@@ -376,8 +376,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--sand);color:var(--text-da
 
 <div id="sub-safety-brief" class="sub-screen">
   <div class="sub-header"><button class="sub-back" onclick="closeSub()">‹</button><div><div class="sub-header-title">🛟 Safety Briefing</div><div class="sub-header-sub">Run with all guests before every departure</div></div></div>
-  <div class="cl-prog-wrap"><div class="cl-bar-wrap"><div class="progress-bar"><div class="progress-fill" id="sb-bar" style="width:0%"></div></div><div class="cl-count" id="sb-count">0 of 0 complete</div></div><button class="cl-reset" onclick="resetCL('sb')">↺ Reset</button></div>
-  <div id="cl-sb"></div><div style="height:16px"></div>
+  <div class="cl-prog-wrap"><div class="cl-bar-wrap"><div class="progress-bar"><div class="progress-fill" id="safety-brief-bar" style="width:0%"></div></div><div class="cl-count" id="safety-brief-count">0 of 0 complete</div></div><button class="cl-reset" onclick="resetCL('safety-brief')">↺ Reset</button></div>
+  <div id="cl-safety-brief"></div><div style="height:16px"></div>
 </div>
 <div id="sub-pd" class="sub-screen">
   <div class="sub-header"><button class="sub-back" onclick="closeSub()">‹</button><div><div class="sub-header-title">🚀 Pre-Departure</div><div class="sub-header-sub">Complete before every departure</div></div></div>
@@ -1044,7 +1044,7 @@ const SYS = {
 };
 
 const CL = {
-  sb:{groups:[
+  'safety-brief':{groups:[
     {t:'Life Jackets',items:[
       {c:'Show guests where life jackets are stored',s:'Cockpit lazarette — port side locker. One per person plus spares.'},
       {c:'Demonstrate how to put on a life jacket',s:'Auto-inflate types: pull red toggle or immersion activates. Green indicator = armed.'},
@@ -1531,7 +1531,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderSysGrid();
   setupFixChips();
   renderFix();
-  renderCL('sb');
+  renderCL('safety-brief');
 });
 </script>
 </body>
