@@ -1,0 +1,17 @@
+# Secrets (local only)
+.env
+backend/.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Large manuals (keep directory via .gitkeep)
+manuals/**/*.pdf
+manuals/**/*.PDF
+
+# Processed / local vector data (keep directory via .gitkeep)
+/data/*
+!/data/.gitkeep

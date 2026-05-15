@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+llama-index-core
+llama-index-vector-stores-postgres
+llama-index-embeddings-azure-openai
+llama-index-llms-azure-openai
+llama-index-readers-file
+docling
+pydantic
+pydantic-settings
+psycopg2-binary
+sqlalchemy
