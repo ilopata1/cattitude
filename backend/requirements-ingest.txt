@@ -1,0 +1,4 @@
+# Optional: local manual ingestion with Docling (not used by the API container).
+-r requirements.txt
+docling
+pypdf

@@ -6,7 +6,8 @@ llama-index-vector-stores-postgres
 llama-index-embeddings-azure-openai
 llama-index-llms-azure-openai
 llama-index-readers-file
-docling
+openai
+pypdf
 pydantic
 pydantic-settings
 psycopg2-binary
