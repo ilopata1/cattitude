@@ -218,6 +218,31 @@ body{font-family:'DM Sans',sans-serif;background:var(--sand);color:var(--text-da
 .modal-close{width:100%;background:rgba(255,255,255,0.1);border:none;border-radius:var(--radius-sm);padding:14px;color:white;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:8px;}
 .hidden{display:none!important;}
 
+/* --- ASK / CHAT TAB --- */
+.suggestion-chip{background:var(--white);border:1.5px solid var(--sand-mid);border-radius:var(--radius-sm);padding:10px 14px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text-mid);cursor:pointer;text-align:left;transition:border-color 0.2s;width:100%;}
+.suggestion-chip:active{border-color:var(--teal);color:var(--teal-dark);}
+.chat-messages{padding:16px;padding-bottom:90px;min-height:calc(100vh - var(--header-height) - var(--tab-height) - 70px);display:flex;flex-direction:column;gap:12px;}
+.chat-welcome{text-align:center;padding:40px 20px;}
+.chat-welcome-icon{font-size:48px;margin-bottom:12px;}
+.chat-welcome-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--navy);margin-bottom:8px;}
+.chat-welcome-sub{font-size:14px;color:var(--text-light);line-height:1.5;}
+.chat-suggestions{margin-top:20px;display:flex;flex-direction:column;gap:8px;}
+.chat-input-bar{position:fixed;bottom:var(--tab-height);left:0;right:0;background:var(--white);border-top:1px solid var(--sand-mid);padding:10px 12px;padding-bottom:calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;align-items:flex-end;z-index:90;}
+.chat-input{flex:1;border:1.5px solid var(--sand-mid);border-radius:20px;padding:10px 14px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text-dark);background:var(--sand);resize:none;outline:none;max-height:100px;overflow-y:auto;}
+.chat-send-btn{width:40px;height:40px;border-radius:50%;background:var(--teal-dark);border:none;color:white;font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.chat-bubble-wrap{display:flex;flex-direction:column;gap:4px;}
+.chat-bubble-wrap.user{align-items:flex-end;}
+.chat-bubble-wrap.assistant{align-items:flex-start;}
+.chat-bubble{max-width:85%;padding:11px 14px;border-radius:16px;font-size:14px;line-height:1.5;white-space:pre-wrap;}
+.chat-bubble.user{background:var(--navy);color:white;border-bottom-right-radius:4px;}
+.chat-bubble.assistant{background:var(--white);color:var(--text-dark);border-bottom-left-radius:4px;box-shadow:0 1px 6px rgba(13,33,55,0.08);}
+.chat-bubble.error{background:var(--coral-light);color:#8B1A16;border-bottom-left-radius:4px;}
+.chat-sources{font-size:11px;color:var(--text-light);margin-top:4px;padding-left:4px;}
+.chat-typing{display:flex;gap:4px;padding:12px 14px;background:var(--white);border-radius:16px;border-bottom-left-radius:4px;box-shadow:0 1px 6px rgba(13,33,55,0.08);width:fit-content;}
+.chat-typing span{width:7px;height:7px;border-radius:50%;background:var(--text-light);animation:chatBounce 1.2s infinite;}
+.chat-typing span:nth-child(2){animation-delay:0.2s;}
+.chat-typing span:nth-child(3){animation-delay:0.4s;}
+@keyframes chatBounce{0%,80%,100%{transform:translateY(0);opacity:0.4;}40%{transform:translateY(-6px);opacity:1;}}
 
 .photo-card{background:var(--white);border-radius:var(--radius);overflow:hidden;margin-bottom:10px;box-shadow:var(--shadow);}
 .photo-card img{width:100%;display:block;cursor:pointer;}
@@ -372,6 +397,28 @@ body{font-family:'DM Sans',sans-serif;background:var(--sand);color:var(--text-da
   <div class="filter-chips" id="fix-chips"></div>
   <div class="fix-list" id="fix-list"></div>
 </div>
+
+<!-- ASK -->
+<div id="screen-ask" class="screen">
+  <div id="chat-messages" class="chat-messages">
+    <div id="chat-welcome" class="chat-welcome">
+      <div class="chat-welcome-icon">📖</div>
+      <div class="chat-welcome-title">Ask About Cattitude</div>
+      <div class="chat-welcome-sub">Ask any question about the boat's systems, equipment, or manuals.<br><em>Try: "How do I bleed the fuel system?"</em></div>
+      <div class="chat-suggestions">
+        <button type="button" class="suggestion-chip" onclick="askSuggestion(this)">How do I change the engine oil on the 4JH45?</button>
+        <button type="button" class="suggestion-chip" onclick="askSuggestion(this)">What is the fuel filter replacement procedure?</button>
+        <button type="button" class="suggestion-chip" onclick="askSuggestion(this)">How do I bleed the fuel system?</button>
+      </div>
+    </div>
+  </div>
+  <div id="chat-input-bar" class="chat-input-bar">
+    <textarea id="chat-input" class="chat-input" rows="1" placeholder="Ask about any system or manual…"
+      oninput="autoResizeChat(this)"
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatMessage();}"></textarea>
+    <button type="button" id="chat-send-btn" class="chat-send-btn" onclick="sendChatMessage()" aria-label="Send">↑</button>
+  </div>
+</div>
 </main>
 
 <!-- SUB-SCREENS -->
@@ -423,6 +470,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--sand);color:var(--text-da
   <button class="nav-tab" id="tab-do" onclick="switchTab('do')"><span class="nav-icon">📋</span>Do</button>
   <button class="nav-tab" id="tab-know" onclick="switchTab('know')"><span class="nav-icon">📖</span>Know</button>
   <button class="nav-tab" id="tab-fix" onclick="switchTab('fix')"><span class="nav-icon">🔧</span>Fix It</button>
+  <button class="nav-tab" id="tab-ask" onclick="switchTab('ask')"><span class="nav-icon">💬</span>Ask</button>
 </nav>
 
 <div class="modal-overlay" id="em-modal" onclick="closeEmergency(event)">
@@ -1271,6 +1319,120 @@ const LOCS = {
   'helm':{label:'Helm Station',sys:['nav','engines','sails']},
   'swim':{label:'Swim Platform',sys:['dinghy','safety']},
 };
+
+// ── ASK / CHAT TAB ─────────────────────────────────────
+const BACKEND_URL = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+  ? 'http://localhost:8000'
+  : 'https://cattitude-production.up.railway.app'; // set to Railway URL when deployed
+
+let chatHistory = [];
+let chatBusy = false;
+
+function autoResizeChat(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+}
+
+function askSuggestion(btn) {
+  document.getElementById('chat-input').value = btn.textContent;
+  sendChatMessage();
+}
+
+function appendChatBubble(role, text, sources) {
+  const welcome = document.getElementById('chat-welcome');
+  if (welcome) welcome.remove();
+
+  const msgs = document.getElementById('chat-messages');
+  const wrap = document.createElement('div');
+  wrap.className = 'chat-bubble-wrap ' + role;
+
+  const bubble = document.createElement('div');
+  bubble.className = 'chat-bubble ' + role;
+  bubble.textContent = text;
+  wrap.appendChild(bubble);
+
+  if (sources && sources.length > 0) {
+    const src = document.createElement('div');
+    src.className = 'chat-sources';
+    const ids = [...new Set(sources.map(s => s.manual_id))].join(', ');
+    src.textContent = '📄 Source: ' + ids;
+    wrap.appendChild(src);
+  }
+
+  msgs.appendChild(wrap);
+  msgs.scrollTop = msgs.scrollHeight;
+  return bubble;
+}
+
+function showTypingIndicator() {
+  const msgs = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.id = 'chat-typing';
+  div.className = 'chat-bubble-wrap assistant';
+  div.innerHTML = '<div class="chat-typing"><span></span><span></span><span></span></div>';
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeTypingIndicator() {
+  const t = document.getElementById('chat-typing');
+  if (t) t.remove();
+}
+
+async function sendChatMessage() {
+  if (chatBusy) return;
+  const input = document.getElementById('chat-input');
+  const question = input.value.trim();
+  if (!question) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+  chatBusy = true;
+  document.getElementById('chat-send-btn').style.opacity = '0.5';
+
+  appendChatBubble('user', question);
+  showTypingIndicator();
+
+  try {
+    const res = await fetch(BACKEND_URL + '/query', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        question: question,
+        conversation_history: chatHistory,
+      }),
+    });
+
+    removeTypingIndicator();
+
+    if (!res.ok) {
+      let msg = 'Server error ' + res.status;
+      try {
+        const err = await res.json();
+        if (err.detail) msg = typeof err.detail === 'string' ? err.detail : JSON.stringify(err.detail);
+      } catch (_) { /* ignore */ }
+      throw new Error(msg);
+    }
+
+    const data = await res.json();
+    appendChatBubble('assistant', data.answer, data.sources);
+
+    chatHistory.push({ role: 'user', content: question });
+    chatHistory.push({ role: 'assistant', content: data.answer });
+    if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
+
+  } catch (err) {
+    removeTypingIndicator();
+    const bubble = appendChatBubble('assistant', '', null);
+    bubble.className = 'chat-bubble error';
+    bubble.textContent = navigator.onLine
+      ? (err.message || '⚠️ Couldn\'t reach the manual server. Is the API running on port 8000?')
+      : '📵 You\'re offline. Manual queries require a connection.';
+  } finally {
+    chatBusy = false;
+    document.getElementById('chat-send-btn').style.opacity = '1';
+  }
+}
 
 // ── STATE ──────────────────────────────────────────────
 const learnDone = {};

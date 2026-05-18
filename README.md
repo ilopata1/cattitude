@@ -1,2 +1,2 @@
 # cattitude
-Cruise Abaco Cattitude
+Cruise Abaco Cattitude App
