@@ -1,10 +1,28 @@
-from pydantic import field_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pathlib import Path
+from typing import Annotated
+
+from pydantic import BeforeValidator
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
+
+
+def _parse_cors_origins(v: object) -> object:
+    if isinstance(v, str):
+        return [s.strip() for s in v.split(",") if s.strip()]
+    return v
+
+_BACKEND_DIR = Path(__file__).resolve().parent
+_REPO_ROOT = _BACKEND_DIR.parent
+
+
+def _discover_env_files() -> tuple[str, ...]:
+    """Load repo-root .env first, then backend/.env overrides (if present)."""
+    paths = (_REPO_ROOT / ".env", _BACKEND_DIR / ".env")
+    return tuple(str(p) for p in paths if p.is_file())
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=_discover_env_files(),
         env_file_encoding="utf-8",
         extra="ignore",
     )
@@ -19,15 +37,12 @@ class Settings(BaseSettings):
     # Database
     database_url: str  # postgresql://user:pass@host:5432/dbname
 
-    # App
-    cors_origins: list[str] = ["http://localhost:8080", "http://127.0.0.1:8080"]
-
-    @field_validator("cors_origins", mode="before")
-    @classmethod
-    def parse_cors_origins(cls, v: object) -> object:
-        if isinstance(v, str):
-            return [s.strip() for s in v.split(",") if s.strip()]
-        return v
+    # App (comma-separated in .env; NoDecode skips JSON parsing of the raw string)
+    cors_origins: Annotated[
+        list[str],
+        NoDecode,
+        BeforeValidator(_parse_cors_origins),
+    ] = ["http://localhost:8080", "http://127.0.0.1:8080"]
 
 
 settings = Settings()

@@ -1,6 +1,6 @@
 """
 Manual ingestion pipeline.
-Usage: python ingest.py --file ../manuals/yanmar_4jh45_operators.pdf --manual-id yanmar_4jh45_operators
+Usage: python ingest.py --file ../manuals/yanmar_jh-cr_operator_manual.pdf --manual-id yanmar_jh-cr_operator
 """
 
 from __future__ import annotations
@@ -8,19 +8,76 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from docling.document_converter import DocumentConverter
+from pypdf import PdfReader
+
 from llama_index.core import Document, StorageContext, VectorStoreIndex
 from llama_index.core.node_parser import SentenceSplitter
 from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
 from llama_index.vector_stores.postgres import PGVectorStore
 
 from config import settings
+from db import postgres_connection_strings
+
+_BACKEND_DIR = Path(__file__).resolve().parent
+_REPO_ROOT = _BACKEND_DIR.parent
+_MANUALS_DIR = _REPO_ROOT / "manuals"
+
+
+def resolve_manual_path(file_path: str | Path) -> Path:
+    """Resolve a manual PDF under cwd, backend/, repo root, or manuals/."""
+    path = Path(file_path).expanduser()
+    candidates: list[Path] = []
+    if path.is_absolute():
+        candidates.append(path)
+    else:
+        for root in (Path.cwd(), _BACKEND_DIR, _REPO_ROOT, _MANUALS_DIR):
+            candidates.append(root / path)
+        candidates.append(_MANUALS_DIR / path.name)
+
+    seen: set[Path] = set()
+    for candidate in candidates:
+        resolved = candidate.resolve()
+        if resolved in seen:
+            continue
+        seen.add(resolved)
+        if resolved.is_file():
+            return resolved
+
+    raise FileNotFoundError(
+        f"Manual not found: {file_path}\n"
+        f"PDFs live in {_MANUALS_DIR}. From backend/, use e.g.:\n"
+        f"  --file ../manuals/{path.name}"
+    )
+
+
+def pdf_to_text(file_path: Path, parser: str = "pypdf") -> str:
+    """Extract text from a PDF. Default pypdf uses far less RAM than Docling."""
+    if parser == "pypdf":
+        reader = PdfReader(str(file_path))
+        parts: list[str] = []
+        for page_num, page in enumerate(reader.pages, start=1):
+            text = (page.extract_text() or "").strip()
+            if text:
+                parts.append(f"## Page {page_num}\n\n{text}")
+        if not parts:
+            raise ValueError(f"No extractable text in {file_path.name}")
+        return "\n\n".join(parts)
+
+    if parser == "docling":
+        from docling.document_converter import DocumentConverter
+
+        converter = DocumentConverter()
+        result = converter.convert(str(file_path))
+        return result.document.export_to_markdown()
+
+    raise ValueError(f"Unknown parser: {parser!r}. Use 'pypdf' or 'docling'.")
 
 
 def ingest_manual(
     file_path: Path,
     manual_id: str,
     equipment_tags: list[str] | None = None,
+    parser: str = "pypdf",
 ) -> None:
     """
     Parse a PDF with Docling, chunk it, embed it, and store in pgvector.
@@ -30,10 +87,8 @@ def ingest_manual(
         manual_id: Stable identifier e.g. "yanmar_4jh45_operators"
         equipment_tags: Optional list e.g. ["yanmar", "4jh45", "engine"]
     """
-    print(f"Converting {file_path} with Docling...")
-    converter = DocumentConverter()
-    result = converter.convert(str(file_path))
-    markdown_text = result.document.export_to_markdown()
+    print(f"Extracting text from {file_path.name} ({parser})...")
+    markdown_text = pdf_to_text(file_path, parser=parser)
 
     metadata = {
         "manual_id": manual_id,
@@ -58,8 +113,10 @@ def ingest_manual(
         api_version=settings.azure_openai_api_version,
     )
 
+    sync_url, async_url = postgres_connection_strings(settings.database_url)
     vector_store = PGVectorStore.from_params(
-        connection_string=settings.database_url,
+        connection_string=sync_url,
+        async_connection_string=async_url,
         table_name="cattitude",
         embed_dim=1536,
     )
@@ -75,5 +132,16 @@ if __name__ == "__main__":
     parser.add_argument("--file", required=True)
     parser.add_argument("--manual-id", required=True)
     parser.add_argument("--tags", nargs="*", default=[])
+    parser.add_argument(
+        "--parser",
+        choices=("pypdf", "docling"),
+        default="pypdf",
+        help="PDF text extraction backend (default: pypdf, lower memory)",
+    )
     args = parser.parse_args()
-    ingest_manual(Path(args.file), args.manual_id, list(args.tags))
+    ingest_manual(
+        resolve_manual_path(args.file),
+        args.manual_id,
+        list(args.tags),
+        parser=args.parser,
+    )

@@ -9,6 +9,7 @@ from llama_index.llms.azure_openai import AzureOpenAI
 from llama_index.vector_stores.postgres import PGVectorStore
 
 from config import settings
+from db import postgres_connection_strings
 
 
 def build_query_engine() -> RetrieverQueryEngine:
@@ -30,8 +31,10 @@ def build_query_engine() -> RetrieverQueryEngine:
         api_version=settings.azure_openai_api_version,
     )
 
+    sync_url, async_url = postgres_connection_strings(settings.database_url)
     vector_store = PGVectorStore.from_params(
-        connection_string=settings.database_url,
+        connection_string=sync_url,
+        async_connection_string=async_url,
         table_name="cattitude",
         embed_dim=1536,
     )
