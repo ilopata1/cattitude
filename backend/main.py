@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import asyncio
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from config import settings
-from query import get_query_engine
+from query import ContentFilterError, run_query
 
 app = FastAPI(title="Cattitude Manual API")
 
@@ -40,10 +40,11 @@ class QueryResponse(BaseModel):
 
 @app.post("/query", response_model=QueryResponse)
 async def query_manuals(req: QueryRequest) -> QueryResponse:
-    engine = get_query_engine()
-
     loop = asyncio.get_event_loop()
-    response = await loop.run_in_executor(None, engine.query, req.question)
+    try:
+        response = await loop.run_in_executor(None, run_query, req.question)
+    except ContentFilterError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     sources: list[SourceItem] = []
     if hasattr(response, "source_nodes"):
