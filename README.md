@@ -1,6 +1,6 @@
 # Cattitude
 
-Monorepo for the Cattitude charter PWA and (planned) manual-query RAG backend.
+Monorepo for the Cattitude charter PWA and manual-query RAG backend.
 
 | Path | Purpose |
 |------|---------|
