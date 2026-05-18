@@ -5,12 +5,16 @@ on:
     branches: [main]
     paths:
       - 'app/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -20,9 +24,11 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git fetch origin pages-live
           git checkout pages-live
+          # Clear tracked root files (avoid rsync app/ → ./ overlap; that deletes source mid-copy)
+          git rm -rf .
           git checkout origin/main -- app
-          rsync -a --delete app/ ./
+          cp -a app/. .
           rm -rf app
-          git add index.html manifest.json *.png
+          git add -A
           git diff --staged --quiet || git commit -m "Sync from main/app"
           git push origin pages-live
