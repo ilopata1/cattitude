@@ -245,7 +245,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--sand);color:var(--text-da
 .chat-source-chip::before{content:'📄';font-size:13px;flex-shrink:0;}
 .chat-source-chip-label{flex:1;line-height:1.35;}
 .chat-source-chip-score{font-size:10px;color:var(--text-light);flex-shrink:0;}
+.chat-source-chip-hint{font-size:10px;color:var(--teal-dark);flex-shrink:0;}
 .chat-source-snippet{background:var(--white);border:1px solid var(--sand-mid);border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.55;color:var(--text-dark);white-space:pre-wrap;box-shadow:0 1px 4px rgba(13,33,55,0.05);}
+.chat-source-snippet[hidden]{display:none;}
 .chat-typing{display:flex;gap:4px;padding:12px 14px;background:var(--white);border-radius:16px;border-bottom-left-radius:4px;box-shadow:0 1px 6px rgba(13,33,55,0.08);width:fit-content;}
 .chat-typing span{width:7px;height:7px;border-radius:50%;background:var(--text-light);animation:chatBounce 1.2s infinite;}
 .chat-typing span:nth-child(2){animation-delay:0.2s;}
@@ -1338,6 +1340,7 @@ let chatBusy = false;
 
 const MANUAL_TITLES = {
   yanmar_jh-cr_operator: 'Yanmar 4JH45 Operator Manual',
+  yanmar_jh_cr_operator: 'Yanmar 4JH45 Operator Manual',
   yanmar_4jh45_operators: 'Yanmar 4JH45 Operator Manual',
   victron_digital_multi_control: 'Victron Multi Control Panel',
   victron_multiplus_manual: 'Victron MultiPlus',
@@ -1390,13 +1393,20 @@ function appendChatBubble(role, text, sources) {
 
     const label = document.createElement('div');
     label.className = 'chat-sources-label';
-    label.textContent = 'Sources';
+    label.textContent = 'Manual excerpts';
     srcWrap.appendChild(label);
+
+    const hint = document.createElement('div');
+    hint.className = 'chat-sources-label';
+    hint.style.textTransform = 'none';
+    hint.style.fontWeight = '400';
+    hint.textContent = 'Tap a source to show or hide its excerpt.';
+    srcWrap.appendChild(hint);
 
     const list = document.createElement('div');
     list.className = 'chat-source-list';
 
-    sources.forEach(source => {
+    sources.forEach((source, index) => {
       const item = document.createElement('div');
       item.className = 'chat-source-item';
 
@@ -1418,10 +1428,17 @@ function appendChatBubble(role, text, sources) {
         btn.appendChild(scoreEl);
       }
 
+      const tapHint = document.createElement('span');
+      tapHint.className = 'chat-source-chip-hint';
+      tapHint.textContent = 'Tap';
+      btn.appendChild(tapHint);
+
       const panel = document.createElement('div');
       panel.className = 'chat-source-snippet';
-      panel.hidden = true;
+      const openByDefault = index === 0;
+      panel.hidden = !openByDefault;
       panel.textContent = source.snippet || '(No excerpt available)';
+      if (openByDefault) btn.classList.add('open');
 
       btn.addEventListener('click', () => {
         const willOpen = panel.hidden;
