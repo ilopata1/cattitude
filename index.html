@@ -1406,7 +1406,7 @@ function appendChatBubble(role, text, sources) {
     const list = document.createElement('div');
     list.className = 'chat-source-list';
 
-    sources.forEach((source, index) => {
+    sources.forEach(source => {
       const item = document.createElement('div');
       item.className = 'chat-source-item';
 
@@ -1435,10 +1435,8 @@ function appendChatBubble(role, text, sources) {
 
       const panel = document.createElement('div');
       panel.className = 'chat-source-snippet';
-      const openByDefault = index === 0;
-      panel.hidden = !openByDefault;
+      panel.hidden = true;
       panel.textContent = source.snippet || '(No excerpt available)';
-      if (openByDefault) btn.classList.add('open');
 
       btn.addEventListener('click', () => {
         const willOpen = panel.hidden;
