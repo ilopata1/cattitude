@@ -13,3 +13,4 @@ pydantic-settings
 psycopg2-binary
 asyncpg
 sqlalchemy
+langdetect

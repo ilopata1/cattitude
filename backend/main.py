@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from config import settings
+from english_text import extract_english
 from query import ContentFilterError, run_query
 
 app = FastAPI(title="Cattitude Manual API")
@@ -46,8 +47,11 @@ def _metadata_int(value: object) -> int | None:
         return None
 
 
-def _source_from_node(node: object) -> SourceItem:
-    text = getattr(node, "text", None) or ""
+def _source_from_node(node: object) -> SourceItem | None:
+    raw = getattr(node, "text", None) or ""
+    text = extract_english(raw).strip()
+    if not text:
+        return None
     metadata = getattr(node, "metadata", None) or {}
     score_raw = getattr(node, "score", None)
     score = round(float(score_raw), 3) if score_raw is not None else None
@@ -80,7 +84,9 @@ async def query_manuals(req: QueryRequest) -> QueryResponse:
     sources: list[SourceItem] = []
     if hasattr(response, "source_nodes"):
         for node in response.source_nodes:
-            sources.append(_source_from_node(node))
+            item = _source_from_node(node)
+            if item is not None:
+                sources.append(item)
 
     return QueryResponse(answer=str(response), sources=sources)
 

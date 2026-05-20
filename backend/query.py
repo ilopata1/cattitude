@@ -13,6 +13,7 @@ from openai import BadRequestError
 
 from config import settings
 from db import postgres_connection_strings
+from english_text import extract_english
 
 # Framing helps Azure content filters treat prompts as marine equipment support.
 _MARINE_CONTEXT = (
@@ -27,7 +28,7 @@ TEXT_QA_PROMPT = PromptTemplate(
     "---------------------\n"
     "{context_str}\n"
     "---------------------\n"
-    "Using only the context above, and no hallucinations, answer this marine equipment question.\n"
+    "Using only the context above, and no hallucinations, answer this marine equipment question in English.\n"
     "Question: {query_str}\n"
     "Answer: "
 )
@@ -42,7 +43,7 @@ REFINE_PROMPT = PromptTemplate(
     "{context_msg}\n"
     "------------\n"
     "Given the new context, refine the original answer to better "
-    "answer the question. "
+    "answer the question in English. "
     "If the context isn't useful, return the original answer.\n"
     "Refined Answer: "
 )
@@ -141,11 +142,25 @@ class ContentFilterError(Exception):
     """Raised when Azure blocks the prompt after a retry."""
 
 
+def _english_nodes(nodes: list) -> list:
+    """Replace node text with English-only excerpts for synthesis and sources."""
+    kept: list = []
+    for node in nodes:
+        raw = node.get_content() if hasattr(node, "get_content") else getattr(node, "text", "") or ""
+        english = extract_english(str(raw)).strip()
+        if not english:
+            continue
+        node.set_content(english)
+        kept.append(node)
+    return kept or nodes
+
+
 def run_query(question: str):
     """Run RAG query with marine framing and one content-filter retry."""
     engine = get_query_engine()
     question = question.strip()
     nodes = engine.retrieve(QueryBundle(query_str=question))
+    nodes = _english_nodes(nodes)
 
     attempts = (
         prepare_manual_query(question),

@@ -17,6 +17,7 @@ from llama_index.vector_stores.postgres import PGVectorStore
 
 from config import settings
 from db import postgres_connection_strings
+from english_text import extract_english
 
 _BACKEND_DIR = Path(__file__).resolve().parent
 _REPO_ROOT = _BACKEND_DIR.parent
@@ -96,9 +97,12 @@ def ingest_manual(
     documents: list[Document] = []
     if parser == "pypdf":
         for page_num, page_text in pdf_to_pages(file_path):
+            english_text = extract_english(page_text)
+            if not english_text.strip():
+                continue
             documents.append(
                 Document(
-                    text=page_text,
+                    text=english_text,
                     metadata={
                         **base_metadata,
                         "page_start": page_num,
@@ -107,9 +111,10 @@ def ingest_manual(
                 )
             )
     elif parser == "docling":
-        documents.append(
-            Document(text=pdf_to_text_docling(file_path), metadata=base_metadata)
-        )
+        english_text = extract_english(pdf_to_text_docling(file_path))
+        if not english_text.strip():
+            raise ValueError(f"No English text extracted from {file_path.name}")
+        documents.append(Document(text=english_text, metadata=base_metadata))
     else:
         raise ValueError(f"Unknown parser: {parser!r}. Use 'pypdf' or 'docling'.")
 
