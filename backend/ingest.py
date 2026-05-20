@@ -50,27 +50,25 @@ def resolve_manual_path(file_path: str | Path) -> Path:
     )
 
 
-def pdf_to_text(file_path: Path, parser: str = "pypdf") -> str:
-    """Extract text from a PDF. Default pypdf uses far less RAM than Docling."""
-    if parser == "pypdf":
-        reader = PdfReader(str(file_path))
-        parts: list[str] = []
-        for page_num, page in enumerate(reader.pages, start=1):
-            text = (page.extract_text() or "").strip()
-            if text:
-                parts.append(f"## Page {page_num}\n\n{text}")
-        if not parts:
-            raise ValueError(f"No extractable text in {file_path.name}")
-        return "\n\n".join(parts)
+def pdf_to_pages(file_path: Path) -> list[tuple[int, str]]:
+    """Extract text per PDF page (1-based page numbers)."""
+    reader = PdfReader(str(file_path))
+    pages: list[tuple[int, str]] = []
+    for page_num, page in enumerate(reader.pages, start=1):
+        text = (page.extract_text() or "").strip()
+        if text:
+            pages.append((page_num, text))
+    if not pages:
+        raise ValueError(f"No extractable text in {file_path.name}")
+    return pages
 
-    if parser == "docling":
-        from docling.document_converter import DocumentConverter
 
-        converter = DocumentConverter()
-        result = converter.convert(str(file_path))
-        return result.document.export_to_markdown()
+def pdf_to_text_docling(file_path: Path) -> str:
+    from docling.document_converter import DocumentConverter
 
-    raise ValueError(f"Unknown parser: {parser!r}. Use 'pypdf' or 'docling'.")
+    converter = DocumentConverter()
+    result = converter.convert(str(file_path))
+    return result.document.export_to_markdown()
 
 
 def ingest_manual(
@@ -80,7 +78,7 @@ def ingest_manual(
     parser: str = "pypdf",
 ) -> None:
     """
-    Parse a PDF with Docling, chunk it, embed it, and store in pgvector.
+    Parse a PDF, chunk it, embed it, and store in pgvector.
 
     Args:
         file_path: Path to the PDF manual
@@ -88,20 +86,38 @@ def ingest_manual(
         equipment_tags: Optional list e.g. ["yanmar", "4jh45", "engine"]
     """
     print(f"Extracting text from {file_path.name} ({parser})...")
-    markdown_text = pdf_to_text(file_path, parser=parser)
 
-    metadata = {
+    base_metadata = {
         "manual_id": manual_id,
         "source_file": file_path.name,
         "equipment_tags": equipment_tags or [],
     }
-    document = Document(text=markdown_text, metadata=metadata)
+
+    documents: list[Document] = []
+    if parser == "pypdf":
+        for page_num, page_text in pdf_to_pages(file_path):
+            documents.append(
+                Document(
+                    text=page_text,
+                    metadata={
+                        **base_metadata,
+                        "page_start": page_num,
+                        "page_end": page_num,
+                    },
+                )
+            )
+    elif parser == "docling":
+        documents.append(
+            Document(text=pdf_to_text_docling(file_path), metadata=base_metadata)
+        )
+    else:
+        raise ValueError(f"Unknown parser: {parser!r}. Use 'pypdf' or 'docling'.")
 
     splitter = SentenceSplitter(chunk_size=512, chunk_overlap=64)
-    nodes = splitter.get_nodes_from_documents([document])
+    nodes = splitter.get_nodes_from_documents(documents)
 
     for node in nodes:
-        node.metadata.update(metadata)
+        node.metadata.update(base_metadata)
 
     print(f"Created {len(nodes)} chunks from {file_path.name}")
 

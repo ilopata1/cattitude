@@ -28,9 +28,40 @@ class QueryRequest(BaseModel):
 
 
 class SourceItem(BaseModel):
+    node_id: str | None = None
     manual_id: str
+    source_file: str | None = None
+    page_start: int | None = None
+    page_end: int | None = None
     snippet: str
     score: float | None = None
+
+
+def _metadata_int(value: object) -> int | None:
+    if value is None:
+        return None
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _source_from_node(node: object) -> SourceItem:
+    text = getattr(node, "text", None) or ""
+    metadata = getattr(node, "metadata", None) or {}
+    score_raw = getattr(node, "score", None)
+    score = round(float(score_raw), 3) if score_raw is not None else None
+    node_id = getattr(node, "node_id", None)
+
+    return SourceItem(
+        node_id=str(node_id) if node_id else None,
+        manual_id=str(metadata.get("manual_id", "unknown")),
+        source_file=metadata.get("source_file"),
+        page_start=_metadata_int(metadata.get("page_start")),
+        page_end=_metadata_int(metadata.get("page_end")),
+        snippet=text[:2000] + "..." if len(text) > 2000 else text,
+        score=score,
+    )
 
 
 class QueryResponse(BaseModel):
@@ -49,16 +80,7 @@ async def query_manuals(req: QueryRequest) -> QueryResponse:
     sources: list[SourceItem] = []
     if hasattr(response, "source_nodes"):
         for node in response.source_nodes:
-            text = node.text or ""
-            snippet = text[:200] + "..." if len(text) > 200 else text
-            score = round(float(node.score), 3) if node.score is not None else None
-            sources.append(
-                SourceItem(
-                    manual_id=str(node.metadata.get("manual_id", "unknown")),
-                    snippet=snippet,
-                    score=score,
-                )
-            )
+            sources.append(_source_from_node(node))
 
     return QueryResponse(answer=str(response), sources=sources)
 

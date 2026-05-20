@@ -27,7 +27,7 @@ TEXT_QA_PROMPT = PromptTemplate(
     "---------------------\n"
     "{context_str}\n"
     "---------------------\n"
-    "Using only the context above, answer this marine equipment question.\n"
+    "Using only the context above, and no hallucinations, answer this marine equipment question.\n"
     "Question: {query_str}\n"
     "Answer: "
 )
