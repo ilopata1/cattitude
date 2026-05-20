@@ -237,7 +237,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--sand);color:var(--text-da
 .chat-bubble.user{background:var(--navy);color:white;border-bottom-right-radius:4px;}
 .chat-bubble.assistant{background:var(--white);color:var(--text-dark);border-bottom-left-radius:4px;box-shadow:0 1px 6px rgba(13,33,55,0.08);}
 .chat-bubble.error{background:var(--coral-light);color:#8B1A16;border-bottom-left-radius:4px;}
-.chat-sources{font-size:11px;color:var(--text-light);margin-top:4px;padding-left:4px;}
+.chat-sources{margin-top:6px;max-width:92%;display:flex;flex-direction:column;gap:6px;}
+.chat-sources-label{font-size:11px;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:0.04em;padding-left:2px;}
+.chat-source-list{display:flex;flex-direction:column;gap:6px;}
+.chat-source-chip{display:flex;align-items:center;gap:6px;width:100%;text-align:left;background:var(--white);border:1px solid var(--sand-mid);border-radius:10px;padding:8px 10px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text-mid);cursor:pointer;transition:border-color 0.15s,background 0.15s;box-shadow:0 1px 4px rgba(13,33,55,0.05);}
+.chat-source-chip:hover,.chat-source-chip.open{border-color:var(--teal);background:var(--sand);}
+.chat-source-chip::before{content:'📄';font-size:13px;flex-shrink:0;}
+.chat-source-chip-label{flex:1;line-height:1.35;}
+.chat-source-chip-score{font-size:10px;color:var(--text-light);flex-shrink:0;}
+.chat-source-snippet{background:var(--white);border:1px solid var(--sand-mid);border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.55;color:var(--text-dark);white-space:pre-wrap;box-shadow:0 1px 4px rgba(13,33,55,0.05);}
 .chat-typing{display:flex;gap:4px;padding:12px 14px;background:var(--white);border-radius:16px;border-bottom-left-radius:4px;box-shadow:0 1px 6px rgba(13,33,55,0.08);width:fit-content;}
 .chat-typing span{width:7px;height:7px;border-radius:50%;background:var(--text-light);animation:chatBounce 1.2s infinite;}
 .chat-typing span:nth-child(2){animation-delay:0.2s;}
@@ -1328,6 +1336,31 @@ const BACKEND_URL = (location.hostname === 'localhost' || location.hostname === 
 let chatHistory = [];
 let chatBusy = false;
 
+const MANUAL_TITLES = {
+  yanmar_jh-cr_operator: 'Yanmar 4JH45 Operator Manual',
+  yanmar_4jh45_operators: 'Yanmar 4JH45 Operator Manual',
+  victron_digital_multi_control: 'Victron Multi Control Panel',
+  victron_multiplus_manual: 'Victron MultiPlus',
+  victron_gx_display_manual: 'Victron GX Display',
+  victron_hub1_system_layout: 'Victron HUB-1 Layout',
+  dometic_captouch_panel: 'Dometic CapTouch Panel',
+  dometic_elite_control: 'Dometic Elite AC Control',
+  garmin_gpsmap_74xx_76xx_owner_manual: 'Garmin GPSMAP 74xx/76xx',
+  tecma_compass_eco_manual: 'Tecma Compass Eco',
+  tecma_macerator_toilets_2g_manual: 'Tecma Electric Heads (2G)',
+};
+
+function formatManualTitle(manualId) {
+  if (MANUAL_TITLES[manualId]) return MANUAL_TITLES[manualId];
+  return manualId.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function formatPageLabel(pageStart, pageEnd) {
+  if (pageStart == null) return '';
+  if (pageEnd == null || pageEnd === pageStart) return 'p. ' + pageStart;
+  return 'pp. ' + pageStart + '–' + pageEnd;
+}
+
 function autoResizeChat(el) {
   el.style.height = 'auto';
   el.style.height = Math.min(el.scrollHeight, 100) + 'px';
@@ -1352,11 +1385,61 @@ function appendChatBubble(role, text, sources) {
   wrap.appendChild(bubble);
 
   if (sources && sources.length > 0) {
-    const src = document.createElement('div');
-    src.className = 'chat-sources';
-    const ids = [...new Set(sources.map(s => s.manual_id))].join(', ');
-    src.textContent = '📄 Source: ' + ids;
-    wrap.appendChild(src);
+    const srcWrap = document.createElement('div');
+    srcWrap.className = 'chat-sources';
+
+    const label = document.createElement('div');
+    label.className = 'chat-sources-label';
+    label.textContent = 'Sources';
+    srcWrap.appendChild(label);
+
+    const list = document.createElement('div');
+    list.className = 'chat-source-list';
+
+    sources.forEach(source => {
+      const item = document.createElement('div');
+      item.className = 'chat-source-item';
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'chat-source-chip';
+
+      const chipLabel = document.createElement('span');
+      chipLabel.className = 'chat-source-chip-label';
+      const title = formatManualTitle(source.manual_id);
+      const page = formatPageLabel(source.page_start, source.page_end);
+      chipLabel.textContent = page ? title + ' · ' + page : title;
+      btn.appendChild(chipLabel);
+
+      if (source.score != null) {
+        const scoreEl = document.createElement('span');
+        scoreEl.className = 'chat-source-chip-score';
+        scoreEl.textContent = source.score.toFixed(2);
+        btn.appendChild(scoreEl);
+      }
+
+      const panel = document.createElement('div');
+      panel.className = 'chat-source-snippet';
+      panel.hidden = true;
+      panel.textContent = source.snippet || '(No excerpt available)';
+
+      btn.addEventListener('click', () => {
+        const willOpen = panel.hidden;
+        list.querySelectorAll('.chat-source-snippet').forEach(p => { p.hidden = true; });
+        list.querySelectorAll('.chat-source-chip').forEach(c => c.classList.remove('open'));
+        if (willOpen) {
+          panel.hidden = false;
+          btn.classList.add('open');
+        }
+      });
+
+      item.appendChild(btn);
+      item.appendChild(panel);
+      list.appendChild(item);
+    });
+
+    srcWrap.appendChild(list);
+    wrap.appendChild(srcWrap);
   }
 
   msgs.appendChild(wrap);
