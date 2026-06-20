@@ -29,20 +29,5 @@
         ]
       }
     }
-  ],
-  "dataGroups": [
-    {
-      "name": "rag-api",
-      "urls": [
-        "https://cattitude-production.up.railway.app/**",
-        "http://localhost:8000/**"
-      ],
-      "cacheConfig": {
-        "strategy": "freshness",
-        "maxSize": 20,
-        "maxAge": "1h",
-        "timeout": "10s"
-      }
-    }
   ]
 }
