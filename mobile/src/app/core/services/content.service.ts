@@ -8,7 +8,6 @@ import {
   LocationZone,
   SystemModule,
 } from '../models/bootstrap-content.model';
-import { SYSTEM_ORDER } from '../config/vessel-ui.config';
 import { environment } from '../../../environments/environment';
 import { VesselContextService } from './vessel-context.service';
 
@@ -65,9 +64,9 @@ export class ContentService {
   }
 
   getSystemsOrdered(): SystemModule[] {
-    return SYSTEM_ORDER.map((id) => this.bootstrap.systems[id]).filter(
-      (system): system is SystemModule => !!system,
-    );
+    return this.bootstrap.ui.systemOrder
+      .map((id) => this.bootstrap.systems[id])
+      .filter((system): system is SystemModule => !!system);
   }
 
   getLocationZone(zoneId: string): LocationZone | undefined {

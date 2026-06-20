@@ -80,6 +80,57 @@ export interface FixCard {
   steps: string[];
 }
 
+export type RuleTone = 'danger' | 'caution' | 'good';
+
+export interface HomeRule {
+  icon: string;
+  text: string;
+  tone: RuleTone;
+  link?: string;
+}
+
+export interface HomeRuleSection {
+  title: string;
+  tone: RuleTone;
+  rules: HomeRule[];
+}
+
+export interface DoMenuItem {
+  key: string;
+  title: string;
+  subtitle: string;
+  icon: string;
+  iconClass: string;
+  route: string;
+  progressType: 'checklist' | 'learn';
+}
+
+export interface DoMenuSection {
+  label: string;
+  items: DoMenuItem[];
+}
+
+export interface ChecklistMeta {
+  title: string;
+  subtitle: string;
+  icon: string;
+}
+
+export interface LocationLayoutItem {
+  id: string;
+  label: string;
+  class?: string;
+  rowClass?: string;
+}
+
+export interface BootstrapUi {
+  homeRuleSections: HomeRuleSection[];
+  doMenu: DoMenuSection[];
+  checklistMeta: Record<string, ChecklistMeta>;
+  systemOrder: string[];
+  locationLayout: LocationLayoutItem[];
+}
+
 export interface BootstrapContent {
   vesselId: string | null;
   vesselSlug: string;
@@ -90,6 +141,7 @@ export interface BootstrapContent {
   fixes: FixCard[];
   locations: Record<string, LocationZone>;
   manualTitles: Record<string, string>;
+  ui: BootstrapUi;
 }
 
 export interface VesselContext {

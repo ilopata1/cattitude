@@ -1,6 +1,9 @@
 /**
- * Extract vessel bootstrap content from app/index.html into JSON + image files
- * for the Ionic Angular app.
+ * LEGACY: one-time migration from app/index.html → bootstrap JSON.
+ *
+ * Production content lives in mobile/src/data/bootstrap/cattitude.json.
+ * Edit that file directly (or utilities/bootstrap_ui.json + embed_bootstrap_ui.mjs
+ * for the ui section). Do not use this script for routine content updates.
  *
  * Usage (from repo root):
  *   node utilities/extract_bootstrap_content.mjs
@@ -266,6 +269,19 @@ const bootstrap = replaceDataUris(
   },
   'asset',
 );
+
+const outJsonPath = path.join(outDir, 'cattitude.json');
+if (fs.existsSync(outJsonPath)) {
+  try {
+    const existing = JSON.parse(fs.readFileSync(outJsonPath, 'utf8'));
+    if (existing.ui) {
+      bootstrap.ui = existing.ui;
+      console.log('Preserved existing ui section from cattitude.json');
+    }
+  } catch {
+    console.warn('Could not read existing cattitude.json — ui section not preserved');
+  }
+}
 
 fs.mkdirSync(outDir, { recursive: true });
 let json = JSON.stringify(bootstrap, null, 2);

@@ -61,12 +61,14 @@ python utilities/clear_vector_store.py
 
 ## Content updates
 
-Bootstrap content for the Ionic app is still extracted from the legacy HTML (temporary):
+Edit **`mobile/src/data/bootstrap/cattitude.json`** directly (systems, checklists, fixes, locations, branding, emergency contacts, and the `ui` section for home rules / Do menu / Know layout).
+
+Validate structure before pushing:
 
 ```bash
-node utilities/extract_bootstrap_content.mjs
+node utilities/validate_bootstrap_content.mjs
 ```
 
-This writes `mobile/src/data/bootstrap/cattitude.json` and `mobile/src/assets/images/systems/*`. Re-run after editing `app/index.html`, then push `mobile/` changes to trigger a Pages deploy.
+Push `mobile/` changes to trigger a Pages deploy. `utilities/extract_bootstrap_content.mjs` is legacy-only for one-time migration from `app/index.html`.
 
 See `cattitude-rag-implementation-plan.md` for Railway deployment and later Clever Sailor stages.

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Checklist } from '../models/bootstrap-content.model';
-import { SYSTEM_ORDER } from '../config/vessel-ui.config';
+import { ContentService } from './content.service';
 
 const PREFIX = 'cattitude-progress';
 
@@ -12,6 +12,7 @@ export interface ChecklistProgress {
 
 @Injectable({ providedIn: 'root' })
 export class ProgressService {
+  constructor(private readonly content: ContentService) {}
   getChecklistState(key: string): Record<string, boolean> {
     return this.readJson(`${PREFIX}-cl-${key}`, {});
   }
@@ -83,8 +84,9 @@ export class ProgressService {
 
   learnProgress(): ChecklistProgress {
     const state = this.getLearnDone();
-    const total = SYSTEM_ORDER.length;
-    const done = SYSTEM_ORDER.filter((id) => state[id]).length;
+    const systemOrder = this.content.bootstrap.ui.systemOrder;
+    const total = systemOrder.length;
+    const done = systemOrder.filter((id) => state[id]).length;
     return {
       done,
       total,

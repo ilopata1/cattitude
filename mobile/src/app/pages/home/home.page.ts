@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { HOME_RULE_SECTIONS } from '../../core/config/vessel-ui.config';
 import { ContentService } from '../../core/services/content.service';
 
 @Component({
@@ -10,12 +9,14 @@ import { ContentService } from '../../core/services/content.service';
   standalone: false,
 })
 export class HomePage {
-  readonly ruleSections = HOME_RULE_SECTIONS;
-
   constructor(
     public readonly content: ContentService,
     private readonly router: Router,
   ) {}
+
+  get ruleSections() {
+    return this.content.bootstrap.ui.homeRuleSections;
+  }
 
   openRuleLink(link: string | undefined): void {
     if (link) {

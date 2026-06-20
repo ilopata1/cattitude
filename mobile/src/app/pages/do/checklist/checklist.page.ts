@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
-import { CHECKLIST_META } from '../../../core/config/vessel-ui.config';
 import { Checklist } from '../../../core/models/bootstrap-content.model';
 import { ContentService } from '../../../core/services/content.service';
 import { ProgressService } from '../../../core/services/progress.service';
@@ -27,7 +26,7 @@ export class ChecklistPage implements OnInit {
   ngOnInit(): void {
     this.key = this.route.snapshot.paramMap.get('key') ?? '';
     this.checklist = this.content.getChecklist(this.key);
-    this.meta = CHECKLIST_META[this.key] ?? this.meta;
+    this.meta = this.content.bootstrap.ui.checklistMeta[this.key] ?? this.meta;
   }
 
   get progressState() {

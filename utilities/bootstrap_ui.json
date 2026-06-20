@@ -1,0 +1,186 @@
+{
+  "homeRuleSections": [
+    {
+      "title": "⛔ Never Do This",
+      "tone": "danger",
+      "rules": [
+        {
+          "icon": "🚽",
+          "tone": "danger",
+          "text": "Never put ANYTHING in the toilet except human waste — no toilet paper, no wipes, no paper towels. Paper goes in the bin."
+        },
+        {
+          "icon": "⚓",
+          "tone": "danger",
+          "text": "Never anchor on coral — always find sand. Coral damage is your liability"
+        },
+        {
+          "icon": "🛞",
+          "tone": "danger",
+          "text": "Never leave helm unattended with autopilot on in traffic, channels, or near shore"
+        }
+      ]
+    },
+    {
+      "title": "⚠️ Always Do This",
+      "tone": "caution",
+      "rules": [
+        {
+          "icon": "📻",
+          "tone": "caution",
+          "text": "Always monitor VHF Ch 16 underway — call Cruise Abaco on Ch 09 during office hours (approx 9am–5pm)"
+        },
+        {
+          "icon": "🛟",
+          "tone": "caution",
+          "text": "Run the Safety Briefing with all guests before every departure",
+          "link": "/tabs/do/checklist/safety-brief"
+        },
+        {
+          "icon": "🔋",
+          "tone": "caution",
+          "text": "Keep battery state above 80% — run engines or generator if solar isn't keeping up"
+        }
+      ]
+    },
+    {
+      "title": "✅ Good Habits",
+      "tone": "good",
+      "rules": [
+        {
+          "icon": "🧊",
+          "tone": "good",
+          "text": "Minimise fridge/freezer door openings — it's your biggest continuous power draw"
+        }
+      ]
+    }
+  ],
+  "doMenu": [
+    {
+      "label": "Day One",
+      "items": [
+        {
+          "key": "safety-brief",
+          "title": "Safety Briefing",
+          "subtitle": "Run with all guests before every departure",
+          "icon": "🛟",
+          "iconClass": "ic-coral",
+          "route": "/tabs/do/checklist/safety-brief",
+          "progressType": "checklist"
+        },
+        {
+          "key": "learn",
+          "title": "Learn the Boat",
+          "subtitle": "Understand every system on Cattitude",
+          "icon": "🛥️",
+          "iconClass": "ic-blue",
+          "route": "/tabs/do/learn",
+          "progressType": "learn"
+        }
+      ]
+    },
+    {
+      "label": "Every Departure",
+      "items": [
+        {
+          "key": "pd",
+          "title": "Pre-Departure",
+          "subtitle": "Run before every time you leave",
+          "icon": "🚀",
+          "iconClass": "ic-green",
+          "route": "/tabs/do/checklist/pd",
+          "progressType": "checklist"
+        }
+      ]
+    },
+    {
+      "label": "At Anchor",
+      "items": [
+        {
+          "key": "anch",
+          "title": "Anchoring",
+          "subtitle": "Setting the hook safely in the Abacos",
+          "icon": "⚓",
+          "iconClass": "ic-amber",
+          "route": "/tabs/do/checklist/anch",
+          "progressType": "checklist"
+        },
+        {
+          "key": "lu",
+          "title": "Leaving Boat Unattended",
+          "subtitle": "Going ashore — secure Cattitude first",
+          "icon": "🔒",
+          "iconClass": "ic-coral",
+          "route": "/tabs/do/checklist/lu",
+          "progressType": "checklist"
+        }
+      ]
+    },
+    {
+      "label": "End of Week",
+      "items": [
+        {
+          "key": "ec",
+          "title": "End of Charter",
+          "subtitle": "Return to Boat Harbour Marina",
+          "icon": "🏁",
+          "iconClass": "ic-navy",
+          "route": "/tabs/do/checklist/ec",
+          "progressType": "checklist"
+        }
+      ]
+    }
+  ],
+  "checklistMeta": {
+    "safety-brief": {
+      "title": "Safety Briefing",
+      "subtitle": "Run with all guests before every departure",
+      "icon": "🛟"
+    },
+    "pd": {
+      "title": "Pre-Departure",
+      "subtitle": "Complete before every departure",
+      "icon": "🚀"
+    },
+    "anch": {
+      "title": "Anchoring",
+      "subtitle": "Setting the hook safely in the Abacos",
+      "icon": "⚓"
+    },
+    "lu": {
+      "title": "Leaving Boat Unattended",
+      "subtitle": "Going ashore — secure Cattitude first",
+      "icon": "🔒"
+    },
+    "ec": {
+      "title": "End of Charter",
+      "subtitle": "Return to Boat Harbour Marina",
+      "icon": "🏁"
+    }
+  },
+  "systemOrder": [
+    "overview",
+    "safety",
+    "sails",
+    "engines",
+    "electrical",
+    "batteries",
+    "water",
+    "heads",
+    "galley",
+    "ac",
+    "nav",
+    "anchoring",
+    "dinghy"
+  ],
+  "locationLayout": [
+    { "id": "bow", "label": "⬆ Bow / Foredeck", "rowClass": "center" },
+    { "id": "port-hull", "label": "◀ Port Hull" },
+    { "id": "saloon", "label": "🏠 Saloon" },
+    { "id": "stbd-hull", "label": "Stbd Hull ▶" },
+    { "id": "galley", "label": "🍳 Galley" },
+    { "id": "cockpit", "label": "☀️ Cockpit" },
+    { "id": "helm", "label": "🧭 Helm Station" },
+    { "id": "swim", "label": "🏊 Swim Platform" }
+  ]
+}

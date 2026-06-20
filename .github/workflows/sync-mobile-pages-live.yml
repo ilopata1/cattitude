@@ -6,7 +6,9 @@ on:
     branches: [main]
     paths:
       - 'mobile/**'
-      - 'utilities/extract_bootstrap_content.mjs'
+      - 'utilities/bootstrap_ui.json'
+      - 'utilities/embed_bootstrap_ui.mjs'
+      - 'utilities/validate_bootstrap_content.mjs'
       - 'utilities/patch_github_pages_assets.mjs'
       - 'utilities/generate_pwa_icons.py'
       - '.github/workflows/sync-mobile-pages-live.yml'
@@ -29,6 +31,7 @@ jobs:
       - name: Install and build Ionic app
         working-directory: mobile
         run: |
+          node ../utilities/validate_bootstrap_content.mjs
           npm ci
           npm run build
           cp www/index.html www/404.html

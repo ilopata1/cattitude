@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LOCATION_LAYOUT } from '../../core/config/vessel-ui.config';
 import { ContentService } from '../../core/services/content.service';
 import { LocationZone, SystemModule } from '../../core/models/bootstrap-content.model';
 
@@ -14,13 +13,16 @@ export class KnowPage implements OnInit {
   mode: 'topic' | 'location' = 'topic';
   selected: SystemModule | null = null;
   selectedZone: string | null = null;
-  readonly locationLayout = LOCATION_LAYOUT;
 
   constructor(
     public readonly content: ContentService,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
   ) {}
+
+  get locationLayout() {
+    return this.content.bootstrap.ui.locationLayout;
+  }
 
   ngOnInit(): void {
     const systemId = this.route.snapshot.queryParamMap.get('system');

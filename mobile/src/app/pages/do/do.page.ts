@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { DO_MENU } from '../../core/config/vessel-ui.config';
 import { ContentService } from '../../core/services/content.service';
 import { ProgressService } from '../../core/services/progress.service';
 
@@ -11,13 +10,15 @@ import { ProgressService } from '../../core/services/progress.service';
   standalone: false,
 })
 export class DoPage {
-  readonly menu = DO_MENU;
-
   constructor(
     public readonly content: ContentService,
     public readonly progress: ProgressService,
     private readonly router: Router,
   ) {}
+
+  get menu() {
+    return this.content.bootstrap.ui.doMenu;
+  }
 
   progressLabel(itemKey: string, progressType: 'checklist' | 'learn'): string {
     if (progressType === 'learn') {

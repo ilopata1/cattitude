@@ -41,18 +41,23 @@ npx serve www -p 8100
 
 ## Bootstrap content
 
-Vessel content is extracted from the archived legacy PWA:
+Vessel content is edited in **`src/data/bootstrap/cattitude.json`** (systems, checklists, fixes, locations, and the `ui` section for home rules, Do menu, and Know layout).
+
+Validate after edits:
 
 ```bash
-node ../utilities/extract_bootstrap_content.mjs
+node ../utilities/validate_bootstrap_content.mjs
 ```
 
-This writes:
+The `ui` block can also be maintained in `utilities/bootstrap_ui.json` and merged:
 
-- `src/data/bootstrap/cattitude.json`
-- `src/assets/images/systems/*`
+```bash
+node ../utilities/embed_bootstrap_ui.mjs
+```
 
-Re-run after editing `app/index.html` until the Ionic app is the source of truth.
+Images live under `src/assets/images/systems/`. Push `mobile/` changes to trigger a Pages deploy.
+
+`utilities/extract_bootstrap_content.mjs` is legacy-only (one-time migration from `app/index.html`).
 
 Regenerate PWA install icons from the hero logo:
 
