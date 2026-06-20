@@ -7,6 +7,7 @@ on:
     paths:
       - 'mobile/**'
       - 'utilities/extract_bootstrap_content.mjs'
+      - '.github/workflows/sync-mobile-pages-live.yml'
 
 permissions:
   contents: write
@@ -19,7 +20,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           cache: npm
           cache-dependency-path: mobile/package-lock.json
 
@@ -31,14 +32,13 @@ jobs:
 
       - name: Push mobile/www to pages-live root
         run: |
+          cp -a mobile/www /tmp/cattitude-www
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git fetch origin pages-live
           git checkout pages-live
           git rm -rf .
-          git checkout origin/main -- mobile/www
-          cp -a mobile/www/. .
-          rm -rf mobile
+          cp -a /tmp/cattitude-www/. .
           git add -A
           git diff --staged --quiet || git commit -m "Sync from main/mobile/www"
           git push origin pages-live
