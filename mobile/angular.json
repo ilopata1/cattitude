@@ -62,7 +62,8 @@
               ],
               "outputHashing": "all",
               "serviceWorker": true,
-              "ngswConfigPath": "ngsw-config.json"
+              "ngswConfigPath": "ngsw-config.json",
+              "baseHref": "/cattitude/"
             },
             "development": {
               "buildOptimizer": false,

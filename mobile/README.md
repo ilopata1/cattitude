@@ -23,6 +23,8 @@ Open http://localhost:8100
 npm run build
 ```
 
+Production builds use `baseHref: /cattitude/` for GitHub Pages at https://ilopata1.github.io/cattitude/.
+
 Output is written to `mobile/www/` for static hosting (Cloudflare Pages, GitHub Pages, etc.).
 
 Production builds include a service worker and web app manifest for offline use and home-screen install. The service worker prefetches the app shell, bootstrap JSON, and images; Ask tab API calls use network-first caching.
