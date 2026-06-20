@@ -1,0 +1,11 @@
+<ng-container *ngIf="state$ | async as state">
+  <div
+    class="photo-overlay"
+    *ngIf="state.open"
+    (click)="onBackdropClick($event)"
+  >
+    <button type="button" class="photo-overlay-close" (click)="close()">×</button>
+    <img [src]="state.src" alt="" />
+    <div class="photo-overlay-caption">{{ state.caption }}</div>
+  </div>
+</ng-container>

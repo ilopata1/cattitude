@@ -1,0 +1,89 @@
+<app-header></app-header>
+<ion-content [fullscreen]="true" class="page-content">
+  <ng-container *ngIf="!selected">
+    <div class="know-toggle">
+      <button
+        type="button"
+        class="know-tog-btn"
+        [class.active]="mode === 'topic'"
+        (click)="setMode('topic')"
+      >
+        By Topic
+      </button>
+      <button
+        type="button"
+        class="know-tog-btn"
+        [class.active]="mode === 'location'"
+        (click)="setMode('location')"
+      >
+        By Location
+      </button>
+    </div>
+
+    <div class="scroll-area" *ngIf="mode === 'topic'">
+      <div class="sys-grid">
+        <button
+          class="sys-card"
+          type="button"
+          *ngFor="let system of content.getSystemsOrdered()"
+          (click)="openSystem(system)"
+        >
+          <span class="sys-icon">{{ system.icon }}</span>
+          <span class="sys-title">{{ system.title }}</span>
+          <span class="sys-sub">{{ system.subtitle }}</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="loc-wrap" *ngIf="mode === 'location'">
+      <div class="loc-intro">Tap a zone to see relevant systems</div>
+      <div class="loc-grid">
+        <button
+          type="button"
+          class="loc-btn"
+          [class.sel]="selectedZone === item.id"
+          *ngFor="let item of locationLayout"
+          (click)="selectZone(item.id)"
+        >
+          {{ item.label }}
+        </button>
+      </div>
+      <div class="loc-sys-panel" *ngIf="selectedZone as zoneId">
+        <div class="loc-sys-title">Systems in: {{ zoneLabel(zoneId) }}</div>
+        <button
+          type="button"
+          class="loc-sys-item"
+          *ngFor="let system of zoneSystems(zoneId)"
+          (click)="openSystem(system)"
+        >
+          <span class="loc-sys-icon">{{ system.icon }}</span>
+          <span class="loc-sys-name">{{ system.title }}</span>
+          <span class="loc-sys-arrow">›</span>
+        </button>
+      </div>
+    </div>
+  </ng-container>
+
+  <div class="detail-screen" *ngIf="selected as system">
+    <div class="detail-header">
+      <button type="button" class="sub-back" (click)="closeDetail()">‹</button>
+      <div>
+        <div class="detail-title">{{ system.title }}</div>
+        <div class="detail-sub">{{ system.subtitle }}</div>
+      </div>
+    </div>
+    <div class="detail-body">
+      <p *ngIf="system.summary" class="summary">{{ system.summary }}</p>
+      <section *ngFor="let section of system.sections" class="detail-section">
+        <h3>{{ section.t }}</h3>
+        <p *ngIf="section.c" class="prose">{{ section.c }}</p>
+        <div *ngIf="section.html" [innerHTML]="section.html" appRichHtml></div>
+      </section>
+      <div class="detail-section">
+        <button type="button" class="det-fix-btn" (click)="goToFix()">
+          🔧 Having a problem with this system? → Fix It
+        </button>
+      </div>
+    </div>
+  </div>
+</ion-content>

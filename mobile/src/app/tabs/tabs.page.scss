@@ -1,0 +1,11 @@
+.bottom-nav {
+  --background: #fff;
+  padding-bottom: env(safe-area-inset-bottom);
+  border-top: 1px solid rgba(13, 33, 55, 0.1);
+}
+
+ion-tab-button {
+  --color: var(--cattitude-text-light);
+  --color-selected: var(--cattitude-teal-dark);
+  font-size: 10px;
+}

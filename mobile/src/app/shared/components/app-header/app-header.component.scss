@@ -1,0 +1,136 @@
+:host {
+  ion-header.app-header ion-toolbar {
+    --background: var(--cattitude-navy);
+    --color: #fff;
+    --padding-start: 18px;
+    --padding-end: 18px;
+    --min-height: 64px;
+  }
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.header-title {
+  font-family: var(--cattitude-font-display);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.header-sub {
+  font-size: 11px;
+  color: var(--cattitude-teal);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.emergency-btn {
+  --background: var(--cattitude-coral);
+  --color: #fff;
+  --border-radius: 20px;
+  --padding-start: 14px;
+  --padding-end: 14px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: none;
+}
+
+.modal-sheet {
+  background: var(--cattitude-navy);
+  border-radius: 20px 20px 0 0;
+  padding: 24px 20px calc(36px + env(safe-area-inset-bottom));
+}
+
+.modal-pill {
+  width: 40px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  margin: 0 auto 20px;
+}
+
+.modal-title {
+  font-family: var(--cattitude-font-display);
+  font-size: 22px;
+  color: #fff;
+  margin: 0 0 4px;
+}
+
+.modal-sub {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 20px;
+}
+
+.modal-contact {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mc-label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.mc-name {
+  font-size: 15px;
+  color: #fff;
+  font-weight: 600;
+  margin: 2px 0;
+}
+
+.mc-val {
+  font-size: 13px;
+  color: var(--cattitude-teal);
+  font-weight: 500;
+}
+
+.mc-call {
+  background: var(--cattitude-coral);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.mc-vhf {
+  background: var(--cattitude-amber);
+  color: var(--cattitude-navy);
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.modal-close {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 8px;
+  padding: 14px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  margin-top: 8px;
+}

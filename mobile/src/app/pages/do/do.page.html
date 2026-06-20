@@ -1,0 +1,24 @@
+<app-header></app-header>
+<ion-content [fullscreen]="true" class="page-content">
+  <div class="scroll-area do-menu">
+    <ng-container *ngFor="let section of menu">
+      <div class="section-label">{{ section.label }}</div>
+      <button
+        type="button"
+        class="do-card"
+        *ngFor="let item of section.items"
+        (click)="open(item.route)"
+      >
+        <div class="do-card-icon" [ngClass]="item.iconClass">{{ item.icon }}</div>
+        <div class="do-card-body">
+          <div class="do-card-title">{{ item.title }}</div>
+          <div class="do-card-sub">{{ item.subtitle }}</div>
+          <div class="do-card-prog" *ngIf="progressLabel(item.key, item.progressType) as label">
+            {{ label }}
+          </div>
+        </div>
+        <div class="do-card-arrow">›</div>
+      </button>
+    </ng-container>
+  </div>
+</ion-content>

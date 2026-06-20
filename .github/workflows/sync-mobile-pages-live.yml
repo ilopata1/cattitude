@@ -1,0 +1,44 @@
+name: Sync mobile web to pages-live
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'mobile/**'
+      - 'utilities/extract_bootstrap_content.mjs'
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+
+      - name: Install and build Ionic app
+        working-directory: mobile
+        run: |
+          npm ci
+          npm run build
+
+      - name: Push mobile/www to pages-live root
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin pages-live
+          git checkout pages-live
+          git rm -rf .
+          git checkout origin/main -- mobile/www
+          cp -a mobile/www/. .
+          rm -rf mobile
+          git add -A
+          git diff --staged --quiet || git commit -m "Sync from main/mobile/www"
+          git push origin pages-live

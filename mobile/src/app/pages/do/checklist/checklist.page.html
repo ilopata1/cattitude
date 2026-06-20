@@ -1,0 +1,41 @@
+<app-header></app-header>
+<ion-content [fullscreen]="true" class="page-content">
+  <div class="sub-header">
+    <button type="button" class="sub-back" (click)="back()">‹</button>
+    <div>
+      <div class="sub-header-title">{{ meta.icon }} {{ meta.title }}</div>
+      <div class="sub-header-sub">{{ meta.subtitle }}</div>
+    </div>
+  </div>
+
+  <div class="cl-prog-wrap" *ngIf="checklist">
+    <div class="cl-bar-wrap">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="progressState.percent"></div>
+      </div>
+      <div class="cl-count">
+        {{ progressState.done }} of {{ progressState.total }} complete
+      </div>
+    </div>
+    <button type="button" class="cl-reset" (click)="reset()">↺ Reset</button>
+  </div>
+
+  <div class="checklist-body" *ngIf="checklist">
+    <div class="cl-group" *ngFor="let group of checklist.groups; let gi = index">
+      <div class="cl-group-title">{{ group.t }}</div>
+      <button
+        type="button"
+        class="cl-item"
+        [class.chk]="isDone(gi, ii)"
+        *ngFor="let item of group.items; let ii = index"
+        (click)="toggle(gi, ii)"
+      >
+        <div class="cl-checkbox">{{ isDone(gi, ii) ? '✓' : '' }}</div>
+        <div>
+          <div class="cl-item-text" [class.done]="isDone(gi, ii)">{{ item.c }}</div>
+          <div class="cl-item-sub" *ngIf="item.s">{{ item.s }}</div>
+        </div>
+      </button>
+    </div>
+  </div>
+</ion-content>

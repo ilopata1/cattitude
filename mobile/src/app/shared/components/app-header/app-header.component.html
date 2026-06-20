@@ -1,0 +1,48 @@
+<ion-header class="app-header ion-no-border">
+  <ion-toolbar>
+    <div class="header-brand" slot="start">
+      <img
+        *ngIf="content.bootstrap.branding.headerLogo as logo"
+        [src]="logo"
+        alt=""
+        class="header-logo"
+      />
+      <div>
+        <div class="header-title">{{ content.bootstrap.branding.charterCompany }}</div>
+        <div class="header-sub">
+          {{ content.bootstrap.branding.vesselName }} · Tanna 47
+        </div>
+      </div>
+    </div>
+    <ion-button slot="end" class="emergency-btn" (click)="openEmergency()">
+      🆘 Emergency
+    </ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-modal [isOpen]="emergencyOpen" (didDismiss)="closeEmergency()">
+  <ng-template>
+    <div class="modal-sheet">
+      <div class="modal-pill"></div>
+      <h2 class="modal-title">Emergency Contacts</h2>
+      <p class="modal-sub">{{ content.bootstrap.emergency.modalSubtitle }}</p>
+
+      <div
+        class="modal-contact"
+        *ngFor="let contact of content.bootstrap.emergency.contacts"
+      >
+        <div>
+          <div class="mc-label">{{ contact.label }}</div>
+          <div class="mc-name" *ngIf="contact.detail">{{ contact.detail }}</div>
+          <div class="mc-val">{{ contact.value }}</div>
+        </div>
+        <a *ngIf="contact.tel" [href]="'tel:' + contact.tel">
+          <button class="mc-call">📞 Call</button>
+        </a>
+        <div *ngIf="contact.action === 'vhf'" class="mc-vhf">{{ contact.value }}</div>
+      </div>
+
+      <button class="modal-close" (click)="closeEmergency()">Close</button>
+    </div>
+  </ng-template>
+</ion-modal>

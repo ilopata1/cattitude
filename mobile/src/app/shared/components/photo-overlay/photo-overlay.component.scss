@@ -1,0 +1,42 @@
+.photo-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.photo-overlay img {
+  max-width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+}
+
+.photo-overlay-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photo-overlay-caption {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 12px;
+  text-align: center;
+  padding: 0 20px;
+}

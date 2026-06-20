@@ -1,0 +1,82 @@
+<app-header></app-header>
+<ion-content [fullscreen]="true" class="page-content">
+  <div class="scroll-area">
+    <div class="hero-banner">
+      <div class="hero-greeting">Welcome Aboard</div>
+      <div class="hero-title">
+        <span>{{ content.bootstrap.branding.vesselName }}</span>
+        <img
+          *ngIf="content.bootstrap.branding.heroLogo as logo"
+          [src]="logo"
+          alt=""
+          class="hero-logo"
+        />
+      </div>
+      <div class="hero-tagline">{{ content.bootstrap.branding.tagline }}</div>
+      <div class="hero-chips">
+        <span class="chip">📍 {{ content.bootstrap.branding.location }}</span>
+        <span class="chip">⛵ {{ content.bootstrap.branding.marina }}</span>
+      </div>
+    </div>
+
+    <div class="mayday-card">
+      <div class="mayday-header">
+        <span>🚨</span>
+        <h3>MAYDAY Procedure — {{ content.bootstrap.emergency.mayday.channel }}</h3>
+      </div>
+      <ol class="mayday-steps">
+        <li *ngFor="let step of content.bootstrap.emergency.mayday.steps; let i = index">
+          <span class="mayday-num">{{ i + 1 }}</span>
+          <span>{{ step }}</span>
+        </li>
+      </ol>
+    </div>
+
+    <div class="emergency-card">
+      <h3>📞 Emergency Contacts</h3>
+      <div class="e-contact">
+        <div>
+          <div class="e-label">DISTRESS — Primary</div>
+          <div class="e-value">VHF Channel 16 (monitored 24/7)</div>
+        </div>
+        <div class="vhf-badge">CH 16</div>
+      </div>
+      <div class="e-contact" *ngFor="let contact of content.bootstrap.emergency.contacts">
+        <div>
+          <div class="e-label">{{ contact.label }}</div>
+          <div class="e-value">{{ contact.value }}</div>
+        </div>
+        <a *ngIf="contact.tel" [href]="'tel:' + contact.tel">
+          <button class="e-action">Call</button>
+        </a>
+        <div *ngIf="contact.action === 'vhf'" class="vhf-badge">{{ contact.value }}</div>
+      </div>
+      <div class="e-contact">
+        <div>
+          <div class="e-label">Boat Harbour Marina</div>
+          <div class="e-value">+1 877-533-4799</div>
+        </div>
+        <a href="tel:+18775334799">
+          <button class="e-action">Call</button>
+        </a>
+      </div>
+    </div>
+
+    <div class="rules-section" *ngFor="let section of ruleSections">
+      <div class="rules-title" [ngClass]="section.tone">{{ section.title }}</div>
+      <div
+        class="rule-item"
+        [ngClass]="section.tone"
+        *ngFor="let rule of section.rules"
+        [class.clickable]="rule.link"
+        (click)="openRuleLink(rule.link)"
+      >
+        <span class="rule-icon">{{ rule.icon }}</span>
+        <span class="rule-text">
+          {{ rule.text }}
+          <span class="rule-link" *ngIf="rule.link"> → Tap to open</span>
+        </span>
+      </div>
+    </div>
+  </div>
+</ion-content>

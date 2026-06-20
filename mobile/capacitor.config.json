@@ -1,0 +1,8 @@
+{
+  "appId": "com.cruiseabaco.cattitude",
+  "appName": "Cattitude",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}

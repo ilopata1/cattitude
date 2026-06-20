@@ -1,0 +1,27 @@
+:root {
+  --cattitude-navy: #0d2137;
+  --cattitude-navy-mid: #1a3a56;
+  --cattitude-teal: #00b4c8;
+  --cattitude-teal-light: #e0f7fa;
+  --cattitude-teal-dark: #007a8c;
+  --cattitude-sand: #f5f0e8;
+  --cattitude-sand-mid: #ede6d6;
+  --cattitude-coral: #e8453c;
+  --cattitude-coral-light: #fdecea;
+  --cattitude-amber: #f4a020;
+  --cattitude-green: #1da462;
+  --cattitude-green-light: #e6f7ee;
+  --cattitude-text-dark: #0d2137;
+  --cattitude-text-mid: #3a5570;
+  --cattitude-text-light: #7a95a8;
+  --cattitude-font-display: 'Playfair Display', Georgia, serif;
+  --cattitude-font-body: 'DM Sans', system-ui, sans-serif;
+
+  --ion-background-color: var(--cattitude-sand);
+  --ion-font-family: var(--cattitude-font-body);
+  --ion-color-primary: var(--cattitude-teal-dark);
+  --ion-color-primary-rgb: 0, 122, 140;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-shade: #006b7b;
+  --ion-color-primary-tint: #1a8798;
+}

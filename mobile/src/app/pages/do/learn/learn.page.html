@@ -1,0 +1,67 @@
+<app-header></app-header>
+<ion-content [fullscreen]="true" class="page-content">
+  <div class="sub-header">
+    <button type="button" class="sub-back" (click)="back()">‹</button>
+    <div>
+      <div class="sub-header-title">🛥️ Learn the Boat</div>
+      <div class="sub-header-sub">Cattitude · review each system on boarding</div>
+    </div>
+  </div>
+
+  <div class="learn-prog-wrap">
+    <div class="learn-prog-top">
+      <span class="learn-prog-label">{{ progress.learnProgressLabel() }}</span>
+      <span class="learn-prog-count">
+        {{ progressState.done }} / {{ progressState.total }}
+      </span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" [style.width.%]="progressState.percent"></div>
+    </div>
+  </div>
+
+  <div class="acc-list">
+    <div
+      class="acc-item"
+      *ngFor="let system of systems"
+      [class.open]="openId === system.id"
+    >
+      <button type="button" class="acc-header" (click)="toggleOpen(system.id)">
+        <div class="acc-icon">{{ system.icon }}</div>
+        <div class="acc-text">
+          <div class="acc-title">{{ system.title }}</div>
+          <div class="acc-sub">{{ system.subtitle }}</div>
+        </div>
+        <div
+          class="acc-check"
+          [class.done]="isDone(system.id)"
+          (click)="toggleDone(system.id, $event)"
+        >
+          {{ isDone(system.id) ? '✓' : '' }}
+        </div>
+        <span class="acc-chevron">›</span>
+      </button>
+      <div class="acc-body" *ngIf="openId === system.id">
+        <div class="acc-section" *ngIf="system.summary">
+          <div class="acc-prose">{{ system.summary }}</div>
+        </div>
+        <div class="acc-section" *ngIf="system.learnChecks?.length">
+          <div class="acc-sec-title">Review checklist</div>
+          <ul class="li-list">
+            <li *ngFor="let check of system.learnChecks">
+              <span class="li-icon">☐</span>
+              <span>{{ check }}</span>
+            </li>
+          </ul>
+        </div>
+        <button
+          type="button"
+          class="open-detail-btn"
+          (click)="openSystemDetail(system.id, $event)"
+        >
+          Open full system guide →
+        </button>
+      </div>
+    </div>
+  </div>
+</ion-content>

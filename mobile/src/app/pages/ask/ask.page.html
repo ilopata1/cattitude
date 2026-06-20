@@ -1,0 +1,77 @@
+<app-header></app-header>
+<ion-content [fullscreen]="true" class="page-content">
+  <div class="chat-messages">
+    <div *ngIf="chat.messages.length === 0" class="chat-welcome">
+      <div class="chat-welcome-icon">📖</div>
+      <div class="chat-welcome-title">Ask about the boat</div>
+      <div class="chat-welcome-sub">
+        Questions are answered from the ingested vessel manuals.
+      </div>
+      <div class="chat-suggestions">
+        <button
+          type="button"
+          class="suggestion-chip"
+          *ngFor="let suggestion of suggestions"
+          (click)="useSuggestion(suggestion)"
+        >
+          {{ suggestion }}
+        </button>
+      </div>
+    </div>
+
+    <div
+      *ngFor="let message of chat.messages"
+      class="chat-bubble-wrap"
+      [class.user]="message.role === 'user'"
+      [class.assistant]="message.role === 'assistant'"
+    >
+      <div class="chat-bubble" [class.user]="message.role === 'user'">
+        {{ message.content }}
+      </div>
+      <div *ngIf="message.sources?.length" class="chat-sources">
+        <div class="chat-sources-label">Sources</div>
+        <button
+          type="button"
+          class="chat-source-chip"
+          *ngFor="let source of message.sources; let i = index"
+          (click)="toggleSource(message, i)"
+        >
+          <span class="chat-source-chip-label">{{
+            chat.formatSourceLabel(source)
+          }}</span>
+        </button>
+        <div
+          *ngFor="let source of message.sources; let i = index"
+          class="chat-source-snippet"
+          [hidden]="expandedSourceKey !== sourceKey(message, i)"
+        >
+          {{ source.snippet }}
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="chat.isBusy" class="chat-typing">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer class="chat-input-bar ion-no-border">
+  <ion-toolbar>
+    <textarea
+      class="chat-input"
+      [(ngModel)]="draft"
+      rows="1"
+      placeholder="Ask a question..."
+      (keydown.enter)="$event.preventDefault(); send()"
+    ></textarea>
+    <ion-button
+      class="chat-send-btn"
+      fill="clear"
+      [disabled]="chat.isBusy || !draft.trim()"
+      (click)="send()"
+    >
+      ➤
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>

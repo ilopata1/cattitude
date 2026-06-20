@@ -1,0 +1,247 @@
+.page-content {
+  --background: var(--cattitude-sand);
+}
+
+.scroll-area {
+  padding: 16px 16px 24px;
+}
+
+.hero-banner {
+  background: linear-gradient(
+    135deg,
+    var(--cattitude-navy) 0%,
+    var(--cattitude-navy-mid) 60%,
+    var(--cattitude-teal-dark) 100%
+  );
+  border-radius: 14px;
+  padding: 24px 20px 20px;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-greeting {
+  font-size: 11px;
+  color: var(--cattitude-teal);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+
+.hero-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--cattitude-font-display);
+  font-size: 28px;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+
+.hero-logo {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.hero-tagline {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.65);
+  font-style: italic;
+  margin-bottom: 14px;
+}
+
+.hero-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 11px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.mayday-card {
+  background: var(--cattitude-navy);
+  border: 2px solid var(--cattitude-coral);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.mayday-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+
+  h3 {
+    font-family: var(--cattitude-font-display);
+    color: var(--cattitude-coral);
+    font-size: 18px;
+    margin: 0;
+  }
+}
+
+.mayday-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.4;
+  }
+}
+
+.mayday-num {
+  width: 20px;
+  height: 20px;
+  background: var(--cattitude-coral);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.emergency-card {
+  background: var(--cattitude-navy);
+  border-radius: 14px;
+  padding: 16px;
+
+  h3 {
+    font-family: var(--cattitude-font-display);
+    color: var(--cattitude-teal);
+    font-size: 16px;
+    margin: 0 0 12px;
+  }
+}
+
+.e-contact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 7px;
+}
+
+.e-label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.e-value {
+  font-size: 14px;
+  color: #fff;
+  font-weight: 600;
+}
+
+.e-action {
+  background: var(--cattitude-teal);
+  color: var(--cattitude-navy);
+  border: none;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.vhf-badge {
+  background: var(--cattitude-amber);
+  color: var(--cattitude-navy);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.rules-section {
+  margin-bottom: 12px;
+}
+
+.rules-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+  padding-left: 2px;
+
+  &.danger {
+    color: var(--cattitude-coral);
+  }
+
+  &.caution {
+    color: var(--cattitude-amber);
+  }
+
+  &.good {
+    color: var(--cattitude-green, #1da462);
+  }
+}
+
+.rule-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #fff;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 7px;
+  box-shadow: 0 1px 6px rgba(13, 33, 55, 0.07);
+
+  &.danger {
+    border-left: 3px solid var(--cattitude-coral);
+  }
+
+  &.caution {
+    border-left: 3px solid var(--cattitude-amber);
+  }
+
+  &.good {
+    border-left: 3px solid var(--cattitude-green, #1da462);
+  }
+
+  &.clickable {
+    cursor: pointer;
+  }
+}
+
+.rule-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.rule-text {
+  font-size: 14px;
+  line-height: 1.45;
+  font-weight: 500;
+}
+
+.rule-link {
+  color: var(--cattitude-teal-dark);
+  font-weight: 700;
+}
