@@ -8,6 +8,7 @@ on:
       - 'mobile/**'
       - 'utilities/extract_bootstrap_content.mjs'
       - 'utilities/patch_github_pages_assets.mjs'
+      - 'utilities/generate_pwa_icons.py'
       - '.github/workflows/sync-mobile-pages-live.yml'
 
 permissions:

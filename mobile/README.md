@@ -54,6 +54,12 @@ This writes:
 
 Re-run after editing `app/index.html` until the Ionic app is the source of truth.
 
+Regenerate PWA install icons from the hero logo:
+
+```bash
+python utilities/generate_pwa_icons.py
+```
+
 ## Environment
 
 | File | Purpose |
