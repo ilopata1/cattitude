@@ -1,21 +1,41 @@
 # Cattitude
 
-Monorepo for the Cattitude charter PWA and manual-query RAG backend.
+Monorepo for the Cattitude charter companion app and manual-query RAG backend.
+
+**Live app:** https://ilopata1.github.io/cattitude/
 
 | Path | Purpose |
 |------|---------|
-| `app/` | Legacy static PWA (`index.html`) — keep until Ionic web reaches parity |
-| `mobile/` | Ionic Angular client (web + future Capacitor builds) |
+| `mobile/` | Ionic Angular client (production web app + future Capacitor builds) |
 | `backend/` | Python FastAPI + RAG service (`requirements.txt`, `main.py`) |
+| `app/` | Archived legacy single-file PWA (reference only; no longer deployed) |
 | `manuals/` | Raw PDF manuals (gitignored; use `.gitkeep` to keep folder) |
 | `data/` | Local processed / cache data (optional; gitignored except `.gitkeep`) |
 
-**Run the frontend locally:**
+## Frontend
 
-- Legacy PWA: serve the `app/` directory (for example `npx serve app -p 8080`)
-- Ionic app: `cd mobile && npm install && npm start` then open http://localhost:8100
+Production deploys from `mobile/` to GitHub Pages (`pages-live` branch) via `.github/workflows/sync-mobile-pages-live.yml`.
 
-**Run the backend locally:** from `backend/`, copy `.env.example` to `.env`, fill in Azure OpenAI and Postgres (`DATABASE_URL`), enable the `vector` extension in Postgres, then:
+**Local development:**
+
+```bash
+cd mobile
+npm install
+npm start
+```
+
+Open http://localhost:8100
+
+**Production build** (output in `mobile/www/`):
+
+```bash
+cd mobile
+npm run build
+```
+
+## Backend
+
+From `backend/`, copy `.env.example` to `.env`, fill in Azure OpenAI and Postgres (`DATABASE_URL`), enable the `vector` extension in Postgres, then:
 
 ```bash
 cd backend
@@ -25,7 +45,9 @@ pip install -r requirements.txt
 uvicorn main:app --reload --port 8000
 ```
 
-Ingest a manual (still from `backend/`):
+Production API: `https://cattitude-production.up.railway.app` (Ask tab). Set `CORS_ORIGINS` on Railway to include `https://ilopata1.github.io`.
+
+Ingest a manual (from `backend/`):
 
 ```bash
 python ingest.py --file ../manuals/your_manual.pdf --manual-id your_manual_id --tags engine brand
@@ -37,10 +59,14 @@ Clear existing vectors before a full re-ingest (from repo root):
 python utilities/clear_vector_store.py
 ```
 
-Regenerate Ionic bootstrap content after editing `app/index.html`:
+## Content updates
+
+Bootstrap content for the Ionic app is still extracted from the legacy HTML (temporary):
 
 ```bash
 node utilities/extract_bootstrap_content.mjs
 ```
 
-See `cattitude-rag-implementation-plan.md` for Railway deployment and later stages.
+This writes `mobile/src/data/bootstrap/cattitude.json` and `mobile/src/assets/images/systems/*`. Re-run after editing `app/index.html`, then push `mobile/` changes to trigger a Pages deploy.
+
+See `cattitude-rag-implementation-plan.md` for Railway deployment and later Clever Sailor stages.

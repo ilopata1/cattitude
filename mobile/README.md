@@ -2,9 +2,13 @@
 
 Clever Sailor consumer app for the Cattitude charter vessel. Web-first; Capacitor native builds come later.
 
+**Production:** https://ilopata1.github.io/cattitude/
+
+Deploys automatically on push to `main` when `mobile/**` changes (see `.github/workflows/sync-mobile-pages-live.yml`).
+
 ## Prerequisites
 
-- Node.js 20.19+ (Angular 20 requirement; upgrade from Node 18 if needed)
+- Node.js 20.19+ (Angular 20 requirement)
 - Backend running locally for the Ask tab (`cd backend && uvicorn main:app --reload --port 8000`)
 
 ## Development
@@ -23,13 +27,11 @@ Open http://localhost:8100
 npm run build
 ```
 
-Production builds use `baseHref: /cattitude/` for GitHub Pages at https://ilopata1.github.io/cattitude/.
+Production builds use `baseHref: /cattitude/` for GitHub Pages. Output is written to `mobile/www/`.
 
-Output is written to `mobile/www/` for static hosting (Cloudflare Pages, GitHub Pages, etc.).
+Production builds include a service worker and web app manifest for offline use and home-screen install. The service worker prefetches the app shell, bootstrap JSON, and images.
 
-Production builds include a service worker and web app manifest for offline use and home-screen install. The service worker prefetches the app shell, bootstrap JSON, and images; Ask tab API calls use network-first caching.
-
-To test the PWA locally, serve the production build over HTTPS (or localhost):
+To test the PWA locally:
 
 ```bash
 npx serve www -p 8100
@@ -39,7 +41,7 @@ npx serve www -p 8100
 
 ## Bootstrap content
 
-Vessel content is extracted from the legacy PWA:
+Vessel content is extracted from the archived legacy PWA:
 
 ```bash
 node ../utilities/extract_bootstrap_content.mjs
