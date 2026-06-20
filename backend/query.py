@@ -142,6 +142,17 @@ class ContentFilterError(Exception):
     """Raised when Azure blocks the prompt after a retry."""
 
 
+def _set_node_content(node: object, content: str) -> None:
+    target = getattr(node, "node", node)
+    if hasattr(target, "set_content"):
+        target.set_content(content)
+        return
+    if hasattr(target, "text"):
+        target.text = content
+        return
+    raise TypeError(f"Cannot set content on {type(node)!r}")
+
+
 def _english_nodes(nodes: list) -> list:
     """Replace node text with English-only excerpts for synthesis and sources."""
     kept: list = []
@@ -150,7 +161,7 @@ def _english_nodes(nodes: list) -> list:
         english = extract_english(str(raw)).strip()
         if not english:
             continue
-        node.set_content(english)
+        _set_node_content(node, english)
         kept.append(node)
     return kept or nodes
 

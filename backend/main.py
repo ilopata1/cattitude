@@ -51,8 +51,11 @@ def _metadata_int(value: object) -> int | None:
 
 
 def _source_from_node(node: object) -> SourceItem | None:
-    raw = getattr(node, "text", None) or ""
-    text = extract_english(raw).strip()
+    if hasattr(node, "get_content"):
+        raw = node.get_content()
+    else:
+        raw = getattr(node, "text", None) or ""
+    text = extract_english(str(raw)).strip()
     if not text:
         return None
     metadata = getattr(node, "metadata", None) or {}
