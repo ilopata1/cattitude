@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,12 +11,14 @@ from config import settings
 from english_text import extract_english
 from query import ContentFilterError, run_query
 
+logger = logging.getLogger(__name__)
+
 app = FastAPI(title="Cattitude Manual API")
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
-    allow_methods=["GET", "POST"],
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -80,6 +83,12 @@ async def query_manuals(req: QueryRequest) -> QueryResponse:
         response = await loop.run_in_executor(None, run_query, req.question)
     except ContentFilterError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except Exception as exc:
+        logger.exception("Query failed")
+        raise HTTPException(
+            status_code=500,
+            detail="Manual query failed. Check Railway logs for details.",
+        ) from exc
 
     sources: list[SourceItem] = []
     if hasattr(response, "source_nodes"):

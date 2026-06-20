@@ -108,6 +108,12 @@ export class ChatService {
       if (err.status === 422) {
         return 'Your question could not be processed. Try rephrasing it.';
       }
+      if (err.status === 500) {
+        return (
+          err.error?.detail ||
+          'The manual service returned an error. Check Railway logs for the backend.'
+        );
+      }
       if (err.error?.detail) {
         return err.error.detail;
       }
