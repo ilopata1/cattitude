@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1781964537256,
+  "timestamp": 1781964984209,
   "index": "/cattitude/index.html",
   "assetGroups": [
     {
@@ -1638,9 +1638,9 @@
     "/cattitude/assets/shapes.svg": "5413e95adabcb2cb639970051f55e0ddb64ace53",
     "/cattitude/common.abd89a35aaf14f15.js": "93fb2268f5c6e5d8bef610d97f1742f2941139c1",
     "/cattitude/data/bootstrap/cattitude.json": "3533086434a0f804ca7d2034fbafbd374f9f56ac",
-    "/cattitude/index.html": "27afc38b65bcf3392ca118dcef7614a05c105d5c",
+    "/cattitude/index.html": "ea15a77675c080bc6a7e6f5f231595b91d59216e",
     "/cattitude/main.546057298d2f854f.js": "2fdbaa41a7bc49e4f82c4d883428d08213009f7c",
-    "/cattitude/manifest.webmanifest": "4ed09d5b3bd61ba79b2240e058c49ae81c3944a2",
+    "/cattitude/manifest.webmanifest": "a811eac8459816cc0da1619c17122a1b26de291b",
     "/cattitude/polyfills.06cbf0422dbf6c09.js": "937619036a8b0ad87acb2897cc94f6eaedc45426",
     "/cattitude/runtime.58b3156e21d9f3d7.js": "218f960e86828ff1e534a5d3cc4bea1f8bff1b69",
     "/cattitude/styles.7284a733f87df873.css": "9f8a68b1a4e2c54828a516310dab36df881fe681",
