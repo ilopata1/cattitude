@@ -7,6 +7,7 @@ on:
     paths:
       - 'mobile/**'
       - 'utilities/extract_bootstrap_content.mjs'
+      - 'utilities/patch_github_pages_assets.mjs'
       - '.github/workflows/sync-mobile-pages-live.yml'
 
 permissions:
@@ -30,6 +31,7 @@ jobs:
           npm ci
           npm run build
           cp www/index.html www/404.html
+          node ../utilities/patch_github_pages_assets.mjs www
 
       - name: Push mobile/www to pages-live root
         run: |

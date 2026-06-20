@@ -6,8 +6,8 @@
   "orientation": "portrait",
   "background_color": "#0D2137",
   "theme_color": "#0D2137",
-  "start_url": "./",
-  "scope": "./",
+  "start_url": "/cattitude/",
+  "scope": "/cattitude/",
   "icons": [
     {
       "src": "assets/icons/icon-192.png",
