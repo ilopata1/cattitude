@@ -3,4 +3,5 @@ export const environment = {
   apiUrl: 'http://localhost:8000',
   vesselSlug: 'cattitude',
   bootstrapContentPath: 'data/bootstrap/cattitude.json',
+  guideSyncEnabled: false,
 };

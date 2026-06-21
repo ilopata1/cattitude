@@ -3,4 +3,5 @@ export const environment = {
   apiUrl: 'https://cattitude-production.up.railway.app',
   vesselSlug: 'cattitude',
   bootstrapContentPath: 'data/bootstrap/cattitude.json',
+  guideSyncEnabled: false,
 };

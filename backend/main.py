@@ -9,11 +9,14 @@ from pydantic import BaseModel, Field
 
 from config import settings
 from english_text import extract_english
+from guide_api import router as guide_router
 from query import ContentFilterError, run_query
 
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="Cattitude Manual API")
+app = FastAPI(title="Clever Sailor API")
+
+app.include_router(guide_router)
 
 app.add_middleware(
     CORSMiddleware,

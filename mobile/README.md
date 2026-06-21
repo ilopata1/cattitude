@@ -59,6 +59,12 @@ node ../utilities/embed_bootstrap_ui.mjs
 
 Images live under `src/assets/images/systems/`. Push `mobile/` changes to trigger a Pages deploy.
 
+### Guide sync (optional)
+
+The backend can serve a published guide from Postgres (`GET /api/v1/vessels/{slug}/guide/*`). To load from the API instead of the bundled JSON, set `guideSyncEnabled: true` in `src/environments/environment.ts`. The app downloads manifest + bundle + assets into IndexedDB and falls back to bundled JSON if sync fails.
+
+Requires a local backend with migrations, seed data, and `python backend/scripts/import_cattitude_guide.py`.
+
 `utilities/extract_bootstrap_content.mjs` is legacy-only (one-time migration from `app/index.html`).
 
 Regenerate PWA install icons from the hero logo:

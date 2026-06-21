@@ -9,6 +9,7 @@ import {
   SystemModule,
 } from '../models/bootstrap-content.model';
 import { environment } from '../../../environments/environment';
+import { GuideSyncService } from './guide-sync.service';
 import { VesselContextService } from './vessel-context.service';
 
 @Injectable({ providedIn: 'root' })
@@ -18,9 +19,24 @@ export class ContentService {
   constructor(
     private readonly http: HttpClient,
     private readonly vesselContext: VesselContextService,
+    private readonly guideSync: GuideSyncService,
   ) {}
 
   async loadBootstrapContent(slug = environment.vesselSlug): Promise<BootstrapContent> {
+    if (environment.guideSyncEnabled) {
+      try {
+        const synced = await this.guideSync.ensureGuide(slug);
+        this.content = synced;
+        this.vesselContext.applyResolvedContext({
+          vesselId: synced.vesselId,
+          vesselSlug: synced.vesselSlug,
+        });
+        return synced;
+      } catch (error) {
+        console.warn('Guide sync failed; using bundled bootstrap JSON.', error);
+      }
+    }
+
     const path = environment.bootstrapContentPath.replace('cattitude', slug);
     const content = await firstValueFrom(
       this.http.get<BootstrapContent>(path),
