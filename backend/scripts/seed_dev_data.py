@@ -8,6 +8,7 @@ Usage (from backend/):
 
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 
@@ -19,9 +20,54 @@ from config import settings  # noqa: E402
 from db import postgres_connection_strings  # noqa: E402
 
 CHARTER_NAME = "Cruise Abaco"
+OPERATING_BASE_NAME = "Abacos"
+OPERATING_BASE_SLUG = "abacos"
 VESSEL_NAME = "Cattitude"
 VESSEL_SLUG = "cattitude"
 VESSEL_TYPE = "sailing_catamaran"
+
+ABACOS_GUIDE_CONTEXT = {
+    "displayName": "Abacos, Bahamas",
+    "regionLabel": "Marsh Harbour, Abacos",
+    "marina": "Boat Harbour Marina",
+    "countryCode": "BS",
+    "timezone": "America/Nassau",
+    "officeVhf": {
+        "label": "Cruise Abaco VHF",
+        "channel": "Ch 09",
+        "hours": "Office hours approx 9am–5pm",
+    },
+    "marinaVhf": {
+        "label": "Boat Harbour Marina VHF",
+        "channel": "Ch 68",
+        "detail": "Working channel",
+    },
+    "emergencyContacts": [
+        {
+            "label": "Cruise Abaco — Jesse",
+            "detail": "Dockmaster 24/7",
+            "value": "+1 305-304-5821",
+            "tel": "+13053045821",
+            "action": "call",
+        },
+        {
+            "label": "Cruise Abaco VHF",
+            "detail": "Office hours approx 9am–5pm",
+            "value": "Ch 09",
+            "action": "vhf",
+        },
+        {
+            "label": "Boat Harbour Marina VHF",
+            "detail": "Working channel",
+            "value": "Ch 68",
+            "action": "vhf",
+        },
+    ],
+    "localRules": [
+        "Never anchor on coral — always find sand.",
+        "Monitor VHF Ch 16 underway; call Cruise Abaco on Ch 09 during office hours.",
+    ],
+}
 
 EQUIPMENT_ROWS = [
     {
@@ -76,18 +122,77 @@ def _get_or_create_charter(conn) -> str:
     return str(row[0])
 
 
-def _get_or_create_vessel(conn, charter_id: str) -> str:
+def _get_or_create_operating_base(conn, charter_id: str) -> str:
+    row = conn.execute(
+        text(
+            """
+            SELECT id FROM charter_operating_bases
+            WHERE charter_company_id = :charter_id AND slug = :slug
+            """
+        ),
+        {"charter_id": charter_id, "slug": OPERATING_BASE_SLUG},
+    ).fetchone()
+    if row:
+        return str(row[0])
+
+    row = conn.execute(
+        text(
+            """
+            INSERT INTO charter_operating_bases (
+                charter_company_id, name, slug, timezone, country_code, guide_context
+            )
+            VALUES (
+                :charter_id, :name, :slug, :timezone, :country_code,
+                CAST(:guide_context AS jsonb)
+            )
+            RETURNING id
+            """
+        ),
+        {
+            "charter_id": charter_id,
+            "name": OPERATING_BASE_NAME,
+            "slug": OPERATING_BASE_SLUG,
+            "timezone": ABACOS_GUIDE_CONTEXT["timezone"],
+            "country_code": ABACOS_GUIDE_CONTEXT["countryCode"],
+            "guide_context": json.dumps(ABACOS_GUIDE_CONTEXT),
+        },
+    ).fetchone()
+    return str(row[0])
+
+
+def _get_or_create_vessel(conn, charter_id: str, operating_base_id: str) -> str:
     row = conn.execute(
         text("SELECT id FROM vessels WHERE slug = :slug"),
         {"slug": VESSEL_SLUG},
     ).fetchone()
     if row:
-        return str(row[0])
+        vessel_id = str(row[0])
+        conn.execute(
+            text(
+                """
+                UPDATE vessels
+                SET charter_company_id = :charter_id,
+                    charter_operating_base_id = :operating_base_id
+                WHERE id = :vessel_id
+                """
+            ),
+            {
+                "charter_id": charter_id,
+                "operating_base_id": operating_base_id,
+                "vessel_id": vessel_id,
+            },
+        )
+        return vessel_id
+
     row = conn.execute(
         text(
             """
-            INSERT INTO vessels (name, slug, charter_company_id, vessel_type)
-            VALUES (:name, :slug, :charter_id, :vessel_type)
+            INSERT INTO vessels (
+                name, slug, charter_company_id, charter_operating_base_id, vessel_type
+            )
+            VALUES (
+                :name, :slug, :charter_id, :operating_base_id, :vessel_type
+            )
             RETURNING id
             """
         ),
@@ -95,6 +200,7 @@ def _get_or_create_vessel(conn, charter_id: str) -> str:
             "name": VESSEL_NAME,
             "slug": VESSEL_SLUG,
             "charter_id": charter_id,
+            "operating_base_id": operating_base_id,
             "vessel_type": VESSEL_TYPE,
         },
     ).fetchone()
@@ -217,7 +323,8 @@ def main() -> None:
 
     with engine.begin() as conn:
         charter_id = _get_or_create_charter(conn)
-        vessel_id = _get_or_create_vessel(conn, charter_id)
+        operating_base_id = _get_or_create_operating_base(conn, charter_id)
+        vessel_id = _get_or_create_vessel(conn, charter_id, operating_base_id)
 
         equipment_ids: list[str] = []
         for spec in EQUIPMENT_ROWS:
@@ -227,7 +334,10 @@ def main() -> None:
 
         _seed_engine_manual(conn, equipment_ids[0])
 
-    print(f"Seed OK: charter={charter_id} vessel={vessel_id} slug={VESSEL_SLUG}")
+    print(
+        f"Seed OK: charter={charter_id} base={operating_base_id} "
+        f"vessel={vessel_id} slug={VESSEL_SLUG}"
+    )
 
 
 if __name__ == "__main__":

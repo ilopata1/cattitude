@@ -26,6 +26,7 @@ If anything here conflicts with the schema reference document, **the schema refe
 | **Vessel guide** | All other in-app content (Home, Do, Know, Fix): systems, checklists, fixes, locations, branding, emergency, UI shell. |
 | **Publication** | Immutable assembled bootstrap snapshot + asset manifest, downloadable to the mobile app. |
 | **Charter guest** | User scoped by `charters.guest_token`. Distinct from vessel guide audience (owners, crew, guests all use the same local guide). |
+| **Operating base** | A charter company's geographic base (e.g. Abacos, Split). Supplies **guide context** (VHF, contacts, marina, local rules) and optional prompt overrides. |
 
 ---
 
@@ -43,6 +44,7 @@ flowchart TB
 
   subgraph tenancy [Tenancy & ops]
     CC[charter_companies]
+    OB[charter_operating_bases]
     V[vessels]
     CH[charters]
     QL[query_log]
@@ -60,6 +62,8 @@ flowchart TB
   end
 
   EQ --> VE
+  CC --> OB
+  OB --> V
   V --> VE
   ML --> MC
   V --> GC
@@ -107,6 +111,7 @@ Apply migrations in dependency order:
 | 5 | `query_log`, `notifications` |
 | 6 | Vessel guide enums |
 | 7 | `guide_prompt_template`, `guide_generation_input_snapshot`, `guide_generation_run`, `guide_content`, `vessel_guide_publication` |
+| 11 | `charter_operating_bases`, `vessels.charter_operating_base_id`, `guide_scope` + `charter_operating_base` |
 | — | `manual_chunks` — **do not hand-build** (LlamaIndex creates on first ingest) |
 
 ---
@@ -331,6 +336,47 @@ CREATE TABLE charter_companies (
 );
 ```
 
+### `charter_operating_bases`
+
+Geographic operating bases under a charter company. Most location-specific guide facts live in **`guide_context`** (structured JSON injected at generation time). Optional **`guide_prompt_template`** rows at scope `charter_operating_base` override company prompts only where generation instructions differ (e.g. anchoring checklist for a region).
+
+```sql
+CREATE TABLE charter_operating_bases (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    charter_company_id UUID NOT NULL REFERENCES charter_companies(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    slug TEXT NOT NULL,
+    timezone TEXT,
+    country_code TEXT,
+    guide_context JSONB NOT NULL DEFAULT '{}',
+    guide_context_version INTEGER NOT NULL DEFAULT 1,
+    cloned_from_operating_base_id UUID REFERENCES charter_operating_bases(id),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    CONSTRAINT uq_charter_operating_bases_company_slug UNIQUE (charter_company_id, slug)
+);
+
+CREATE INDEX idx_charter_operating_bases_company ON charter_operating_bases (charter_company_id);
+```
+
+**`guide_context` schema** (validated in Admin; injected into generation snapshots):
+
+| Field | Purpose |
+|-------|---------|
+| `displayName` | Human label, e.g. "Abacos, Bahamas" |
+| `regionLabel` | Shorter region string for branding |
+| `marina` | Default marina name for the base |
+| `countryCode` | ISO 3166-1 alpha-2 |
+| `timezone` | IANA timezone |
+| `officeVhf` | `{ label, channel, hours }` |
+| `marinaVhf` | `{ label, channel, detail? }` |
+| `emergencyContacts` | Same shape as bootstrap `emergency.contacts` |
+| `localRules` | String array of base-specific rules for prompts |
+
+Bump `guide_context_version` when context changes; Admin shows stale context on vessels at that base (manual regen, same as prompt stale badges).
+
+**Clone between bases:** set `cloned_from_operating_base_id` and copy `guide_context` (+ optional operating-base prompt rows) when opening a new base — starter set, then edit.
+
 ### `vessels`
 
 ```sql
@@ -339,12 +385,18 @@ CREATE TABLE vessels (
     name TEXT NOT NULL,
     slug TEXT NOT NULL UNIQUE,
     charter_company_id UUID REFERENCES charter_companies(id),
+    charter_operating_base_id UUID REFERENCES charter_operating_bases(id),
     vessel_type vessel_type NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE INDEX idx_vessels_charter_company ON vessels (charter_company_id);
+CREATE INDEX idx_vessels_operating_base ON vessels (charter_operating_base_id);
 ```
+
+Private owners: `charter_company_id` and `charter_operating_base_id` may both be null; location facts come from vessel intake or platform region packs.
+
+**Note:** `vessel_type` on the `vessels` table itself is not explicitly listed in the schema reference document but is clearly required by the application logic described in the taxonomy document (Section 8.1, "Vessel Configuration Generation" filters by vessel type). Add it here as a single value, distinct from `equipment.vessel_types` which is an array describing which vessel types a piece of equipment *can* apply to.
 
 ### `vessel_equipment`
 
@@ -484,7 +536,7 @@ JSONB modules, not row-per-checklist-item.
 
 ```sql
 CREATE TYPE guide_scope AS ENUM (
-    'platform', 'charter_company', 'vessel_type', 'vessel'
+    'platform', 'charter_company', 'charter_operating_base', 'vessel_type', 'vessel'
 );
 
 CREATE TYPE guide_content_type AS ENUM (
@@ -533,7 +585,7 @@ CREATE INDEX idx_guide_prompt_template_lookup
     WHERE is_active = true;
 ```
 
-Prompt resolution: `platform` → `charter_company` (if any) → `vessel_type` (optional). Same-job rule: checklist jobs must declare all outputs (checklist + ui keys) in `output_schema`.
+Prompt resolution: `platform` → `charter_company` (if any) → `charter_operating_base` (optional override per module) → `vessel_type` (optional). **`guide_context`** from the vessel's operating base is injected into every generation job (not a prompt merge — snapshot data). Same-job rule: checklist jobs must declare all outputs (checklist + ui keys) in `output_schema`.
 
 ### `guide_generation_input_snapshot`
 
@@ -726,6 +778,7 @@ backend/alembic/versions/
   008_create_guide_generation.py
   009_create_guide_content.py
   010_create_vessel_guide_publication.py
+  011_create_charter_operating_bases.py
 ```
 
 Apply from `backend/` (requires `DATABASE_URL` in `.env`):
@@ -745,7 +798,8 @@ Every migration must implement working `downgrade()`.
 Idempotent script (`backend/scripts/seed_dev_data.py`):
 
 - `charter_companies`: Cruise Abaco  
-- `vessels`: Cattitude, `sailing_catamaran`  
+- `charter_operating_bases`: Abacos (`guide_context` with VHF/contacts/local rules)  
+- `vessels`: Cattitude, linked to company + operating base  
 - Sample `equipment` + `vessel_equipment` (engine, watermaker, generic hardware)  
 - One `manual_work` / `manual_edition` / `manual_file` chain for RAG testing  
 
@@ -753,7 +807,7 @@ Idempotent script (`backend/scripts/seed_dev_data.py`):
 
 ## Cattitude migration path
 
-1. Run migrations 001–010; seed Phase A data  
+1. Run migrations 001–011; seed Phase A data  
 2. Import via `backend/scripts/import_cattitude_guide.py` → `guide_content` (`source: imported`, `status: approved`)  
 3. Publish v1 → manifest matches current production  
 4. Mobile: static file in git until `GuideStoreService` + sync API; payload shape unchanged  
@@ -765,6 +819,7 @@ Idempotent script (`backend/scripts/seed_dev_data.py`):
 ### Core platform
 
 - [ ] All core tables build on fresh Postgres 15+ with no manual steps  
+- [ ] `charter_operating_bases` slug unique per company; vessels link to base  
 - [ ] FK, unique, and check constraints verified by negative tests  
 - [ ] One `is_current` edition per `manual_work` enforced  
 - [ ] `manual_file.file_hash` UNIQUE enforced  
