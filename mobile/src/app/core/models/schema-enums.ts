@@ -1,4 +1,4 @@
-/** Mirrors Postgres ENUM types from cursor-build-postgres-schema.md */
+/** Mirrors Postgres ENUM types from clever-sailor-data-model.md */
 
 export type VesselType =
   | 'sailing_catamaran'

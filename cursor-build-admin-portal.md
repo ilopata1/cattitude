@@ -107,7 +107,7 @@ This is the most structurally important screen — it must respect the manual_wo
 - Edit `manual_type`, `title`, `source_tier`, `legal_status`
 - **Edition history table:** every `manual_edition` for this work, showing `edition_label`, `ingested_at`, `is_current`, and (if superseded) a link to the edition that replaced it
 - For the current edition, show its `manual_file` rows: language, source_url, file size (read from storage), upload date
-- **"Set as current" action** on any non-current edition — this must enforce the single-current-edition invariant. Implementation: wrap in a transaction that sets the target edition's `is_current = true` and the previously-current edition's `is_current = false` atomically. The database's partial unique index (per the Postgres build doc) will reject a naive update that doesn't do this correctly — rely on that as a safety net, but the application code should not depend on the constraint to catch a logic error; get the transaction right.
+- **"Set as current" action** on any non-current edition — this must enforce the single-current-edition invariant. Implementation: wrap in a transaction that sets the target edition's `is_current = true` and the previously-current edition's `is_current = false` atomically. The database's partial unique index (per `clever-sailor-data-model.md`) will reject a naive update that doesn't do this correctly — rely on that as a safety net, but the application code should not depend on the constraint to catch a logic error; get the transaction right.
 
 **New Manual Upload flow** (`GET/POST /admin/manuals/new`):
 1. Select equipment (autocomplete) — or create new equipment inline if none matches
@@ -198,7 +198,7 @@ Per the project briefing's testing requirements (Section 2.11):
 
 ## Acceptance Criteria
 
-- [ ] All seven screens are functional against the schema defined in the Postgres build document
+- [ ] All seven screens are functional against the schema defined in `clever-sailor-data-model.md`
 - [ ] Manual upload correctly rejects exact file duplicates and shows the existing record instead
 - [ ] Manual upload correctly distinguishes "new language of existing edition" from "new edition" via the content-hash comparison, with the team member prompted rather than the system guessing silently
 - [ ] Setting a new current edition correctly and atomically unsets the previous one
