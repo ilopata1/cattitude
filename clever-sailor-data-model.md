@@ -716,7 +716,7 @@ Gate-checked; no silent publish.
 
 ```
 backend/alembic/versions/
-  001_create_core_enums.py
+  001_create_extensions_and_core_enums.py
   002_create_equipment_registry.py
   003_create_manual_library.py
   004_create_vessels_and_tenancy.py
@@ -726,6 +726,14 @@ backend/alembic/versions/
   008_create_guide_generation.py
   009_create_guide_content.py
   010_create_vessel_guide_publication.py
+```
+
+Apply from `backend/` (requires `DATABASE_URL` in `.env`):
+
+```bash
+python -m alembic upgrade head
+python scripts/seed_dev_data.py
+python scripts/import_cattitude_guide.py
 ```
 
 Every migration must implement working `downgrade()`.
@@ -746,7 +754,7 @@ Idempotent script (`backend/scripts/seed_dev_data.py`):
 ## Cattitude migration path
 
 1. Run migrations 001–010; seed Phase A data  
-2. Import `mobile/src/data/bootstrap/cattitude.json` → `guide_content` (`source: imported`, `status: approved`)  
+2. Import via `backend/scripts/import_cattitude_guide.py` → `guide_content` (`source: imported`, `status: approved`)  
 3. Publish v1 → manifest matches current production  
 4. Mobile: static file in git until `GuideStoreService` + sync API; payload shape unchanged  
 
