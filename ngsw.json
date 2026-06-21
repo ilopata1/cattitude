@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1782036751863,
+  "timestamp": 1782037718826,
   "index": "/cattitude/index.html",
   "assetGroups": [
     {
@@ -1621,7 +1621,7 @@
     "/cattitude/assets/images/systems/sys-sails-sections-5-html-8a03a280ce25.jpg": "33b340adac3e2ab97c390651eb8e9d404e841d4a",
     "/cattitude/assets/shapes.svg": "5413e95adabcb2cb639970051f55e0ddb64ace53",
     "/cattitude/common.abd89a35aaf14f15.js": "93fb2268f5c6e5d8bef610d97f1742f2941139c1",
-    "/cattitude/data/bootstrap/cattitude.json": "c64c6084f4e28dde7da6f6cf520b8af341d0837e",
+    "/cattitude/data/bootstrap/cattitude.json": "a0ed3688d4daa74ad6728533e0c4b6429b0b6ebc",
     "/cattitude/index.html": "f9d9b26f5f84074451f6c580654236d9db3ca4ca",
     "/cattitude/main.28058cb514580df8.js": "bacf62175a7e219e2044f5bf2f6be914980fb72b",
     "/cattitude/manifest.webmanifest": "76159937b792f293db5cfea32fdcd1616fb81fa3",
