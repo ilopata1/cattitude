@@ -58,20 +58,23 @@
 
 <ion-footer class="chat-input-bar ion-no-border">
   <ion-toolbar>
-    <textarea
-      class="chat-input"
-      [(ngModel)]="draft"
-      rows="1"
-      placeholder="Ask a question..."
-      (keydown.enter)="$event.preventDefault(); send()"
-    ></textarea>
-    <ion-button
-      class="chat-send-btn"
-      fill="clear"
-      [disabled]="chat.isBusy || !draft.trim()"
-      (click)="send()"
-    >
-      ➤
-    </ion-button>
+    <div class="chat-input-row">
+      <textarea
+        class="chat-input"
+        [(ngModel)]="draft"
+        rows="1"
+        placeholder="Ask a question..."
+        (keydown.enter)="$event.preventDefault(); send()"
+      ></textarea>
+      <button
+        type="button"
+        class="chat-send-btn"
+        [disabled]="chat.isBusy || !draft.trim()"
+        (click)="send()"
+        aria-label="Send question"
+      >
+        ➤
+      </button>
+    </div>
   </ion-toolbar>
 </ion-footer>

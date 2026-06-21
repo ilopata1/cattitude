@@ -39,6 +39,8 @@ npx serve www -p 8100
 
 `ng serve` does not register the service worker (development mode only).
 
+**Installed PWA vs browser:** The home-screen app uses the service worker cache. After a deploy, the browser tab usually picks up updates on refresh; the installed icon may lag until the new service worker activates (close all app windows and reopen, or wait for the next visit). A user-visible “update available” prompt is deferred until native App Store builds.
+
 ## Bootstrap content
 
 Vessel content is edited in **`src/data/bootstrap/cattitude.json`** (systems, checklists, fixes, locations, and the `ui` section for home rules, Do menu, and Know layout).
