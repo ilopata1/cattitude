@@ -1,0 +1,2944 @@
+{
+  "vesselId": null,
+  "vesselSlug": "cattitude",
+  "branding": {
+    "vesselName": "Cattitude",
+    "vesselSlug": "cattitude",
+    "vesselType": "sailing_catamaran",
+    "model": "Fountaine Pajot Tanna 47",
+    "charterCompany": "Cruise Abaco",
+    "location": "Marsh Harbour, Abacos",
+    "marina": "Boat Harbour Marina",
+    "tagline": "Fountaine Pajot Tanna 47 · Abacos Charter Guide",
+    "headerLogo": "assets/images/systems/logo-header-637ece4c168d.png",
+    "heroLogo": "assets/images/systems/logo-hero-6e4130b11588.png"
+  },
+  "emergency": {
+    "mayday": {
+      "channel": "VHF Ch 16",
+      "vesselCallsign": "Cattitude",
+      "steps": [
+        "Tune VHF to Channel 16 — switch to high power (25W)",
+        "Say \"MAYDAY MAYDAY MAYDAY\"",
+        "Say \"This is Cattitude, Cattitude, Cattitude\"",
+        "Say \"MAYDAY Cattitude\"",
+        "State your position — GPS lat/long or bearing and distance from known landmark",
+        "State nature of distress — fire, sinking, medical, etc.",
+        "State assistance required",
+        "State number of persons on board",
+        "Release transmit button and listen for response"
+      ]
+    },
+    "contacts": [
+      {
+        "label": "Cruise Abaco — Jesse",
+        "detail": "Dockmaster 24/7",
+        "value": "+1 305-304-5821",
+        "tel": "+13053045821",
+        "action": "call"
+      },
+      {
+        "label": "Cruise Abaco VHF",
+        "detail": "Office hours approx 9am–5pm",
+        "value": "Ch 09",
+        "action": "vhf"
+      },
+      {
+        "label": "Boat Harbour Marina VHF",
+        "detail": "Working channel",
+        "value": "Ch 68",
+        "action": "vhf"
+      }
+    ],
+    "modalSubtitle": "Cattitude · Cruise Abaco · Marsh Harbour, Bahamas"
+  },
+  "systems": {
+    "overview": {
+      "id": "overview",
+      "icon": "🗺️",
+      "title": "Boat Overview & Layout",
+      "subtitle": "Orientation to Cattitude — Tanna 47",
+      "locs": [
+        "cockpit",
+        "helm",
+        "saloon"
+      ],
+      "summary": "The Fountaine Pajot Tanna 47 is a 46ft luxury sailing catamaran with twin hulls, wide bridgedeck saloon, open cockpit, and elevated flybridge helm.",
+      "learnChecks": [
+        "Located and walked through all 5 cabins and 5 heads",
+        "Confirmed port hull: 3 cabins (fwd en-suite, mid bunk with saloon-access head, aft en-suite)",
+        "Confirmed starboard hull: 2 cabins both with en-suite heads",
+        "Found both engine compartment hatches at the rear of the outdoor space (cockpit)",
+        "Located main electrical panel in indoor saloon",
+        "Noted both fuel fill caps: starboard deck side + stern near swim steps"
+      ],
+      "sections": [
+        {
+          "t": "About Cattitude",
+          "type": "prose",
+          "c": "The Fountaine Pajot Tanna 47 is a 46-foot luxury sailing catamaran. She has twin hulls (port and starboard), a wide bridgedeck saloon, an open cockpit, and an elevated flybridge helm station. Designed to be sailed shorthanded, she is highly stable and spacious in Bahamian conditions."
+        },
+        {
+          "t": "Deck Layout Plan",
+          "type": "photo",
+          "html": "<div class=\"photo-card\"><img style=\"max-width:384px;width:100%;\" src=\"assets/images/systems/asset-systems-overview-sections-1-html-0-d1b63b1d8b30.png\" alt=\"Cattitude — Deck Layout Plan\" onclick=\"openPhoto(this.src,'Cattitude — Deck Layout Plan — Port hull: 3 cabins · Starboard hull: 2 cabins · Cockpit centre')\"><div class=\"photo-caption\"><span class=\"photo-caption-icon\">🗺️</span><div><div class=\"photo-caption-text\">Cattitude — Deck Layout Plan</div><div class=\"photo-caption-sub\">Port hull: 3 cabins · Starboard hull: 2 cabins · Cockpit centre</div></div></div></div>"
+        },
+        {
+          "t": "Layout",
+          "type": "list",
+          "items": [
+            {
+              "i": "🛏️",
+              "c": "Port hull: 3 cabins — forward double (en-suite head forward), midships bunk berths (separate dedicated head accessible directly from the central saloon), aft double (en-suite head aft). No designated master cabin."
+            },
+            {
+              "i": "🛏️",
+              "c": "Starboard hull: 2 cabins — forward double (en-suite head) and aft double (en-suite head). Both en-suite."
+            },
+            {
+              "i": "🏠",
+              "c": "Indoor saloon: central living area with nav station, DC electrical panel, and galley. No dining table inside."
+            },
+            {
+              "i": "☀️",
+              "c": "Outdoor cockpit / dining area: large teak-decked space in the centre with dining table, seating, and engine compartment access hatches at the rear. Lazarette lockers port and starboard."
+            },
+            {
+              "i": "🧭",
+              "c": "Flybridge helm: elevated above cockpit with chartplotter, VHF, throttles, autopilot, and 360° visibility."
+            },
+            {
+              "i": "⚓",
+              "c": "Foredeck: trampoline netting, anchor windlass, chain locker, and bow cleats."
+            }
+          ]
+        },
+        {
+          "t": "Find These on Day 1",
+          "type": "steps",
+          "items": [
+            "Life jackets — cockpit lazarette",
+            "EPIRB — helm station or nav station (orange/yellow unit)",
+            "Fire extinguishers — galley, both engine compartments (outlets behind cabin mattresses), cockpit",
+            "Flare kit — orange waterproof case in cockpit",
+            "First aid kit — inside coffee table in the saloon",
+            "Main DC electrical panel — indoor saloon",
+            "Fuel deck fillers — TWO caps: one on starboard deck side, one on stern adjacent to swim steps",
+            "Fresh water deck filler — starboard forward deck",
+            "Life raft — stored under the staircase leading to the helm station",
+            "Manual bilge pump — starboard aft locker"
+          ]
+        }
+      ]
+    },
+    "safety": {
+      "id": "safety",
+      "icon": "🛟",
+      "title": "Safety Gear",
+      "subtitle": "Locations and use of all emergency equipment",
+      "locs": [
+        "cockpit",
+        "saloon",
+        "helm"
+      ],
+      "summary": "Know where every piece of safety gear is before you leave the dock. Brief all guests on day one, every trip.",
+      "learnChecks": [
+        "Life jackets located and counted — one per person minimum",
+        "EPIRB found and confirmed registered to vessel",
+        "Flare kit found — expiry dates checked",
+        "Fire extinguishers identified: galley, cockpit, engine compartment outlets behind mattresses",
+        "Life raft location confirmed",
+        "Stern ladder checked — operable for re-boarding from water"
+      ],
+      "sections": [
+        {
+          "t": "Life Jackets",
+          "type": "list",
+          "items": [
+            {
+              "i": "🛟",
+              "c": "Location: cockpit lazarette (port side locker) — one per person plus spares"
+            },
+            {
+              "i": "✅",
+              "c": "Check before every departure. All guests must know where they are."
+            }
+          ]
+        },
+        {
+          "t": "EPIRB",
+          "type": "list",
+          "items": [
+            {
+              "i": "🔴",
+              "c": "Location: mounted at helm or nav station — bright orange/yellow unit"
+            },
+            {
+              "i": "⚠️",
+              "c": "Registered to Cattitude — activates coordinated SAR response with vessel details"
+            },
+            {
+              "i": "🚨",
+              "c": "ONLY activate in genuine life-threatening emergency. False activation is very costly."
+            }
+          ]
+        },
+        {
+          "t": "Flares",
+          "type": "list",
+          "items": [
+            {
+              "i": "🚀",
+              "c": "Orange/red waterproof flare kit — coffee table in saloon"
+            },
+            {
+              "i": "📅",
+              "c": "Check expiry dates — expired flares are not legal and may not function"
+            },
+            {
+              "i": "🌙",
+              "c": "Red parachute: night use. Orange smoke: day use. White: collision warning to approaching vessels."
+            }
+          ]
+        },
+        {
+          "t": "Fire Extinguishers",
+          "type": "list",
+          "items": [
+            {
+              "i": "🔥",
+              "c": "Galley: mounted near stove"
+            },
+            {
+              "i": "⚙️",
+              "c": "Engine rooms: automatic discharge outlets are BEHIND THE MATTRESSES in the two aft cabins. Move mattress, push hose through outlet, trigger."
+            },
+            {
+              "i": "🪣",
+              "c": "Cockpit: additional portable extinguisher in locker"
+            }
+          ]
+        },
+        {
+          "t": "Life Raft",
+          "type": "list",
+          "items": [
+            {
+              "i": "🪂",
+              "c": "Location: under steps leading from cockpit to helm station"
+            },
+            {
+              "i": "🚫",
+              "c": "Do NOT inflate inside the boat — deploy over the side"
+            },
+            {
+              "i": "🔗",
+              "c": "Painter line attaches to boat — goes taut automatically when raft is deployed, triggering inflation"
+            }
+          ]
+        },
+        {
+          "t": "Warnings",
+          "type": "warnings",
+          "items": [
+            "Brief ALL guests on safety gear locations before every departure — no exceptions",
+            "EPIRB for life-threatening emergencies only. For non-emergency assistance: call Cruise Abaco on Ch 09 during office hours (approx 9am–5pm). Outside hours: text Jesse or wait until office hours.",
+            "MAYDAY: VHF Ch 16 — MAYDAY x3, boat name x3, position, emergency type, persons on board"
+          ]
+        }
+      ]
+    },
+    "sails": {
+      "id": "sails",
+      "icon": "⛵",
+      "title": "Sails & Rigging",
+      "subtitle": "Mainsail, furling jib, reefing, and travellers",
+      "locs": [
+        "bow",
+        "cockpit",
+        "helm"
+      ],
+      "summary": "Square-top mainsail and roller-furling genoa. All lines lead aft to two clutch banks and two winches in the cockpit. Everything is labelled.",
+      "learnChecks": [
+        "Located both clutch banks — port side (coloured ropes) and starboard side (black ropes)",
+        "Identified Main halyard clutch on STARBOARD bank (coloured ropes)",
+        "Identified 1st Reef and 2nd Reef clutches on STARBOARD bank (coloured ropes)",
+        "Identified Topping Lift clutch on STARBOARD bank (coloured ropes)",
+        "Identified Port Traveller and Stbd Traveller clutches on PORT bank (black ropes)",
+        "Identified both Genoa 1 clutches: starboard sheet on STARBOARD bank (active on port tack), port sheet on PORT bank (active on starboard tack)",
+        "Located all three winches at the helm — two powered (port and starboard), one manual (centre)",
+        "Mainsheet and traveller cars found and understood"
+      ],
+      "sections": [
+        {
+          "t": "Sail Overview",
+          "type": "prose",
+          "c": "Cattitude has a sloop rig with a square-top mainsail and roller-furling genoa. All running rigging leads aft to two clutch/jammer banks in the cockpit. The starboard bank (coloured ropes) controls reef lines, topping lift, main halyard, and spinnaker. The port bank (tan/beige ropes) controls travellers, mainsheet, and genoa. Three winches are at the helm — two are powered (port and starboard self-tailing), one is manual (centre). The powered winches serve all primary lines. Everything is clearly labelled on the clutches."
+        },
+        {
+          "t": "Cockpit Rigging — Photos",
+          "type": "photo",
+          "html": "<div class=\"photo-card\"><img src=\"assets/images/systems/asset-systems-sails-sections-1-html-0-bce4467f3277.jpg\" alt=\"Cockpit Rigging Overview\" onclick=\"openPhoto(this.src,'Cockpit Rigging Overview — Three winches at the helm (two powered, one manual), two clutch banks — port (coloured ropes) and starboard (black ropes)')\"><div class=\"photo-caption\"><span class=\"photo-caption-icon\">⛵</span><div><div class=\"photo-caption-text\">Cockpit Rigging Overview</div><div class=\"photo-caption-sub\">Two winches, two clutch banks — port (coloured) and starboard (black)</div></div></div></div><div class=\"photo-card\"><img src=\"assets/images/systems/asset-systems-sails-sections-1-html-1-fa2c28b3451f.jpg\" alt=\"Starboard Clutch Bank\" onclick=\"openPhoto(this.src,'Port Clutch Bank — Port Traveller · Stbd Traveller · Main Sheet · Genoa 1 (tan/beige ropes)')\"><div class=\"photo-caption\"><span class=\"photo-caption-icon\">↔️</span><div><div class=\"photo-caption-text\">Starboard Clutch Bank</div><div class=\"photo-caption-sub\">Port Traveller · Stbd Traveller · Main Sheet · Genoa 1 (port sheet, black)</div></div></div></div><div class=\"photo-card\"><img src=\"assets/images/systems/asset-systems-sails-sections-1-html-2-2363f6f672a0.jpg\" alt=\"Port Clutch Bank\" onclick=\"openPhoto(this.src,'Starboard Clutch Bank — 1st Reef · 2nd Reef · Topping Lift · Main Halyard · Spin 1 (coloured ropes)')\"><div class=\"photo-caption\"><span class=\"photo-caption-icon\">🪝</span><div><div class=\"photo-caption-text\">Port Clutch Bank</div><div class=\"photo-caption-sub\">1st Reef · 2nd Reef · Topping Lift · Main · Spin 1 (coloured ropes)</div></div></div></div>"
+        },
+        {
+          "t": "Starboard Clutch Bank (Coloured Ropes)",
+          "type": "list",
+          "items": [
+            {
+              "i": "⚓",
+              "c": "Unlabelled (far port): unknown/spare — do not use without confirming with Cruise Abaco"
+            },
+            {
+              "i": "🪝",
+              "c": "1ST REEF: Reef 1 line — haul to take in first reef in the mainsail"
+            },
+            {
+              "i": "🪝",
+              "c": "2ND REEF: Reef 2 line — haul to take in second reef"
+            },
+            {
+              "i": "⬆️",
+              "c": "TOPPING LIFT: supports the boom — must be tensioned when reefing to keep boom from dropping"
+            },
+            {
+              "i": "⛵",
+              "c": "Main: MAINSHEET — controls the angle and trim of the mainsail."
+            },
+            {
+              "i": "🌀",
+              "c": "SPIN 1: spinnaker/genaker halyard — for downwind sail if fitted"
+            }
+          ]
+        },
+        {
+          "t": "Port Clutch Bank (Black Ropes)",
+          "type": "list",
+          "items": [
+            {
+              "i": "↔️",
+              "c": "PORT TRAVELLER: controls port side of the traveller car — eases or tensions port traveller line"
+            },
+            {
+              "i": "↔️",
+              "c": "STB TRAVELLER: controls starboard side of the traveller car — eases or tensions stbd traveller line"
+            },
+            {
+              "i": "⛵",
+              "c": "Main: MAINSHEET — controls the angle and trim of the mainsail."
+            },
+            {
+              "i": "⛵",
+              "c": "GENOA 1 (Starboard sheet): starboard genoa sheet — active when sailing on PORT tack. Sits in a standalone clutch between the two banks, not part of either bank."
+            },
+            {
+              "i": "⛵",
+              "c": "GENOA 1 (Port sheet): port genoa sheet — active when sailing on STARBOARD tack. PORT clutch bank."
+            }
+          ]
+        },
+        {
+          "t": "How the Clutches Work",
+          "type": "prose",
+          "c": "Each clutch is a rope stopper/jammer. When the clutch lever is CLOSED (down/locked), the rope is held in place — you can release the winch and the rope stays put. When OPEN (up/released), the rope runs free. To haul a line: close the clutch first, take the rope to the winch, then grind. Closing the clutch before you haul means the line cannot run back if the winch handle slips or you lose grip — the clutch holds it. Never open a clutch while it is under heavy load without first controlling the rope on the winch."
+        },
+        {
+          "t": "Karver Batten Hook System",
+          "type": "photo",
+          "html": "<div class=\"photo-card\"><img src=\"assets/images/systems/asset-systems-sails-sections-5-html-0-8a03a280ce25.jpg\" alt=\"Karver KBH Batten Hook\" onclick=\"openPhoto(this.src,'Karver KBH Batten Hook — Mast track batten hook — locks batten cars when sail is hoisted')\"><div class=\"photo-caption\"><span class=\"photo-caption-icon\">🪝</span><div><div class=\"photo-caption-text\">Karver KBH Batten Hook</div><div class=\"photo-caption-sub\">Mast track batten hook — locks batten cars when sail is hoisted</div></div></div></div>"
+        },
+        {
+          "t": "Karver Gaff Lock — What It Does",
+          "type": "prose",
+          "c": "The Karver KMS Gaff Lock (also called the Gaff Hook) solves a specific problem unique to square-top mainsails: the top batten of a square-top sail is horizontal and forms the \"gaff\" — the squared-off head of the sail. When lowering the mainsail, this top batten needs to disconnect from the headboard car so the sail can drop fully into the lazyjacks. Without a Gaff Lock, you would need to climb the mast to disconnect the headboard each time. The Karver system allows the sail to automatically detach from the headboard car when lowered and automatically re-engage when hoisted — all from the deck using only the halyard. It is not a batten car holder for the whole sail — it only operates on the top batten and headboard car."
+        },
+        {
+          "t": "Karver Gaff Lock — Hoisting",
+          "type": "steps",
+          "items": [
+            "Hoist the main halyard as normal — the lower batten cars slide up the mast track freely",
+            "As the headboard (top of the sail) approaches the top car, the Karver Gaff Lock automatically engages — a strap on the halyard pulls the headboard into the car and locks it",
+            "You will feel a slight increase in resistance and then a click or firm stop as the lock engages",
+            "Once locked, the halyard tension is held by the lock — the halyard itself is no longer under full load at the top",
+            "The last 6-8 feet of hoisting is typically the hardest due to the square top twisting and the weight of the boom lifting — use the winch"
+          ]
+        },
+        {
+          "t": "Karver Gaff Lock — Lowering",
+          "type": "steps",
+          "items": [
+            "Ease the halyard — as tension comes off, the Gaff Lock at the headboard automatically releases",
+            "The top batten and headboard drop away from the headboard car and the sail falls freely into the lazyjacks",
+            "Lower the halyard smoothly — guide the sail into the lazyjacks as it comes down",
+            "No manual intervention at the mast is needed — the system works entirely from the deck",
+            "If the sail does not drop freely at the top: do not force the halyard down. The lock may not have released — ease halyard tension completely, wait, then try again"
+          ]
+        },
+        {
+          "t": "Notes",
+          "type": "notes",
+          "items": [
+            "The Karver Gaff Lock only affects the top batten and headboard car — the rest of the batten cars on the mast track operate normally at all times.",
+            "If the sail is stiff to hoist in the last few feet: this is normal for a square-top sail due to the twisting load. Use the winch — do not force by hand.",
+            "If the top of the sail will not drop when lowering: ease all halyard tension and wait for the lock to release before pulling the sail down.",
+            "The halyard has a deflector block on the mast to redirect the load into the Gaff Lock — if the sail is not hoisting smoothly, check the halyard is running correctly through this deflector."
+          ]
+        },
+        {
+          "t": "Hoisting the Mainsail",
+          "type": "steps",
+          "items": [
+            "Ease mainsheet and centre the traveller",
+            "Release any sail ties or open the stack-pack zipper",
+            "Motor up and head to wind — this removes wind pressure from the sail and is required before hoisting",
+            "Close the Main halyard clutch (STARBOARD bank — labelled Main)",
+            "Take the main halyard to the winch and hoist from the start using the winch — do not haul by hand first",
+            "Hoist until the luff is tight with slight horizontal wrinkles at the batten cars",
+            "Bear away to your desired point of sail, then adjust traveller and mainsheet for conditions"
+          ]
+        },
+        {
+          "t": "Reef 1 — Using the 1ST REEF Clutch",
+          "type": "steps",
+          "items": [
+            "Head to wind to spill pressure from the sail",
+            "OPEN the Main halyard clutch (starboard bank) — ease the halyard on the winch enough to lower the tack 20cm from the boom, then close the clutch",
+            "Close the 1ST REEF clutch — take the reef line to the winch and haul",
+            "Re-tension the main halyard on the winch so the tack point sits ~10cm above the boom",
+            "Bear away to your desired point of sail and re-sheet the mainsheet for conditions"
+          ]
+        },
+        {
+          "t": "Reef 2 — Using the 2ND REEF Clutch",
+          "type": "steps",
+          "items": [
+            "Head to wind to spill pressure from the sail",
+            "OPEN the Main halyard clutch (starboard bank) — ease the halyard on the winch to lower, then close the clutch",
+            "Strap the tack cringle to the boom",
+            "Haul up the Main halyard on the winch",
+            "Close the 2ND REEF clutch — take the reef 2 line to the winch and haul",
+            "Ensure TOPPING LIFT is tensioned — boom must not drop",
+            "Bear away to your desired point of sail and re-sheet for conditions"
+          ]
+        },
+        {
+          "t": "Traveller — PORT and STB TRAVELLER Clutches",
+          "type": "list",
+          "items": [
+            {
+              "i": "↔️",
+              "c": "The traveller car slides across the traveller track to change the angle of the boom relative to the centreline."
+            },
+            {
+              "i": "⬆️",
+              "c": "Sailing upwind: use the traveller to adjust mainsail trim (boom angle). Use the mainsheet to adjust twist (how much the top of the sail opens relative to the bottom). Move traveller to windward to increase power, leeward to depower."
+            },
+            {
+              "i": "⬇️",
+              "c": "Sailing downwind: the traveller is eased fully to leeward. Use the mainsheet to adjust sail trim and angle."
+            },
+            {
+              "i": "⚠️",
+              "c": "To move the car: ease one side clutch (e.g. PORT TRAVELLER) while hauling the other (STB TRAVELLER). Control the speed — do not let it slam across."
+            }
+          ]
+        },
+        {
+          "t": "Sail Reduction Guide",
+          "type": "list",
+          "items": [
+            {
+              "i": "🌬️",
+              "c": "0-18 kts beating / 0-15 kts downwind: Full sail"
+            },
+            {
+              "i": "💨",
+              "c": "18-25 kts beating / 15-20 kts downwind: 1st Reef + Genoa 2/3"
+            },
+            {
+              "i": "💨",
+              "c": "25-30 kts beating / 20-25 kts downwind: 2nd Reef + Genoa 1/2"
+            },
+            {
+              "i": "⛈️",
+              "c": "30-35 kts: 2nd Reef + Genoa 1/3. Above 35 kts: Main down, minimal genoa only."
+            }
+          ]
+        },
+        {
+          "t": "Critical — Two Clutches Labelled MAIN",
+          "type": "warnings",
+          "items": [
+            "There are TWO clutches labelled Main: STARBOARD bank = Main HALYARD (raises/lowers the sail). PORT bank = Main SHEET (trims the sail angle). Using the wrong one is a common mistake — confirm which bank you are on before operating."
+          ]
+        },
+        {
+          "t": "Warnings",
+          "type": "warnings",
+          "items": [
+            "Never open a loaded clutch without controlling the rope on the winch first — rope will run free under load",
+            "Never flog (flap) mainsail continuously — seriously damages the sail. Always sheet in or furl.",
+            "Always tension TOPPING LIFT before reefing — prevents boom from dropping and damaging the sail or injuring crew",
+            "Do not ease mainsheet without easing traveller first in heavy air — risk of sudden involuntary gybe",
+            "Never force genoa furling against wind load — head to wind to spill pressure first"
+          ]
+        }
+      ]
+    },
+    "engines": {
+      "id": "engines",
+      "icon": "⚙️",
+      "title": "Engines & Engine Compartments",
+      "subtitle": "Twin Yanmar diesels — check both before every departure",
+      "locs": [
+        "port-hull",
+        "stbd-hull",
+        "cockpit"
+      ],
+      "summary": "Two Yanmar diesel engines, one per hull. Engine rooms under cockpit steps. Check both before every departure.",
+      "learnChecks": [
+        "Port engine compartment hatch found and opened",
+        "Starboard engine compartment hatch found and opened",
+        "Raw water seacocks identified on both — confirmed open (handle parallel to pipe)",
+        "Oil dipsticks located on both engines",
+        "Raw water strainers (clear plastic bowls) identified on both",
+        "Coolant overflow bottles identified",
+        "Bilge checked — dry or minimal water only, no oil sheen"
+      ],
+      "sections": [
+        {
+          "t": "Engine Compartment Access",
+          "type": "prose",
+          "c": "The two engine compartments are accessed via hatches at the rear of the outdoor cockpit/saloon space — port side for port engine, starboard for starboard. They are NOT under the cockpit steps. Each contains a Yanmar diesel engine, raw water seacock, raw water strainer, bilge pump, and battery circuit breakers. Check both before every departure."
+        },
+        {
+          "t": "Pre-Start Checks (Both Engines)",
+          "type": "steps",
+          "items": [
+            "Open engine compartment hatch — check for fuel smell or oil sheen in bilge",
+            "Check engine oil on dipstick — level between MIN and MAX marks",
+            "Check coolant overflow bottle — fluid visible",
+            "Confirm raw water seacock OPEN — handle parallel to the pipe",
+            "Check raw water strainer (clear bowl) — clear of debris and weeds",
+            "Engine circuit breakers in engine compartment must be ON (red button)"
+          ]
+        },
+        {
+          "t": "Starting Procedure",
+          "type": "steps",
+          "items": [
+            "At helm: press ON/OFF to activate EVC system",
+            "Wait for glow plug pre-heat cycle to complete",
+            "Ensure engine is in neutral",
+            "Press START — do not hold more than 10 seconds",
+            "Confirm water flowing from BOTH port AND starboard exhaust outlets within 30 seconds of each engine start — check both every time",
+            "Let engine idle at 1000 RPM for 5 minutes to warm up"
+          ]
+        },
+        {
+          "t": "Shutting Down",
+          "type": "steps",
+          "items": [
+            "Idle engines for 3-5 minutes before shutdown",
+            "Press STOP button, then press ON/OFF to deactivate EVC"
+          ]
+        },
+        {
+          "t": "Warnings",
+          "type": "warnings",
+          "items": [
+            "NEVER run engine with raw water seacock closed — impeller destroyed within 2 minutes. Expensive repair.",
+            "NEVER crank starter for more than 10 seconds — water enters exhaust and hydrolocks engine",
+            "Always confirm water flowing from BOTH exhausts within 30 seconds of starting each engine. No water from either = shut down that engine immediately.",
+            "Allow 5 min warm-up at 1000 RPM before applying load"
+          ]
+        },
+        {
+          "t": "Notes",
+          "type": "notes",
+          "items": [
+            "Cruise RPM: 2000-2100. Max: 2200. Fuel burn: ~1-1.5 gal/hr per engine at cruise speed."
+          ]
+        }
+      ]
+    },
+    "electrical": {
+      "id": "electrical",
+      "icon": "⚡",
+      "title": "Electrical Panel",
+      "subtitle": "DC breakers, AC systems, and shore power",
+      "locs": [
+        "saloon"
+      ],
+      "summary": "Main 12V DC panel is in the saloon. Controls all onboard circuits. Bilge pumps must always be on AUTO.",
+      "learnChecks": [
+        "Main electrical panel found in saloon",
+        "All DC switch labels read and understood — refer to panel guide below",
+        "All bilge pump switches confirmed in AUTO position",
+        "Victron HUB-1 display located and reading checked",
+        "Shore power status checked if still at dock",
+        "Fuse boxes located"
+      ],
+      "sections": [
+        {
+          "t": "System Overview",
+          "type": "prose",
+          "c": "Cattitude uses a 12V DC system for all normal onboard functions, controlled from the panel in the saloon. The panel controls loads only — not battery sources. The Victron GX system manages charging automatically. Locate fuse boxes if you need them — ask Cruise Abaco if unsure."
+        },
+        {
+          "t": "DC Panel Photo",
+          "type": "photo",
+          "html": "<div class=\"photo-card\">\n  <img src=\"assets/images/systems/asset-systems-electrical-sections-1-html-0-1bd7c58e170b.jpg\" alt=\"DC Switch Panel\" onclick=\"openPhoto(this.src,'DC Switch Panel — Actual panel on Cattitude — 12V DC')\">\n  <div class=\"photo-caption\">\n    <span class=\"photo-caption-icon\">⚡</span>\n    <div>\n      <div class=\"photo-caption-text\">DC Switch Panel</div>\n      <div class=\"photo-caption-sub\">Actual panel on Cattitude — 12V DC</div>\n    </div>\n  </div>\n</div>"
+        },
+        {
+          "t": "DC Panel Switches — What They Do",
+          "type": "list",
+          "items": [
+            {
+              "i": "🔴",
+              "c": "Navigation Lights (Sailing): red/green + stern light. ON at night when sailing."
+            },
+            {
+              "i": "🔴",
+              "c": "Power Nav Lights: nav lights + steaming light. ON when motoring at night."
+            },
+            {
+              "i": "⚪",
+              "c": "Mooring Light: all-round white anchor light. ON when anchored overnight. Required by law."
+            },
+            {
+              "i": "🔦",
+              "c": "Searchlight: forward spotlight. Illuminates the foredeck and the water below the trampoline. Useful when anchoring at night or working on the foredeck in the dark."
+            },
+            {
+              "i": "🧭",
+              "c": "Navigation Instruments: chartplotter, wind, depth. ON when navigating. Can be left off at anchor."
+            },
+            {
+              "i": "💡",
+              "c": "Hull Lights: controls the interior cabin lighting throughout the hulls. ON for evening and night use."
+            },
+            {
+              "i": "🧊",
+              "c": "Fridge 1: first saloon refrigerator. Leave ON at all times — only off during layup."
+            },
+            {
+              "i": "💧",
+              "c": "Fresh Water Pump: pressurises freshwater. ON while living aboard. OFF when leaving boat unattended."
+            },
+            {
+              "i": "🌊",
+              "c": "Sea Water Pump: seawater supply circuit. ON when needed, OFF otherwise."
+            },
+            {
+              "i": "❄️",
+              "c": "Fridge 2: second saloon refrigerator. Leave ON at all times."
+            },
+            {
+              "i": "💡",
+              "c": "Courtesy Lights: interior ambient lighting. ON for evening use. OFF when sleeping or away."
+            },
+            {
+              "i": "🏊",
+              "c": "Underwater / Annex Light: additional lighting. ON for night swimming only."
+            },
+            {
+              "i": "📷",
+              "c": "Cameras: security and docking monitoring. Use when docking or security needed."
+            }
+          ]
+        },
+        {
+          "t": "Bilge Pump Switches — 3 Positions",
+          "type": "list",
+          "items": [
+            {
+              "i": "✅",
+              "c": "AUTO (normal setting): float switch controls pump automatically. ALWAYS leave here."
+            },
+            {
+              "i": "⛔",
+              "c": "OFF: disables pump completely. Maintenance only — leaves boat unprotected from flooding."
+            },
+            {
+              "i": "🔧",
+              "c": "MANUAL / ON: forces pump to run continuously. Testing or active dewatering only."
+            }
+          ]
+        },
+        {
+          "t": "Victron Multi Control + Aqua-Base Panel Photo",
+          "type": "photo",
+          "html": "<div class=\"photo-card\">\n  <img src=\"assets/images/systems/asset-systems-electrical-sections-4-html-0-1a130f8aa2a0.jpg\" alt=\"Victron Multi Control + Aqua-Base\" onclick=\"openPhoto(this.src,'Victron Multi Control + Aqua-Base — Inverter control & watermaker panel')\">\n  <div class=\"photo-caption\">\n    <span class=\"photo-caption-icon\">🎛️</span>\n    <div>\n      <div class=\"photo-caption-text\">Victron Multi Control + Aqua-Base</div>\n      <div class=\"photo-caption-sub\">Inverter control & watermaker panel</div>\n    </div>\n  </div>\n</div>"
+        },
+        {
+          "t": "Victron Multi Control Panel",
+          "type": "prose",
+          "c": "The Victron Multi Control is a grey panel mounted in the saloon (Victron Energy Blue Power branding). It has a 3-position toggle switch on the left, indicator LEDs on both sides, a current limit rotary knob, and a blue digital current limit display on the right. This is how you control the inverter for cooking and AC loads."
+        },
+        {
+          "t": "Multi Control — Toggle Switch (3 Positions)",
+          "type": "list",
+          "items": [
+            {
+              "i": "🍳",
+              "c": "ON (right position): inverter is active — AC power available for induction stove, air conditioning, and other AC loads. Required for both cooking and running the AC units."
+            },
+            {
+              "i": "⛔",
+              "c": "OFF (centre position): inverter disabled. No AC output from batteries. Use when not cooking and not on shore power."
+            },
+            {
+              "i": "🔌",
+              "c": "CHARGER ONLY (left position): unit only charges batteries from shore power or generator — does not invert. Use when you want to charge batteries without enabling AC loads."
+            }
+          ]
+        },
+        {
+          "t": "Multi Control — Charger LEDs (Left Side)",
+          "type": "list",
+          "items": [
+            {
+              "i": "⚪",
+              "c": "Mains On: shore power or generator input is connected and active. Light on = AC input present."
+            },
+            {
+              "i": "🟡",
+              "c": "Bulk: fast charging phase — batteries are below target, charging aggressively. Normal after anchor overnight."
+            },
+            {
+              "i": "🟡",
+              "c": "Absorption: charging slowing — battery nearly full. Voltage holding at target level."
+            },
+            {
+              "i": "🟡",
+              "c": "Float: batteries full — trickle maintenance charge only. Ideal state when at dock."
+            }
+          ]
+        },
+        {
+          "t": "Multi Control — Inverter LEDs (Right Side)",
+          "type": "list",
+          "items": [
+            {
+              "i": "⚪",
+              "c": "Inverter On: inverter is active and producing AC output. Should be on when toggle is in ON position."
+            },
+            {
+              "i": "🔴",
+              "c": "Overload: AC loads are drawing more current than the inverter can supply. Turn off high-draw appliances immediately."
+            },
+            {
+              "i": "🔴",
+              "c": "Low Battery: batteries too low to run inverter safely. Switch to OFF, charge batteries before using AC loads again."
+            },
+            {
+              "i": "🔴",
+              "c": "Temperature: inverter overheating. Switch off, allow to cool. Check ventilation around the unit."
+            }
+          ]
+        },
+        {
+          "t": "Multi Control — Current Limit Knob",
+          "type": "list",
+          "items": [
+            {
+              "i": "🔢",
+              "c": "The rotary knob and blue digital display set the maximum AC input current limit (shown in amps)."
+            },
+            {
+              "i": "🔌",
+              "c": "When on shore power: sets how much current to draw from the dock — prevents tripping the marina breaker."
+            },
+            {
+              "i": "⚙️",
+              "c": "Do not adjust this knob unless instructed by Cruise Abaco — the current setting is pre-configured for this boat."
+            }
+          ]
+        },
+        {
+          "t": "Shore Power Connection",
+          "type": "steps",
+          "items": [
+            "Check cable condition before connecting",
+            "Connect shore power — roll cable out fully before plugging in",
+            "Mains On LED on Victron Multi Control will illuminate — confirms AC input active",
+            "Toggle switch can stay in ON or CHARGER ONLY depending on whether you need AC loads",
+            "Before disconnecting shore power: switch off all AC loads first, then disconnect cable"
+          ]
+        },
+        {
+          "t": "Warnings",
+          "type": "warnings",
+          "items": [
+            "NEVER leave any bilge pump switch in OFF — this removes your only automatic flood protection",
+            "If Overload LED lights up: too many AC loads running simultaneously — turn off induction stove, AC units, or microwave",
+            "If Low Battery LED lights up on Multi Control: switch toggle to OFF immediately and charge batteries before using AC again",
+            "If Temperature LED lights up: inverter is overheating — switch off and allow to cool before resuming",
+            "Do not adjust the Current Limit knob — it is pre-set for this boat",
+            "If a breaker trips again immediately on reset: fault in circuit. Leave it off, call Cruise Abaco."
+          ]
+        }
+      ]
+    },
+    "batteries": {
+      "id": "batteries",
+      "icon": "🔋",
+      "title": "Batteries & Solar",
+      "subtitle": "Victron system — power management at anchor",
+      "locs": [
+        "stbd-hull",
+        "saloon"
+      ],
+      "summary": "Cattitude uses a Victron GX energy management system. The HUB-1 display in the saloon is your primary power dashboard.",
+      "learnChecks": [
+        "Victron HUB-1 display found in saloon — reading understood",
+        "Current state of charge (SOC %) noted",
+        "Solar production (PV Charger watts) confirmed in daylight",
+        "AC Input reading checked — shore power or generator active?",
+        "Understood: keep batteries above 80% as normal operating target"
+      ],
+      "sections": [
+        {
+          "t": "Victron Displays — Photos",
+          "type": "photo",
+          "html": "<div class=\"photo-card\">\n  <img src=\"assets/images/systems/asset-systems-batteries-sections-0-html-0-b68634a27ce6.jpg\" alt=\"Victron HUB-1 Overview\" onclick=\"openPhoto(this.src,'Victron HUB-1 Overview — Main status dashboard')\">\n  <div class=\"photo-caption\">\n    <span class=\"photo-caption-icon\">📊</span>\n    <div>\n      <div class=\"photo-caption-text\">Victron HUB-1 Overview</div>\n      <div class=\"photo-caption-sub\">Main status dashboard</div>\n    </div>\n  </div>\n</div>\n<div class=\"photo-card\">\n  <img src=\"assets/images/systems/asset-systems-batteries-sections-0-html-1-8baf0d1fb290.jpg\" alt=\"Victron Power Flow Display\" onclick=\"openPhoto(this.src,'Victron Power Flow Display — Real-time power balance diagram')\">\n  <div class=\"photo-caption\">\n    <span class=\"photo-caption-icon\">🔋</span>\n    <div>\n      <div class=\"photo-caption-text\">Victron Power Flow Display</div>\n      <div class=\"photo-caption-sub\">Real-time power balance diagram</div>\n    </div>\n  </div>\n</div>"
+        },
+        {
+          "t": "The Victron HUB-1 Display",
+          "type": "prose",
+          "c": "The HUB-1 is your electrical instrument panel — think of it as engine gauges but for power. It shows battery state of charge, charging phase, solar production, AC input, and AC loads at a glance. Check it before sleep and before leaving the boat."
+        },
+        {
+          "t": "Reading the Display",
+          "type": "list",
+          "items": [
+            {
+              "i": "🔋",
+              "c": "Battery %: state of charge. Watch the trend — dropping means you are net-discharging. Target: keep above 80%."
+            },
+            {
+              "i": "⚡",
+              "c": "System / Phase: Bulk = charging fast (not yet full). Absorption = slowing, nearly full. Float = full, maintenance only."
+            },
+            {
+              "i": "🔌",
+              "c": "AC Input (watts): power coming in from shore power or generator. Zero = off-grid, running on batteries/solar."
+            },
+            {
+              "i": "💡",
+              "c": "AC Loads (watts): total onboard consumption. Watch for spikes — kettle, water heater, and AC units are the biggest."
+            },
+            {
+              "i": "☀️",
+              "c": "PV Charger (watts): solar production. Low = clouds or shade. Peaks midday on a clear Abaco day."
+            }
+          ]
+        },
+        {
+          "t": "Battery Targets — Owner Requests House Bank Above 80%",
+          "type": "list",
+          "items": [
+            {
+              "i": "✅",
+              "c": "Above 80%: the boat owner requests this as the minimum operating level. It is a conservative and protective target, not a strict technical limit, but please respect it."
+            },
+            {
+              "i": "⚠️",
+              "c": "70-80%: below the requested target. Charge soon — start engines or connect shore power before running high-draw loads."
+            },
+            {
+              "i": "🟠",
+              "c": "60-70%: meaningfully low. Run both engines at 1200-1500 RPM for 45-60 mins. Reduce all unnecessary loads."
+            },
+            {
+              "i": "🔴",
+              "c": "Below 60%: very low. Charge immediately. Avoid AC, stove, and watermaker until back above 80%."
+            }
+          ]
+        },
+        {
+          "t": "Charging Phases — What They Mean",
+          "type": "list",
+          "items": [
+            {
+              "i": "⚡",
+              "c": "Bulk: fast charging — system is aggressively filling batteries. Best time to run high-draw devices."
+            },
+            {
+              "i": "📉",
+              "c": "Absorption: slowing down — battery approaching full. Normal, no action needed."
+            },
+            {
+              "i": "🟢",
+              "c": "Float: batteries are full — system in maintenance mode. Ideal state when at dock."
+            }
+          ]
+        },
+        {
+          "t": "Power Balance — Net Awareness",
+          "type": "list",
+          "items": [
+            {
+              "i": "➕",
+              "c": "If AC Input + Solar > AC Loads: you are power-positive. Batteries are charging."
+            },
+            {
+              "i": "➖",
+              "c": "If AC Loads > AC Input + Solar: you are drawing down batteries. Reduce loads or charge."
+            },
+            {
+              "i": "☀️",
+              "c": "On a sunny Abaco day: solar typically produces 20-30A — usually covers fridge and basic loads without engines."
+            },
+            {
+              "i": "🌙",
+              "c": "Overnight at anchor: if starting at 80%+ expect 70-75% by morning with no AC. Run engines before breakfast to restore above 80% before any heavy loads."
+            }
+          ]
+        },
+        {
+          "t": "Common Power Drains",
+          "type": "list",
+          "items": [
+            {
+              "i": "🧊",
+              "c": "Fridges/freezer: 2 saloon fridges + freezer + cockpit fridge = significant continuous draw. Leave doors closed, keep well stocked. Biggest collective steady drain at anchor."
+            },
+            {
+              "i": "❄️",
+              "c": "Air conditioning: 50-80A per unit. Requires engines, generator, or shore power — cannot run on battery."
+            },
+            {
+              "i": "🌊",
+              "c": "Watermaker: 8-12A. Run with engines or strong solar."
+            },
+            {
+              "i": "📡",
+              "c": "Microwave/kettle: very high peak draw. Use with engines running if batteries below 80%."
+            },
+            {
+              "i": "💡",
+              "c": "LED lights: minimal draw. Leave on freely."
+            }
+          ]
+        },
+        {
+          "t": "Warnings",
+          "type": "warnings",
+          "items": [
+            "The boat owner requests the house battery bank be kept above 80%. While this is a conservative target rather than a strict technical limit, please respect it — it protects the battery bank and ensures reliable power throughout your charter.",
+            "AC air conditioning cannot run on batteries or solar alone — always run engines or generator",
+            "Below 60% on this boat is equivalent to \"critical\" on a typical boat — do not let it get here",
+            "Bulk phase does not mean batteries are full — check the % number. Bulk just means fast charging is active."
+          ]
+        }
+      ]
+    },
+    "water": {
+      "id": "water",
+      "icon": "💧",
+      "title": "Water & Watermaker",
+      "subtitle": "Fresh water system and Aqua-Base watermaker",
+      "locs": [
+        "stbd-hull",
+        "saloon",
+        "bow"
+      ],
+      "summary": "Fresh water tanks accessible from the anchor locker. Aqua-Base watermaker is AC-powered — requires generator running. Operated by 3-button panel: green (start), red (stop), blue (flush).",
+      "learnChecks": [
+        "Fresh water tank access confirmed in anchor locker",
+        "Pressure pump switch located on panel",
+        "Main water circuit valve found in anchor well — confirmed open",
+        "Hot water tank supply valve confirmed open",
+        "Aqua-Base watermaker panel found — green, red, blue buttons identified",
+        "Salinity indicator on Aqua-Base understood",
+        "Fresh water deck filler location confirmed (starboard forward deck)"
+      ],
+      "sections": [
+        {
+          "t": "Fresh Water System",
+          "type": "steps",
+          "items": [
+            "Twin fresh water tanks are accessible from the anchor locker",
+            "Hot water tank supply valve: must be open at all times — do not close",
+            "Pressure pump switch: on DC panel — leave ON for normal use",
+            "Check water gauge on panel daily. Fill before tank drops below 1/4.",
+            "Fresh water deck filler: starboard forward deck — cap clearly labelled WATER"
+          ]
+        },
+        {
+          "t": "Aqua-Base Watermaker — Control Panel",
+          "type": "prose",
+          "c": "The watermaker is controlled by an Aqua-Base panel with three large illuminated buttons: GREEN (power/start), RED (stop), and BLUE (flush/rinse). A Salinity indicator shows the quality of water being produced. The panel is located in the starboard engine compartment."
+        },
+        {
+          "t": "Aqua-Base Panel Buttons",
+          "type": "list",
+          "items": [
+            {
+              "i": "🟢",
+              "c": "GREEN button (Power / Start): starts the watermaker. Press and hold briefly to start production. The unit will pressurise and begin making water."
+            },
+            {
+              "i": "🔴",
+              "c": "RED button (Stop): stops watermaker production. Always press this to stop before switching off the breaker."
+            },
+            {
+              "i": "🔵",
+              "c": "BLUE button (Flush / Rinse): runs a fresh water flush through the membranes. Use this after every session if not running again within 3 days — preserves the membranes."
+            },
+            {
+              "i": "💧",
+              "c": "SALINITY indicator: monitors the quality of water being produced. If salinity reads high (poor quality), do not send water to tanks — the unit may need attention. Call Cruise Abaco."
+            }
+          ]
+        },
+        {
+          "t": "Starting the Watermaker",
+          "type": "steps",
+          "items": [
+            "ONLY run in clean, clear water — not at marinas, fuel docks, or in murky/contaminated anchorages",
+            "Turn on Watermaker breaker at DC panel in saloon",
+            "Confirm generator is running — watermaker is AC-powered and requires the generator (solar alone is not sufficient)",
+            "Press GREEN button on Aqua-Base panel to start — switching to tank is automatic, no need to wait",
+            "Check Salinity indicator — water quality should be good before sending to tanks",
+            "Production rate: approximately 5-7 gallons per hour"
+          ]
+        },
+        {
+          "t": "Stopping the Watermaker",
+          "type": "steps",
+          "items": [
+            "Press RED button to stop production",
+            "If not running again within 3 days: press BLUE button to run a fresh water flush — this protects the membranes",
+            "Turn off Watermaker breaker at DC panel"
+          ]
+        },
+        {
+          "t": "Warnings",
+          "type": "warnings",
+          "items": [
+            "Never run watermaker near fuel docks, marinas, or in dirty/murky water — membranes get contaminated. Expensive to replace.",
+            "Never run watermaker dry — destroys the low-pressure pump",
+            "Always flush with BLUE button if not using again within 3 days — biological growth destroys membranes",
+            "If Salinity indicator reads high: stop production, do not send to tanks, call Cruise Abaco",
+            "Hot water tank must never run empty — will damage the element"
+          ]
+        },
+        {
+          "t": "Notes",
+          "type": "notes",
+          "items": [
+            "Typical usage: 10-15 gallons/day for 4-6 people. Run watermaker 2-3 hrs/day to stay topped up.",
+            "Best anchorages for watermaking: open water away from boat traffic, clear turquoise water."
+          ]
+        }
+      ]
+    },
+    "heads": {
+      "id": "heads",
+      "icon": "🚽",
+      "title": "Heads & Holding Tanks",
+      "subtitle": "Five heads — electric toilets with holding tanks. Brief everyone before departure.",
+      "locs": [
+        "port-hull",
+        "stbd-hull"
+      ],
+      "summary": "Electric marine toilets with holding tanks. Brief every guest without exception. Blockages are expensive.",
+      "learnChecks": [
+        "All five heads located and inspected",
+        "Evacuation valves located in all five heads",
+        "Evacuation valves found (in each shower hatch)",
+        "Flush cycle tested — electric switch confirmed working",
+        "Holding tank level/gauge understood",
+        "All crew briefed: NOTHING goes in the toilet — human waste only, paper in the bin"
+      ],
+      "sections": [
+        {
+          "t": "Holding Tank Valve Photos — All Heads",
+          "type": "photo",
+          "html": "<div class=\"photo-card\"><img src=\"assets/images/systems/asset-systems-heads-sections-0-html-0-88e0a2ff42c2.jpg\" alt=\"Starboard Forward Head\" onclick=\"openPhoto(this.src,'Starboard Forward Head — Access hatch door closed — hatch is behind shower, in the wall panel')\"><div class=\"photo-caption\"><span class=\"photo-caption-icon\">🚿</span><div><div class=\"photo-caption-text\">Starboard Forward Head</div><div class=\"photo-caption-sub\">Access hatch door closed — hatch is behind shower, in the wall panel</div></div></div></div><div class=\"photo-card\"><img src=\"assets/images/systems/asset-systems-heads-sections-0-html-1-8391841aa3e7.jpg\" alt=\"Evacuation Valve — CLOSED\" onclick=\"openPhoto(this.src,'Evacuation Valve — CLOSED — Stbd Fwd head: red lever PERPENDICULAR to pipe = closed (harbour/mooring position)')\"><div class=\"photo-caption\"><span class=\"photo-caption-icon\">🔴</span><div><div class=\"photo-caption-text\">Evacuation Valve — CLOSED</div><div class=\"photo-caption-sub\">Stbd Fwd head: red lever PERPENDICULAR to pipe = closed (harbour/mooring position)</div></div></div></div><div class=\"photo-card\"><img src=\"assets/images/systems/asset-systems-heads-sections-0-html-2-9b5222e5d682.jpg\" alt=\"Evacuation Valve — OPEN\" onclick=\"openPhoto(this.src,'Evacuation Valve — OPEN — Stbd Fwd head: red lever PARALLEL to pipe = open (offshore discharge position)')\"><div class=\"photo-caption\"><span class=\"photo-caption-icon\">🟢</span><div><div class=\"photo-caption-text\">Evacuation Valve — OPEN</div><div class=\"photo-caption-sub\">Stbd Fwd head: red lever PARALLEL to pipe = open (offshore discharge position)</div></div></div></div><div class=\"photo-card\"><img src=\"assets/images/systems/asset-systems-heads-sections-0-html-3-5dd1f47e1d2c.jpg\" alt=\"Port Rear Head — Valve Access\" onclick=\"openPhoto(this.src,'Port Rear Head — Valve Access — Located in cupboard/locker. Red lever visible — same closed/open positions apply')\"><div class=\"photo-caption\"><span class=\"photo-caption-icon\">🔴</span><div><div class=\"photo-caption-text\">Port Rear Head — Valve Access</div><div class=\"photo-caption-sub\">Located in cupboard/locker. Red lever visible — same closed/open positions apply</div></div></div></div><div class=\"photo-card\"><img src=\"assets/images/systems/asset-systems-heads-sections-0-html-4-e331c9b07303.jpg\" alt=\"Port Midships Head — Valve Access\" onclick=\"openPhoto(this.src,'Port Midships Head — Valve Access — Located in cupboard/locker. Red lever with blue handle visible')\"><div class=\"photo-caption\"><span class=\"photo-caption-icon\">🔴</span><div><div class=\"photo-caption-text\">Port Midships Head — Valve Access</div><div class=\"photo-caption-sub\">Located in cupboard/locker. Red lever with blue handle visible</div></div></div></div><div class=\"photo-card\"><img src=\"assets/images/systems/asset-systems-heads-sections-0-html-5-a0b815bb473e.jpg\" alt=\"Port Forward Head — Valve Close-Up\" onclick=\"openPhoto(this.src,'Port Forward Head — Valve Close-Up — Red lever valve clearly labelled: EVACUATION WC / TOILET WATER DISCHARGE')\"><div class=\"photo-caption\"><span class=\"photo-caption-icon\">🔴</span><div><div class=\"photo-caption-text\">Port Forward Head — Valve Close-Up</div><div class=\"photo-caption-sub\">Red lever valve clearly labelled: EVACUATION WC / TOILET WATER DISCHARGE</div></div></div></div>"
+        },
+        {
+          "t": "Reading the Valve — Closed vs Open",
+          "type": "list",
+          "items": [
+            {
+              "i": "🔴",
+              "c": "RED LEVER PERPENDICULAR (across the pipe) = CLOSED — waste goes to holding tank. Use this position in harbour, anchorage, and marina at all times."
+            },
+            {
+              "i": "🟢",
+              "c": "RED LEVER PARALLEL (along the pipe) = OPEN — waste discharges overboard. Only use this position when offshore in deep open water."
+            },
+            {
+              "i": "🚿",
+              "c": "Evacuation valves: starboard forward — behind the shower wall panel. Port heads (rear, midships, forward) — under the three sinks. A panel behind the shower in the starboard hull."
+            },
+            {
+              "i": "🏷️",
+              "c": "Each hatch is labelled: EVACUATION WC / TOILET WATER DISCHARGE (left) and ALIMENTATION WC / TOILET WATER INLET (right)."
+            }
+          ]
+        },
+        {
+          "t": "Using the Electric Toilet",
+          "type": "prose",
+          "c": "Electric heads: use the electric switch (not a lever) to flush. The toilet flushes with fresh water and pumps waste to the holding tank. If the toilet will not flush, first check the 25A circuit breaker at the main panel."
+        },
+        {
+          "t": "Valve Locations — How to Find Each One",
+          "type": "list",
+          "items": [
+            {
+              "i": "🚿",
+              "c": "Starboard forward head: evacuation valve hatch is on the shower wall — white panel with recessed pull handle. Open it to access the red lever."
+            },
+            {
+              "i": "🚪",
+              "c": "Port heads (rear, midships, forward): evacuation valve under the sink or through a locker door."
+            },
+            {
+              "i": "🔴",
+              "c": "All evacuation valves: red lever with blue tip. Perpendicular = CLOSED. Parallel = OPEN."
+            },
+            {
+              "i": "⚠️",
+              "c": "All valves CLOSED at all times except when actively discharging offshore in deep water."
+            }
+          ]
+        },
+        {
+          "t": "Holding Tank",
+          "type": "list",
+          "items": [
+            {
+              "i": "🪣",
+              "c": "Each WC has its own holding tank — capacity 45L each"
+            },
+            {
+              "i": "🔔",
+              "c": "Watch for odour or slow flushing — signs the tank is getting full"
+            },
+            {
+              "i": "⚓",
+              "c": "At marina: pump out via waste deck fitting"
+            },
+            {
+              "i": "🌊",
+              "c": "Offshore only: open evacuation valve to discharge — close immediately when done"
+            }
+          ]
+        },
+        {
+          "t": "Warnings",
+          "type": "warnings",
+          "items": [
+            "NEVER put ANYTHING in the toilet except human waste — NO toilet paper of any kind, no wipes, no paper towels, no tampons. All paper goes in the bin provided.",
+            "Do not throw anything in WC — blocks check valves immediately. The pump cannot handle any paper product.",
+            "Do not force a blocked pump — call Cruise Abaco. Self-repair makes it worse and more expensive."
+          ]
+        }
+      ]
+    },
+    "galley": {
+      "id": "galley",
+      "icon": "🍳",
+      "title": "Galley & Cooking",
+      "subtitle": "Whirlpool induction stove, refrigeration, and power",
+      "locs": [
+        "galley",
+        "cockpit"
+      ],
+      "summary": "Whirlpool induction stove — requires generator ON and inverter ON to operate. Fridge is biggest continuous power draw.",
+      "learnChecks": [
+        "Induction stove located and understood — requires generator + inverter",
+        "Generator start/stop controls found",
+        "Inverter switch located on electrical panel",
+        "Fridge 1 and Fridge 2 switches on DC panel located and confirmed on",
+        "Freezer switch on DC panel located",
+        "Cockpit fridge located at base of helm stairs — thermostat confirmed on",
+        "Microwave/inverter breaker located"
+      ],
+      "sections": [
+        {
+          "t": "Induction Stove — How to Use",
+          "type": "prose",
+          "c": "Cattitude has a Whirlpool induction stove. Unlike a gas stove, it runs on 240V AC power. To operate the stove, TWO things must be active simultaneously: the generator must be running AND the inverter must be switched on at the panel. If either is off, the stove will not work."
+        },
+        {
+          "t": "Starting the Stove",
+          "type": "steps",
+          "items": [
+            "Start the generator — controls in port engine compartment or remote at chart table",
+            "Confirm generator running — Mains On LED on Victron Multi Control will illuminate",
+            "Flip the Victron Multi Control toggle switch to ON (right position) — Inverter On LED will light up",
+            "The induction stove now has 240V AC power — turn on at the stove controls as normal",
+            "Use induction-compatible cookware only (magnetic base — magnet should stick to the bottom of the pot)",
+            "After cooking: turn off stove at the stove controls",
+            "If generator not needed for anything else: flip Multi Control toggle to OFF, then shut down generator"
+          ]
+        },
+        {
+          "t": "Generator Operation",
+          "type": "steps",
+          "items": [
+            "Generator start: controls are in the saloon below the electrical panel, or remotely at the chart table",
+            "Allow 30 seconds to warm up before applying load",
+            "Generator powers AC loads — AC units, induction stove, water heater, battery charging",
+            "To shut down: turn off all AC loads first, then stop generator",
+            "Never run generator dry — it has its own fuel supply (port diesel tank)"
+          ]
+        },
+        {
+          "t": "Refrigeration",
+          "type": "list",
+          "items": [
+            {
+              "i": "🧊",
+              "c": "Fridge 1 (saloon): switched at DC panel — Fridge 1 breaker. Leave ON at all times."
+            },
+            {
+              "i": "🧊",
+              "c": "Fridge 2 (saloon): switched at DC panel — Fridge 2 breaker. Leave ON at all times."
+            },
+            {
+              "i": "❄️",
+              "c": "Freezer (saloon): separate switch at DC panel. Set thermostat to minimum necessary temperature."
+            },
+            {
+              "i": "🍺",
+              "c": "Cockpit fridge: located at the base of the stairs to the helm station in the outdoor cockpit. Primarily for drinks. Turned on via its own thermostat — not on the main DC panel."
+            },
+            {
+              "i": "💡",
+              "c": "Battery safety: fridges switch off automatically if service battery drops below 11.7V."
+            }
+          ]
+        },
+        {
+          "t": "Warnings",
+          "type": "warnings",
+          "items": [
+            "The induction stove will NOT work without BOTH the generator running AND the inverter switched on",
+            "Running microwave + AC + stove simultaneously may overload the generator — stagger high-draw appliances",
+            "Use only induction-compatible cookware — non-magnetic pots and pans will not heat"
+          ]
+        },
+        {
+          "t": "Notes",
+          "type": "notes",
+          "items": [
+            "Maxwell's Grocery Marsh Harbour for provisioning. MiQ and Rubis for basics.",
+            "Fridge is most efficient when well-stocked — fill gaps with water bottles to reduce dead air space."
+          ]
+        }
+      ]
+    },
+    "nav": {
+      "id": "nav",
+      "icon": "🧭",
+      "title": "Navigation Electronics",
+      "subtitle": "Chartplotter, VHF, AIS, depth sounder",
+      "locs": [
+        "helm",
+        "saloon"
+      ],
+      "summary": "Garmin or Raymarine chartplotter, VHF with AIS, wind instruments, depth sounder — all at the helm.",
+      "learnChecks": [
+        "Chartplotter powered on — Bahamas charts confirmed loaded",
+        "VHF powered on — confirmed on Ch 16",
+        "AIS active — nearby vessels visible",
+        "Depth sounder reading confirmed",
+        "Wind instruments checked",
+        "Autopilot engaged and disengaged — confirmed functional"
+      ],
+      "sections": [
+        {
+          "t": "System Overview",
+          "type": "prose",
+          "c": "The helm station has a Garmin multifunction display combining chartplotter, AIS, wind, and depth sounder. A fixed VHF radio with AIS transponder sits beside it. Always power up all instruments before leaving the dock to confirm they work. Note that Garmin charts may not be fully up to date for the Bahamas — always cross-reference with the Cruising Guide to the Abacos by Steve, Jon and Jeff Dodge (on board), consider using Navionics on your phone as a chart supplement, and use your eyes when approaching new anchorages."
+        },
+        {
+          "t": "Key Instruments",
+          "type": "list",
+          "items": [
+            {
+              "i": "🗺️",
+              "c": "Chartplotter: Garmin with Bahamas charts pre-loaded. Charts may be out of date — treat them as a guide only, not ground truth. Use Navionics on your phone as a chart supplement. Zoom in carefully and use the Dodge Cruising Guide to the Abacos and visual piloting in shallow or unfamiliar areas."
+            },
+            {
+              "i": "📻",
+              "c": "VHF: Monitor Ch 16 underway at all times. Ch 09 for Cruise Abaco during office hours (approx 9am–5pm). Ch 68 common in Abacos anchorages."
+            },
+            {
+              "i": "🚢",
+              "c": "AIS: Nearby vessels by name, speed, and heading. Very useful at night and in traffic."
+            },
+            {
+              "i": "🌊",
+              "c": "Depth sounder: reads from the bottom of the hull — the displayed depth is the water depth BELOW the hull, with no additional offset to subtract. Watch continuously in new or shallow areas. The Abacos has many unmarked coral heads."
+            },
+            {
+              "i": "💨",
+              "c": "Wind instruments: true and apparent wind speed/angle at the helm."
+            },
+            {
+              "i": "🤖",
+              "c": "Autopilot: engage via AP button. Monitor constantly — does not avoid obstacles."
+            }
+          ]
+        },
+        {
+          "t": "VHF Channels",
+          "type": "list",
+          "items": [
+            {
+              "i": "🔴",
+              "c": "Channel 16: International distress and calling channel. PRIMARY emergency channel — monitored globally 24/7. Always keep watch on Ch 16 underway."
+            },
+            {
+              "i": "🟡",
+              "c": "Channel 09: Cruise Abaco working channel. Office hours approx 9am–5pm. Outside hours: text Jesse (+1 305-304-5821) or call his mobile directly. Not monitored overnight."
+            },
+            {
+              "i": "🟢",
+              "c": "Channel 68: Common cruiser working channel in the Abacos anchorages."
+            },
+            {
+              "i": "🔵",
+              "c": "Channel 72: Working channel — commonly used between vessels for inter-ship communication. Not a designated radio check channel."
+            }
+          ]
+        },
+        {
+          "t": "Warnings",
+          "type": "warnings",
+          "items": [
+            "Garmin charts may be out of date — always cross-reference with the Cruising Guide to the Abacos (Dodge) on board. Visual piloting is essential in the Bahamas.",
+            "NEVER enter a new cut or channel on a falling tide — wait for high and rising tide",
+            "Autopilot does not avoid boats, coral, or obstacles — keep a watch forward at all times",
+            "Depth sounder reference is set to the bottom of the hull — displayed depth is clearance below the keel"
+          ]
+        },
+        {
+          "t": "Whale Cut — Specific Conditions Required",
+          "type": "warnings",
+          "items": [
+            "Whale Cut (between Whale Cay and Baker Bay) is a well-known dangerous passage. Do NOT attempt unless ALL conditions are met.",
+            "Waves/swell: 4ft or below",
+            "Wind: 15 knots or below",
+            "Timing: slack tide only — cross at or near slack water to avoid dangerous current against swell",
+            "If in doubt: wait for conditions to improve. The cut has claimed boats in conditions that looked manageable."
+          ]
+        },
+        {
+          "t": "Notes",
+          "type": "notes",
+          "items": [
+            "The Cruising Guide to the Abacos by Steve, Jon and Jeff Dodge is on board — consult it for every anchorage entry. It has GPS waypoints, approach notes, and local hazard information specific to the Abacos.",
+            "Download Garmin ActiveCaptain or Navionics as a phone backup chart. Both work offline.",
+            "Garmin ActiveCaptain connects to the onboard Garmin MFD and can sync waypoints from your phone."
+          ]
+        }
+      ]
+    },
+    "anchoring": {
+      "id": "anchoring",
+      "icon": "⚓",
+      "title": "Anchoring & Windlass",
+      "subtitle": "Quick Dylan DH4 vertical windlass — handheld remote, Abacos anchorages",
+      "locs": [
+        "bow",
+        "cockpit"
+      ],
+      "summary": "Quick Dylan DH4 vertical windlass with Quick handheld wired remote. Designed for boats 14-18m. Abacos has excellent sand holding.",
+      "learnChecks": [
+        "Quick handheld wired remote found in anchor well — UP and DOWN buttons confirmed",
+        "Quick QNC CHC chain counter located on bow — power on confirmed (long-press centre ⏻ button)",
+        "Chain locker hatch opened — chain and bridle lines inspected",
+        "Bridle snap hook located in anchor well",
+        "Anchor type confirmed (Rocna or Mantus)"
+      ],
+      "sections": [
+        {
+          "t": "Windlass Photos",
+          "type": "photo",
+          "html": "<div class=\"photo-card\"><img src=\"assets/images/systems/asset-systems-anchoring-sections-0-html-0-342f9018ef32.jpg\" alt=\"Quick Dylan DH4 Windlass\" onclick=\"openPhoto(this.src,'Quick Dylan DH4 Windlass — windlass head and bow fitting with anchor chain')\"><div class=\"photo-caption\"><span class=\"photo-caption-icon\">⚓</span><div><div class=\"photo-caption-text\">Quick Dylan DH4 Windlass</div><div class=\"photo-caption-sub\">Windlass head at the bow with anchor chain</div></div></div></div><div class=\"photo-card\"><img src=\"assets/images/systems/asset-systems-anchoring-sections-0-html-1-c28bd24c2db7.jpg\" alt=\"Quick Windlass Handheld Remote\" onclick=\"openPhoto(this.src,'Quick Windlass Handheld Remote — Wired remote stored in anchor well — UP raises chain, DOWN lowers chain')\"><div class=\"photo-caption\"><span class=\"photo-caption-icon\">🎮</span><div><div class=\"photo-caption-text\">Quick Windlass Handheld Remote</div><div class=\"photo-caption-sub\">Wired remote stored in anchor well — UP raises chain, DOWN lowers chain</div></div></div></div>"
+        },
+        {
+          "t": "Quick Windlass — Equipment Overview",
+          "type": "list",
+          "items": [
+            {
+              "i": "⚓",
+              "c": "Windlass head: the chrome drum at the bow that drives the chain up or down. Powered by a dedicated DC circuit — circuit breaker is located in the starboard engine compartment."
+            },
+            {
+              "i": "🎮",
+              "c": "Quick handheld remote: wired remote stored in the anchor well. Top button = UP (raise chain). Bottom two buttons = DOWN (lower chain). Hold to run, release to stop."
+            },
+            {
+              "i": "🦶",
+              "c": "Foot switches: if present at the bow, UP and DOWN foot switches mirror the handheld remote."
+            }
+          ]
+        },
+        {
+          "t": "Anchoring Procedure",
+          "type": "steps",
+          "items": [
+            "Confirm windlass circuit breaker is ON — located in the starboard engine compartment",
+            "Select anchoring spot: white sand on chartplotter and visually — avoid coral, seagrass, dark patches",
+            "Motor upwind of desired spot, stop over position",
+            "Using the Quick handheld remote: press and hold DOWN to lower anchor under control",
+            "Do not free-drop — lower slowly as boat drifts back over the spot",
+            "Pay out chain to near final scope length",
+            "Hook chain to bridle snap hook in anchor well",
+            "Lower remaining chain until bridle takes the load — chain goes slack at windlass",
+            "Back down at 1500 RPM for 30 seconds to set anchor",
+            "Check position against fixed references — confirm no dragging",
+            "Set anchor alarm on chartplotter. Engines off."
+          ]
+        },
+        {
+          "t": "Model & Specs",
+          "type": "list",
+          "items": [
+            {
+              "i": "⚙️",
+              "c": "Windlass: Quick Dylan DH4 — vertical windlass designed for boats 14-18m (46-59ft). Motor and gearbox are installed below deck in the anchor well, with only the gypsy head visible on deck."
+            },
+            {
+              "i": "🔗",
+              "c": "Gypsy: handles 12mm chain (ISO) or 13mm DIN 766. Also accepts 3/4\" (19mm) rope via the Slim Splice system if needed."
+            },
+            {
+              "i": "🔌",
+              "c": "Power: either 1500W/12V or 1700W/24V depending on fitted model (wattage not confirmed — confirm with Cruise Abaco)."
+            },
+            {
+              "i": "🏭",
+              "c": "Features: IP67 watertight motor, anodized aluminium gearbox, integrated chain counter sensor, manual free-fall system, emergency manual lift system."
+            }
+          ]
+        },
+        {
+          "t": "Controlled Lowering Rate",
+          "type": "list",
+          "items": [
+            {
+              "i": "✅",
+              "c": "Always lower using the Quick handheld remote DOWN button — smooth, controlled, and stops the instant you release the button."
+            },
+            {
+              "i": "⏱️",
+              "c": "Practical guide: in 15ft of water targeting 5:1 scope (75ft / 23m of chain), expect 45-60 seconds of controlled lowering. Count it out — do not just watch the chain disappear."
+            },
+            {
+              "i": "📏",
+              "c": "The DH4 has an integrated chain counter sensor. If a chain counter display is fitted on Cattitude, use it to track exactly how much chain is out."
+            }
+          ]
+        },
+        {
+          "t": "Manual Free-Fall — Use With Extreme Caution",
+          "type": "list",
+          "items": [
+            {
+              "i": "🚨",
+              "c": "The DH4 has a built-in manual free-fall system: releasing the gypsy clutch (via the pressure lever on the windlass head) disengages the gypsy and the chain falls under gravity."
+            },
+            {
+              "i": "⚠️",
+              "c": "Free-fall rate is very fast — chain will run out in seconds. Only use intentionally in an emergency (e.g. loss of power and you need to drop anchor immediately)."
+            },
+            {
+              "i": "🛑",
+              "c": "NEVER accidentally trigger free-fall. The lever on the windlass gypsy must be released for this to happen — treat it with care."
+            },
+            {
+              "i": "🆘",
+              "c": "Emergency manual lift: if power is completely lost, the windlass can be raised manually using the handle that comes with the unit. This is slow but allows recovery."
+            }
+          ]
+        },
+        {
+          "t": "Scope Guide",
+          "type": "list",
+          "items": [
+            {
+              "i": "📏",
+              "c": "Minimum scope: 5:1 — chain length = 5x water depth. In 10ft water = 50ft (15m) chain minimum."
+            },
+            {
+              "i": "📏",
+              "c": "Overnight or strong winds: 7:1 or more. In 15ft water overnight = 105ft (32m) chain minimum."
+            },
+            {
+              "i": "⚓",
+              "c": "Bridle takes the load when set correctly — chain should hang slack between windlass and bridle snap hook."
+            },
+            {
+              "i": "🌙",
+              "c": "Set anchor alarm on chartplotter for overnight — radius slightly larger than scope length."
+            }
+          ]
+        },
+        {
+          "t": "Raising the Anchor",
+          "type": "steps",
+          "items": [
+            "Start starboard engine (1500 RPM)",
+            "Using Quick remote: press and hold UP to raise chain",
+            "Motor slowly toward the anchor as chain comes in — keep chain vertical, not dragging at an angle",
+            "Guide chain into locker evenly — prevent jamming. Pause if chain is piling up.",
+            "When anchor reaches bow roller: confirm anchor tip enters roller in correct direction",
+            "Stow Quick remote back in anchor well",
+            "Stow Quick remote back in anchor well"
+          ]
+        },
+        {
+          "t": "Quick QNC CHC Chain Counter",
+          "type": "photo",
+          "html": "<div class=\"photo-card\"><img src=\"assets/images/systems/asset-systems-anchoring-sections-8-html-0-76ba5fecb025.jpg\" style=\"width:100%;border-radius:8px;margin:8px 0\"><div class=\"photo-caption\">📍 Quick QNC CHC Chain Counter — three touch buttons on the black bezel below the screen: red ▲ (raise) left, amber ⏻ (power) centre, green ▼ (lower) right. In bright sunlight the amber power button is nearly invisible — feel for the centre button rather than trying to see it.</div></div>"
+        },
+        {
+          "t": "Chain Counter — Powering On",
+          "type": "steps",
+          "items": [
+            "The power button is the centre button on the black bezel below the screen. It is marked with an amber ⏻ symbol — almost invisible in bright Bahamian sunlight. Do not look for it: place your finger exactly halfway between the red ▲ on the left and the green ▼ on the right, then feel for a slight recess.",
+            "POWER ON: Press and hold the centre ⏻ button for 2–3 seconds until the display lights up.",
+            "UNLOCK: The unit powers on in locked mode to prevent accidental operation. Double-tap the centre ⏻ button quickly to unlock. The display confirms the unlocked state.",
+            "Once unlocked, the red ▲ and green ▼ buttons on the counter panel control the windlass directly — as an alternative to the handheld remote.",
+            "POWER OFF: Press and hold the centre ⏻ button for 2–3 seconds."
+          ]
+        },
+        {
+          "t": "Chain Counter vs Handheld Remote — Alternatives",
+          "type": "prose",
+          "c": "The chain counter panel (at the bow) and the Quick handheld wired remote are alternatives that control the same windlass — you do not need both. Use the counter panel when you are working at the bow and want to see the chain depth readout at the same time. Use the handheld remote when you prefer to operate from a distance or when finding the counter buttons in sunlight is frustrating. Both will show the same chain length on the counter display."
+        },
+        {
+          "t": "Reading the Display",
+          "type": "steps",
+          "items": [
+            "Large number (e.g. 270.2 ft): chain deployed — how much chain is currently out.",
+            "SPEED (ft/min): chain movement speed — shows 0 ft/min when stopped.",
+            "Status line top left: STOP, UP, or DOWN — current windlass state.",
+            "REMAINING CHAIN: how much chain is left on the drum. If this reads 0.0 ft, the total chain length has not been programmed — ignore it and rely on the deployed figure only."
+          ]
+        },
+        {
+          "t": "Resetting the Counter to 0.0",
+          "type": "steps",
+          "items": [
+            "The counter should read 0.0 ft when the anchor is fully raised and home on the bow roller.",
+            "If the counter shows a wrong number — for example after a power cycle or if the sensor skipped — you can reset it manually.",
+            "Power on and unlock the unit first (long press, then double-tap).",
+            "With the unit unlocked, press and hold both the red ▲ and green ▼ buttons simultaneously for 3–5 seconds.",
+            "The display resets to 0.0 ft, confirming the counter is zeroed from the current chain position.",
+            "Only reset to zero when the anchor is genuinely fully home. Zeroing with chain out will make all subsequent readings wrong."
+          ]
+        },
+        {
+          "t": "Warnings",
+          "type": "warnings",
+          "items": [
+            "NEVER anchor on coral — always choose white sand. Coral damage is your liability and very expensive.",
+            "Keep the windlass remote cable clear of the anchor chain at all times — the cable can be caught and pulled in as chain runs out or is raised, damaging the cable or remote.",
+            "Keep hands and feet completely clear of windlass, chain, and stopper while operating — serious crush injury risk",
+            "Do not run windlass continuously for more than 60 seconds — allow cooling between runs",
+            "If windlass stops: check circuit breaker in starboard engine compartment — reset if tripped. Allow motor to cool before retrying.",
+            "NEVER free-drop chain — always use remote DOWN button for controlled lowering"
+          ]
+        },
+        {
+          "t": "Notes",
+          "type": "notes",
+          "items": [
+            "Best anchorages in Abacos: Hope Town, Man-O-War Cay, Lynyard Cay, Little Harbour, Guana Cay, Green Turtle Cay.",
+            "Most of the Abacos is sand bottom — excellent holding. Always visually confirm sand before dropping.",
+            "If windlass remote is unresponsive: check circuit breaker in starboard engine compartment — it may have tripped under heavy load."
+          ]
+        },
+        {
+          "t": "Quick QNC CHC Chain Counter",
+          "type": "prose",
+          "c": "A Quick QNC CHC chain counter is mounted at the bow and shows exactly how much chain is out — essential for calculating scope. The windlass handheld remote and the chain counter panel are alternatives: use whichever is more convenient. Both control the same windlass."
+        },
+        {
+          "t": "Chain Counter Photo",
+          "type": "photo",
+          "html": "<div class=\"photo-card\"><img src=\"assets/images/systems/asset-systems-anchoring-sections-16-html-0-fc0bd5031ead.jpg\" style=\"width:100%;border-radius:8px;margin:8px 0\"><div class=\"photo-caption\">📍 Quick QNC CHC Chain Counter — red ▲ (up), amber ⏻ (power, centre), green ▼ (down). Display shows chain deployed and speed.</div></div>"
+        },
+        {
+          "t": "Finding the Buttons in Bright Sunlight",
+          "type": "warnings",
+          "items": [
+            "The three touch buttons are on the black bezel below the screen and are nearly invisible in bright sunlight. Feel for them by position: left third = red ▲ UP, centre = amber ⏻ POWER, right third = green ▼ DOWN. Run your finger along the lower bezel until you feel the slight raised dot or recess on each button."
+          ]
+        },
+        {
+          "t": "Turning On",
+          "type": "steps",
+          "items": [
+            "Press and HOLD the centre amber ⏻ button for 2–3 seconds until the screen lights up. A brief tap will not turn it on — it must be a long press.",
+            "Once on, the display shows chain deployed (large number in ft), speed (ft/min), and remaining chain."
+          ]
+        },
+        {
+          "t": "Unlocking the Controls",
+          "type": "steps",
+          "items": [
+            "After power-on the windlass buttons are locked to prevent accidental operation.",
+            "Double-tap the centre amber ⏻ button to unlock. The display will confirm unlocked state.",
+            "The red ▲ and green ▼ buttons are now live — red raises the anchor, green lowers."
+          ]
+        },
+        {
+          "t": "Operating the Windlass from the Counter",
+          "type": "steps",
+          "items": [
+            "Press and hold red ▲ to raise chain — release to stop.",
+            "Press and hold green ▼ to lower chain — release to stop.",
+            "The large number updates in real time showing feet of chain deployed.",
+            "Speed in ft/min is shown at the top of the display while moving.",
+            "The remote handset works identically — use whichever is more practical. There is no need to use both."
+          ]
+        },
+        {
+          "t": "Resetting to 0.0 ft",
+          "type": "steps",
+          "items": [
+            "If the counter shows an incorrect value (e.g. 270.2 ft when the anchor is fully up), reset it through the settings menu — not via any button combination.",
+            "With the unit on and unlocked, tap the centre amber ⏻ button briefly to open the icon menu.",
+            "Navigate to RESET and select it. Confirm YES when prompted.",
+            "The display will return to 0.0 ft — this is now your zero reference for the next deployment.",
+            "Always reset after fully raising the anchor so the counter is accurate for the next anchorage."
+          ]
+        }
+      ]
+    },
+    "dinghy": {
+      "id": "dinghy",
+      "icon": "🚤",
+      "title": "Dinghy & Outboard",
+      "subtitle": "Hydraulic lifting platform — your tender to shore",
+      "locs": [
+        "swim"
+      ],
+      "summary": "Inflatable RIB on a hydraulic submersible lifting platform at the stern. Operated by handheld remote or buttons under the stern bench seat.",
+      "learnChecks": [
+        "Hydraulic platform operation understood — handheld remote located",
+        "Backup platform controls found under stern bench seat",
+        "Dinghy painter line confirmed secured to Cattitude when platform is raised",
+        "Outboard fuel level checked",
+        "Kill switch lanyard found and functional",
+        "Running light on dinghy checked (for night trips)",
+        "Life jackets accessible for dinghy trips"
+      ],
+      "sections": [
+        {
+          "t": "Hydraulic Lifting Platform",
+          "type": "prose",
+          "c": "The dinghy sits on a hydraulic submersible platform at the stern of Cattitude. The platform lowers to float the dinghy off and raises to secure it for passage. The dinghy remains on the platform when Cattitude is underway. Primary control is a handheld wired remote stored in the anchor well. Backup controls are buttons located under the bench seat at the stern. There is also a master power switch on the base of the bench seat that must be turned ON before operating the platform or starting the outboard, and turned OFF whenever leaving Cattitude."
+        },
+        {
+          "t": "Master Switch — Important",
+          "type": "list",
+          "items": [
+            {
+              "i": "🔴",
+              "c": "The master switch is on the BASE of the stern bench seat."
+            },
+            {
+              "i": "✅",
+              "c": "Turn ON before: lowering or raising the platform, or starting the outboard engine."
+            },
+            {
+              "i": "⛔",
+              "c": "Turn OFF: whenever leaving Cattitude — every single time, without exception."
+            }
+          ]
+        },
+        {
+          "t": "Dinghy Securing Straps",
+          "type": "list",
+          "items": [
+            {
+              "i": "🪢",
+              "c": "The dinghy is secured on the platform by two straps with buckles — one port, one starboard."
+            },
+            {
+              "i": "🔓",
+              "c": "REMOVE both straps before lowering the platform to launch the dinghy."
+            },
+            {
+              "i": "🔒",
+              "c": "RE-SECURE both straps after recovering the dinghy onto the platform before raising."
+            },
+            {
+              "i": "⚠️",
+              "c": "Never lower the platform with the straps still attached — they will be damaged or jam the mechanism."
+            }
+          ]
+        },
+        {
+          "t": "Launching the Dinghy",
+          "type": "steps",
+          "items": [
+            "Turn ON the master switch on the stern bench seat base",
+            "Remove both securing straps from the dinghy",
+            "Check the painter line — leave it attached to Cattitude but ensure there is enough slack to run freely as the platform lowers. Make sure it cannot foul or catch in the platform mechanism.",
+            "Using the handheld remote or stern bench buttons, press DOWN to lower the platform",
+            "Lower only until the dinghy just floats free — do not lower all the way. Stopping at the float point makes recovery easier.",
+            "You may stand on the platform to assist launching but NEVER while it is moving",
+            "Drive or pull the dinghy clear of the platform",
+            "The platform does not need to be raised after launching — leave it at the float position"
+          ]
+        },
+        {
+          "t": "Recovering the Dinghy",
+          "type": "steps",
+          "items": [
+            "If platform has been raised, lower it to the float position — just below water surface",
+            "Lower the outboard engine before approaching — engine must be down before starting",
+            "Raise the outboard engine fully before positioning dinghy onto the platform — prevents damage to engine and platform",
+            "Drive or guide dinghy onto the platform carefully, centring it",
+            "You may stand on the platform to assist positioning but NEVER while it is moving",
+            "Re-attach both securing straps and buckle firmly",
+            "Press UP on remote or stern bench buttons to raise platform",
+            "Raise until dinghy is clear of the water and platform is fully up"
+          ]
+        },
+        {
+          "t": "Platform Controls",
+          "type": "list",
+          "items": [
+            {
+              "i": "🎮",
+              "c": "Primary: handheld wired remote in anchor well — UP to raise, DOWN to lower. Hold to run, release to stop."
+            },
+            {
+              "i": "🔘",
+              "c": "Backup: buttons under the stern bench seat — same UP/DOWN operation."
+            },
+            {
+              "i": "🔊",
+              "c": "Listen to the motor while operating — stop immediately if the sound changes or the motor labours. This indicates an obstruction or mechanical issue."
+            },
+            {
+              "i": "⚠️",
+              "c": "If remote is not working: confirm master switch is ON, then use stern bench buttons."
+            },
+            {
+              "i": "🔋",
+              "c": "Platform runs on boat DC power — if batteries are very low, platform may be sluggish or unresponsive."
+            }
+          ]
+        },
+        {
+          "t": "Starting the Outboard",
+          "type": "steps",
+          "items": [
+            "Confirm master switch on stern bench base is ON",
+            "Lower the outboard engine to its running position before attempting to start",
+            "Attach kill switch lanyard to your wrist",
+            "Press electric start button — warm up at idle for 1-2 minutes before heading out"
+          ]
+        },
+        {
+          "t": "Rules and Safety",
+          "type": "list",
+          "items": [
+            {
+              "i": "🛟",
+              "c": "Always carry life jackets in dinghy — one per person. Wear them at night or in chop."
+            },
+            {
+              "i": "🔦",
+              "c": "At night: dinghy must have a white 360-degree light visible. Check before night trips."
+            },
+            {
+              "i": "🔑",
+              "c": "Kill switch lanyard: always attached to skipper wrist while underway."
+            },
+            {
+              "i": "⚓",
+              "c": "When leaving dinghy at a dock: secure with a bow line. Allow enough line to account for tidal rise and fall — the Abacos has a modest tide but it adds up."
+            },
+            {
+              "i": "🌊",
+              "c": "Do not overload — max 3-4 adults depending on sea conditions."
+            },
+            {
+              "i": "📻",
+              "c": "If you have a personal handheld VHF, bring it on dinghy trips away from Cattitude — there is no spare on board."
+            }
+          ]
+        },
+        {
+          "t": "Warnings",
+          "type": "warnings",
+          "items": [
+            "Always raise the platform and secure the dinghy before Cattitude gets underway — the dinghy travels on the platform",
+            "NEVER stand on the platform while it is being raised or lowered — wait until movement stops",
+            "Turn OFF the master switch on the stern bench base whenever leaving Cattitude",
+            "Remove securing straps before lowering the platform — straps left on will be damaged",
+            "Stop platform operation immediately if the motor sound changes — do not force it",
+            "Always lower the outboard to running position BEFORE starting it",
+            "Raise the outboard fully BEFORE driving onto the platform — prevents damage",
+            "Ensure the painter line has enough slack to run freely during platform lowering and cannot foul in the mechanism"
+          ]
+        },
+        {
+          "t": "Notes",
+          "type": "notes",
+          "items": [
+            "Marsh Harbour dinghy docks: Mermaid Marina and Harbour View Marina are most central.",
+            "Check weather before long dinghy runs — conditions can change quickly in the Abacos."
+          ]
+        }
+      ]
+    },
+    "ac": {
+      "id": "ac",
+      "icon": "❄️",
+      "title": "Air Conditioning",
+      "subtitle": "Dometic climate control — one panel per cabin and saloon",
+      "locs": [
+        "port-hull",
+        "stbd-hull",
+        "saloon"
+      ],
+      "summary": "Each cabin and the saloon has a Dometic touch panel. Requires shore power OR generator running. Cannot run on batteries alone.",
+      "learnChecks": [
+        "Dometic panel found in each cabin and saloon — confirmed locations",
+        "Understood: AC requires shore power or generator — cannot run on battery",
+        "Shore power or generator confirmed active before attempting to use AC",
+        "Mode buttons identified: cool, dry, heat, AUX",
+        "Fan speed button identified (top left)",
+        "Temperature +/- buttons identified (right side)"
+      ],
+      "sections": [
+        {
+          "t": "Dometic Panel Photo",
+          "type": "photo",
+          "html": "<div class=\"photo-card\"><img src=\"assets/images/systems/asset-systems-ac-sections-0-html-0-0c040a29812c.jpg\" alt=\"Dometic Climate Control Panel\" onclick=\"openPhoto(this.src,'Dometic Climate Control Panel — One panel per cabin and saloon — touch to operate')\"><div class=\"photo-caption\"><span class=\"photo-caption-icon\">❄️</span><div><div class=\"photo-caption-text\">Dometic Climate Control Panel</div><div class=\"photo-caption-sub\">One panel per cabin and saloon — touch to operate</div></div></div></div>"
+        },
+        {
+          "t": "Panel Layout",
+          "type": "list",
+          "items": [
+            {
+              "i": "🌀",
+              "c": "Fan icon (top left): tap to cycle through fan speeds — Low, Medium, High, Auto"
+            },
+            {
+              "i": "📋",
+              "c": "MODE button (bottom left): tap to cycle through operating modes"
+            },
+            {
+              "i": "❄️",
+              "c": "Snowflake: COOL mode — air conditioning, cools the cabin. Most used in the Abacos."
+            },
+            {
+              "i": "💧",
+              "c": "Droplet: DRY mode — dehumidify without significant cooling. Good for humid nights."
+            },
+            {
+              "i": "🌡️",
+              "c": "Heat icon: HEAT mode — heating (rarely needed in the Abacos)"
+            },
+            {
+              "i": "☀️",
+              "c": "AUX: fan-only mode — circulates air without heating or cooling"
+            },
+            {
+              "i": "➕",
+              "c": "+ button (top right): increase target temperature"
+            },
+            {
+              "i": "➖",
+              "c": "- button (bottom right): decrease target temperature"
+            }
+          ]
+        },
+        {
+          "t": "Starting the AC",
+          "type": "steps",
+          "items": [
+            "Confirm shore power OR generator is running — Victron HUB-1 AC Input should show watts",
+            "If using generator: start generator, wait 30 seconds, flip Victron Multi Control toggle to ON",
+            "Confirm sea water valves for AC units are open",
+            "At the Dometic panel: tap any button to wake the display",
+            "Press MODE to select COOL (snowflake icon)",
+            "Press + or - to set target temperature — 22-24 degrees C is comfortable overnight",
+            "Press fan icon to set speed — Auto is recommended for quiet overnight operation"
+          ]
+        },
+        {
+          "t": "Turning Off",
+          "type": "steps",
+          "items": [
+            "Hold MODE button or tap off on panel to power down the unit",
+            "If shutting down the generator: turn OFF all Dometic units at their panels first",
+            "Then switch Multi Control toggle to OFF, then stop the generator",
+            "Never cut generator power while AC units are running — can damage the compressor"
+          ]
+        },
+        {
+          "t": "Tips for the Abacos",
+          "type": "list",
+          "items": [
+            {
+              "i": "🌙",
+              "c": "Overnight: COOL mode, 23-24 degrees, fan on Auto — comfortable and not too cold"
+            },
+            {
+              "i": "💧",
+              "c": "Humid evenings: try DRY mode first — removes humidity without over-cooling the cabin"
+            },
+            {
+              "i": "🔇",
+              "c": "For quieter nights: Low fan speed uses less power and is significantly quieter"
+            },
+            {
+              "i": "🪟",
+              "c": "Close ALL hatches and portlights before running AC — open hatches defeat the cooling entirely"
+            },
+            {
+              "i": "⚡",
+              "c": "Each unit draws 50-80A — avoid running all cabins simultaneously unless on strong shore power"
+            }
+          ]
+        },
+        {
+          "t": "Warnings",
+          "type": "warnings",
+          "items": [
+            "AC CANNOT run on batteries or solar — shore power or generator must be active first",
+            "Always turn off Dometic panels before shutting down the generator — never cut power to a running unit",
+            "Sea water valves must be open before starting AC — dry-running destroys the seawater pumps",
+            "If a unit makes unusual noise, does not cool, or trips its breaker: switch off and call Cruise Abaco"
+          ]
+        }
+      ]
+    }
+  },
+  "checklists": {
+    "safety-brief": {
+      "groups": [
+        {
+          "t": "Life Jackets",
+          "items": [
+            {
+              "c": "Show guests where life jackets are stored",
+              "s": "Cockpit lazarette — port side locker. One per person plus spares."
+            },
+            {
+              "c": "Demonstrate how to put on a life jacket",
+              "s": ""
+            },
+            {
+              "c": "Confirm one life jacket per person on board",
+              "s": ""
+            }
+          ]
+        },
+        {
+          "t": "Emergency Equipment Locations",
+          "items": [
+            {
+              "c": "Show flare kit location",
+              "s": "Orange waterproof case in coffee table in saloon. Red parachute = night. Orange smoke = day."
+            },
+            {
+              "c": "Show fire extinguisher locations",
+              "s": "Galley: near stove. Cockpit: in locker. Engine rooms: outlets behind aft cabin mattresses — move mattress, punch hose through, trigger."
+            },
+            {
+              "c": "Show life raft location",
+              "s": "Stored under the stairs that lead up to the helm station.  Lift the stairs to access the life raft."
+            },
+            {
+              "c": "Show EPIRB location",
+              "s": "Helm or nav station — bright orange/yellow unit. Only activate in genuine life-threatening emergency."
+            },
+            {
+              "c": "Show first aid kit location",
+              "s": "Coffee table in saloon."
+            }
+          ]
+        },
+        {
+          "t": "Emergency Hatches & Escape",
+          "items": [
+            {
+              "c": "Warn guests: do not walk on deck hatches or solar panels",
+              "s": "Hatches can crack or open unexpectedly under weight. Solar panels on the bimini are not designed to be walked on and will be damaged."
+            },
+            {
+              "c": "Point out all companionway and deck hatch exits",
+              "s": "Each cabin has a hatch. In a capsize or flooding situation these are your exit routes."
+            },
+            {
+              "c": "Show guests how to open hatches from inside",
+              "s": "Twist/push mechanism — confirm each guest can operate independently."
+            },
+            {
+              "c": "Confirm guests know not to open safety hatches underway",
+              "s": "Marked NEVER OPEN WHEN SAILING — only emergency egress."
+            },
+            {
+              "c": "\"One hand for you, one for the boat\" — always",
+              "s": "When moving around the boat, especially on deck or in a seaway, always keep one hand holding on to a fixed part of the boat. Falls overboard most often happen when someone lets go to do something. Move deliberately, never rush."
+            }
+          ]
+        },
+        {
+          "t": "Man Overboard (MOB)",
+          "items": [
+            {
+              "c": "Explain MOB call — shout \"MAN OVERBOARD\" immediately",
+              "s": ""
+            },
+            {
+              "c": "Assign one person to keep eyes on the person in water at all times — point continuously, never look away",
+              "s": "This is the most important job. Do not stop pointing."
+            },
+            {
+              "c": "Show SOS button on chartplotter — press immediately to mark position",
+              "s": "At helm — large button or dedicated function key."
+            },
+            {
+              "c": "Explain recovery manoeuvre: slow down, circle back, approach from downwind",
+              "s": "Engine on immediately. Approach slowly from downwind side."
+            },
+            {
+              "c": "Show stern ladder location — how to deploy for re-boarding",
+              "s": "Transom steps on port hull."
+            },
+            {
+              "c": "Show throwable buoy / horseshoe buoy location",
+              "s": "Mounted on starboard side rail. Throw immediately on MOB."
+            }
+          ]
+        },
+        {
+          "t": "Fire",
+          "items": [
+            {
+              "c": "Explain fire drill: shout \"FIRE\", locate source, grab extinguisher",
+              "s": ""
+            },
+            {
+              "c": "For engine compartment fire: do NOT open hatch — use extinguisher outlet behind cabin mattress",
+              "s": "Opening the hatch feeds oxygen to the fire."
+            },
+            {
+              "c": "If fire cannot be controlled: MAYDAY, prepare to abandon ship",
+              "s": "Life raft, EPIRB, flares, water, VHF."
+            }
+          ]
+        },
+        {
+          "t": "VHF & Communications",
+          "items": [
+            {
+              "c": "Show guests where VHF radio is located",
+              "s": "Fixed VHF at helm and at nav station in the saloon. There is no handheld VHF on board — if you have a personal one, keep it accessible."
+            },
+            {
+              "c": "Explain Channel 16: primary distress channel — always monitored internationally. Say MAYDAY here first.",
+              "s": ""
+            },
+            {
+              "c": "Explain Channel 09: Cruise Abaco working channel during office hours approx 9am–5pm",
+              "s": "Outside hours: text or call Jesse directly. Not monitored overnight."
+            },
+            {
+              "c": "Run through MAYDAY procedure verbally",
+              "s": "MAYDAY x3 · This is Cattitude x3 · MAYDAY Cattitude · Position · Nature of distress · Assistance required · Persons on board · Vessel description · Over"
+            }
+          ]
+        }
+      ]
+    },
+    "pd": {
+      "groups": [
+        {
+          "t": "Below Deck",
+          "items": [
+            {
+              "c": "Close all hull portholes and safety hatches",
+              "s": "Safety hatches marked NEVER OPEN WHEN SAILING"
+            },
+            {
+              "c": "Check bilges empty — port and starboard engine compartments",
+              "s": "Small water is normal; oil sheen or rising water is not"
+            },
+            {
+              "c": "Life raft confirmed accessible and secured",
+              "s": "Must be able to deploy freely from its mount"
+            },
+            {
+              "c": "Unlock all doors and lockers",
+              "s": "Nothing should jam shut once underway"
+            }
+          ]
+        },
+        {
+          "t": "Engine Compartments — Both",
+          "items": [
+            {
+              "c": "Engine circuit breakers connected in both engine compartments",
+              "s": "Red button circuit breakers in each engine compartment"
+            },
+            {
+              "c": "Windlass circuit breaker confirmed ON — located in starboard engine compartment",
+              "s": "Check when doing engine compartment checks before departure"
+            },
+            {
+              "c": "Raw water seacocks OPEN on both engines",
+              "s": "Handle parallel to pipe = open"
+            },
+            {
+              "c": "Oil levels checked — both engines",
+              "s": "Dipstick between MIN and MAX"
+            },
+            {
+              "c": "No fuel smell or gas vapour in engine compartments",
+              "s": "Sniff-test before closing hatches"
+            }
+          ]
+        },
+        {
+          "t": "Electrical Panel",
+          "items": [
+            {
+              "c": "Navigation electronics switched on",
+              "s": "Chartplotter, VHF, AIS, instruments"
+            },
+            {
+              "c": "Bilge pumps switch in AUTO position",
+              "s": "Must always be on AUTO — never manual or off"
+            },
+            {
+              "c": "Water and fuel levels checked on panel gauges",
+              "s": "Check fuel both tanks, fresh water tanks"
+            }
+          ]
+        },
+        {
+          "t": "Fuel & Gas",
+          "items": [
+            {
+              "c": "Diesel levels checked — port and starboard tanks",
+              "s": "Never depart below 1/4 tank"
+            },
+            {
+              "c": "Fresh water level checked",
+              "s": "Fill if below 1/2 tank for longer passages"
+            }
+          ]
+        },
+        {
+          "t": "Helm & Cast Off",
+          "items": [
+            {
+              "c": "Navigation lights tested",
+              "s": "Required before any night departure"
+            },
+            {
+              "c": "Mobile items secured — cockpit cushions, loose gear",
+              "s": "Strong wind launches items overboard easily"
+            },
+            {
+              "c": "Fenders retrieved and stowed below",
+              "s": "Do not motor with fenders hanging"
+            },
+            {
+              "c": "All dock lines aboard and stowed",
+              "s": "Confirm all lines aboard before leaving slip"
+            },
+            {
+              "c": "Brief ALL guests on toilet rule: NOTHING goes in the head except human waste — paper in the bin",
+              "s": "This is the most common and most expensive charter problem"
+            },
+            {
+              "c": "Safety Briefing completed with all guests",
+              "s": "Use the Safety Briefing checklist in the Do tab — cover life jackets, MOB, fire, and emergency exits"
+            },
+            {
+              "c": "Both engines started — raw water confirmed from exhaust",
+              "s": "Confirm within 30 seconds of starting each engine"
+            }
+          ]
+        }
+      ]
+    },
+    "anch": {
+      "groups": [
+        {
+          "t": "Choosing a Spot",
+          "items": [
+            {
+              "c": "Sand bottom confirmed on chartplotter and visually",
+              "s": "White sand = safe. Avoid coral (dark patches) and seagrass."
+            },
+            {
+              "c": "Sufficient swinging room assessed",
+              "s": "Account for wind shifts and scope. Check other boats' swing radius."
+            },
+            {
+              "c": "Depth noted — scope required calculated",
+              "s": "5:1 minimum. Depth x 5 = minimum chain length."
+            }
+          ]
+        },
+        {
+          "t": "Setting the Anchor",
+          "items": [
+            {
+              "c": "Windlass DC breaker ON at saloon panel",
+              "s": ""
+            },
+            {
+              "c": "Anchor lowered under control to seabed",
+              "s": "Lower slowly as boat moves upwind over spot — do not drop"
+            },
+            {
+              "c": "Chain paid out to near final scope length",
+              "s": ""
+            },
+            {
+              "c": "Chain hooked to bridle snap hook in anchor well",
+              "s": "The bridle takes the load, not the windlass"
+            },
+            {
+              "c": "Remaining chain dropped until bridle takes load",
+              "s": "Chain goes slack at windlass when correctly set"
+            },
+            {
+              "c": "Backed down at 1500 RPM for 30 seconds",
+              "s": "This sets the anchor. Watch position — no dragging."
+            }
+          ]
+        },
+        {
+          "t": "Confirmed at Anchor",
+          "items": [
+            {
+              "c": "Position checked against 2+ fixed references on shore",
+              "s": ""
+            },
+            {
+              "c": "Anchor alarm set on chartplotter",
+              "s": "Radius = scope length + boat length"
+            },
+            {
+              "c": "Engines off",
+              "s": ""
+            },
+            {
+              "c": "Anchor light on if staying after sunset",
+              "s": "All-round white light — required by law"
+            }
+          ]
+        }
+      ]
+    },
+    "lu": {
+      "groups": [
+        {
+          "t": "Power & Systems",
+          "items": [
+            {
+              "c": "Non-essential DC breakers off",
+              "s": "Leave: fridge ON, bilge pump AUTO, anchor light if night"
+            },
+            {
+              "c": "Generator off and inverter off",
+              "s": "No cooking underway — shut both down"
+            },
+            {
+              "c": "Watermaker off",
+              "s": ""
+            },
+            {
+              "c": "Inverter off",
+              "s": "No need to run inverter with no one aboard"
+            }
+          ]
+        },
+        {
+          "t": "Water & Systems",
+          "items": [
+            {
+              "c": "Fresh water pressure pump off",
+              "s": "Prevents running pump dry if a hose fails while you're ashore"
+            }
+          ]
+        },
+        {
+          "t": "Security",
+          "items": [
+            {
+              "c": "All hatches closed and secured",
+              "s": "Sudden squalls are common in the Abacos — can arrive fast"
+            },
+            {
+              "c": "Dinghy recovered onto platform, securing straps buckled, platform raised fully",
+              "s": "Turn off master switch on stern bench base before leaving"
+            },
+            {
+              "c": "Loose items stowed below or in lockers",
+              "s": "Cushions, fishing rods, gear — all away"
+            },
+            {
+              "c": "VHF off",
+              "s": "No point monitoring Ch 16 with no one aboard to hear it"
+            },
+            {
+              "c": "Chartplotter off",
+              "s": "Anchor alarm serves no purpose with no one aboard"
+            }
+          ]
+        }
+      ]
+    },
+    "ec": {
+      "groups": [
+        {
+          "t": "Final Day at Sea",
+          "items": [
+            {
+              "c": "Pump out holding tanks before returning — empty all heads",
+              "s": "Do not return to marina with full or partially full holding tanks"
+            },
+            {
+              "c": "OPEN all holding tank evacuation valves before entering marina",
+              "s": "Cruise Abaco need to see the valves are open — confirms you discharged properly offshore"
+            }
+          ]
+        },
+        {
+          "t": "Returning to Slip",
+          "items": [
+            {
+              "c": "Confirm holding tank evacuation valves are OPEN on arrival",
+              "s": "Cruise Abaco will check — this confirms tanks were properly discharged offshore"
+            },
+            {
+              "c": "Fenders deployed before entering marina",
+              "s": "One per side minimum, height adjusted for dock"
+            },
+            {
+              "c": "Dock lines prepared — bow, stern, and springs",
+              "s": "Crew ready with lines before final approach"
+            },
+            {
+              "c": "Shore power connected",
+              "s": "Roll cable out fully before plugging in"
+            },
+            {
+              "c": "Engines shut down — EVC deactivated",
+              "s": "Idle 3-5 mins, then STOP, then ON/OFF to deactivate"
+            }
+          ]
+        },
+        {
+          "t": "Shut Down & Hand Back",
+          "items": [
+            {
+              "c": "All DC breakers off except bilge pumps (AUTO)",
+              "s": ""
+            },
+            {
+              "c": "Generator off — inverter off",
+              "s": "Confirm both shut down"
+            },
+            {
+              "c": "Fresh water pump off",
+              "s": ""
+            },
+            {
+              "c": "All hatches secured",
+              "s": ""
+            },
+            {
+              "c": "Inventory checked — all gear accounted for",
+              "s": "Life jackets, flare kit, snorkel gear, fishing rods, charts"
+            },
+            {
+              "c": "Boat cleaned — interior and cockpit",
+              "s": "Leave Cattitude as you found her"
+            },
+            {
+              "c": "Any damage noted and reported to Cruise Abaco",
+              "s": "Contact Jesse before departure — do not wait until the handover"
+            },
+            {
+              "c": "Complete and sign all charter sign-off documents with Cruise Abaco",
+              "s": "Do not leave the marina until sign-off paperwork is complete"
+            },
+            {
+              "c": "Confirm sign-off complete with Cruise Abaco representative",
+              "s": "Walk through the boat with Jesse or crew if required"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "fixes": [
+    {
+      "icon": "🔴",
+      "cat": "engine",
+      "catL": "Engine",
+      "title": "Engine won't start",
+      "steps": [
+        "Confirm raw water seacock OPEN (handle parallel to pipe) in engine compartment",
+        "Check engine circuit breaker ON in engine compartment (red button)",
+        "At helm: press ON/OFF to activate EVC, wait for glow plug cycle",
+        "Check battery voltage — must be above 12.0V",
+        "Never crank more than 10 seconds — risk of water in exhaust",
+        "Contact Cruise Abaco — Ch 09 during office hours (approx 9am–5pm), or text/call Jesse directly outside hours"
+      ]
+    },
+    {
+      "icon": "🌡️",
+      "cat": "engine",
+      "catL": "Engine",
+      "title": "Engine overheating alarm",
+      "steps": [
+        "IMMEDIATELY reduce RPM — switch to other engine if possible",
+        "Check raw water flow from exhaust — must be continuous stream",
+        "Go to engine compartment: check raw water strainer for blockage — clear if needed",
+        "Confirm raw water seacock is fully open",
+        "No water from exhaust = impeller failed — do not run engine",
+        "Do not restart until water flow confirmed",
+        "Contact Cruise Abaco — Ch 09 during office hours, or text/call Jesse directly outside hours. They carry spare impellers."
+      ]
+    },
+    {
+      "icon": "🚽",
+      "cat": "plumbing",
+      "catL": "Plumbing",
+      "title": "Toilet won't flush",
+      "steps": [
+        "Check 25A circuit breaker for that head at main panel — reset if tripped",
+        "Confirm fresh water pump is on",
+        "Hold flush switch for full 10+ second cycle",
+        "Check for blockage — almost always caused by paper products or foreign objects",
+        "Do NOT try to disassemble — call Cruise Abaco",
+        "REMINDER: Nothing goes in the head except human waste — no TP, no wipes, ever"
+      ]
+    },
+    {
+      "icon": "💧",
+      "cat": "plumbing",
+      "catL": "Plumbing",
+      "title": "No fresh water at taps",
+      "steps": [
+        "Check fresh water pump DC breaker at main panel",
+        "Check fresh water tank level — tanks may be empty",
+        "Turn pressure pump switch off and back on to reset",
+        "Check hot water tank supply valve is open — hot water tank is in the port engine compartment next to the transom",
+        "Call Cruise Abaco if still no flow"
+      ]
+    },
+    {
+      "icon": "⚡",
+      "cat": "electrical",
+      "catL": "Electrical",
+      "title": "Something stopped working",
+      "steps": [
+        "Find the breaker for that circuit at main DC panel in saloon",
+        "Switch fully OFF then back ON to reset",
+        "If breaker trips again immediately: fault — leave off, call Cruise Abaco",
+        "Check battery voltage — below 11.8V and some systems auto-shut off",
+        "Check fuse boxes if breaker appears fine — ask Cruise Abaco for location if unsure",
+        "Call Cruise Abaco if breaker keeps tripping"
+      ]
+    },
+    {
+      "icon": "🔋",
+      "cat": "electrical",
+      "catL": "Electrical",
+      "title": "Batteries below 80% / low battery",
+      "steps": [
+        "This boat requires the house bank above 80% — below this is a prompt to charge, not a normal state",
+        "Turn off all high-draw loads: AC units, induction stove, watermaker, microwave",
+        "Start both engines — run at 1200-1500 RPM until Victron display shows 80%+ and charging phase reaches Absorption",
+        "Alternatively: start the generator and switch the Victron Multi Control toggle to CHARGER ONLY — this charges the batteries without enabling AC loads",
+        "Check solar charge controller on Victron display — PV Charger watts should be contributing in daylight",
+        "Do not run AC, stove, or watermaker again until back above 80%",
+        "If unable to get above 80% despite charging: possible battery fault — call Cruise Abaco"
+      ]
+    },
+    {
+      "icon": "⛵",
+      "cat": "sails",
+      "catL": "Sails",
+      "title": "Jib won't furl",
+      "steps": [
+        "Check furling line not fouled on cleat, winch, or jammer",
+        "Reduce jib sheet tension — but keep some pressure on the sail for a clean furl. Do not release completely or the sail will flog.",
+        "Do NOT force — a heavily loaded sail cannot furl against full wind pressure",
+        "Head slightly into wind to reduce but not fully spill pressure, then pull furling line steadily",
+        "Check furling drum at bow for line tangles",
+        "If stuck open in strong wind: call Cruise Abaco"
+      ]
+    },
+    {
+      "icon": "🧭",
+      "cat": "nav",
+      "catL": "Navigation",
+      "title": "Autopilot not holding course",
+      "steps": [
+        "Confirm autopilot properly engaged — display should show Heading Hold, Wind Hold, or Apparent Wind Hold",
+        "Check no large metal objects near compass sensor",
+        "Disengage and re-engage — sometimes resets drift",
+        "Recalibrate compass if option available in settings",
+        "Call Cruise Abaco if completely non-functional"
+      ]
+    },
+    {
+      "icon": "🌊",
+      "cat": "plumbing",
+      "catL": "Plumbing",
+      "title": "Bilge alarm going off",
+      "steps": [
+        "Identify which bilge: port engine compartment, starboard engine compartment, or hull bilge",
+        "Confirm bilge pump switch is in AUTO — alarm triggers when water rises",
+        "Look for water source: raw water hose, seacock leak, shaft seal",
+        "Small amount of water (few inches) can be normal — confirm pump has activated",
+        "If water rising rapidly: identify source — consider MAYDAY if uncontrolled",
+        "Contact Cruise Abaco immediately — Ch 09 if during office hours, or call/text Jesse directly. If water rising uncontrolled: MAYDAY on Ch 16."
+      ]
+    },
+    {
+      "icon": "🍳",
+      "cat": "electrical",
+      "catL": "Electrical",
+      "title": "Induction stove not working",
+      "steps": [
+        "Confirm generator is running — Mains On LED on Victron Multi Control panel should be lit",
+        "Check Victron Multi Control toggle switch is in ON position (right) — not OFF or CHARGER ONLY",
+        "Inverter On LED on Multi Control should be illuminated — if not, toggle is in wrong position or inverter fault",
+        "Check for Overload LED on Multi Control — too many AC loads running simultaneously. Turn off other AC loads then try again.",
+        "Confirm induction-compatible cookware — magnet must stick firmly to base of pot/pan",
+        "If Mains On LED is not lit: generator is not running or AC input not reaching the unit — check generator",
+        "Call Cruise Abaco if Multi Control shows a red warning LED (Overload, Low Battery, or Temperature)"
+      ]
+    },
+    {
+      "icon": "📻",
+      "cat": "nav",
+      "catL": "Navigation",
+      "title": "VHF not transmitting",
+      "steps": [
+        "Check DC breaker for VHF at main panel",
+        "Confirm volume up and squelch not fully closed",
+        "Try radio check on Ch 72 (Any station, radio check)",
+        "Check antenna connection at back of VHF radio",
+        "There is no spare handheld VHF on board — if you have a personal one, use it as backup",
+        "Report non-functioning fixed VHF to Cruise Abaco immediately"
+      ]
+    },
+    {
+      "icon": "🧊",
+      "cat": "electrical",
+      "catL": "Electrical",
+      "title": "Fridge not cooling",
+      "steps": [
+        "Identify which fridge: Fridge 1, Fridge 2, and Freezer are on the main DC panel. Cockpit fridge has its own thermostat — check it is turned on.",
+        "Check DC breaker for that fridge at main panel (Fridge 1 or Fridge 2 breaker)",
+        "Check battery voltage — fridges auto-shut off below 11.7V",
+        "Confirm thermostat not set to warmest setting",
+        "Check fridge fan running — feel for airflow at vents",
+        "Keep door closed — allow 30 mins to recover after voltage is restored",
+        "Call Cruise Abaco if not cooling after an hour with good battery voltage"
+      ]
+    },
+    {
+      "icon": "⚓",
+      "cat": "general",
+      "catL": "General",
+      "title": "Windlass not working",
+      "steps": [
+        "Check circuit breaker in starboard engine compartment — reset if tripped",
+        "Never run windlass continuously more than 60 seconds — allow motor to cool between runs",
+        "Check handheld remote connection — ensure cable is plugged in and not damaged",
+        "Ensure remote cable has not been caught in or around the anchor chain",
+        "If remote does not respond: try operating from the Quick QNC CHC chain counter at the helm station instead",
+        "Start starboard engine — windlass draws high current, low battery will kill it",
+        "Call Cruise Abaco if unresponsive after all checks"
+      ]
+    },
+    {
+      "icon": "❄️",
+      "cat": "electrical",
+      "catL": "Electrical",
+      "title": "Air conditioning not working",
+      "steps": [
+        "Confirm shore power OR generator running — Victron HUB-1 AC Input must show watts",
+        "Confirm Victron Multi Control toggle is in ON position — Inverter On LED should be lit",
+        "Open sea water valves for AC units — pumps need seawater flow or they are destroyed",
+        "At the Dometic panel in the cabin: tap to wake, press MODE to select COOL",
+        "Check AC circuit breaker on the main electrical panel",
+        "Do not run all cabins simultaneously if on generator — may overload it",
+        "Never cut generator power with AC units running — turn off at Dometic panels first",
+        "Call Cruise Abaco if unit makes unusual noise, trips breaker repeatedly, or does not cool"
+      ]
+    },
+    {
+      "icon": "🪣",
+      "cat": "plumbing",
+      "catL": "Plumbing",
+      "title": "Holding tank full / toilet smell",
+      "steps": [
+        "If at marina: pump out via waste deck filler fitting",
+        "If offshore in deep water: open evacuation valve to discharge, close immediately when done",
+        "Evacuation valve locations: under the sinks in the port hull cabins, and behind the shower panel in the starboard hull",
+        "Do not force manual pump if tank is truly full — call Cruise Abaco",
+        "Flush with several seawater cycles after tank is emptied",
+        "Rinse tank with fresh water periodically to reduce odour buildup"
+      ]
+    },
+    {
+      "icon": "💧",
+      "cat": "plumbing",
+      "catL": "Plumbing",
+      "title": "Watermaker not producing / poor water quality",
+      "steps": [
+        "Check Watermaker breaker at DC panel is ON",
+        "Confirm generator is running — watermaker is AC-powered. Solar alone is not sufficient.",
+        "Press GREEN button on Aqua-Base panel to start — switching to tank is automatic",
+        "Check Salinity indicator — if reading high, water quality is poor. Do not send to tanks.",
+        "Confirm you are in clean, deep, open water — not shallow, sandy, near a marina, or in murky conditions",
+        "If unit runs but salinity stays high: membranes may be contaminated — press RED to stop, call Cruise Abaco",
+        "If not used for 3+ days without flushing: press BLUE button to flush before attempting production"
+      ]
+    },
+    {
+      "icon": "🚿",
+      "cat": "plumbing",
+      "catL": "Plumbing",
+      "title": "Shower sump pump running continuously",
+      "steps": [
+        "The shower sump pump runs automatically when water collects in the sump bowl. If it runs non-stop with no shower in use, the yellow float switch is stuck — usually from salt residue or debris.",
+        "<div class=\"photo-card\"><img src=\"assets/images/systems/asset-fixes-16-steps-1-0-babdc0a751d3.jpg\" style=\"width:100%;border-radius:8px;margin:8px 0\"><div class=\"photo-caption\">📍 Shower sump unit — Whale pump (black, top) and sump bowl with yellow float switch (centre)</div></div>",
+        "Lift the floor hatch to access the sump unit. The grey bowl is the Whale sump; the yellow component in the centre is the float switch.",
+        "<div class=\"photo-card\"><img src=\"assets/images/systems/asset-fixes-16-steps-3-0-6b5510e8e442.jpg\" style=\"width:100%;border-radius:8px;margin:8px 0\"><div class=\"photo-caption\">📍 Float switch close-up — rotate the black rotor counterclockwise to the OPEN position to remove the cover</div></div>",
+        "Rotate the black rotor counterclockwise to the OPEN position (arrow marked on rotor). The circular cover will lift free.",
+        "<div class=\"photo-card\"><img src=\"assets/images/systems/asset-fixes-16-steps-5-0-e1fba3d63007.jpg\" style=\"width:100%;border-radius:8px;margin:8px 0\"><div class=\"photo-caption\">📍 Cover removed — wipe the float, yellow switch body, and inside of the bowl with a dry paper towel</div></div>",
+        "With the cover removed, use a dry paper towel to wipe the yellow float switch, the inside of the black rotor, and the sump bowl. Remove any salt crust, grime, or debris that could be holding the float in the raised position.",
+        "Reinstall the cover by lowering it back into position and rotating the black rotor clockwise until it locks.",
+        "Run a small amount of water into the shower to confirm the pump activates and then stops automatically once the sump drains.",
+        "If the pump continues running after cleaning, call Cruise Abaco — the float switch or pump motor may need replacement."
+      ]
+    }
+  ],
+  "locations": {
+    "bow": {
+      "label": "Bow / Foredeck",
+      "sys": [
+        "anchoring",
+        "sails",
+        "overview"
+      ]
+    },
+    "port-hull": {
+      "label": "Port Hull",
+      "sys": [
+        "engines",
+        "heads",
+        "water",
+        "ac",
+        "overview"
+      ]
+    },
+    "stbd-hull": {
+      "label": "Starboard Hull",
+      "sys": [
+        "engines",
+        "heads",
+        "batteries",
+        "water",
+        "ac",
+        "overview"
+      ]
+    },
+    "saloon": {
+      "label": "Saloon",
+      "sys": [
+        "electrical",
+        "batteries",
+        "ac",
+        "nav",
+        "overview"
+      ]
+    },
+    "galley": {
+      "label": "Galley",
+      "sys": [
+        "galley",
+        "water"
+      ]
+    },
+    "cockpit": {
+      "label": "Cockpit",
+      "sys": [
+        "sails",
+        "safety",
+        "anchoring",
+        "engines",
+        "overview"
+      ]
+    },
+    "helm": {
+      "label": "Helm Station",
+      "sys": [
+        "nav",
+        "engines",
+        "sails"
+      ]
+    },
+    "swim": {
+      "label": "Swim Platform",
+      "sys": [
+        "dinghy",
+        "safety"
+      ]
+    }
+  },
+  "manualTitles": {
+    "yanmar_jh-cr_operator": "Yanmar 4JH45 Operator Manual",
+    "yanmar_jh_cr_operator": "Yanmar 4JH45 Operator Manual",
+    "yanmar_4jh45_operators": "Yanmar 4JH45 Operator Manual",
+    "victron_digital_multi_control": "Victron Multi Control Panel",
+    "victron_multiplus_manual": "Victron MultiPlus",
+    "victron_gx_display_manual": "Victron GX Display",
+    "victron_hub1_system_layout": "Victron HUB-1 Layout",
+    "dometic_captouch_panel": "Dometic CapTouch Panel",
+    "dometic_elite_control": "Dometic Elite AC Control",
+    "garmin_gpsmap_74xx_76xx_owner_manual": "Garmin GPSMAP 74xx/76xx",
+    "tecma_compass_eco_manual": "Tecma Compass Eco",
+    "tecma_macerator_toilets_2g_manual": "Tecma Electric Heads (2G)"
+  },
+  "ui": {
+    "homeRuleSections": [
+      {
+        "title": "⛔ Never Do This",
+        "tone": "danger",
+        "rules": [
+          {
+            "icon": "🚽",
+            "tone": "danger",
+            "text": "Never put ANYTHING in the toilet except human waste — no toilet paper, no wipes, no paper towels. Paper goes in the bin."
+          },
+          {
+            "icon": "⚓",
+            "tone": "danger",
+            "text": "Never anchor on coral — always find sand. Coral damage is your liability"
+          },
+          {
+            "icon": "🛞",
+            "tone": "danger",
+            "text": "Never leave helm unattended with autopilot on in traffic, channels, or near shore"
+          }
+        ]
+      },
+      {
+        "title": "⚠️ Always Do This",
+        "tone": "caution",
+        "rules": [
+          {
+            "icon": "📻",
+            "tone": "caution",
+            "text": "Always monitor VHF Ch 16 underway — call Cruise Abaco on Ch 09 during office hours (approx 9am–5pm)"
+          },
+          {
+            "icon": "🛟",
+            "tone": "caution",
+            "text": "Run the Safety Briefing with all guests before every departure",
+            "link": "/tabs/do/checklist/safety-brief"
+          },
+          {
+            "icon": "🔋",
+            "tone": "caution",
+            "text": "Keep battery state above 80% — run engines or generator if solar isn't keeping up"
+          }
+        ]
+      },
+      {
+        "title": "✅ Good Habits",
+        "tone": "good",
+        "rules": [
+          {
+            "icon": "🧊",
+            "tone": "good",
+            "text": "Minimise fridge/freezer door openings — it's your biggest continuous power draw"
+          }
+        ]
+      }
+    ],
+    "doMenu": [
+      {
+        "label": "Day One",
+        "items": [
+          {
+            "key": "safety-brief",
+            "title": "Safety Briefing",
+            "subtitle": "Run with all guests before every departure",
+            "icon": "🛟",
+            "iconClass": "ic-coral",
+            "route": "/tabs/do/checklist/safety-brief",
+            "progressType": "checklist"
+          },
+          {
+            "key": "learn",
+            "title": "Learn the Boat",
+            "subtitle": "Understand every system on Cattitude",
+            "icon": "🛥️",
+            "iconClass": "ic-blue",
+            "route": "/tabs/do/learn",
+            "progressType": "learn"
+          }
+        ]
+      },
+      {
+        "label": "Every Departure",
+        "items": [
+          {
+            "key": "pd",
+            "title": "Pre-Departure",
+            "subtitle": "Run before every time you leave",
+            "icon": "🚀",
+            "iconClass": "ic-green",
+            "route": "/tabs/do/checklist/pd",
+            "progressType": "checklist"
+          }
+        ]
+      },
+      {
+        "label": "At Anchor",
+        "items": [
+          {
+            "key": "anch",
+            "title": "Anchoring",
+            "subtitle": "Setting the hook safely in the Abacos",
+            "icon": "⚓",
+            "iconClass": "ic-amber",
+            "route": "/tabs/do/checklist/anch",
+            "progressType": "checklist"
+          },
+          {
+            "key": "lu",
+            "title": "Leaving Boat Unattended",
+            "subtitle": "Going ashore — secure Cattitude first",
+            "icon": "🔒",
+            "iconClass": "ic-coral",
+            "route": "/tabs/do/checklist/lu",
+            "progressType": "checklist"
+          }
+        ]
+      },
+      {
+        "label": "End of Week",
+        "items": [
+          {
+            "key": "ec",
+            "title": "End of Charter",
+            "subtitle": "Return to Boat Harbour Marina",
+            "icon": "🏁",
+            "iconClass": "ic-navy",
+            "route": "/tabs/do/checklist/ec",
+            "progressType": "checklist"
+          }
+        ]
+      }
+    ],
+    "checklistMeta": {
+      "safety-brief": {
+        "title": "Safety Briefing",
+        "subtitle": "Run with all guests before every departure",
+        "icon": "🛟"
+      },
+      "pd": {
+        "title": "Pre-Departure",
+        "subtitle": "Complete before every departure",
+        "icon": "🚀"
+      },
+      "anch": {
+        "title": "Anchoring",
+        "subtitle": "Setting the hook safely in the Abacos",
+        "icon": "⚓"
+      },
+      "lu": {
+        "title": "Leaving Boat Unattended",
+        "subtitle": "Going ashore — secure Cattitude first",
+        "icon": "🔒"
+      },
+      "ec": {
+        "title": "End of Charter",
+        "subtitle": "Return to Boat Harbour Marina",
+        "icon": "🏁"
+      }
+    },
+    "systemOrder": [
+      "overview",
+      "safety",
+      "sails",
+      "engines",
+      "electrical",
+      "batteries",
+      "water",
+      "heads",
+      "galley",
+      "ac",
+      "nav",
+      "anchoring",
+      "dinghy"
+    ],
+    "locationLayout": [
+      {
+        "id": "bow",
+        "label": "⬆ Bow / Foredeck",
+        "rowClass": "center"
+      },
+      {
+        "id": "port-hull",
+        "label": "◀ Port Hull"
+      },
+      {
+        "id": "saloon",
+        "label": "🏠 Saloon"
+      },
+      {
+        "id": "stbd-hull",
+        "label": "Stbd Hull ▶"
+      },
+      {
+        "id": "galley",
+        "label": "🍳 Galley"
+      },
+      {
+        "id": "cockpit",
+        "label": "☀️ Cockpit"
+      },
+      {
+        "id": "helm",
+        "label": "🧭 Helm Station"
+      },
+      {
+        "id": "swim",
+        "label": "🏊 Swim Platform"
+      }
+    ]
+  }
+}
