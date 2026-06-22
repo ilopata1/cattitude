@@ -4,14 +4,58 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
 from pathlib import Path
 from typing import Any
 
 ASSET_PATH_RE = re.compile(r"assets/images/[^\s\"'<>]+")
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+BACKEND_DIR = Path(__file__).resolve().parent
+REPO_ROOT = BACKEND_DIR.parent
 MOBILE_SRC = REPO_ROOT / "mobile" / "src"
+
+
+def guide_bundle_dir() -> Path | None:
+    env = os.environ.get("GUIDE_BUNDLE_DIR")
+    if env:
+        return Path(env)
+    bundled = BACKEND_DIR / "guide_bundle"
+    if bundled.is_dir():
+        return bundled
+    return None
+
+
+def resolve_bootstrap_json(slug: str = "cattitude") -> Path:
+    candidates: list[Path] = []
+    if bundle := guide_bundle_dir():
+        candidates.extend(
+            [
+                bundle / "bootstrap" / f"{slug}.json",
+                bundle / "data" / "bootstrap" / f"{slug}.json",
+            ]
+        )
+    candidates.append(MOBILE_SRC / "data" / "bootstrap" / f"{slug}.json")
+    for path in candidates:
+        if path.is_file():
+            return path
+    tried = ", ".join(str(path) for path in candidates)
+    raise FileNotFoundError(
+        f"Bootstrap JSON for '{slug}' not found. Tried: {tried}"
+    )
+
+
+def asset_file_path(logical_path: str) -> Path:
+    rel = logical_path if logical_path.startswith("assets/") else f"assets/{logical_path}"
+    search_roots: list[Path] = []
+    if bundle := guide_bundle_dir():
+        search_roots.append(bundle)
+    search_roots.append(MOBILE_SRC)
+    for root in search_roots:
+        candidate = root / rel
+        if candidate.is_file():
+            return candidate
+    return search_roots[0] / rel
 
 
 def canonical_json_hash(data: Any) -> str:
@@ -35,12 +79,6 @@ def find_asset_paths(data: Any) -> list[str]:
 
     walk(data)
     return sorted(found)
-
-
-def asset_file_path(logical_path: str) -> Path:
-    if logical_path.startswith("assets/"):
-        return MOBILE_SRC / logical_path
-    return MOBILE_SRC / "assets" / logical_path
 
 
 def build_asset_manifest(

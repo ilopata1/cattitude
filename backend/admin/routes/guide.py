@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
+from typing import Any
 
 from fastapi import APIRouter, Depends, Form, Request
 from fastapi.responses import RedirectResponse
@@ -9,12 +9,10 @@ from sqlalchemy import text
 
 from admin.auth import require_admin_user
 from admin.deps import get_engine, templates
-from guide_bootstrap import split_bootstrap
+from guide_bootstrap import split_bootstrap, resolve_bootstrap_json
 from guide_publish import PublishValidationError, assemble_publication, publish_vessel_guide
 
 router = APIRouter(prefix="/vessels/{vessel_id}/guide", tags=["admin-guide"])
-
-REPO_ROOT = Path(__file__).resolve().parents[3]
 
 
 def _load_vessel(conn, vessel_id: str) -> dict | None:
@@ -248,8 +246,9 @@ async def reimport_from_repository_json(
         if vessel is None:
             return RedirectResponse("/admin/vessels", status_code=303)
 
-    json_path = REPO_ROOT / "mobile" / "src" / "data" / "bootstrap" / f"{vessel['slug']}.json"
-    if not json_path.is_file():
+    try:
+        json_path = resolve_bootstrap_json(vessel["slug"])
+    except FileNotFoundError:
         with get_engine().connect() as conn:
             modules = _load_modules(conn, vessel_id)
         return templates.TemplateResponse(
@@ -263,7 +262,9 @@ async def reimport_from_repository_json(
                 "stale_context": False,
                 "preview": None,
                 "preview_error": None,
-                "reimport_error": f"Bootstrap JSON not available on this server ({json_path.name}).",
+                "reimport_error": (
+                    f"Bootstrap JSON for '{vessel['slug']}' not available on this server."
+                ),
             },
             status_code=400,
         )

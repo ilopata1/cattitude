@@ -26,10 +26,9 @@ from guide_bootstrap import (  # noqa: E402
     assemble_bootstrap,
     build_asset_manifest,
     canonical_json_hash,
+    resolve_bootstrap_json,
     split_bootstrap,
 )
-
-DEFAULT_JSON = REPO_ROOT / "mobile" / "src" / "data" / "bootstrap" / "cattitude.json"
 
 
 def _load_bootstrap(path: Path) -> dict:
@@ -125,12 +124,13 @@ def _approved_modules(conn, vessel_id: str) -> list[dict]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Import bootstrap JSON into Postgres")
-    parser.add_argument("--json", type=Path, default=DEFAULT_JSON)
+    parser.add_argument("--json", type=Path, default=None)
     parser.add_argument("--slug", default="cattitude")
     parser.add_argument("--version", type=int, default=1)
     args = parser.parse_args()
 
-    bootstrap = _load_bootstrap(args.json)
+    json_path = args.json or resolve_bootstrap_json(args.slug)
+    bootstrap = _load_bootstrap(json_path)
     slug = bootstrap.get("vesselSlug") or args.slug
 
     sync_url, _ = postgres_connection_strings(settings.database_url)

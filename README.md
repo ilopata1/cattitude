@@ -346,15 +346,19 @@ Bulk ingest helper: `utilities/ingest_all_manuals.py`. Clear vectors: `utilities
 | Component | Host | Trigger |
 |-----------|------|---------|
 | **Mobile PWA** | GitHub Pages (`pages-live` branch) | Push to `main` changing `mobile/**` |
-| **API + Postgres** | Railway | Push to `main` / Railway auto-deploy (`backend/railway.toml`) |
+| **API + Postgres** | Railway | Push to `main` / Railway auto-deploy (`railway.toml` at repo root) |
+
+**Railway service settings:** set **Root Directory** to the repository root (empty or `/`), not `backend/`. The Dockerfile copies `mobile/src/data/bootstrap/` and guide images into the API image at `/app/guide_bundle/`.
 
 Railway Postgres: run migrations as part of deploy or manually after deploy:
 
 ```bash
 cd backend && python -m alembic upgrade head
+python scripts/seed_dev_data.py
+python scripts/import_cattitude_guide.py
 ```
 
-Seed / import are for dev and initial setup — not necessarily every deploy.
+Seed / import are for initial setup — not necessarily every deploy.
 
 ---
 
