@@ -383,7 +383,7 @@ Seed is for initial tenancy/equipment setup — not every deploy.
 | Operating bases + `guide_context` | **Shipped** (schema + seed) |
 | Cattitude guide in Postgres (`guide_content` + publication) | **Shipped** (one-time migration complete) |
 | Guide sync API + mobile local store | **Shipped** (API + IndexedDB sync; `guideSyncEnabled` off by default) |
-| Admin portal — operating base + publish | **Shipped** (minimal slice at `/admin`) |
+| Admin portal — operating base + publish + vessels | **Shipped** (vessel CRUD, clone, equipment picker) |
 | LLM generation pipeline + admin review gates | **Planned** |
 | Admin portal (full equipment, manuals, intake) | **Planned** |
 | Vessel intake flow (Ionic) | **Planned** |

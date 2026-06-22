@@ -1,14 +1,18 @@
 {% extends "base.html" %}
 {% block title %}Vessels — Clever Sailor Admin{% endblock %}
 {% block content %}
-<h1>Vessels</h1>
+<div class="page-header">
+  <h1>Vessels</h1>
+  <a class="button" href="/admin/vessels/new">Add vessel</a>
+</div>
+
 {% if filter_label %}
 <p class="filter-banner">
   {{ filter_label }}.
   <a href="/admin/vessels">Show all vessels</a>
 </p>
 {% else %}
-<p class="lede">Guide publication status and operating-base context freshness.</p>
+<p class="lede">Fleet overview — equipment, guide publication, and operating-base context.</p>
 {% endif %}
 
 <table class="data-table">
@@ -16,9 +20,9 @@
     <tr>
       <th>Vessel</th>
       <th>Company / base</th>
-      <th>Approved</th>
-      <th>Drafts</th>
-      <th>Latest publication</th>
+      <th>Equipment</th>
+      <th>Guide</th>
+      <th>Publication</th>
       <th>Flags</th>
       <th></th>
     </tr>
@@ -28,14 +32,18 @@
     <tr>
       <td>
         <strong>{{ vessel.name }}</strong><br>
-        <code>{{ vessel.slug }}</code>
+        <code>{{ vessel.slug }}</code><br>
+        <span class="muted">{{ vessel.vessel_type | format_label }}</span>
       </td>
       <td>
         {{ vessel.company_name or '—' }}<br>
         {{ vessel.base_name or '—' }}
       </td>
-      <td>{{ vessel.approved_modules }}</td>
-      <td>{{ vessel.draft_modules }}</td>
+      <td>{{ vessel.equipment_count }}</td>
+      <td>
+        {{ vessel.approved_modules }} approved
+        {% if vessel.draft_modules %}<br>{{ vessel.draft_modules }} drafts{% endif %}
+      </td>
       <td>
         {% if vessel.latest_publication %}
           v{{ vessel.latest_publication.version }}<br>
@@ -49,11 +57,16 @@
           <span class="badge badge-warn">Base context changed</span>
         {% endif %}
       </td>
-      <td><a href="/admin/vessels/{{ vessel.id }}/guide">Guide</a></td>
+      <td class="action-links">
+        <a href="/admin/vessels/{{ vessel.id }}/edit">Edit</a>
+        <a href="/admin/vessels/{{ vessel.id }}/equipment">Equipment</a>
+        <a href="/admin/vessels/{{ vessel.id }}/guide">Guide</a>
+        <a href="/admin/vessels/{{ vessel.id }}/clone">Clone</a>
+      </td>
     </tr>
     {% else %}
     <tr><td colspan="7">
-      {% if filter_label %}No vessels match this filter.{% else %}No vessels yet.{% endif %}
+      {% if filter_label %}No vessels match this filter.{% else %}No vessels yet. <a href="/admin/vessels/new">Add one</a>.{% endif %}
     </td></tr>
     {% endfor %}
   </tbody>

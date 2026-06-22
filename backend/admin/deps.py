@@ -8,9 +8,11 @@ from sqlalchemy.engine import Engine
 
 from config import settings
 from db import postgres_connection_strings
+from .formatting import format_label
 
 ADMIN_DIR = Path(__file__).resolve().parent
 templates = Jinja2Templates(directory=str(ADMIN_DIR / "templates"))
+templates.env.filters["format_label"] = format_label
 
 _engine: Engine | None = None
 

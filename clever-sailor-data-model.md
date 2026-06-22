@@ -880,9 +880,9 @@ Recommended sequence (extends current minimal admin):
 
 1. Operating base `guide_context` editor — **shipped**
 2. Vessel list + guide modules + publish — **shipped** (minimal)
-3. Vessel create/edit (company, base, type)
-4. Clone vessel (`vessel_equipment` + optional guide seed from sibling)
-5. Equipment picker (registry + option pack)
+3. Vessel create/edit (company, base, type) — **shipped**
+4. Clone vessel (`vessel_equipment` + optional guide modules) — **shipped**
+5. Equipment picker (registry + option pack) — **shipped**
 6. Trigger generation + module review (diff)
 7. Charter + guest token management
 

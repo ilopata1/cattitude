@@ -18,9 +18,9 @@
   <tbody>
     {% for prompt in prompts %}
     <tr>
-      <td>{{ prompt.scope }}</td>
+      <td>{{ prompt.scope | format_label }}</td>
       <td>{{ prompt.scope_id or '—' }}</td>
-      <td>{{ prompt.content_type }} / <code>{{ prompt.content_key }}</code></td>
+      <td>{{ prompt.content_type | format_label }} / <code>{{ prompt.content_key }}</code></td>
       <td>v{{ prompt.version }}</td>
       <td>{{ 'yes' if prompt.is_active else 'no' }}</td>
       <td>{{ prompt.created_at }}</td>

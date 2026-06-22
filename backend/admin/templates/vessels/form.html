@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}{{ form_title }} — Clever Sailor Admin{% endblock %}
+{% block content %}
+<p class="breadcrumb"><a href="/admin/vessels">Vessels</a> / {{ form_title }}</p>
+<h1>{{ form_title }}</h1>
+
+{% if request.query_params.get('created') %}
+<div class="flash flash-ok">Vessel created.</div>
+{% endif %}
+{% if request.query_params.get('saved') %}
+<div class="flash flash-ok">Vessel saved.</div>
+{% endif %}
+{% if request.query_params.get('cloned') %}
+<div class="flash flash-ok">Vessel cloned.</div>
+{% endif %}
+{% if error %}
+<div class="flash flash-error">{{ error }}</div>
+{% endif %}
+
+<form method="post" class="form-grid">
+  <fieldset class="full-width">
+    <legend>Identity</legend>
+    <label>Name<input name="name" value="{{ vessel.name if vessel else '' }}" required></label>
+    <label>Slug (URL key)<input name="slug" value="{{ vessel.slug if vessel else '' }}" placeholder="auto from name"></label>
+    <label>Vessel type
+      <select name="vessel_type">
+        {% for vt in vessel_types %}
+        <option value="{{ vt }}" {% if vessel and vessel.vessel_type == vt %}selected{% elif not vessel and vt == 'sailing_catamaran' %}selected{% endif %}>{{ vt | format_label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+  </fieldset>
+
+  <fieldset class="full-width">
+    <legend>Tenancy</legend>
+    <label>Charter company
+      <select name="charter_company_id">
+        <option value="">— None (private owner) —</option>
+        {% for company in companies %}
+        <option value="{{ company.id }}" {% if vessel and vessel.charter_company_id == company.id %}selected{% endif %}>{{ company.name }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Operating base
+      <select name="charter_operating_base_id">
+        <option value="">— None —</option>
+        {% for base in all_bases %}
+        <option value="{{ base.id }}" {% if vessel and vessel.charter_operating_base_id == base.id %}selected{% endif %}>{{ base.label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+  </fieldset>
+
+  <div class="form-actions full-width">
+    <button type="submit">Save vessel</button>
+    {% if vessel and vessel.id %}
+    <a href="/admin/vessels/{{ vessel.id }}/equipment">Equipment</a>
+    <a href="/admin/vessels/{{ vessel.id }}/guide">Guide</a>
+    <a href="/admin/vessels/{{ vessel.id }}/clone">Clone</a>
+    {% endif %}
+    <a href="/admin/vessels">Cancel</a>
+  </div>
+</form>
+{% endblock %}

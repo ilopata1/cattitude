@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Clone {{ source.name }} — Clever Sailor Admin{% endblock %}
+{% block content %}
+<p class="breadcrumb"><a href="/admin/vessels">Vessels</a> / <a href="/admin/vessels/{{ source.id }}/edit">{{ source.name }}</a> / Clone</p>
+<h1>Clone {{ source.name }}</h1>
+<p class="lede">Create a new vessel from <code>{{ source.slug }}</code>. Useful for sister ships with the same hull type and equipment.</p>
+
+{% if error %}
+<div class="flash flash-error">{{ error }}</div>
+{% endif %}
+
+<form method="post" class="form-grid">
+  <fieldset class="full-width">
+    <legend>New vessel</legend>
+    <label>Name<input name="name" value="{{ form.name if form else '' }}" required placeholder="e.g. Cattitude II"></label>
+    <label>Slug<input name="slug" value="{{ form.slug if form else '' }}" placeholder="auto from name"></label>
+    <label>Vessel type
+      <select name="vessel_type">
+        {% for vt in vessel_types %}
+        <option value="{{ vt }}" {% if (form and form.vessel_type == vt) or (not form and source.vessel_type == vt) %}selected{% endif %}>{{ vt | format_label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+  </fieldset>
+
+  <fieldset class="full-width">
+    <legend>Tenancy (defaults from source)</legend>
+    <label>Charter company
+      <select name="charter_company_id">
+        <option value="">— None —</option>
+        {% for company in companies %}
+        <option value="{{ company.id }}"
+          {% if form and form.charter_company_id == company.id %}selected
+          {% elif not form and source.charter_company_id == company.id %}selected{% endif %}>{{ company.name }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Operating base
+      <select name="charter_operating_base_id">
+        <option value="">— None —</option>
+        {% for base in all_bases %}
+        <option value="{{ base.id }}"
+          {% if form and form.charter_operating_base_id == base.id %}selected
+          {% elif not form and source.charter_operating_base_id == base.id %}selected{% endif %}>{{ base.label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+  </fieldset>
+
+  <fieldset class="full-width">
+    <legend>Copy from source</legend>
+    <label class="checkbox-label">
+      <input type="checkbox" name="copy_equipment" value="yes" checked>
+      Copy equipment list (<code>vessel_equipment</code>)
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" name="copy_guide_modules" value="yes">
+      Copy approved guide modules (drafts for review — does not publish)
+    </label>
+  </fieldset>
+
+  <div class="form-actions full-width">
+    <button type="submit">Create clone</button>
+    <a href="/admin/vessels/{{ source.id }}/edit">Cancel</a>
+  </div>
+</form>
+{% endblock %}

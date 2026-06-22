@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block title %}{{ vessel.name }} equipment — Clever Sailor Admin{% endblock %}
+{% block content %}
+<p class="breadcrumb">
+  <a href="/admin/vessels">Vessels</a> /
+  <a href="/admin/vessels/{{ vessel.id }}/edit">{{ vessel.name }}</a> /
+  Equipment
+</p>
+<h1>{{ vessel.name }} — equipment</h1>
+
+{% if request.query_params.get('pack_applied') %}
+<div class="flash flash-ok">Option pack applied.</div>
+{% endif %}
+{% if request.query_params.get('error') %}
+<div class="flash flash-error">{{ request.query_params.get('error') }}</div>
+{% endif %}
+
+<div class="panel-grid">
+  <section class="panel">
+    <h2>Installed ({{ installed|length }})</h2>
+    {% if installed %}
+    <table class="data-table compact">
+      <thead>
+        <tr>
+          <th>Manufacturer</th>
+          <th>Model</th>
+          <th>System</th>
+          <th>Confirmed by</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in installed %}
+        <tr>
+          <td>{{ item.manufacturer or '—' }}</td>
+          <td>{{ item.model or '—' }}</td>
+          <td>{{ item.system_category | format_label }}</td>
+          <td>{{ item.confirmed_by | format_label }}</td>
+          <td>
+            <form method="post" action="/admin/vessels/{{ vessel.id }}/equipment/remove">
+              <input type="hidden" name="equipment_id" value="{{ item.equipment_id }}">
+              <button type="submit" class="btn-danger">Remove</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="muted">No equipment linked yet.</p>
+    {% endif %}
+  </section>
+
+  <section class="panel">
+    <h2>Apply option pack</h2>
+    {% if option_packs %}
+    <form method="post" action="/admin/vessels/{{ vessel.id }}/equipment/apply-pack" class="inline-form">
+      <select name="option_pack_id" required>
+        <option value="">Select pack…</option>
+        {% for pack in option_packs %}
+        <option value="{{ pack.id }}">{{ pack.manufacturer }} — {{ pack.pack_name }} ({{ pack.bill_count }} items)</option>
+        {% endfor %}
+      </select>
+      <button type="submit">Apply pack</button>
+    </form>
+    {% else %}
+    <p class="muted">No option packs in registry yet.</p>
+    {% endif %}
+  </section>
+</div>
+
+<section class="panel">
+  <h2>Add from equipment registry</h2>
+  <form method="get" class="search-row">
+    <input name="q" value="{{ query }}" placeholder="Search manufacturer or model">
+    <select name="system_category">
+      <option value="">All systems</option>
+      {% for cat in system_categories %}
+      <option value="{{ cat }}" {% if system_category == cat %}selected{% endif %}>{{ cat | format_label }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit">Search</button>
+  </form>
+  <p class="muted">Filtered for vessel type <strong>{{ vessel.vessel_type | format_label }}</strong>.</p>
+
+  {% if results %}
+  <table class="data-table compact">
+    <thead>
+      <tr>
+        <th>Manufacturer</th>
+        <th>Model</th>
+        <th>System</th>
+        <th>Zone</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in results %}
+      <tr>
+        <td>{{ item.manufacturer or '—' }}</td>
+        <td>{{ item.model or '—' }}</td>
+        <td>{{ item.system_category | format_label }}</td>
+        <td>{{ item.zone | format_label }}</td>
+        <td>
+          {% if item.id in installed_ids %}
+          <span class="muted">Installed</span>
+          {% else %}
+          <form method="post" action="/admin/vessels/{{ vessel.id }}/equipment/add">
+            <input type="hidden" name="equipment_id" value="{{ item.id }}">
+            <button type="submit">Add</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="muted">No matching equipment. Try a broader search.</p>
+  {% endif %}
+</section>
+{% endblock %}

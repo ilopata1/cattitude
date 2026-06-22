@@ -66,10 +66,10 @@
     <tbody>
       {% for module in modules %}
       <tr>
-        <td>{{ module.content_type }}</td>
+        <td>{{ module.content_type | format_label }}</td>
         <td><code>{{ module.content_key }}</code></td>
-        <td>{{ module.source }}</td>
-        <td><span class="badge badge-{{ module.status }}">{{ module.status }}</span></td>
+        <td>{{ module.source | format_label }}</td>
+        <td><span class="badge badge-{{ module.status }}">{{ module.status | format_label }}</span></td>
         <td>{{ module.approved_at or '—' }}</td>
         <td>
           {% if module.status == 'draft' %}
