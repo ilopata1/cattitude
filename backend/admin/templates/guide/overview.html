@@ -7,12 +7,6 @@
 {% if request.query_params.get('published') %}
 <div class="flash flash-ok">Published version {{ request.query_params.get('published') }}.</div>
 {% endif %}
-{% if request.query_params.get('reimported') %}
-<div class="flash flash-ok">Re-imported approved modules from repository JSON.</div>
-{% endif %}
-{% if reimport_error %}
-<div class="flash flash-error">{{ reimport_error }}</div>
-{% endif %}
 
 <div class="panel-grid">
   <section class="panel">
@@ -31,13 +25,6 @@
       <div class="flash flash-warn">Operating base context changed since last publication. Regenerate guide content before the next publish.</div>
     {% endif %}
     <p><a class="button" href="/admin/vessels/{{ vessel.id }}/guide/publish">Publish new version</a></p>
-    <form method="post" action="/admin/vessels/{{ vessel.id }}/guide/reimport" class="confirm-form">
-      <label>
-        <input type="checkbox" name="confirm" value="yes" required>
-        Re-import approved modules from <code>mobile/src/data/bootstrap/{{ vessel.slug }}.json</code>
-      </label>
-      <button type="submit">Re-import from repository</button>
-    </form>
   </section>
 
   <section class="panel">
@@ -93,7 +80,7 @@
         </td>
       </tr>
       {% else %}
-      <tr><td colspan="6">No guide modules. Run <code>import_cattitude_guide.py</code>.</td></tr>
+      <tr><td colspan="6">No guide modules in Postgres for this vessel.</td></tr>
       {% endfor %}
     </tbody>
   </table>

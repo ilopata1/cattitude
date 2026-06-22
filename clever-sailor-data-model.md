@@ -731,6 +731,18 @@ GET /api/v1/vessels/{slug}/guide/version
 }
 ```
 
+### Asset delivery and offline use
+
+Object storage (S3, R2, Railway bucket, etc.) is the **origin** for guide images at **sync time only**. It does **not** break offline operation.
+
+1. Client calls manifest → downloads `bundle.json` → downloads every asset in the manifest (while online).
+2. Client stores JSON + image blobs in **local storage** (IndexedDB / Capacitor filesystem).
+3. During normal use, guide tabs read **local copies only** — no network calls for content or images, even when online.
+
+Railway or S3 URLs appear in the manifest as fetch targets during step 1–2, not as runtime dependencies. The installed app must complete at least one successful sync before going offline without images.
+
+**Planned:** upload assets to object storage at **publish** time; manifest URLs point to durable storage. Until that ships, the production Cattitude PWA continues to use images bundled in the GitHub Pages build (`guideSyncEnabled: false`).
+
 ### Auth
 
 | Caller | Guide download | Ask `/query` |
@@ -828,7 +840,7 @@ Each row is one onboarding job. **Primary** = expected default for that persona.
 |---------|-----------------|--------------|
 | **Charter operator** | Admin | Base context → add/clone vessel → equipment from registry/pack → generate → review → publish → create charter |
 | **Private owner** | Mobile intake | Five-step wizard on board → generation → review (admin or simplified owner editor later) → publish → sync |
-| **Clever Sailor team** | Admin + scripts | Registry, manuals, intake review queue, `import_cattitude_guide.py`, platform prompts |
+| **Clever Sailor team** | Admin | Registry, manuals, intake review queue, platform prompts |
 | **Charter guest** | Mobile (consumer only) | Associate via token/QR → download publication → use guide offline; Ask when charter active |
 
 ### Mobile five-step flow vs Admin (charter path)
@@ -855,9 +867,12 @@ Charter fleets with repeated hull types (e.g. multiple Tanna 47s) should default
 | `owner_reported` | Mobile Step 3 manual checklist |
 | `team_verified` | Admin intake review or direct admin entry |
 
-### Cattitude as reference implementation
+### Cattitude (legacy JSON migration — complete)
 
-Cattitude was onboarded without mobile intake: bootstrap JSON → `import_cattitude_guide.py` → `guide_content` + publication v1. That is the **charter / migration** path, not an exception. Admin publish + optional re-import is the transitional operator workflow until generation is live.
+Cattitude’s guide was migrated once from `cattitude.json` into `guide_content` + `vessel_guide_publication`. That one-time import path has been **removed** from the codebase; Postgres is now the source of truth for API and admin.
+
+- **Live PWA:** still ships frozen bootstrap JSON + images from the `mobile/` build until `guideSyncEnabled` is enabled and publish-time asset storage exists.
+- **Ongoing edits:** via admin module review + publish (and eventually LLM generation) — not by editing `cattitude.json`.
 
 ### Admin build order (charter onboarding)
 
@@ -883,7 +898,7 @@ Gate-checked; no silent publish.
 **Regenerate:** creates draft + diff; accept/reject before approve  
 **Publish:** validator pass + confirm  
 
-**Screens:** prompt templates, vessel guide overview (stale badges), module review (diff), regenerate (manual/bulk), publish, import.
+**Screens:** prompt templates, vessel guide overview (stale badges), module review (diff), regenerate (manual/bulk), publish.
 
 **Example flow (`checklist/safety-brief`):** charter prompt → intake snapshot → one job (checklist + ui) → review → approve → publish → client sync → Do tab reads local JSON.
 
@@ -911,7 +926,6 @@ Apply from `backend/` (requires `DATABASE_URL` in `.env`):
 ```bash
 python -m alembic upgrade head
 python scripts/seed_dev_data.py
-python scripts/import_cattitude_guide.py
 ```
 
 Every migration must implement working `downgrade()`.
@@ -930,12 +944,11 @@ Idempotent script (`backend/scripts/seed_dev_data.py`):
 
 ---
 
-## Cattitude migration path
+## Cattitude migration path (historical)
 
-1. Run migrations 001–011; seed Phase A data  
-2. Import via `backend/scripts/import_cattitude_guide.py` → `guide_content` (`source: imported`, `status: approved`)  
-3. Publish v1 → manifest matches current production  
-4. Mobile: static file in git until `GuideStoreService` + sync API; payload shape unchanged  
+One-time migration from `cattitude.json` → Postgres is **complete** for production. The import script has been removed.
+
+For new local dev databases without guide data, restore from a DB dump or wait for admin generation/clone tooling. Seed + migrations alone do not populate `guide_content`.  
 
 ---
 
@@ -961,7 +974,7 @@ Idempotent script (`backend/scripts/seed_dev_data.py`):
 - [ ] Manifest hashes match bundle and assets  
 - [ ] Stale prompt badge when published version < active template  
 - [ ] Expired charter: Ask 403; guide download policy as implemented  
-- [ ] Cattitude import → publication v1 idempotent  
+- [ ] Cattitude guide modules + publication v1 present in Postgres (migration complete)  
 
 ---
 

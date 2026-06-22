@@ -1,3 +1,7 @@
-# Deprecated: use ../railway.toml at the repository root.
-# Railway service Root Directory must be the repo root (not backend/) so the
-# Dockerfile can COPY mobile bootstrap JSON and guide images into the image.
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+healthcheckPath = "/health"
+restartPolicyType = "ON_FAILURE"

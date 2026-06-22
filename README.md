@@ -255,10 +255,9 @@ Three conceptual layers in one database:
 
 ### Current (Cattitude production)
 
-1. Edit `mobile/src/data/bootstrap/cattitude.json` (and optionally `utilities/bootstrap_ui.json` merged via `embed_bootstrap_ui.mjs`).
-2. Validate: `node utilities/validate_bootstrap_content.mjs`
-3. Push `mobile/` → CI builds and deploys to GitHub Pages.
-4. Optionally import same JSON into Postgres: `python backend/scripts/import_cattitude_guide.py` → `guide_content` + `vessel_guide_publication` v1.
+**Postgres** holds Cattitude’s `guide_content` modules and `vessel_guide_publication` (migrated once from legacy JSON). **Admin** is the path for review and republication.
+
+**Mobile PWA** still ships a frozen copy of `cattitude.json` + images from the `mobile/` build (`guideSyncEnabled: false`). Do not edit the JSON for content changes — wait for admin/generation tooling.
 
 ### Target (multi-vessel platform)
 
@@ -310,11 +309,12 @@ cp .env.example .env
 # Edit .env: DATABASE_URL, AZURE_OPENAI_*, CORS_ORIGINS
 python -m alembic upgrade head
 python scripts/seed_dev_data.py
-python scripts/import_cattitude_guide.py
 uvicorn main:app --reload --port 8000
 ```
 
 **Admin portal:** set `ADMIN_PASSWORD` in `.env`, then open http://localhost:8000/admin/ (HTTP Basic Auth). Screens: operating base `guide_context` editor, vessel guide modules, publish gate, prompt template list.
+
+**Note:** `seed_dev_data.py` does not populate guide modules. Use a DB dump from an environment where Cattitude was migrated, or add modules via future admin/generation tooling.
 
 ### Manual ingest
 
@@ -346,19 +346,15 @@ Bulk ingest helper: `utilities/ingest_all_manuals.py`. Clear vectors: `utilities
 | Component | Host | Trigger |
 |-----------|------|---------|
 | **Mobile PWA** | GitHub Pages (`pages-live` branch) | Push to `main` changing `mobile/**` |
-| **API + Postgres** | Railway | Push to `main` / Railway auto-deploy (`railway.toml` at repo root) |
+| **API + Postgres** | Railway | Push to `main` / Railway auto-deploy (`backend/railway.toml`) |
 
-**Railway service settings:** set **Root Directory** to the repository root (empty or `/`), not `backend/`. The Dockerfile copies `mobile/src/data/bootstrap/` and guide images into the API image at `/app/guide_bundle/`.
-
-Railway Postgres: run migrations as part of deploy or manually after deploy:
+Railway Postgres: run migrations after deploy if needed:
 
 ```bash
 cd backend && python -m alembic upgrade head
-python scripts/seed_dev_data.py
-python scripts/import_cattitude_guide.py
 ```
 
-Seed / import are for initial setup — not necessarily every deploy.
+Seed is for initial tenancy/equipment setup — not every deploy.
 
 ---
 
@@ -385,7 +381,7 @@ Seed / import are for initial setup — not necessarily every deploy.
 | FastAPI `/query` RAG + Railway deploy | **Shipped** |
 | Postgres schema migrations 001–011 | **Shipped** |
 | Operating bases + `guide_context` | **Shipped** (schema + seed) |
-| Guide import → `guide_content` + publication | **Shipped** (script) |
+| Cattitude guide in Postgres (`guide_content` + publication) | **Shipped** (one-time migration complete) |
 | Guide sync API + mobile local store | **Shipped** (API + IndexedDB sync; `guideSyncEnabled` off by default) |
 | Admin portal — operating base + publish | **Shipped** (minimal slice at `/admin`) |
 | LLM generation pipeline + admin review gates | **Planned** |

@@ -1,15 +1,11 @@
 from __future__ import annotations
 
-import json
-from typing import Any
-
 from fastapi import APIRouter, Depends, Form, Request
 from fastapi.responses import RedirectResponse
 from sqlalchemy import text
 
 from admin.auth import require_admin_user
 from admin.deps import get_engine, templates
-from guide_bootstrap import split_bootstrap, resolve_bootstrap_json
 from guide_publish import PublishValidationError, assemble_publication, publish_vessel_guide
 
 router = APIRouter(prefix="/vessels/{vessel_id}/guide", tags=["admin-guide"])
@@ -127,7 +123,6 @@ async def vessel_guide_overview(
             "stale_context": stale_context,
             "preview": preview,
             "preview_error": preview_error,
-            "reimport_error": None,
         },
     )
 
@@ -227,88 +222,5 @@ async def publish_confirm(
 
     return RedirectResponse(
         f"/admin/vessels/{vessel_id}/guide?published={result['version']}",
-        status_code=303,
-    )
-
-
-@router.post("/reimport")
-async def reimport_from_repository_json(
-    request: Request,
-    vessel_id: str,
-    admin_user: str = Depends(require_admin_user),
-    confirm: str = Form(""),
-):
-    if confirm != "yes":
-        return RedirectResponse(f"/admin/vessels/{vessel_id}/guide", status_code=303)
-
-    with get_engine().connect() as conn:
-        vessel = _load_vessel(conn, vessel_id)
-        if vessel is None:
-            return RedirectResponse("/admin/vessels", status_code=303)
-
-    try:
-        json_path = resolve_bootstrap_json(vessel["slug"])
-    except FileNotFoundError:
-        with get_engine().connect() as conn:
-            modules = _load_modules(conn, vessel_id)
-        return templates.TemplateResponse(
-            request,
-            "guide/overview.html",
-            {
-                "admin_user": admin_user,
-                "vessel": vessel,
-                "modules": modules,
-                "publication": None,
-                "stale_context": False,
-                "preview": None,
-                "preview_error": None,
-                "reimport_error": (
-                    f"Bootstrap JSON for '{vessel['slug']}' not available on this server."
-                ),
-            },
-            status_code=400,
-        )
-
-    with json_path.open(encoding="utf-8") as handle:
-        bootstrap = json.load(handle)
-
-    modules = split_bootstrap(bootstrap)
-    with get_engine().begin() as conn:
-        conn.execute(
-            text(
-                """
-                UPDATE guide_content
-                SET status = 'superseded'
-                WHERE vessel_id = :vessel_id
-                  AND status IN ('approved', 'published', 'draft')
-                """
-            ),
-            {"vessel_id": vessel_id},
-        )
-        for module in modules:
-            conn.execute(
-                text(
-                    """
-                    INSERT INTO guide_content (
-                        vessel_id, content_type, content_key, payload,
-                        source, status, approved_at, approved_by
-                    )
-                    VALUES (
-                        :vessel_id, :content_type, :content_key, CAST(:payload AS jsonb),
-                        'imported', 'approved', now(), :approved_by
-                    )
-                    """
-                ),
-                {
-                    "vessel_id": vessel_id,
-                    "content_type": module["content_type"],
-                    "content_key": module["content_key"],
-                    "payload": json.dumps(module["payload"]),
-                    "approved_by": admin_user,
-                },
-            )
-
-    return RedirectResponse(
-        f"/admin/vessels/{vessel_id}/guide?reimported=1",
         status_code=303,
     )
