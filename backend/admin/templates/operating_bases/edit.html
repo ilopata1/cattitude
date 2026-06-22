@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}{{ base.name }} — Operating base — Clever Sailor Admin{% endblock %}
+{% block content %}
+<p class="breadcrumb"><a href="/admin/operating-bases">Operating bases</a> / {{ base.company_name }} / {{ base.name }}</p>
+<h1>{{ base.name }}</h1>
+<p class="lede">Guide context version <strong>v{{ base.guide_context_version }}</strong>. Saving bumps the version and marks vessel guides at this base as needing regeneration.</p>
+
+{% if request.query_params.get('saved') %}
+<div class="flash flash-ok">Guide context saved.</div>
+{% endif %}
+{% if error %}
+<div class="flash flash-error">{{ error }}</div>
+{% endif %}
+
+<form method="post" class="form-grid">
+  <fieldset>
+    <legend>Location</legend>
+    <label>Display name<input name="display_name" value="{{ context.displayName or '' }}"></label>
+    <label>Region label<input name="region_label" value="{{ context.regionLabel or '' }}"></label>
+    <label>Marina<input name="marina" value="{{ context.marina or '' }}"></label>
+    <label>Country code<input name="country_code" value="{{ context.countryCode or base.country_code or '' }}" maxlength="2"></label>
+    <label>Timezone<input name="timezone" value="{{ context.timezone or base.timezone or '' }}"></label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Office VHF</legend>
+    <label>Label<input name="office_vhf_label" value="{{ context.officeVhf.label if context.officeVhf else '' }}"></label>
+    <label>Channel<input name="office_vhf_channel" value="{{ context.officeVhf.channel if context.officeVhf else '' }}"></label>
+    <label>Hours<input name="office_vhf_hours" value="{{ context.officeVhf.hours if context.officeVhf else '' }}"></label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Marina VHF</legend>
+    <label>Label<input name="marina_vhf_label" value="{{ context.marinaVhf.label if context.marinaVhf else '' }}"></label>
+    <label>Channel<input name="marina_vhf_channel" value="{{ context.marinaVhf.channel if context.marinaVhf else '' }}"></label>
+    <label>Detail<input name="marina_vhf_detail" value="{{ context.marinaVhf.detail if context.marinaVhf else '' }}"></label>
+  </fieldset>
+
+  <fieldset class="full-width">
+    <legend>Emergency contacts (JSON array)</legend>
+    <textarea name="emergency_contacts_json" rows="12">{{ emergency_contacts_json }}</textarea>
+  </fieldset>
+
+  <fieldset class="full-width">
+    <legend>Local rules (one per line)</legend>
+    <textarea name="local_rules_text" rows="6">{{ local_rules_text }}</textarea>
+  </fieldset>
+
+  <div class="form-actions full-width">
+    <button type="submit">Save guide context</button>
+  </div>
+</form>
+{% endblock %}

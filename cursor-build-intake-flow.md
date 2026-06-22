@@ -4,7 +4,21 @@
 
 Build the vessel intake feature inside the existing Clever Sailor Ionic/Capacitor app. This is the guided flow a user completes to register a new vessel and identify its equipment, as described in the project briefing (Section 2.5) and grounded in the data model in the Universal Vessel Taxonomy and Schema Reference documents.
 
+**This flow is the primary onboarding path for private boat owners** and an optional on-board verification path for charter staff. It is **not** the default charter fleet onboarding path — charter operators add vessels, equipment, and publications through the **Admin portal** (see **Onboarding channels** in `clever-sailor-data-model.md`). Charter **guests** never run intake; they associate with an existing vessel and download a publication.
+
 **Assumption:** The PWA-to-Ionic migration (project briefing, Phase 3) is already complete. The companion app's five tabs (Home, Do, Know, Fix, Ask, Emergency) and the hamburger menu shell already exist. This build adds the intake flow inside that hamburger menu, alongside (not replacing) existing navigation.
+
+## Who uses this flow
+
+| Persona | Uses mobile intake? | Notes |
+|---------|---------------------|-------|
+| **Private owner** | **Yes — primary** | Full five-step wizard on the vessel |
+| **Charter operator** | No (default) | Admin: vessel create, clone, equipment picker, publish |
+| **Charter operator (field)** | Optional | Photo verify ambiguous equipment; turnover updates |
+| **Charter guest** | **No** | Associate + download guide only |
+| **Clever Sailor team** | No | Admin + import scripts; intake review queue |
+
+All channels write the same Postgres tables and share `guide_generation_input_snapshot` → generation → publication. See `clever-sailor-data-model.md` § Onboarding channels for the full step matrix.
 
 ## Source of Truth
 
@@ -38,7 +52,9 @@ ionic-app/src/app/
       intake-state.model.ts
 ```
 
-Entry point: a "Add a Vessel" item in the existing hamburger menu, per the project briefing's navigation structure (Section 2.3). Tapping it pushes the `intake` module onto the navigation stack — it does not replace the bottom tab bar, which remains accessible via back navigation at any point (the user can abandon intake and return to the companion app).
+Entry point: a "Add a Vessel" item in the existing hamburger menu, per the project briefing's navigation structure (Section 2.3). **Target audience: private owners** (and optionally charter staff doing on-board verification). Tapping it pushes the `intake` module onto the navigation stack — it does not replace the bottom tab bar, which remains accessible via back navigation at any point (the user can abandon intake and return to the companion app).
+
+Do not expose this entry to charter guests mid-charter; guests receive vessel association via token/QR, not intake.
 
 ---
 

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Vessels — Clever Sailor Admin{% endblock %}
+{% block content %}
+<h1>Vessels</h1>
+{% if filter_label %}
+<p class="filter-banner">
+  {{ filter_label }}.
+  <a href="/admin/vessels">Show all vessels</a>
+</p>
+{% else %}
+<p class="lede">Guide publication status and operating-base context freshness.</p>
+{% endif %}
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Vessel</th>
+      <th>Company / base</th>
+      <th>Approved</th>
+      <th>Drafts</th>
+      <th>Latest publication</th>
+      <th>Flags</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for vessel in vessels %}
+    <tr>
+      <td>
+        <strong>{{ vessel.name }}</strong><br>
+        <code>{{ vessel.slug }}</code>
+      </td>
+      <td>
+        {{ vessel.company_name or '—' }}<br>
+        {{ vessel.base_name or '—' }}
+      </td>
+      <td>{{ vessel.approved_modules }}</td>
+      <td>{{ vessel.draft_modules }}</td>
+      <td>
+        {% if vessel.latest_publication %}
+          v{{ vessel.latest_publication.version }}<br>
+          <span class="muted">{{ vessel.latest_publication.published_at }}</span>
+        {% else %}
+          <span class="muted">Not published</span>
+        {% endif %}
+      </td>
+      <td>
+        {% if vessel.stale_context %}
+          <span class="badge badge-warn">Base context changed</span>
+        {% endif %}
+      </td>
+      <td><a href="/admin/vessels/{{ vessel.id }}/guide">Guide</a></td>
+    </tr>
+    {% else %}
+    <tr><td colspan="7">
+      {% if filter_label %}No vessels match this filter.{% else %}No vessels yet.{% endif %}
+    </td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

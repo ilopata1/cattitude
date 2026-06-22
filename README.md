@@ -93,6 +93,7 @@ B2B customer operating multiple vessels across **operating bases** (geographic l
 
 - Maintains **company-wide** prompt templates (safety policy tone, checklist structure).
 - Maintains **operating base** context: VHF channels, emergency contacts, marina names, local rules (Abacos vs Croatia). New bases can clone context from an existing base.
+- **Onboards vessels via Admin** (create/clone vessel, equipment from registry, generate, review, publish) — not via the mobile intake wizard. See `clever-sailor-data-model.md` § Onboarding channels.
 - Reviews LLM-generated guide drafts per vessel (diff + approve workflow). Publishes immutable guide snapshots for download.
 - Manages fleet: which vessels belong to which base, charter dates, guest tokens.
 - Uses the **admin portal** (planned, FastAPI + Jinja2) — not the Ionic app.
@@ -313,6 +314,8 @@ python scripts/import_cattitude_guide.py
 uvicorn main:app --reload --port 8000
 ```
 
+**Admin portal:** set `ADMIN_PASSWORD` in `.env`, then open http://localhost:8000/admin/ (HTTP Basic Auth). Screens: operating base `guide_context` editor, vessel guide modules, publish gate, prompt template list.
+
 ### Manual ingest
 
 From `backend/`:
@@ -333,6 +336,8 @@ Bulk ingest helper: `utilities/ingest_all_manuals.py`. Clear vectors: `utilities
 | `AZURE_OPENAI_EMBEDDING_DEPLOYMENT` | e.g. `text-embedding-3-small` |
 | `AZURE_OPENAI_CHAT_DEPLOYMENT` | e.g. `gpt-4o` |
 | `CORS_ORIGINS` | Comma-separated browser origins |
+| `ADMIN_USERNAME` | Admin portal Basic Auth username (default `admin`) |
+| `ADMIN_PASSWORD` | Admin portal password (required to use `/admin`; empty disables login) |
 
 ---
 
@@ -361,7 +366,7 @@ Seed / import are for dev and initial setup — not necessarily every deploy.
 | **`mobile/README.md`** | Frontend developers | Ionic dev commands, PWA notes, bootstrap editing |
 | **`cattitude-rag-implementation-plan.md`** | Historical / staging | Original RAG MVP plan (Stages 1–4) |
 | **`cursor-build-admin-portal.md`** | Planned work | Internal admin screens (equipment, manuals, guide review, publish) |
-| **`cursor-build-intake-flow.md`** | Planned work | Five-step vessel onboarding in the app |
+| **`cursor-build-intake-flow.md`** | Planned work | Private-owner mobile intake (five steps); charter guests do not use this |
 | **`clever-sailor-schema-reference.docx`** | Schema authority | Field-level reference for core platform tables |
 | **`app/README.md`** | Reference | Archived legacy PWA |
 
@@ -378,8 +383,9 @@ Seed / import are for dev and initial setup — not necessarily every deploy.
 | Operating bases + `guide_context` | **Shipped** (schema + seed) |
 | Guide import → `guide_content` + publication | **Shipped** (script) |
 | Guide sync API + mobile local store | **Shipped** (API + IndexedDB sync; `guideSyncEnabled` off by default) |
+| Admin portal — operating base + publish | **Shipped** (minimal slice at `/admin`) |
 | LLM generation pipeline + admin review gates | **Planned** |
-| Admin portal (FastAPI + Jinja2) | **Planned** |
+| Admin portal (full equipment, manuals, intake) | **Planned** |
 | Vessel intake flow (Ionic) | **Planned** |
 | Multi-vessel app shell (add vessel, switch vessel) | **Planned** |
 | Auth0 / guest tokens / charter-scoped Ask | **Planned** |

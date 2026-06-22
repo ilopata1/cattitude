@@ -2,11 +2,14 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+from admin.routes import router as admin_router
 from config import settings
 from english_text import extract_english
 from guide_api import router as guide_router
@@ -17,6 +20,10 @@ logger = logging.getLogger(__name__)
 app = FastAPI(title="Clever Sailor API")
 
 app.include_router(guide_router)
+app.include_router(admin_router)
+
+_admin_static = Path(__file__).resolve().parent / "admin" / "static"
+app.mount("/admin/static", StaticFiles(directory=str(_admin_static)), name="admin-static")
 
 app.add_middleware(
     CORSMiddleware,

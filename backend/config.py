@@ -49,5 +49,9 @@ class Settings(BaseSettings):
         "https://ilopata1.github.io",
     ]
 
+    # Admin portal (HTTP Basic Auth placeholder until Auth0)
+    admin_username: str = "admin"
+    admin_password: str = ""
+
 
 settings = Settings()

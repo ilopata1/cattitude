@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}{{ vessel.name }} guide — Clever Sailor Admin{% endblock %}
+{% block content %}
+<p class="breadcrumb"><a href="/admin/vessels">Vessels</a> / {{ vessel.name }} / Guide</p>
+<h1>{{ vessel.name }} vessel guide</h1>
+
+{% if request.query_params.get('published') %}
+<div class="flash flash-ok">Published version {{ request.query_params.get('published') }}.</div>
+{% endif %}
+{% if request.query_params.get('reimported') %}
+<div class="flash flash-ok">Re-imported approved modules from repository JSON.</div>
+{% endif %}
+{% if reimport_error %}
+<div class="flash flash-error">{{ reimport_error }}</div>
+{% endif %}
+
+<div class="panel-grid">
+  <section class="panel">
+    <h2>Publication</h2>
+    {% if publication %}
+      <dl class="meta-list">
+        <dt>Version</dt><dd>v{{ publication.version }}</dd>
+        <dt>Content hash</dt><dd><code>{{ publication.content_hash }}</code></dd>
+        <dt>Published</dt><dd>{{ publication.published_at }} by {{ publication.published_by or '—' }}</dd>
+        <dt>Manifest API</dt><dd><a href="/api/v1/vessels/{{ vessel.slug }}/guide/manifest" target="_blank">Open manifest</a></dd>
+      </dl>
+    {% else %}
+      <p>No publication yet.</p>
+    {% endif %}
+    {% if stale_context %}
+      <div class="flash flash-warn">Operating base context changed since last publication. Regenerate guide content before the next publish.</div>
+    {% endif %}
+    <p><a class="button" href="/admin/vessels/{{ vessel.id }}/guide/publish">Publish new version</a></p>
+    <form method="post" action="/admin/vessels/{{ vessel.id }}/guide/reimport" class="confirm-form">
+      <label>
+        <input type="checkbox" name="confirm" value="yes" required>
+        Re-import approved modules from <code>mobile/src/data/bootstrap/{{ vessel.slug }}.json</code>
+      </label>
+      <button type="submit">Re-import from repository</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>Assembly preview</h2>
+    {% if preview_error %}
+      <div class="flash flash-error">
+        <ul>{% for message in preview_error %}<li>{{ message }}</li>{% endfor %}</ul>
+      </div>
+    {% elif preview %}
+      <dl class="meta-list">
+        <dt>Approved modules</dt><dd>{{ preview.module_count }}</dd>
+        <dt>Content hash</dt><dd><code>{{ preview.content_hash }}</code></dd>
+        <dt>Assets</dt><dd>{{ preview.asset_manifest|length }}{% if preview.missing_assets %} ({{ preview.missing_assets|length }} missing on disk){% endif %}</dd>
+      </dl>
+      {% if preview.validation_messages %}
+        <ul class="note-list">
+          {% for message in preview.validation_messages %}
+          <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endif %}
+  </section>
+</div>
+
+<section class="panel">
+  <h2>Guide modules</h2>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Key</th>
+        <th>Source</th>
+        <th>Status</th>
+        <th>Approved</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for module in modules %}
+      <tr>
+        <td>{{ module.content_type }}</td>
+        <td><code>{{ module.content_key }}</code></td>
+        <td>{{ module.source }}</td>
+        <td><span class="badge badge-{{ module.status }}">{{ module.status }}</span></td>
+        <td>{{ module.approved_at or '—' }}</td>
+        <td>
+          {% if module.status == 'draft' %}
+          <form method="post" action="/admin/vessels/{{ vessel.id }}/guide/modules/{{ module.id }}/approve">
+            <button type="submit">Approve</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6">No guide modules. Run <code>import_cattitude_guide.py</code>.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

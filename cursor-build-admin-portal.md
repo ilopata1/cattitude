@@ -4,6 +4,8 @@
 
 Build the internal administrative portal for the Clever Sailor team — a web-only interface, not part of the Ionic consumer app, used to manage the equipment registry, manual library, intake review queue, vessel oversight, and query log review. This corresponds to Section 2.10 of the project briefing.
 
+**Charter fleet onboarding** (add vessel, clone sibling, equipment from registry/option pack, generate, review, publish) is **admin-first**. The mobile intake flow (`cursor-build-intake-flow.md`) targets private owners and optional on-board verification. See **Onboarding channels** in `clever-sailor-data-model.md` for the step matrix and persona split.
+
 **This is not a customer-facing product.** Design and build for internal team efficiency over polish. No mobile responsiveness is required (desktop-only is acceptable). No multi-language support is required (English only, per project briefing Section 2.12).
 
 ## Source of Truth

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Clever Sailor Admin{% endblock %}</title>
+  <link rel="stylesheet" href="/admin/static/admin.css">
+</head>
+<body>
+  <header class="admin-header">
+    <div class="brand">
+      <a href="/admin/">Clever Sailor Admin</a>
+    </div>
+    <nav>
+      <a href="/admin/vessels">Vessels</a>
+      <a href="/admin/operating-bases">Operating bases</a>
+      <a href="/admin/prompts">Prompt templates</a>
+    </nav>
+    <div class="user">{{ admin_user }}</div>
+  </header>
+
+  <main class="admin-main">
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

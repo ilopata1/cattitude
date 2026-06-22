@@ -26,6 +26,7 @@ If anything here conflicts with the schema reference document, **the schema refe
 | **Vessel guide** | All other in-app content (Home, Do, Know, Fix): systems, checklists, fixes, locations, branding, emergency, UI shell. |
 | **Publication** | Immutable assembled bootstrap snapshot + asset manifest, downloadable to the mobile app. |
 | **Charter guest** | User scoped by `charters.guest_token`. Distinct from vessel guide audience (owners, crew, guests all use the same local guide). |
+| **Charter operator** | Staff of a charter company (fleet manager, base manager). Onboards vessels via **Admin**; does not use the consumer app for fleet setup. |
 | **Operating base** | A charter company's geographic base (e.g. Abacos, Split). Supplies **guide context** (VHF, contacts, marina, local rules) and optional prompt overrides. |
 
 ---
@@ -503,6 +504,7 @@ Created automatically on first ingest. Before ingestion:
 | 2 | **Fleet prompt updates = manual only.** Stale-template badge in Admin; new prompt version applies to new onboardings until explicit regen. |
 | 3 | **Checklist + UI chrome = same generation job** (checklist body + `checklistMeta` + `doMenu` slice). |
 | 4 | **Charter end:** guest keeps local guide; Ask `/query` denied; cached Ask answers OK. |
+| 5 | **Guests never onboard vessels.** Operators onboard vessels; guests **associate** with a vessel (token/QR) and download an existing publication. |
 
 ### Published bootstrap shape
 
@@ -750,6 +752,129 @@ Sync: compare `contentHash` → fetch changed bundle/assets → atomic swap.
 
 ---
 
+## Onboarding channels
+
+Onboarding is **not** a single mobile wizard. It is a set of jobs that feed one shared pipeline. Different personas use different surfaces; all paths write the same tables and converge on `guide_generation_input_snapshot` → generation → `guide_content` → `vessel_guide_publication`.
+
+### Core principle
+
+> **Guests never onboard vessels. Operators onboard vessels; guests associate with vessels.**
+
+Charter guests download a guide that already exists. Private owners may complete intake themselves. Charter operators typically work from **Admin** (desk, fleet data, clone sibling vessels).
+
+### Unified pipeline (all channels)
+
+```mermaid
+flowchart LR
+  subgraph surfaces [Intake surfaces]
+    ADM[Admin portal]
+    MOB[Mobile intake]
+    IMP[Import / clone]
+  end
+
+  subgraph data [Shared Postgres]
+    V[vessels]
+    VE[vessel_equipment]
+    SNAP[guide_generation_input_snapshot]
+    RUN[guide_generation_run]
+    GC[guide_content]
+    PUB[vessel_guide_publication]
+  end
+
+  subgraph client [Consumer app]
+    ASSOC[Associate vessel]
+    SYNC[Download publication]
+  end
+
+  ADM --> V
+  MOB --> V
+  IMP --> V
+  ADM --> VE
+  MOB --> VE
+  IMP --> VE
+  V --> SNAP
+  VE --> SNAP
+  SNAP --> RUN
+  RUN --> GC
+  GC --> PUB
+  ASSOC --> SYNC
+  PUB --> SYNC
+```
+
+**Rule:** surfaces differ; snapshots, generation runs, review gates, and publication do **not** fork per channel.
+
+### Onboarding step matrix
+
+Each row is one onboarding job. **Primary** = expected default for that persona. **Optional** = supported but not required. **—** = not applicable.
+
+| Step | Admin | Mobile intake | Automated | Import / clone | Notes |
+|------|-------|---------------|-----------|----------------|-------|
+| Charter company setup | **Primary** (charter) | — | — | — | `charter_companies` |
+| Operating base + `guide_context` | **Primary** (charter) | — | — | Clone from sibling base | `charter_operating_bases`; bumps `guide_context_version` |
+| Vessel record (name, slug, type, company, base) | **Primary** (charter) | **Primary** (owner) | — | **Primary** (migration) | `vessels` |
+| Equipment identification | **Primary** (charter) | **Primary** (owner) | Option pack pre-fill | Clone `vessel_equipment` | Registry search, pack BOM, or photo/Signal-K |
+| Medium-confidence equipment review | **Primary** | — | Queue | — | Admin intake review queue (`confirmed_by` → `team_verified`) |
+| Manual library linkage | **Primary** | — | Ingest pipeline | — | `manual_work` / editions; not part of mobile intake |
+| Guide generation (LLM) | Trigger | Trigger | **Primary** (job runner) | — | `guide_generation_run`; same job shape all channels |
+| Module review (draft + diff) | **Primary** | — | — | — | Regenerate policy #1 |
+| Approve modules | **Primary** | — | — | — | `guide_content.status` → `approved` |
+| Publish publication | **Primary** | — | — | Import script (bootstrap) | `vessel_guide_publication`; confirm gate |
+| Charter dates + guest token | **Primary** | — | — | — | `charters` |
+| Guest association + guide download | — | **Primary** (guest) | — | — | Manifest sync; **no intake** |
+
+### Persona summary
+
+| Persona | Primary surface | Typical path |
+|---------|-----------------|--------------|
+| **Charter operator** | Admin | Base context → add/clone vessel → equipment from registry/pack → generate → review → publish → create charter |
+| **Private owner** | Mobile intake | Five-step wizard on board → generation → review (admin or simplified owner editor later) → publish → sync |
+| **Clever Sailor team** | Admin + scripts | Registry, manuals, intake review queue, `import_cattitude_guide.py`, platform prompts |
+| **Charter guest** | Mobile (consumer only) | Associate via token/QR → download publication → use guide offline; Ask when charter active |
+
+### Mobile five-step flow vs Admin (charter path)
+
+The Ionic intake flow (`cursor-build-intake-flow.md`) maps to shared tables as follows:
+
+| Intake step | Private owner (mobile) | Charter operator (admin) |
+|-------------|------------------------|---------------------------|
+| 1 — Vessel basics | Mobile form | Admin vessel create/edit |
+| 1b — Option pack | Mobile sub-step | Admin: apply pack to vessel equipment |
+| 2 — Photo / vision ID | **Primary** on board | Optional field verify; not required for fleet add |
+| 3 — Equipment checklist | Mobile checklist | Admin equipment picker + clone sibling vessel |
+| 4 — Signal-K scan | Optional on vessel LAN | Rare in admin; optional mobile verify |
+| 5 — Review + submit | Mobile POST | Admin save + trigger generation |
+
+Charter fleets with repeated hull types (e.g. multiple Tanna 47s) should default to **clone vessel** + edit deltas, not repeat full mobile intake per hull.
+
+### `confirmed_by` by channel
+
+| Value | Typical source |
+|-------|----------------|
+| `config_match` | Option pack BOM (admin or mobile) |
+| `photo_intake` | Mobile Step 2 vision |
+| `owner_reported` | Mobile Step 3 manual checklist |
+| `team_verified` | Admin intake review or direct admin entry |
+
+### Cattitude as reference implementation
+
+Cattitude was onboarded without mobile intake: bootstrap JSON → `import_cattitude_guide.py` → `guide_content` + publication v1. That is the **charter / migration** path, not an exception. Admin publish + optional re-import is the transitional operator workflow until generation is live.
+
+### Admin build order (charter onboarding)
+
+Recommended sequence (extends current minimal admin):
+
+1. Operating base `guide_context` editor — **shipped**
+2. Vessel list + guide modules + publish — **shipped** (minimal)
+3. Vessel create/edit (company, base, type)
+4. Clone vessel (`vessel_equipment` + optional guide seed from sibling)
+5. Equipment picker (registry + option pack)
+6. Trigger generation + module review (diff)
+7. Charter + guest token management
+
+Mobile intake remains in parallel for **private owners** and **on-board verification**; it is not the default charter fleet path.
+
+---
+
 ## Admin workflow (vessel guide)
 
 Gate-checked; no silent publish.
@@ -844,8 +969,8 @@ Idempotent script (`backend/scripts/seed_dev_data.py`):
 
 | Document | Scope |
 |----------|--------|
-| `cursor-build-admin-portal.md` | Admin UI (equipment, manuals, vessel guide screens) |
-| `cursor-build-intake-flow.md` | Onboarding → `guide_generation_input_snapshot` |
+| `cursor-build-admin-portal.md` | Admin UI (equipment, manuals, vessel guide screens, charter onboarding) |
+| `cursor-build-intake-flow.md` | **Private-owner** mobile intake → `guide_generation_input_snapshot` |
 | `mobile/src/app/core/models/bootstrap-content.model.ts` | Published payload types |
 | `mobile/src/app/core/models/schema-enums.ts` | TS mirrors of Postgres enums |
 | `utilities/validate_bootstrap_content.mjs` | Publication validation |

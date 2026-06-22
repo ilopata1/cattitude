@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Operating bases — Clever Sailor Admin{% endblock %}
+{% block content %}
+<h1>Operating bases</h1>
+<p class="lede">Location-specific facts injected at guide generation time (VHF, contacts, marina, local rules).</p>
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Company</th>
+      <th>Base</th>
+      <th>Slug</th>
+      <th>Context version</th>
+      <th>Updated</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for base in bases %}
+    <tr>
+      <td>{{ base.company_name }}</td>
+      <td>{{ base.name }}</td>
+      <td><code>{{ base.slug }}</code></td>
+      <td>v{{ base.guide_context_version }}</td>
+      <td>{{ base.updated_at }}</td>
+      <td><a href="/admin/operating-bases/{{ base.id }}">Edit context</a></td>
+    </tr>
+    {% else %}
+    <tr><td colspan="6">No operating bases yet. Run <code>seed_dev_data.py</code>.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

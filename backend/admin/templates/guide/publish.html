@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Publish {{ vessel.name }} — Clever Sailor Admin{% endblock %}
+{% block content %}
+<p class="breadcrumb"><a href="/admin/vessels">Vessels</a> / <a href="/admin/vessels/{{ vessel.id }}/guide">{{ vessel.name }}</a> / Publish</p>
+<h1>Publish {{ vessel.name }}</h1>
+<p class="lede">Creates an immutable <code>vessel_guide_publication</code> snapshot from approved modules. Mobile clients sync when the content hash changes.</p>
+
+{% if preview_error %}
+<div class="flash flash-error">
+  <ul>{% for message in preview_error %}<li>{{ message }}</li>{% endfor %}</ul>
+</div>
+{% elif preview %}
+<section class="panel">
+  <dl class="meta-list">
+    <dt>Approved modules</dt><dd>{{ preview.module_count }}</dd>
+    <dt>New content hash</dt><dd><code>{{ preview.content_hash }}</code></dd>
+    <dt>Assets in manifest</dt><dd>{{ preview.asset_manifest|length }}</dd>
+  </dl>
+  {% if preview.missing_assets %}
+  <div class="flash flash-warn">
+    {{ preview.missing_assets|length }} asset(s) missing on disk (API will 404 until files are deployed with the backend).
+  </div>
+  {% endif %}
+  {% if preview.validation_messages %}
+  <ul class="note-list">
+    {% for message in preview.validation_messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  <form method="post" class="confirm-form">
+    <label>
+      <input type="checkbox" name="confirm" value="yes" required>
+      I confirm this publication should go live for client sync.
+    </label>
+    <div class="form-actions">
+      <button type="submit">Publish now</button>
+      <a href="/admin/vessels/{{ vessel.id }}/guide">Cancel</a>
+    </div>
+  </form>
+</section>
+{% endif %}
+{% endblock %}

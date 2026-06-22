@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Prompt templates — Clever Sailor Admin{% endblock %}
+{% block content %}
+<h1>Prompt templates</h1>
+<p class="lede">Read-only list for now. Generation pipeline will create and version these rows.</p>
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Scope</th>
+      <th>Scope ID</th>
+      <th>Module</th>
+      <th>Version</th>
+      <th>Active</th>
+      <th>Created</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for prompt in prompts %}
+    <tr>
+      <td>{{ prompt.scope }}</td>
+      <td>{{ prompt.scope_id or '—' }}</td>
+      <td>{{ prompt.content_type }} / <code>{{ prompt.content_key }}</code></td>
+      <td>v{{ prompt.version }}</td>
+      <td>{{ 'yes' if prompt.is_active else 'no' }}</td>
+      <td>{{ prompt.created_at }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="6">No prompt templates yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
