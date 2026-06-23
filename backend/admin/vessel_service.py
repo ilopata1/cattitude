@@ -65,6 +65,53 @@ def list_operating_bases(
     ]
 
 
+def list_hull_models(
+    conn: Connection, *, manufacturer: str | None = None
+) -> list[dict[str, Any]]:
+    clauses = ["TRUE"]
+    params: dict[str, Any] = {}
+    if manufacturer:
+        clauses.append("manufacturer = :manufacturer")
+        params["manufacturer"] = manufacturer
+
+    rows = conn.execute(
+        text(
+            f"""
+            SELECT id, manufacturer, model_code, display_name, vessel_type
+            FROM hull_model
+            WHERE {' AND '.join(clauses)}
+            ORDER BY manufacturer, model_code
+            """
+        ),
+        params,
+    ).fetchall()
+    return [
+        {
+            "id": str(row[0]),
+            "manufacturer": row[1],
+            "model_code": row[2],
+            "display_name": row[3] or row[2],
+            "vessel_type": row[4],
+            "label": f"{row[1]} — {row[3] or row[2]}",
+        }
+        for row in rows
+    ]
+
+
+def _resolve_vessel_type(
+    conn: Connection, vessel_type: str, hull_model_id: str | None
+) -> str:
+    if not hull_model_id:
+        return vessel_type
+    row = conn.execute(
+        text("SELECT vessel_type FROM hull_model WHERE id = :id"),
+        {"id": hull_model_id},
+    ).fetchone()
+    if row is None:
+        raise VesselServiceError("Hull model not found.")
+    return str(row[0])
+
+
 def get_vessel(conn: Connection, vessel_id: str) -> dict[str, Any] | None:
     row = conn.execute(
         text(
@@ -72,11 +119,16 @@ def get_vessel(conn: Connection, vessel_id: str) -> dict[str, Any] | None:
             SELECT
                 v.id, v.name, v.slug, v.vessel_type,
                 v.charter_company_id, v.charter_operating_base_id,
+                v.hull_model_id,
                 c.name AS company_name,
-                b.name AS base_name
+                b.name AS base_name,
+                hm.manufacturer AS hull_manufacturer,
+                hm.model_code AS hull_model_code,
+                hm.display_name AS hull_display_name
             FROM vessels v
             LEFT JOIN charter_companies c ON c.id = v.charter_company_id
             LEFT JOIN charter_operating_bases b ON b.id = v.charter_operating_base_id
+            LEFT JOIN hull_model hm ON hm.id = v.hull_model_id
             WHERE v.id = :vessel_id
             """
         ),
@@ -91,8 +143,12 @@ def get_vessel(conn: Connection, vessel_id: str) -> dict[str, Any] | None:
         "vessel_type": row[3],
         "charter_company_id": str(row[4]) if row[4] else "",
         "charter_operating_base_id": str(row[5]) if row[5] else "",
-        "company_name": row[6],
-        "base_name": row[7],
+        "hull_model_id": str(row[6]) if row[6] else "",
+        "company_name": row[7],
+        "base_name": row[8],
+        "hull_manufacturer": row[9],
+        "hull_model_code": row[10],
+        "hull_display_name": row[11],
     }
 
 
@@ -104,11 +160,14 @@ def create_vessel(
     vessel_type: str,
     charter_company_id: str | None,
     charter_operating_base_id: str | None,
+    hull_model_id: str | None = None,
 ) -> str:
     name = name.strip()
     slug = slugify(slug or name)
     if not name:
         raise VesselServiceError("Vessel name is required.")
+
+    resolved_type = _resolve_vessel_type(conn, vessel_type, hull_model_id)
 
     try:
         row = conn.execute(
@@ -116,11 +175,12 @@ def create_vessel(
                 """
                 INSERT INTO vessels (
                     name, slug, charter_company_id,
-                    charter_operating_base_id, vessel_type
+                    charter_operating_base_id, vessel_type, hull_model_id
                 )
                 VALUES (
                     :name, :slug, :charter_company_id,
-                    :charter_operating_base_id, CAST(:vessel_type AS vessel_type)
+                    :charter_operating_base_id, CAST(:vessel_type AS vessel_type),
+                    :hull_model_id
                 )
                 RETURNING id
                 """
@@ -130,7 +190,8 @@ def create_vessel(
                 "slug": slug,
                 "charter_company_id": charter_company_id or None,
                 "charter_operating_base_id": charter_operating_base_id or None,
-                "vessel_type": vessel_type,
+                "vessel_type": resolved_type,
+                "hull_model_id": hull_model_id or None,
             },
         ).fetchone()
     except IntegrityError as exc:
@@ -149,11 +210,14 @@ def update_vessel(
     vessel_type: str,
     charter_company_id: str | None,
     charter_operating_base_id: str | None,
+    hull_model_id: str | None = None,
 ) -> None:
     name = name.strip()
     slug = slugify(slug or name)
     if not name:
         raise VesselServiceError("Vessel name is required.")
+
+    resolved_type = _resolve_vessel_type(conn, vessel_type, hull_model_id)
 
     try:
         result = conn.execute(
@@ -165,7 +229,8 @@ def update_vessel(
                     slug = :slug,
                     charter_company_id = :charter_company_id,
                     charter_operating_base_id = :charter_operating_base_id,
-                    vessel_type = CAST(:vessel_type AS vessel_type)
+                    vessel_type = CAST(:vessel_type AS vessel_type),
+                    hull_model_id = :hull_model_id
                 WHERE id = :vessel_id
                 """
             ),
@@ -175,7 +240,8 @@ def update_vessel(
                 "slug": slug,
                 "charter_company_id": charter_company_id or None,
                 "charter_operating_base_id": charter_operating_base_id or None,
-                "vessel_type": vessel_type,
+                "vessel_type": resolved_type,
+                "hull_model_id": hull_model_id or None,
             },
         )
     except IntegrityError as exc:
@@ -212,6 +278,7 @@ def clone_vessel(
         charter_operating_base_id=(
             charter_operating_base_id or source["charter_operating_base_id"] or None
         ),
+        hull_model_id=source["hull_model_id"] or None,
     )
 
     if copy_equipment:
@@ -385,15 +452,57 @@ def remove_vessel_equipment(
     )
 
 
-def list_option_packs(conn: Connection) -> list[dict[str, Any]]:
-    rows = conn.execute(
-        text(
+def list_option_packs(
+    conn: Connection, *, hull_model_id: str | None = None
+) -> list[dict[str, Any]]:
+    clauses = ["TRUE"]
+    params: dict[str, Any] = {}
+    if hull_model_id:
+        clauses.append(
             """
-            SELECT id, manufacturer, pack_name, applicable_models, bill_of_materials
-            FROM option_pack
-            ORDER BY manufacturer, pack_name
+            EXISTS (
+                SELECT 1 FROM option_pack_hull_model opam
+                WHERE opam.option_pack_id = op.id
+                  AND opam.hull_model_id = :hull_model_id
+            )
             """
         )
+        params["hull_model_id"] = hull_model_id
+
+    rows = conn.execute(
+        text(
+            f"""
+            SELECT
+                op.id,
+                op.manufacturer,
+                op.pack_name,
+                COALESCE(hull_models.model_codes, ARRAY[]::text[]) AS applicable_models,
+                COALESCE(item_counts.item_count, 0) AS item_count,
+                COALESCE(child_counts.child_pack_count, 0) AS child_pack_count
+            FROM option_pack op
+            LEFT JOIN (
+                SELECT option_pack_id, COUNT(*)::int AS item_count
+                FROM option_pack_equipment
+                GROUP BY option_pack_id
+            ) item_counts ON item_counts.option_pack_id = op.id
+            LEFT JOIN (
+                SELECT parent_pack_id, COUNT(*)::int AS child_pack_count
+                FROM option_pack_child_pack
+                GROUP BY parent_pack_id
+            ) child_counts ON child_counts.parent_pack_id = op.id
+            LEFT JOIN (
+                SELECT
+                    opam.option_pack_id,
+                    array_agg(hm.model_code ORDER BY hm.model_code) AS model_codes
+                FROM option_pack_hull_model opam
+                JOIN hull_model hm ON hm.id = opam.hull_model_id
+                GROUP BY opam.option_pack_id
+            ) hull_models ON hull_models.option_pack_id = op.id
+            WHERE {' AND '.join(clauses)}
+            ORDER BY op.manufacturer, op.pack_name
+            """
+        ),
+        params,
     ).fetchall()
     return [
         {
@@ -401,28 +510,102 @@ def list_option_packs(conn: Connection) -> list[dict[str, Any]]:
             "manufacturer": row[1],
             "pack_name": row[2],
             "applicable_models": row[3] or [],
-            "bill_count": len(row[4] or []),
+            "bill_count": row[4],
+            "child_pack_count": row[5],
         }
         for row in rows
     ]
 
 
+def _collect_pack_equipment_ids(
+    conn: Connection, pack_id: str, visited: set[str]
+) -> list[str]:
+    """Resolve direct equipment and nested child packs (depth-first, cycle-safe)."""
+    if pack_id in visited:
+        raise VesselServiceError("Circular option pack reference detected.")
+    visited.add(pack_id)
+
+    equipment_ids: list[str] = []
+    for row in conn.execute(
+        text(
+            """
+            SELECT equipment_id
+            FROM option_pack_equipment
+            WHERE option_pack_id = :pack_id
+            ORDER BY sort_order, equipment_id
+            """
+        ),
+        {"pack_id": pack_id},
+    ):
+        equipment_ids.append(str(row[0]))
+
+    for row in conn.execute(
+        text(
+            """
+            SELECT child_pack_id
+            FROM option_pack_child_pack
+            WHERE parent_pack_id = :pack_id
+            ORDER BY sort_order, child_pack_id
+            """
+        ),
+        {"pack_id": pack_id},
+    ):
+        equipment_ids.extend(
+            _collect_pack_equipment_ids(conn, str(row[0]), visited)
+        )
+
+    return equipment_ids
+
+
 def apply_option_pack(
     conn: Connection, vessel_id: str, option_pack_id: str
 ) -> int:
-    row = conn.execute(
-        text(
-            """
-            SELECT bill_of_materials FROM option_pack WHERE id = :pack_id
-            """
-        ),
+    vessel = get_vessel(conn, vessel_id)
+    if vessel is None:
+        raise VesselServiceError("Vessel not found.")
+
+    pack = conn.execute(
+        text("SELECT id FROM option_pack WHERE id = :pack_id"),
         {"pack_id": option_pack_id},
     ).fetchone()
-    if not row or not row[0]:
-        raise VesselServiceError("Option pack not found or has no bill of materials.")
+    if not pack:
+        raise VesselServiceError("Option pack not found.")
+
+    if vessel.get("hull_model_id"):
+        applicable = conn.execute(
+            text(
+                """
+                SELECT 1 FROM option_pack_hull_model
+                WHERE option_pack_id = :pack_id
+                  AND hull_model_id = :hull_model_id
+                """
+            ),
+            {
+                "pack_id": option_pack_id,
+                "hull_model_id": vessel["hull_model_id"],
+            },
+        ).fetchone()
+        if not applicable:
+            raise VesselServiceError(
+                "Option pack does not apply to this vessel's hull model."
+            )
+
+    equipment_ids: list[str] = []
+    seen: set[str] = set()
+    for equipment_id in _collect_pack_equipment_ids(
+        conn, option_pack_id, visited=set()
+    ):
+        if equipment_id not in seen:
+            seen.add(equipment_id)
+            equipment_ids.append(equipment_id)
+
+    if not equipment_ids:
+        raise VesselServiceError(
+            "Option pack has no equipment items (direct or via child packs)."
+        )
 
     added = 0
-    for equipment_id in row[0]:
+    for equipment_id in equipment_ids:
         result = conn.execute(
             text(
                 """
@@ -435,7 +618,7 @@ def apply_option_pack(
                 RETURNING equipment_id
                 """
             ),
-            {"vessel_id": vessel_id, "equipment_id": str(equipment_id)},
+            {"vessel_id": vessel_id, "equipment_id": equipment_id},
         ).fetchone()
         if result:
             added += 1

@@ -25,6 +25,9 @@ OPERATING_BASE_SLUG = "abacos"
 VESSEL_NAME = "Cattitude"
 VESSEL_SLUG = "cattitude"
 VESSEL_TYPE = "sailing_catamaran"
+HULL_MANUFACTURER = "Fountaine Pajot"
+HULL_MODEL_CODE = "Tanna 47"
+HULL_DISPLAY_NAME = "Tanna 47"
 
 ABACOS_GUIDE_CONTEXT = {
     "displayName": "Abacos, Bahamas",
@@ -160,7 +163,45 @@ def _get_or_create_operating_base(conn, charter_id: str) -> str:
     return str(row[0])
 
 
-def _get_or_create_vessel(conn, charter_id: str, operating_base_id: str) -> str:
+def _get_or_create_hull_model(conn) -> str:
+    row = conn.execute(
+        text(
+            """
+            SELECT id FROM hull_model
+            WHERE manufacturer = :manufacturer AND model_code = :model_code
+            """
+        ),
+        {"manufacturer": HULL_MANUFACTURER, "model_code": HULL_MODEL_CODE},
+    ).fetchone()
+    if row:
+        return str(row[0])
+
+    row = conn.execute(
+        text(
+            """
+            INSERT INTO hull_model (
+                manufacturer, model_code, display_name, vessel_type, aliases
+            )
+            VALUES (
+                :manufacturer, :model_code, :display_name,
+                CAST(:vessel_type AS vessel_type),
+                CAST(:aliases AS text[])
+            )
+            RETURNING id
+            """
+        ),
+        {
+            "manufacturer": HULL_MANUFACTURER,
+            "model_code": HULL_MODEL_CODE,
+            "display_name": HULL_DISPLAY_NAME,
+            "vessel_type": VESSEL_TYPE,
+            "aliases": ["FP47", "Tanna47"],
+        },
+    ).fetchone()
+    return str(row[0])
+
+
+def _get_or_create_vessel(conn, charter_id: str, operating_base_id: str, hull_model_id: str) -> str:
     row = conn.execute(
         text("SELECT id FROM vessels WHERE slug = :slug"),
         {"slug": VESSEL_SLUG},
@@ -172,13 +213,15 @@ def _get_or_create_vessel(conn, charter_id: str, operating_base_id: str) -> str:
                 """
                 UPDATE vessels
                 SET charter_company_id = :charter_id,
-                    charter_operating_base_id = :operating_base_id
+                    charter_operating_base_id = :operating_base_id,
+                    hull_model_id = :hull_model_id
                 WHERE id = :vessel_id
                 """
             ),
             {
                 "charter_id": charter_id,
                 "operating_base_id": operating_base_id,
+                "hull_model_id": hull_model_id,
                 "vessel_id": vessel_id,
             },
         )
@@ -188,10 +231,12 @@ def _get_or_create_vessel(conn, charter_id: str, operating_base_id: str) -> str:
         text(
             """
             INSERT INTO vessels (
-                name, slug, charter_company_id, charter_operating_base_id, vessel_type
+                name, slug, charter_company_id, charter_operating_base_id,
+                vessel_type, hull_model_id
             )
             VALUES (
-                :name, :slug, :charter_id, :operating_base_id, :vessel_type
+                :name, :slug, :charter_id, :operating_base_id,
+                CAST(:vessel_type AS vessel_type), :hull_model_id
             )
             RETURNING id
             """
@@ -202,6 +247,7 @@ def _get_or_create_vessel(conn, charter_id: str, operating_base_id: str) -> str:
             "charter_id": charter_id,
             "operating_base_id": operating_base_id,
             "vessel_type": VESSEL_TYPE,
+            "hull_model_id": hull_model_id,
         },
     ).fetchone()
     return str(row[0])
@@ -324,7 +370,8 @@ def main() -> None:
     with engine.begin() as conn:
         charter_id = _get_or_create_charter(conn)
         operating_base_id = _get_or_create_operating_base(conn, charter_id)
-        vessel_id = _get_or_create_vessel(conn, charter_id, operating_base_id)
+        hull_model_id = _get_or_create_hull_model(conn)
+        vessel_id = _get_or_create_vessel(conn, charter_id, operating_base_id, hull_model_id)
 
         equipment_ids: list[str] = []
         for spec in EQUIPMENT_ROWS:

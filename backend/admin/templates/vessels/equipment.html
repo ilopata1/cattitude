@@ -53,12 +53,17 @@
 
   <section class="panel">
     <h2>Apply option pack</h2>
+    {% if vessel.hull_model_id %}
+    <p class="muted">Filtered for <strong>{{ vessel.hull_manufacturer }} {{ vessel.hull_display_name or vessel.hull_model_code }}</strong>.</p>
+    {% else %}
+    <p class="muted">Set a hull model on the vessel to filter packs for this hull.</p>
+    {% endif %}
     {% if option_packs %}
     <form method="post" action="/admin/vessels/{{ vessel.id }}/equipment/apply-pack" class="inline-form">
       <select name="option_pack_id" required>
         <option value="">Select pack…</option>
         {% for pack in option_packs %}
-        <option value="{{ pack.id }}">{{ pack.manufacturer }} — {{ pack.pack_name }} ({{ pack.bill_count }} items)</option>
+        <option value="{{ pack.id }}">{{ pack.manufacturer }} — {{ pack.pack_name }} ({{ pack.bill_count }} items{% if pack.child_pack_count %}, {{ pack.child_pack_count }} child packs{% endif %})</option>
         {% endfor %}
       </select>
       <button type="submit">Apply pack</button>

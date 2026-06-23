@@ -15,6 +15,7 @@ from admin.vessel_service import (
     create_vessel,
     get_vessel,
     list_charter_companies,
+    list_hull_models,
     list_operating_bases,
     list_option_packs,
     list_vessel_equipment,
@@ -36,6 +37,7 @@ def _form_context(conn, vessel: dict | None = None, error: str | None = None) ->
         "bases": list_operating_bases(conn, charter_company_id=charter_id or None),
         "all_bases": list_operating_bases(conn),
         "vessel_types": VESSEL_TYPES,
+        "hull_models": list_hull_models(conn),
         "error": error,
     }
 
@@ -55,6 +57,8 @@ async def list_vessels(
                     v.id, v.name, v.slug, v.vessel_type,
                     c.name AS company_name,
                     b.name AS base_name,
+                    hm.manufacturer AS hull_manufacturer,
+                    hm.model_code AS hull_model_code,
                     b.guide_context_version,
                     b.updated_at AS base_updated_at,
                     (
@@ -77,6 +81,7 @@ async def list_vessels(
                 FROM vessels v
                 LEFT JOIN charter_companies c ON c.id = v.charter_company_id
                 LEFT JOIN charter_operating_bases b ON b.id = v.charter_operating_base_id
+                LEFT JOIN hull_model hm ON hm.id = v.hull_model_id
                 LEFT JOIN LATERAL (
                     SELECT version, content_hash, published_at
                     FROM vessel_guide_publication
@@ -92,14 +97,14 @@ async def list_vessels(
     vessels = []
     for row in rows:
         latest = None
-        if row[11] is not None:
+        if row[13] is not None:
             latest = {
-                "version": row[11],
-                "content_hash": row[12],
-                "published_at": row[13],
+                "version": row[13],
+                "content_hash": row[14],
+                "published_at": row[15],
             }
         stale_context = bool(
-            latest and row[7] and row[7] > latest["published_at"]
+            latest and row[9] and row[9] > latest["published_at"]
         )
         vessels.append(
             {
@@ -109,10 +114,12 @@ async def list_vessels(
                 "vessel_type": row[3],
                 "company_name": row[4],
                 "base_name": row[5],
-                "guide_context_version": row[6],
-                "approved_modules": row[8],
-                "draft_modules": row[9],
-                "equipment_count": row[10],
+                "hull_manufacturer": row[6],
+                "hull_model_code": row[7],
+                "guide_context_version": row[8],
+                "approved_modules": row[10],
+                "draft_modules": row[11],
+                "equipment_count": row[12],
                 "latest_publication": latest,
                 "stale_context": stale_context,
             }
@@ -163,6 +170,7 @@ async def create_vessel_action(
     vessel_type: str = Form("sailing_catamaran"),
     charter_company_id: str = Form(""),
     charter_operating_base_id: str = Form(""),
+    hull_model_id: str = Form(""),
 ):
     with get_engine().begin() as conn:
         try:
@@ -173,6 +181,7 @@ async def create_vessel_action(
                 vessel_type=vessel_type,
                 charter_company_id=charter_company_id or None,
                 charter_operating_base_id=charter_operating_base_id or None,
+                hull_model_id=hull_model_id or None,
             )
         except VesselServiceError as exc:
             vessel = {
@@ -181,6 +190,7 @@ async def create_vessel_action(
                 "vessel_type": vessel_type,
                 "charter_company_id": charter_company_id,
                 "charter_operating_base_id": charter_operating_base_id,
+                "hull_model_id": hull_model_id,
             }
             ctx = _form_context(conn, vessel=vessel, error=str(exc))
             return templates.TemplateResponse(
@@ -224,6 +234,7 @@ async def update_vessel_action(
     vessel_type: str = Form("sailing_catamaran"),
     charter_company_id: str = Form(""),
     charter_operating_base_id: str = Form(""),
+    hull_model_id: str = Form(""),
 ):
     with get_engine().begin() as conn:
         try:
@@ -235,6 +246,7 @@ async def update_vessel_action(
                 vessel_type=vessel_type,
                 charter_company_id=charter_company_id or None,
                 charter_operating_base_id=charter_operating_base_id or None,
+                hull_model_id=hull_model_id or None,
             )
         except VesselServiceError as exc:
             vessel = {
@@ -244,6 +256,7 @@ async def update_vessel_action(
                 "vessel_type": vessel_type,
                 "charter_company_id": charter_company_id,
                 "charter_operating_base_id": charter_operating_base_id,
+                "hull_model_id": hull_model_id,
             }
             ctx = _form_context(conn, vessel=vessel, error=str(exc))
             return templates.TemplateResponse(
@@ -353,7 +366,9 @@ async def vessel_equipment_page(
             system_category=system_category,
             vessel_type=vessel["vessel_type"],
         )
-        packs = list_option_packs(conn)
+        packs = list_option_packs(
+            conn, hull_model_id=vessel.get("hull_model_id") or None
+        )
 
     installed_ids = {item["equipment_id"] for item in installed}
     return templates.TemplateResponse(

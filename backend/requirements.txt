@@ -8,8 +8,8 @@ llama-index-llms-azure-openai
 llama-index-readers-file
 openai
 pypdf
-pydantic
-pydantic-settings
+pydantic>=2.13.4
+pydantic-settings>=2.14.1
 psycopg2-binary
 asyncpg
 sqlalchemy

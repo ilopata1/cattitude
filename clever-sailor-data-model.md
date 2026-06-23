@@ -106,13 +106,16 @@ Apply migrations in dependency order:
 | Step | Objects |
 |------|---------|
 | 1 | Core enums (see below) |
-| 2 | `equipment`, `option_pack`, `manufacturer_config_availability`, `equipment_constraint` |
+| 2 | `equipment`, `hull_model`, `option_pack`, `option_pack_equipment`, `option_pack_child_pack`, `option_pack_hull_model`, `manufacturer_config_availability`, `equipment_constraint` |
 | 3 | `manual_work`, `manual_edition`, `manual_file` |
 | 4 | `charter_companies`, `vessels`, `vessel_equipment`, `charters` |
 | 5 | `query_log`, `notifications` |
 | 6 | Vessel guide enums |
 | 7 | `guide_prompt_template`, `guide_generation_input_snapshot`, `guide_generation_run`, `guide_content`, `vessel_guide_publication` |
 | 11 | `charter_operating_bases`, `vessels.charter_operating_base_id`, `guide_scope` + `charter_operating_base` |
+| 13 | `hull_model`, `option_pack_hull_model`, `vessels.hull_model_id`; drop `option_pack.applicable_models` |
+| 14 | Rename `option_pack_applicable_model` → `option_pack_hull_model` (if 013 created old name) |
+| 15 | `option_pack_child_pack` (nested pack membership) |
 | — | `manual_chunks` — **do not hand-build** (LlamaIndex creates on first ingest) |
 
 ---
@@ -201,7 +204,6 @@ CREATE TABLE equipment (
     system_category system_category NOT NULL,
     equipment_class equipment_class NOT NULL,
     configuration_tier configuration_tier NOT NULL,
-    option_pack_id UUID,
     has_formal_manual BOOLEAN NOT NULL DEFAULT false,
     identification_method identification_method NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -212,23 +214,104 @@ CREATE INDEX idx_equipment_system_category ON equipment (system_category);
 CREATE INDEX idx_equipment_vessel_types ON equipment USING GIN (vessel_types);
 ```
 
+### `hull_model`
+
+Builder product lines (e.g. Fountaine Pajot FP44, Jeanneau Sun Odyssey 490). Distinct from `equipment` registry items and from a specific vessel instance.
+
+```sql
+CREATE TABLE hull_model (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    manufacturer TEXT NOT NULL,
+    model_code TEXT NOT NULL,
+    display_name TEXT,
+    vessel_type vessel_type NOT NULL,
+    aliases TEXT[] NOT NULL DEFAULT '{}',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    UNIQUE (manufacturer, model_code)
+);
+
+CREATE INDEX idx_hull_model_manufacturer ON hull_model (manufacturer);
+CREATE INDEX idx_hull_model_vessel_type ON hull_model (vessel_type);
+CREATE INDEX idx_hull_model_aliases ON hull_model USING GIN (aliases);
+```
+
+- `model_code` — canonical key used in imports and configurator cross-refs (`FP44`, `Oceanis 46.1`).
+- `display_name` — human label when it differs from `model_code`.
+- `aliases` — alternate strings for intake matching (`SO 490`, `Sun Odyssey 490`).
+
+CSV import: `hull_models.csv` — `manufacturer`, `model_code`, `display_name`, `vessel_type`, optional `aliases` (pipe-separated).
+
 ### `option_pack`
 
 ```sql
 CREATE TABLE option_pack (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     manufacturer TEXT NOT NULL,
-    applicable_models TEXT[] NOT NULL DEFAULT '{}',
     pack_name TEXT NOT NULL,
-    bill_of_materials UUID[] NOT NULL DEFAULT '{}',
     source pack_source NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
-
-ALTER TABLE equipment
-    ADD CONSTRAINT fk_equipment_option_pack
-    FOREIGN KEY (option_pack_id) REFERENCES option_pack(id);
 ```
+
+Pack membership (many-to-many with `equipment`) is in `option_pack_equipment`. Nested packs (parent includes child packs) are in `option_pack_child_pack`. Hull applicability (many-to-many with `hull_model`) is in `option_pack_hull_model`. Pack header rows in `equipment` (`configuration_tier = 'option_pack'`) remain searchable registry entries.
+
+### `option_pack_child_pack`
+
+```sql
+CREATE TABLE option_pack_child_pack (
+    parent_pack_id UUID NOT NULL REFERENCES option_pack(id) ON DELETE CASCADE,
+    child_pack_id UUID NOT NULL REFERENCES option_pack(id) ON DELETE CASCADE,
+    sort_order INT NOT NULL DEFAULT 0,
+    is_optional BOOLEAN NOT NULL DEFAULT false,
+    source_note TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    PRIMARY KEY (parent_pack_id, child_pack_id),
+    CONSTRAINT chk_option_pack_child_not_self
+        CHECK (parent_pack_id <> child_pack_id)
+);
+
+CREATE INDEX idx_option_pack_child_pack_child
+    ON option_pack_child_pack (child_pack_id);
+```
+
+`apply_option_pack` resolves equipment transitively: direct `option_pack_equipment` rows plus all equipment from child packs (cycle-safe). Import must not create cycles.
+
+CSV import: `option_pack_child_pack.csv` — `parent_manufacturer`, `parent_pack_name`, `child_manufacturer`, `child_pack_name`, optional `sort_order`, `is_optional`, `source_note`. Resolved to `(parent_pack_id, child_pack_id)` at import time. If `(manufacturer, pack_name)` is ambiguous, disambiguate `pack_name` in `option_packs.csv` before linking.
+
+### `option_pack_hull_model`
+
+```sql
+CREATE TABLE option_pack_hull_model (
+    option_pack_id UUID NOT NULL REFERENCES option_pack(id) ON DELETE CASCADE,
+    hull_model_id UUID NOT NULL REFERENCES hull_model(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    PRIMARY KEY (option_pack_id, hull_model_id)
+);
+
+CREATE INDEX idx_option_pack_hull_model_hull_model
+    ON option_pack_hull_model (hull_model_id);
+```
+
+CSV import: `option_pack_hull_model.csv` — `manufacturer`, `pack_name`, `hull_manufacturer`, `hull_model_code`.
+
+### `option_pack_equipment`
+
+```sql
+CREATE TABLE option_pack_equipment (
+    option_pack_id UUID NOT NULL REFERENCES option_pack(id) ON DELETE CASCADE,
+    equipment_id UUID NOT NULL REFERENCES equipment(id) ON DELETE CASCADE,
+    sort_order INT NOT NULL DEFAULT 0,
+    quantity INT NOT NULL DEFAULT 1,
+    is_optional BOOLEAN NOT NULL DEFAULT false,
+    source_note TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    PRIMARY KEY (option_pack_id, equipment_id)
+);
+
+CREATE INDEX idx_option_pack_equipment_equipment ON option_pack_equipment (equipment_id);
+```
+
+CSV import: `option_pack_equipment.csv` with columns `manufacturer`, `pack_name`, `equipment_manufacturer`, `equipment_model`, optional `sort_order`, `quantity`, `is_optional`, `source_note`.
 
 ### `manufacturer_config_availability`
 
@@ -388,16 +471,18 @@ CREATE TABLE vessels (
     charter_company_id UUID REFERENCES charter_companies(id),
     charter_operating_base_id UUID REFERENCES charter_operating_bases(id),
     vessel_type vessel_type NOT NULL,
+    hull_model_id UUID REFERENCES hull_model(id),
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE INDEX idx_vessels_charter_company ON vessels (charter_company_id);
 CREATE INDEX idx_vessels_operating_base ON vessels (charter_operating_base_id);
+CREATE INDEX idx_vessels_hull_model ON vessels (hull_model_id);
 ```
 
 Private owners: `charter_company_id` and `charter_operating_base_id` may both be null; location facts come from vessel intake or platform region packs.
 
-**Note:** `vessel_type` on the `vessels` table itself is not explicitly listed in the schema reference document but is clearly required by the application logic described in the taxonomy document (Section 8.1, "Vessel Configuration Generation" filters by vessel type). Add it here as a single value, distinct from `equipment.vessel_types` which is an array describing which vessel types a piece of equipment *can* apply to.
+**Note:** `vessel_type` is the operational category for equipment filtering and guide generation. When `hull_model_id` is set, admin syncs `vessel_type` from `hull_model.vessel_type`. Distinct from `equipment.vessel_types` (array of types a registry item *can* apply to).
 
 ### `vessel_equipment`
 

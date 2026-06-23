@@ -29,6 +29,15 @@
         {% endfor %}
       </select>
     </label>
+    <label>Hull model (builder product line)
+      <select name="hull_model_id">
+        <option value="">— Not set —</option>
+        {% for hull in hull_models %}
+        <option value="{{ hull.id }}" {% if vessel and vessel.hull_model_id == hull.id %}selected{% endif %}>{{ hull.label }} ({{ hull.vessel_type | format_label }})</option>
+        {% endfor %}
+      </select>
+    </label>
+    <p class="muted">Selecting a hull model sets vessel type from the registry and scopes option packs on the equipment page.</p>
   </fieldset>
 
   <fieldset class="full-width">

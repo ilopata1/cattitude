@@ -67,7 +67,7 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 - Edit all fields per the `equipment` table in the schema reference
 - `vessel_types` as a multi-select against the `VesselType` enum
 - `zone` as a single select against the full `Zone` enum (all four sub-groups combined, per the Postgres schema build doc)
-- Show linked `option_pack` (if `option_pack_id` set) as a read-only reference with a link to that pack's detail view
+- Show option packs that include this equipment (query `option_pack_equipment`) as read-only links to each pack's detail view
 - Show linked `equipment_constraint` rows (both where this equipment is the source and where it's a target) inline, with add/remove controls
 
 **Create view** (`GET/POST /admin/equipment/new`):
@@ -84,11 +84,13 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 ## Screen 2: Option Packs
 
 **List view** (`GET /admin/option-packs`):
-- Table: manufacturer, pack_name, applicable_models, source, count of bill_of_materials items
+- Table: manufacturer, pack_name, applicable hull models (from `option_pack_hull_model`), source, count of `option_pack_equipment` rows, count of child packs
 
 **Detail/edit view** (`GET/POST /admin/option-packs/{id}`):
-- Edit `pack_name`, `applicable_models` (tag input), `source`
-- `bill_of_materials`: searchable add/remove list of equipment items (autocomplete against the registry, same pattern as constraints above)
+- Edit `pack_name`, `source`
+- Hull applicability: add/remove `hull_model` rows via `option_pack_hull_model`
+- Equipment membership: searchable add/remove list backed by `option_pack_equipment` (autocomplete against the registry, same pattern as constraints above); optional per-row `sort_order`, `quantity`, `is_optional`, `source_note`
+- Child packs: add/remove nested packs via `option_pack_child_pack` (parent includes child); optional per-row `sort_order`, `is_optional`, `source_note`; prevent cycles
 
 **Manufacturer Config Availability sub-screen** (`GET/POST /admin/manufacturers/config-availability`):
 - Simple table over `manufacturer_config_availability`: manufacturer, has_public_configurator, pack_data_source_tier, last_verified

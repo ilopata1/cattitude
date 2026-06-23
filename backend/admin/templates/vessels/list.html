@@ -34,6 +34,9 @@
         <strong>{{ vessel.name }}</strong><br>
         <code>{{ vessel.slug }}</code><br>
         <span class="muted">{{ vessel.vessel_type | format_label }}</span>
+        {% if vessel.hull_model_code %}
+        <br><span class="muted">{{ vessel.hull_manufacturer }} {{ vessel.hull_model_code }}</span>
+        {% endif %}
       </td>
       <td>
         {{ vessel.company_name or '—' }}<br>

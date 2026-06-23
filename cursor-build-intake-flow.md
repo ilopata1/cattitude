@@ -84,7 +84,7 @@ interface ConfigAvailability {
 }
 ```
 
-- If `has_public_configurator` is true (or `option_pack` records exist for this manufacturer/model regardless of the flag), show a sub-step: **"Do you know your configuration or option pack name?"** with a searchable list of `option_pack.pack_name` values scoped to `applicable_models` matching this model, plus a "Skip — I don't know" option.
+- If `has_public_configurator` is true (or `option_pack` records exist for this manufacturer/model regardless of the flag), show a sub-step: **"Do you know your configuration or option pack name?"** with a searchable list of `option_pack.pack_name` values scoped via `option_pack_hull_model` to the vessel's `hull_model_id`, plus a "Skip — I don't know" option.
 - If the user selects a pack, store `selected_option_pack_id` in intake state. This will pre-populate Step 3 (Equipment Checklist) per the manufacturer research findings (taxonomy document, Section 1.6 and 8.4) — **do not skip Step 2 or Step 3 entirely**, since structural/aftermarket items still need confirmation or photo capture.
 - If the manufacturer has no known config data (`has_public_configurator: false` and no packs found), skip this sub-step silently — do not show an empty list or a dead-end UI state.
 
@@ -126,7 +126,7 @@ interface EquipmentIdentificationResult {
 
 **Pre-population logic (in priority order):**
 
-1. If an option pack was selected in Step 1, every `equipment_id` in that pack's `bill_of_materials` is pre-checked and shown with a "From your configuration" badge — these still require a single confirm tap, not re-entry
+1. If an option pack was selected in Step 1, every `equipment_id` linked via `option_pack_equipment` (including equipment from nested child packs in `option_pack_child_pack`) is pre-checked and shown with a "From your configuration" badge — these still require a single confirm tap, not re-entry
 2. Items identified via Step 2 photography are shown as pre-filled rows
 3. Remaining expected equipment for this vessel type (query equipment where `vessel_types` contains this vessel's type, scoped to common `system_category` values not yet covered) shown as **Yes / No / Not sure** rows — this is the fallback checklist behavior from the original project briefing
 
