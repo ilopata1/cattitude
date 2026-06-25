@@ -77,7 +77,24 @@
 <section class="panel">
   <h2>Add from equipment registry</h2>
   <form method="get" class="search-row">
-    <input name="q" value="{{ query }}" placeholder="Search manufacturer or model">
+    <div class="combobox" data-combobox>
+      <input
+        type="text"
+        name="manufacturer"
+        value="{{ manufacturer }}"
+        placeholder="Manufacturer"
+        autocomplete="off"
+        aria-autocomplete="list"
+        aria-controls="manufacturer-options"
+        role="combobox"
+      >
+      <ul id="manufacturer-options" class="combobox-options" role="listbox" hidden>
+        {% for name in manufacturers %}
+        <li role="option" data-value="{{ name }}">{{ name }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <input name="q" value="{{ query }}" placeholder="Model">
     <select name="system_category">
       <option value="">All systems</option>
       {% for cat in system_categories %}
@@ -124,4 +141,7 @@
   <p class="muted">No matching equipment. Try a broader search.</p>
   {% endif %}
 </section>
+{% endblock %}
+{% block scripts %}
+<script src="/admin/static/combobox.js"></script>
 {% endblock %}

@@ -121,6 +121,47 @@ a.stat-card-link:focus-visible {
   margin-top: 0;
 }
 
+.combobox {
+  position: relative;
+  min-width: 200px;
+}
+
+.combobox input {
+  width: 100%;
+  margin-top: 0;
+}
+
+.combobox-options {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 2px);
+  left: 0;
+  right: 0;
+  max-height: 240px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0.25rem 0;
+  list-style: none;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(16, 42, 67, 0.12);
+}
+
+.combobox.is-open .combobox-options:not([hidden]) {
+  display: block;
+}
+
+.combobox-options [role="option"] {
+  padding: 0.45rem 0.65rem;
+  cursor: pointer;
+}
+
+.combobox-options [role="option"]:hover,
+.combobox-options [role="option"]:focus {
+  background: #e6f2ff;
+}
+
 .inline-form {
   display: flex;
   flex-wrap: wrap;

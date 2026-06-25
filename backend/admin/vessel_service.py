@@ -369,9 +369,34 @@ def list_vessel_equipment(conn: Connection, vessel_id: str) -> list[dict[str, An
     ]
 
 
+def list_equipment_manufacturers(
+    conn: Connection, *, vessel_type: str = ""
+) -> list[str]:
+    clauses = ["manufacturer IS NOT NULL", "manufacturer <> ''"]
+    params: dict[str, Any] = {}
+
+    if vessel_type:
+        clauses.append("CAST(:vessel_type AS vessel_type) = ANY(vessel_types)")
+        params["vessel_type"] = vessel_type
+
+    rows = conn.execute(
+        text(
+            f"""
+            SELECT DISTINCT manufacturer
+            FROM equipment
+            WHERE {' AND '.join(clauses)}
+            ORDER BY manufacturer
+            """
+        ),
+        params,
+    ).fetchall()
+    return [row[0] for row in rows]
+
+
 def search_equipment(
     conn: Connection,
     *,
+    manufacturer: str = "",
     query: str = "",
     system_category: str = "",
     vessel_type: str = "",
@@ -380,10 +405,12 @@ def search_equipment(
     clauses = ["TRUE"]
     params: dict[str, Any] = {"limit": limit}
 
+    if manufacturer.strip():
+        clauses.append("manufacturer ILIKE :manufacturer_pattern")
+        params["manufacturer_pattern"] = f"%{manufacturer.strip()}%"
+
     if query.strip():
-        clauses.append(
-            "(manufacturer ILIKE :query_pattern OR model ILIKE :query_pattern)"
-        )
+        clauses.append("model ILIKE :query_pattern")
         params["query_pattern"] = f"%{query.strip()}%"
 
     if system_category:

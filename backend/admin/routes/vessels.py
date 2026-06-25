@@ -18,6 +18,7 @@ from admin.vessel_service import (
     list_hull_models,
     list_operating_bases,
     list_option_packs,
+    list_equipment_manufacturers,
     list_vessel_equipment,
     remove_vessel_equipment,
     search_equipment,
@@ -352,6 +353,7 @@ async def vessel_equipment_page(
     request: Request,
     vessel_id: str,
     admin_user: str = Depends(require_admin_user),
+    manufacturer: str = Query(""),
     q: str = Query(""),
     system_category: str = Query(""),
 ):
@@ -360,8 +362,12 @@ async def vessel_equipment_page(
         if vessel is None:
             return RedirectResponse("/admin/vessels", status_code=303)
         installed = list_vessel_equipment(conn, vessel_id)
+        manufacturers = list_equipment_manufacturers(
+            conn, vessel_type=vessel["vessel_type"]
+        )
         results = search_equipment(
             conn,
+            manufacturer=manufacturer,
             query=q,
             system_category=system_category,
             vessel_type=vessel["vessel_type"],
@@ -382,6 +388,8 @@ async def vessel_equipment_page(
             "results": results,
             "option_packs": packs,
             "system_categories": SYSTEM_CATEGORIES,
+            "manufacturers": manufacturers,
+            "manufacturer": manufacturer,
             "query": q,
             "system_category": system_category,
         },
