@@ -7,17 +7,37 @@
   <link rel="stylesheet" href="/admin/static/admin.css">
 </head>
 <body>
+  {% set path = request.url.path %}
   <header class="admin-header">
     <div class="brand">
-      <a href="/admin/">Clever Sailor Admin</a>
+      <a href="/admin/" {% if path == '/admin/' or path == '/admin' %}class="is-active"{% endif %}>Dashboard</a>
     </div>
-    <nav>
-      <a href="/admin/vessels">Vessels</a>
-      <a href="/admin/equipment">Equipment registry</a>
-      <a href="/admin/manuals">Manual library</a>
-      <a href="/admin/option-packs">Option packs</a>
-      <a href="/admin/operating-bases">Operating bases</a>
-      <a href="/admin/prompts">Prompt templates</a>
+    <nav class="admin-nav">
+      <a href="/admin/vessels" {% if path.startswith('/admin/vessels') %}class="is-active"{% endif %}>Vessels</a>
+
+      <div class="nav-group" {% if path.startswith('/admin/option-packs') or path.startswith('/admin/equipment') or path.startswith('/admin/manuals') %}data-open{% endif %}>
+        <span class="nav-group-label" tabindex="0">Equipment</span>
+        <div class="nav-submenu">
+          <a href="/admin/option-packs" {% if path.startswith('/admin/option-packs') %}class="is-active"{% endif %}>Option Packs</a>
+          <a href="/admin/equipment" {% if path.startswith('/admin/equipment') %}class="is-active"{% endif %}>Equipment</a>
+          <a href="/admin/manuals" {% if path.startswith('/admin/manuals') %}class="is-active"{% endif %}>Manuals</a>
+        </div>
+      </div>
+
+      <div class="nav-group" {% if path.startswith('/admin/companies') or path.startswith('/admin/operating-bases') %}data-open{% endif %}>
+        <span class="nav-group-label" tabindex="0">Charter Companies</span>
+        <div class="nav-submenu">
+          <a href="/admin/companies" {% if path.startswith('/admin/companies') %}class="is-active"{% endif %}>Companies</a>
+          <a href="/admin/operating-bases" {% if path.startswith('/admin/operating-bases') %}class="is-active"{% endif %}>Operating Bases</a>
+        </div>
+      </div>
+
+      <div class="nav-group" {% if path.startswith('/admin/prompts') %}data-open{% endif %}>
+        <span class="nav-group-label" tabindex="0">Guides</span>
+        <div class="nav-submenu">
+          <a href="/admin/prompts" {% if path.startswith('/admin/prompts') %}class="is-active"{% endif %}>Prompt Templates</a>
+        </div>
+      </div>
     </nav>
     <div class="user">{{ admin_user }}</div>
   </header>

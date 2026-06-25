@@ -33,10 +33,81 @@ a { color: var(--accent); }
 
 .admin-header a { color: #fff; text-decoration: none; }
 
-.admin-header nav {
+.admin-nav {
   display: flex;
-  gap: 1rem;
+  align-items: center;
+  gap: 0.25rem;
   flex: 1;
+}
+
+.admin-nav > a,
+.admin-nav .nav-group-label {
+  display: inline-block;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.95rem;
+  cursor: default;
+}
+
+.admin-nav > a:hover,
+.admin-nav .nav-group:hover .nav-group-label,
+.admin-nav .nav-group:focus-within .nav-group-label {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.admin-nav a.is-active,
+.admin-nav .nav-group-label.is-active {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.nav-group {
+  position: relative;
+}
+
+.nav-group-label.is-active {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.nav-submenu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  min-width: 11rem;
+  padding: 0.35rem 0;
+  background: #243b53;
+  border: 1px solid #486581;
+  border-radius: 8px;
+  box-shadow: 0 10px 28px rgba(16, 42, 67, 0.35);
+  z-index: 30;
+}
+
+.nav-group:hover .nav-submenu,
+.nav-group:focus-within .nav-submenu {
+  display: block;
+}
+
+.nav-submenu a {
+  display: block;
+  padding: 0.45rem 0.85rem;
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.nav-submenu a:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.nav-submenu a.is-active {
+  background: rgba(255, 255, 255, 0.14);
+  font-weight: 600;
+}
+
+.nav-group[data-open] .nav-group-label {
+  background: rgba(255, 255, 255, 0.16);
 }
 
 .admin-header .user {

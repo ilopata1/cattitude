@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Companies — Clever Sailor Admin{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Charter companies</h1>
+</div>
+
+<p class="lede">Fleet operators that own vessels and operating bases.</p>
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Company</th>
+      <th>Operating bases</th>
+      <th>Vessels</th>
+      <th>Auth0 org</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for company in companies %}
+    <tr>
+      <td><strong>{{ company.name }}</strong></td>
+      <td>{{ company.base_count }}</td>
+      <td>{{ company.vessel_count }}</td>
+      <td>{% if company.auth0_org_id %}<code>{{ company.auth0_org_id }}</code>{% else %}<span class="muted">—</span>{% endif %}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="4">No charter companies yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
