@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Add option pack — Clever Sailor Admin{% endblock %}
+{% block content %}
+<p class="breadcrumb"><a href="/admin/option-packs">Option packs</a> / Add</p>
+<h1>Add option pack</h1>
+
+{% if error %}
+<div class="flash flash-error">{{ error }}</div>
+{% endif %}
+
+<form method="post" class="form-grid">
+  <fieldset class="full-width">
+    <legend>Pack header</legend>
+    <label>Manufacturer
+      <input name="manufacturer" list="manufacturer-suggestions" value="{{ form.manufacturer or '' }}" required>
+      <datalist id="manufacturer-suggestions">
+        {% for name in manufacturers %}
+        <option value="{{ name }}">
+        {% endfor %}
+      </datalist>
+    </label>
+    <label>Pack name<input name="pack_name" value="{{ form.pack_name or '' }}" required></label>
+    <label>Source
+      <select name="source" required>
+        {% for src in pack_sources %}
+        <option value="{{ src }}" {% if form.source == src %}selected{% elif not form.source and src == 'team_researched' %}selected{% endif %}>{{ src | format_label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+  </fieldset>
+  <div class="form-actions full-width">
+    <button type="submit">Create pack</button>
+    <a href="/admin/option-packs">Cancel</a>
+  </div>
+</form>
+{% endblock %}

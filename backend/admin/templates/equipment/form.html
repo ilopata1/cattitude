@@ -125,7 +125,7 @@
   {% if option_packs %}
   <ul class="link-list">
     {% for pack in option_packs %}
-    <li>{{ pack.manufacturer }} — {{ pack.pack_name }} <span class="muted">({{ pack.source | format_label }})</span></li>
+    <li>{{ pack.manufacturer }} — <a href="/admin/option-packs/{{ pack.id }}">{{ pack.pack_name }}</a> <span class="muted">({{ pack.source | format_label }})</span></li>
     {% endfor %}
   </ul>
   {% else %}

@@ -19,6 +19,10 @@
     <div class="stat-value">{{ stats.manuals }}</div>
     <div class="stat-label">Manual works</div>
   </a>
+  <a class="stat-card stat-card-link" href="/admin/option-packs">
+    <div class="stat-value">{{ stats.option_packs }}</div>
+    <div class="stat-label">Option packs</div>
+  </a>
   {% if stats.pending_manuals %}
   <a class="stat-card stat-card-link" href="/admin/manuals/legal-review">
     <div class="stat-value">{{ stats.pending_manuals }}</div>
@@ -38,6 +42,7 @@
 <section class="panel">
   <h2>Quick links</h2>
   <ul class="link-list">
+    <li><a href="/admin/option-packs">Option packs and hull/equipment links</a></li>
     <li><a href="/admin/manuals">Manual library and uploads</a></li>
     <li><a href="/admin/equipment">Browse and edit equipment registry</a></li>
     <li><a href="/admin/vessels">Review vessel guides and publish</a></li>

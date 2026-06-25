@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Option packs — Clever Sailor Admin{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Option packs</h1>
+  <a class="button" href="/admin/option-packs/new">Add option pack</a>
+</div>
+
+<p class="lede">{{ total }} pack{% if total != 1 %}s{% endif %} in the registry.</p>
+
+<form method="get" class="search-row">
+  <div class="combobox" data-combobox>
+    <input
+      type="text"
+      name="manufacturer"
+      value="{{ manufacturer }}"
+      placeholder="Manufacturer"
+      autocomplete="off"
+      aria-autocomplete="list"
+      aria-controls="pack-manufacturer-options"
+      role="combobox"
+    >
+    <ul id="pack-manufacturer-options" class="combobox-options" role="listbox" hidden>
+      {% for name in manufacturers %}
+      <li role="option" data-value="{{ name }}">{{ name }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  <input name="q" value="{{ query }}" placeholder="Pack name">
+  <button type="submit">Filter</button>
+</form>
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Manufacturer</th>
+      <th>Pack name</th>
+      <th>Source</th>
+      <th>Hull models</th>
+      <th>Equipment</th>
+      <th>Child packs</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in items %}
+    <tr>
+      <td>{{ item.manufacturer }}</td>
+      <td>{{ item.pack_name }}</td>
+      <td>{{ item.source | format_label }}</td>
+      <td>
+        {% if item.applicable_models %}
+        {{ item.applicable_models | join(', ') }}
+        {% else %}
+        <span class="muted">—</span>
+        {% endif %}
+      </td>
+      <td>{{ item.equipment_count }}</td>
+      <td>{{ item.child_pack_count }}</td>
+      <td><a href="/admin/option-packs/{{ item.id }}">Edit</a></td>
+    </tr>
+    {% else %}
+    <tr><td colspan="7">No option packs match these filters.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if total_pages > 1 %}
+<nav class="pagination">
+  {% if page > 1 %}
+  <a href="?manufacturer={{ manufacturer | urlencode }}&q={{ query | urlencode }}&page={{ page - 1 }}">Previous</a>
+  {% endif %}
+  <span class="muted">Page {{ page }} of {{ total_pages }}</span>
+  {% if page < total_pages %}
+  <a href="?manufacturer={{ manufacturer | urlencode }}&q={{ query | urlencode }}&page={{ page + 1 }}">Next</a>
+  {% endif %}
+</nav>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+<script src="/admin/static/combobox.js"></script>
+{% endblock %}

@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+{% block title %}{{ pack.pack_name }} — Option packs{% endblock %}
+{% block content %}
+<p class="breadcrumb"><a href="/admin/option-packs">Option packs</a> / {{ pack.pack_name }}</p>
+<h1>{{ pack.manufacturer }} — {{ pack.pack_name }}</h1>
+
+{% if request.query_params.get('created') %}
+<div class="flash flash-ok">Option pack created.</div>
+{% endif %}
+{% if request.query_params.get('saved') %}
+<div class="flash flash-ok">Pack saved.</div>
+{% endif %}
+{% if request.query_params.get('hull_added') %}
+<div class="flash flash-ok">Hull model linked.</div>
+{% endif %}
+{% if request.query_params.get('hull_removed') %}
+<div class="flash flash-ok">Hull model removed.</div>
+{% endif %}
+{% if request.query_params.get('equipment_added') %}
+<div class="flash flash-ok">Equipment added.</div>
+{% endif %}
+{% if request.query_params.get('equipment_saved') %}
+<div class="flash flash-ok">Equipment row saved.</div>
+{% endif %}
+{% if request.query_params.get('equipment_removed') %}
+<div class="flash flash-ok">Equipment removed.</div>
+{% endif %}
+{% if request.query_params.get('child_added') %}
+<div class="flash flash-ok">Child pack linked.</div>
+{% endif %}
+{% if request.query_params.get('child_saved') %}
+<div class="flash flash-ok">Child pack row saved.</div>
+{% endif %}
+{% if request.query_params.get('child_removed') %}
+<div class="flash flash-ok">Child pack removed.</div>
+{% endif %}
+{% if request.query_params.get('error') %}
+<div class="flash flash-error">{{ request.query_params.get('error') }}</div>
+{% endif %}
+
+<form method="post" class="form-grid">
+  <fieldset class="full-width">
+    <legend>Pack header</legend>
+    <label>Manufacturer
+      <input value="{{ pack.manufacturer }}" disabled>
+    </label>
+    <label>Pack name<input name="pack_name" value="{{ pack.pack_name }}" required></label>
+    <label>Source
+      <select name="source" required>
+        {% for src in pack_sources %}
+        <option value="{{ src }}" {% if pack.source == src %}selected{% endif %}>{{ src | format_label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+  </fieldset>
+  <div class="form-actions full-width">
+    <button type="submit">Save header</button>
+    <a href="/admin/option-packs">Back to list</a>
+  </div>
+</form>
+
+<section class="panel">
+  <h2>Hull applicability</h2>
+  {% if hull_models %}
+  <table class="data-table compact">
+    <thead>
+      <tr>
+        <th>Hull model</th>
+        <th>Code</th>
+        <th>Vessel type</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for hull in hull_models %}
+      <tr>
+        <td>{{ hull.label }}</td>
+        <td><code>{{ hull.model_code }}</code></td>
+        <td>{{ hull.vessel_type | format_label }}</td>
+        <td>
+          <form method="post" action="/admin/option-packs/{{ pack.id }}/hull-models/{{ hull.id }}/delete" onsubmit="return confirm('Remove this hull model from the pack?');">
+            <button type="submit" class="btn-danger">Remove</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="muted">No hull models linked yet.</p>
+  {% endif %}
+
+  {% if hull_choices %}
+  <form method="post" action="/admin/option-packs/{{ pack.id }}/hull-models" class="inline-form">
+    <select name="hull_model_id" required>
+      <option value="">Add hull model…</option>
+      {% for hull in hull_choices %}
+      <option value="{{ hull.id }}">{{ hull.label }} ({{ hull.vessel_type | format_label }})</option>
+      {% endfor %}
+    </select>
+    <button type="submit">Add hull</button>
+  </form>
+  {% else %}
+  <p class="muted">All hull models for {{ pack.manufacturer }} are already linked, or none exist in the registry.</p>
+  {% endif %}
+</section>
+
+<section class="panel">
+  <h2>Equipment membership</h2>
+  {% if equipment %}
+  <table class="data-table compact">
+    <thead>
+      <tr>
+        <th>Equipment</th>
+        <th>System</th>
+        <th>Sort</th>
+        <th>Qty</th>
+        <th>Optional</th>
+        <th>Note</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in equipment %}
+      <tr>
+        <td>{{ row.manufacturer }} — {{ row.model }}</td>
+        <td>{{ row.system_category | format_label }}</td>
+        <td><input form="eq-{{ row.equipment_id }}" name="sort_order" value="{{ row.sort_order }}" class="input-narrow" type="number"></td>
+        <td><input form="eq-{{ row.equipment_id }}" name="quantity" value="{{ row.quantity }}" class="input-narrow" type="number" min="1"></td>
+        <td>
+          <label class="checkbox-label">
+            <input form="eq-{{ row.equipment_id }}" type="checkbox" name="is_optional" value="yes" {% if row.is_optional %}checked{% endif %}>
+          </label>
+        </td>
+        <td><input form="eq-{{ row.equipment_id }}" name="source_note" value="{{ row.source_note }}" class="input-wide"></td>
+        <td class="action-links">
+          <form id="eq-{{ row.equipment_id }}" method="post" action="/admin/option-packs/{{ pack.id }}/equipment/{{ row.equipment_id }}">
+            <button type="submit">Save</button>
+          </form>
+          <form method="post" action="/admin/option-packs/{{ pack.id }}/equipment/{{ row.equipment_id }}/delete" onsubmit="return confirm('Remove this equipment from the pack?');">
+            <button type="submit" class="btn-danger">Remove</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="muted">No equipment in this pack yet.</p>
+  {% endif %}
+
+  <h3>Add equipment</h3>
+  <form method="post" action="/admin/option-packs/{{ pack.id }}/equipment" class="constraint-form">
+    <div data-equipment-autocomplete data-autocomplete-url="/admin/equipment/autocomplete">
+      <label>Equipment
+        <input type="text" placeholder="Search manufacturer or model" autocomplete="off">
+        <input type="hidden" name="equipment_id">
+      </label>
+      <ul class="combobox-options" role="listbox" hidden></ul>
+    </div>
+    <label>Sort order<input name="sort_order" value="0" type="number"></label>
+    <label>Quantity<input name="quantity" value="1" type="number" min="1"></label>
+    <label class="checkbox-label">
+      <input type="checkbox" name="is_optional" value="yes"> Optional
+    </label>
+    <label>Source note<input name="source_note" placeholder="Optional note"></label>
+    <button type="submit">Add equipment</button>
+  </form>
+</section>
+
+<section class="panel">
+  <h2>Child packs</h2>
+  <p class="muted">Nested packs are resolved transitively when applying a pack to a vessel. Cycles are not allowed.</p>
+  {% if child_packs %}
+  <table class="data-table compact">
+    <thead>
+      <tr>
+        <th>Child pack</th>
+        <th>Sort</th>
+        <th>Optional</th>
+        <th>Note</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in child_packs %}
+      <tr>
+        <td><a href="/admin/option-packs/{{ row.child_pack_id }}">{{ row.manufacturer }} — {{ row.pack_name }}</a></td>
+        <td><input form="child-{{ row.child_pack_id }}" name="sort_order" value="{{ row.sort_order }}" class="input-narrow" type="number"></td>
+        <td>
+          <label class="checkbox-label">
+            <input form="child-{{ row.child_pack_id }}" type="checkbox" name="is_optional" value="yes" {% if row.is_optional %}checked{% endif %}>
+          </label>
+        </td>
+        <td><input form="child-{{ row.child_pack_id }}" name="source_note" value="{{ row.source_note }}" class="input-wide"></td>
+        <td class="action-links">
+          <form id="child-{{ row.child_pack_id }}" method="post" action="/admin/option-packs/{{ pack.id }}/child-packs/{{ row.child_pack_id }}">
+            <button type="submit">Save</button>
+          </form>
+          <form method="post" action="/admin/option-packs/{{ pack.id }}/child-packs/{{ row.child_pack_id }}/delete" onsubmit="return confirm('Remove this child pack?');">
+            <button type="submit" class="btn-danger">Remove</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="muted">No child packs linked.</p>
+  {% endif %}
+
+  <h3>Add child pack</h3>
+  <form method="post" action="/admin/option-packs/{{ pack.id }}/child-packs" class="constraint-form">
+    <div data-pack-autocomplete data-autocomplete-url="/admin/option-packs/autocomplete?exclude_id={{ pack.id }}">
+      <label>Child pack
+        <input type="text" placeholder="Search manufacturer or pack name" autocomplete="off">
+        <input type="hidden" name="child_pack_id">
+      </label>
+      <ul class="combobox-options" role="listbox" hidden></ul>
+    </div>
+    <label>Sort order<input name="sort_order" value="0" type="number"></label>
+    <label class="checkbox-label">
+      <input type="checkbox" name="is_optional" value="yes"> Optional
+    </label>
+    <label>Source note<input name="source_note" placeholder="Optional note"></label>
+    <button type="submit">Add child pack</button>
+  </form>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="/admin/static/equipment-autocomplete.js"></script>
+<script src="/admin/static/pack-autocomplete.js"></script>
+{% endblock %}

@@ -28,6 +28,7 @@ async def admin_home(
         pending_manuals = conn.execute(
             text("SELECT COUNT(*) FROM manual_work WHERE legal_status = 'pending'")
         ).scalar()
+        option_pack_count = conn.execute(text("SELECT COUNT(*) FROM option_pack")).scalar()
 
     return templates.TemplateResponse(
         request,
@@ -42,6 +43,7 @@ async def admin_home(
                 "equipment": equipment_count,
                 "manuals": manual_count,
                 "pending_manuals": pending_manuals,
+                "option_packs": option_pack_count,
             },
         },
     )

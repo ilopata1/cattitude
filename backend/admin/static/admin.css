@@ -184,6 +184,21 @@ a.stat-card-link:focus-visible {
   margin-bottom: 0.5rem;
 }
 
+.input-narrow {
+  width: 4.5rem;
+  margin-top: 0;
+}
+
+.input-wide {
+  min-width: 10rem;
+  width: 100%;
+  margin-top: 0;
+}
+
+.data-table .action-links form {
+  display: inline;
+}
+
 .combobox {
   position: relative;
   min-width: 200px;
