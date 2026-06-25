@@ -11,6 +11,10 @@
     <div class="stat-value">{{ stats.operating_bases }}</div>
     <div class="stat-label">Operating bases</div>
   </a>
+  <a class="stat-card stat-card-link" href="/admin/equipment">
+    <div class="stat-value">{{ stats.equipment }}</div>
+    <div class="stat-label">Equipment registry</div>
+  </a>
   <a class="stat-card stat-card-link" href="/admin/vessels?published=1">
     <div class="stat-value">{{ stats.publications }}</div>
     <div class="stat-label">Publications</div>
@@ -24,6 +28,7 @@
 <section class="panel">
   <h2>Quick links</h2>
   <ul class="link-list">
+    <li><a href="/admin/equipment">Browse and edit equipment registry</a></li>
     <li><a href="/admin/vessels">Review vessel guides and publish</a></li>
     <li><a href="/admin/operating-bases">Edit operating base context</a></li>
     <li><a href="/admin/prompts">View prompt templates</a></li>

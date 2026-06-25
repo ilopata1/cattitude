@@ -23,6 +23,7 @@ async def admin_home(
         draft_count = conn.execute(
             text("SELECT COUNT(*) FROM guide_content WHERE status = 'draft'")
         ).scalar()
+        equipment_count = conn.execute(text("SELECT COUNT(*) FROM equipment")).scalar()
 
     return templates.TemplateResponse(
         request,
@@ -34,6 +35,7 @@ async def admin_home(
                 "operating_bases": base_count,
                 "publications": publication_count,
                 "draft_modules": draft_count,
+                "equipment": equipment_count,
             },
         },
     )

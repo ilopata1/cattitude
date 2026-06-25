@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Equipment registry — Clever Sailor Admin{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Equipment registry</h1>
+  <a class="button" href="/admin/equipment/new">Add equipment</a>
+</div>
+
+<p class="lede">{{ total }} item{% if total != 1 %}s{% endif %} in the registry.</p>
+
+<form method="get" class="search-row">
+  <div class="combobox" data-combobox>
+    <input
+      type="text"
+      name="manufacturer"
+      value="{{ manufacturer }}"
+      placeholder="Manufacturer"
+      autocomplete="off"
+      aria-autocomplete="list"
+      aria-controls="manufacturer-options"
+      role="combobox"
+    >
+    <ul id="manufacturer-options" class="combobox-options" role="listbox" hidden>
+      {% for name in manufacturers %}
+      <li role="option" data-value="{{ name }}">{{ name }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  <input name="q" value="{{ query }}" placeholder="Search manufacturer or model">
+  <select name="system_category">
+    <option value="">All systems</option>
+    {% for cat in system_categories %}
+    <option value="{{ cat }}" {% if system_category == cat %}selected{% endif %}>{{ cat | format_label }}</option>
+    {% endfor %}
+  </select>
+  <select name="equipment_class">
+    <option value="">All classes</option>
+    {% for cls in equipment_classes %}
+    <option value="{{ cls }}" {% if equipment_class == cls %}selected{% endif %}>{{ cls | format_label }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit">Filter</button>
+</form>
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Manufacturer</th>
+      <th>Model</th>
+      <th>System</th>
+      <th>Class</th>
+      <th>Tier</th>
+      <th>Manual</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in items %}
+    <tr>
+      <td>{{ item.manufacturer or '—' }}</td>
+      <td>{{ item.model or '—' }}</td>
+      <td>{{ item.system_category | format_label }}</td>
+      <td>{{ item.equipment_class | format_label }}</td>
+      <td>{{ item.configuration_tier | format_label }}</td>
+      <td>{% if item.has_formal_manual %}Yes{% else %}<span class="muted">No</span>{% endif %}</td>
+      <td><a href="/admin/equipment/{{ item.id }}">Edit</a></td>
+    </tr>
+    {% else %}
+    <tr><td colspan="7">No equipment matches these filters.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if total_pages > 1 %}
+<nav class="pagination">
+  {% if page > 1 %}
+  <a href="?manufacturer={{ manufacturer | urlencode }}&q={{ query | urlencode }}&system_category={{ system_category | urlencode }}&equipment_class={{ equipment_class | urlencode }}&page={{ page - 1 }}">Previous</a>
+  {% endif %}
+  <span class="muted">Page {{ page }} of {{ total_pages }}</span>
+  {% if page < total_pages %}
+  <a href="?manufacturer={{ manufacturer | urlencode }}&q={{ query | urlencode }}&system_category={{ system_category | urlencode }}&equipment_class={{ equipment_class | urlencode }}&page={{ page + 1 }}">Next</a>
+  {% endif %}
+</nav>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+<script src="/admin/static/combobox.js"></script>
+{% endblock %}

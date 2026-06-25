@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% block title %}{{ form_title }} — Clever Sailor Admin{% endblock %}
+{% block content %}
+<p class="breadcrumb"><a href="/admin/equipment">Equipment registry</a> / {{ form_title }}</p>
+<h1>{{ form_title }}</h1>
+
+{% if request.query_params.get('created') %}
+<div class="flash flash-ok">Equipment created.</div>
+{% endif %}
+{% if request.query_params.get('saved') %}
+<div class="flash flash-ok">Equipment saved.</div>
+{% endif %}
+{% if request.query_params.get('constraint_added') %}
+<div class="flash flash-ok">Constraint added.</div>
+{% endif %}
+{% if request.query_params.get('constraint_deleted') %}
+<div class="flash flash-ok">Constraint removed.</div>
+{% endif %}
+{% if request.query_params.get('error') %}
+<div class="flash flash-error">{{ request.query_params.get('error') }}</div>
+{% endif %}
+{% if error %}
+<div class="flash flash-error">{{ error }}</div>
+{% endif %}
+
+{% if duplicate %}
+<div class="flash flash-warn">
+  <strong>Possible duplicate:</strong>
+  <a href="/admin/equipment/{{ duplicate.id }}">{{ duplicate.manufacturer }} — {{ duplicate.model }}</a>
+  already exists in the registry.
+  {% if not equipment.id %}
+  Submit again with confirmation to create a second record anyway (not recommended).
+  {% endif %}
+</div>
+{% endif %}
+
+{% set selected_vessel_types = equipment.vessel_types if equipment and equipment.vessel_types is defined else [] %}
+
+<form method="post" class="form-grid">
+  <fieldset class="full-width">
+    <legend>Identity</legend>
+    <label>Manufacturer
+      <input name="manufacturer" value="{{ equipment.manufacturer if equipment else '' }}" required>
+    </label>
+    <label>Model
+      <input name="model" value="{{ equipment.model if equipment else '' }}" required>
+    </label>
+    <div class="full-width">
+      <span class="field-label">Vessel types</span>
+      <div class="checkbox-grid">
+        {% for vt in vessel_types %}
+        <label class="checkbox-label">
+          <input type="checkbox" name="vessel_types" value="{{ vt }}" {% if vt in selected_vessel_types %}checked{% endif %}>
+          {{ vt | format_label }}
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset class="full-width">
+    <legend>Classification</legend>
+    <label>System category
+      <select name="system_category" required>
+        {% for cat in system_categories %}
+        <option value="{{ cat }}" {% if equipment and equipment.system_category == cat %}selected{% endif %}>{{ cat | format_label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Equipment class
+      <select name="equipment_class" required>
+        {% for cls in equipment_classes %}
+        <option value="{{ cls }}" {% if equipment and equipment.equipment_class == cls %}selected{% endif %}>{{ cls | format_label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Configuration tier
+      <select name="configuration_tier" required>
+        {% for tier in configuration_tiers %}
+        <option value="{{ tier }}" {% if equipment and equipment.configuration_tier == tier %}selected{% endif %}>{{ tier | format_label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Identification method
+      <select name="identification_method" required>
+        {% for method in identification_methods %}
+        <option value="{{ method }}" {% if equipment and equipment.identification_method == method %}selected{% endif %}>{{ method | format_label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Zone
+      <select name="zone" required>
+        {% for z in zones %}
+        <option value="{{ z }}" {% if equipment and equipment.zone == z %}selected{% endif %}>{{ z | format_label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Zone cardinality
+      <select name="zone_cardinality">
+        {% for zc in zone_cardinalities %}
+        <option value="{{ zc }}" {% if equipment and equipment.zone_cardinality == zc %}selected{% elif not equipment and zc == 'fixed' %}selected{% endif %}>{{ zc | format_label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" name="has_formal_manual" value="yes" {% if equipment and equipment.has_formal_manual %}checked{% endif %}>
+      Has formal manual
+    </label>
+  </fieldset>
+
+  <div class="form-actions full-width">
+    {% if duplicate and not equipment.id %}
+    <input type="hidden" name="confirm_create" value="yes">
+    <button type="submit">Create anyway</button>
+    {% else %}
+    <button type="submit">{% if equipment and equipment.id %}Save{% else %}Create{% endif %}</button>
+    {% endif %}
+    <a href="/admin/equipment">Cancel</a>
+  </div>
+</form>
+
+{% if equipment and equipment.id %}
+<section class="panel">
+  <h2>Option packs</h2>
+  {% if option_packs %}
+  <ul class="link-list">
+    {% for pack in option_packs %}
+    <li>{{ pack.manufacturer }} — {{ pack.pack_name }} <span class="muted">({{ pack.source | format_label }})</span></li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="muted">This equipment is not linked to any option packs.</p>
+  {% endif %}
+</section>
+
+<section class="panel">
+  <h2>Constraints</h2>
+  {% if constraints %}
+  <table class="data-table compact">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Relation</th>
+        <th>Other item / group</th>
+        <th>Source</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in constraints %}
+      <tr>
+        <td>{{ row.constraint_type | format_label }}</td>
+        <td>{% if row.direction == 'outgoing' %}Outgoing{% else %}Incoming{% endif %}</td>
+        <td>
+          {% if row.constraint_type == 'mutually_exclusive_group' %}
+          Group <code>{{ row.target_group_id }}</code>
+          {% elif row.direction == 'outgoing' %}
+          {{ row.tgt_manufacturer or '—' }} — {{ row.tgt_model or '—' }}
+          {% else %}
+          {{ row.src_manufacturer or '—' }} — {{ row.src_model or '—' }}
+          {% endif %}
+        </td>
+        <td>{{ row.source | format_label }}</td>
+        <td>
+          {% if row.direction == 'outgoing' or row.constraint_type == 'mutually_exclusive_group' %}
+          <form method="post" action="/admin/equipment/{{ equipment.id }}/constraints/{{ row.id }}/delete" onsubmit="return confirm('Remove this constraint?');">
+            <button type="submit" class="btn-danger">Remove</button>
+          </form>
+          {% else %}
+          <span class="muted">—</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="muted">No constraints linked to this equipment.</p>
+  {% endif %}
+
+  <h3>Add constraint</h3>
+  <form method="post" action="/admin/equipment/{{ equipment.id }}/constraints" class="constraint-form" id="constraint-form">
+    <label>Constraint type
+      <select name="constraint_type" id="constraint-type" required>
+        {% for ct in constraint_types %}
+        <option value="{{ ct }}">{{ ct | format_label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <div id="target-equipment-field" data-equipment-autocomplete data-autocomplete-url="/admin/equipment/autocomplete">
+      <label>Target equipment
+        <input type="text" placeholder="Search manufacturer or model" autocomplete="off">
+        <input type="hidden" name="target_equipment_id">
+      </label>
+      <ul class="combobox-options" role="listbox" hidden></ul>
+    </div>
+    <label id="target-group-field" hidden>Group ID
+      <input name="target_group_id" placeholder="Leave blank to generate a new group UUID">
+    </label>
+    <label>Source
+      <select name="source" required>
+        {% for src in pack_sources %}
+        <option value="{{ src }}">{{ src | format_label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <button type="submit">Add constraint</button>
+  </form>
+</section>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+<script src="/admin/static/equipment-autocomplete.js"></script>
+<script src="/admin/static/constraint-form.js"></script>
+{% endblock %}
