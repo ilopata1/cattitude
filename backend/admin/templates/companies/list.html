@@ -20,8 +20,20 @@
     {% for company in companies %}
     <tr>
       <td><strong>{{ company.name }}</strong></td>
-      <td>{{ company.base_count }}</td>
-      <td>{{ company.vessel_count }}</td>
+      <td>
+        {% if company.base_count %}
+        <a href="/admin/operating-bases?charter_company_id={{ company.id }}">{{ company.base_count }}</a>
+        {% else %}
+        <span class="muted">0</span>
+        {% endif %}
+      </td>
+      <td>
+        {% if company.vessel_count %}
+        <a href="/admin/vessels?charter_company_id={{ company.id }}">{{ company.vessel_count }}</a>
+        {% else %}
+        <span class="muted">0</span>
+        {% endif %}
+      </td>
       <td>{% if company.auth0_org_id %}<code>{{ company.auth0_org_id }}</code>{% else %}<span class="muted">—</span>{% endif %}</td>
     </tr>
     {% else %}

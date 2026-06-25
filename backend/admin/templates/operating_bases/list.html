@@ -2,7 +2,15 @@
 {% block title %}Operating bases — Clever Sailor Admin{% endblock %}
 {% block content %}
 <h1>Operating bases</h1>
+
+{% if filter_label %}
+<p class="filter-banner">
+  {{ filter_label }}.
+  <a href="/admin/operating-bases">Show all operating bases</a>
+</p>
+{% else %}
 <p class="lede">Location-specific facts injected at guide generation time (VHF, contacts, marina, local rules).</p>
+{% endif %}
 
 <table class="data-table">
   <thead>
@@ -26,7 +34,7 @@
       <td><a href="/admin/operating-bases/{{ base.id }}">Edit context</a></td>
     </tr>
     {% else %}
-    <tr><td colspan="6">No operating bases yet. Run <code>seed_dev_data.py</code>.</td></tr>
+    <tr><td colspan="6">{% if filter_label %}No operating bases match this filter.{% else %}No operating bases yet. Run <code>seed_dev_data.py</code>.{% endif %}</td></tr>
     {% endfor %}
   </tbody>
 </table>

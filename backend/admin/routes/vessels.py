@@ -49,11 +49,26 @@ async def list_vessels(
     admin_user: str = Depends(require_admin_user),
     drafts: bool = Query(False),
     published: bool = Query(False),
+    charter_company_id: str = Query(""),
 ):
+    clauses: list[str] = []
+    params: dict[str, str] = {}
+    if charter_company_id:
+        clauses.append("v.charter_company_id = :charter_company_id")
+        params["charter_company_id"] = charter_company_id
+    where_sql = f"WHERE {' AND '.join(clauses)}" if clauses else ""
+
     with get_engine().connect() as conn:
+        company_name = None
+        if charter_company_id:
+            company_name = conn.execute(
+                text("SELECT name FROM charter_companies WHERE id = :id"),
+                {"id": charter_company_id},
+            ).scalar()
+
         rows = conn.execute(
             text(
-                """
+                f"""
                 SELECT
                     v.id, v.name, v.slug, v.vessel_type,
                     c.name AS company_name,
@@ -90,9 +105,11 @@ async def list_vessels(
                     ORDER BY published_at DESC, version DESC
                     LIMIT 1
                 ) pub ON true
+                {where_sql}
                 ORDER BY v.name
                 """
-            )
+            ),
+            params,
         ).fetchall()
 
     vessels = []
@@ -131,11 +148,14 @@ async def list_vessels(
     if published:
         vessels = [vessel for vessel in vessels if vessel["latest_publication"]]
 
-    filter_label = None
+    filter_parts: list[str] = []
+    if company_name:
+        filter_parts.append(f"Vessels for {company_name}")
     if drafts:
-        filter_label = "Vessels with draft modules"
+        filter_parts.append("with draft modules")
     elif published:
-        filter_label = "Vessels with publications"
+        filter_parts.append("with publications")
+    filter_label = " ".join(filter_parts) if filter_parts else None
 
     return templates.TemplateResponse(
         request,
@@ -144,6 +164,7 @@ async def list_vessels(
             "admin_user": admin_user,
             "vessels": vessels,
             "filter_label": filter_label,
+            "charter_company_id": charter_company_id,
         },
     )
 

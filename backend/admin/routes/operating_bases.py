@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from fastapi import APIRouter, Depends, Form, Request
+from fastapi import APIRouter, Depends, Form, Query, Request
 from fastapi.responses import RedirectResponse
 from sqlalchemy import text
 
@@ -39,19 +39,36 @@ def _parse_local_rules(raw: str) -> list[str]:
 async def list_operating_bases(
     request: Request,
     admin_user: str = Depends(require_admin_user),
+    charter_company_id: str = Query(""),
 ):
+    clauses: list[str] = []
+    params: dict[str, str] = {}
+    if charter_company_id:
+        clauses.append("b.charter_company_id = :charter_company_id")
+        params["charter_company_id"] = charter_company_id
+    where_sql = f"WHERE {' AND '.join(clauses)}" if clauses else ""
+
     with get_engine().connect() as conn:
+        company_name = None
+        if charter_company_id:
+            company_name = conn.execute(
+                text("SELECT name FROM charter_companies WHERE id = :id"),
+                {"id": charter_company_id},
+            ).scalar()
+
         rows = conn.execute(
             text(
-                """
+                f"""
                 SELECT
                     b.id, b.name, b.slug, b.guide_context_version, b.updated_at,
                     c.name AS company_name
                 FROM charter_operating_bases b
                 JOIN charter_companies c ON c.id = b.charter_company_id
+                {where_sql}
                 ORDER BY c.name, b.name
                 """
-            )
+            ),
+            params,
         ).fetchall()
 
     bases = [
@@ -65,10 +82,18 @@ async def list_operating_bases(
         }
         for row in rows
     ]
+    filter_label = (
+        f"Operating bases for {company_name}" if company_name else None
+    )
     return templates.TemplateResponse(
         request,
         "operating_bases/list.html",
-        {"admin_user": admin_user, "bases": bases},
+        {
+            "admin_user": admin_user,
+            "bases": bases,
+            "filter_label": filter_label,
+            "charter_company_id": charter_company_id,
+        },
     )
 
 
