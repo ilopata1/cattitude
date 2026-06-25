@@ -2,7 +2,9 @@
   function initAutocomplete(root) {
     const url = root.dataset.autocompleteUrl;
     const textInput = root.querySelector('input[type="text"]');
-    const hiddenInput = root.querySelector('input[type="hidden"]');
+    const hiddenInput = root.querySelector('input[type="hidden"][name="equipment_id"]')
+      || root.querySelector('input[type="hidden"]');
+    const labelHidden = root.querySelector('input[name="equipment_label"]');
     const list = root.querySelector(".combobox-options");
     if (!url || !textInput || !hiddenInput || !list) {
       return;
@@ -67,6 +69,9 @@
       event.preventDefault();
       textInput.value = option.dataset.label || "";
       hiddenInput.value = option.dataset.value || "";
+      if (labelHidden) {
+        labelHidden.value = option.dataset.label || "";
+      }
       hideList();
     });
 

@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}Upload manual — Clever Sailor Admin{% endblock %}
+{% block content %}
+<p class="breadcrumb"><a href="/admin/manuals">Manual library</a> / Upload</p>
+<h1>Upload manual</h1>
+
+{% if error %}
+<div class="flash flash-error">{{ error }}</div>
+{% endif %}
+{% if same_content_warning %}
+<div class="flash flash-warn">
+  This PDF appears to have the same content as the current edition. If this is another language of the same edition, use
+  <strong>Add language to current edition</strong> instead. To create a new edition anyway, re-select the PDF and submit with confirmation below.
+</div>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" class="form-grid" id="upload-form">
+  <fieldset class="full-width">
+    <legend>Equipment</legend>
+    <div data-equipment-autocomplete data-autocomplete-url="/admin/equipment/autocomplete">
+      <label>Registry equipment
+        <input type="text" placeholder="Search manufacturer or model" autocomplete="off" value="{{ form.equipment_label or '' }}">
+        <input type="hidden" name="equipment_id" value="{{ form.equipment_id or '' }}">
+        <input type="hidden" name="equipment_label" value="{{ form.equipment_label or '' }}">
+      </label>
+      <ul class="combobox-options" role="listbox" hidden></ul>
+    </div>
+    <p class="muted"><a href="/admin/equipment/new">Add new equipment</a> if nothing matches.</p>
+  </fieldset>
+
+  <fieldset class="full-width">
+    <legend>Manual work</legend>
+    <label>Work
+      <select name="work_mode" id="work-mode">
+        <option value="existing" {% if form.work_mode != 'new' %}selected{% endif %}>Use existing manual work</option>
+        <option value="new" {% if form.work_mode == 'new' %}selected{% endif %}>Create new manual work</option>
+      </select>
+    </label>
+    <label id="existing-work-field">Existing work
+      <select name="manual_work_id" id="manual-work-select">
+        <option value="">Select equipment first…</option>
+        {% if form.manual_work_id %}
+        <option value="{{ form.manual_work_id }}" selected>Previously selected work</option>
+        {% endif %}
+      </select>
+    </label>
+    <div id="new-work-fields" hidden>
+      <label>Title<input name="title" value="{{ form.title or '' }}"></label>
+      <label>Manual type
+        <select name="manual_type">
+          {% for mt in manual_types %}
+          <option value="{{ mt }}" {% if form.manual_type == mt %}selected{% endif %}>{{ mt | format_label }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Source tier
+        <select name="source_tier">
+          {% for tier in source_tiers %}
+          <option value="{{ tier }}" {% if form.source_tier == tier %}selected{% endif %}>{{ tier | format_label }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Legal status
+        <select name="legal_status">
+          {% for status in legal_statuses %}
+          <option value="{{ status }}" {% if form.legal_status == status %}selected{% endif %}>{{ status | format_label }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+  </fieldset>
+
+  <fieldset class="full-width">
+    <legend>Edition &amp; file</legend>
+    <label>Edition action
+      <select name="edition_action" id="edition-action">
+        <option value="first_edition" {% if form.edition_action == 'first_edition' %}selected{% endif %}>First edition</option>
+        <option value="new_edition" {% if form.edition_action == 'new_edition' %}selected{% endif %}>New edition</option>
+        <option value="add_language_current" {% if form.edition_action == 'add_language_current' %}selected{% endif %}>Add language to current edition</option>
+      </select>
+    </label>
+    <label id="edition-label-field">Edition label
+      <input name="edition_label" value="{{ form.edition_label or '' }}" placeholder="e.g. 2024 revision">
+    </label>
+    <label>Language
+      <select name="language" required>
+        {% for code, label in manual_languages %}
+        <option value="{{ code }}" {% if form.language == code %}selected{% endif %}>{{ label }} ({{ code }})</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Source URL (optional)<input name="source_url" value="{{ form.source_url or '' }}" placeholder="https://…"></label>
+    <label>PDF file<input type="file" name="file" accept="application/pdf,.pdf" required></label>
+    {% if same_content_warning %}
+    <label class="checkbox-label">
+      <input type="checkbox" name="confirm_same_content" value="yes">
+      I confirm this is a new edition, not another language
+    </label>
+    {% endif %}
+  </fieldset>
+
+  <div class="form-actions full-width">
+    <button type="submit">Upload</button>
+    <a href="/admin/manuals">Cancel</a>
+  </div>
+</form>
+{% endblock %}
+{% block scripts %}
+<script src="/admin/static/equipment-autocomplete.js"></script>
+<script src="/admin/static/manual-upload-form.js"></script>
+{% endblock %}

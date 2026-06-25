@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Add language — {{ work.title }}{% endblock %}
+{% block content %}
+<p class="breadcrumb">
+  <a href="/admin/manuals">Manual library</a> /
+  <a href="/admin/manuals/{{ work.id }}">{{ work.title }}</a> /
+  Add language
+</p>
+<h1>Add language</h1>
+<p class="muted">{{ work.manufacturer }} — {{ work.model }} · edition {{ edition.edition_label or 'unlabeled' }}</p>
+
+{% if error %}
+<div class="flash flash-error">{{ error }}</div>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" class="form-grid">
+  <fieldset class="full-width">
+    <legend>Language file</legend>
+    <label>Language
+      <select name="language" required>
+        {% for code, label in manual_languages %}
+        <option value="{{ code }}">{{ label }} ({{ code }})</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Source URL (optional)<input name="source_url" placeholder="https://…"></label>
+    <label>PDF file<input type="file" name="file" accept="application/pdf,.pdf" required></label>
+  </fieldset>
+  <div class="form-actions full-width">
+    <button type="submit">Upload language file</button>
+    <a href="/admin/manuals/{{ work.id }}">Cancel</a>
+  </div>
+</form>
+{% endblock %}

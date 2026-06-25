@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Manual library — Clever Sailor Admin{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Manual library</h1>
+  <div class="action-links">
+    <a class="button" href="/admin/manuals/new">Upload manual</a>
+    {% if pending_count %}
+    <a class="button" href="/admin/manuals/legal-review">Legal review ({{ pending_count }})</a>
+    {% endif %}
+  </div>
+</div>
+
+<p class="lede">{{ total }} manual work{% if total != 1 %}s{% endif %} in the library.</p>
+
+<form method="get" class="search-row">
+  <input name="q" value="{{ query }}" placeholder="Search equipment or title">
+  <select name="legal_status">
+    <option value="">All legal statuses</option>
+    {% for status in legal_statuses %}
+    <option value="{{ status }}" {% if legal_status == status %}selected{% endif %}>{{ status | format_label }}</option>
+    {% endfor %}
+  </select>
+  <select name="system_category">
+    <option value="">All systems</option>
+    {% for cat in system_categories %}
+    <option value="{{ cat }}" {% if system_category == cat %}selected{% endif %}>{{ cat | format_label }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit">Filter</button>
+</form>
+
+{% if legal_status == 'pending' or (not legal_status and pending_count) %}
+<p class="filter-banner">
+  <strong>{{ pending_count }}</strong> manual work{% if pending_count != 1 %}s{% endif %} awaiting legal review.
+  <a href="/admin/manuals/legal-review">Open review queue</a>
+</p>
+{% endif %}
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Equipment</th>
+      <th>Type</th>
+      <th>Title</th>
+      <th>Legal</th>
+      <th>Tier</th>
+      <th>Current edition</th>
+      <th>Languages</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in items %}
+    <tr {% if item.legal_status == 'pending' %}class="row-pending"{% endif %}>
+      <td>{{ item.manufacturer or '—' }}<br><span class="muted">{{ item.model or '—' }}</span></td>
+      <td>{{ item.manual_type | format_label }}</td>
+      <td>{{ item.title }}</td>
+      <td>
+        {% if item.legal_status == 'pending' %}
+        <span class="badge badge-warn">{{ item.legal_status | format_label }}</span>
+        {% elif item.legal_status == 'cleared' %}
+        <span class="badge badge-approved">{{ item.legal_status | format_label }}</span>
+        {% else %}
+        <span class="badge">{{ item.legal_status | format_label }}</span>
+        {% endif %}
+      </td>
+      <td>{{ item.source_tier | format_label }}</td>
+      <td>{{ item.edition_label or '—' }}</td>
+      <td>{{ item.languages | join(', ') if item.languages else '—' }}</td>
+      <td><a href="/admin/manuals/{{ item.id }}">View</a></td>
+    </tr>
+    {% else %}
+    <tr><td colspan="8">No manuals match these filters.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if total_pages > 1 %}
+<nav class="pagination">
+  {% if page > 1 %}
+  <a href="?q={{ query | urlencode }}&legal_status={{ legal_status | urlencode }}&system_category={{ system_category | urlencode }}&page={{ page - 1 }}">Previous</a>
+  {% endif %}
+  <span class="muted">Page {{ page }} of {{ total_pages }}</span>
+  {% if page < total_pages %}
+  <a href="?q={{ query | urlencode }}&legal_status={{ legal_status | urlencode }}&system_category={{ system_category | urlencode }}&page={{ page + 1 }}">Next</a>
+  {% endif %}
+</nav>
+{% endif %}
+{% endblock %}

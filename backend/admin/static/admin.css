@@ -160,6 +160,30 @@ a.stat-card-link:focus-visible {
   position: relative;
 }
 
+.data-table tr.row-pending td {
+  background: #fffdf5;
+}
+
+.edition-block {
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.edition-block:last-child {
+  border-bottom: 0;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.edition-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
 .combobox {
   position: relative;
   min-width: 200px;

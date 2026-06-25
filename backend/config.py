@@ -53,5 +53,8 @@ class Settings(BaseSettings):
     admin_username: str = "admin"
     admin_password: str = ""
 
+    # Manual PDF storage (defaults to repo manuals/ when unset)
+    manuals_storage_dir: str = ""
+
 
 settings = Settings()

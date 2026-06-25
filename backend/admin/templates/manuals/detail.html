@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}{{ work.title }} — Manual library{% endblock %}
+{% block content %}
+<p class="breadcrumb"><a href="/admin/manuals">Manual library</a> / {{ work.title }}</p>
+<h1>{{ work.title }}</h1>
+<p class="muted">{{ work.manufacturer }} — {{ work.model }} · {{ work.system_category | format_label }}</p>
+
+{% if request.query_params.get('saved') %}
+<div class="flash flash-ok">Manual work saved.</div>
+{% endif %}
+{% if request.query_params.get('uploaded') %}
+<div class="flash flash-ok">Manual uploaded and ingested.</div>
+{% endif %}
+{% if request.query_params.get('language_added') %}
+<div class="flash flash-ok">Language file added.</div>
+{% endif %}
+{% if request.query_params.get('edition_current') %}
+<div class="flash flash-ok">Current edition updated.</div>
+{% endif %}
+{% if request.query_params.get('error') %}
+<div class="flash flash-error">{{ request.query_params.get('error') }}</div>
+{% endif %}
+
+<form method="post" class="form-grid">
+  <fieldset class="full-width">
+    <legend>Manual work</legend>
+    <label>Title<input name="title" value="{{ work.title }}" required></label>
+    <label>Manual type
+      <select name="manual_type" required>
+        {% for mt in manual_types %}
+        <option value="{{ mt }}" {% if work.manual_type == mt %}selected{% endif %}>{{ mt | format_label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Source tier
+      <select name="source_tier" required>
+        {% for tier in source_tiers %}
+        <option value="{{ tier }}" {% if work.source_tier == tier %}selected{% endif %}>{{ tier | format_label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Legal status
+      <select name="legal_status" required>
+        {% for status in legal_statuses %}
+        <option value="{{ status }}" {% if work.legal_status == status %}selected{% endif %}>{{ status | format_label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+  </fieldset>
+  <div class="form-actions full-width">
+    <button type="submit">Save</button>
+    <a href="/admin/equipment/{{ work.equipment_id }}">View equipment</a>
+    <a href="/admin/manuals">Back to library</a>
+  </div>
+</form>
+
+<section class="panel">
+  <h2>Editions</h2>
+  {% for edition in editions %}
+  <div class="edition-block">
+    <div class="edition-header">
+      <strong>{{ edition.edition_label or 'Unlabeled edition' }}</strong>
+      {% if edition.is_current %}
+      <span class="badge badge-approved">Current</span>
+      {% endif %}
+      <span class="muted">Ingested {{ edition.ingested_at }}</span>
+      {% if edition.superseded_by_label %}
+      <span class="muted">Superseded by {{ edition.superseded_by_label }}</span>
+      {% endif %}
+      {% if not edition.is_current %}
+      <form method="post" action="/admin/manuals/{{ work.id }}/editions/{{ edition.id }}/set-current" class="inline-form" onsubmit="return confirm('Set this edition as current?');">
+        <button type="submit">Set as current</button>
+      </form>
+      {% endif %}
+      <a href="/admin/manuals/{{ work.id }}/editions/{{ edition.id }}/add-language">Add language</a>
+    </div>
+    {% set files = edition_files[edition.id] %}
+    {% if files %}
+    <table class="data-table compact">
+      <thead>
+        <tr>
+          <th>Language</th>
+          <th>File</th>
+          <th>Size</th>
+          <th>Uploaded</th>
+          <th>Source URL</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for file in files %}
+        <tr>
+          <td>{{ file.language }}</td>
+          <td><code>{{ file.storage_path }}</code></td>
+          <td>{{ file.file_size or '—' }}</td>
+          <td>{{ file.created_at }}</td>
+          <td>{% if file.source_url %}<a href="{{ file.source_url }}" target="_blank" rel="noopener">Link</a>{% else %}—{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="muted">No files for this edition.</p>
+    {% endif %}
+  </div>
+  {% else %}
+  <p class="muted">No editions yet. <a href="/admin/manuals/new">Upload a manual</a>.</p>
+  {% endfor %}
+</section>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Legal review — Manual library{% endblock %}
+{% block content %}
+<p class="breadcrumb"><a href="/admin/manuals">Manual library</a> / Legal review</p>
+<h1>Legal review queue</h1>
+
+{% if request.query_params.get('saved') %}
+<div class="flash flash-ok">Legal status updated.</div>
+{% endif %}
+
+<p class="lede">Manual works with <strong>pending</strong> legal status cannot be used for RAG until cleared.</p>
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Equipment</th>
+      <th>Title</th>
+      <th>Type</th>
+      <th>Tier</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in items %}
+    <tr>
+      <td>{{ item.manufacturer }}<br><span class="muted">{{ item.model }}</span></td>
+      <td><a href="/admin/manuals/{{ item.id }}">{{ item.title }}</a></td>
+      <td>{{ item.manual_type | format_label }}</td>
+      <td>{{ item.source_tier | format_label }}</td>
+      <td class="action-links">
+        <form method="post" action="/admin/manuals/{{ item.id }}/legal-status" class="inline-form">
+          <input type="hidden" name="return_to" value="review">
+          <input type="hidden" name="legal_status" value="cleared">
+          <button type="submit">Clear</button>
+        </form>
+        <form method="post" action="/admin/manuals/{{ item.id }}/legal-status" class="inline-form" onsubmit="return confirm('Mark as DMCA removed?');">
+          <input type="hidden" name="return_to" value="review">
+          <input type="hidden" name="legal_status" value="dmca_removed">
+          <button type="submit" class="btn-danger">DMCA removed</button>
+        </form>
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5">No pending manuals — all clear.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
