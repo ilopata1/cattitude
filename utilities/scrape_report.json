@@ -1,0 +1,549 @@
+{
+  "summary": {
+    "sources_attempted": 29,
+    "total_records": 155,
+    "ok": 48,
+    "skipped": 0,
+    "errors": 0
+  },
+  "registry": {
+    "total": 877,
+    "matched": 61,
+    "updated": 61
+  },
+  "sources": [
+    {
+      "name": "Yanmar",
+      "records": 6,
+      "ok": 0,
+      "errors": 0,
+      "error_list": [],
+      "manuals": []
+    },
+    {
+      "name": "Volvo Penta",
+      "records": 5,
+      "ok": 3,
+      "errors": 0,
+      "error_list": [],
+      "manuals": [
+        {
+          "title": "IPS Drive Operator Manual",
+          "url": "https://pubs.volvopenta.com/publications/7738812",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Volvo_Penta\\.7738812",
+          "kb": 1522
+        },
+        {
+          "title": "D6 Series Operator Manual",
+          "url": "https://pubs.volvopenta.com/publications/7797286",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Volvo_Penta\\.7797286",
+          "kb": 1687
+        },
+        {
+          "title": "D11 / IPS20 Operator Manual",
+          "url": "https://pubs.volvopenta.com/publications/7747144",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Volvo_Penta\\.7747144",
+          "kb": 742
+        }
+      ]
+    },
+    {
+      "name": "Victron Energy",
+      "records": 10,
+      "ok": 5,
+      "errors": 0,
+      "error_list": [],
+      "manuals": [
+        {
+          "title": "MultiPlus-II 230V Inverter-Charger Manual",
+          "url": "https://www.victronenergy.com/upload/documents/MultiPlus-II_230V/32424-MultiPlus-II___Quattro-II-pdf-en.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Victron_Energy\\32424-MultiPlus-II___Quattro-II-pdf-en.pdf",
+          "kb": 7916
+        },
+        {
+          "title": "MultiPlus 3kVA 120V Manual",
+          "url": "https://www.victronenergy.com/upload/documents/Manual-MultiPlus-3k-120V-(firmware-xxxx4xx)-EN.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Victron_Energy\\Manual-MultiPlus-3k-120V-_firmware-xxxx4xx_-EN.pdf",
+          "kb": 817
+        },
+        {
+          "title": "Cerbo GX / Ekrano GX / Venus GX Manual",
+          "url": "https://www.victronenergy.com/upload/documents/Cerbo_GX/140558-Ekrano_GX__Venus_GX__Cerbo_GX__Cerbo-S_GX_Manual-pdf-en.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Victron_Energy\\140558-Ekrano_GX__Venus_GX__Cerbo_GX__Cerbo-S_GX_Manual-pdf-en.pdf",
+          "kb": 24106
+        },
+        {
+          "title": "VE.Bus BMS V2 Manual",
+          "url": "https://www.victronenergy.com/upload/documents/VE.Bus_BMS_V2/111619-VE_Bus_BMS_V2_-_Manual-pdf-en.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Victron_Energy\\111619-VE_Bus_BMS_V2_-_Manual-pdf-en.pdf",
+          "kb": 9171
+        },
+        {
+          "title": "MultiPlus-II GX Manual",
+          "url": "https://www.victronenergy.com/upload/documents/MultiPlus-II_GX/2983-MultiPlus-II_GX-pdf-en.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Victron_Energy\\2983-MultiPlus-II_GX-pdf-en.pdf",
+          "kb": 2996
+        }
+      ]
+    },
+    {
+      "name": "Garmin",
+      "records": 7,
+      "ok": 4,
+      "errors": 0,
+      "error_list": [],
+      "manuals": [
+        {
+          "title": "GPSMAP Touch x2 Plus / x3 Series Owner Manual",
+          "url": "https://www8.garmin.com/manuals/webhelp/GUID-413FE004-9D7D-474E-8423-3B787BC4A5BF/EN-US/GPSMAP_Touch_x2Plus_x3_OM_EN-US.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Garmin\\GPSMAP_Touch_x2Plus_x3_OM_EN-US.pdf",
+          "kb": 14772
+        },
+        {
+          "title": "GPSMAP 7400/7600 Series Owner Manual",
+          "url": "https://www8.garmin.com/manuals/webhelp/gpsmap7400-7600/EN-US/GPSMAP_74xx-76xx_OM_EN-US.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Garmin\\GPSMAP_74xx-76xx_OM_EN-US.pdf",
+          "kb": 12074
+        },
+        {
+          "title": "GPSMAP 10x2 / 12x2 Keyed Series Owner Manual",
+          "url": "https://www8.garmin.com/manuals/webhelp/gpsmap1002-1202/EN-US/GPSMAP_10x2-12x2_Keyed_OM_EN-US.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Garmin\\GPSMAP_10x2-12x2_Keyed_OM_EN-US.pdf",
+          "kb": 16663
+        },
+        {
+          "title": "GPSMAP Touch Owner Manual (9500/8700 series)",
+          "url": "https://www8.garmin.com/manuals/webhelp/gpsmap_touch/EN-US/GPSMAP_Touch_OM_EN-US.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Garmin\\GPSMAP_Touch_OM_EN-US.pdf",
+          "kb": 7823
+        }
+      ]
+    },
+    {
+      "name": "Raymarine",
+      "records": 9,
+      "ok": 2,
+      "errors": 0,
+      "error_list": [],
+      "manuals": [
+        {
+          "title": "Quantum 2 Doppler Radar Installation Guide",
+          "url": "https://docs.raymarine.com/87342/en-US/latest/87342%20(Rev%206)%20(en-US).pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Raymarine\\87342_20_Rev_206__20_en-US_.pdf",
+          "kb": 5109
+        },
+        {
+          "title": "Raymarine p70s / p70Rs Pilot Controller Manual (Hudson Marine)",
+          "url": "https://media.hudsonmarine.co.uk/uploads/Raymarine/AIS/p70s%20&%20p70Rs%20Installation%20and%20operation%20instructions.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Raymarine\\p70s_20__20p70Rs_20Installation_20and_20operation_20instructions.pdf",
+          "kb": 3835
+        }
+      ]
+    },
+    {
+      "name": "B&G",
+      "records": 6,
+      "ok": 5,
+      "errors": 0,
+      "error_list": [],
+      "manuals": [
+        {
+          "title": "B&G Triton2 Operator Manual",
+          "url": "https://busse-yachtshop.de/pdf/bg-Triton2-operator-manual.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\B_G\\bg-Triton2-operator-manual.pdf",
+          "kb": 5773
+        },
+        {
+          "title": "B&G Triton System Installation Manual",
+          "url": "https://busse-yachtshop.de/pdf/bg-triton-install-en.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\B_G\\bg-triton-install-en.pdf",
+          "kb": 4438
+        },
+        {
+          "title": "B&G Zeus3S Operator Manual",
+          "url": "https://ca.binnacle.com/pdf/B&G%20Zeus%203S%20Operator%20Manual%20988-12586-001_w.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\B_G\\B_G_20Zeus_203S_20Operator_20Manual_20988-12586-001_w.pdf",
+          "kb": 13939
+        },
+        {
+          "title": "B&G Zeus S Installation Manual",
+          "url": "https://s3-ap-southeast-2.amazonaws.com/cdn-wnw/pdf/46281_Installation_Manual.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\B_G\\46281_Installation_Manual.pdf",
+          "kb": 2408
+        },
+        {
+          "title": "B&G Zeus2 Installation Manual (SVB24)",
+          "url": "https://media1.svb-media.de/media/snr/510072/pdf/manual_2018-01-05_14-28-30_5867d4693e4c858a34352c3eeb6a06c0.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\B_G\\manual_2018-01-05_14-28-30_5867d4693e4c858a34352c3eeb6a06c0.pdf",
+          "kb": 7001
+        }
+      ]
+    },
+    {
+      "name": "Simrad",
+      "records": 1,
+      "ok": 1,
+      "errors": 0,
+      "error_list": [],
+      "manuals": [
+        {
+          "title": "Simrad HH33 VHF Radio Manual (Busse)",
+          "url": "https://busse-yachtshop.de/pdf/simrad-hh33-handbuch.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Simrad\\simrad-hh33-handbuch.pdf",
+          "kb": 2880
+        }
+      ]
+    },
+    {
+      "name": "Furuno",
+      "records": 7,
+      "ok": 6,
+      "errors": 0,
+      "error_list": [],
+      "manuals": [
+        {
+          "title": "Furuno GP-39 GPS Navigator Operator Guide",
+          "url": "https://www.furunousa.com/-/media/sites/furuno/document_library/documents/manuals/public_manuals/gp39_operators_guide.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Furuno\\gp39_operators_guide.pdf",
+          "kb": 876
+        },
+        {
+          "title": "Furuno NavNet TZtouch3 Installation Manual",
+          "url": "https://www.furunousa.com/-/media/sites/furuno/document_library/documents/manuals/public_manuals/tzt2bb_installation_manual.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Furuno\\tzt2bb_installation_manual.pdf",
+          "kb": 7271
+        },
+        {
+          "title": "Furuno NavPilot-300 Autopilot Operator Manual",
+          "url": "https://www.furunousa.com/-/media/sites/furuno/document_library/documents/manuals/public_manuals/navpilot_300_operators_manual.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Furuno\\navpilot_300_operators_manual.pdf",
+          "kb": 18205
+        },
+        {
+          "title": "Furuno SCX-21 Satellite Compass Operator Manual",
+          "url": "https://www.furunousa.com/-/media/sites/furuno/document_library/documents/manuals/public_manuals/scx21_operators_manual.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Furuno\\scx21_operators_manual.pdf",
+          "kb": 27862
+        },
+        {
+          "title": "Furuno TZT Ecosystem Guide",
+          "url": "https://www.furunousa.com/-/media/sites/furuno/document_library/documents/manuals/public_manuals/navnet_tztouch3_tz_ecosystem.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Furuno\\navnet_tztouch3_tz_ecosystem.pdf",
+          "kb": 1666
+        },
+        {
+          "title": "Furuno AIS FA-170 Installation Manual",
+          "url": "https://www.furunousa.com/-/media/sites/furuno/document_library/documents/manuals/public_manuals/fa170_installation_manual.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Furuno\\fa170_installation_manual.pdf",
+          "kb": 11988
+        }
+      ]
+    },
+    {
+      "name": "Lewmar",
+      "records": 7,
+      "ok": 1,
+      "errors": 0,
+      "error_list": [],
+      "manuals": [
+        {
+          "title": "Lewmar V1-V6 Windlass Owner / Installation / Servicing Manual",
+          "url": "https://defender.com/assets/pdf/lewmar/v1_6_windlass.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Lewmar\\v1_6_windlass.pdf",
+          "kb": 7479
+        }
+      ]
+    },
+    {
+      "name": "Lofrans",
+      "records": 11,
+      "ok": 11,
+      "errors": 0,
+      "error_list": [],
+      "manuals": [
+        {
+          "title": "Lofrans Progress 1 Windlass Manual",
+          "url": "https://www.p2marine.com/documents/lofrans/lofrans-progress-1-manual.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Lofrans\\lofrans-progress-1-manual.pdf",
+          "kb": 579
+        },
+        {
+          "title": "Lofrans Progress 2 Windlass Manual",
+          "url": "https://www.p2marine.com/documents/lofrans/lofrans-progress-2-manual.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Lofrans\\lofrans-progress-2-manual.pdf",
+          "kb": 1924
+        },
+        {
+          "title": "Lofrans Project 1000 / X2 Windlass Manual",
+          "url": "https://www.p2marine.com/documents/lofrans/lofrans-project-1000-x2-manual.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Lofrans\\lofrans-project-1000-x2-manual.pdf",
+          "kb": 6751
+        },
+        {
+          "title": "Lofrans Kobra Windlass Manual",
+          "url": "https://www.p2marine.com/documents/lofrans/lofrans-kobra-manual.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Lofrans\\lofrans-kobra-manual.pdf",
+          "kb": 288
+        },
+        {
+          "title": "Lofrans Marlin Windlass Manual",
+          "url": "https://www.p2marine.com/documents/lofrans/lofrans-marlin-manual.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Lofrans\\lofrans-marlin-manual.pdf",
+          "kb": 12969
+        },
+        {
+          "title": "Lofrans Royal Manual Windlass",
+          "url": "https://www.p2marine.com/documents/lofrans/lofrans-royal-manual.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Lofrans\\lofrans-royal-manual.pdf",
+          "kb": 3472
+        },
+        {
+          "title": "Lofrans Project X1 Windlass Manual",
+          "url": "https://busse-yachtshop.de/pdf/lofrans-ProjectX1-Manuale.Rev.01.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Lofrans\\lofrans-ProjectX1-Manuale_Rev_01.pdf",
+          "kb": 1048
+        },
+        {
+          "title": "Lofrans Project X2 Windlass Manual",
+          "url": "https://busse-yachtshop.de/pdf/lofrans-Project%20X2-Manuale.Rev.04.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Lofrans\\lofrans-Project_20X2-Manuale_Rev_04.pdf",
+          "kb": 1278
+        },
+        {
+          "title": "Lofrans Project X3 Windlass Manual",
+          "url": "https://busse-yachtshop.de/pdf/lofrans-ProjectX3-Manuale.Rev.00.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Lofrans\\lofrans-ProjectX3-Manuale_Rev_00.pdf",
+          "kb": 1019
+        },
+        {
+          "title": "Lofrans Project 1000 Manual (Busse)",
+          "url": "https://busse-yachtshop.de/pdf/lofrans-Project1000-Manuale.Rev.04.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Lofrans\\lofrans-Project1000-Manuale_Rev_04.pdf",
+          "kb": 1301
+        },
+        {
+          "title": "Lofrans Thetis Chain Counter Manual",
+          "url": "https://busse-yachtshop.de/pdf/Lofrans-THETIS-7003-Handbuch.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Lofrans\\Lofrans-THETIS-7003-Handbuch.pdf",
+          "kb": 4458
+        }
+      ]
+    },
+    {
+      "name": "Maxwell",
+      "records": 7,
+      "ok": 1,
+      "errors": 0,
+      "error_list": [],
+      "manuals": [
+        {
+          "title": "Maxwell VWC Series Windlass Owner Manual (Defender CDN)",
+          "url": "https://defender.com/assets/pdf/maxwell/vwc.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Maxwell\\vwc.pdf",
+          "kb": 275
+        }
+      ]
+    },
+    {
+      "name": "Quick",
+      "records": 8,
+      "ok": 2,
+      "errors": 0,
+      "error_list": [],
+      "manuals": [
+        {
+          "title": "Quick Prince DP3 Windlass Manual (Marine Warehouse AU)",
+          "url": "http://marinewarehouse.net/images/quick/PDF/Prince%20DP3%20Users%20Manual.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Quick\\Prince_20DP3_20Users_20Manual.pdf",
+          "kb": 3848
+        },
+        {
+          "title": "Quick Prince DP3 700-1500W Windlass Manual (NaviNordic)",
+          "url": "https://www.navinordic.com/pub_docs/files/Ladda_ner/Quick/Ankarspel/DP3_7-10-15_Rev_003A_GB.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Quick\\DP3_7-10-15_Rev_003A_GB.pdf",
+          "kb": 1070
+        }
+      ]
+    },
+    {
+      "name": "Dometic",
+      "records": 5,
+      "ok": 4,
+      "errors": 0,
+      "error_list": [],
+      "manuals": [
+        {
+          "title": "Marine Air Systems / Dometic Turbo Installation Manual",
+          "url": "https://yachtaidmarine.com/wp-content/uploads/documents/marine-air-conditioning/price-list/Marine-Air-Systems-Manual.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Dometic\\Marine-Air-Systems-Manual.pdf",
+          "kb": 1280
+        },
+        {
+          "title": "Dometic HVAC Control Panel Operation Manual",
+          "url": "https://media.dometic.com/externalassets/4709_55277.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Dometic\\4709_55277.pdf",
+          "kb": 732
+        },
+        {
+          "title": "Dometic Turbo 16 Self-Contained AC Installation Manual",
+          "url": "https://www.southerncalmarine.com/products/air-conditioning/marine-air-systems/self-contained-air-conditio/turbo-self-contained-air/turbo-install-manual.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Dometic\\turbo-install-manual.pdf",
+          "kb": 1948
+        },
+        {
+          "title": "Dometic Marine Air Conditioning Handbook",
+          "url": "https://yachtaidmarine.com/wp-content/uploads/documents/marine-air-conditioning/installation-manuals/Dometic-installation-manual.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Dometic\\Dometic-installation-manual.pdf",
+          "kb": 1119
+        }
+      ]
+    },
+    {
+      "name": "Webasto",
+      "records": 5,
+      "ok": 0,
+      "errors": 0,
+      "error_list": [],
+      "manuals": []
+    },
+    {
+      "name": "Espar",
+      "records": 5,
+      "ok": 0,
+      "errors": 0,
+      "error_list": [],
+      "manuals": []
+    },
+    {
+      "name": "Spectra",
+      "records": 4,
+      "ok": 0,
+      "errors": 0,
+      "error_list": [],
+      "manuals": []
+    },
+    {
+      "name": "Schenker",
+      "records": 6,
+      "ok": 0,
+      "errors": 0,
+      "error_list": [],
+      "manuals": []
+    },
+    {
+      "name": "Yamaha Marine",
+      "records": 5,
+      "ok": 0,
+      "errors": 0,
+      "error_list": [],
+      "manuals": []
+    },
+    {
+      "name": "Mercury Marine",
+      "records": 5,
+      "ok": 0,
+      "errors": 0,
+      "error_list": [],
+      "manuals": []
+    },
+    {
+      "name": "Jabsco",
+      "records": 7,
+      "ok": 3,
+      "errors": 0,
+      "error_list": [],
+      "manuals": [
+        {
+          "title": "Jabsco Quiet Flush E2 Marine Toilet User Guide",
+          "url": "https://www.xylem.com/siteassets/brand/jabsco/resources/manual/user-guide-quiet-flush-e2.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Jabsco\\user-guide-quiet-flush-e2.pdf",
+          "kb": 10598
+        },
+        {
+          "title": "Jabsco PAR-MAX 3 Water Pressure Pump Manual",
+          "url": "https://www.xylem.com/siteassets/brand/jabsco/resources/manual/user-guide-par-max-3.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Jabsco\\user-guide-par-max-3.pdf",
+          "kb": 3347
+        },
+        {
+          "title": "Jabsco PAR-MAX 2 Datasheet / Technical Sheet",
+          "url": "https://www.xylem.com/siteassets/brand/jabsco/resources/technical-brochure/parmax-2-datasheet-31295-3512-3a.pdf",
+          "local": "C:\\Users\\ilopa\\Documents\\Sailing\\Cattitude\\utilities\\manuals\\Jabsco\\parmax-2-datasheet-31295-3512-3a.pdf",
+          "kb": 542
+        }
+      ]
+    },
+    {
+      "name": "Whale",
+      "records": 7,
+      "ok": 0,
+      "errors": 0,
+      "error_list": [],
+      "manuals": []
+    },
+    {
+      "name": "Vetus",
+      "records": 5,
+      "ok": 0,
+      "errors": 0,
+      "error_list": [],
+      "manuals": []
+    },
+    {
+      "name": "DirectPDF",
+      "records": 17,
+      "ok": 0,
+      "errors": 0,
+      "error_list": [],
+      "manuals": []
+    },
+    {
+      "name": "busse-yachtshop.de",
+      "records": 0,
+      "ok": 0,
+      "errors": 0,
+      "error_list": [],
+      "manuals": []
+    },
+    {
+      "name": "svb24.com",
+      "records": 0,
+      "ok": 0,
+      "errors": 0,
+      "error_list": [],
+      "manuals": []
+    },
+    {
+      "name": "navinordic.com",
+      "records": 0,
+      "ok": 0,
+      "errors": 0,
+      "error_list": [],
+      "manuals": []
+    },
+    {
+      "name": "defender.com",
+      "records": 0,
+      "ok": 0,
+      "errors": 0,
+      "error_list": [],
+      "manuals": []
+    },
+    {
+      "name": "marinewarehouse.net",
+      "records": 0,
+      "ok": 0,
+      "errors": 0,
+      "error_list": [],
+      "manuals": []
+    },
+    {
+      "name": "binnacle.com",
+      "records": 0,
+      "ok": 0,
+      "errors": 0,
+      "error_list": [],
+      "manuals": []
+    }
+  ]
+}

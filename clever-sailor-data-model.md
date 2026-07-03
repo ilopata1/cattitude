@@ -1067,6 +1067,8 @@ For new local dev databases without guide data, restore from a DB dump or wait f
 
 | Document | Scope |
 |----------|--------|
+| `PLATFORM_ROADMAP.md` | Delivery phases 1–7 (including owner communities) |
+| `cursor-build-community-phase.md` | Phase 7 — communities, moderation, community RAG, FB import |
 | `cursor-build-admin-portal.md` | Admin UI (equipment, manuals, vessel guide screens, charter onboarding) |
 | `cursor-build-intake-flow.md` | **Private-owner** mobile intake → `guide_generation_input_snapshot` |
 | `mobile/src/app/core/models/bootstrap-content.model.ts` | Published payload types |

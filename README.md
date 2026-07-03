@@ -24,6 +24,8 @@ The product splits into two largely independent content systems:
 
 A third layer — **equipment registry and tenancy** — models what is on each vessel, which charter company and operating base it belongs to, and who may access what. This supports onboarding, fleet management, and filtered RAG retrieval as the platform matures.
 
+A fourth layer — **owner communities** (planned **Phase 7**) — will let users discuss specific hull models and equipment (similar to Facebook owner groups), with optional **RAG over community posts** including curated historical Facebook group content. See [`PLATFORM_ROADMAP.md`](PLATFORM_ROADMAP.md) and [`cursor-build-community-phase.md`](cursor-build-community-phase.md).
+
 ```mermaid
 flowchart LR
   subgraph users [Users]
@@ -384,13 +386,17 @@ Seed is for initial tenancy/equipment setup — not every deploy.
 | Cattitude guide in Postgres (`guide_content` + publication) | **Shipped** (one-time migration complete) |
 | Guide sync API + mobile local store | **Shipped** (API + IndexedDB sync; `guideSyncEnabled` off by default) |
 | Admin portal — operating base + publish + vessels | **Shipped** (vessel CRUD, clone, equipment picker) |
+| Admin portal — equipment registry, manuals, option packs | **Shipped** |
 | LLM generation pipeline + admin review gates | **Planned** |
-| Admin portal (full equipment, manuals, intake) | **Planned** |
+| Admin portal (intake review, query logs, notifications) | **Planned** |
 | Vessel intake flow (Ionic) | **Planned** |
 | Multi-vessel app shell (add vessel, switch vessel) | **Planned** |
-| Auth0 / guest tokens / charter-scoped Ask | **Planned** |
+| Auth0 / guest tokens / charter-scoped Ask | **Planned** (Phase 4) |
+| Owner communities + community RAG | **Planned** (Phase 7) |
 | Capacitor native builds | **Deferred** |
 | Filtered RAG by `vessel_equipment` | **Planned** (Stage 3) |
+
+**Full phase list:** [`PLATFORM_ROADMAP.md`](PLATFORM_ROADMAP.md)
 
 ---
 
@@ -408,6 +414,6 @@ Seed is for initial tenancy/equipment setup — not every deploy.
 
 6. **CORS and error handling:** Backend returns JSON errors with CORS headers on `/query` failures — otherwise the browser reports a misleading CORS error on 500 responses.
 
-7. **Planned admin and intake** are spec-only in `cursor-build-*.md` — not implemented yet; avoid assuming those routes exist.
+7. **Planned admin and intake** are spec-only in `cursor-build-*.md` where marked planned — see [`PLATFORM_ROADMAP.md`](PLATFORM_ROADMAP.md) for phase ordering. Phase 7 (owner communities + community RAG) is documented in `cursor-build-community-phase.md`.
 
-For questions about original product intent and staging, see `cattitude-rag-implementation-plan.md`. For schema field disputes, `clever-sailor-schema-reference.docx` wins over markdown docs.
+For questions about original product intent and staging, see `cattitude-rag-implementation-plan.md` and `PLATFORM_ROADMAP.md`. For schema field disputes, `clever-sailor-schema-reference.docx` wins over markdown docs.
