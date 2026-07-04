@@ -338,6 +338,129 @@ def _load_diff_against_id(
     return str(row[0]) if row else None
 
 
+def _load_existing_draft_id(
+    conn: Connection, vessel_id: str, content_type: str, content_key: str
+) -> str | None:
+    row = conn.execute(
+        text(
+            """
+            SELECT id FROM guide_content
+            WHERE vessel_id = :vessel_id
+              AND content_type = CAST(:content_type AS guide_content_type)
+              AND content_key = :content_key
+              AND status = 'draft'
+            ORDER BY created_at DESC
+            LIMIT 1
+            """
+        ),
+        {
+            "vessel_id": vessel_id,
+            "content_type": content_type,
+            "content_key": content_key,
+        },
+    ).fetchone()
+    return str(row[0]) if row else None
+
+
+def _supersede_extra_drafts(
+    conn: Connection,
+    vessel_id: str,
+    content_type: str,
+    content_key: str,
+    keep_id: str,
+) -> None:
+    conn.execute(
+        text(
+            """
+            UPDATE guide_content
+            SET status = 'superseded'
+            WHERE vessel_id = :vessel_id
+              AND content_type = CAST(:content_type AS guide_content_type)
+              AND content_key = :content_key
+              AND status = 'draft'
+              AND id <> :keep_id
+            """
+        ),
+        {
+            "vessel_id": vessel_id,
+            "content_type": content_type,
+            "content_key": content_key,
+            "keep_id": keep_id,
+        },
+    )
+
+
+def _save_generated_draft(
+    conn: Connection,
+    *,
+    vessel_id: str,
+    content_type: str,
+    content_key: str,
+    payload: Any,
+    run_id: str,
+    diff_against_id: str | None,
+    created_by: str,
+) -> tuple[str, bool]:
+    """Insert or overwrite the single draft row for this module. Returns (module_id, reused)."""
+    existing_draft_id = _load_existing_draft_id(
+        conn, vessel_id, content_type, content_key
+    )
+    params = {
+        "vessel_id": vessel_id,
+        "content_type": content_type,
+        "content_key": content_key,
+        "payload": json.dumps(payload),
+        "run_id": run_id,
+        "diff_against_id": diff_against_id,
+        "created_by": created_by,
+    }
+
+    if existing_draft_id:
+        conn.execute(
+            text(
+                """
+                UPDATE guide_content
+                SET payload = CAST(:payload AS jsonb),
+                    source = 'generated',
+                    status = 'draft',
+                    generation_run_id = :run_id,
+                    diff_against_id = :diff_against_id,
+                    created_by = :created_by,
+                    created_at = now()
+                WHERE id = :module_id
+                  AND vessel_id = :vessel_id
+                """
+            ),
+            {**params, "module_id": existing_draft_id},
+        )
+        _supersede_extra_drafts(
+            conn, vessel_id, content_type, content_key, existing_draft_id
+        )
+        return existing_draft_id, True
+
+    module_row = conn.execute(
+        text(
+            """
+            INSERT INTO guide_content (
+                vessel_id, content_type, content_key, payload,
+                source, status, generation_run_id, diff_against_id, created_by
+            )
+            VALUES (
+                :vessel_id,
+                CAST(:content_type AS guide_content_type),
+                :content_key,
+                CAST(:payload AS jsonb),
+                'generated', 'draft',
+                :run_id, :diff_against_id, :created_by
+            )
+            RETURNING id
+            """
+        ),
+        params,
+    ).fetchone()
+    return str(module_row[0]), False
+
+
 def _validate_module_payload(
     content_type: str, content_key: str, payload: Any
 ) -> None:
@@ -448,34 +571,16 @@ def generate_module(
         payload = _parse_llm_json(str(response))
         _validate_module_payload(content_type, content_key, payload)
 
-        module_row = conn.execute(
-            text(
-                """
-                INSERT INTO guide_content (
-                    vessel_id, content_type, content_key, payload,
-                    source, status, generation_run_id, diff_against_id, created_by
-                )
-                VALUES (
-                    :vessel_id,
-                    CAST(:content_type AS guide_content_type),
-                    :content_key,
-                    CAST(:payload AS jsonb),
-                    'generated', 'draft',
-                    :run_id, :diff_against_id, :created_by
-                )
-                RETURNING id
-                """
-            ),
-            {
-                "vessel_id": vessel_id,
-                "content_type": content_type,
-                "content_key": content_key,
-                "payload": json.dumps(payload),
-                "run_id": run_id,
-                "diff_against_id": diff_against_id,
-                "created_by": created_by,
-            },
-        ).fetchone()
+        module_id, reused_draft = _save_generated_draft(
+            conn,
+            vessel_id=vessel_id,
+            content_type=content_type,
+            content_key=content_key,
+            payload=payload,
+            run_id=run_id,
+            diff_against_id=diff_against_id,
+            created_by=created_by,
+        )
 
         conn.execute(
             text(
@@ -489,10 +594,11 @@ def generate_module(
         )
         return {
             "run_id": run_id,
-            "module_id": str(module_row[0]),
+            "module_id": module_id,
             "content_type": content_type,
             "content_key": content_key,
             "status": "completed",
+            "reused_draft": reused_draft,
         }
     except Exception as exc:
         conn.execute(

@@ -53,6 +53,7 @@ def _load_modules(conn, vessel_id: str) -> list[dict]:
                 created_at, approved_at, approved_by
             FROM guide_content
             WHERE vessel_id = :vessel_id
+              AND status NOT IN ('superseded', 'archived')
             ORDER BY content_type, content_key, created_at DESC
             """
         ),
