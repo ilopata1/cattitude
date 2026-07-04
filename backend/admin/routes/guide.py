@@ -6,6 +6,7 @@ from sqlalchemy import text
 
 from admin.auth import require_admin_user
 from admin.deps import get_engine, templates
+from guide_generation import GuideGenerationError, STARTER_MODULES, run_guide_generation
 from guide_publish import PublishValidationError, assemble_publication, publish_vessel_guide
 
 router = APIRouter(prefix="/vessels/{vessel_id}/guide", tags=["admin-guide"])
@@ -134,6 +135,40 @@ async def approve_module(
     admin_user: str = Depends(require_admin_user),
 ):
     with get_engine().begin() as conn:
+        row = conn.execute(
+            text(
+                """
+                SELECT content_type, content_key
+                FROM guide_content
+                WHERE id = :module_id
+                  AND vessel_id = :vessel_id
+                  AND status = 'draft'
+                """
+            ),
+            {"module_id": module_id, "vessel_id": vessel_id},
+        ).fetchone()
+        if row is None:
+            return RedirectResponse(f"/admin/vessels/{vessel_id}/guide", status_code=303)
+
+        conn.execute(
+            text(
+                """
+                UPDATE guide_content
+                SET status = 'superseded'
+                WHERE vessel_id = :vessel_id
+                  AND content_type = :content_type
+                  AND content_key = :content_key
+                  AND status IN ('approved', 'published')
+                  AND id <> :module_id
+                """
+            ),
+            {
+                "vessel_id": vessel_id,
+                "content_type": row[0],
+                "content_key": row[1],
+                "module_id": module_id,
+            },
+        )
         conn.execute(
             text(
                 """
@@ -151,6 +186,38 @@ async def approve_module(
             },
         )
     return RedirectResponse(f"/admin/vessels/{vessel_id}/guide", status_code=303)
+
+
+@router.post("/generate")
+async def generate_guide_modules(
+    vessel_id: str,
+    admin_user: str = Depends(require_admin_user),
+):
+    with get_engine().connect() as conn:
+        vessel = _load_vessel(conn, vessel_id)
+        if vessel is None:
+            return RedirectResponse("/admin/vessels", status_code=303)
+
+    try:
+        with get_engine().begin() as conn:
+            result = run_guide_generation(
+                conn,
+                vessel_id,
+                STARTER_MODULES,
+                created_by=admin_user,
+            )
+    except GuideGenerationError as exc:
+        from urllib.parse import quote
+
+        return RedirectResponse(
+            f"/admin/vessels/{vessel_id}/guide?gen_error={quote(str(exc))}",
+            status_code=303,
+        )
+
+    return RedirectResponse(
+        f"/admin/vessels/{vessel_id}/guide?generated={len(result.runs)}",
+        status_code=303,
+    )
 
 
 @router.get("/publish")

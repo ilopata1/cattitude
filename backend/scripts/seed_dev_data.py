@@ -26,7 +26,7 @@ VESSEL_NAME = "Cattitude"
 VESSEL_SLUG = "cattitude"
 VESSEL_TYPE = "sailing_catamaran"
 HULL_MANUFACTURER = "Fountaine Pajot"
-HULL_MODEL_CODE = "Tanna 47"
+HULL_MODEL_CODE = "fountaine_pajot_tanna_47"
 HULL_DISPLAY_NAME = "Tanna 47"
 
 ABACOS_GUIDE_CONTEXT = {

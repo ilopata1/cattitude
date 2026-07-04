@@ -7,6 +7,12 @@
 {% if request.query_params.get('published') %}
 <div class="flash flash-ok">Published version {{ request.query_params.get('published') }}.</div>
 {% endif %}
+{% if request.query_params.get('generated') %}
+<div class="flash flash-ok">Generated {{ request.query_params.get('generated') }} draft module(s). Review and approve below.</div>
+{% endif %}
+{% if request.query_params.get('gen_error') %}
+<div class="flash flash-error">Generation failed: {{ request.query_params.get('gen_error') }}</div>
+{% endif %}
 
 <div class="panel-grid">
   <section class="panel">
@@ -24,6 +30,10 @@
     {% if stale_context %}
       <div class="flash flash-warn">Operating base context changed since last publication. Regenerate guide content before the next publish.</div>
     {% endif %}
+    <form method="post" action="/admin/vessels/{{ vessel.id }}/guide/generate" class="inline-form">
+      <button type="submit">Generate v0 drafts</button>
+    </form>
+    <p class="muted">Creates draft modules: branding, emergency, home rules (LLM). Does not publish.</p>
     <p><a class="button" href="/admin/vessels/{{ vessel.id }}/guide/publish">Publish new version</a></p>
   </section>
 

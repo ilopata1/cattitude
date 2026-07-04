@@ -546,24 +546,12 @@ def _clear_link_tables(conn: Connection) -> None:
     conn.execute(text("DELETE FROM option_pack_hull_model"))
 
 
-def import_registry(
+def import_registry_core(
     conn: Connection,
-    data_dir: Path,
-    *,
-    replace_links: bool = True,
-    dry_run: bool = False,
-) -> ImportReport:
-    bundle = validate_csv_bundle(data_dir)
-    report = ImportReport()
-
-    if dry_run:
-        report = ImportReport()
-        _warn_pack_coverage(bundle, report)
-        report.warnings.insert(
-            0, "Dry run: validation passed; no database writes."
-        )
-        return report
-
+    bundle: dict[str, list[dict[str, str]]],
+    report: ImportReport,
+) -> None:
+    """Upsert hull models, equipment, and option pack headers."""
     for row in bundle["hull_models"]:
         _upsert_hull_model(conn, row, report)
 
@@ -573,6 +561,15 @@ def import_registry(
     for row in bundle["option_packs"]:
         _upsert_option_pack(conn, row, report)
 
+
+def import_registry_links(
+    conn: Connection,
+    bundle: dict[str, list[dict[str, str]]],
+    report: ImportReport,
+    *,
+    replace_links: bool = True,
+) -> None:
+    """Reload option pack relationship tables (hull, equipment, child packs)."""
     ids = _load_id_maps(conn)
 
     if replace_links:
@@ -671,6 +668,27 @@ def import_registry(
         )
         report.pack_child_links += 1
 
+
+def import_registry(
+    conn: Connection,
+    data_dir: Path,
+    *,
+    replace_links: bool = True,
+    dry_run: bool = False,
+) -> ImportReport:
+    bundle = validate_csv_bundle(data_dir)
+    report = ImportReport()
+
+    if dry_run:
+        report = ImportReport()
+        _warn_pack_coverage(bundle, report)
+        report.warnings.insert(
+            0, "Dry run: validation passed; no database writes."
+        )
+        return report
+
+    import_registry_core(conn, bundle, report)
+    import_registry_links(conn, bundle, report, replace_links=replace_links)
     _warn_pack_coverage(bundle, report)
 
     return report
