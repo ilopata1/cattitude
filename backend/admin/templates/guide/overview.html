@@ -31,9 +31,18 @@
       <div class="flash flash-warn">Operating base context changed since last publication. Regenerate guide content before the next publish.</div>
     {% endif %}
     <form method="post" action="/admin/vessels/{{ vessel.id }}/guide/generate" class="inline-form">
-      <button type="submit">Generate v0 drafts</button>
+      <input type="hidden" name="module_set" value="shell">
+      <button type="submit">Generate Home tab drafts</button>
     </form>
-    <p class="muted">Creates draft modules: branding, emergency, home rules (LLM). Does not publish.</p>
+    <form method="post" action="/admin/vessels/{{ vessel.id }}/guide/generate" class="inline-form">
+      <input type="hidden" name="module_set" value="systems">
+      <button type="submit">Generate system drafts</button>
+    </form>
+    <form method="post" action="/admin/vessels/{{ vessel.id }}/guide/generate" class="inline-form">
+      <input type="hidden" name="module_set" value="all">
+      <button type="submit">Generate all drafts</button>
+    </form>
+    <p class="muted">Home tab: branding, emergency, rules. Systems: overview + engines. Existing drafts are overwritten.</p>
     <p><a class="button" href="/admin/vessels/{{ vessel.id }}/guide/publish">Publish new version</a></p>
   </section>
 

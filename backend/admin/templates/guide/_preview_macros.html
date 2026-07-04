@@ -109,6 +109,69 @@
 </div>
 {% endmacro %}
 
+{% macro preview_system_section(section) %}
+<div class="guide-preview-sys-section">
+  <div class="guide-preview-sys-section-title">{{ section.t }}</div>
+  {% if section.c %}
+  <p class="guide-preview-sys-prose">{{ section.c }}</p>
+  {% elif section.type == 'photo' %}
+  <p class="guide-preview-sys-photo">📷 Photo section preserved from approved guide</p>
+  {% elif section.items %}
+  <ul class="guide-preview-sys-list">
+    {% for item in section.items[:5] %}
+    <li>
+      {% if item is mapping %}
+        {% if item.i %}<span>{{ item.i }}</span> {% endif %}{{ item.c or item }}
+      {% else %}
+        {{ item }}
+      {% endif %}
+    </li>
+    {% endfor %}
+    {% if section.items|length > 5 %}
+    <li class="guide-preview-sys-more">… {{ section.items|length - 5 }} more</li>
+    {% endif %}
+  </ul>
+  {% endif %}
+</div>
+{% endmacro %}
+
+{% macro preview_system(payload) %}
+<div class="guide-preview-scroll">
+  <div class="guide-preview-learn-card">
+    <div class="guide-preview-learn-icon">{{ payload.icon or '⚙️' }}</div>
+    <div class="guide-preview-learn-text">
+      <div class="guide-preview-learn-title">{{ payload.title }}</div>
+      <div class="guide-preview-learn-sub">{{ payload.subtitle }}</div>
+    </div>
+  </div>
+  {% if payload.summary %}
+  <p class="guide-preview-sys-summary">{{ payload.summary }}</p>
+  {% endif %}
+  {% if payload.learnChecks %}
+  <div class="guide-preview-sys-block">
+    <div class="guide-preview-sys-block-title">Review checklist</div>
+    <ul class="guide-preview-sys-checks">
+      {% for check in payload.learnChecks[:4] %}
+      <li><span>☐</span> {{ check }}</li>
+      {% endfor %}
+      {% if payload.learnChecks|length > 4 %}
+      <li class="guide-preview-sys-more">… {{ payload.learnChecks|length - 4 }} more checks</li>
+      {% endif %}
+    </ul>
+  </div>
+  {% endif %}
+  <div class="guide-preview-sys-block">
+    <div class="guide-preview-sys-block-title">Full system guide</div>
+    {% for section in payload.sections[:4] %}
+      {{ preview_system_section(section) }}
+    {% endfor %}
+    {% if payload.sections|length > 4 %}
+    <p class="guide-preview-sys-more">… {{ payload.sections|length - 4 }} more sections</p>
+    {% endif %}
+  </div>
+</div>
+{% endmacro %}
+
 {% macro preview_panel(label, payload, vessel_slug, content_type, content_key, variant='single') %}
 <div class="guide-preview-frame guide-preview-frame--{{ variant }}">
   <div class="guide-preview-frame-header">
@@ -125,6 +188,8 @@
         {{ preview_emergency(payload) }}
       {% elif content_type == 'ui' and content_key == 'homeRuleSections' %}
         {{ preview_home_rules(payload) }}
+      {% elif content_type == 'system' %}
+        {{ preview_system(payload) }}
       {# Add new preview types here — see admin/guide_review_meta.py #}
       {% else %}
         <p class="guide-preview-fallback">Visual preview is not available for this module type yet.</p>

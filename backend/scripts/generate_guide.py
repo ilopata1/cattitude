@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """
-Run guide generation for a vessel (v0: branding + emergency + home rules).
+Run guide generation for a vessel (Home tab shell + optional system modules).
 
 Usage (from backend/):
   python scripts/generate_guide.py --slug cattitude
+  python scripts/generate_guide.py --slug cattitude --modules systems
+  python scripts/generate_guide.py --slug cattitude --modules overview,engines
   python scripts/generate_guide.py --slug cattitude --modules branding,emergency
   python scripts/generate_guide.py --slug cattitude --snapshot-only
 """
@@ -21,7 +23,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from config import settings  # noqa: E402
 from db import postgres_connection_strings  # noqa: E402
 from guide_generation import (  # noqa: E402
+    DEFAULT_GENERATION_MODULES,
     STARTER_MODULES,
+    SYSTEM_MODULES,
     GuideGenerationError,
     create_input_snapshot,
     load_vessel_generation_context,
@@ -41,6 +45,16 @@ def _parse_modules(raw: str) -> list[tuple[str, str]]:
             modules.append(("emergency", "emergency"))
         elif part in ("homeRuleSections", "home-rules", "ui"):
             modules.append(("ui", "homeRuleSections"))
+        elif part in ("systems", "system"):
+            modules.extend(SYSTEM_MODULES)
+        elif part == "overview":
+            modules.append(("system", "overview"))
+        elif part == "engines":
+            modules.append(("system", "engines"))
+        elif part in ("all", "default"):
+            modules.extend(DEFAULT_GENERATION_MODULES)
+        elif part in ("shell", "starter"):
+            modules.extend(STARTER_MODULES)
         elif ":" in part:
             content_type, content_key = part.split(":", 1)
             modules.append((content_type.strip(), content_key.strip()))
@@ -50,13 +64,14 @@ def _parse_modules(raw: str) -> list[tuple[str, str]]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Generate vessel guide modules (v0).")
+    parser = argparse.ArgumentParser(description="Generate vessel guide modules.")
     parser.add_argument("--slug", default="cattitude", help="Vessel slug")
     parser.add_argument(
         "--modules",
         default="",
-        help="Comma-separated modules (default: starter set). "
-        "Aliases: branding, emergency, homeRuleSections",
+        help="Comma-separated modules (default: Home tab shell only). "
+        "Aliases: branding, emergency, homeRuleSections, overview, engines, "
+        "systems, shell, all",
     )
     parser.add_argument(
         "--snapshot-only",

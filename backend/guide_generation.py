@@ -14,12 +14,36 @@ from sqlalchemy.engine import Connection
 from config import settings
 from guide_bootstrap import canonical_json_hash
 
-# First vertical slice: charter shell modules (not full systems tree yet).
+# First vertical slice: charter shell + initial Learn/Know systems.
 STARTER_MODULES: list[tuple[str, str]] = [
     ("branding", "branding"),
     ("emergency", "emergency"),
     ("ui", "homeRuleSections"),
 ]
+
+SYSTEM_MODULES: list[tuple[str, str]] = [
+    ("system", "overview"),
+    ("system", "engines"),
+]
+
+DEFAULT_GENERATION_MODULES: list[tuple[str, str]] = (
+    STARTER_MODULES + SYSTEM_MODULES
+)
+
+SYSTEM_DEFAULTS: dict[str, dict[str, Any]] = {
+    "overview": {
+        "icon": "🗺️",
+        "locs": ["cockpit", "helm", "saloon"],
+    },
+    "engines": {
+        "icon": "⚙️",
+        "locs": ["port-hull", "stbd-hull", "cockpit"],
+    },
+}
+
+SYSTEM_SECTION_TYPES = frozenset(
+    {"prose", "photo", "list", "steps", "warnings", "notes"}
+)
 
 SCHEMA_HINTS: dict[tuple[str, str], str] = {
     ("branding", "branding"): (
@@ -33,6 +57,14 @@ SCHEMA_HINTS: dict[tuple[str, str], str] = {
     ),
     ("ui", "homeRuleSections"): (
         '[{"title","tone":"danger|caution|good","rules":[{"icon","tone","text","link?"}]}]'
+    ),
+    ("system", "overview"): (
+        '{"id":"overview","icon","title","subtitle","locs[]","summary",'
+        '"learnChecks[]","sections":[{"t","type":"prose|list|steps","c?","items?"}]}'
+    ),
+    ("system", "engines"): (
+        '{"id":"engines","icon","title","subtitle","locs[]","summary",'
+        '"learnChecks[]","sections":[{"t","type":"prose|steps|warnings|notes","c?","items?"}]}'
     ),
 }
 
@@ -64,6 +96,40 @@ Produce 2–3 sections: Never Do This (danger), Always Do This (caution), option
 Each rule needs icon (emoji), tone, and text. Add link only when referencing a checklist route.
 
 Return JSON only — a JSON array (homeRuleSections), no wrapper object.""",
+    ("system", "overview"): """Generate the boat overview system module (Learn the Boat + Know tab).
+
+Use INPUT SNAPSHOT: vessel.name, hull_model.display_name, vessel.vessel_type, equipment list.
+Audience: charter guests on day one. Tone: orientation — where things are, layout, safety gear locations.
+
+Produce id "overview", icon "🗺️", locs for cockpit/helm/saloon.
+Include summary (1-2 sentences), learnChecks (6-10 walkthrough items), and sections:
+- About [vessel name] (prose) — hull model facts from snapshot only
+- Layout (list) — cabin/hull layout using hull model; do not invent cabin counts not supported by snapshot
+- Find These on Day 1 (steps) — safety gear and key locations (life jackets, EPIRB, fire ext, panel, fuel/water fills)
+
+Do NOT include sections with type "photo" — deck plan photos are preserved from REFERENCE MODULE separately.
+If REFERENCE MODULE is provided, match its section structure and tone; update facts from snapshot.
+
+Return JSON only — one system object, no wrapper.""",
+    ("system", "engines"): """Generate the engines system module (Learn the Boat + Know tab).
+
+Use INPUT SNAPSHOT equipment rows for propulsion (system_category propulsion, or manufacturer Yanmar/volvo/etc.).
+Use twin-engine catamaran assumptions when two propulsion units with port/starboard zone_instance appear.
+
+Produce id "engines", icon "⚙️", locs including port-hull, stbd-hull, cockpit.
+Subtitle and summary must name actual engine make/model from equipment when available.
+
+Include learnChecks (6-8 compartment checks) and sections:
+- Engine Compartment Access (prose)
+- Pre-Start Checks (Both Engines) (steps)
+- Starting Procedure (steps) — include EVC/glow plug/neutral/water from exhaust checks if applicable
+- Shutting Down (steps)
+- Warnings (warnings) — seacock, starter, exhaust water, warm-up
+- Notes (notes) — cruise RPM / fuel if known from reference tone
+
+Do NOT include photo sections. Do not invent engine specs not in snapshot or reference.
+
+Return JSON only — one system object, no wrapper.""",
 }
 
 
@@ -478,6 +544,90 @@ def _validate_module_payload(
     elif content_type == "ui" and content_key == "homeRuleSections":
         if not isinstance(payload, list) or not payload:
             raise GuideGenerationError("homeRuleSections must be a non-empty array")
+    elif content_type == "system":
+        _validate_system_module(content_key, payload)
+
+
+def _validate_system_module(content_key: str, payload: Any) -> None:
+    if not isinstance(payload, dict):
+        raise GuideGenerationError("system payload must be an object")
+    if payload.get("id") != content_key:
+        raise GuideGenerationError(f'system id must be "{content_key}"')
+    for key in ("icon", "title", "subtitle", "summary", "sections"):
+        if not payload.get(key):
+            raise GuideGenerationError(f"system missing {key}")
+    sections = payload.get("sections")
+    if not isinstance(sections, list) or not sections:
+        raise GuideGenerationError("system sections must be a non-empty array")
+    for index, section in enumerate(sections):
+        if not isinstance(section, dict):
+            raise GuideGenerationError(f"section {index} must be an object")
+        if not section.get("t") or not section.get("type"):
+            raise GuideGenerationError(f"section {index} missing t or type")
+        section_type = section["type"]
+        if section_type not in SYSTEM_SECTION_TYPES:
+            raise GuideGenerationError(f"section {index} has invalid type {section_type!r}")
+        if section_type == "prose" and not section.get("c"):
+            raise GuideGenerationError(f"prose section {index} missing c")
+        if section_type in {"list", "steps", "warnings", "notes"} and not section.get("items"):
+            raise GuideGenerationError(f"{section_type} section {index} missing items")
+    learn_checks = payload.get("learnChecks")
+    if learn_checks is not None and (
+        not isinstance(learn_checks, list) or not learn_checks
+    ):
+        raise GuideGenerationError("learnChecks must be a non-empty array when present")
+
+
+def _merge_system_photo_sections(
+    reference: dict[str, Any] | None, payload: dict[str, Any]
+) -> dict[str, Any]:
+    """Interleave photo sections from the reference module at their original positions."""
+    if not reference:
+        return payload
+
+    ref_sections = reference.get("sections", [])
+    generated = {
+        section["t"]: section
+        for section in payload.get("sections", [])
+        if section.get("t") and section.get("type") != "photo"
+    }
+
+    merged: list[dict[str, Any]] = []
+    used_titles: set[str] = set()
+    for ref_section in ref_sections:
+        if ref_section.get("type") == "photo":
+            merged.append(ref_section)
+            continue
+        title = ref_section.get("t")
+        if title and title in generated:
+            merged.append(generated[title])
+            used_titles.add(title)
+
+    for section in payload.get("sections", []):
+        title = section.get("t")
+        if section.get("type") == "photo" or not title or title in used_titles:
+            continue
+        merged.append(section)
+
+    payload["sections"] = merged
+    return payload
+
+
+def _finalize_system_payload(
+    content_key: str,
+    payload: dict[str, Any],
+    reference: dict[str, Any] | None,
+) -> dict[str, Any]:
+    payload["id"] = content_key
+    defaults = SYSTEM_DEFAULTS.get(content_key, {})
+    for key, value in defaults.items():
+        if not payload.get(key):
+            payload[key] = value
+    if reference:
+        for key in ("icon", "locs"):
+            if not payload.get(key) and reference.get(key):
+                payload[key] = reference[key]
+    return _merge_system_photo_sections(reference, payload)
 
 
 def _compose_prompt(
@@ -569,6 +719,10 @@ def generate_module(
         )
         response = llm.complete(composed)
         payload = _parse_llm_json(str(response))
+        if content_type == "system":
+            if not isinstance(payload, dict):
+                raise GuideGenerationError("system payload must be an object")
+            payload = _finalize_system_payload(content_key, payload, reference)
         _validate_module_payload(content_type, content_key, payload)
 
         module_id, reused_draft = _save_generated_draft(

@@ -50,9 +50,31 @@ _MODULE_REVIEW: dict[tuple[str, str], dict[str, Any]] = {
         "preview_available": True,
         "mobile_ref": "mobile/src/app/pages/home/home.page.html",
     },
+    ("system", "overview"): {
+        "section_title": "Boat overview",
+        "guest_label": "Learn + Know — layout",
+        "review_title": "Boat overview & layout",
+        "review_blurb": (
+            "Orientation content for Learn the Boat and the Know tab — layout, "
+            "cabins, and day-one safety gear locations."
+        ),
+        "preview_context": "Do → Learn / Know",
+        "preview_available": True,
+        "mobile_ref": "mobile/src/app/pages/do/learn/learn.page.html",
+    },
+    ("system", "engines"): {
+        "section_title": "Engines",
+        "guest_label": "Learn + Know — propulsion",
+        "review_title": "Engines & compartments",
+        "review_blurb": (
+            "Engine compartment checks, start/stop procedures, and warnings "
+            "shown in Learn the Boat and the full system guide on Know."
+        ),
+        "preview_context": "Do → Learn / Know",
+        "preview_available": True,
+        "mobile_ref": "mobile/src/app/pages/know/know.page.html",
+    },
     # Planned — register metadata now; add preview macros when generation ships:
-    # ("systems", "overview"): { "section_title": "Boat overview", ... "mobile_ref": "learn.page" }
-    # ("systems", "engines"): { ... }
     # ("checklists", "safety-brief"): { ... "mobile_ref": "checklist.page" }
     # ("fix_cards", "..."): { ... "mobile_ref": "know.page" }
 }

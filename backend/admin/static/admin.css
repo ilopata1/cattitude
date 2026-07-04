@@ -904,3 +904,122 @@ code {
   padding: 1rem;
   color: #627d98;
 }
+
+.guide-preview-learn-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 15px 16px;
+  box-shadow: 0 2px 16px rgba(13, 33, 55, 0.1);
+}
+
+.guide-preview-learn-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #e0f7fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.guide-preview-learn-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0d2137;
+}
+
+.guide-preview-learn-sub {
+  font-size: 12px;
+  color: #7a95a8;
+  margin-top: 2px;
+}
+
+.guide-preview-sys-summary {
+  font-size: 14px;
+  line-height: 1.55;
+  color: #0d2137;
+  margin: 0;
+}
+
+.guide-preview-sys-block {
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: 0 1px 8px rgba(13, 33, 55, 0.06);
+}
+
+.guide-preview-sys-block-title {
+  font-size: 10px;
+  font-weight: 700;
+  color: #7a95a8;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+
+.guide-preview-sys-checks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.guide-preview-sys-checks li {
+  display: flex;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(237, 230, 214, 0.6);
+  font-size: 13px;
+  line-height: 1.4;
+  color: #0d2137;
+}
+
+.guide-preview-sys-section {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(237, 230, 214, 0.5);
+}
+
+.guide-preview-sys-section:last-child {
+  border-bottom: none;
+}
+
+.guide-preview-sys-section-title {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0d2137;
+  margin-bottom: 6px;
+}
+
+.guide-preview-sys-prose {
+  font-size: 13px;
+  line-height: 1.55;
+  color: #3a5570;
+  margin: 0;
+}
+
+.guide-preview-sys-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #3a5570;
+}
+
+.guide-preview-sys-photo {
+  font-size: 12px;
+  color: #007a8c;
+  margin: 0;
+  font-style: italic;
+}
+
+.guide-preview-sys-more {
+  font-size: 12px;
+  color: #7a95a8;
+  font-style: italic;
+  list-style: none;
+}
