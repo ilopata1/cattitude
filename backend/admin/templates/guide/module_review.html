@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% from "guide/_preview_macros.html" import preview_panel %}
+{% block title %}Review guide content — {{ vessel.name }}{% endblock %}
+{% block content %}
+<p class="breadcrumb">
+  <a href="/admin/vessels">Vessels</a> /
+  <a href="/admin/vessels/{{ vessel.id }}/guide">{{ vessel.name }} guide</a> /
+  Review
+</p>
+
+{% if module.content_type == 'branding' %}
+  {% set review_title = 'Welcome banner' %}
+  {% set review_blurb = 'This is what guests see at the top of the Home tab when they open the guide app.' %}
+{% elif module.content_type == 'emergency' %}
+  {% set review_title = 'Emergency & MAYDAY' %}
+  {% set review_blurb = 'MAYDAY steps and emergency contacts shown on the Home tab — the first things a crew needs in a crisis.' %}
+{% elif module.content_type == 'ui' and module.content_key == 'homeRuleSections' %}
+  {% set review_title = 'Home screen rules' %}
+  {% set review_blurb = 'Safety rules and good habits listed on the Home tab, grouped by severity.' %}
+{% else %}
+  {% set review_title = module.content_type | format_label ~ ' — ' ~ module.content_key %}
+  {% set review_blurb = 'Review the proposed content before approving.' %}
+{% endif %}
+
+<h1>{{ review_title }}</h1>
+<p class="review-intro">{{ review_blurb }}</p>
+
+<dl class="meta-list review-meta">
+  <dt>Status</dt><dd><span class="badge badge-{{ module.status }}">{{ module.status | format_label }}</span></dd>
+  {% if module.status == 'draft' %}
+  <dt>Reviewing</dt><dd><strong>Proposed draft</strong> — compare with the current live version below</dd>
+  {% endif %}
+  <dt>Source</dt><dd>{{ module.source | format_label }}</dd>
+  {% if module.created_at %}
+  <dt>Created</dt><dd>{{ module.created_at }}{% if module.created_by %} by {{ module.created_by }}{% endif %}</dd>
+  {% endif %}
+</dl>
+
+{% if module.status == 'draft' %}
+<div class="review-actions panel">
+  <form method="post" action="/admin/vessels/{{ vessel.id }}/guide/modules/{{ module.id }}/approve">
+    <button type="submit" class="button">Approve this draft</button>
+  </form>
+  <p class="muted">Approving replaces the current approved version with what you see under “Proposed draft”.</p>
+</div>
+{% endif %}
+
+<section class="panel guide-preview-section">
+  <h2>App preview</h2>
+  <p class="muted guide-preview-note">Shown as it appears in the guest mobile app (Home tab).</p>
+
+  {% if module.baseline_payload %}
+  <div class="review-grid guide-preview-grid">
+    {{ preview_panel(
+      module.baseline_label or 'Current live version',
+      module.baseline_payload,
+      vessel.slug,
+      module.content_type,
+      module.content_key
+    ) }}
+    {{ preview_panel(
+      'Proposed draft' ~ (' (pending approval)' if module.status == 'draft' else ''),
+      module.payload,
+      vessel.slug,
+      module.content_type,
+      module.content_key
+    ) }}
+  </div>
+  {% else %}
+  <p class="muted">No prior approved version — this is the first draft for this section.</p>
+  {{ preview_panel(
+    'Proposed content',
+    module.payload,
+    vessel.slug,
+    module.content_type,
+    module.content_key
+  ) }}
+  {% endif %}
+</section>
+
+<details class="panel technical-details">
+  <summary>Technical details (for developers)</summary>
+  {% if module.baseline_json %}
+  <div class="review-grid">
+    <div>
+      <h3>{{ module.baseline_label or 'Baseline' }}</h3>
+      <pre class="code-panel">{{ module.baseline_json }}</pre>
+    </div>
+    <div>
+      <h3>Draft</h3>
+      <pre class="code-panel">{{ module.payload_json }}</pre>
+    </div>
+  </div>
+  {% else %}
+  <pre class="code-panel">{{ module.payload_json }}</pre>
+  {% endif %}
+  {% if module.generation_run_id %}
+  <p class="muted">Generation run: <code>{{ module.generation_run_id }}</code></p>
+  {% endif %}
+  {% if module.baseline_label %}
+  <p class="muted">Baseline: {{ module.baseline_label }}</p>
+  {% endif %}
+</details>
+
+<p><a href="/admin/vessels/{{ vessel.id }}/guide">← Back to guide overview</a></p>
+{% endblock %}
+

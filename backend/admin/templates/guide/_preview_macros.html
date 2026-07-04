@@ -1,0 +1,126 @@
+{% macro guide_asset_url(vessel_slug, path) -%}
+/api/v1/vessels/{{ vessel_slug }}/guide/assets/{{ path }}
+{%- endmacro %}
+
+{% macro preview_branding(payload, vessel_slug) %}
+<div class="guide-preview-scroll">
+  <div class="guide-preview-hero">
+    <div class="guide-preview-hero-greeting">Welcome Aboard</div>
+    <div class="guide-preview-hero-title">
+      <span>{{ payload.vesselName or 'Vessel name' }}</span>
+      {% if payload.heroLogo %}
+      <img
+        src="{{ guide_asset_url(vessel_slug, payload.heroLogo) }}"
+        alt=""
+        class="guide-preview-hero-logo"
+        loading="lazy"
+        onerror="this.hidden=true"
+      />
+      {% endif %}
+    </div>
+    {% if payload.tagline %}
+    <div class="guide-preview-hero-tagline">{{ payload.tagline }}</div>
+    {% endif %}
+    {% if payload.location or payload.marina %}
+    <div class="guide-preview-hero-chips">
+      {% if payload.location %}
+      <span class="guide-preview-chip">📍 {{ payload.location }}</span>
+      {% endif %}
+      {% if payload.marina %}
+      <span class="guide-preview-chip">⛵ {{ payload.marina }}</span>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endmacro %}
+
+{% macro preview_emergency(payload) %}
+<div class="guide-preview-scroll">
+  {% if payload.mayday %}
+  <div class="guide-preview-mayday">
+    <div class="guide-preview-mayday-header">
+      <span>🚨</span>
+      <h3>MAYDAY Procedure — {{ payload.mayday.channel or 'VHF' }}</h3>
+    </div>
+    {% if payload.mayday.steps %}
+    <ol class="guide-preview-mayday-steps">
+      {% for step in payload.mayday.steps %}
+      <li>
+        <span class="guide-preview-mayday-num">{{ loop.index }}</span>
+        <span>{{ step }}</span>
+      </li>
+      {% endfor %}
+    </ol>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <div class="guide-preview-emergency">
+    <h3>📞 Emergency Contacts</h3>
+    <div class="guide-preview-e-contact">
+      <div>
+        <div class="guide-preview-e-label">DISTRESS — Primary</div>
+        <div class="guide-preview-e-value">VHF Channel 16 (monitored 24/7)</div>
+      </div>
+      <div class="guide-preview-vhf-badge">CH 16</div>
+    </div>
+    {% for contact in payload.contacts or [] %}
+    <div class="guide-preview-e-contact">
+      <div>
+        <div class="guide-preview-e-label">{{ contact.label }}</div>
+        <div class="guide-preview-e-value">{{ contact.value }}</div>
+        {% if contact.detail %}
+        <div class="guide-preview-e-detail">{{ contact.detail }}</div>
+        {% endif %}
+      </div>
+      {% if contact.tel %}
+      <span class="guide-preview-e-action">Call</span>
+      {% elif contact.action == 'vhf' %}
+      <div class="guide-preview-vhf-badge">{{ contact.value }}</div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endmacro %}
+
+{% macro preview_home_rules(sections) %}
+<div class="guide-preview-scroll">
+  {% for section in sections or [] %}
+  <div class="guide-preview-rules-section">
+    <div class="guide-preview-rules-title guide-preview-tone-{{ section.tone or 'caution' }}">
+      {{ section.title }}
+    </div>
+    {% for rule in section.rules or [] %}
+    <div class="guide-preview-rule-item guide-preview-tone-{{ rule.tone or section.tone or 'caution' }}">
+      <span class="guide-preview-rule-icon">{{ rule.icon }}</span>
+      <span class="guide-preview-rule-text">
+        {{ rule.text }}
+        {% if rule.link %}
+        <span class="guide-preview-rule-link"> → Tap to open</span>
+        {% endif %}
+      </span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</div>
+{% endmacro %}
+
+{% macro preview_panel(label, payload, vessel_slug, content_type, content_key) %}
+<div class="guide-preview-frame">
+  <div class="guide-preview-frame-label">{{ label }}</div>
+  <div class="guide-preview-phone">
+    {% if content_type == 'branding' %}
+      {{ preview_branding(payload, vessel_slug) }}
+    {% elif content_type == 'emergency' %}
+      {{ preview_emergency(payload) }}
+    {% elif content_type == 'ui' and content_key == 'homeRuleSections' %}
+      {{ preview_home_rules(payload) }}
+    {% else %}
+      <p class="guide-preview-fallback">Visual preview is not available for this module type yet.</p>
+    {% endif %}
+  </div>
+</div>
+{% endmacro %}

@@ -65,25 +65,46 @@
   <table class="data-table">
     <thead>
       <tr>
-        <th>Type</th>
-        <th>Key</th>
+        <th>Section</th>
+        <th>What guests see</th>
         <th>Source</th>
         <th>Status</th>
         <th>Approved</th>
-        <th></th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
       {% for module in modules %}
       <tr>
-        <td>{{ module.content_type | format_label }}</td>
-        <td><code>{{ module.content_key }}</code></td>
+        <td>
+          {% if module.content_type == 'branding' and module.content_key == 'branding' %}
+            Welcome banner
+          {% elif module.content_type == 'emergency' and module.content_key == 'emergency' %}
+            Emergency &amp; MAYDAY
+          {% elif module.content_type == 'ui' and module.content_key == 'homeRuleSections' %}
+            Home screen rules
+          {% else %}
+            {{ module.content_type | format_label }}
+          {% endif %}
+        </td>
+        <td>
+          {% if module.content_type == 'branding' and module.content_key == 'branding' %}
+            <span class="muted">Home tab header</span>
+          {% elif module.content_type == 'emergency' and module.content_key == 'emergency' %}
+            <span class="muted">MAYDAY &amp; contacts</span>
+          {% elif module.content_type == 'ui' and module.content_key == 'homeRuleSections' %}
+            <span class="muted">Safety rules list</span>
+          {% else %}
+            <code>{{ module.content_key }}</code>
+          {% endif %}
+        </td>
         <td>{{ module.source | format_label }}</td>
         <td><span class="badge badge-{{ module.status }}">{{ module.status | format_label }}</span></td>
         <td>{{ module.approved_at or '—' }}</td>
         <td>
+          <a href="/admin/vessels/{{ vessel.id }}/guide/modules/{{ module.id }}">Review</a>
           {% if module.status == 'draft' %}
-          <form method="post" action="/admin/vessels/{{ vessel.id }}/guide/modules/{{ module.id }}/approve">
+          <form method="post" action="/admin/vessels/{{ vessel.id }}/guide/modules/{{ module.id }}/approve" class="inline-form">
             <button type="submit">Approve</button>
           </form>
           {% endif %}

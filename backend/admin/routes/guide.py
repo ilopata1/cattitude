@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import json
+from typing import Any
+
 from fastapi import APIRouter, Depends, Form, Request
 from fastapi.responses import RedirectResponse
 from sqlalchemy import text
@@ -69,6 +72,89 @@ def _load_modules(conn, vessel_id: str) -> list[dict]:
     ]
 
 
+def _coerce_jsonb(value: Any) -> Any:
+    if isinstance(value, (dict, list)):
+        return value
+    if isinstance(value, str):
+        return json.loads(value)
+    return value
+
+
+def _load_module_detail(
+    conn, vessel_id: str, module_id: str
+) -> dict[str, Any] | None:
+    row = conn.execute(
+        text(
+            """
+            SELECT
+                gc.id, gc.content_type, gc.content_key, gc.source, gc.status,
+                gc.payload, gc.created_at, gc.created_by,
+                gc.diff_against_id, gc.generation_run_id
+            FROM guide_content gc
+            WHERE gc.id = :module_id AND gc.vessel_id = :vessel_id
+            """
+        ),
+        {"module_id": module_id, "vessel_id": vessel_id},
+    ).fetchone()
+    if row is None:
+        return None
+
+    baseline_payload = None
+    baseline_label = None
+    if row[8]:
+        baseline_row = conn.execute(
+            text("SELECT payload, status FROM guide_content WHERE id = :id"),
+            {"id": row[8]},
+        ).fetchone()
+        if baseline_row:
+            baseline_payload = _coerce_jsonb(baseline_row[0])
+            baseline_label = f"Compared to prior module ({baseline_row[1]})"
+    if baseline_payload is None:
+        baseline_row = conn.execute(
+            text(
+                """
+                SELECT payload, status
+                FROM guide_content
+                WHERE vessel_id = :vessel_id
+                  AND content_type = :content_type
+                  AND content_key = :content_key
+                  AND status IN ('approved', 'published')
+                  AND id <> :module_id
+                ORDER BY approved_at DESC NULLS LAST, created_at DESC
+                LIMIT 1
+                """
+            ),
+            {
+                "vessel_id": vessel_id,
+                "content_type": row[1],
+                "content_key": row[2],
+                "module_id": module_id,
+            },
+        ).fetchone()
+        if baseline_row:
+            baseline_payload = _coerce_jsonb(baseline_row[0])
+            baseline_label = f"Current approved ({baseline_row[1]})"
+
+    draft_payload = _coerce_jsonb(row[5])
+    return {
+        "id": str(row[0]),
+        "content_type": row[1],
+        "content_key": row[2],
+        "source": row[3],
+        "status": row[4],
+        "payload": draft_payload,
+        "payload_json": json.dumps(draft_payload, indent=2, sort_keys=True),
+        "baseline_payload": baseline_payload,
+        "baseline_json": json.dumps(baseline_payload, indent=2, sort_keys=True)
+        if baseline_payload is not None
+        else None,
+        "baseline_label": baseline_label,
+        "created_at": row[6],
+        "created_by": row[7],
+        "generation_run_id": str(row[9]) if row[9] else None,
+    }
+
+
 @router.get("")
 async def vessel_guide_overview(
     request: Request,
@@ -124,6 +210,32 @@ async def vessel_guide_overview(
             "stale_context": stale_context,
             "preview": preview,
             "preview_error": preview_error,
+        },
+    )
+
+
+@router.get("/modules/{module_id}")
+async def module_review_page(
+    request: Request,
+    vessel_id: str,
+    module_id: str,
+    admin_user: str = Depends(require_admin_user),
+):
+    with get_engine().connect() as conn:
+        vessel = _load_vessel(conn, vessel_id)
+        if vessel is None:
+            return RedirectResponse("/admin/vessels", status_code=303)
+        module = _load_module_detail(conn, vessel_id, module_id)
+        if module is None:
+            return RedirectResponse(f"/admin/vessels/{vessel_id}/guide", status_code=303)
+
+    return templates.TemplateResponse(
+        request,
+        "guide/module_review.html",
+        {
+            "admin_user": admin_user,
+            "vessel": vessel,
+            "module": module,
         },
     )
 
