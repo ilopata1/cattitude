@@ -110,15 +110,16 @@
 {% endmacro %}
 
 {% macro preview_system_section(section) %}
+{% set section_items = section['items'] if section['items'] is defined else [] %}
 <div class="guide-preview-sys-section">
   <div class="guide-preview-sys-section-title">{{ section.t }}</div>
   {% if section.c %}
   <p class="guide-preview-sys-prose">{{ section.c }}</p>
   {% elif section.type == 'photo' %}
   <p class="guide-preview-sys-photo">📷 Photo section preserved from approved guide</p>
-  {% elif section.items %}
+  {% elif section_items %}
   <ul class="guide-preview-sys-list">
-    {% for item in section.items[:5] %}
+    {% for item in section_items[:5] %}
     <li>
       {% if item is mapping %}
         {% if item.i %}<span>{{ item.i }}</span> {% endif %}{{ item.c or item }}
@@ -127,8 +128,8 @@
       {% endif %}
     </li>
     {% endfor %}
-    {% if section.items|length > 5 %}
-    <li class="guide-preview-sys-more">… {{ section.items|length - 5 }} more</li>
+    {% if section_items|length > 5 %}
+    <li class="guide-preview-sys-more">… {{ section_items|length - 5 }} more</li>
     {% endif %}
   </ul>
   {% endif %}
