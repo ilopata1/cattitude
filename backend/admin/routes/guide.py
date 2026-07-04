@@ -9,6 +9,7 @@ from sqlalchemy import text
 
 from admin.auth import require_admin_user
 from admin.deps import get_engine, templates
+from admin.guide_review_meta import attach_review_meta
 from guide_generation import GuideGenerationError, STARTER_MODULES, run_guide_generation
 from guide_publish import PublishValidationError, assemble_publication, publish_vessel_guide
 
@@ -136,7 +137,7 @@ def _load_module_detail(
             baseline_label = f"Current approved ({baseline_row[1]})"
 
     draft_payload = _coerce_jsonb(row[5])
-    return {
+    module = {
         "id": str(row[0]),
         "content_type": row[1],
         "content_key": row[2],
@@ -153,6 +154,7 @@ def _load_module_detail(
         "created_by": row[7],
         "generation_run_id": str(row[9]) if row[9] else None,
     }
+    return attach_review_meta(module)
 
 
 @router.get("")
@@ -165,7 +167,7 @@ async def vessel_guide_overview(
         vessel = _load_vessel(conn, vessel_id)
         if vessel is None:
             return RedirectResponse("/admin/vessels", status_code=303)
-        modules = _load_modules(conn, vessel_id)
+        modules = [attach_review_meta(m) for m in _load_modules(conn, vessel_id)]
         latest = conn.execute(
             text(
                 """

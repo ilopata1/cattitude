@@ -553,47 +553,100 @@ code {
   margin-bottom: 1rem;
 }
 
-/* Guide module review — mirrors mobile Home tab styling */
+/* Guide module review — mirrors mobile app (see mobile/src/theme/variables.scss) */
+.admin-main--wide {
+  max-width: 1320px;
+}
+
 .guide-preview-section {
-  --gp-navy: #102a43;
-  --gp-navy-mid: #243b53;
-  --gp-teal: #2bb0ed;
-  --gp-teal-dark: #1992d4;
-  --gp-coral: #ff6b6b;
-  --gp-amber: #f0b429;
-  --gp-green: #1da462;
-  --gp-sand: #f0ebe3;
-  --gp-font-display: Georgia, "Times New Roman", serif;
+  overflow: hidden;
 }
 
 .guide-preview-note {
   margin-top: -0.5rem;
 }
 
-.guide-preview-grid {
+.guide-preview-compare {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
   align-items: start;
+  margin-top: 1rem;
+}
+
+.guide-preview-compare--single {
+  grid-template-columns: minmax(0, 480px);
+}
+
+@media (max-width: 780px) {
+  .guide-preview-compare {
+    grid-template-columns: 1fr;
+  }
 }
 
 .guide-preview-frame {
   min-width: 0;
+  border: 1px solid #bcccdc;
+  border-radius: 12px;
+  background: #f0f4f8;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(16, 42, 67, 0.06);
+}
+
+.guide-preview-frame--baseline {
+  border-top: 4px solid #486581;
+}
+
+.guide-preview-frame--draft {
+  border-top: 4px solid #00b4c8;
+  background: #f7fcfd;
+}
+
+.guide-preview-frame-header {
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid #d9e2ec;
+  background: #fff;
 }
 
 .guide-preview-frame-label {
-  font-size: 0.85rem;
+  display: block;
+  font-size: 0.78rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--muted, #627d98);
-  margin-bottom: 0.5rem;
+  letter-spacing: 0.07em;
+  color: #486581;
+}
+
+.guide-preview-frame--draft .guide-preview-frame-label {
+  color: #007a8c;
+}
+
+.guide-preview-device {
+  padding: 0.75rem;
+}
+
+.guide-preview-device-bar {
+  display: flex;
+  justify-content: center;
+  padding: 0.35rem 0 0.5rem;
+  background: #0d2137;
+  border-radius: 14px 14px 0 0;
+}
+
+.guide-preview-device-notch {
+  width: 72px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
 }
 
 .guide-preview-phone {
-  background: var(--gp-sand);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 12px;
-  max-width: 420px;
-  box-shadow: 0 4px 18px rgba(16, 42, 67, 0.08);
+  background: #f5f0e8;
+  border: 1px solid #d9e2ec;
+  border-top: none;
+  border-radius: 0 0 14px 14px;
+  padding: 16px;
+  font-family: "DM Sans", "Segoe UI", system-ui, sans-serif;
 }
 
 .guide-preview-scroll {
@@ -603,12 +656,7 @@ code {
 }
 
 .guide-preview-hero {
-  background: linear-gradient(
-    135deg,
-    var(--gp-navy) 0%,
-    var(--gp-navy-mid) 60%,
-    var(--gp-teal-dark) 100%
-  );
+  background: linear-gradient(135deg, #0d2137 0%, #1a3a56 60%, #007a8c 100%);
   border-radius: 14px;
   padding: 24px 20px 20px;
   overflow: hidden;
@@ -616,7 +664,7 @@ code {
 
 .guide-preview-hero-greeting {
   font-size: 11px;
-  color: var(--gp-teal);
+  color: #00b4c8;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -628,8 +676,8 @@ code {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  font-family: var(--gp-font-display);
-  font-size: 24px;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  font-size: 26px;
   font-weight: 900;
   color: #fff;
   line-height: 1.1;
@@ -668,8 +716,8 @@ code {
 }
 
 .guide-preview-mayday {
-  background: var(--gp-navy);
-  border: 2px solid var(--gp-coral);
+  background: #0d2137;
+  border: 2px solid #e8453c;
   border-radius: 14px;
   padding: 16px;
 }
@@ -682,8 +730,8 @@ code {
 }
 
 .guide-preview-mayday-header h3 {
-  font-family: var(--gp-font-display);
-  color: var(--gp-coral);
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  color: #e8453c;
   font-size: 16px;
   margin: 0;
   line-height: 1.25;
@@ -713,7 +761,7 @@ code {
 .guide-preview-mayday-num {
   width: 20px;
   height: 20px;
-  background: var(--gp-coral);
+  background: #e8453c;
   border-radius: 50%;
   display: inline-flex;
   align-items: center;
@@ -725,14 +773,14 @@ code {
 }
 
 .guide-preview-emergency {
-  background: var(--gp-navy);
+  background: #0d2137;
   border-radius: 14px;
   padding: 16px;
 }
 
 .guide-preview-emergency h3 {
-  font-family: var(--gp-font-display);
-  color: var(--gp-teal);
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  color: #00b4c8;
   font-size: 16px;
   margin: 0 0 12px;
 }
@@ -768,8 +816,8 @@ code {
 }
 
 .guide-preview-e-action {
-  background: var(--gp-teal);
-  color: var(--gp-navy);
+  background: #00b4c8;
+  color: #0d2137;
   border-radius: 20px;
   padding: 6px 14px;
   font-size: 12px;
@@ -778,8 +826,8 @@ code {
 }
 
 .guide-preview-vhf-badge {
-  background: var(--gp-amber);
-  color: var(--gp-navy);
+  background: #f4a020;
+  color: #0d2137;
   border-radius: 20px;
   padding: 4px 12px;
   font-size: 12px;
@@ -801,27 +849,27 @@ code {
 }
 
 .guide-preview-tone-danger {
-  color: var(--gp-coral);
+  color: #e8453c;
 }
 
 .guide-preview-rule-item.guide-preview-tone-danger {
-  border-left: 3px solid var(--gp-coral);
+  border-left: 3px solid #e8453c;
 }
 
 .guide-preview-tone-caution {
-  color: var(--gp-amber);
+  color: #f4a020;
 }
 
 .guide-preview-rule-item.guide-preview-tone-caution {
-  border-left: 3px solid var(--gp-amber);
+  border-left: 3px solid #f4a020;
 }
 
 .guide-preview-tone-good {
-  color: var(--gp-green);
+  color: #1da462;
 }
 
 .guide-preview-rule-item.guide-preview-tone-good {
-  border-left: 3px solid var(--gp-green);
+  border-left: 3px solid #1da462;
 }
 
 .guide-preview-rule-item {
@@ -844,15 +892,15 @@ code {
   font-size: 14px;
   line-height: 1.45;
   font-weight: 500;
-  color: var(--gp-navy);
+  color: #0d2137;
 }
 
 .guide-preview-rule-link {
-  color: var(--gp-teal-dark);
+  color: #007a8c;
   font-weight: 700;
 }
 
 .guide-preview-fallback {
   padding: 1rem;
-  color: var(--muted, #627d98);
+  color: #627d98;
 }

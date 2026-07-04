@@ -1,3 +1,4 @@
+{# Visual previews mirror the guest mobile app. See admin/guide_review_meta.py #}
 {% macro guide_asset_url(vessel_slug, path) -%}
 /api/v1/vessels/{{ vessel_slug }}/guide/assets/{{ path }}
 {%- endmacro %}
@@ -108,19 +109,27 @@
 </div>
 {% endmacro %}
 
-{% macro preview_panel(label, payload, vessel_slug, content_type, content_key) %}
-<div class="guide-preview-frame">
-  <div class="guide-preview-frame-label">{{ label }}</div>
-  <div class="guide-preview-phone">
-    {% if content_type == 'branding' %}
-      {{ preview_branding(payload, vessel_slug) }}
-    {% elif content_type == 'emergency' %}
-      {{ preview_emergency(payload) }}
-    {% elif content_type == 'ui' and content_key == 'homeRuleSections' %}
-      {{ preview_home_rules(payload) }}
-    {% else %}
-      <p class="guide-preview-fallback">Visual preview is not available for this module type yet.</p>
-    {% endif %}
+{% macro preview_panel(label, payload, vessel_slug, content_type, content_key, variant='single') %}
+<div class="guide-preview-frame guide-preview-frame--{{ variant }}">
+  <div class="guide-preview-frame-header">
+    <span class="guide-preview-frame-label">{{ label }}</span>
+  </div>
+  <div class="guide-preview-device">
+    <div class="guide-preview-device-bar">
+      <span class="guide-preview-device-notch"></span>
+    </div>
+    <div class="guide-preview-phone">
+      {% if content_type == 'branding' %}
+        {{ preview_branding(payload, vessel_slug) }}
+      {% elif content_type == 'emergency' %}
+        {{ preview_emergency(payload) }}
+      {% elif content_type == 'ui' and content_key == 'homeRuleSections' %}
+        {{ preview_home_rules(payload) }}
+      {# Add new preview types here — see admin/guide_review_meta.py #}
+      {% else %}
+        <p class="guide-preview-fallback">Visual preview is not available for this module type yet.</p>
+      {% endif %}
+    </div>
   </div>
 </div>
 {% endmacro %}

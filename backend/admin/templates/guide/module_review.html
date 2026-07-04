@@ -1,6 +1,16 @@
 {% extends "base.html" %}
 {% from "guide/_preview_macros.html" import preview_panel %}
+
 {% block title %}Review guide content — {{ vessel.name }}{% endblock %}
+
+{% block main_class %}admin-main--wide{% endblock %}
+
+{% block extra_head %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
 <p class="breadcrumb">
   <a href="/admin/vessels">Vessels</a> /
@@ -8,22 +18,8 @@
   Review
 </p>
 
-{% if module.content_type == 'branding' %}
-  {% set review_title = 'Welcome banner' %}
-  {% set review_blurb = 'This is what guests see at the top of the Home tab when they open the guide app.' %}
-{% elif module.content_type == 'emergency' %}
-  {% set review_title = 'Emergency & MAYDAY' %}
-  {% set review_blurb = 'MAYDAY steps and emergency contacts shown on the Home tab — the first things a crew needs in a crisis.' %}
-{% elif module.content_type == 'ui' and module.content_key == 'homeRuleSections' %}
-  {% set review_title = 'Home screen rules' %}
-  {% set review_blurb = 'Safety rules and good habits listed on the Home tab, grouped by severity.' %}
-{% else %}
-  {% set review_title = module.content_type | format_label ~ ' — ' ~ module.content_key %}
-  {% set review_blurb = 'Review the proposed content before approving.' %}
-{% endif %}
-
-<h1>{{ review_title }}</h1>
-<p class="review-intro">{{ review_blurb }}</p>
+<h1>{{ module.review.review_title }}</h1>
+<p class="review-intro">{{ module.review.review_blurb }}</p>
 
 <dl class="meta-list review-meta">
   <dt>Status</dt><dd><span class="badge badge-{{ module.status }}">{{ module.status | format_label }}</span></dd>
@@ -47,34 +43,43 @@
 
 <section class="panel guide-preview-section">
   <h2>App preview</h2>
-  <p class="muted guide-preview-note">Shown as it appears in the guest mobile app (Home tab).</p>
+  {% if module.review.preview_available %}
+  <p class="muted guide-preview-note">Shown as it appears in the guest mobile app ({{ module.review.preview_context }}).</p>
+  {% else %}
+  <p class="muted guide-preview-note">A visual preview for this section is not built yet. Use technical details below, or approve once content has been checked elsewhere.</p>
+  {% endif %}
 
   {% if module.baseline_payload %}
-  <div class="review-grid guide-preview-grid">
+  <div class="guide-preview-compare">
     {{ preview_panel(
-      module.baseline_label or 'Current live version',
+      'Current live version',
       module.baseline_payload,
       vessel.slug,
       module.content_type,
-      module.content_key
+      module.content_key,
+      'baseline'
     ) }}
     {{ preview_panel(
       'Proposed draft' ~ (' (pending approval)' if module.status == 'draft' else ''),
       module.payload,
       vessel.slug,
       module.content_type,
-      module.content_key
+      module.content_key,
+      'draft'
     ) }}
   </div>
   {% else %}
   <p class="muted">No prior approved version — this is the first draft for this section.</p>
-  {{ preview_panel(
-    'Proposed content',
-    module.payload,
-    vessel.slug,
-    module.content_type,
-    module.content_key
-  ) }}
+  <div class="guide-preview-compare guide-preview-compare--single">
+    {{ preview_panel(
+      'Proposed content',
+      module.payload,
+      vessel.slug,
+      module.content_type,
+      module.content_key,
+      'draft'
+    ) }}
+  </div>
   {% endif %}
 </section>
 
@@ -97,8 +102,8 @@
   {% if module.generation_run_id %}
   <p class="muted">Generation run: <code>{{ module.generation_run_id }}</code></p>
   {% endif %}
-  {% if module.baseline_label %}
-  <p class="muted">Baseline: {{ module.baseline_label }}</p>
+  {% if module.review.mobile_ref %}
+  <p class="muted">Mobile reference: <code>{{ module.review.mobile_ref }}</code></p>
   {% endif %}
 </details>
 
