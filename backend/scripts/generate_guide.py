@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Run guide generation for a vessel (Home tab shell + optional system modules).
+Run guide generation for a vessel (all guide tabs except Ask).
 
 Usage (from backend/):
   python scripts/generate_guide.py --slug cattitude
-  python scripts/generate_guide.py --slug cattitude --modules systems
+  python scripts/generate_guide.py --slug cattitude --set full
+  python scripts/generate_guide.py --slug cattitude --set systems
   python scripts/generate_guide.py --slug cattitude --modules overview,engines
-  python scripts/generate_guide.py --slug cattitude --modules branding,emergency
   python scripts/generate_guide.py --slug cattitude --snapshot-only
 """
 
@@ -23,14 +23,34 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from config import settings  # noqa: E402
 from db import postgres_connection_strings  # noqa: E402
 from guide_generation import (  # noqa: E402
-    DEFAULT_GENERATION_MODULES,
-    STARTER_MODULES,
-    SYSTEM_MODULES,
     GuideGenerationError,
     create_input_snapshot,
     load_vessel_generation_context,
     run_guide_generation,
 )
+from guide_module_catalog import (  # noqa: E402
+    CHECKLIST_MODULES,
+    FIXES_MODULE,
+    FULL_GUIDE_MODULES,
+    STARTER_MODULES,
+    SYSTEM_MODULES,
+    modules_for_set,
+)
+
+SET_ALIASES = {
+    "shell": "shell",
+    "home": "shell",
+    "systems": "systems",
+    "system": "systems",
+    "checklists": "checklists",
+    "checklist": "checklists",
+    "fixes": "fixes",
+    "fix": "fixes",
+    "navigation": "navigation",
+    "nav": "navigation",
+    "all": "full",
+    "full": "full",
+}
 
 
 def _parse_modules(raw: str) -> list[tuple[str, str]]:
@@ -51,10 +71,18 @@ def _parse_modules(raw: str) -> list[tuple[str, str]]:
             modules.append(("system", "overview"))
         elif part == "engines":
             modules.append(("system", "engines"))
-        elif part in ("all", "default"):
-            modules.extend(DEFAULT_GENERATION_MODULES)
+        elif part in ("checklists", "checklist"):
+            modules.extend(CHECKLIST_MODULES)
+        elif part in ("fixes", "fix"):
+            modules.extend(FIXES_MODULE)
+        elif part in ("full", "all"):
+            modules.extend(FULL_GUIDE_MODULES)
         elif part in ("shell", "starter"):
             modules.extend(STARTER_MODULES)
+        elif part.startswith("system:"):
+            modules.append(("system", part.split(":", 1)[1]))
+        elif part.startswith("checklist:"):
+            modules.append(("checklist", part.split(":", 1)[1]))
         elif ":" in part:
             content_type, content_key = part.split(":", 1)
             modules.append((content_type.strip(), content_key.strip()))
@@ -67,11 +95,14 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Generate vessel guide modules.")
     parser.add_argument("--slug", default="cattitude", help="Vessel slug")
     parser.add_argument(
+        "--set",
+        default="",
+        help="Module set: shell, systems, checklists, fixes, navigation, full",
+    )
+    parser.add_argument(
         "--modules",
         default="",
-        help="Comma-separated modules (default: Home tab shell only). "
-        "Aliases: branding, emergency, homeRuleSections, overview, engines, "
-        "systems, shell, all",
+        help="Comma-separated modules (overrides --set). Aliases: branding, systems, full, ...",
     )
     parser.add_argument(
         "--snapshot-only",
@@ -85,7 +116,14 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    modules = _parse_modules(args.modules) if args.modules else list(STARTER_MODULES)
+    if args.modules:
+        modules = _parse_modules(args.modules)
+    elif args.set:
+        module_set = SET_ALIASES.get(args.set.strip(), args.set.strip())
+        modules = modules_for_set(module_set)
+    else:
+        modules = list(STARTER_MODULES)
+
     sync_url, _ = postgres_connection_strings(settings.database_url)
     engine = create_engine(sync_url)
 
@@ -121,11 +159,13 @@ def main() -> None:
         raise SystemExit(str(exc)) from exc
 
     print(f"Generation OK for {vessel_name} ({args.slug})")
+    print(f"  modules: {len(modules)}")
     print(f"  snapshot_id: {result.snapshot_id}")
     for run in result.runs:
+        copied = " (copied)" if run.get("copied_from_reference") else ""
         print(
             f"  draft {run['content_type']}/{run['content_key']} "
-            f"module_id={run['module_id']} run_id={run['run_id']}"
+            f"module_id={run['module_id']}{copied}"
         )
     print(
         f"\nNext: review drafts at /admin/vessels/{vessel_id}/guide, "

@@ -13,33 +13,24 @@ from sqlalchemy.engine import Connection
 
 from config import settings
 from guide_bootstrap import canonical_json_hash
-
-# First vertical slice: charter shell + initial Learn/Know systems.
-STARTER_MODULES: list[tuple[str, str]] = [
-    ("branding", "branding"),
-    ("emergency", "emergency"),
-    ("ui", "homeRuleSections"),
-]
-
-SYSTEM_MODULES: list[tuple[str, str]] = [
-    ("system", "overview"),
-    ("system", "engines"),
-]
-
-DEFAULT_GENERATION_MODULES: list[tuple[str, str]] = (
-    STARTER_MODULES + SYSTEM_MODULES
+from guide_module_catalog import (
+    CHECKLIST_CATALOG,
+    CHECKLIST_MODULES,
+    COPY_MODULES,
+    FULL_GUIDE_MODULES,
+    STARTER_MODULES,
+    SYSTEM_CATALOG,
+    SYSTEM_MODULES,
 )
 
+COPY_MODULE_KEYS = frozenset(COPY_MODULES)
+
 SYSTEM_DEFAULTS: dict[str, dict[str, Any]] = {
-    "overview": {
-        "icon": "🗺️",
-        "locs": ["cockpit", "helm", "saloon"],
-    },
-    "engines": {
-        "icon": "⚙️",
-        "locs": ["port-hull", "stbd-hull", "cockpit"],
-    },
+    system_id: {"icon": meta["icon"], "locs": meta["locs"]}
+    for system_id, meta in SYSTEM_CATALOG.items()
 }
+
+DEFAULT_GENERATION_MODULES: list[tuple[str, str]] = list(FULL_GUIDE_MODULES)
 
 SYSTEM_SECTION_TYPES = frozenset(
     {"prose", "photo", "list", "steps", "warnings", "notes"}
@@ -65,6 +56,16 @@ SCHEMA_HINTS: dict[tuple[str, str], str] = {
     ("system", "engines"): (
         '{"id":"engines","icon","title","subtitle","locs[]","summary",'
         '"learnChecks[]","sections":[{"t","type":"prose|steps|warnings|notes","c?","items?"}]}'
+    ),
+    ("system", "_generic"): (
+        '{"id","icon","title","subtitle","locs[]","summary","learnChecks[]",'
+        '"sections":[{"t","type":"prose|list|steps|warnings|notes","c?","items?"}]}'
+    ),
+    ("checklist", "_generic"): (
+        '{"groups":[{"t","items":[{"c","s?"}]}]}'
+    ),
+    ("fix_card_set", "all"): (
+        '[{"icon","cat","catL","title","steps[]"}]'
     ),
 }
 
@@ -131,6 +132,17 @@ Do NOT include photo sections. Do not invent engine specs not in snapshot or ref
 
 Return JSON only — one system object, no wrapper.""",
 }
+
+FIXES_PROMPT = """Generate the Fix It troubleshooting card set for this charter vessel.
+
+Use INPUT SNAPSHOT equipment and operating_base.guide_context for realistic guest-fixable problems.
+Cover engines, electrical, plumbing/heads, water, batteries, anchoring, AC, dinghy as equipment supports.
+
+Each card: icon (emoji), cat (short key), catL (display category), title, steps (5-8 actionable strings).
+Include charter company contact in steps where guests should call for help (VHF channel from context).
+
+Match REFERENCE MODULE count and categories when provided; update facts from snapshot.
+Return JSON only — a JSON array of fix cards, no wrapper."""
 
 
 class GuideGenerationError(Exception):
@@ -323,6 +335,67 @@ def ensure_default_prompt_templates(conn: Connection) -> None:
         )
 
 
+def _schema_hint_for(content_type: str, content_key: str) -> str:
+    key = (content_type, content_key)
+    if key in SCHEMA_HINTS:
+        return SCHEMA_HINTS[key]
+    if content_type == "system":
+        return SCHEMA_HINTS[("system", "_generic")]
+    if content_type == "checklist":
+        return SCHEMA_HINTS[("checklist", "_generic")]
+    return "valid JSON for this module type"
+
+
+def _equipment_for_system(
+    snapshot: dict[str, Any], system_id: str
+) -> list[dict[str, Any]]:
+    meta = SYSTEM_CATALOG.get(system_id, {})
+    categories = set(meta.get("equipment_categories") or [])
+    equipment = snapshot.get("equipment") or []
+    if not categories:
+        return equipment
+    return [row for row in equipment if row.get("system_category") in categories]
+
+
+def _build_generic_system_prompt(system_id: str) -> str:
+    meta = SYSTEM_CATALOG.get(system_id, {})
+    icon = meta.get("icon", "⚙️")
+    locs = meta.get("locs", [])
+    focus = meta.get("focus", "This onboard system")
+    categories = meta.get("equipment_categories") or []
+    category_note = (
+        f"Prioritize equipment with system_category in: {', '.join(categories)}."
+        if categories
+        else "Use relevant equipment from the snapshot where applicable."
+    )
+    return f"""Generate the "{system_id}" system module for a charter vessel guide (Learn + Know tabs).
+
+TARGET: {focus}
+{category_note}
+
+Produce id "{system_id}", icon "{icon}", locs {json.dumps(locs)}.
+Include title, subtitle, summary (1-2 sentences), learnChecks (6-8 items), and sections.
+Section types allowed: prose, list, steps, warnings, notes. Do NOT include photo sections — photos are merged from REFERENCE separately.
+
+Use ONLY facts from INPUT SNAPSHOT and RELEVANT EQUIPMENT below. Match REFERENCE structure and tone when provided.
+
+Return JSON only — one system object, no wrapper."""
+
+
+def _build_generic_checklist_prompt(checklist_id: str) -> str:
+    meta = CHECKLIST_CATALOG.get(checklist_id, {})
+    focus = meta.get("focus", checklist_id)
+    title = meta.get("title", checklist_id)
+    return f"""Generate the "{checklist_id}" checklist ({title}) for charter crew/guests.
+
+PURPOSE: {focus}
+
+Structure: groups[] with t (group title) and items[] with c (check text) and optional s (detail subtext).
+Use INPUT SNAPSHOT for vessel-specific locations and equipment. Match REFERENCE group structure when provided.
+
+Return JSON only — checklist object with groups array, no wrapper."""
+
+
 def _resolve_prompt_text(
     conn: Connection, content_type: str, content_key: str
 ) -> tuple[str, dict[str, Any] | None]:
@@ -345,11 +418,17 @@ def _resolve_prompt_text(
     if row:
         return row[2], {"id": str(row[0]), "version": row[1], "scope": "platform"}
     default = DEFAULT_PROMPTS.get((content_type, content_key))
-    if not default:
-        raise GuideGenerationError(
-            f"No prompt template for {content_type}/{content_key}"
-        )
-    return default, None
+    if default:
+        return default, None
+    if content_type == "system":
+        return _build_generic_system_prompt(content_key), None
+    if content_type == "checklist":
+        return _build_generic_checklist_prompt(content_key), None
+    if content_type == "fix_card_set" and content_key == "all":
+        return FIXES_PROMPT, None
+    raise GuideGenerationError(
+        f"No prompt template for {content_type}/{content_key}"
+    )
 
 
 def _load_reference_module(
@@ -365,6 +444,34 @@ def _load_reference_module(
                   AND content_key = :content_key
                   AND status = CAST(:status AS guide_module_status)
                 ORDER BY created_at DESC
+                LIMIT 1
+                """
+            ),
+            {
+                "vessel_id": vessel_id,
+                "content_type": content_type,
+                "content_key": content_key,
+                "status": status,
+            },
+        ).fetchone()
+        if row:
+            return _coerce_jsonb(row[0])
+    return None
+
+
+def _load_approved_reference_module(
+    conn: Connection, vessel_id: str, content_type: str, content_key: str
+) -> Any | None:
+    for status in ("approved", "published"):
+        row = conn.execute(
+            text(
+                """
+                SELECT payload FROM guide_content
+                WHERE vessel_id = :vessel_id
+                  AND content_type = CAST(:content_type AS guide_content_type)
+                  AND content_key = :content_key
+                  AND status = CAST(:status AS guide_module_status)
+                ORDER BY approved_at DESC NULLS LAST, created_at DESC
                 LIMIT 1
                 """
             ),
@@ -546,6 +653,76 @@ def _validate_module_payload(
             raise GuideGenerationError("homeRuleSections must be a non-empty array")
     elif content_type == "system":
         _validate_system_module(content_key, payload)
+    elif content_type == "checklist":
+        _validate_checklist_module(content_key, payload)
+    elif content_type == "fix_card_set" and content_key == "all":
+        _validate_fixes_module(payload)
+    elif content_type == "locations" and content_key == "locations":
+        _validate_locations_module(payload)
+    elif content_type == "ui" and content_key in {
+        "doMenu",
+        "checklistMeta",
+        "systemOrder",
+        "locationLayout",
+    }:
+        _validate_ui_config_module(content_key, payload)
+
+
+def _validate_checklist_module(content_key: str, payload: Any) -> None:
+    if not isinstance(payload, dict):
+        raise GuideGenerationError("checklist payload must be an object")
+    groups = payload.get("groups")
+    if not isinstance(groups, list) or not groups:
+        raise GuideGenerationError(f"checklist {content_key} missing groups")
+    for index, group in enumerate(groups):
+        if not isinstance(group, dict) or not group.get("t"):
+            raise GuideGenerationError(f"checklist group {index} missing title")
+        items = group.get("items")
+        if not isinstance(items, list) or not items:
+            raise GuideGenerationError(f"checklist group {index} missing items")
+        for item_index, item in enumerate(items):
+            if not isinstance(item, dict) or not item.get("c"):
+                raise GuideGenerationError(
+                    f"checklist {content_key} group {index} item {item_index} missing c"
+                )
+
+
+def _validate_fixes_module(payload: Any) -> None:
+    if not isinstance(payload, list) or not payload:
+        raise GuideGenerationError("fixes must be a non-empty array")
+    for index, card in enumerate(payload):
+        if not isinstance(card, dict):
+            raise GuideGenerationError(f"fix card {index} must be an object")
+        for key in ("icon", "cat", "catL", "title", "steps"):
+            if not card.get(key):
+                raise GuideGenerationError(f"fix card {index} missing {key}")
+        if not isinstance(card.get("steps"), list) or not card["steps"]:
+            raise GuideGenerationError(f"fix card {index} missing steps")
+
+
+def _validate_locations_module(payload: Any) -> None:
+    if not isinstance(payload, dict) or not payload:
+        raise GuideGenerationError("locations must be a non-empty object")
+    for zone_id, zone in payload.items():
+        if not isinstance(zone, dict):
+            raise GuideGenerationError(f"location {zone_id} must be an object")
+        if not zone.get("label") or not isinstance(zone.get("sys"), list):
+            raise GuideGenerationError(f"location {zone_id} missing label or sys")
+
+
+def _validate_ui_config_module(content_key: str, payload: Any) -> None:
+    if content_key == "doMenu":
+        if not isinstance(payload, list) or not payload:
+            raise GuideGenerationError("doMenu must be a non-empty array")
+    elif content_key == "checklistMeta":
+        if not isinstance(payload, dict) or not payload:
+            raise GuideGenerationError("checklistMeta must be a non-empty object")
+    elif content_key == "systemOrder":
+        if not isinstance(payload, list) or not payload:
+            raise GuideGenerationError("systemOrder must be a non-empty array")
+    elif content_key == "locationLayout":
+        if not isinstance(payload, list) or not payload:
+            raise GuideGenerationError("locationLayout must be a non-empty array")
 
 
 def _validate_system_module(content_key: str, payload: Any) -> None:
@@ -630,6 +807,127 @@ def _finalize_system_payload(
     return _merge_system_photo_sections(reference, payload)
 
 
+def _insert_generation_run(
+    conn: Connection,
+    *,
+    vessel_id: str,
+    snapshot_id: str,
+    content_type: str,
+    content_key: str,
+    trigger: str,
+    prompt_refs: list[dict[str, Any]],
+    model_id: str,
+) -> str:
+    run_row = conn.execute(
+        text(
+            """
+            INSERT INTO guide_generation_run (
+                vessel_id, input_snapshot_id, trigger, status,
+                prompt_refs, content_type, content_key,
+                output_module_keys, model_id, started_at
+            )
+            VALUES (
+                :vessel_id, :snapshot_id, CAST(:trigger AS guide_generation_trigger),
+                'running', CAST(:prompt_refs AS jsonb),
+                CAST(:content_type AS guide_content_type), :content_key,
+                CAST(:output_keys AS text[]), :model_id, now()
+            )
+            RETURNING id
+            """
+        ),
+        {
+            "vessel_id": vessel_id,
+            "snapshot_id": snapshot_id,
+            "trigger": trigger,
+            "prompt_refs": json.dumps(prompt_refs),
+            "content_type": content_type,
+            "content_key": content_key,
+            "output_keys": [content_key],
+            "model_id": model_id,
+        },
+    ).fetchone()
+    return str(run_row[0])
+
+
+def _complete_generation_run(conn: Connection, run_id: str) -> None:
+    conn.execute(
+        text(
+            """
+            UPDATE guide_generation_run
+            SET status = 'completed', completed_at = now()
+            WHERE id = :run_id
+            """
+        ),
+        {"run_id": run_id},
+    )
+
+
+def _fail_generation_run(conn: Connection, run_id: str, error: str) -> None:
+    conn.execute(
+        text(
+            """
+            UPDATE guide_generation_run
+            SET status = 'failed', error_message = :error, completed_at = now()
+            WHERE id = :run_id
+            """
+        ),
+        {"run_id": run_id, "error": error[:2000]},
+    )
+
+
+def copy_module_from_reference(
+    conn: Connection,
+    *,
+    vessel_id: str,
+    snapshot_id: str,
+    content_type: str,
+    content_key: str,
+    trigger: str = "onboarding",
+    created_by: str = "guide_generation",
+) -> dict[str, Any]:
+    reference = _load_approved_reference_module(
+        conn, vessel_id, content_type, content_key
+    )
+    if reference is None:
+        raise GuideGenerationError(
+            f"No approved reference to copy for {content_type}/{content_key}"
+        )
+    payload = json.loads(json.dumps(reference))
+    diff_against_id = _load_diff_against_id(conn, vessel_id, content_type, content_key)
+    _validate_module_payload(content_type, content_key, payload)
+
+    run_id = _insert_generation_run(
+        conn,
+        vessel_id=vessel_id,
+        snapshot_id=snapshot_id,
+        content_type=content_type,
+        content_key=content_key,
+        trigger=trigger,
+        prompt_refs=[],
+        model_id="reference_copy",
+    )
+    module_id, reused_draft = _save_generated_draft(
+        conn,
+        vessel_id=vessel_id,
+        content_type=content_type,
+        content_key=content_key,
+        payload=payload,
+        run_id=run_id,
+        diff_against_id=diff_against_id,
+        created_by=created_by,
+    )
+    _complete_generation_run(conn, run_id)
+    return {
+        "run_id": run_id,
+        "module_id": module_id,
+        "content_type": content_type,
+        "content_key": content_key,
+        "status": "completed",
+        "reused_draft": reused_draft,
+        "copied_from_reference": True,
+    }
+
+
 def _compose_prompt(
     *,
     instruction: str,
@@ -671,49 +969,46 @@ def generate_module(
     created_by: str = "guide_generation",
     llm: AzureOpenAI | None = None,
 ) -> dict[str, Any]:
+    if (content_type, content_key) in COPY_MODULE_KEYS:
+        return copy_module_from_reference(
+            conn,
+            vessel_id=vessel_id,
+            snapshot_id=snapshot_id,
+            content_type=content_type,
+            content_key=content_key,
+            trigger=trigger,
+            created_by=created_by,
+        )
+
     prompt_text, prompt_ref = _resolve_prompt_text(conn, content_type, content_key)
-    schema_hint = SCHEMA_HINTS.get(
-        (content_type, content_key), "valid JSON for this module type"
-    )
+    schema_hint = _schema_hint_for(content_type, content_key)
     reference = _load_reference_module(conn, vessel_id, content_type, content_key)
     diff_against_id = _load_diff_against_id(conn, vessel_id, content_type, content_key)
 
     prompt_refs = [prompt_ref] if prompt_ref else []
-    run_row = conn.execute(
-        text(
-            """
-            INSERT INTO guide_generation_run (
-                vessel_id, input_snapshot_id, trigger, status,
-                prompt_refs, content_type, content_key,
-                output_module_keys, model_id, started_at
-            )
-            VALUES (
-                :vessel_id, :snapshot_id, CAST(:trigger AS guide_generation_trigger),
-                'running', CAST(:prompt_refs AS jsonb),
-                CAST(:content_type AS guide_content_type), :content_key,
-                CAST(:output_keys AS text[]), :model_id, now()
-            )
-            RETURNING id
-            """
-        ),
-        {
-            "vessel_id": vessel_id,
-            "snapshot_id": snapshot_id,
-            "trigger": trigger,
-            "prompt_refs": json.dumps(prompt_refs),
-            "content_type": content_type,
-            "content_key": content_key,
-            "output_keys": [content_key],
-            "model_id": settings.azure_openai_chat_deployment,
-        },
-    ).fetchone()
-    run_id = str(run_row[0])
+    run_id = _insert_generation_run(
+        conn,
+        vessel_id=vessel_id,
+        snapshot_id=snapshot_id,
+        content_type=content_type,
+        content_key=content_key,
+        trigger=trigger,
+        prompt_refs=prompt_refs,
+        model_id=settings.azure_openai_chat_deployment,
+    )
+
+    prompt_snapshot = snapshot_payload
+    if content_type == "system":
+        prompt_snapshot = {
+            **snapshot_payload,
+            "relevant_equipment": _equipment_for_system(snapshot_payload, content_key),
+        }
 
     try:
         llm = llm or _build_llm()
         composed = _compose_prompt(
             instruction=prompt_text,
-            snapshot=snapshot_payload,
+            snapshot=prompt_snapshot,
             schema_hint=schema_hint,
             reference=reference,
         )
@@ -736,16 +1031,7 @@ def generate_module(
             created_by=created_by,
         )
 
-        conn.execute(
-            text(
-                """
-                UPDATE guide_generation_run
-                SET status = 'completed', completed_at = now()
-                WHERE id = :run_id
-                """
-            ),
-            {"run_id": run_id},
-        )
+        _complete_generation_run(conn, run_id)
         return {
             "run_id": run_id,
             "module_id": module_id,
@@ -755,16 +1041,7 @@ def generate_module(
             "reused_draft": reused_draft,
         }
     except Exception as exc:
-        conn.execute(
-            text(
-                """
-                UPDATE guide_generation_run
-                SET status = 'failed', error_message = :error, completed_at = now()
-                WHERE id = :run_id
-                """
-            ),
-            {"run_id": run_id, "error": str(exc)[:2000]},
-        )
+        _fail_generation_run(conn, run_id, str(exc))
         raise GuideGenerationError(
             f"Generation failed for {content_type}/{content_key}: {exc}"
         ) from exc
@@ -781,9 +1058,13 @@ def run_guide_generation(
     ensure_default_prompt_templates(conn)
     snapshot_payload = load_vessel_generation_context(conn, vessel_id)
     snapshot_id = create_input_snapshot(conn, vessel_id, snapshot_payload)
-    llm = _build_llm()
+    llm: AzureOpenAI | None = None
     results: list[dict[str, Any]] = []
-    for content_type, content_key in modules or STARTER_MODULES:
+    module_list = modules or list(STARTER_MODULES)
+    for content_type, content_key in module_list:
+        needs_llm = (content_type, content_key) not in COPY_MODULE_KEYS
+        if needs_llm and llm is None:
+            llm = _build_llm()
         results.append(
             generate_module(
                 conn,

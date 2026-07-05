@@ -1,11 +1,4 @@
-"""Friendly labels and preview metadata for guide module review in admin UI.
-
-To add a visual preview for a new module type:
-1. Register section metadata below (title, blurb, app tab context).
-2. Add a preview macro in admin/templates/guide/_preview_macros.html.
-3. Dispatch to it from preview_panel() in the same file.
-4. Mirror styling from the matching mobile page SCSS in admin/static/admin.css.
-"""
+"""Friendly labels and preview metadata for guide module review in admin UI."""
 
 from __future__ import annotations
 
@@ -13,6 +6,12 @@ from dataclasses import asdict, dataclass
 from typing import Any
 
 from admin.formatting import format_label
+from guide_module_catalog import (
+    CHECKLIST_CATALOG,
+    COPY_MODULE_REVIEW,
+    FIXES_REVIEW,
+    SYSTEM_CATALOG,
+)
 
 # (content_type, content_key) → review metadata
 _MODULE_REVIEW: dict[tuple[str, str], dict[str, Any]] = {
@@ -50,34 +49,39 @@ _MODULE_REVIEW: dict[tuple[str, str], dict[str, Any]] = {
         "preview_available": True,
         "mobile_ref": "mobile/src/app/pages/home/home.page.html",
     },
-    ("system", "overview"): {
-        "section_title": "Boat overview",
-        "guest_label": "Learn + Know — layout",
-        "review_title": "Boat overview & layout",
-        "review_blurb": (
-            "Orientation content for Learn the Boat and the Know tab — layout, "
-            "cabins, and day-one safety gear locations."
-        ),
-        "preview_context": "Do → Learn / Know",
+    ("fix_card_set", "all"): {
+        **FIXES_REVIEW,
         "preview_available": True,
-        "mobile_ref": "mobile/src/app/pages/do/learn/learn.page.html",
+        "mobile_ref": "mobile/src/app/pages/fix/fix.page.html",
     },
-    ("system", "engines"): {
-        "section_title": "Engines",
-        "guest_label": "Learn + Know — propulsion",
-        "review_title": "Engines & compartments",
+}
+
+for _system_id, _meta in SYSTEM_CATALOG.items():
+    _MODULE_REVIEW[("system", _system_id)] = {
+        "section_title": _meta.get("review_title", _system_id),
+        "guest_label": _meta.get("guest_label", _system_id),
+        "review_title": _meta.get("review_title", _system_id),
         "review_blurb": (
-            "Engine compartment checks, start/stop procedures, and warnings "
-            "shown in Learn the Boat and the full system guide on Know."
+            f"{_meta.get('focus', '')} — shown in Learn the Boat and the Know tab."
         ),
         "preview_context": "Do → Learn / Know",
         "preview_available": True,
         "mobile_ref": "mobile/src/app/pages/know/know.page.html",
-    },
-    # Planned — register metadata now; add preview macros when generation ships:
-    # ("checklists", "safety-brief"): { ... "mobile_ref": "checklist.page" }
-    # ("fix_cards", "..."): { ... "mobile_ref": "know.page" }
-}
+    }
+
+for _checklist_id, _meta in CHECKLIST_CATALOG.items():
+    _MODULE_REVIEW[("checklist", _checklist_id)] = {
+        "section_title": _meta["title"],
+        "guest_label": _meta["guest_label"],
+        "review_title": _meta["title"],
+        "review_blurb": _meta["focus"],
+        "preview_context": "Do → Checklist",
+        "preview_available": True,
+        "mobile_ref": "mobile/src/app/pages/do/checklist/checklist.page.html",
+    }
+
+for _key, _meta in COPY_MODULE_REVIEW.items():
+    _MODULE_REVIEW[_key] = {**_meta, "preview_available": False}
 
 
 @dataclass(frozen=True)

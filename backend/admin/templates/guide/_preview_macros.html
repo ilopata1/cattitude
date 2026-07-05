@@ -173,6 +173,51 @@
 </div>
 {% endmacro %}
 
+{% endmacro %}
+
+{% macro preview_checklist(payload) %}
+<div class="guide-preview-scroll">
+  {% for group in payload.groups[:3] %}
+  <div class="guide-preview-sys-block">
+    <div class="guide-preview-sys-block-title">{{ group.t }}</div>
+    {% for item in group['items'][:3] %}
+    <div class="guide-preview-cl-item">
+      <span class="guide-preview-cl-box">☐</span>
+      <div>
+        <div>{{ item.c }}</div>
+        {% if item.s %}<div class="guide-preview-cl-sub">{{ item.s }}</div>{% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</div>
+{% endmacro %}
+
+{% macro preview_fixes(cards) %}
+<div class="guide-preview-scroll">
+  {% for card in cards[:4] %}
+  <div class="guide-preview-fix-card">
+    <div class="guide-preview-fix-header">
+      <span>{{ card.icon }}</span>
+      <div>
+        <div class="guide-preview-fix-cat">{{ card.catL }}</div>
+        <div class="guide-preview-fix-title">{{ card.title }}</div>
+      </div>
+    </div>
+    <ol class="guide-preview-fix-steps">
+      {% for step in card['steps'][:4] %}
+      <li>{{ step }}</li>
+      {% endfor %}
+    </ol>
+  </div>
+  {% endfor %}
+  {% if cards|length > 4 %}
+  <p class="guide-preview-sys-more">… {{ cards|length - 4 }} more fix cards</p>
+  {% endif %}
+</div>
+{% endmacro %}
+
 {% macro preview_panel(label, payload, vessel_slug, content_type, content_key, variant='single') %}
 <div class="guide-preview-frame guide-preview-frame--{{ variant }}">
   <div class="guide-preview-frame-header">
@@ -191,6 +236,10 @@
         {{ preview_home_rules(payload) }}
       {% elif content_type == 'system' %}
         {{ preview_system(payload) }}
+      {% elif content_type == 'checklist' %}
+        {{ preview_checklist(payload) }}
+      {% elif content_type == 'fix_card_set' and content_key == 'all' %}
+        {{ preview_fixes(payload) }}
       {# Add new preview types here — see admin/guide_review_meta.py #}
       {% else %}
         <p class="guide-preview-fallback">Visual preview is not available for this module type yet.</p>

@@ -10,13 +10,8 @@ from sqlalchemy import text
 from admin.auth import require_admin_user
 from admin.deps import get_engine, templates
 from admin.guide_review_meta import attach_review_meta
-from guide_generation import (
-    GuideGenerationError,
-    DEFAULT_GENERATION_MODULES,
-    STARTER_MODULES,
-    SYSTEM_MODULES,
-    run_guide_generation,
-)
+from guide_generation import GuideGenerationError, run_guide_generation
+from guide_module_catalog import modules_for_set
 from guide_publish import PublishValidationError, assemble_publication, publish_vessel_guide
 
 router = APIRouter(prefix="/vessels/{vessel_id}/guide", tags=["admin-guide"])
@@ -315,12 +310,10 @@ async def generate_guide_modules(
     module_set: str = Form("shell"),
     admin_user: str = Depends(require_admin_user),
 ):
-    if module_set == "systems":
-        modules = SYSTEM_MODULES
-    elif module_set == "all":
-        modules = DEFAULT_GENERATION_MODULES
-    else:
-        modules = STARTER_MODULES
+    try:
+        modules = modules_for_set(module_set)
+    except ValueError:
+        modules = modules_for_set("shell")
 
     with get_engine().connect() as conn:
         vessel = _load_vessel(conn, vessel_id)
