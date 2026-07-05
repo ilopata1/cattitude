@@ -32,36 +32,39 @@
     {% endif %}
 
     <h3>Generate drafts</h3>
-    <p class="muted">Select sections to generate. Existing drafts for those sections are overwritten.</p>
     <form
       method="post"
       action="/admin/vessels/{{ vessel.id }}/guide/generate"
       class="generate-form"
       id="guide-generate-form"
     >
-      <label class="generate-option generate-option--master">
-        <input type="checkbox" id="gen-full-guide">
-        <span class="generate-option-text">
-          <strong>Full guide</strong>
-          <span class="muted">All sections below (~25 modules — may take several minutes)</span>
-        </span>
-      </label>
-      <div class="generate-options">
+      <div class="generate-row">
+        <label class="generate-chip">
+          <input type="checkbox" id="gen-full-guide">
+          <span>Full guide</span>
+        </label>
         {% for option in generation_sets %}
-        <label class="generate-option">
+        <label class="generate-chip">
           <input
             type="checkbox"
             name="module_sets"
             value="{{ option.value }}"
             class="gen-section-checkbox"
           >
-          <span class="generate-option-text">
-            <strong>{{ option.label }}</strong>
-            <span class="muted">{{ option.description }}</span>
-          </span>
+          <span>{{ option.label }}</span>
         </label>
         {% endfor %}
+        <span class="generate-help" tabindex="0" aria-label="What each section includes">
+          <span class="generate-help-icon" aria-hidden="true">?</span>
+          <div class="generate-help-popover" role="tooltip">
+            <p><strong>Full guide</strong> — All sections below (~25 modules; may take several minutes).</p>
+            {% for option in generation_sets %}
+            <p><strong>{{ option.label }}</strong> — {{ option.description }}</p>
+            {% endfor %}
+          </div>
+        </span>
       </div>
+      <p class="muted generate-form-note">Existing drafts for selected sections are overwritten.</p>
       <button type="submit" class="button">Generate selected drafts</button>
     </form>
     <p><a class="button" href="/admin/vessels/{{ vessel.id }}/guide/publish">Publish new version</a></p>

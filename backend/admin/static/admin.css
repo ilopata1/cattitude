@@ -1026,44 +1026,112 @@ code {
 
 .generate-form {
   margin: 0.75rem 0 1rem;
-  max-width: 36rem;
 }
 
-.generate-options {
-  margin: 0.5rem 0 1rem;
-  padding-left: 0.25rem;
-  border-left: 2px solid var(--border);
-}
-
-.generate-option {
+.generate-row {
   display: flex;
-  align-items: flex-start;
-  gap: 0.6rem;
-  padding: 0.45rem 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem 1.1rem;
+}
+
+.generate-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 500;
   cursor: pointer;
+  white-space: nowrap;
 }
 
-.generate-option--master {
-  padding-bottom: 0.65rem;
-  margin-bottom: 0.25rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.generate-option input[type="checkbox"] {
+.generate-chip input[type="checkbox"] {
+  display: inline-block;
   width: auto;
-  margin: 0.2rem 0 0;
+  margin: 0;
+  padding: 0;
   flex-shrink: 0;
 }
 
-.generate-option-text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  line-height: 1.35;
+.generate-form-note {
+  margin: 0.5rem 0 0.75rem;
+  font-size: 0.88rem;
 }
 
-.generate-option-text .muted {
-  font-size: 0.88rem;
+.generate-help {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.15rem;
+  outline: none;
+}
+
+.generate-help-icon {
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 50%;
+  background: #829ab1;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: help;
+  transition: background 0.15s ease;
+}
+
+.generate-help:hover .generate-help-icon,
+.generate-help:focus-visible .generate-help-icon {
+  background: var(--accent);
+}
+
+.generate-help-popover {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 10px);
+  right: 0;
+  width: 22rem;
+  max-width: min(22rem, 85vw);
+  padding: 0.85rem 1rem;
+  background: #243b53;
+  color: #f0f4f8;
+  border-radius: 8px;
+  box-shadow: 0 8px 28px rgba(16, 42, 67, 0.28);
+  z-index: 40;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  font-weight: 400;
+  text-align: left;
+  white-space: normal;
+}
+
+.generate-help-popover p {
+  margin: 0 0 0.55rem;
+}
+
+.generate-help-popover p:last-child {
+  margin-bottom: 0;
+}
+
+.generate-help-popover strong {
+  color: #fff;
+}
+
+.generate-help:hover .generate-help-popover,
+.generate-help:focus-within .generate-help-popover {
+  display: block;
+}
+
+.generate-help-popover::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  right: 10px;
+  border: 7px solid transparent;
+  border-top-color: #243b53;
 }
 
 .guide-preview-cl-item {
