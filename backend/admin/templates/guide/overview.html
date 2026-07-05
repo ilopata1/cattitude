@@ -1,125 +1,160 @@
-{% extends "base.html" %}
-{% block title %}{{ vessel.name }} guide — Clever Sailor Admin{% endblock %}
-{% block content %}
-<p class="breadcrumb"><a href="/admin/vessels">Vessels</a> / {{ vessel.name }} / Guide</p>
-<h1>{{ vessel.name }} vessel guide</h1>
-
-{% if request.query_params.get('published') %}
-<div class="flash flash-ok">Published version {{ request.query_params.get('published') }}.</div>
-{% endif %}
-{% if request.query_params.get('generated') %}
-<div class="flash flash-ok">Generated {{ request.query_params.get('generated') }} draft module(s). Review and approve below.</div>
-{% endif %}
-{% if request.query_params.get('gen_error') %}
-<div class="flash flash-error">Generation failed: {{ request.query_params.get('gen_error') }}</div>
-{% endif %}
-
-<div class="panel-grid">
-  <section class="panel">
-    <h2>Publication</h2>
-    {% if publication %}
-      <dl class="meta-list">
-        <dt>Version</dt><dd>v{{ publication.version }}</dd>
-        <dt>Content hash</dt><dd><code>{{ publication.content_hash }}</code></dd>
-        <dt>Published</dt><dd>{{ publication.published_at }} by {{ publication.published_by or '—' }}</dd>
-        <dt>Manifest API</dt><dd><a href="/api/v1/vessels/{{ vessel.slug }}/guide/manifest" target="_blank">Open manifest</a></dd>
-      </dl>
-    {% else %}
-      <p>No publication yet.</p>
-    {% endif %}
-    {% if stale_context %}
-      <div class="flash flash-warn">Operating base context changed since last publication. Regenerate guide content before the next publish.</div>
-    {% endif %}
-
-    <h3>Generate drafts</h3>
-    <p class="muted">Existing drafts are overwritten. Full guide (~25 modules) is best run via CLI to avoid timeouts.</p>
-    <div class="generate-actions">
-      <form method="post" action="/admin/vessels/{{ vessel.id }}/guide/generate" class="inline-form">
-        <input type="hidden" name="module_set" value="shell">
-        <button type="submit">Home tab</button>
-      </form>
-      <form method="post" action="/admin/vessels/{{ vessel.id }}/guide/generate" class="inline-form">
-        <input type="hidden" name="module_set" value="systems">
-        <button type="submit">All systems</button>
-      </form>
-      <form method="post" action="/admin/vessels/{{ vessel.id }}/guide/generate" class="inline-form">
-        <input type="hidden" name="module_set" value="checklists">
-        <button type="submit">Checklists</button>
-      </form>
-      <form method="post" action="/admin/vessels/{{ vessel.id }}/guide/generate" class="inline-form">
-        <input type="hidden" name="module_set" value="fixes">
-        <button type="submit">Fix tab</button>
-      </form>
-      <form method="post" action="/admin/vessels/{{ vessel.id }}/guide/generate" class="inline-form">
-        <input type="hidden" name="module_set" value="navigation">
-        <button type="submit">Navigation UI</button>
-      </form>
-      <form method="post" action="/admin/vessels/{{ vessel.id }}/guide/generate" class="inline-form">
-        <input type="hidden" name="module_set" value="full">
-        <button type="submit" class="button">Full guide</button>
-      </form>
-    </div>
-    <p><a class="button" href="/admin/vessels/{{ vessel.id }}/guide/publish">Publish new version</a></p>
-  </section>
-
-  <section class="panel">
-    <h2>Assembly preview</h2>
-    {% if preview_error %}
-      <div class="flash flash-error">
-        <ul>{% for message in preview_error %}<li>{{ message }}</li>{% endfor %}</ul>
-      </div>
-    {% elif preview %}
-      <dl class="meta-list">
-        <dt>Approved modules</dt><dd>{{ preview.module_count }}</dd>
-        <dt>Content hash</dt><dd><code>{{ preview.content_hash }}</code></dd>
-        <dt>Assets</dt><dd>{{ preview.asset_manifest|length }}{% if preview.missing_assets %} ({{ preview.missing_assets|length }} missing on disk){% endif %}</dd>
-      </dl>
-      {% if preview.validation_messages %}
-        <ul class="note-list">
-          {% for message in preview.validation_messages %}
-          <li>{{ message }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    {% endif %}
-  </section>
-</div>
-
-<section class="panel">
-  <h2>Guide modules</h2>
-  <table class="data-table">
-    <thead>
-      <tr>
-        <th>Section</th>
-        <th>What guests see</th>
-        <th>Source</th>
-        <th>Status</th>
-        <th>Approved</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for module in modules %}
-      <tr>
-        <td>{{ module.review.section_title }}</td>
-        <td><span class="muted">{{ module.review.guest_label }}</span></td>
-        <td>{{ module.source | format_label }}</td>
-        <td><span class="badge badge-{{ module.status }}">{{ module.status | format_label }}</span></td>
-        <td>{{ module.approved_at or '—' }}</td>
-        <td>
-          <a href="/admin/vessels/{{ vessel.id }}/guide/modules/{{ module.id }}">Review</a>
-          {% if module.status == 'draft' %}
-          <form method="post" action="/admin/vessels/{{ vessel.id }}/guide/modules/{{ module.id }}/approve" class="inline-form">
-            <button type="submit">Approve</button>
-          </form>
-          {% endif %}
-        </td>
-      </tr>
-      {% else %}
-      <tr><td colspan="6">No guide modules in Postgres for this vessel.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</section>
-{% endblock %}
-
+{% extends "base.html" %}
+{% block title %}{{ vessel.name }} guide — Clever Sailor Admin{% endblock %}
+{% block content %}
+<p class="breadcrumb"><a href="/admin/vessels">Vessels</a> / {{ vessel.name }} / Guide</p>
+<h1>{{ vessel.name }} vessel guide</h1>
+
+{% if request.query_params.get('published') %}
+<div class="flash flash-ok">Published version {{ request.query_params.get('published') }}.</div>
+{% endif %}
+{% if request.query_params.get('generated') %}
+<div class="flash flash-ok">Generated {{ request.query_params.get('generated') }} draft module(s). Review and approve below.</div>
+{% endif %}
+{% if request.query_params.get('gen_error') %}
+<div class="flash flash-error">Generation failed: {{ request.query_params.get('gen_error') }}</div>
+{% endif %}
+
+<div class="panel-grid">
+  <section class="panel">
+    <h2>Publication</h2>
+    {% if publication %}
+      <dl class="meta-list">
+        <dt>Version</dt><dd>v{{ publication.version }}</dd>
+        <dt>Content hash</dt><dd><code>{{ publication.content_hash }}</code></dd>
+        <dt>Published</dt><dd>{{ publication.published_at }} by {{ publication.published_by or '—' }}</dd>
+        <dt>Manifest API</dt><dd><a href="/api/v1/vessels/{{ vessel.slug }}/guide/manifest" target="_blank">Open manifest</a></dd>
+      </dl>
+    {% else %}
+      <p>No publication yet.</p>
+    {% endif %}
+    {% if stale_context %}
+      <div class="flash flash-warn">Operating base context changed since last publication. Regenerate guide content before the next publish.</div>
+    {% endif %}
+
+    <h3>Generate drafts</h3>
+    <p class="muted">Select sections to generate. Existing drafts for those sections are overwritten.</p>
+    <form
+      method="post"
+      action="/admin/vessels/{{ vessel.id }}/guide/generate"
+      class="generate-form"
+      id="guide-generate-form"
+    >
+      <label class="generate-option generate-option--master">
+        <input type="checkbox" id="gen-full-guide">
+        <span class="generate-option-text">
+          <strong>Full guide</strong>
+          <span class="muted">All sections below (~25 modules — may take several minutes)</span>
+        </span>
+      </label>
+      <div class="generate-options">
+        {% for option in generation_sets %}
+        <label class="generate-option">
+          <input
+            type="checkbox"
+            name="module_sets"
+            value="{{ option.value }}"
+            class="gen-section-checkbox"
+          >
+          <span class="generate-option-text">
+            <strong>{{ option.label }}</strong>
+            <span class="muted">{{ option.description }}</span>
+          </span>
+        </label>
+        {% endfor %}
+      </div>
+      <button type="submit" class="button">Generate selected drafts</button>
+    </form>
+    <p><a class="button" href="/admin/vessels/{{ vessel.id }}/guide/publish">Publish new version</a></p>
+  </section>
+
+  <section class="panel">
+    <h2>Assembly preview</h2>
+    {% if preview_error %}
+      <div class="flash flash-error">
+        <ul>{% for message in preview_error %}<li>{{ message }}</li>{% endfor %}</ul>
+      </div>
+    {% elif preview %}
+      <dl class="meta-list">
+        <dt>Approved modules</dt><dd>{{ preview.module_count }}</dd>
+        <dt>Content hash</dt><dd><code>{{ preview.content_hash }}</code></dd>
+        <dt>Assets</dt><dd>{{ preview.asset_manifest|length }}{% if preview.missing_assets %} ({{ preview.missing_assets|length }} missing on disk){% endif %}</dd>
+      </dl>
+      {% if preview.validation_messages %}
+        <ul class="note-list">
+          {% for message in preview.validation_messages %}
+          <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endif %}
+  </section>
+</div>
+
+<section class="panel">
+  <h2>Guide modules</h2>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Section</th>
+        <th>What guests see</th>
+        <th>Source</th>
+        <th>Status</th>
+        <th>Approved</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for module in modules %}
+      <tr>
+        <td>{{ module.review.section_title }}</td>
+        <td><span class="muted">{{ module.review.guest_label }}</span></td>
+        <td>{{ module.source | format_label }}</td>
+        <td><span class="badge badge-{{ module.status }}">{{ module.status | format_label }}</span></td>
+        <td>{{ module.approved_at or '—' }}</td>
+        <td>
+          <a href="/admin/vessels/{{ vessel.id }}/guide/modules/{{ module.id }}">Review</a>
+          {% if module.status == 'draft' %}
+          <form method="post" action="/admin/vessels/{{ vessel.id }}/guide/modules/{{ module.id }}/approve" class="inline-form">
+            <button type="submit">Approve</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6">No guide modules in Postgres for this vessel.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+  var full = document.getElementById('gen-full-guide');
+  var sections = document.querySelectorAll('.gen-section-checkbox');
+  if (!full || !sections.length) return;
+
+  function allSectionsChecked() {
+    for (var i = 0; i < sections.length; i++) {
+      if (!sections[i].checked) return false;
+    }
+    return true;
+  }
+
+  function syncFullFromSections() {
+    full.checked = allSectionsChecked();
+  }
+
+  full.addEventListener('change', function () {
+    var checked = full.checked;
+    sections.forEach(function (cb) { cb.checked = checked; });
+  });
+
+  sections.forEach(function (cb) {
+    cb.addEventListener('change', syncFullFromSections);
+  });
+})();
+</script>
+{% endblock %}
+

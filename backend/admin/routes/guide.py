@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import Any
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, Form, Request
 from fastapi.responses import RedirectResponse
@@ -11,7 +11,7 @@ from admin.auth import require_admin_user
 from admin.deps import get_engine, templates
 from admin.guide_review_meta import attach_review_meta
 from guide_generation import GuideGenerationError, run_guide_generation
-from guide_module_catalog import modules_for_set
+from guide_module_catalog import GENERATION_SET_OPTIONS, modules_for_sets
 from guide_publish import PublishValidationError, assemble_publication, publish_vessel_guide
 
 router = APIRouter(prefix="/vessels/{vessel_id}/guide", tags=["admin-guide"])
@@ -214,6 +214,7 @@ async def vessel_guide_overview(
             "stale_context": stale_context,
             "preview": preview,
             "preview_error": preview_error,
+            "generation_sets": GENERATION_SET_OPTIONS,
         },
     )
 
@@ -307,13 +308,26 @@ async def approve_module(
 @router.post("/generate")
 async def generate_guide_modules(
     vessel_id: str,
-    module_set: str = Form("shell"),
+    module_sets: Annotated[list[str], Form()] = [],
     admin_user: str = Depends(require_admin_user),
 ):
+    if not module_sets:
+        from urllib.parse import quote
+
+        return RedirectResponse(
+            f"/admin/vessels/{vessel_id}/guide?gen_error={quote('Select at least one section to generate.')}",
+            status_code=303,
+        )
+
     try:
-        modules = modules_for_set(module_set)
-    except ValueError:
-        modules = modules_for_set("shell")
+        modules = modules_for_sets(module_sets)
+    except ValueError as exc:
+        from urllib.parse import quote
+
+        return RedirectResponse(
+            f"/admin/vessels/{vessel_id}/guide?gen_error={quote(str(exc))}",
+            status_code=303,
+        )
 
     with get_engine().connect() as conn:
         vessel = _load_vessel(conn, vessel_id)

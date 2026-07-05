@@ -1024,6 +1024,48 @@ code {
   margin: 0.75rem 0 1rem;
 }
 
+.generate-form {
+  margin: 0.75rem 0 1rem;
+  max-width: 36rem;
+}
+
+.generate-options {
+  margin: 0.5rem 0 1rem;
+  padding-left: 0.25rem;
+  border-left: 2px solid var(--border);
+}
+
+.generate-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.45rem 0;
+  cursor: pointer;
+}
+
+.generate-option--master {
+  padding-bottom: 0.65rem;
+  margin-bottom: 0.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.generate-option input[type="checkbox"] {
+  width: auto;
+  margin: 0.2rem 0 0;
+  flex-shrink: 0;
+}
+
+.generate-option-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  line-height: 1.35;
+}
+
+.generate-option-text .muted {
+  font-size: 0.88rem;
+}
+
 .guide-preview-cl-item {
   display: flex;
   gap: 10px;

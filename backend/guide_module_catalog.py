@@ -229,6 +229,35 @@ FIXES_REVIEW = {
     "preview_context": "Fix tab",
 }
 
+# Admin “Generate drafts” checkbox sections (value → modules_for_set key).
+GENERATION_SET_OPTIONS: list[dict[str, str]] = [
+    {
+        "value": "shell",
+        "label": "Home tab",
+        "description": "Welcome banner, MAYDAY & contacts, home rules",
+    },
+    {
+        "value": "systems",
+        "label": "Equipment",
+        "description": "All system guides — Learn the Boat & Know (13 topics)",
+    },
+    {
+        "value": "checklists",
+        "label": "Checklists",
+        "description": "Safety brief, pre-departure, anchoring, leaving unattended, end of charter",
+    },
+    {
+        "value": "fixes",
+        "label": "Fix tab",
+        "description": "Troubleshooting cards for common problems",
+    },
+    {
+        "value": "navigation",
+        "label": "Navigation UI",
+        "description": "App menus, system order & Know-by-location layout (copied from approved guide)",
+    },
+]
+
 
 def modules_for_set(module_set: str) -> list[tuple[str, str]]:
     if module_set == "shell":
@@ -244,3 +273,15 @@ def modules_for_set(module_set: str) -> list[tuple[str, str]]:
     if module_set in ("all", "full"):
         return list(FULL_GUIDE_MODULES)
     raise ValueError(f"Unknown module_set: {module_set}")
+
+
+def modules_for_sets(module_sets: list[str]) -> list[tuple[str, str]]:
+    """Combine selected generation sets, preserving order and deduplicating modules."""
+    seen: set[tuple[str, str]] = set()
+    combined: list[tuple[str, str]] = []
+    for module_set in module_sets:
+        for module in modules_for_set(module_set):
+            if module not in seen:
+                seen.add(module)
+                combined.append(module)
+    return combined
