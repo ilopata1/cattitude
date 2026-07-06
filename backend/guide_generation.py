@@ -14,6 +14,12 @@ from sqlalchemy.engine import Connection
 from config import settings
 from guide_bootstrap import canonical_json_hash
 from guide_context_utils import emergency_contacts_count, merge_guide_context
+from guide_equipment_coverage import (
+    build_placeholder_system_module,
+    equipment_for_system_categories,
+    system_has_equipment,
+    system_requires_equipment,
+)
 from guide_module_catalog import (
     CHECKLIST_CATALOG,
     CHECKLIST_MODULES,
@@ -127,15 +133,17 @@ Use INPUT SNAPSHOT equipment rows for propulsion (system_category propulsion, or
 Use twin-engine catamaran assumptions when two propulsion units with port/starboard zone_instance appear.
 
 Produce id "engines", icon "⚙️", locs including port-hull, stbd-hull, cockpit.
-Subtitle and summary must name actual engine make/model from equipment when available.
+Subtitle and summary should name actual engine make/model when equipment is present; otherwise state that engine equipment is not yet configured.
 
-Include learnChecks (6-8 compartment checks) and sections:
+Include learnChecks (6-8 compartment checks) and sections when equipment is available:
 - Engine Compartment Access (prose)
 - Pre-Start Checks (Both Engines) (steps)
 - Starting Procedure (steps) — include EVC/glow plug/neutral/water from exhaust checks if applicable
 - Shutting Down (steps)
 - Warnings (warnings) — seacock, starter, exhaust water, warm-up
 - Notes (notes) — cruise RPM / fuel if known from reference tone
+
+If no propulsion equipment is listed, produce a short placeholder module explaining that engine details will be added when equipment is linked.
 
 Do NOT include photo sections. Do not invent engine specs not in snapshot or reference.
 
@@ -288,10 +296,6 @@ def create_input_snapshot(
 ) -> str:
     if payload is None:
         payload = load_vessel_generation_context(conn, vessel_id)
-    if not payload.get("equipment"):
-        raise GuideGenerationError(
-            "No vessel_equipment rows — populate equipment before generating."
-        )
     content_hash = canonical_json_hash(payload)
     row = conn.execute(
         text(
@@ -366,11 +370,9 @@ def _equipment_for_system(
     snapshot: dict[str, Any], system_id: str
 ) -> list[dict[str, Any]]:
     meta = SYSTEM_CATALOG.get(system_id, {})
-    categories = set(meta.get("equipment_categories") or [])
+    categories = meta.get("equipment_categories") or []
     equipment = snapshot.get("equipment") or []
-    if not categories:
-        return equipment
-    return [row for row in equipment if row.get("system_category") in categories]
+    return equipment_for_system_categories(equipment, categories)
 
 
 def _build_generic_system_prompt(system_id: str) -> str:
@@ -384,10 +386,16 @@ def _build_generic_system_prompt(system_id: str) -> str:
         if categories
         else "Use relevant equipment from the snapshot where applicable."
     )
+    empty_note = (
+        "\nIf RELEVANT EQUIPMENT is empty, state clearly that equipment is not yet "
+        "configured — do not invent makes, models, or procedures."
+        if categories
+        else ""
+    )
     return f"""Generate the "{system_id}" system module for a charter vessel guide (Learn + Know tabs).
 
 TARGET: {focus}
-{category_note}
+{category_note}{empty_note}
 
 Produce id "{system_id}", icon "{icon}", locs {json.dumps(locs)}.
 Include title, subtitle, summary (1-2 sentences), learnChecks (6-8 items), and sections.
@@ -1033,6 +1041,14 @@ def generate_module(
     reference = _load_reference_module(conn, vessel_id, content_type, content_key)
     diff_against_id = _load_diff_against_id(conn, vessel_id, content_type, content_key)
 
+    use_equipment_placeholder = (
+        content_type == "system"
+        and system_requires_equipment(content_key)
+        and not system_has_equipment(
+            snapshot_payload.get("equipment") or [], content_key
+        )
+    )
+
     prompt_refs = [prompt_ref] if prompt_ref else []
     run_id = _insert_generation_run(
         conn,
@@ -1042,7 +1058,11 @@ def generate_module(
         content_key=content_key,
         trigger=trigger,
         prompt_refs=prompt_refs,
-        model_id=settings.azure_openai_chat_deployment,
+        model_id=(
+            "equipment_gap_placeholder"
+            if use_equipment_placeholder
+            else settings.azure_openai_chat_deployment
+        ),
     )
 
     prompt_snapshot = snapshot_payload
@@ -1053,20 +1073,24 @@ def generate_module(
         }
 
     try:
-        llm = llm or _build_llm()
-        composed = _compose_prompt(
-            instruction=prompt_text,
-            snapshot=prompt_snapshot,
-            schema_hint=schema_hint,
-            reference=reference,
-            reference_label=_reference_label_for(content_type, content_key),
-        )
-        response = llm.complete(composed)
-        payload = _parse_llm_json(str(response))
-        if content_type == "system":
-            if not isinstance(payload, dict):
-                raise GuideGenerationError("system payload must be an object")
+        if use_equipment_placeholder:
+            payload = build_placeholder_system_module(content_key)
             payload = _finalize_system_payload(content_key, payload, reference)
+        else:
+            llm = llm or _build_llm()
+            composed = _compose_prompt(
+                instruction=prompt_text,
+                snapshot=prompt_snapshot,
+                schema_hint=schema_hint,
+                reference=reference,
+                reference_label=_reference_label_for(content_type, content_key),
+            )
+            response = llm.complete(composed)
+            payload = _parse_llm_json(str(response))
+            if content_type == "system":
+                if not isinstance(payload, dict):
+                    raise GuideGenerationError("system payload must be an object")
+                payload = _finalize_system_payload(content_key, payload, reference)
         _validate_module_payload(content_type, content_key, payload)
 
         module_id, reused_draft = _save_generated_draft(
@@ -1088,6 +1112,7 @@ def generate_module(
             "content_key": content_key,
             "status": "completed",
             "reused_draft": reused_draft,
+            "equipment_placeholder": use_equipment_placeholder,
         }
     except Exception as exc:
         _fail_generation_run(conn, run_id, str(exc))

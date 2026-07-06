@@ -28,6 +28,7 @@ from admin.vessel_service import (
     update_vessel,
 )
 from guide_context_utils import build_guide_context_from_form
+from guide_equipment_coverage import list_system_equipment_gaps
 
 router = APIRouter(prefix="/vessels", tags=["admin-vessels"])
 
@@ -401,6 +402,9 @@ async def vessel_equipment_page(
         )
 
     installed_ids = {item["equipment_id"] for item in installed}
+    guide_equipment_gaps = list_system_equipment_gaps(
+        [{"system_category": item["system_category"]} for item in installed]
+    )
     return templates.TemplateResponse(
         request,
         "vessels/equipment.html",
@@ -416,6 +420,7 @@ async def vessel_equipment_page(
             "manufacturer": manufacturer,
             "query": q,
             "system_category": system_category,
+            "guide_equipment_gaps": guide_equipment_gaps,
         },
     )
 

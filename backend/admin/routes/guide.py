@@ -10,7 +10,8 @@ from sqlalchemy import text
 from admin.auth import require_admin_user
 from admin.deps import get_engine, templates
 from admin.guide_review_meta import attach_review_meta
-from guide_generation import GuideGenerationError, run_guide_generation
+from guide_generation import GuideGenerationError, load_vessel_generation_context, run_guide_generation
+from guide_equipment_coverage import gaps_for_modules, list_system_equipment_gaps
 from guide_module_catalog import GENERATION_SET_OPTIONS, modules_for_sets
 from guide_context_utils import emergency_contacts_count, merge_guide_context
 from guide_publish import PublishValidationError, assemble_publication, publish_vessel_guide
@@ -206,9 +207,14 @@ async def vessel_guide_overview(
 
     preview_error = None
     preview = None
+    equipment_gaps: list[dict] = []
     try:
         with get_engine().connect() as conn:
             preview = assemble_publication(conn, vessel_id, vessel["slug"])
+            generation_context = load_vessel_generation_context(conn, vessel_id)
+            equipment_gaps = list_system_equipment_gaps(
+                generation_context.get("equipment") or []
+            )
     except PublishValidationError as exc:
         preview_error = exc.messages
 
@@ -224,6 +230,7 @@ async def vessel_guide_overview(
             "preview": preview,
             "preview_error": preview_error,
             "generation_sets": GENERATION_SET_OPTIONS,
+            "equipment_gaps": equipment_gaps,
         },
     )
 
@@ -318,6 +325,7 @@ async def approve_module(
 async def generate_guide_modules(
     vessel_id: str,
     module_sets: Annotated[list[str], Form()] = [],
+    confirm_equipment_gaps: str = Form(""),
     admin_user: str = Depends(require_admin_user),
 ):
     if not module_sets:
@@ -345,6 +353,18 @@ async def generate_guide_modules(
 
     try:
         with get_engine().begin() as conn:
+            snapshot = load_vessel_generation_context(conn, vessel_id)
+            equipment_gaps = gaps_for_modules(
+                snapshot.get("equipment") or [], modules
+            )
+            if equipment_gaps and confirm_equipment_gaps != "yes":
+                from urllib.parse import quote
+
+                gap_titles = ", ".join(gap["title"] for gap in equipment_gaps)
+                return RedirectResponse(
+                    f"/admin/vessels/{vessel_id}/guide?gen_error={quote('Equipment gap confirmation required.')}",
+                    status_code=303,
+                )
             result = run_guide_generation(
                 conn,
                 vessel_id,

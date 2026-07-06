@@ -15,6 +15,19 @@
 <div class="flash flash-error">{{ request.query_params.get('error') }}</div>
 {% endif %}
 
+{% if guide_equipment_gaps %}
+<section class="panel">
+  <h2>Guide coverage gaps</h2>
+  <p class="muted">These Learn/Know guide sections have no linked equipment yet. Guide generation will produce a “not yet available” placeholder until equipment is added.</p>
+  <ul class="note-list">
+    {% for gap in guide_equipment_gaps %}
+    <li><strong>{{ gap.title }}</strong> — expected categories: {% for cat in gap.categories %}{{ cat | format_label }}{% if not loop.last %}, {% endif %}{% endfor %}</li>
+    {% endfor %}
+  </ul>
+  <p><a href="/admin/vessels/{{ vessel.id }}/guide">Open vessel guide</a></p>
+</section>
+{% endif %}
+
 <div class="panel-grid">
   <section class="panel">
     <h2>Installed ({{ installed|length }})</h2>

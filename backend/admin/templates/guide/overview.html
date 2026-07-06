@@ -37,6 +37,14 @@
         before generating the emergency module.
       </div>
     {% endif %}
+    {% if equipment_gaps %}
+      <div class="flash flash-warn">
+        <strong>{{ equipment_gaps|length }} equipment guide section(s)</strong> have no linked equipment yet
+        (e.g. {{ equipment_gaps[0].title }}{% if equipment_gaps|length > 1 %}, …{% endif %}).
+        You can still generate — missing sections will show a “not yet available” placeholder.
+        <a href="/admin/vessels/{{ vessel.id }}/equipment">Configure equipment</a>
+      </div>
+    {% endif %}
 
     <p><a href="/admin/vessels/{{ vessel.id }}/guide-context">Edit guide context</a> (emergency contacts, VHF, local rules)</p>
 
@@ -74,6 +82,7 @@
         </span>
       </div>
       <p class="muted generate-form-note">Existing drafts for selected sections are overwritten.</p>
+      <input type="hidden" name="confirm_equipment_gaps" id="confirm-equipment-gaps" value="">
       <button type="submit" class="button">Generate selected drafts</button>
     </form>
     <p><a class="button" href="/admin/vessels/{{ vessel.id }}/guide/publish">Publish new version</a></p>
@@ -141,10 +150,19 @@
 {% endblock %}
 
 {% block scripts %}
+<script id="equipment-gaps-data" type="application/json">{{ equipment_gaps | tojson }}</script>
 <script>
 (function () {
   var full = document.getElementById('gen-full-guide');
   var sections = document.querySelectorAll('.gen-section-checkbox');
+  var form = document.getElementById('guide-generate-form');
+  var confirmField = document.getElementById('confirm-equipment-gaps');
+  var gapsData = document.getElementById('equipment-gaps-data');
+  var equipmentGaps = [];
+  if (gapsData) {
+    try { equipmentGaps = JSON.parse(gapsData.textContent || '[]'); } catch (e) {}
+  }
+
   if (!full || !sections.length) return;
 
   function allSectionsChecked() {
@@ -166,6 +184,36 @@
   sections.forEach(function (cb) {
     cb.addEventListener('change', syncFullFromSections);
   });
+
+  function selectedIncludesSystems() {
+    for (var i = 0; i < sections.length; i++) {
+      var cb = sections[i];
+      if (!cb.checked) continue;
+      if (cb.value === 'systems' || cb.value === 'full') return true;
+    }
+    return full && full.checked;
+  }
+
+  function gapsForSelection() {
+    if (!equipmentGaps.length || !selectedIncludesSystems()) return [];
+    return equipmentGaps;
+  }
+
+  if (form && confirmField) {
+    form.addEventListener('submit', function (event) {
+      var gaps = gapsForSelection();
+      if (!gaps.length || confirmField.value === 'yes') return;
+      var titles = gaps.map(function (g) { return g.title; }).join(', ');
+      var message =
+        gaps.length + ' guide section(s) have no matching equipment yet (' + titles + '). ' +
+        'Generate anyway? Those sections will use a “not yet available” placeholder.';
+      if (!window.confirm(message)) {
+        event.preventDefault();
+        return;
+      }
+      confirmField.value = 'yes';
+    });
+  }
 })();
 </script>
 {% endblock %}
