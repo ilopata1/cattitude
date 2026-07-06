@@ -46,8 +46,14 @@ jobs:
           node ../utilities/patch_github_pages_assets.mjs www
 
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
+          path: mobile/www
+
+      - name: Upload www for pages-live mirror
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-www
           path: mobile/www
 
   deploy:
@@ -59,7 +65,7 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
 
   mirror-pages-live:
     needs: build
@@ -70,7 +76,7 @@ jobs:
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
-          name: github-pages
+          name: mobile-www
           path: /tmp/cattitude-www
 
       - name: Push mobile/www to pages-live branch
