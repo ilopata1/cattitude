@@ -12,6 +12,7 @@ from admin.deps import get_engine, templates
 from admin.guide_review_meta import attach_review_meta
 from guide_generation import GuideGenerationError, run_guide_generation
 from guide_module_catalog import GENERATION_SET_OPTIONS, modules_for_sets
+from guide_context_utils import emergency_contacts_count, merge_guide_context
 from guide_publish import PublishValidationError, assemble_publication, publish_vessel_guide
 
 router = APIRouter(prefix="/vessels/{vessel_id}/guide", tags=["admin-guide"])
@@ -25,7 +26,10 @@ def _load_vessel(conn, vessel_id: str) -> dict | None:
                 v.id, v.name, v.slug,
                 b.name AS base_name,
                 b.guide_context_version,
-                b.updated_at AS base_updated_at
+                b.updated_at AS base_updated_at,
+                b.guide_context AS base_guide_context,
+                v.guide_context AS vessel_guide_context,
+                v.guide_context_version AS vessel_guide_context_version
             FROM vessels v
             LEFT JOIN charter_operating_bases b ON b.id = v.charter_operating_base_id
             WHERE v.id = :vessel_id
@@ -35,6 +39,9 @@ def _load_vessel(conn, vessel_id: str) -> dict | None:
     ).fetchone()
     if not row:
         return None
+    base_context = _coerce_jsonb(row[6]) if row[6] else {}
+    vessel_context = _coerce_jsonb(row[7]) if row[7] else {}
+    merged_context = merge_guide_context(base_context, vessel_context)
     return {
         "id": str(row[0]),
         "name": row[1],
@@ -42,6 +49,8 @@ def _load_vessel(conn, vessel_id: str) -> dict | None:
         "base_name": row[3],
         "guide_context_version": row[4],
         "base_updated_at": row[5],
+        "vessel_guide_context_version": row[8],
+        "emergency_contact_count": emergency_contacts_count(merged_context),
     }
 
 

@@ -9,6 +9,7 @@ from sqlalchemy import text
 
 from admin.auth import require_admin_user
 from admin.deps import get_engine, templates
+from guide_context_utils import build_guide_context_from_form
 
 router = APIRouter(prefix="/operating-bases", tags=["admin-operating-bases"])
 
@@ -19,20 +20,6 @@ GUIDE_CONTEXT_FIELDS = (
     "countryCode",
     "timezone",
 )
-
-
-def _parse_emergency_contacts(raw: str) -> list[dict[str, Any]]:
-    raw = raw.strip()
-    if not raw:
-        return []
-    data = json.loads(raw)
-    if not isinstance(data, list):
-        raise ValueError("emergencyContacts must be a JSON array.")
-    return data
-
-
-def _parse_local_rules(raw: str) -> list[str]:
-    return [line.strip() for line in raw.splitlines() if line.strip()]
 
 
 @router.get("")
@@ -166,25 +153,22 @@ async def save_operating_base(
 ):
     error: str | None = None
     try:
-        guide_context = {
-            "displayName": display_name.strip(),
-            "regionLabel": region_label.strip(),
-            "marina": marina.strip(),
-            "countryCode": country_code.strip(),
-            "timezone": timezone.strip(),
-            "officeVhf": {
-                "label": office_vhf_label.strip(),
-                "channel": office_vhf_channel.strip(),
-                "hours": office_vhf_hours.strip(),
-            },
-            "marinaVhf": {
-                "label": marina_vhf_label.strip(),
-                "channel": marina_vhf_channel.strip(),
-                "detail": marina_vhf_detail.strip(),
-            },
-            "emergencyContacts": _parse_emergency_contacts(emergency_contacts_json),
-            "localRules": _parse_local_rules(local_rules_text),
-        }
+        guide_context = build_guide_context_from_form(
+            display_name=display_name,
+            region_label=region_label,
+            marina=marina,
+            country_code=country_code,
+            timezone=timezone,
+            vessel_callsign="",
+            office_vhf_label=office_vhf_label,
+            office_vhf_channel=office_vhf_channel,
+            office_vhf_hours=office_vhf_hours,
+            marina_vhf_label=marina_vhf_label,
+            marina_vhf_channel=marina_vhf_channel,
+            marina_vhf_detail=marina_vhf_detail,
+            emergency_contacts_json=emergency_contacts_json,
+            local_rules_text=local_rules_text,
+        )
     except (json.JSONDecodeError, ValueError) as exc:
         error = str(exc)
         guide_context = None

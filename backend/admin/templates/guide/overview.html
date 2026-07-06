@@ -30,6 +30,15 @@
     {% if stale_context %}
       <div class="flash flash-warn">Operating base context changed since last publication. Regenerate guide content before the next publish.</div>
     {% endif %}
+    {% if vessel.emergency_contact_count == 0 %}
+      <div class="flash flash-warn">
+        No emergency contacts configured.
+        <a href="/admin/vessels/{{ vessel.id }}/guide-context">Add guide context</a>
+        before generating the emergency module.
+      </div>
+    {% endif %}
+
+    <p><a href="/admin/vessels/{{ vessel.id }}/guide-context">Edit guide context</a> (emergency contacts, VHF, local rules)</p>
 
     <h3>Generate drafts</h3>
     <form

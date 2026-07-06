@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}{{ vessel.name }} — Guide context — Clever Sailor Admin{% endblock %}
+{% block content %}
+<p class="breadcrumb">
+  <a href="/admin/vessels">Vessels</a> /
+  <a href="/admin/vessels/{{ vessel.id }}/edit">{{ vessel.name }}</a> /
+  Guide context
+</p>
+<h1>{{ vessel.name }} — guide context</h1>
+
+{% if vessel.base_name %}
+<p class="lede">
+  Charter base <strong>{{ vessel.base_name }}</strong> supplies default contacts and local rules.
+  Entries here override the base for this vessel only.
+</p>
+{% else %}
+<p class="lede">
+  Private-owner vessel — add emergency contacts and VHF details here before generating the guide.
+  The emergency module requires at least one contact.
+</p>
+{% endif %}
+
+<p class="lede">Guide context version <strong>v{{ vessel.guide_context_version }}</strong>. Saving bumps the version; regenerate affected guide modules before publishing.</p>
+
+{% if request.query_params.get('saved') %}
+<div class="flash flash-ok">Guide context saved.</div>
+{% endif %}
+{% if error %}
+<div class="flash flash-error">{{ error }}</div>
+{% endif %}
+
+<form method="post" class="form-grid">
+  <fieldset>
+    <legend>Location</legend>
+    <label>Display name<input name="display_name" value="{{ context.displayName or '' }}" placeholder="e.g. Chesapeake Bay"></label>
+    <label>Region label<input name="region_label" value="{{ context.regionLabel or '' }}"></label>
+    <label>Home marina<input name="marina" value="{{ context.marina or '' }}"></label>
+    <label>Country code<input name="country_code" value="{{ context.countryCode or '' }}" maxlength="2"></label>
+    <label>Timezone<input name="timezone" value="{{ context.timezone or '' }}" placeholder="America/New_York"></label>
+    <label>Vessel callsign (MAYDAY)<input name="vessel_callsign" value="{{ context.vesselCallsign or vessel.name }}" placeholder="{{ vessel.name }}"></label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Office / owner VHF</legend>
+    <label>Label<input name="office_vhf_label" value="{{ context.officeVhf.label if context.officeVhf else '' }}" placeholder="Owner VHF"></label>
+    <label>Channel<input name="office_vhf_channel" value="{{ context.officeVhf.channel if context.officeVhf else '' }}" placeholder="Ch 16"></label>
+    <label>Hours / notes<input name="office_vhf_hours" value="{{ context.officeVhf.hours if context.officeVhf else '' }}"></label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Marina / harbour VHF</legend>
+    <label>Label<input name="marina_vhf_label" value="{{ context.marinaVhf.label if context.marinaVhf else '' }}"></label>
+    <label>Channel<input name="marina_vhf_channel" value="{{ context.marinaVhf.channel if context.marinaVhf else '' }}"></label>
+    <label>Detail<input name="marina_vhf_detail" value="{{ context.marinaVhf.detail if context.marinaVhf else '' }}"></label>
+  </fieldset>
+
+  <fieldset class="full-width">
+    <legend>Emergency contacts (JSON array) — required for guide generation</legend>
+    <p class="muted">Same shape as the mobile app <code>emergency.contacts</code> list. Each item needs <code>label</code>, <code>value</code>, and <code>action</code> (<code>call</code> or <code>vhf</code>). Add <code>tel</code> for phone numbers.</p>
+    <textarea name="emergency_contacts_json" rows="14">{{ emergency_contacts_json }}</textarea>
+  </fieldset>
+
+  <fieldset class="full-width">
+    <legend>Local rules (one per line)</legend>
+    <textarea name="local_rules_text" rows="6">{{ local_rules_text }}</textarea>
+  </fieldset>
+
+  <div class="form-actions full-width">
+    <button type="submit">Save guide context</button>
+    <a href="/admin/vessels/{{ vessel.id }}/guide">Guide overview</a>
+    <a href="/admin/vessels/{{ vessel.id }}/edit">Back to vessel</a>
+  </div>
+</form>
+{% endblock %}

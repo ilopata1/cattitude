@@ -13,6 +13,7 @@ from sqlalchemy.engine import Connection
 
 from config import settings
 from guide_bootstrap import canonical_json_hash
+from guide_context_utils import emergency_contacts_count, merge_guide_context
 from guide_module_catalog import (
     CHECKLIST_CATALOG,
     CHECKLIST_MODULES,
@@ -78,10 +79,10 @@ Audience: charter guests. Tone: clear and welcoming.
 If REFERENCE MODULE is provided, match its structure and preserve headerLogo/heroLogo paths exactly if present.
 
 Return JSON only — the branding object, no wrapper.""",
-    ("emergency", "emergency"): """Generate the emergency module for a charter vessel guide.
+    ("emergency", "emergency"): """Generate the emergency module for a vessel guide.
 
-Use INPUT SNAPSHOT operating_base.guide_context for contacts and local VHF channels.
-Use vessel.name for mayday callsign and modalSubtitle.
+Use INPUT SNAPSHOT guide_context for contacts and local VHF channels (merged operating base + vessel-specific context).
+Use guide_context.vesselCallsign or vessel.name for mayday callsign and modalSubtitle.
 Include standard MAYDAY steps on VHF Ch 16.
 
 contacts[].action must be "call" or "vhf". Include tel for phone contacts.
@@ -89,7 +90,7 @@ contacts[].action must be "call" or "vhf". Include tel for phone contacts.
 Return JSON only — the emergency object, no wrapper.""",
     ("ui", "homeRuleSections"): """Generate homeRuleSections for the Home tab.
 
-Use operating_base.guide_context.localRules and emergencyContacts where relevant.
+Use guide_context.localRules and emergencyContacts where relevant.
 Include toilet/waste rule for Tecma electric heads if equipment mentions Tecma.
 Include coral anchoring rule for Bahamas charter bases when localRules mention coral.
 
@@ -193,6 +194,7 @@ def load_vessel_generation_context(conn: Connection, vessel_id: str) -> dict[str
                 cob.id AS operating_base_id,
                 cob.name AS operating_base_name,
                 cob.guide_context,
+                v.guide_context AS vessel_guide_context,
                 hm.manufacturer AS hull_manufacturer,
                 hm.model_code AS hull_model_code,
                 hm.display_name AS hull_display_name
@@ -229,12 +231,17 @@ def load_vessel_generation_context(conn: Connection, vessel_id: str) -> dict[str
         {"vessel_id": vessel_id},
     ).fetchall()
 
+    base_guide_context = _coerce_jsonb(row[8]) if row[8] else {}
+    vessel_guide_context = _coerce_jsonb(row[9]) if row[9] else {}
+    merged_guide_context = merge_guide_context(base_guide_context, vessel_guide_context)
+
     return {
         "vessel": {
             "id": str(row[0]),
             "name": row[1],
             "slug": row[2],
             "vessel_type": row[3],
+            "guide_context": vessel_guide_context,
         },
         "charter_company": {
             "id": str(row[4]) if row[4] else None,
@@ -243,14 +250,15 @@ def load_vessel_generation_context(conn: Connection, vessel_id: str) -> dict[str
         "operating_base": {
             "id": str(row[6]) if row[6] else None,
             "name": row[7],
-            "guide_context": _coerce_jsonb(row[8]) if row[8] else {},
+            "guide_context": base_guide_context,
         },
+        "guide_context": merged_guide_context,
         "hull_model": {
-            "manufacturer": row[9],
-            "model_code": row[10],
-            "display_name": row[11],
+            "manufacturer": row[10],
+            "model_code": row[11],
+            "display_name": row[12],
         }
-        if row[9]
+        if row[10]
         else None,
         "equipment": [
             {
@@ -979,6 +987,13 @@ def generate_module(
             trigger=trigger,
             created_by=created_by,
         )
+    if content_type == "emergency":
+        if emergency_contacts_count(snapshot_payload.get("guide_context")) < 1:
+            raise GuideGenerationError(
+                "No emergency contacts in guide context. Open Admin → Vessels → "
+                "Guide context and add at least one emergency contact (or set an "
+                "operating base with contacts for charter vessels)."
+            )
 
     prompt_text, prompt_ref = _resolve_prompt_text(conn, content_type, content_key)
     schema_hint = _schema_hint_for(content_type, content_key)

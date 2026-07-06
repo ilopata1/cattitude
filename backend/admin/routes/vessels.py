@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+
 from fastapi import APIRouter, Depends, Form, Query, Request
 from fastapi.responses import RedirectResponse
 from sqlalchemy import text
@@ -25,6 +27,7 @@ from admin.vessel_service import (
     slugify,
     update_vessel,
 )
+from guide_context_utils import build_guide_context_from_form
 
 router = APIRouter(prefix="/vessels", tags=["admin-vessels"])
 
@@ -458,3 +461,158 @@ async def apply_pack_action(
         f"/admin/vessels/{vessel_id}/equipment?pack_applied=1",
         status_code=303,
     )
+
+
+@router.get("/{vessel_id}/guide-context")
+async def vessel_guide_context_form(
+    request: Request,
+    vessel_id: str,
+    admin_user: str = Depends(require_admin_user),
+):
+    with get_engine().connect() as conn:
+        row = conn.execute(
+            text(
+                """
+                SELECT
+                    v.id, v.name, v.slug,
+                    v.guide_context, v.guide_context_version,
+                    b.name AS base_name
+                FROM vessels v
+                LEFT JOIN charter_operating_bases b ON b.id = v.charter_operating_base_id
+                WHERE v.id = :vessel_id
+                """
+            ),
+            {"vessel_id": vessel_id},
+        ).fetchone()
+        if not row:
+            return RedirectResponse("/admin/vessels", status_code=303)
+        context = row[3] if isinstance(row[3], dict) else json.loads(row[3] or "{}")
+
+    return templates.TemplateResponse(
+        request,
+        "vessels/guide_context.html",
+        {
+            "admin_user": admin_user,
+            "vessel": {
+                "id": str(row[0]),
+                "name": row[1],
+                "slug": row[2],
+                "guide_context_version": row[4],
+                "base_name": row[5],
+            },
+            "context": context,
+            "emergency_contacts_json": json.dumps(
+                context.get("emergencyContacts", []), indent=2
+            ),
+            "local_rules_text": "\n".join(context.get("localRules", [])),
+            "error": None,
+        },
+    )
+
+
+@router.post("/{vessel_id}/guide-context")
+async def save_vessel_guide_context(
+    request: Request,
+    vessel_id: str,
+    admin_user: str = Depends(require_admin_user),
+    display_name: str = Form(""),
+    region_label: str = Form(""),
+    marina: str = Form(""),
+    country_code: str = Form(""),
+    timezone: str = Form(""),
+    vessel_callsign: str = Form(""),
+    office_vhf_label: str = Form(""),
+    office_vhf_channel: str = Form(""),
+    office_vhf_hours: str = Form(""),
+    marina_vhf_label: str = Form(""),
+    marina_vhf_channel: str = Form(""),
+    marina_vhf_detail: str = Form(""),
+    emergency_contacts_json: str = Form("[]"),
+    local_rules_text: str = Form(""),
+):
+    error: str | None = None
+    try:
+        guide_context = build_guide_context_from_form(
+            display_name=display_name,
+            region_label=region_label,
+            marina=marina,
+            country_code=country_code,
+            timezone=timezone,
+            vessel_callsign=vessel_callsign,
+            office_vhf_label=office_vhf_label,
+            office_vhf_channel=office_vhf_channel,
+            office_vhf_hours=office_vhf_hours,
+            marina_vhf_label=marina_vhf_label,
+            marina_vhf_channel=marina_vhf_channel,
+            marina_vhf_detail=marina_vhf_detail,
+            emergency_contacts_json=emergency_contacts_json,
+            local_rules_text=local_rules_text,
+        )
+    except (json.JSONDecodeError, ValueError) as exc:
+        error = str(exc)
+        guide_context = None
+
+    if guide_context is not None:
+        with get_engine().begin() as conn:
+            updated = conn.execute(
+                text(
+                    """
+                    UPDATE vessels
+                    SET
+                        guide_context = CAST(:guide_context AS jsonb),
+                        guide_context_version = guide_context_version + 1
+                    WHERE id = :vessel_id
+                    RETURNING guide_context_version
+                    """
+                ),
+                {
+                    "vessel_id": vessel_id,
+                    "guide_context": json.dumps(guide_context),
+                },
+            ).fetchone()
+        if updated:
+            return RedirectResponse(
+                f"/admin/vessels/{vessel_id}/guide-context?saved=1",
+                status_code=303,
+            )
+        error = "Vessel not found."
+
+    with get_engine().connect() as conn:
+        row = conn.execute(
+            text(
+                """
+                SELECT
+                    v.id, v.name, v.slug,
+                    v.guide_context, v.guide_context_version,
+                    b.name AS base_name
+                FROM vessels v
+                LEFT JOIN charter_operating_bases b ON b.id = v.charter_operating_base_id
+                WHERE v.id = :vessel_id
+                """
+            ),
+            {"vessel_id": vessel_id},
+        ).fetchone()
+    if not row:
+        return RedirectResponse("/admin/vessels", status_code=303)
+    context = row[3] if isinstance(row[3], dict) else json.loads(row[3] or "{}")
+
+    return templates.TemplateResponse(
+        request,
+        "vessels/guide_context.html",
+        {
+            "admin_user": admin_user,
+            "vessel": {
+                "id": str(row[0]),
+                "name": row[1],
+                "slug": row[2],
+                "guide_context_version": row[4],
+                "base_name": row[5],
+            },
+            "context": context,
+            "emergency_contacts_json": emergency_contacts_json,
+            "local_rules_text": local_rules_text,
+            "error": error,
+        },
+        status_code=400,
+    )
+

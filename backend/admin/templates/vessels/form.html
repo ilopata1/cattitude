@@ -64,6 +64,7 @@
     <button type="submit">Save vessel</button>
     {% if vessel and vessel.id %}
     <a href="/admin/vessels/{{ vessel.id }}/equipment">Equipment</a>
+    <a href="/admin/vessels/{{ vessel.id }}/guide-context">Guide context</a>
     <a href="/admin/vessels/{{ vessel.id }}/guide">Guide</a>
     <a href="/admin/vessels/{{ vessel.id }}/clone">Clone</a>
     {% endif %}
