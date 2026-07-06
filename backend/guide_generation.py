@@ -90,9 +90,17 @@ contacts[].action must be "call" or "vhf". Include tel for phone contacts.
 Return JSON only — the emergency object, no wrapper.""",
     ("ui", "homeRuleSections"): """Generate homeRuleSections for the Home tab.
 
-Use guide_context.localRules and emergencyContacts where relevant.
-Include toilet/waste rule for Tecma electric heads if equipment mentions Tecma.
-Include coral anchoring rule for Bahamas charter bases when localRules mention coral.
+Use ONLY facts from INPUT SNAPSHOT (vessel, guide_context, equipment).
+Turn guide_context.localRules into guest-facing rules when present.
+Add equipment-specific rules only when manufacturer/model in the snapshot supports them.
+
+STRICT RULES:
+- Do NOT include location-specific rules (anchoring, VHF channels, marina/charter contacts)
+  unless explicitly stated in guide_context.localRules or guide_context VHF/contact fields.
+- Do NOT mention equipment brands or models absent from INPUT SNAPSHOT equipment.
+- Do NOT assume charter base, cruising region, or head type — use snapshot facts only.
+- If REFERENCE MODULE is provided, match its section structure and tone only; write fresh rule
+  text from INPUT SNAPSHOT. Never copy reference rule wording the snapshot does not support.
 
 Produce 2–3 sections: Never Do This (danger), Always Do This (caution), optional Good Habits (good).
 Each rule needs icon (emoji), tone, and text. Add link only when referencing a checklist route.
@@ -439,10 +447,31 @@ def _resolve_prompt_text(
     )
 
 
+def _reference_statuses_for(content_type: str, content_key: str) -> tuple[str, ...]:
+    """Draft modules are not used as LLM reference for home rules (avoids bad-output loops)."""
+    if content_type == "ui" and content_key == "homeRuleSections":
+        return ("approved", "published")
+    return ("approved", "published", "draft")
+
+
+def _reference_label_for(content_type: str, content_key: str) -> str:
+    if content_type == "ui" and content_key == "homeRuleSections":
+        return (
+            "REFERENCE MODULE (section layout and tone only; every rule text must come "
+            "from INPUT SNAPSHOT — do not copy reference wording):"
+        )
+    return "REFERENCE MODULE (structure/tone; do not copy stale facts over snapshot):"
+
+
 def _load_reference_module(
-    conn: Connection, vessel_id: str, content_type: str, content_key: str
+    conn: Connection,
+    vessel_id: str,
+    content_type: str,
+    content_key: str,
+    *,
+    statuses: tuple[str, ...] | None = None,
 ) -> Any | None:
-    for status in ("approved", "published", "draft"):
+    for status in statuses or _reference_statuses_for(content_type, content_key):
         row = conn.execute(
             text(
                 """
@@ -942,6 +971,7 @@ def _compose_prompt(
     snapshot: dict[str, Any],
     schema_hint: str,
     reference: Any | None,
+    reference_label: str | None = None,
 ) -> str:
     parts = [
         instruction,
@@ -953,10 +983,13 @@ def _compose_prompt(
         json.dumps(snapshot, indent=2, sort_keys=True),
     ]
     if reference is not None:
+        label = reference_label or (
+            "REFERENCE MODULE (structure/tone; do not copy stale facts over snapshot):"
+        )
         parts.extend(
             [
                 "",
-                "REFERENCE MODULE (structure/tone; do not copy stale facts over snapshot):",
+                label,
                 json.dumps(reference, indent=2, sort_keys=True),
             ]
         )
@@ -1026,6 +1059,7 @@ def generate_module(
             snapshot=prompt_snapshot,
             schema_hint=schema_hint,
             reference=reference,
+            reference_label=_reference_label_for(content_type, content_key),
         )
         response = llm.complete(composed)
         payload = _parse_llm_json(str(response))
