@@ -119,9 +119,11 @@ Audience: charter guests on day one. Tone: orientation — where things are, lay
 
 Produce id "overview", icon "🗺️", locs for cockpit/helm/saloon.
 Include summary (1-2 sentences), learnChecks (6-10 walkthrough items), and sections:
-- About [vessel name] (prose) — hull model facts from snapshot only
+- About [vessel name] (prose) — hull model facts from snapshot only; prose sections MUST use field "c" for paragraph text
 - Layout (list) — cabin/hull layout using hull model; do not invent cabin counts not supported by snapshot
 - Find These on Day 1 (steps) — safety gear and key locations (life jackets, EPIRB, fire ext, panel, fuel/water fills)
+
+If hull_model or layout details are missing from the snapshot, say so plainly in prose — do not invent cabin counts or layout.
 
 Do NOT include sections with type "photo" — deck plan photos are preserved from REFERENCE MODULE separately.
 If REFERENCE MODULE is provided, match its section structure and tone; update facts from snapshot.
@@ -400,6 +402,7 @@ TARGET: {focus}
 Produce id "{system_id}", icon "{icon}", locs {json.dumps(locs)}.
 Include title, subtitle, summary (1-2 sentences), learnChecks (6-8 items), and sections.
 Section types allowed: prose, list, steps, warnings, notes. Do NOT include photo sections — photos are merged from REFERENCE separately.
+Prose sections MUST use field "c" for paragraph text (not "text" or "content").
 
 Use ONLY facts from INPUT SNAPSHOT and RELEVANT EQUIPMENT below. Match REFERENCE structure and tone when provided.
 
@@ -835,6 +838,56 @@ def _merge_system_photo_sections(
     return payload
 
 
+def _normalize_system_section(section: dict[str, Any]) -> dict[str, Any]:
+    """Coerce common LLM field names and fill empty prose when needed."""
+    normalized = dict(section)
+    section_type = normalized.get("type")
+    if section_type == "prose" and not normalized.get("c"):
+        for alt_key in ("text", "content", "body", "prose"):
+            alt_value = normalized.get(alt_key)
+            if isinstance(alt_value, str) and alt_value.strip():
+                normalized["c"] = alt_value.strip()
+                break
+        if not normalized.get("c"):
+            title = normalized.get("t") or "This section"
+            normalized["c"] = (
+                f"{title} — detailed information is not yet available. "
+                "Update the vessel configuration and regenerate this section."
+            )
+    if section_type in {"list", "steps", "warnings", "notes"}:
+        items = normalized.get("items")
+        if isinstance(items, list):
+            fixed_items: list[Any] = []
+            for item in items:
+                if isinstance(item, dict):
+                    item_dict = dict(item)
+                    if not item_dict.get("c"):
+                        for alt_key in ("text", "content", "s"):
+                            alt_value = item_dict.get(alt_key)
+                            if isinstance(alt_value, str) and alt_value.strip():
+                                item_dict["c"] = alt_value.strip()
+                                break
+                    fixed_items.append(item_dict)
+                elif isinstance(item, str) and item.strip():
+                    fixed_items.append({"c": item.strip()})
+                else:
+                    fixed_items.append(item)
+            normalized["items"] = fixed_items
+    return normalized
+
+
+def _normalize_system_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    sections = payload.get("sections")
+    if isinstance(sections, list):
+        payload["sections"] = [
+            _normalize_system_section(section)
+            if isinstance(section, dict)
+            else section
+            for section in sections
+        ]
+    return payload
+
+
 def _finalize_system_payload(
     content_key: str,
     payload: dict[str, Any],
@@ -849,7 +902,8 @@ def _finalize_system_payload(
         for key in ("icon", "locs"):
             if not payload.get(key) and reference.get(key):
                 payload[key] = reference[key]
-    return _merge_system_photo_sections(reference, payload)
+    payload = _merge_system_photo_sections(reference, payload)
+    return _normalize_system_payload(payload)
 
 
 def _insert_generation_run(
