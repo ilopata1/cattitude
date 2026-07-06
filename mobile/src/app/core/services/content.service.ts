@@ -35,7 +35,7 @@ export class ContentService {
   ) {}
 
   async loadBootstrapContent(slug: string): Promise<BootstrapContent> {
-    if (environment.guideSyncEnabled) {
+    if (this.shouldSyncFromApi(slug)) {
       try {
         const synced = await this.guideSync.ensureGuide(slug);
         return this.applyLoadedContent(synced, slug);
@@ -44,6 +44,14 @@ export class ContentService {
         const cached = await this.guideSync.loadFromCache(slug);
         if (cached) {
           return this.applyLoadedContent(cached, slug);
+        }
+        if (slug !== environment.defaultVesselSlug) {
+          const detail =
+            error instanceof Error ? error.message : 'Guide sync failed.';
+          throw new GuideLoadError(
+            slug,
+            `Unable to load guide for vessel "${slug}" from the API. ${detail}`,
+          );
         }
       }
     }
@@ -54,6 +62,11 @@ export class ContentService {
     } catch {
       throw new GuideLoadError(slug);
     }
+  }
+
+  /** Published non-default vessels always sync from the API; default vessel uses bundled JSON unless sync is enabled. */
+  private shouldSyncFromApi(slug: string): boolean {
+    return environment.guideSyncEnabled || slug !== environment.defaultVesselSlug;
   }
 
   get loaded(): boolean {

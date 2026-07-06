@@ -6,4 +6,5 @@ export const environment = {
   vesselSlug: 'cattitude',
   bootstrapContentPath: 'data/bootstrap/cattitude.json',
   guideSyncEnabled: false,
+  /** When false, only the defaultVesselSlug uses bundled JSON; other slugs load from the API. */
 };
