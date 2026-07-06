@@ -16,24 +16,42 @@ export class GuideSyncService {
   ) {}
 
   async loadFromCache(vesselSlug: string): Promise<BootstrapContent | null> {
-    const stored = await this.store.getStoredGuide(vesselSlug);
-    if (!stored?.guide) {
+    try {
+      const stored = await this.store.getStoredGuide(vesselSlug);
+      if (!stored?.guide) {
+        return null;
+      }
+      return this.rewriteAssetUrls(vesselSlug, stored.guide as BootstrapContent);
+    } catch (error) {
+      console.warn('Guide cache read failed.', error);
       return null;
     }
-    return this.rewriteAssetUrls(vesselSlug, stored.guide as BootstrapContent);
+  }
+
+  async fetchBundleFromApi(vesselSlug: string): Promise<BootstrapContent> {
+    return this.fetchBundle(vesselSlug);
   }
 
   async ensureGuide(vesselSlug: string): Promise<BootstrapContent> {
     const manifest = await this.fetchManifest(vesselSlug);
-    const stored = await this.store.getStoredGuide(vesselSlug);
+    let stored = null;
+    try {
+      stored = await this.store.getStoredGuide(vesselSlug);
+    } catch (error) {
+      console.warn('Guide cache read failed.', error);
+    }
 
     if (stored?.contentHash === manifest.contentHash) {
       return this.rewriteAssetUrls(vesselSlug, stored.guide as BootstrapContent);
     }
 
     const guide = await this.fetchBundle(vesselSlug);
-    await this.syncAssets(vesselSlug, manifest, stored?.manifest ?? null);
-    await this.store.saveGuide(vesselSlug, manifest, guide);
+    try {
+      await this.syncAssets(vesselSlug, manifest, stored?.manifest ?? null);
+      await this.store.saveGuide(vesselSlug, manifest, guide);
+    } catch (error) {
+      console.warn('Guide cache write failed; continuing with network bundle.', error);
+    }
     return this.rewriteAssetUrls(vesselSlug, guide);
   }
 

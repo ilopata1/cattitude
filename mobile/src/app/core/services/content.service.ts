@@ -46,6 +46,12 @@ export class ContentService {
           return this.applyLoadedContent(cached, slug);
         }
         if (slug !== environment.defaultVesselSlug) {
+          try {
+            const direct = await this.guideSync.fetchBundleFromApi(slug);
+            return this.applyLoadedContent(direct, slug);
+          } catch {
+            // fall through to GuideLoadError below
+          }
           const detail =
             error instanceof Error ? error.message : 'Guide sync failed.';
           throw new GuideLoadError(

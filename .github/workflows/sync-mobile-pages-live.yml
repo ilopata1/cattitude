@@ -1,5 +1,7 @@
 name: Sync mobile web to pages-live
 
+# Deploys the Ionic PWA to GitHub Pages. In repo Settings → Pages, set
+# "Build and deployment" source to GitHub Actions (not a static branch).
 on:
   workflow_dispatch:
   push:
@@ -15,9 +17,15 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
 
 jobs:
-  sync:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -37,9 +45,36 @@ jobs:
           cp www/index.html www/404.html
           node ../utilities/patch_github_pages_assets.mjs www
 
-      - name: Push mobile/www to pages-live root
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: mobile/www
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  mirror-pages-live:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          path: /tmp/cattitude-www
+
+      - name: Push mobile/www to pages-live branch
         run: |
-          cp -a mobile/www /tmp/cattitude-www
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git fetch origin pages-live
@@ -47,5 +82,5 @@ jobs:
           git rm -rf .
           cp -a /tmp/cattitude-www/. .
           git add -A
-          git diff --staged --quiet || git commit -m "Sync from main/mobile/www"
+          git diff --staged --quiet || git commit -m "Sync from main/mobile/www (${GITHUB_SHA::7})"
           git push origin pages-live
