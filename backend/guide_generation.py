@@ -838,8 +838,41 @@ def _merge_system_photo_sections(
     return payload
 
 
+def _collect_section_items(section: dict[str, Any]) -> list[Any]:
+    items = section.get("items")
+    if isinstance(items, list):
+        return items
+    for alt_key in ("warnings", "steps", "list", "bullets", "points", "notes"):
+        alt = section.get(alt_key)
+        if isinstance(alt, list):
+            return alt
+        if isinstance(alt, str) and alt.strip():
+            return [alt.strip()]
+    return []
+
+
+def _normalize_list_item(item: Any) -> Any | None:
+    if isinstance(item, str):
+        stripped = item.strip()
+        return stripped if stripped else None
+    if isinstance(item, dict):
+        item_dict = dict(item)
+        if not item_dict.get("c"):
+            for alt_key in ("text", "content", "s", "label", "title", "body"):
+                alt_value = item_dict.get(alt_key)
+                if isinstance(alt_value, str) and alt_value.strip():
+                    item_dict["c"] = alt_value.strip()
+                    break
+        if item_dict.get("c"):
+            return item_dict
+        for value in item_dict.values():
+            if isinstance(value, str) and value.strip():
+                return {"c": value.strip()}
+    return None
+
+
 def _normalize_system_section(section: dict[str, Any]) -> dict[str, Any]:
-    """Coerce common LLM field names and fill empty prose when needed."""
+    """Coerce common LLM field names and fill empty content when needed."""
     normalized = dict(section)
     section_type = normalized.get("type")
     if section_type == "prose" and not normalized.get("c"):
@@ -855,35 +888,62 @@ def _normalize_system_section(section: dict[str, Any]) -> dict[str, Any]:
                 "Update the vessel configuration and regenerate this section."
             )
     if section_type in {"list", "steps", "warnings", "notes"}:
-        items = normalized.get("items")
-        if isinstance(items, list):
-            fixed_items: list[Any] = []
-            for item in items:
-                if isinstance(item, dict):
-                    item_dict = dict(item)
-                    if not item_dict.get("c"):
-                        for alt_key in ("text", "content", "s"):
-                            alt_value = item_dict.get(alt_key)
-                            if isinstance(alt_value, str) and alt_value.strip():
-                                item_dict["c"] = alt_value.strip()
-                                break
-                    fixed_items.append(item_dict)
-                elif isinstance(item, str) and item.strip():
-                    fixed_items.append({"c": item.strip()})
-                else:
-                    fixed_items.append(item)
-            normalized["items"] = fixed_items
+        fixed_items: list[Any] = []
+        for item in _collect_section_items(normalized):
+            fixed = _normalize_list_item(item)
+            if fixed is not None:
+                fixed_items.append(fixed)
+        if not fixed_items:
+            title = normalized.get("t") or section_type
+            fixed_items = [
+                {
+                    "c": (
+                        f"{title} — details not yet available. "
+                        "Configure equipment and regenerate this section."
+                    )
+                }
+            ]
+        normalized["items"] = fixed_items
     return normalized
 
 
 def _normalize_system_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    system_id = str(payload.get("id") or "")
+    meta = SYSTEM_CATALOG.get(system_id, {})
+    if not payload.get("title"):
+        payload["title"] = meta.get("review_title", system_id.replace("_", " ").title())
+    if not payload.get("subtitle"):
+        payload["subtitle"] = "See vessel configuration for equipment-specific details"
+    if not payload.get("summary"):
+        payload["summary"] = (
+            f"Information about {payload['title'].lower()} for this vessel. "
+            "Regenerate after equipment is configured for full detail."
+        )
+    learn_checks = payload.get("learnChecks")
+    if isinstance(learn_checks, list) and not learn_checks:
+        payload.pop("learnChecks", None)
+
     sections = payload.get("sections")
     if isinstance(sections, list):
-        payload["sections"] = [
+        normalized_sections = [
             _normalize_system_section(section)
             if isinstance(section, dict)
             else section
             for section in sections
+        ]
+        payload["sections"] = [
+            section for section in normalized_sections if isinstance(section, dict)
+        ]
+    if not payload.get("sections"):
+        payload["sections"] = [
+            {
+                "t": "Not yet available",
+                "type": "prose",
+                "c": (
+                    "Detailed information for this system is not yet available. "
+                    "Link equipment on the vessel configuration page and regenerate."
+                ),
+            }
         ]
     return payload
 
@@ -1193,17 +1253,27 @@ def run_guide_generation(
         needs_llm = (content_type, content_key) not in COPY_MODULE_KEYS
         if needs_llm and llm is None:
             llm = _build_llm()
-        results.append(
-            generate_module(
-                conn,
-                vessel_id=vessel_id,
-                snapshot_id=snapshot_id,
-                snapshot_payload=snapshot_payload,
-                content_type=content_type,
-                content_key=content_key,
-                trigger=trigger,
-                created_by=created_by,
-                llm=llm,
+        try:
+            results.append(
+                generate_module(
+                    conn,
+                    vessel_id=vessel_id,
+                    snapshot_id=snapshot_id,
+                    snapshot_payload=snapshot_payload,
+                    content_type=content_type,
+                    content_key=content_key,
+                    trigger=trigger,
+                    created_by=created_by,
+                    llm=llm,
+                )
             )
-        )
+        except GuideGenerationError as exc:
+            results.append(
+                {
+                    "content_type": content_type,
+                    "content_key": content_key,
+                    "status": "failed",
+                    "error": str(exc),
+                }
+            )
     return GenerationResult(snapshot_id=snapshot_id, runs=results)

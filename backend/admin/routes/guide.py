@@ -379,8 +379,29 @@ async def generate_guide_modules(
             status_code=303,
         )
 
+    from urllib.parse import quote
+
+    succeeded = [run for run in result.runs if run.get("status") == "completed"]
+    failed = [run for run in result.runs if run.get("status") == "failed"]
+    if failed and not succeeded:
+        return RedirectResponse(
+            f"/admin/vessels/{vessel_id}/guide?gen_error={quote(failed[0]['error'])}",
+            status_code=303,
+        )
+    if failed:
+        failed_labels = ", ".join(
+            f"{run['content_type']}/{run['content_key']}" for run in failed
+        )
+        return RedirectResponse(
+            (
+                f"/admin/vessels/{vessel_id}/guide?generated={len(succeeded)}"
+                f"&gen_warn={quote(f'Some sections failed: {failed_labels}')}"
+            ),
+            status_code=303,
+        )
+
     return RedirectResponse(
-        f"/admin/vessels/{vessel_id}/guide?generated={len(result.runs)}",
+        f"/admin/vessels/{vessel_id}/guide?generated={len(succeeded)}",
         status_code=303,
     )
 
