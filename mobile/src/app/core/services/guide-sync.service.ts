@@ -15,6 +15,14 @@ export class GuideSyncService {
     private readonly store: GuideStoreService,
   ) {}
 
+  async loadFromCache(vesselSlug: string): Promise<BootstrapContent | null> {
+    const stored = await this.store.getStoredGuide(vesselSlug);
+    if (!stored?.guide) {
+      return null;
+    }
+    return this.rewriteAssetUrls(vesselSlug, stored.guide as BootstrapContent);
+  }
+
   async ensureGuide(vesselSlug: string): Promise<BootstrapContent> {
     const manifest = await this.fetchManifest(vesselSlug);
     const stored = await this.store.getStoredGuide(vesselSlug);

@@ -6,7 +6,7 @@ import { environment } from '../../../environments/environment';
 export class VesselContextService {
   private context: VesselContext = {
     vesselId: null,
-    vesselSlug: environment.vesselSlug,
+    vesselSlug: environment.defaultVesselSlug,
     charterCompanyId: null,
     charterId: null,
     guestToken: this.readGuestTokenFromUrl(),
@@ -22,6 +22,10 @@ export class VesselContextService {
 
   get vesselId(): string | null {
     return this.context.vesselId;
+  }
+
+  setVesselSlug(slug: string): void {
+    this.context = { ...this.context, vesselSlug: slug };
   }
 
   /** Called when API resolves slug or guest token to a vessel record. */

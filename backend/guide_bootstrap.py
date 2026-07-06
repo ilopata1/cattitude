@@ -10,15 +10,54 @@ from typing import Any
 
 ASSET_PATH_RE = re.compile(r"assets/images/[^\s\"'<>]+")
 
+LEGACY_SYSTEMS_PREFIX = "assets/images/systems/"
+VESSEL_SYSTEMS_PREFIX = "assets/images/vessels/{slug}/systems/"
+
+
+def vessel_systems_prefix(vessel_slug: str) -> str:
+    return VESSEL_SYSTEMS_PREFIX.format(slug=vessel_slug)
+
+
+def normalize_vessel_asset_paths(data: Any, vessel_slug: str) -> Any:
+    """Rewrite legacy shared image paths to the per-vessel namespace."""
+    target = vessel_systems_prefix(vessel_slug)
+    if isinstance(data, str):
+        return data.replace(LEGACY_SYSTEMS_PREFIX, target)
+    if isinstance(data, dict):
+        return {key: normalize_vessel_asset_paths(value, vessel_slug) for key, value in data.items()}
+    if isinstance(data, list):
+        return [normalize_vessel_asset_paths(item, vessel_slug) for item in data]
+    return data
+
+
 BACKEND_DIR = Path(__file__).resolve().parent
 REPO_ROOT = BACKEND_DIR.parent
 MOBILE_SRC = REPO_ROOT / "mobile" / "src"
 
 
-def asset_file_path(logical_path: str) -> Path:
+def asset_file_path(logical_path: str, *, vessel_slug: str | None = None) -> Path:
     if logical_path.startswith("assets/"):
-        return MOBILE_SRC / logical_path
-    return MOBILE_SRC / "assets" / logical_path
+        primary = MOBILE_SRC / logical_path
+    else:
+        primary = MOBILE_SRC / "assets" / logical_path
+
+    if primary.is_file():
+        return primary
+
+    if vessel_slug and LEGACY_SYSTEMS_PREFIX in logical_path:
+        legacy = MOBILE_SRC / logical_path.replace(
+            vessel_systems_prefix(vessel_slug),
+            LEGACY_SYSTEMS_PREFIX,
+        )
+        if legacy.is_file():
+            return legacy
+
+    if LEGACY_SYSTEMS_PREFIX in logical_path:
+        legacy = MOBILE_SRC / logical_path
+        if legacy.is_file():
+            return legacy
+
+    return primary
 
 
 def canonical_json_hash(data: Any) -> str:
@@ -52,7 +91,7 @@ def build_asset_manifest(
 ) -> list[dict[str, Any]]:
     manifest: list[dict[str, Any]] = []
     for path in find_asset_paths(payload):
-        file_path = asset_file_path(path)
+        file_path = asset_file_path(path, vessel_slug=vessel_slug)
         if file_path.is_file():
             raw = file_path.read_bytes()
             manifest.append(
@@ -168,4 +207,4 @@ def assemble_bootstrap(
         elif content_type == "ui":
             bootstrap["ui"][content_key] = payload
 
-    return bootstrap
+    return normalize_vessel_asset_paths(bootstrap, vessel_slug)

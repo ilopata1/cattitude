@@ -9,7 +9,7 @@ from PIL import Image
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SOURCE = (
     REPO_ROOT
-    / "mobile/src/assets/images/systems/logo-hero-6e4130b11588.png"
+    / "mobile/src/assets/images/vessels/cattitude/systems/logo-hero-6e4130b11588.png"
 )
 ICONS_DIR = REPO_ROOT / "mobile/src/assets/icons"
 FAVICON = REPO_ROOT / "mobile/src/assets/icon/favicon.png"

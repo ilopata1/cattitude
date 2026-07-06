@@ -74,7 +74,7 @@ async def get_guide_asset(slug: str, asset_path: str) -> Response:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     try:
-        raw, content_hash = read_asset_file(logical_path)
+        raw, content_hash = read_asset_file(logical_path, vessel_slug=slug)
     except FileNotFoundError as exc:
         raise HTTPException(status_code=404, detail=f"Asset not found: {logical_path}") from exc
 

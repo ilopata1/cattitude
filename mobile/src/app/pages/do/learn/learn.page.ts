@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { Location } from '@angular/common';
-import { Router } from '@angular/router';
 import { ContentService } from '../../../core/services/content.service';
 import { ProgressService } from '../../../core/services/progress.service';
+import { VesselRouteService } from '../../../core/services/vessel-route.service';
 import { SystemModule } from '../../../core/models/bootstrap-content.model';
 
 @Component({
@@ -18,7 +18,7 @@ export class LearnPage {
     public readonly content: ContentService,
     public readonly progress: ProgressService,
     private readonly location: Location,
-    private readonly router: Router,
+    private readonly vesselRoutes: VesselRouteService,
   ) {}
 
   get systems(): SystemModule[] {
@@ -44,7 +44,7 @@ export class LearnPage {
 
   openSystemDetail(id: string, event: Event): void {
     event.stopPropagation();
-    void this.router.navigate(['/tabs/know'], {
+    void this.vesselRoutes.navigateTabsWithExtras(['know'], {
       queryParams: { system: id },
     });
   }

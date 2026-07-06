@@ -1,0 +1,33 @@
+.vessel-error {
+  --background: var(--cattitude-sand);
+}
+
+.vessel-error__card {
+  margin: 48px 24px;
+  padding: 24px;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid var(--cattitude-sand-mid);
+}
+
+.vessel-error__card h1 {
+  margin: 0 0 12px;
+  font-family: var(--cattitude-font-display);
+  color: var(--cattitude-navy);
+}
+
+.vessel-error__card p {
+  margin: 0 0 12px;
+  color: var(--cattitude-text-mid);
+  line-height: 1.5;
+}
+
+.vessel-error__detail {
+  font-size: 0.9rem;
+  color: var(--cattitude-coral);
+}
+
+.vessel-error__hint {
+  font-size: 0.9rem;
+  color: var(--cattitude-text-light);
+}

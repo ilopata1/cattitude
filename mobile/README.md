@@ -57,13 +57,22 @@ The `ui` block can also be maintained in `utilities/bootstrap_ui.json` and merge
 node ../utilities/embed_bootstrap_ui.mjs
 ```
 
-Images live under `src/assets/images/systems/`. Push `mobile/` changes to trigger a Pages deploy.
+Images live under `src/assets/images/vessels/{slug}/systems/` (e.g. `vessels/cattitude/systems/`). Push `mobile/` changes to trigger a Pages deploy.
 
-### Guide sync (optional)
+### Multi-vessel routes
 
-The backend can serve a published guide from Postgres (`GET /api/v1/vessels/{slug}/guide/*`). To load from the API instead of the bundled JSON, set `guideSyncEnabled: true` in `src/environments/environment.ts`. The app downloads manifest + bundle + assets into IndexedDB and falls back to bundled JSON if sync fails.
+The app shell is vessel-agnostic. Open a guide at:
 
-Requires a publication in Postgres and (when enabled) publish-time asset storage on the API — not yet required while `guideSyncEnabled` is false.
+- `http://localhost:8100/cattitude/v/cattitude/tabs/home` (dev — includes `baseHref`)
+- `https://ilopata1.github.io/cattitude/v/cattitude/tabs/home` (production)
+
+`/tabs/…` URLs redirect to `/v/cattitude/tabs/…` for backward compatibility. The site root redirects to the default vessel (`cattitude`).
+
+### Guide sync
+
+The backend serves published guides from Postgres (`GET /api/v1/vessels/{slug}/guide/*`). In **development**, `guideSyncEnabled: true` in `environment.ts` — the app syncs manifest + bundle + assets into IndexedDB and falls back to bundled JSON or cache on failure.
+
+Production keeps `guideSyncEnabled: false` until you are ready to flip it in `environment.prod.ts`.
 
 `utilities/extract_bootstrap_content.mjs` is legacy-only (one-time migration from `app/index.html`).
 

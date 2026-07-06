@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ContentService } from '../../core/services/content.service';
+import { VesselRouteService } from '../../core/services/vessel-route.service';
 import { LocationZone, SystemModule } from '../../core/models/bootstrap-content.model';
 
 @Component({
@@ -17,7 +18,7 @@ export class KnowPage implements OnInit {
   constructor(
     public readonly content: ContentService,
     private readonly route: ActivatedRoute,
-    private readonly router: Router,
+    private readonly vesselRoutes: VesselRouteService,
   ) {}
 
   get locationLayout() {
@@ -66,6 +67,6 @@ export class KnowPage implements OnInit {
   }
 
   goToFix(): void {
-    this.router.navigate(['/tabs/fix']);
+    void this.vesselRoutes.navigateTabs('fix');
   }
 }

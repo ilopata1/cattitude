@@ -11,6 +11,17 @@ import {
 import { environment } from '../../../environments/environment';
 import { GuideSyncService } from './guide-sync.service';
 import { VesselContextService } from './vessel-context.service';
+import { VesselRouteService } from './vessel-route.service';
+
+export class GuideLoadError extends Error {
+  constructor(
+    readonly vesselSlug: string,
+    message = `Unable to load guide for vessel "${vesselSlug}".`,
+  ) {
+    super(message);
+    this.name = 'GuideLoadError';
+  }
+}
 
 @Injectable({ providedIn: 'root' })
 export class ContentService {
@@ -20,33 +31,29 @@ export class ContentService {
     private readonly http: HttpClient,
     private readonly vesselContext: VesselContextService,
     private readonly guideSync: GuideSyncService,
+    private readonly vesselRoutes: VesselRouteService,
   ) {}
 
-  async loadBootstrapContent(slug = environment.vesselSlug): Promise<BootstrapContent> {
+  async loadBootstrapContent(slug: string): Promise<BootstrapContent> {
     if (environment.guideSyncEnabled) {
       try {
         const synced = await this.guideSync.ensureGuide(slug);
-        this.content = synced;
-        this.vesselContext.applyResolvedContext({
-          vesselId: synced.vesselId,
-          vesselSlug: synced.vesselSlug,
-        });
-        return synced;
+        return this.applyLoadedContent(synced, slug);
       } catch (error) {
-        console.warn('Guide sync failed; using bundled bootstrap JSON.', error);
+        console.warn('Guide sync failed; trying local cache or bundled JSON.', error);
+        const cached = await this.guideSync.loadFromCache(slug);
+        if (cached) {
+          return this.applyLoadedContent(cached, slug);
+        }
       }
     }
 
-    const path = environment.bootstrapContentPath.replace('cattitude', slug);
-    const content = await firstValueFrom(
-      this.http.get<BootstrapContent>(path),
-    );
-    this.content = content;
-    this.vesselContext.applyResolvedContext({
-      vesselId: content.vesselId,
-      vesselSlug: content.vesselSlug,
-    });
-    return content;
+    try {
+      const bundled = await this.loadBundledContent(slug);
+      return this.applyLoadedContent(bundled, slug);
+    } catch {
+      throw new GuideLoadError(slug);
+    }
   }
 
   get loaded(): boolean {
@@ -98,5 +105,43 @@ export class ContentService {
       this.bootstrap.manualTitles[manualId] ??
       manualId.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
     );
+  }
+
+  private async loadBundledContent(slug: string): Promise<BootstrapContent> {
+    const path = environment.bootstrapContentPath.replace('cattitude', slug);
+    return firstValueFrom(this.http.get<BootstrapContent>(path));
+  }
+
+  private applyLoadedContent(content: BootstrapContent, slug: string): BootstrapContent {
+    const prepared = this.prefixVesselRoutes(structuredClone(content) as BootstrapContent, slug);
+    this.content = prepared;
+    this.vesselContext.applyResolvedContext({
+      vesselId: prepared.vesselId,
+      vesselSlug: prepared.vesselSlug,
+    });
+    return prepared;
+  }
+
+  private prefixVesselRoutes(content: BootstrapContent, slug: string): BootstrapContent {
+    const ui = content.ui;
+    if (ui?.homeRuleSections) {
+      for (const section of ui.homeRuleSections) {
+        for (const rule of section.rules ?? []) {
+          if (rule.link) {
+            rule.link = this.vesselRoutes.resolveAppUrl(rule.link, slug);
+          }
+        }
+      }
+    }
+    if (ui?.doMenu) {
+      for (const section of ui.doMenu) {
+        for (const item of section.items ?? []) {
+          if (item.route) {
+            item.route = this.vesselRoutes.resolveAppUrl(item.route, slug);
+          }
+        }
+      }
+    }
+    return content;
   }
 }

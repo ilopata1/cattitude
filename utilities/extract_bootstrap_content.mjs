@@ -104,7 +104,7 @@ function saveDataUri(dataUri, prefix) {
   const bytes = Buffer.from(match[2], 'base64');
   const hash = createHash('sha256').update(bytes).digest('hex').slice(0, 12);
   const filename = `${prefix}-${hash}.${ext}`;
-  const relPath = `assets/images/systems/${filename}`;
+  const relPath = `assets/images/vessels/cattitude/systems/${filename}`;
   const absPath = path.join(assetsDir, 'systems', filename);
 
   fs.mkdirSync(path.dirname(absPath), { recursive: true });

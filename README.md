@@ -174,8 +174,9 @@ mobile/src/
 
 **Transitional vs target loading:**
 
-- **Today:** `ContentService` HTTP-loads `data/bootstrap/cattitude.json` bundled in the GitHub Pages build. `vesselSlug` is fixed in environment config.
-- **Target:** User adds a vessel or starts a charter → app downloads `GET /api/v1/vessels/{slug}/guide/manifest` → stores JSON + assets in IndexedDB/Capacitor filesystem → all guide tabs read local storage only. Updates when publication hash changes.
+- **Today (production):** `ContentService` loads bundled `data/bootstrap/cattitude.json` (`guideSyncEnabled: false`). Legacy `/tabs/…` URLs redirect to `/v/cattitude/tabs/…`.
+- **Development:** `guideSyncEnabled: true` — sync from `GET /api/v1/vessels/{slug}/guide/*` into IndexedDB, with bundled JSON / cache fallback.
+- **Target:** Same sync path in production; admin publish updates content without a mobile redeploy.
 
 **Offline / PWA:** Production builds register `@angular/service-worker`. Installed home-screen apps may lag behind browser tabs until the service worker updates; see `mobile/README.md`.
 

@@ -9,6 +9,9 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ContentService } from './core/services/content.service';
+import { GuideLoadService } from './core/services/guide-load.service';
+import { VesselContextService } from './core/services/vessel-context.service';
+import { VesselResolverService } from './core/services/vessel-resolver.service';
 import { appInitializer } from './core/initializers/app.initializer';
 import { SharedModule } from './shared/shared.module';
 
@@ -30,7 +33,12 @@ import { SharedModule } from './shared/shared.module';
     {
       provide: APP_INITIALIZER,
       useFactory: appInitializer,
-      deps: [ContentService],
+      deps: [
+        ContentService,
+        VesselResolverService,
+        VesselContextService,
+        GuideLoadService,
+      ],
       multi: true,
     },
   ],

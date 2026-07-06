@@ -1,0 +1,12 @@
+<ion-content class="vessel-error">
+  <div class="vessel-error__card">
+    <h1>Guide not available</h1>
+    <p>
+      We could not load the guide for <strong>{{ slug }}</strong>.
+    </p>
+    <p class="vessel-error__detail" *ngIf="guideLoad.message">{{ guideLoad.message }}</p>
+    <p class="vessel-error__hint">
+      Check the link, confirm the guide has been published, and try again when you have a connection.
+    </p>
+  </div>
+</ion-content>

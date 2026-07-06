@@ -125,9 +125,9 @@ def validate_asset_path(logical_path: str) -> None:
         raise ValueError("Asset path must be under assets/images/")
 
 
-def read_asset_file(logical_path: str) -> tuple[bytes, str]:
+def read_asset_file(logical_path: str, *, vessel_slug: str | None = None) -> tuple[bytes, str]:
     validate_asset_path(logical_path)
-    file_path = asset_file_path(logical_path)
+    file_path = asset_file_path(logical_path, vessel_slug=vessel_slug)
     if not file_path.is_file():
         raise FileNotFoundError(logical_path)
     raw = file_path.read_bytes()

@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Checklist } from '../models/bootstrap-content.model';
 import { ContentService } from './content.service';
-
-const PREFIX = 'cattitude-progress';
+import { VesselContextService } from './vessel-context.service';
 
 export interface ChecklistProgress {
   done: number;
@@ -12,13 +11,21 @@ export interface ChecklistProgress {
 
 @Injectable({ providedIn: 'root' })
 export class ProgressService {
-  constructor(private readonly content: ContentService) {}
+  constructor(
+    private readonly content: ContentService,
+    private readonly vesselContext: VesselContextService,
+  ) {}
+
+  private get prefix(): string {
+    return `${this.vesselContext.vesselSlug}-progress`;
+  }
+
   getChecklistState(key: string): Record<string, boolean> {
-    return this.readJson(`${PREFIX}-cl-${key}`, {});
+    return this.readJson(`${this.prefix}-cl-${key}`, {});
   }
 
   saveChecklistState(key: string, state: Record<string, boolean>): void {
-    this.writeJson(`${PREFIX}-cl-${key}`, state);
+    this.writeJson(`${this.prefix}-cl-${key}`, state);
   }
 
   toggleChecklistItem(key: string, groupIndex: number, itemIndex: number): void {
@@ -69,11 +76,11 @@ export class ProgressService {
   }
 
   getLearnDone(): Record<string, boolean> {
-    return this.readJson(`${PREFIX}-learn`, {});
+    return this.readJson(`${this.prefix}-learn`, {});
   }
 
   saveLearnDone(state: Record<string, boolean>): void {
-    this.writeJson(`${PREFIX}-learn`, state);
+    this.writeJson(`${this.prefix}-learn`, state);
   }
 
   toggleLearnDone(systemId: string): void {
