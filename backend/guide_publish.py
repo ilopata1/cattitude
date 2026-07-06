@@ -12,9 +12,12 @@ from guide_bootstrap import assemble_bootstrap, build_asset_manifest, canonical_
 
 
 class PublishValidationError(Exception):
+    """Raised when assembled guide content fails publication validation."""
+
     def __init__(self, messages: list[str]) -> None:
+        joined = "; ".join(messages)
+        Exception.__init__(self, joined)
         self.messages = messages
-        super().__init("; ".join(messages))
 
 
 def _coerce_jsonb(value: Any) -> Any:
