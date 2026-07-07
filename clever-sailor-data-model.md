@@ -578,7 +578,7 @@ Created automatically on first ingest. Before ingestion:
 | Updates | Re-download when publication hash changes |
 | One app, many vessels | No per-vessel app builds; no all-vessels-in-install |
 | Delivery | JSON + asset manifest (separate fetches; zip not required) |
-| Generation | ~100% LLM at onboarding; edit in Admin |
+| Generation | **Premium:** personalized LLM modules; **Free:** template assembly + exemplar copy (planned — see `PLATFORM_ROADMAP.md` § Guide generation economics). Today: full LLM per module run (~22 calls/vessel); no cross-vessel reuse yet. |
 | Prompt templates | Versioned in Postgres; charter-editable |
 
 ### Locked product decisions
@@ -590,6 +590,8 @@ Created automatically on first ingest. Before ingestion:
 | 3 | **Checklist + UI chrome = same generation job** (checklist body + `checklistMeta` + `doMenu` slice). |
 | 4 | **Charter end:** guest keeps local guide; Ask `/query` denied; cached Ask answers OK. |
 | 5 | **Guests never onboard vessels.** Operators onboard vessels; guests **associate** with a vessel (token/QR) and download an existing publication. |
+| 6 | **Freemium economics:** free tier must not require a full LLM guide run on signup; reuse hull-model templates and exemplar publications before per-vessel GPT-4o generation. |
+| 7 | **LLM cache:** fragment-level exact-key cache (Postgres-first; Redis optional for Ask). Complements tiers/templates — does not replace them. No semantic cache for guide generation. |
 
 ### Published bootstrap shape
 

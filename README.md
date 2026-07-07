@@ -388,7 +388,9 @@ Seed is for initial tenancy/equipment setup — not every deploy.
 | Guide sync API + mobile local store | **Shipped** (API + IndexedDB sync; `guideSyncEnabled` off by default) |
 | Admin portal — operating base + publish + vessels | **Shipped** (vessel CRUD, clone, equipment picker) |
 | Admin portal — equipment registry, manuals, option packs | **Shipped** |
-| LLM generation pipeline + admin review gates | **Planned** |
+| LLM generation pipeline + admin review gates | **In progress** (full per-vessel LLM; no freemium tier yet) |
+| Guide generation economics (freemium / template assembly) | **Planned** — [`PLATFORM_ROADMAP.md`](PLATFORM_ROADMAP.md) § Guide generation economics |
+| LLM fragment cache (Postgres-first; Redis for Ask optional) | **Planned** — same workstream |
 | Admin portal (intake review, query logs, notifications) | **Planned** |
 | Vessel intake flow (Ionic) | **Planned** |
 | Multi-vessel app shell (add vessel, switch vessel) | **Planned** |
