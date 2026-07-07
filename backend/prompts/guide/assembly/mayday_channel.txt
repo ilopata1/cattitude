@@ -1,0 +1,5 @@
+# Purpose: VHF channel label in the emergency module MAYDAY block.
+# Used by: guide_template_assembly.build_emergency_module
+# Module: emergency / mayday.channel (template assembly, not LLM)
+#
+VHF Ch 16

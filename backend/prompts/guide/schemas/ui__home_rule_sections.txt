@@ -1,0 +1,5 @@
+# Purpose: JSON shape hint appended to LLM prompts (not sent to guests).
+# Used by: guide_generation._compose_prompt via _schema_hint_for for ui/homeRuleSections.
+# Module: ui / homeRuleSections
+#
+[{"title","tone":"danger|caution|good","rules":[{"icon","tone","text","link?"}]}]

@@ -1,0 +1,26 @@
+# Purpose: LLM instruction for the engines system module (propulsion procedures).
+# Used by: guide_generation._resolve_prompt_text for system/engines when no equipment fragment applies.
+# Module: system / engines
+# Composed with: guide/schemas/system__engines.txt, INPUT SNAPSHOT, optional REFERENCE MODULE
+#
+Generate the engines system module (Learn the Boat + Know tab).
+
+Use INPUT SNAPSHOT equipment rows for propulsion (system_category propulsion, or manufacturer Yanmar/volvo/etc.).
+Use twin-engine catamaran assumptions when two propulsion units with port/starboard zone_instance appear.
+
+Produce id "engines", icon "⚙️", locs including port-hull, stbd-hull, cockpit.
+Subtitle and summary should name actual engine make/model when equipment is present; otherwise state that engine equipment is not yet configured.
+
+Include learnChecks (6-8 compartment checks) and sections when equipment is available:
+- Engine Compartment Access (prose)
+- Pre-Start Checks (Both Engines) (steps)
+- Starting Procedure (steps) — include EVC/glow plug/neutral/water from exhaust checks if applicable
+- Shutting Down (steps)
+- Warnings (warnings) — seacock, starter, exhaust water, warm-up
+- Notes (notes) — cruise RPM / fuel if known from reference tone
+
+If no propulsion equipment is listed, produce a short placeholder module explaining that engine details will be added when equipment is linked.
+
+Do NOT include photo sections. Do not invent engine specs not in snapshot or reference.
+
+Return JSON only — one system object, no wrapper.

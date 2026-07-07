@@ -1,0 +1,4 @@
+# Purpose: Section header in composed guide-generation LLM prompts.
+# Used by: guide_generation._compose_prompt
+#
+OUTPUT JSON SCHEMA (shape only):

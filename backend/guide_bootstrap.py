@@ -30,14 +30,14 @@ def normalize_vessel_asset_paths(data: Any, vessel_slug: str) -> Any:
     return data
 
 
-from guide_assets_service import get_guide_assets_root
-
 BACKEND_DIR = Path(__file__).resolve().parent
 REPO_ROOT = BACKEND_DIR.parent
 MOBILE_SRC = REPO_ROOT / "mobile" / "src"
 
 
 def asset_file_path(logical_path: str, *, vessel_slug: str | None = None) -> Path:
+    from guide_assets_service import get_guide_assets_root
+
     uploaded = get_guide_assets_root() / logical_path
     if uploaded.is_file():
         return uploaded

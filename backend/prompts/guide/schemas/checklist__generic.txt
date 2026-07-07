@@ -1,0 +1,5 @@
+# Purpose: JSON shape hint for checklist LLM output (Personalize path).
+# Used by: guide_generation._schema_hint_for for checklist/* modules.
+# Module: checklist / _generic fallback
+#
+{"groups":[{"t","items":[{"c","s?"}]}]}

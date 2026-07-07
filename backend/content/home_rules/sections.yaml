@@ -1,0 +1,12 @@
+# Purpose: Home rules section headings and tones.
+# Used by: content.assembler.build_home_rules_module
+# Module: ui / homeRuleSections
+#
+
+sections:
+- title: ⛔ Never Do This
+  tone: danger
+- title: ⚠️ Always Do This
+  tone: caution
+- title: ✅ Good Habits
+  tone: good

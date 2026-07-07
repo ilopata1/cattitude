@@ -33,6 +33,13 @@ from guide_module_catalog import (
     SYSTEM_CATALOG,
 )
 from guide_template_assembly import TEMPLATE_MODULE_BUILDERS
+from prompts.guide.registry import (
+    all_default_llm_prompts,
+    get_compose_text,
+    get_generic_llm_template,
+    get_llm_prompt,
+    get_schema_hint,
+)
 
 COPY_MODULE_KEYS = frozenset(COPY_MODULES)
 
@@ -44,100 +51,6 @@ SYSTEM_DEFAULTS: dict[str, dict[str, Any]] = {
 SYSTEM_SECTION_TYPES = frozenset(
     {"prose", "photo", "list", "steps", "warnings", "notes"}
 )
-
-SCHEMA_HINTS: dict[tuple[str, str], str] = {
-    ("ui", "homeRuleSections"): (
-        '[{"title","tone":"danger|caution|good","rules":[{"icon","tone","text","link?"}]}]'
-    ),
-    ("system", "overview"): (
-        '{"id":"overview","icon","title","subtitle","locs[]","summary",'
-        '"learnChecks[]","sections":[{"t","type":"prose|list|steps","c?","items?"}]}'
-    ),
-    ("system", "engines"): (
-        '{"id":"engines","icon","title","subtitle","locs[]","summary",'
-        '"learnChecks[]","sections":[{"t","type":"prose|steps|warnings|notes","c?","items?"}]}'
-    ),
-    ("system", "_generic"): (
-        '{"id","icon","title","subtitle","locs[]","summary","learnChecks[]",'
-        '"sections":[{"t","type":"prose|list|steps|warnings|notes","c?","items?"}]}'
-    ),
-    ("checklist", "_generic"): (
-        '{"groups":[{"t","items":[{"c","s?"}]}]}'
-    ),
-    ("fix_card_set", "all"): (
-        '[{"icon","cat","catL","title","steps[]"}]'
-    ),
-}
-
-DEFAULT_PROMPTS: dict[tuple[str, str], str] = {
-    ("ui", "homeRuleSections"): """Generate homeRuleSections for the Home tab.
-
-Use ONLY facts from INPUT SNAPSHOT (vessel, guide_context, equipment).
-Turn guide_context.localRules into guest-facing rules when present.
-Add equipment-specific rules only when manufacturer/model in the snapshot supports them.
-
-STRICT RULES:
-- Do NOT include location-specific rules (anchoring, VHF channels, marina/charter contacts)
-  unless explicitly stated in guide_context.localRules or guide_context VHF/contact fields.
-- Do NOT mention equipment brands or models absent from INPUT SNAPSHOT equipment.
-- Do NOT assume charter base, cruising region, or head type — use snapshot facts only.
-- If REFERENCE MODULE is provided, match its section structure and tone only; write fresh rule
-  text from INPUT SNAPSHOT. Never copy reference rule wording the snapshot does not support.
-
-Produce 2–3 sections: Never Do This (danger), Always Do This (caution), optional Good Habits (good).
-Each rule needs icon (emoji), tone, and text. Add link only when referencing a checklist route.
-
-Return JSON only — a JSON array (homeRuleSections), no wrapper object.""",
-    ("system", "overview"): """Generate the boat overview system module (Learn the Boat + Know tab).
-
-Use INPUT SNAPSHOT: vessel.name, hull_model.display_name, vessel.vessel_type, equipment list.
-Audience: charter guests on day one. Tone: orientation — where things are, layout, safety gear locations.
-
-Produce id "overview", icon "🗺️", locs for cockpit/helm/saloon.
-Include summary (1-2 sentences), learnChecks (6-10 walkthrough items), and sections:
-- About [vessel name] (prose) — hull model facts from snapshot only; prose sections MUST use field "c" for paragraph text
-- Layout (list) — cabin/hull layout using hull model; do not invent cabin counts not supported by snapshot
-- Find These on Day 1 (steps) — safety gear and key locations (life jackets, EPIRB, fire ext, panel, fuel/water fills)
-
-If hull_model or layout details are missing from the snapshot, say so plainly in prose — do not invent cabin counts or layout.
-
-Do NOT include sections with type "photo" — deck plan photos are preserved from REFERENCE MODULE separately.
-If REFERENCE MODULE is provided, match its section structure and tone; update facts from snapshot.
-
-Return JSON only — one system object, no wrapper.""",
-    ("system", "engines"): """Generate the engines system module (Learn the Boat + Know tab).
-
-Use INPUT SNAPSHOT equipment rows for propulsion (system_category propulsion, or manufacturer Yanmar/volvo/etc.).
-Use twin-engine catamaran assumptions when two propulsion units with port/starboard zone_instance appear.
-
-Produce id "engines", icon "⚙️", locs including port-hull, stbd-hull, cockpit.
-Subtitle and summary should name actual engine make/model when equipment is present; otherwise state that engine equipment is not yet configured.
-
-Include learnChecks (6-8 compartment checks) and sections when equipment is available:
-- Engine Compartment Access (prose)
-- Pre-Start Checks (Both Engines) (steps)
-- Starting Procedure (steps) — include EVC/glow plug/neutral/water from exhaust checks if applicable
-- Shutting Down (steps)
-- Warnings (warnings) — seacock, starter, exhaust water, warm-up
-- Notes (notes) — cruise RPM / fuel if known from reference tone
-
-If no propulsion equipment is listed, produce a short placeholder module explaining that engine details will be added when equipment is linked.
-
-Do NOT include photo sections. Do not invent engine specs not in snapshot or reference.
-
-Return JSON only — one system object, no wrapper.""",
-}
-
-FIXES_PROMPT = """Generate the Fix It troubleshooting card set for this charter vessel.
-
-Use INPUT SNAPSHOT equipment and operating_base.guide_context for realistic guest-fixable problems.
-Cover engines, electrical, plumbing/heads, water, batteries, anchoring, AC, dinghy as equipment supports.
-
-Each card: icon (emoji), cat (short key), catL (display category), title, steps (5-8 actionable strings).
-Include charter company contact in steps where guests should call for help (VHF channel from context).
-
-Match REFERENCE MODULE count and categories when provided; update facts from snapshot.
-Return JSON only — a JSON array of fix cards, no wrapper."""
 
 
 class GuideGenerationError(Exception):
@@ -312,7 +225,7 @@ def ensure_default_prompt_templates(conn: Connection) -> None:
             ),
             {"content_type": content_type, "content_key": content_key},
         )
-    for (content_type, content_key), prompt_text in DEFAULT_PROMPTS.items():
+    for (content_type, content_key), prompt_text in all_default_llm_prompts().items():
         existing = conn.execute(
             text(
                 """
@@ -351,14 +264,7 @@ def ensure_default_prompt_templates(conn: Connection) -> None:
 
 
 def _schema_hint_for(content_type: str, content_key: str) -> str:
-    key = (content_type, content_key)
-    if key in SCHEMA_HINTS:
-        return SCHEMA_HINTS[key]
-    if content_type == "system":
-        return SCHEMA_HINTS[("system", "_generic")]
-    if content_type == "checklist":
-        return SCHEMA_HINTS[("checklist", "_generic")]
-    return "valid JSON for this module type"
+    return get_schema_hint(content_type, content_key)
 
 
 def _equipment_for_system(
@@ -387,33 +293,25 @@ def _build_generic_system_prompt(system_id: str) -> str:
         if categories
         else ""
     )
-    return f"""Generate the "{system_id}" system module for a charter vessel guide (Learn + Know tabs).
-
-TARGET: {focus}
-{category_note}{empty_note}
-
-Produce id "{system_id}", icon "{icon}", locs {json.dumps(locs)}.
-Include title, subtitle, summary (1-2 sentences), learnChecks (6-8 items), and sections.
-Section types allowed: prose, list, steps, warnings, notes. Do NOT include photo sections — photos are merged from REFERENCE separately.
-Prose sections MUST use field "c" for paragraph text (not "text" or "content").
-
-Use ONLY facts from INPUT SNAPSHOT and RELEVANT EQUIPMENT below. Match REFERENCE structure and tone when provided.
-
-Return JSON only — one system object, no wrapper."""
+    return get_generic_llm_template("system").format(
+        system_id=system_id,
+        icon=icon,
+        locs_json=json.dumps(locs),
+        focus=focus,
+        category_note=category_note,
+        empty_note=empty_note,
+    )
 
 
 def _build_generic_checklist_prompt(checklist_id: str) -> str:
     meta = CHECKLIST_CATALOG.get(checklist_id, {})
     focus = meta.get("focus", checklist_id)
     title = meta.get("title", checklist_id)
-    return f"""Generate the "{checklist_id}" checklist ({title}) for charter crew/guests.
-
-PURPOSE: {focus}
-
-Structure: groups[] with t (group title) and items[] with c (check text) and optional s (detail subtext).
-Use INPUT SNAPSHOT for vessel-specific locations and equipment. Match REFERENCE group structure when provided.
-
-Return JSON only — checklist object with groups array, no wrapper."""
+    return get_generic_llm_template("checklist").format(
+        checklist_id=checklist_id,
+        title=title,
+        focus=focus,
+    )
 
 
 def _resolve_prompt_text(
@@ -437,7 +335,7 @@ def _resolve_prompt_text(
     ).fetchone()
     if row:
         return row[2], {"id": str(row[0]), "version": row[1], "scope": "platform"}
-    default = DEFAULT_PROMPTS.get((content_type, content_key))
+    default = get_llm_prompt(content_type, content_key)
     if default:
         return default, None
     if content_type == "system":
@@ -445,7 +343,10 @@ def _resolve_prompt_text(
     if content_type == "checklist":
         return _build_generic_checklist_prompt(content_key), None
     if content_type == "fix_card_set" and content_key == "all":
-        return FIXES_PROMPT, None
+        prompt = get_llm_prompt("fix_card_set", "all")
+        if prompt is None:
+            raise GuideGenerationError("Missing fix_card_set prompt file")
+        return prompt, None
     raise GuideGenerationError(
         f"No prompt template for {content_type}/{content_key}"
     )
@@ -460,11 +361,8 @@ def _reference_statuses_for(content_type: str, content_key: str) -> tuple[str, .
 
 def _reference_label_for(content_type: str, content_key: str) -> str:
     if content_type == "ui" and content_key == "homeRuleSections":
-        return (
-            "REFERENCE MODULE (section layout and tone only; every rule text must come "
-            "from INPUT SNAPSHOT — do not copy reference wording):"
-        )
-    return "REFERENCE MODULE (structure/tone; do not copy stale facts over snapshot):"
+        return get_compose_text("reference_label_home_rules")
+    return get_compose_text("reference_label_default")
 
 
 def _load_reference_module(
@@ -1091,16 +989,14 @@ def _compose_prompt(
     parts = [
         instruction,
         "",
-        "OUTPUT JSON SCHEMA (shape only):",
+        get_compose_text("output_schema_header"),
         schema_hint,
         "",
-        "INPUT SNAPSHOT:",
+        get_compose_text("input_snapshot_header"),
         json.dumps(snapshot, indent=2, sort_keys=True),
     ]
     if reference is not None:
-        label = reference_label or (
-            "REFERENCE MODULE (structure/tone; do not copy stale facts over snapshot):"
-        )
+        label = reference_label or get_compose_text("reference_label_default")
         parts.extend(
             [
                 "",
@@ -1109,7 +1005,7 @@ def _compose_prompt(
             ]
         )
     parts.append("")
-    parts.append("Respond with valid JSON only.")
+    parts.append(get_compose_text("response_footer"))
     return "\n".join(parts)
 
 

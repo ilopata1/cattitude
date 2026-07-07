@@ -1,0 +1,4 @@
+# Purpose: Final line of composed guide-generation LLM prompts.
+# Used by: guide_generation._compose_prompt
+#
+Respond with valid JSON only.

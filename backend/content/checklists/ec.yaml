@@ -1,0 +1,41 @@
+# Purpose: ec checklist content.
+# Used by: content.assembler.build_checklist_module
+# Module: checklist / ec
+# Slots: {vessel_name}, {company}, {company_or_charter}, {engine_group_title}, etc.
+#
+
+groups:
+- t: Final Day at Sea
+  items:
+  - c: Pump out holding tanks before returning — empty all heads
+    s: Do not return to the marina with full or partially full holding tanks
+    when:
+      has_category:
+      - sanitation
+- t: Returning to Slip
+  items:
+  - c: Fenders deployed before entering the marina
+    s: One per side minimum, height adjusted for the dock
+  - c: Dock lines prepared — bow, stern, and springs
+    s: Crew ready with lines before final approach
+  - c: Shore power connected
+    s: Roll the cable out fully before plugging in
+    when:
+      has_category:
+      - electrical_ac_shore_power
+  - c: Engines shut down after idling 3-5 minutes
+    when:
+      has_category:
+      - propulsion
+- t: Shut Down & Hand Back
+  items:
+  - c: All DC breakers off except bilge pumps (AUTO)
+  - c: Fresh water pump off
+  - c: All hatches secured
+  - c: Inventory checked — all gear accounted for
+    s: Life jackets, flare kit, snorkel gear, charts
+  - c: Boat cleaned — interior and cockpit
+    s: Leave {vessel_name} as you found her
+  - c: Any damage noted and reported to {company_or_charter}
+    s: Report before departure — do not wait until the handover
+  - c: Complete and sign all charter sign-off documents with {company_or_charter}

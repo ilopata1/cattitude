@@ -1,0 +1,5 @@
+# Purpose: Label for REFERENCE MODULE block when generating home rules.
+# Used by: guide_generation._reference_label_for for ui/homeRuleSections
+# Module: ui / homeRuleSections
+#
+REFERENCE MODULE (section layout and tone only; every rule text must come from INPUT SNAPSHOT — do not copy reference wording):

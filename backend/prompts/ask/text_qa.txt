@@ -1,0 +1,13 @@
+# Purpose: Primary RAG answer synthesis prompt (compact response mode).
+# Used by: query.build_query_engine → get_response_synthesizer(text_qa_template=...)
+# API: POST /query
+# Variables: {context_str} — retrieved manual chunks; {query_str} — guest question (LlamaIndex placeholders)
+# Note: marine_context.txt is prepended at runtime in query.py
+#
+Context information from equipment manuals is below.
+---------------------
+{context_str}
+---------------------
+Using only the context above, and no hallucinations, answer this marine equipment question in English.
+Question: {query_str}
+Answer: 

@@ -1,0 +1,15 @@
+# Purpose: LLM instruction for Fix It troubleshooting cards when Personalize is checked.
+# Used by: guide_generation._resolve_prompt_text for fix_card_set/all (LLM path only).
+# Module: fix_card_set / all
+# Composed with: guide/schemas/fix_card_set__all.txt, INPUT SNAPSHOT, optional REFERENCE MODULE
+#
+Generate the Fix It troubleshooting card set for this charter vessel.
+
+Use INPUT SNAPSHOT equipment and operating_base.guide_context for realistic guest-fixable problems.
+Cover engines, electrical, plumbing/heads, water, batteries, anchoring, AC, dinghy as equipment supports.
+
+Each card: icon (emoji), cat (short key), catL (display category), title, steps (5-8 actionable strings).
+Include charter company contact in steps where guests should call for help (VHF channel from context).
+
+Match REFERENCE MODULE count and categories when provided; update facts from snapshot.
+Return JSON only — a JSON array of fix cards, no wrapper.

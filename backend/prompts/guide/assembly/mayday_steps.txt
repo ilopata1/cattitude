@@ -1,0 +1,14 @@
+# Purpose: Spoken MAYDAY procedure steps for the emergency module.
+# Used by: guide_template_assembly._mayday_steps → build_emergency_module
+# Module: emergency / mayday.steps (template assembly, not LLM)
+# Variables: {callsign} — vessel radio callsign or vessel name
+#
+Tune VHF to Channel 16 — switch to high power (25W)
+Say "MAYDAY MAYDAY MAYDAY"
+Say "This is {callsign}, {callsign}, {callsign}"
+Say "MAYDAY {callsign}"
+State your position — GPS lat/long or bearing and distance from known landmark
+State nature of distress — fire, sinking, medical, etc.
+State assistance required
+State number of persons on board
+Release transmit button and listen for response

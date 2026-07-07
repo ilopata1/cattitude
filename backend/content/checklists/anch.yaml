@@ -1,0 +1,45 @@
+# Purpose: anch checklist content.
+# Used by: content.assembler.build_checklist_module
+# Module: checklist / anch
+# Slots: {vessel_name}, {company}, {company_or_charter}, {engine_group_title}, etc.
+#
+
+groups:
+- t: Choosing a Spot
+  items:
+  - c: Holding ground confirmed on chart and visually
+    s: Sand is best. Avoid coral, rock, and thick seagrass.
+  - c: Sufficient swinging room assessed
+    s: Account for wind shifts and scope. Check other boats' swing radius.
+  - c: Depth noted — scope required calculated
+    s: 5:1 minimum. Depth x 5 = minimum chain length.
+- t: Setting the Anchor
+  items:
+  - c: Windlass DC breaker ON
+    when:
+      has_category:
+      - anchoring_ground_tackle
+  - c: Anchor lowered under control to the seabed
+    s: Lower slowly as the boat moves upwind over the spot — do not drop
+  - c: Chain paid out to near final scope length
+  - c: Snubber or bridle attached and taking the load
+    s: The snubber/bridle takes the load, not the windlass
+  - c: Backed down gently in reverse for 30 seconds
+    s: This sets the anchor. Watch fixed references — no dragging.
+    when:
+      has_category:
+      - propulsion
+- t: Confirmed at Anchor
+  items:
+  - c: Position checked against 2+ fixed references on shore
+  - c: Anchor alarm set on chartplotter
+    s: Radius = scope length + boat length
+    when:
+      has_category:
+      - navigation_electronics
+  - c: Engines off
+    when:
+      has_category:
+      - propulsion
+  - c: Anchor light on if staying after sunset
+    s: All-round white light — required by law

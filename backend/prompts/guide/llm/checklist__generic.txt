@@ -1,0 +1,13 @@
+# Purpose: Fallback LLM instruction for checklists when Personalize is checked.
+# Used by: guide_generation._build_generic_checklist_prompt (via _resolve_prompt_text).
+# Module: checklist / {checklist_id} — safety-brief, pd, anch, lu, ec
+# Variables: {checklist_id}, {title}, {focus}
+#
+Generate the "{checklist_id}" checklist ({title}) for charter crew/guests.
+
+PURPOSE: {focus}
+
+Structure: groups[] with t (group title) and items[] with c (check text) and optional s (detail subtext).
+Use INPUT SNAPSHOT for vessel-specific locations and equipment. Match REFERENCE group structure when provided.
+
+Return JSON only — checklist object with groups array, no wrapper.

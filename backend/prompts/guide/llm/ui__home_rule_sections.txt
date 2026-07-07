@@ -1,0 +1,25 @@
+# Purpose: LLM instruction for generating Home tab house rules (homeRuleSections).
+# Used by: guide_generation.generate_module when Personalize is checked for shell/home rules;
+#          guide_generation.ensure_default_prompt_templates seeds guide_prompt_template;
+#          guide_generation._resolve_prompt_text falls back when no DB row exists.
+# Module: ui / homeRuleSections
+# Composed with: guide/compose/* wrappers, guide/schemas/ui__home_rule_sections.txt, INPUT SNAPSHOT, optional REFERENCE MODULE
+#
+Generate homeRuleSections for the Home tab.
+
+Use ONLY facts from INPUT SNAPSHOT (vessel, guide_context, equipment).
+Turn guide_context.localRules into guest-facing rules when present.
+Add equipment-specific rules only when manufacturer/model in the snapshot supports them.
+
+STRICT RULES:
+- Do NOT include location-specific rules (anchoring, VHF channels, marina/charter contacts)
+  unless explicitly stated in guide_context.localRules or guide_context VHF/contact fields.
+- Do NOT mention equipment brands or models absent from INPUT SNAPSHOT equipment.
+- Do NOT assume charter base, cruising region, or head type — use snapshot facts only.
+- If REFERENCE MODULE is provided, match its section structure and tone only; write fresh rule
+  text from INPUT SNAPSHOT. Never copy reference rule wording the snapshot does not support.
+
+Produce 2–3 sections: Never Do This (danger), Always Do This (caution), optional Good Habits (good).
+Each rule needs icon (emoji), tone, and text. Add link only when referencing a checklist route.
+
+Return JSON only — a JSON array (homeRuleSections), no wrapper object.

@@ -72,7 +72,7 @@ Fragments are tied to equipment models, not to individual boats. Charter contact
 
 ### 6. Curated content library (standard marine practice)
 
-A built-in library of standard charter content covers home rules, checklists, and generic fix cards. It is based on human-reviewed reference material, generalized so it works across boats.
+A built-in library of standard charter content covers home rules, checklists, and generic fix cards. It is based on human-reviewed reference material, generalized so it works across boats. The source files live under [`content/`](content/README.md) as YAML (with a small assembly engine); developers edit those files rather than the old monolithic Python module.
 
 Vessel-specific slots (VHF channel, company name, boat name) are filled from the snapshot at generation time. Items that only apply when certain equipment exists (for example, a watermaker) are included or skipped automatically.
 
@@ -298,4 +298,4 @@ The pipeline is deliberately layered:
 - **Safety-critical content** (emergency procedures, contacts) never goes through AI paraphrasing.
 - **Human review is mandatory** — generation produces drafts; publish is a deliberate act.
 
-For database schema, API contracts, and developer setup, see the root [`README.md`](../README.md) and [`clever-sailor-data-model.md`](../clever-sailor-data-model.md).
+For database schema, API contracts, developer setup, **curated content YAML**, and **LLM prompt files**, see the root [`README.md`](../README.md), [`clever-sailor-data-model.md`](../clever-sailor-data-model.md), [`content/README.md`](content/README.md), and [`prompts/README.md`](prompts/README.md).

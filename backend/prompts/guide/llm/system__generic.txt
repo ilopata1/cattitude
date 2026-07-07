@@ -1,0 +1,18 @@
+# Purpose: Fallback LLM instruction for system modules without a dedicated prompt file.
+# Used by: guide_generation._build_generic_system_prompt (via _resolve_prompt_text).
+# Module: system / {system_id} — all SYSTEM_CATALOG ids except overview and engines (which have dedicated files).
+# Variables: {system_id}, {icon}, {locs_json}, {focus}, {category_note}, {empty_note}
+#
+Generate the "{system_id}" system module for a charter vessel guide (Learn + Know tabs).
+
+TARGET: {focus}
+{category_note}{empty_note}
+
+Produce id "{system_id}", icon "{icon}", locs {locs_json}.
+Include title, subtitle, summary (1-2 sentences), learnChecks (6-8 items), and sections.
+Section types allowed: prose, list, steps, warnings, notes. Do NOT include photo sections — photos are merged from REFERENCE separately.
+Prose sections MUST use field "c" for paragraph text (not "text" or "content").
+
+Use ONLY facts from INPUT SNAPSHOT and RELEVANT EQUIPMENT below. Match REFERENCE structure and tone when provided.
+
+Return JSON only — one system object, no wrapper.

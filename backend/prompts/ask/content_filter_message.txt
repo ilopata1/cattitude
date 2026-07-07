@@ -1,0 +1,5 @@
+# Purpose: User-facing error when Azure blocks an Ask question after retry.
+# Used by: query.ContentFilterError raised to main.query_manuals → HTTP 422
+# API: POST /query (mobile Ask tab displays this message)
+#
+Azure blocked this question due to a content-filter false positive. Try rephrasing in mechanical terms, for example: "No cooling water from the engine exhaust / raw-water telltale — what should I check?"

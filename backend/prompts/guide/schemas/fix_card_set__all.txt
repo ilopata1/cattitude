@@ -1,0 +1,5 @@
+# Purpose: JSON shape hint for Fix It card set LLM output.
+# Used by: guide_generation._schema_hint_for for fix_card_set/all.
+# Module: fix_card_set / all
+#
+[{"icon","cat","catL","title","steps[]"}]

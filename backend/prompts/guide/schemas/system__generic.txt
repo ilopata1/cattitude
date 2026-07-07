@@ -1,0 +1,5 @@
+# Purpose: JSON shape hint for generic system module LLM output.
+# Used by: guide_generation._schema_hint_for for system/* without a dedicated schema file.
+# Module: system / _generic fallback
+#
+{"id","icon","title","subtitle","locs[]","summary","learnChecks[]","sections":[{"t","type":"prose|list|steps|warnings|notes","c?","items?"}]}

@@ -1,0 +1,47 @@
+# Purpose: lu checklist content.
+# Used by: content.assembler.build_checklist_module
+# Module: checklist / lu
+# Slots: {vessel_name}, {company}, {company_or_charter}, {engine_group_title}, etc.
+#
+
+groups:
+- t: Power & Systems
+  items:
+  - c: Non-essential DC breakers off
+    s: 'Leave: fridge ON, bilge pumps AUTO, anchor light if night'
+  - c: Generator and inverter off
+    s: Confirm both shut down
+    when:
+      has_category:
+      - electrical_ac_shore_power
+  - c: Air conditioning off
+    when:
+      has_category:
+      - hvac_climate
+  - c: Watermaker off
+    when:
+      has_watermaker: true
+- t: Water
+  items:
+  - c: Fresh water pressure pump off
+    s: Prevents pumping the tanks dry if a hose fails while you're ashore
+    when:
+      has_category:
+      - freshwater_system
+- t: Security
+  items:
+  - c: All hatches closed and secured
+    s: Squalls can arrive fast — never leave hatches open
+  - c: Dinghy secured — davits/platform raised fully, straps buckled
+    when:
+      has_category:
+      - tenders_davits
+  - c: Loose items stowed below or in lockers
+    s: Cushions, fishing rods, gear — all away
+  - c: VHF off
+    s: No point monitoring Ch 16 with no one aboard to hear it
+  - c: Chartplotter off
+    s: The anchor alarm serves no purpose with no one aboard
+    when:
+      has_category:
+      - navigation_electronics

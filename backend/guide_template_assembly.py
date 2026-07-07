@@ -15,21 +15,7 @@ from __future__ import annotations
 
 from typing import Any, Callable
 
-MAYDAY_CHANNEL = "VHF Ch 16"
-
-
-def _mayday_steps(callsign: str) -> list[str]:
-    return [
-        "Tune VHF to Channel 16 — switch to high power (25W)",
-        'Say "MAYDAY MAYDAY MAYDAY"',
-        f'Say "This is {callsign}, {callsign}, {callsign}"',
-        f'Say "MAYDAY {callsign}"',
-        "State your position — GPS lat/long or bearing and distance from known landmark",
-        "State nature of distress — fire, sinking, medical, etc.",
-        "State assistance required",
-        "State number of persons on board",
-        "Release transmit button and listen for response",
-    ]
+from prompts.guide.assembly_text import MAYDAY_CHANNEL, mayday_steps
 
 
 def _clean(value: Any) -> str:
@@ -133,7 +119,7 @@ def build_emergency_module(
         "mayday": {
             "channel": MAYDAY_CHANNEL,
             "vesselCallsign": callsign,
-            "steps": _mayday_steps(callsign),
+            "steps": mayday_steps(callsign),
         },
         "contacts": contacts,
         "modalSubtitle": " · ".join(part for part in subtitle_parts if part),

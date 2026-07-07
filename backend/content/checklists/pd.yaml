@@ -1,0 +1,101 @@
+# Purpose: pd checklist content.
+# Used by: content.assembler.build_checklist_module
+# Module: checklist / pd
+# Slots: {vessel_name}, {company}, {company_or_charter}, {engine_group_title}, etc.
+#
+
+groups:
+- t: Below Deck
+  items:
+  - c: Close all hull portholes and deck hatches
+    s: Safety hatches must never be open when sailing
+  - c: Check bilges empty
+    s: A small amount of water is normal; an oil sheen or rising water is not
+  - c: Life raft confirmed accessible and secured
+    s: Must be able to deploy freely from its mount
+  - c: Unlock all doors and lockers
+    s: Nothing should jam shut once underway
+- t: '{engine_group_title}'
+  when:
+    has_category:
+    - propulsion
+  items:
+  - c: 'Engine circuit breakers connected — {engine_compartments}'
+    when:
+      has_category:
+      - propulsion
+  - c: Windlass circuit breaker confirmed ON
+    when:
+      all:
+      - has_category:
+        - propulsion
+      - has_category:
+        - anchoring_ground_tackle
+  - c: 'Raw water seacocks OPEN on {both_engines}'
+    s: Handle parallel to pipe = open
+    when:
+      has_category:
+      - propulsion
+  - c: 'Oil levels checked — {both_engines}'
+    s: Dipstick between MIN and MAX
+    when:
+      has_category:
+      - propulsion
+  - c: 'No fuel smell or gas vapour in {engine_compartments}'
+    s: Sniff-test before closing hatches
+    when:
+      has_category:
+      - propulsion
+- t: Electrical Panel
+  items:
+  - c: Navigation electronics switched on
+    s: Chartplotter, VHF, AIS, instruments
+    when:
+      all:
+      - has_category:
+        - electrical_dc
+      - has_category:
+        - navigation_electronics
+  - c: Bilge pump switches in AUTO position
+    s: Must always be on AUTO — never manual or off
+    when:
+      has_category:
+      - electrical_dc
+  - c: Water and fuel levels checked on panel gauges
+    when:
+      has_category:
+      - electrical_dc
+- t: Fuel & Water
+  items:
+  - c: Fuel levels checked
+    s: Never depart below 1/4 tank
+    when:
+      has_category:
+      - propulsion
+  - c: Fresh water level checked
+    s: Fill if below 1/2 tank for longer passages
+    when:
+      has_category:
+      - freshwater_system
+- t: Helm & Cast Off
+  items:
+  - c: Navigation lights tested
+    s: Required before any night departure
+  - c: Mobile items secured — cockpit cushions, loose gear
+    s: Strong wind launches items overboard easily
+  - c: Fenders retrieved and stowed
+    s: Do not motor with fenders hanging
+  - c: All dock lines aboard and stowed
+    s: Confirm all lines aboard before leaving the slip
+  - c: 'Brief ALL guests on the toilet rule: NOTHING goes in the head except human waste — paper in the bin'
+    s: This is the most common and most expensive charter problem
+    when:
+      has_category:
+      - sanitation
+  - c: Safety Briefing completed with all guests
+    s: Use the Safety Briefing checklist in the Do tab — cover life jackets, MOB, fire, and emergency exits
+  - c: '{both_engines_cap} started — raw water confirmed from exhaust'
+    s: Confirm within 30 seconds of starting
+    when:
+      has_category:
+      - propulsion

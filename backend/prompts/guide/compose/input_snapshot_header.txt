@@ -1,0 +1,4 @@
+# Purpose: Section header before the frozen vessel snapshot in composed LLM prompts.
+# Used by: guide_generation._compose_prompt
+#
+INPUT SNAPSHOT:

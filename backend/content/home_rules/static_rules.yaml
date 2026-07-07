@@ -1,0 +1,44 @@
+# Purpose: Static home rules appended when equipment/local rules match.
+# Used by: content.assembler.build_home_rules_module (plus guide_context.localRules)
+# Module: ui / homeRuleSections
+#
+
+rules:
+- when:
+    has_category:
+    - sanitation
+    local_rules_exclude:
+    - toilet
+  section: danger
+  icon: 🚽
+  text: Never put ANYTHING in the toilet except human waste — no toilet paper, no wipes, no paper towels. Paper goes in the bin.
+- when:
+    has_category:
+    - navigation_electronics
+    local_rules_exclude:
+    - autopilot
+  section: danger
+  icon: 🛞
+  text: Never leave the helm unattended with autopilot on in traffic, channels, or near shore
+- section: caution
+  icon: 🛟
+  text: Run the Safety Briefing with all guests before every departure
+  link: /tabs/do/checklist/safety-brief
+- when:
+    has_category:
+    - electrical_dc
+  section: caution
+  icon: 🔋
+  text: Check house battery state of charge morning and evening — charge before it gets low, not after
+- when:
+    has_category:
+    - refrigeration_galley
+  section: good
+  icon: 🧊
+  text: Minimise fridge/freezer door openings — refrigeration is your biggest continuous power draw
+- when:
+    has_category:
+    - freshwater_system
+  section: good
+  icon: 💧
+  text: Treat fresh water as precious — short showers, taps off while soaping

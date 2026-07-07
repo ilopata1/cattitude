@@ -16,4 +16,5 @@ sqlalchemy
 alembic
 jinja2
 python-multipart
+pyyaml
 langdetect

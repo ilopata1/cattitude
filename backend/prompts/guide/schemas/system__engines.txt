@@ -1,0 +1,5 @@
+# Purpose: JSON shape hint for the engines system module LLM output.
+# Used by: guide_generation._schema_hint_for for system/engines.
+# Module: system / engines
+#
+{"id":"engines","icon","title","subtitle","locs[]","summary","learnChecks[]","sections":[{"t","type":"prose|steps|warnings|notes","c?","items?"}]}

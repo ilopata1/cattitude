@@ -1,0 +1,66 @@
+# Purpose: safety-brief checklist content.
+# Used by: content.assembler.build_checklist_module
+# Module: checklist / safety-brief
+# Slots: {vessel_name}, {company}, {company_or_charter}, {engine_group_title}, etc.
+#
+
+groups:
+- t: Life Jackets
+  items:
+  - c: Show guests where life jackets are stored
+    s: One per person plus spares.
+  - c: Demonstrate how to put on a life jacket
+  - c: Confirm one life jacket per person on board
+- t: Emergency Equipment Locations
+  items:
+  - c: Show flare kit location
+    s: Red parachute = night. Orange smoke = day.
+  - c: Show fire extinguisher locations
+  - c: Show life raft location and how to release it
+  - c: Show EPIRB location
+    s: Only activate in a genuine life-threatening emergency.
+  - c: Show first aid kit location
+- t: Emergency Hatches & Escape
+  items:
+  - c: 'Warn guests: do not walk on deck hatches or solar panels'
+    s: Hatches can crack or open unexpectedly under weight.
+  - c: Point out all companionway and deck hatch exits
+    s: In a flooding situation these are your exit routes.
+  - c: Show guests how to open hatches from inside
+    s: Confirm each guest can operate them independently.
+  - c: '"One hand for you, one for the boat" — always'
+    s: Keep one hand holding a fixed part of the boat when moving around, especially on deck or in a seaway. Move deliberately, never rush.
+- t: Man Overboard (MOB)
+  items:
+  - c: Explain MOB call — shout "MAN OVERBOARD" immediately
+  - c: Assign one person to keep eyes on the person in the water at all times — point continuously, never look away
+    s: This is the most important job. Do not stop pointing.
+  - c: Show the SOS/MOB button on the chartplotter — press immediately to mark position
+    when:
+      has_category:
+      - navigation_electronics
+  - c: 'Explain recovery manoeuvre: slow down, circle back, approach from downwind'
+    s: Engine on immediately. Approach slowly from the downwind side.
+  - c: Show the boarding ladder location and how to deploy it
+  - c: Show the throwable buoy / horseshoe buoy location
+    s: Throw immediately on MOB.
+- t: Fire
+  items:
+  - c: 'Explain fire drill: shout "FIRE", locate source, grab extinguisher'
+  - c: 'For an engine compartment fire: do NOT open the hatch — use the fire port / extinguisher outlet if fitted'
+    s: Opening the hatch feeds oxygen to the fire.
+    when:
+      has_category:
+      - propulsion
+  - c: 'If fire cannot be controlled: MAYDAY, prepare to abandon ship'
+    s: Life raft, EPIRB, flares, water, VHF.
+- t: VHF & Communications
+  items:
+  - c: Show guests where the VHF radio is located
+    s: Confirm everyone can find and switch on the radio without help.
+  - c: 'Explain Channel 16: primary distress channel — always monitored. Say MAYDAY here first.'
+  - c: '{vhf_working_channel_line}'
+    when:
+      has_company_vhf: true
+  - c: Run through the MAYDAY procedure verbally
+    s: '{mayday_verbal_script}'

@@ -1,0 +1,5 @@
+# Purpose: Label for REFERENCE MODULE block in composed LLM prompts (most modules).
+# Used by: guide_generation._compose_prompt and _reference_label_for
+# Module: all except ui/homeRuleSections
+#
+REFERENCE MODULE (structure/tone; do not copy stale facts over snapshot):

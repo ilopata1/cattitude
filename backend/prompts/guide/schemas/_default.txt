@@ -1,0 +1,4 @@
+# Purpose: Fallback schema hint when no module-specific schema file applies.
+# Used by: guide_generation._schema_hint_for for unknown module types.
+#
+valid JSON for this module type
