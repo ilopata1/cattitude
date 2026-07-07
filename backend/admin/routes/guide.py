@@ -22,19 +22,22 @@ from guide_generation import GuideGenerationError, load_vessel_generation_contex
 from guide_equipment_coverage import gaps_for_modules, list_system_equipment_gaps
 from guide_module_catalog import GENERATION_SET_OPTIONS, SYSTEM_IDS, modules_for_sets
 from guide_context_utils import emergency_contacts_count, merge_guide_context
-from guide_publish import PublishValidationError, assemble_publication, publish_vessel_guide
+from guide_publish import (
+    NO_PUBLISHABLE_MODULES_MSG,
+    PublishValidationError,
+    assemble_publication,
+    publish_vessel_guide,
+)
 
 router = APIRouter(prefix="/vessels/{vessel_id}/guide", tags=["admin-guide"])
-
-NO_APPROVED_MODULES_MSG = "No approved guide modules to publish."
 
 
 def _classify_preview_messages(
     messages: list[str],
 ) -> tuple[list[str] | None, list[str] | None]:
     """Split informational assembly messages from hard validation errors."""
-    info = [message for message in messages if message == NO_APPROVED_MODULES_MSG]
-    errors = [message for message in messages if message != NO_APPROVED_MODULES_MSG]
+    info = [message for message in messages if message == NO_PUBLISHABLE_MODULES_MSG]
+    errors = [message for message in messages if message != NO_PUBLISHABLE_MODULES_MSG]
     return (errors or None), (info or None)
 
 

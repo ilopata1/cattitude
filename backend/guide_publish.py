@@ -1,4 +1,4 @@
-"""Assemble and publish vessel guides from approved guide_content modules."""
+"""Assemble and publish vessel guides from guide_content modules."""
 
 from __future__ import annotations
 
@@ -11,6 +11,10 @@ from sqlalchemy.engine import Connection
 from guide_bootstrap import assemble_bootstrap, build_asset_manifest, canonical_json_hash
 from guide_navigation import NAVIGATION_MODULE_KEYS, enrich_navigation
 from manual_titles import build_manual_titles_for_vessel
+
+NO_PUBLISHABLE_MODULES_MSG = (
+    "No publishable guide modules. Generate and approve content before the first publish."
+)
 
 
 class PublishValidationError(Exception):
@@ -30,14 +34,22 @@ def _coerce_jsonb(value: Any) -> Any:
     return value
 
 
-def load_approved_modules(conn: Connection, vessel_id: str) -> list[dict[str, Any]]:
+def load_publishable_modules(conn: Connection, vessel_id: str) -> list[dict[str, Any]]:
+    """Latest module per content slot — approved overrides published for that slot."""
     rows = conn.execute(
         text(
             """
-            SELECT id, content_type, content_key, payload
+            SELECT DISTINCT ON (content_type, content_key)
+                id, content_type, content_key, payload, status
             FROM guide_content
-            WHERE vessel_id = :vessel_id AND status = 'approved'
-            ORDER BY content_type, content_key
+            WHERE vessel_id = :vessel_id
+              AND status IN ('approved', 'published')
+            ORDER BY
+              content_type,
+              content_key,
+              CASE status WHEN 'approved' THEN 0 ELSE 1 END,
+              approved_at DESC NULLS LAST,
+              created_at DESC
             """
         ),
         {"vessel_id": vessel_id},
@@ -48,8 +60,18 @@ def load_approved_modules(conn: Connection, vessel_id: str) -> list[dict[str, An
             "content_type": row[1],
             "content_key": row[2],
             "payload": _coerce_jsonb(row[3]),
+            "status": row[4],
         }
         for row in rows
+    ]
+
+
+def load_approved_modules(conn: Connection, vessel_id: str) -> list[dict[str, Any]]:
+    """Return only approved modules (legacy helper)."""
+    return [
+        module
+        for module in load_publishable_modules(conn, vessel_id)
+        if module["status"] == "approved"
     ]
 
 
@@ -97,9 +119,9 @@ def assemble_publication(
     vessel_id: str,
     vessel_slug: str,
 ) -> dict[str, Any]:
-    modules = load_approved_modules(conn, vessel_id)
+    modules = load_publishable_modules(conn, vessel_id)
     if not modules:
-        raise PublishValidationError(["No approved guide modules to publish."])
+        raise PublishValidationError([NO_PUBLISHABLE_MODULES_MSG])
 
     content_modules = [
         module
@@ -133,12 +155,21 @@ def assemble_publication(
         for module in content_modules
     ]
 
+    approved_count = sum(
+        1 for module in content_modules if module["status"] == "approved"
+    )
+    published_count = sum(
+        1 for module in content_modules if module["status"] == "published"
+    )
+
     return {
         "payload": payload,
         "content_hash": content_hash,
         "asset_manifest": asset_manifest,
         "module_refs": module_refs,
         "module_count": len(content_modules),
+        "approved_module_count": approved_count,
+        "published_module_count": published_count,
         "validation_messages": validation,
         "missing_assets": [asset for asset in asset_manifest if asset.get("missing")],
     }
@@ -199,9 +230,18 @@ def publish_vessel_guide(
     conn.execute(
         text(
             """
-            UPDATE guide_content
+            UPDATE guide_content AS old
             SET status = 'superseded'
-            WHERE vessel_id = :vessel_id AND status = 'published'
+            WHERE old.vessel_id = :vessel_id
+              AND old.status = 'published'
+              AND EXISTS (
+                SELECT 1
+                FROM guide_content newer
+                WHERE newer.vessel_id = :vessel_id
+                  AND newer.status = 'approved'
+                  AND newer.content_type = old.content_type
+                  AND newer.content_key = old.content_key
+              )
             """
         ),
         {"vessel_id": vessel_id},

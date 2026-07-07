@@ -3,7 +3,7 @@
 {% block content %}
 <p class="breadcrumb"><a href="/admin/vessels">Vessels</a> / <a href="/admin/vessels/{{ vessel.id }}/guide">{{ vessel.name }}</a> / Publish</p>
 <h1>Publish {{ vessel.name }}</h1>
-<p class="lede">Creates an immutable <code>vessel_guide_publication</code> snapshot from approved modules. Mobile clients sync when the content hash changes.</p>
+<p class="lede">Creates an immutable <code>vessel_guide_publication</code> snapshot from approved modules and any in-place updates to the last published set (for example new logos). Mobile clients sync when the content hash changes.</p>
 
 {% if preview_info %}
 <div class="flash flash-ok">
@@ -17,7 +17,13 @@
 {% elif preview %}
 <section class="panel">
   <dl class="meta-list">
-    <dt>Approved modules</dt><dd>{{ preview.module_count }}</dd>
+    <dt>Modules in bundle</dt>
+    <dd>
+      {{ preview.module_count }}
+      {% if preview.published_module_count %}
+      ({{ preview.approved_module_count }} approved, {{ preview.published_module_count }} from last publish)
+      {% endif %}
+    </dd>
     <dt>New content hash</dt><dd><code>{{ preview.content_hash }}</code></dd>
     <dt>Assets in manifest</dt><dd>{{ preview.asset_manifest|length }}</dd>
   </dl>

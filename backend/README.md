@@ -166,7 +166,7 @@ Even when a module is not copied verbatim, a previous approved version may still
 3. Optionally curate **equipment fragments** for models you use repeatedly (“first boat pays, siblings reuse”) — edit JSON on each equipment registry page
 4. **Review drafts** — compare new output to the prior approved version
 5. **Approve** modules individually
-6. **Publish** the full approved set to make it live in the app
+6. **Publish** the full approved set to make it live in the app (or republish after image-only updates — see below)
 
 Equipment **manuals** (PDFs for the Ask tab) are uploaded and legally reviewed separately. They are outside this pipeline.
 
@@ -188,6 +188,7 @@ The system fills gaps predictably rather than failing silently:
 | Manual tab titles (`manualTitles`) | Built at publish from `manual_work.title` for manuals on linked equipment; Ask live queries also resolve titles from the library |
 | Operating base context updated after last publish | Admin shows a **stale context** warning — regenerate affected sections |
 | Publish with no changes since last time | Publish is blocked (same content hash) |
+| Logo or system photo uploaded after last publish | Upload patches the live module in place; **Publish new version** picks up the change without regenerating drafts |
 
 At publish time, image paths are normalized for the vessel, and missing image files are flagged in the asset manifest but do not block publish.
 
@@ -224,9 +225,9 @@ At publish time, image paths are normalized for the vessel, and missing image fi
                              ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │  PUBLISH                                                        │
-│  All approved modules → single app package (bootstrap)          │
-│  + manual titles from last publication                          │
-│  Validate → record version → approved modules become published  │
+│  Approved modules + in-place published updates → app package    │
+│  + manual titles from equipment                                 │
+│  Validate → record version → newly approved modules → published │
 └────────────────────────────┬────────────────────────────────────┘
                              ▼
 ┌─────────────────────────────────────────────────────────────────┐
@@ -262,7 +263,7 @@ When you duplicate a vessel, approved or published guide modules can be copied d
 
 4. **Invest in equipment fragments for repeated models.** One curated fragment benefits every vessel with that engine, chartplotter, or head type.
 
-5. **Publish** — Do and Know navigation are included automatically; no separate navigation step.
+5. **Publish** — Do and Know navigation are included automatically; no separate navigation step. After uploading header/hero logos or system photos, publish again to sync images — no draft approval required when only images changed.
 
 6. **Nothing reaches guests until you publish.** Generation always creates drafts. Review, approve, then publish.
 

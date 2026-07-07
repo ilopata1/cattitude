@@ -120,7 +120,13 @@
       </div>
     {% elif preview %}
       <dl class="meta-list">
-        <dt>Approved modules</dt><dd>{{ preview.module_count }}</dd>
+        <dt>Modules in bundle</dt>
+        <dd>
+          {{ preview.module_count }}
+          {% if preview.published_module_count %}
+          ({{ preview.approved_module_count }} approved, {{ preview.published_module_count }} from last publish)
+          {% endif %}
+        </dd>
         <dt>Content hash</dt><dd><code>{{ preview.content_hash }}</code></dd>
         <dt>Assets</dt><dd>{{ preview.asset_manifest|length }}{% if preview.missing_assets %} ({{ preview.missing_assets|length }} missing on disk){% endif %}</dd>
       </dl>
@@ -137,7 +143,7 @@
 
 <section class="panel" id="guide-assets">
   <h2>Guide images</h2>
-  <p class="muted">Upload logos and system photos for this vessel. Images are stored under <code>assets/images/vessels/{{ vessel.slug }}/systems/</code> and included in the asset manifest at publish.</p>
+  <p class="muted">Upload logos and system photos for this vessel. Images are stored under <code>assets/images/vessels/{{ vessel.slug }}/systems/</code> and included in the asset manifest at publish. After uploading, use <strong>Publish new version</strong> to push image changes live — you do not need to regenerate or re-approve drafts.</p>
 
   <div class="asset-upload-grid">
     <form method="post" action="/admin/vessels/{{ vessel.id }}/guide/assets/logo" enctype="multipart/form-data" class="asset-upload-form">
