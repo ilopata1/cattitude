@@ -1,4 +1,4 @@
-"""Build guide generation snapshots and run LLM module generation."""
+"""Build guide generation snapshots and generate modules (template assembly, reference copy, or LLM)."""
 
 from __future__ import annotations
 
@@ -20,15 +20,19 @@ from guide_equipment_coverage import (
     system_has_equipment,
     system_requires_equipment,
 )
+from guide_content_library import LIBRARY_MODULE_BUILDERS
+from guide_equipment_fragments import (
+    apply_fix_card_fragments,
+    assemble_system_from_fragments,
+    load_vessel_fragments,
+)
 from guide_module_catalog import (
     CHECKLIST_CATALOG,
-    CHECKLIST_MODULES,
     COPY_MODULES,
-    FULL_GUIDE_MODULES,
     STARTER_MODULES,
     SYSTEM_CATALOG,
-    SYSTEM_MODULES,
 )
+from guide_template_assembly import TEMPLATE_MODULE_BUILDERS
 
 COPY_MODULE_KEYS = frozenset(COPY_MODULES)
 
@@ -37,22 +41,11 @@ SYSTEM_DEFAULTS: dict[str, dict[str, Any]] = {
     for system_id, meta in SYSTEM_CATALOG.items()
 }
 
-DEFAULT_GENERATION_MODULES: list[tuple[str, str]] = list(FULL_GUIDE_MODULES)
-
 SYSTEM_SECTION_TYPES = frozenset(
     {"prose", "photo", "list", "steps", "warnings", "notes"}
 )
 
 SCHEMA_HINTS: dict[tuple[str, str], str] = {
-    ("branding", "branding"): (
-        '{"vesselName","vesselSlug","vesselType","model","charterCompany",'
-        '"location","marina","tagline","headerLogo","heroLogo"}'
-    ),
-    ("emergency", "emergency"): (
-        '{"mayday":{"channel","vesselCallsign","steps[]"},'
-        '"contacts":[{"label","detail?","value","tel?","action"}],'
-        '"modalSubtitle"}'
-    ),
     ("ui", "homeRuleSections"): (
         '[{"title","tone":"danger|caution|good","rules":[{"icon","tone","text","link?"}]}]'
     ),
@@ -77,23 +70,6 @@ SCHEMA_HINTS: dict[tuple[str, str], str] = {
 }
 
 DEFAULT_PROMPTS: dict[tuple[str, str], str] = {
-    ("branding", "branding"): """Generate the branding module for a charter vessel guide.
-
-Use ONLY facts from INPUT SNAPSHOT (vessel, charter company, operating base).
-Audience: charter guests. Tone: clear and welcoming.
-
-If REFERENCE MODULE is provided, match its structure and preserve headerLogo/heroLogo paths exactly if present.
-
-Return JSON only — the branding object, no wrapper.""",
-    ("emergency", "emergency"): """Generate the emergency module for a vessel guide.
-
-Use INPUT SNAPSHOT guide_context for contacts and local VHF channels (merged operating base + vessel-specific context).
-Use guide_context.vesselCallsign or vessel.name for mayday callsign and modalSubtitle.
-Include standard MAYDAY steps on VHF Ch 16.
-
-contacts[].action must be "call" or "vhf". Include tel for phone contacts.
-
-Return JSON only — the emergency object, no wrapper.""",
     ("ui", "homeRuleSections"): """Generate homeRuleSections for the Home tab.
 
 Use ONLY facts from INPUT SNAPSHOT (vessel, guide_context, equipment).
@@ -319,6 +295,23 @@ def create_input_snapshot(
 
 
 def ensure_default_prompt_templates(conn: Connection) -> None:
+    # Template-assembled modules no longer use prompts; retire stale platform rows
+    # so the admin prompt list reflects what generation actually uses.
+    for content_type, content_key in TEMPLATE_MODULE_BUILDERS:
+        conn.execute(
+            text(
+                """
+                UPDATE guide_prompt_template
+                SET is_active = false
+                WHERE scope = 'platform'
+                  AND scope_id IS NULL
+                  AND content_type = CAST(:content_type AS guide_content_type)
+                  AND content_key = :content_key
+                  AND is_active = true
+                """
+            ),
+            {"content_type": content_type, "content_key": content_key},
+        )
     for (content_type, content_key), prompt_text in DEFAULT_PROMPTS.items():
         existing = conn.execute(
             text(
@@ -1131,6 +1124,7 @@ def generate_module(
     trigger: str = "onboarding",
     created_by: str = "guide_generation",
     llm: AzureOpenAI | None = None,
+    personalize: bool = False,
 ) -> dict[str, Any]:
     if (content_type, content_key) in COPY_MODULE_KEYS:
         return copy_module_from_reference(
@@ -1150,11 +1144,14 @@ def generate_module(
                 "operating base with contacts for charter vessels)."
             )
 
-    prompt_text, prompt_ref = _resolve_prompt_text(conn, content_type, content_key)
-    schema_hint = _schema_hint_for(content_type, content_key)
     reference = _load_reference_module(conn, vessel_id, content_type, content_key)
     diff_against_id = _load_diff_against_id(conn, vessel_id, content_type, content_key)
 
+    # Pure field mappings are always template-assembled; library-backed hybrid
+    # modules use the curated library unless the caller opts into LLM personalization.
+    template_builder = TEMPLATE_MODULE_BUILDERS.get((content_type, content_key))
+    if template_builder is None and not personalize:
+        template_builder = LIBRARY_MODULE_BUILDERS.get((content_type, content_key))
     use_equipment_placeholder = (
         content_type == "system"
         and system_requires_equipment(content_key)
@@ -1163,7 +1160,42 @@ def generate_module(
         )
     )
 
-    prompt_refs = [prompt_ref] if prompt_ref else []
+    # Equipment content library: shared per-equipment fragments assemble system
+    # modules (skipping the LLM) and enrich fix cards with model-specific steps.
+    fragment_rows: list[dict[str, Any]] = []
+    if not personalize and content_type in ("system", "fix_card_set"):
+        fragment_rows = load_vessel_fragments(conn, vessel_id)
+    fragment_system_payload = None
+    if (
+        content_type == "system"
+        and not personalize
+        and not use_equipment_placeholder
+    ):
+        fragment_system_payload = assemble_system_from_fragments(
+            content_key, fragment_rows
+        )
+
+    uses_llm = (
+        template_builder is None
+        and not use_equipment_placeholder
+        and fragment_system_payload is None
+    )
+
+    prompt_text = None
+    prompt_refs: list[dict[str, Any]] = []
+    if uses_llm:
+        prompt_text, prompt_ref = _resolve_prompt_text(conn, content_type, content_key)
+        prompt_refs = [prompt_ref] if prompt_ref else []
+
+    if template_builder is not None:
+        model_id = "template_assembly"
+    elif fragment_system_payload is not None:
+        model_id = "equipment_content_library"
+    elif use_equipment_placeholder:
+        model_id = "equipment_gap_placeholder"
+    else:
+        model_id = settings.azure_openai_chat_deployment
+
     run_id = _insert_generation_run(
         conn,
         vessel_id=vessel_id,
@@ -1172,11 +1204,7 @@ def generate_module(
         content_key=content_key,
         trigger=trigger,
         prompt_refs=prompt_refs,
-        model_id=(
-            "equipment_gap_placeholder"
-            if use_equipment_placeholder
-            else settings.azure_openai_chat_deployment
-        ),
+        model_id=model_id,
     )
 
     prompt_snapshot = snapshot_payload
@@ -1187,7 +1215,15 @@ def generate_module(
         }
 
     try:
-        if use_equipment_placeholder:
+        if template_builder is not None:
+            payload = template_builder(snapshot_payload, reference)
+            if content_type == "fix_card_set":
+                payload = apply_fix_card_fragments(payload, fragment_rows)
+        elif fragment_system_payload is not None:
+            payload = _finalize_system_payload(
+                content_key, fragment_system_payload, reference
+            )
+        elif use_equipment_placeholder:
             payload = build_placeholder_system_module(content_key)
             payload = _finalize_system_payload(content_key, payload, reference)
         else:
@@ -1195,7 +1231,7 @@ def generate_module(
             composed = _compose_prompt(
                 instruction=prompt_text,
                 snapshot=prompt_snapshot,
-                schema_hint=schema_hint,
+                schema_hint=_schema_hint_for(content_type, content_key),
                 reference=reference,
                 reference_label=_reference_label_for(content_type, content_key),
             )
@@ -1227,6 +1263,8 @@ def generate_module(
             "status": "completed",
             "reused_draft": reused_draft,
             "equipment_placeholder": use_equipment_placeholder,
+            "template_assembly": template_builder is not None,
+            "equipment_content_library": fragment_system_payload is not None,
         }
     except Exception as exc:
         _fail_generation_run(conn, run_id, str(exc))
@@ -1242,6 +1280,7 @@ def run_guide_generation(
     *,
     trigger: str = "onboarding",
     created_by: str = "guide_generation",
+    personalize: bool = False,
 ) -> GenerationResult:
     ensure_default_prompt_templates(conn)
     snapshot_payload = load_vessel_generation_context(conn, vessel_id)
@@ -1250,7 +1289,12 @@ def run_guide_generation(
     results: list[dict[str, Any]] = []
     module_list = modules or list(STARTER_MODULES)
     for content_type, content_key in module_list:
-        needs_llm = (content_type, content_key) not in COPY_MODULE_KEYS
+        module_key = (content_type, content_key)
+        needs_llm = (
+            module_key not in COPY_MODULE_KEYS
+            and module_key not in TEMPLATE_MODULE_BUILDERS
+            and (personalize or module_key not in LIBRARY_MODULE_BUILDERS)
+        )
         if needs_llm and llm is None:
             llm = _build_llm()
         try:
@@ -1265,6 +1309,7 @@ def run_guide_generation(
                     trigger=trigger,
                     created_by=created_by,
                     llm=llm,
+                    personalize=personalize,
                 )
             )
         except GuideGenerationError as exc:

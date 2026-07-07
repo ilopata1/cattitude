@@ -110,6 +110,14 @@ def main() -> None:
         help="Build input snapshot only; no LLM calls",
     )
     parser.add_argument(
+        "--personalize",
+        action="store_true",
+        help=(
+            "Use the LLM for library-backed modules (home rules, checklists, "
+            "fix cards) instead of the standard content library"
+        ),
+    )
+    parser.add_argument(
         "--created-by",
         default="generate_guide.py",
         help="Audit label stored on guide_content",
@@ -154,6 +162,7 @@ def main() -> None:
                 vessel_id,
                 modules,
                 created_by=args.created_by,
+                personalize=args.personalize,
             )
     except GuideGenerationError as exc:
         raise SystemExit(str(exc)) from exc

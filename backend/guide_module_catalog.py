@@ -41,11 +41,12 @@ SYSTEM_MODULES: list[tuple[str, str]] = [("system", sid) for sid in SYSTEM_IDS]
 CHECKLIST_MODULES: list[tuple[str, str]] = [("checklist", cid) for cid in CHECKLIST_IDS]
 FIXES_MODULE: list[tuple[str, str]] = [("fix_card_set", "all")]
 
-LLM_GUIDE_MODULES: list[tuple[str, str]] = (
+# Generated per vessel (branding/emergency via template assembly; the rest via LLM).
+GENERATED_GUIDE_MODULES: list[tuple[str, str]] = (
     STARTER_MODULES + SYSTEM_MODULES + CHECKLIST_MODULES + FIXES_MODULE
 )
 
-FULL_GUIDE_MODULES: list[tuple[str, str]] = LLM_GUIDE_MODULES + COPY_MODULES
+FULL_GUIDE_MODULES: list[tuple[str, str]] = GENERATED_GUIDE_MODULES + COPY_MODULES
 
 # Per-system generation hints (equipment categories are Postgres system_category values).
 SYSTEM_CATALOG: dict[str, dict[str, Any]] = {

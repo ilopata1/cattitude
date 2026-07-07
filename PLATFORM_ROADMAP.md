@@ -64,7 +64,7 @@ Referenced in `cursor-build-admin-portal.md`, project briefing §2.10 / §4.
 
 **Status:** planned (design before scale; spans Phases 2–4)
 
-**Problem:** Today each full guide run is ~22 GPT-4o calls (~**$0.35–0.45/vessel**). There is **no cross-vessel LLM reuse** — shared equipment in the registry does not skip calls. At freemium conversion (~5%), generating a full personalized guide on every signup burns **~$7–9 in LLM per paying customer** before Ask, hosting, or support. With 1,000+ similar hulls worldwide, that cost is unsustainable.
+**Problem:** Each full guide run is at most ~13 GPT-4o calls by default (system modules only — branding, emergency, home rules, checklists, and fix cards are template/library-assembled without LLM; ~20 calls with the "Personalize with AI" opt-in). System modules whose linked equipment has curated `equipment_guide_fragment` rows are also assembled without LLM, so a vessel fully covered by the fragment library (e.g. a sibling hull) drops to ~2 calls (overview + safety). There is **no cross-vessel LLM reuse** — shared equipment in the registry does not skip calls. At freemium conversion (~5%), generating a full personalized guide on every signup burns **~$7–9 in LLM per paying customer** before Ask, hosting, or support. With 1,000+ similar hulls worldwide, that cost is unsustainable.
 
 **Principle:** Separate **“has a usable guide”** from **“ran the full LLM pipeline.”** Free users get a good-enough guide from templates and assembly; premium (or paid onboarding) triggers personalized LLM generation.
 
@@ -101,7 +101,7 @@ Regeneration of the same vessel with unchanged `guide_generation_input_snapshot.
 | 3 | **`assemble_guide_from_templates()`** — no LLM path to `vessel_guide_publication` | 2–3 | Hull-model baseline + intake facts (name, contacts, equipment list as structured data) |
 | 4 | **Hull-model starter publications** | 2–3 | Curated bootstrap per `hull_model` (maintain from first approved guide on that hull) |
 | 5 | **Exemplar matching** — `(hull_model + option_pack fingerprint + operating_base)` → copy modules | 2–3 | Extends `clone_vessel(copy_guide_modules)` policy globally; LLM only for unmatched modules |
-| 6 | **Equipment-level content library** (optional) | 3+ | Shared prose keyed by `equipment_id`; assemble into system modules without LLM |
+| 6 | **Equipment-level content library** | 3+ | **Shipped** — `equipment_guide_fragment` (shared prose keyed by `equipment_id`) assembles system modules and enriches fix cards without LLM; harvest + seed scripts in `backend/scripts/` |
 | 7 | **Tiered model policy** | 2 | GPT-4o mini for free/light paths; GPT-4o for premium; validate before publish |
 | 8 | **Token/cost logging** on `guide_generation_run` | 2 | Real unit economics per module, not estimates |
 | 9 | **Ask gating** aligned with tier | 4 | Free: offline guide only or capped/cached Ask; premium: live RAG |
