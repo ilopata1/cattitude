@@ -1,4 +1,4 @@
-"""Build guide generation snapshots and generate modules (template assembly, reference copy, or LLM)."""
+"""Build guide generation snapshots and generate modules (template assembly or LLM)."""
 
 from __future__ import annotations
 
@@ -28,7 +28,6 @@ from guide_equipment_fragments import (
 )
 from guide_module_catalog import (
     CHECKLIST_CATALOG,
-    COPY_MODULES,
     STARTER_MODULES,
     SYSTEM_CATALOG,
 )
@@ -40,8 +39,6 @@ from prompts.guide.registry import (
     get_llm_prompt,
     get_schema_hint,
 )
-
-COPY_MODULE_KEYS = frozenset(COPY_MODULES)
 
 SYSTEM_DEFAULTS: dict[str, dict[str, Any]] = {
     system_id: {"icon": meta["icon"], "locs": meta["locs"]}
@@ -925,59 +922,6 @@ def _fail_generation_run(conn: Connection, run_id: str, error: str) -> None:
     )
 
 
-def copy_module_from_reference(
-    conn: Connection,
-    *,
-    vessel_id: str,
-    snapshot_id: str,
-    content_type: str,
-    content_key: str,
-    trigger: str = "onboarding",
-    created_by: str = "guide_generation",
-) -> dict[str, Any]:
-    reference = _load_approved_reference_module(
-        conn, vessel_id, content_type, content_key
-    )
-    if reference is None:
-        raise GuideGenerationError(
-            f"No approved reference to copy for {content_type}/{content_key}"
-        )
-    payload = json.loads(json.dumps(reference))
-    diff_against_id = _load_diff_against_id(conn, vessel_id, content_type, content_key)
-    _validate_module_payload(content_type, content_key, payload)
-
-    run_id = _insert_generation_run(
-        conn,
-        vessel_id=vessel_id,
-        snapshot_id=snapshot_id,
-        content_type=content_type,
-        content_key=content_key,
-        trigger=trigger,
-        prompt_refs=[],
-        model_id="reference_copy",
-    )
-    module_id, reused_draft = _save_generated_draft(
-        conn,
-        vessel_id=vessel_id,
-        content_type=content_type,
-        content_key=content_key,
-        payload=payload,
-        run_id=run_id,
-        diff_against_id=diff_against_id,
-        created_by=created_by,
-    )
-    _complete_generation_run(conn, run_id)
-    return {
-        "run_id": run_id,
-        "module_id": module_id,
-        "content_type": content_type,
-        "content_key": content_key,
-        "status": "completed",
-        "reused_draft": reused_draft,
-        "copied_from_reference": True,
-    }
-
-
 def _compose_prompt(
     *,
     instruction: str,
@@ -1022,16 +966,6 @@ def generate_module(
     llm: AzureOpenAI | None = None,
     personalize: bool = False,
 ) -> dict[str, Any]:
-    if (content_type, content_key) in COPY_MODULE_KEYS:
-        return copy_module_from_reference(
-            conn,
-            vessel_id=vessel_id,
-            snapshot_id=snapshot_id,
-            content_type=content_type,
-            content_key=content_key,
-            trigger=trigger,
-            created_by=created_by,
-        )
     if content_type == "emergency":
         if emergency_contacts_count(snapshot_payload.get("guide_context")) < 1:
             raise GuideGenerationError(
@@ -1187,8 +1121,7 @@ def run_guide_generation(
     for content_type, content_key in module_list:
         module_key = (content_type, content_key)
         needs_llm = (
-            module_key not in COPY_MODULE_KEYS
-            and module_key not in TEMPLATE_MODULE_BUILDERS
+            module_key not in TEMPLATE_MODULE_BUILDERS
             and (personalize or module_key not in LIBRARY_MODULE_BUILDERS)
         )
         if needs_llm and llm is None:

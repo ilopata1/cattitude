@@ -20,22 +20,13 @@ SYSTEM_IDS: list[str] = [
     "water",
     "heads",
     "galley",
+    "ac",
     "nav",
     "anchoring",
     "dinghy",
-    "ac",
 ]
 
 CHECKLIST_IDS: list[str] = ["safety-brief", "pd", "anch", "lu", "ec"]
-
-# Structural modules copied from the current approved guide (photos, routes, zone layout).
-COPY_MODULES: list[tuple[str, str]] = [
-    ("locations", "locations"),
-    ("ui", "doMenu"),
-    ("ui", "checklistMeta"),
-    ("ui", "systemOrder"),
-    ("ui", "locationLayout"),
-]
 
 SYSTEM_MODULES: list[tuple[str, str]] = [("system", sid) for sid in SYSTEM_IDS]
 CHECKLIST_MODULES: list[tuple[str, str]] = [("checklist", cid) for cid in CHECKLIST_IDS]
@@ -46,7 +37,7 @@ GENERATED_GUIDE_MODULES: list[tuple[str, str]] = (
     STARTER_MODULES + SYSTEM_MODULES + CHECKLIST_MODULES + FIXES_MODULE
 )
 
-FULL_GUIDE_MODULES: list[tuple[str, str]] = GENERATED_GUIDE_MODULES + COPY_MODULES
+FULL_GUIDE_MODULES: list[tuple[str, str]] = list(GENERATED_GUIDE_MODULES)
 
 # Per-system generation hints (equipment categories are Postgres system_category values).
 SYSTEM_CATALOG: dict[str, dict[str, Any]] = {
@@ -184,7 +175,8 @@ CHECKLIST_CATALOG: dict[str, dict[str, str]] = {
     },
 }
 
-COPY_MODULE_REVIEW: dict[tuple[str, str], dict[str, str]] = {
+# Legacy module types — navigation is assembled at publish; rows may still exist in DB.
+LEGACY_NAVIGATION_REVIEW: dict[tuple[str, str], dict[str, str]] = {
     ("locations", "locations"): {
         "section_title": "Know by location",
         "guest_label": "Know tab — zones",
@@ -196,7 +188,7 @@ COPY_MODULE_REVIEW: dict[tuple[str, str], dict[str, str]] = {
         "section_title": "Do menu",
         "guest_label": "Do tab navigation",
         "review_title": "Do tab menu",
-        "review_blurb": "Checklist and Learn links shown on the Do tab (copied from approved guide).",
+        "review_blurb": "Legacy module — Do/Know navigation is now assembled automatically at publish.",
         "preview_context": "Do tab",
     },
     ("ui", "checklistMeta"): {
@@ -252,11 +244,6 @@ GENERATION_SET_OPTIONS: list[dict[str, str]] = [
         "label": "Fix tab",
         "description": "Troubleshooting cards for common problems",
     },
-    {
-        "value": "navigation",
-        "label": "Navigation UI",
-        "description": "App menus, system order & Know-by-location layout (copied from approved guide)",
-    },
 ]
 
 
@@ -269,8 +256,6 @@ def modules_for_set(module_set: str) -> list[tuple[str, str]]:
         return list(CHECKLIST_MODULES)
     if module_set == "fixes":
         return list(FIXES_MODULE)
-    if module_set == "navigation":
-        return list(COPY_MODULES)
     if module_set in ("all", "full"):
         return list(FULL_GUIDE_MODULES)
     raise ValueError(f"Unknown module_set: {module_set}")

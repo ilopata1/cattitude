@@ -46,8 +46,6 @@ SET_ALIASES = {
     "checklist": "checklists",
     "fixes": "fixes",
     "fix": "fixes",
-    "navigation": "navigation",
-    "nav": "navigation",
     "all": "full",
     "full": "full",
 }
@@ -97,7 +95,7 @@ def main() -> None:
     parser.add_argument(
         "--set",
         default="",
-        help="Module set: shell, systems, checklists, fixes, navigation, full",
+        help="Module set: shell, systems, checklists, fixes, full",
     )
     parser.add_argument(
         "--modules",

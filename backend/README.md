@@ -80,9 +80,10 @@ Vessel-specific slots (VHF channel, company name, boat name) are filled from the
 
 When you regenerate content, the system can look up the vessel’s last **approved** or **published** version of the same module. This is used to:
 
-- Preserve photos and layout
-- Copy navigation menus and zone layout verbatim
+- Preserve photos and layout in system guides
 - Give AI a structural template to follow (section order and tone)
+
+Do/Know **navigation** (menus, system order, zone layout) is **not** copied from reference — it is assembled automatically when you publish.
 
 It is **not** used to blindly reuse outdated facts. Fresh data always comes from the current snapshot.
 
@@ -116,17 +117,17 @@ When you click **Generate** in admin (or run the generation script), each module
 
 | Priority | Method | Used for | AI? |
 |----------|--------|----------|-----|
-| 1 | **Copy from reference** | Navigation menus, system order, zone layout, location map | Never |
-| 2 | **Template assembly** | Branding, emergency (MAYDAY, contacts) | Never |
-| 3 | **Equipment gap placeholder** | System topics that need equipment but none is linked | Never |
-| 4 | **Equipment content library** | System guides when curated fragments exist for linked equipment | Never |
-| 5 | **Curated content library** | Home rules, checklists, fix cards (default path) | Only if you check **Personalize** |
-| 6 | **AI generation** | System guides without fragments; any module when **Personalize** is checked | Yes |
+| 1 | **Template assembly** | Branding, emergency (MAYDAY, contacts) | Never |
+| 2 | **Equipment gap placeholder** | System topics that need equipment but none is linked | Never |
+| 3 | **Equipment content library** | System guides when curated fragments exist for linked equipment | Never |
+| 4 | **Curated content library** | Home rules, checklists, fix cards (default path) | Only if you check **Personalize** |
+| 5 | **AI generation** | System guides without fragments; any module when **Personalize** is checked | Yes |
+| *(at publish)* | **Navigation assembly** | Do menu, checklist labels, system order, Know-by-location layout | Never |
 
 **Key behaviors:**
 
 - **Branding and emergency** always use template assembly. Emergency text is built from your contacts and callsign — the system does not paraphrase MAYDAY procedures through AI.
-- **Navigation UI** (menus, ordering, which systems appear in each boat zone) is copied from an existing approved guide on the same vessel. It is not generated from scratch. You need a “golden” reference boat set up first.
+- **Do and Know navigation** is built automatically at **publish** from your approved systems, checklists, and `vessel_type` (see `guide_navigation.py`). You do not generate or approve navigation modules separately.
 - **Home rules, checklists, and fix cards** use the curated library **by default**. AI is opt-in via the **Personalize** checkbox.
 - **System guides** use equipment fragments when available; otherwise AI fills the gap (if equipment is linked). If required equipment is missing, you get a clear placeholder instead of invented details.
 
@@ -155,8 +156,8 @@ Even when a module is not copied verbatim, a previous approved version may still
 | System guides (missing equipment) | Placeholder message | Never |
 | Checklists (5) | Curated library | Only if **Personalize** is checked |
 | Fix cards | Curated library + equipment fragment enrichment | Only if **Personalize** is checked |
-| Navigation UI | Copied from approved reference on same vessel | Never |
-| Zone → system map | Copied from approved reference on same vessel | Never |
+| Do tab menu & checklist headers | Assembled at publish from approved checklists + catalog | Never |
+| Know tab order & zones | Assembled at publish from approved systems + `vessel_type` layout profile | Never |
 
 **Your manual steps** (the system does not do these for you):
 
@@ -261,15 +262,13 @@ When you duplicate a vessel, approved or published guide modules can be copied d
 
 4. **Invest in equipment fragments for repeated models.** One curated fragment benefits every vessel with that engine, chartplotter, or head type.
 
-5. **Set up navigation on a reference boat once.** Menus, system order, and zone layout are copied — not generated. Configure a “golden” vessel, approve it, then clone or copy for sisters.
+5. **Publish** — Do and Know navigation are included automatically; no separate navigation step.
 
 6. **Nothing reaches guests until you publish.** Generation always creates drafts. Review, approve, then publish.
 
 7. **Regenerate after context or equipment changes.** The snapshot captures a point in time. Old drafts do not auto-update when you change VHF channels or add equipment.
 
 8. **Watch for stale context warnings.** If the operating base is updated after your last publish, regenerate sections that depend on local facts.
-
----
 
 ## Terminology
 

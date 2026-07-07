@@ -9,6 +9,7 @@ from sqlalchemy import text
 from sqlalchemy.engine import Connection
 
 from guide_bootstrap import assemble_bootstrap, build_asset_manifest, canonical_json_hash
+from guide_navigation import NAVIGATION_MODULE_KEYS, enrich_navigation
 from manual_titles import build_manual_titles_for_vessel
 
 
@@ -57,6 +58,16 @@ def load_manual_titles(conn: Connection, vessel_id: str) -> dict[str, str]:
     return build_manual_titles_for_vessel(conn, vessel_id)
 
 
+def load_vessel_type(conn: Connection, vessel_id: str) -> str:
+    row = conn.execute(
+        text("SELECT vessel_type FROM vessels WHERE id = :vessel_id"),
+        {"vessel_id": vessel_id},
+    ).fetchone()
+    if row is None:
+        raise PublishValidationError([f"Vessel not found: {vessel_id}"])
+    return str(row[0])
+
+
 def validate_publication_payload(payload: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     warnings: list[str] = []
@@ -69,8 +80,14 @@ def validate_publication_payload(payload: dict[str, Any]) -> list[str]:
         errors.append("Missing systems content.")
     if not payload.get("checklists"):
         warnings.append("No checklists in assembled guide.")
-    if not payload.get("ui"):
-        errors.append("Missing ui configuration.")
+
+    ui = payload.get("ui") or {}
+    if not ui.get("homeRuleSections"):
+        errors.append("Missing home rules (ui.homeRuleSections).")
+    if payload.get("systems") and not ui.get("systemOrder"):
+        errors.append("Navigation assembly failed: empty systemOrder.")
+    if payload.get("checklists") and not ui.get("doMenu"):
+        errors.append("Navigation assembly failed: empty doMenu.")
 
     return errors + [f"Warning: {message}" for message in warnings]
 
@@ -84,13 +101,21 @@ def assemble_publication(
     if not modules:
         raise PublishValidationError(["No approved guide modules to publish."])
 
+    content_modules = [
+        module
+        for module in modules
+        if (module["content_type"], module["content_key"]) not in NAVIGATION_MODULE_KEYS
+    ]
+
     manual_titles = load_manual_titles(conn, vessel_id)
+    vessel_type = load_vessel_type(conn, vessel_id)
     payload = assemble_bootstrap(
-        modules,
+        content_modules,
         vessel_id=vessel_id,
         vessel_slug=vessel_slug,
         manual_titles=manual_titles,
     )
+    enrich_navigation(payload, vessel_type=vessel_type)
     validation = validate_publication_payload(payload)
     hard_errors = [message for message in validation if not message.startswith("Warning:")]
     if hard_errors:
@@ -105,7 +130,7 @@ def assemble_publication(
             "content_key": module["content_key"],
             "prompt_refs": [],
         }
-        for module in modules
+        for module in content_modules
     ]
 
     return {
@@ -113,7 +138,7 @@ def assemble_publication(
         "content_hash": content_hash,
         "asset_manifest": asset_manifest,
         "module_refs": module_refs,
-        "module_count": len(modules),
+        "module_count": len(content_modules),
         "validation_messages": validation,
         "missing_assets": [asset for asset in asset_manifest if asset.get("missing")],
     }

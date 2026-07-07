@@ -8,7 +8,7 @@ from typing import Any
 from admin.formatting import format_label
 from guide_module_catalog import (
     CHECKLIST_CATALOG,
-    COPY_MODULE_REVIEW,
+    LEGACY_NAVIGATION_REVIEW,
     FIXES_REVIEW,
     SYSTEM_CATALOG,
 )
@@ -80,7 +80,7 @@ for _checklist_id, _meta in CHECKLIST_CATALOG.items():
         "mobile_ref": "mobile/src/app/pages/do/checklist/checklist.page.html",
     }
 
-for _key, _meta in COPY_MODULE_REVIEW.items():
+for _key, _meta in LEGACY_NAVIGATION_REVIEW.items():
     _MODULE_REVIEW[_key] = {**_meta, "preview_available": False}
 
 
