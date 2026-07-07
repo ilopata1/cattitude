@@ -16,6 +16,15 @@
 {% if request.query_params.get('constraint_deleted') %}
 <div class="flash flash-ok">Constraint removed.</div>
 {% endif %}
+{% if request.query_params.get('fragment_saved') %}
+<div class="flash flash-ok">Guide fragment saved.</div>
+{% endif %}
+{% if request.query_params.get('fragment_cleared') %}
+<div class="flash flash-ok">Guide fragment removed.</div>
+{% endif %}
+{% if request.query_params.get('fragment_error') %}
+<div class="flash flash-error">{{ request.query_params.get('fragment_error') }}</div>
+{% endif %}
 {% if request.query_params.get('error') %}
 <div class="flash flash-error">{{ request.query_params.get('error') }}</div>
 {% endif %}
@@ -206,6 +215,43 @@
     </label>
     <button type="submit">Add constraint</button>
   </form>
+</section>
+
+<section class="panel" id="guide-fragment">
+  <h2>Guide content fragment</h2>
+  <p class="muted">
+    Shared guide content for this equipment model — reused on every vessel that links this registry item.
+    System sections, fix-card overrides, and extra fix cards are assembled without AI when a fragment exists.
+  </p>
+  {% if fragment %}
+  <p class="muted">Last updated {{ fragment.updated_at }}{% if fragment.created_by %} by {{ fragment.created_by }}{% endif %}.</p>
+  {% endif %}
+  <form method="post" action="/admin/equipment/{{ equipment.id }}/fragment" class="form-grid">
+    <label class="full-width">Fragment JSON
+      <textarea name="fragment_json" rows="18" class="code-textarea" spellcheck="false">{{ fragment_json }}</textarea>
+    </label>
+    <div class="form-actions full-width">
+      <button type="submit">Save fragment</button>
+      <button type="submit" name="clear_fragment" value="yes" class="btn-danger" onclick="return confirm('Remove this equipment fragment? Vessels will fall back to AI or placeholders.');">Remove fragment</button>
+    </div>
+  </form>
+  <details class="muted">
+    <summary>Fragment shape (reference)</summary>
+    <pre class="code-panel">{
+  "system_sections": {
+    "engines": {
+      "subtitle": "…",
+      "summary": "…",
+      "learnChecks": ["…"],
+      "sections": [{"t": "…", "type": "prose", "c": "…"}]
+    }
+  },
+  "fix_card_overrides": {
+    "engine-wont-start": {"title": "…", "steps": ["…"]}
+  },
+  "extra_fix_cards": [{"icon": "…", "cat": "…", "catL": "…", "title": "…", "steps": ["…"]}]
+}</pre>
+  </details>
 </section>
 {% endif %}
 {% endblock %}

@@ -4,6 +4,7 @@
 <p class="breadcrumb"><a href="/admin/manuals">Manual library</a> / {{ work.title }}</p>
 <h1>{{ work.title }}</h1>
 <p class="muted">{{ work.manufacturer }} — {{ work.model }} · {{ work.system_category | format_label }}</p>
+<p class="muted">Manual ID (Ask / <code>manualTitles</code> key): <code>{{ work.id }}</code></p>
 
 {% if request.query_params.get('saved') %}
 <div class="flash flash-ok">Manual work saved.</div>
@@ -25,6 +26,7 @@
   <fieldset class="full-width">
     <legend>Manual work</legend>
     <label>Title<input name="title" value="{{ work.title }}" required></label>
+    <p class="muted">This title is the source of truth for Ask citations and is included in the vessel guide <code>manualTitles</code> map at publish (keyed by this manual's ID).</p>
     <label>Manual type
       <select name="manual_type" required>
         {% for mt in manual_types %}

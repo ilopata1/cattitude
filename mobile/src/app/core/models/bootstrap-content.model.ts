@@ -161,6 +161,7 @@ export interface ChatMessage {
 export interface ChatSource {
   node_id?: string | null;
   manual_id: string;
+  title?: string | null;
   source_file?: string | null;
   page_start?: number | null;
   page_end?: number | null;

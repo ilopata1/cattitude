@@ -56,5 +56,8 @@ class Settings(BaseSettings):
     # Manual PDF storage (defaults to repo manuals/ when unset)
     manuals_storage_dir: str = ""
 
+    # Guide images uploaded via admin (logos, system photos)
+    guide_assets_storage_dir: str = ""
+
 
 settings = Settings()

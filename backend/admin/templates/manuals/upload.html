@@ -46,6 +46,7 @@
     </label>
     <div id="new-work-fields" hidden>
       <label>Title<input name="title" value="{{ form.title or '' }}"></label>
+      <p class="muted">Used in the manual library and as the guest-facing Ask citation label.</p>
       <label>Manual type
         <select name="manual_type">
           {% for mt in manual_types %}

@@ -368,6 +368,27 @@ select {
   margin-bottom: 1rem;
 }
 
+.panel-heading-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.panel-heading-row h2 {
+  margin: 0;
+}
+
+[id^="module-"] {
+  scroll-margin-top: 1rem;
+}
+
+#guide-modules {
+  scroll-margin-top: 1rem;
+}
+
 .data-table {
   width: 100%;
   border-collapse: collapse;
@@ -443,6 +464,37 @@ button, .button {
 .flash-ok { background: #d8f3dc; color: var(--ok); }
 .flash-warn { background: #fff3cd; color: var(--warn); }
 .flash-error { background: #fde2e2; color: var(--error); }
+
+.code-textarea {
+  width: 100%;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  min-height: 12rem;
+}
+
+.asset-upload-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.asset-upload-form {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.85rem;
+  background: #fafbfd;
+}
+
+.asset-upload-form--wide {
+  grid-column: 1 / -1;
+}
+
+.asset-upload-form h3 {
+  margin: 0 0 0.65rem;
+  font-size: 1rem;
+}
 
 .badge {
   display: inline-block;

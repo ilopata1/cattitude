@@ -164,6 +164,96 @@ def apply_fix_card_fragments(
     return result
 
 
+def get_equipment_fragment(
+    conn: Connection, equipment_id: str
+) -> dict[str, Any] | None:
+    row = conn.execute(
+        text(
+            """
+            SELECT id, fragment, updated_at, created_by
+            FROM equipment_guide_fragment
+            WHERE equipment_id = :equipment_id AND is_active
+            """
+        ),
+        {"equipment_id": equipment_id},
+    ).fetchone()
+    if row is None:
+        return None
+    return {
+        "id": str(row[0]),
+        "fragment": _coerce_jsonb(row[1]) or {},
+        "updated_at": row[2],
+        "created_by": row[3],
+    }
+
+
+def replace_equipment_fragment(
+    conn: Connection,
+    equipment_id: str,
+    fragment: dict[str, Any],
+    *,
+    created_by: str,
+) -> dict[str, Any]:
+    """Replace the equipment's active fragment JSON (creates row if needed)."""
+    row = conn.execute(
+        text(
+            """
+            SELECT id FROM equipment_guide_fragment
+            WHERE equipment_id = :equipment_id AND is_active
+            """
+        ),
+        {"equipment_id": equipment_id},
+    ).fetchone()
+
+    payload = json.dumps(fragment)
+    if row:
+        conn.execute(
+            text(
+                """
+                UPDATE equipment_guide_fragment
+                SET fragment = CAST(:fragment AS jsonb),
+                    updated_at = now(),
+                    created_by = :created_by
+                WHERE id = :id
+                """
+            ),
+            {
+                "id": str(row[0]),
+                "fragment": payload,
+                "created_by": created_by,
+            },
+        )
+    else:
+        conn.execute(
+            text(
+                """
+                INSERT INTO equipment_guide_fragment (equipment_id, fragment, created_by)
+                VALUES (:equipment_id, CAST(:fragment AS jsonb), :created_by)
+                """
+            ),
+            {
+                "equipment_id": equipment_id,
+                "fragment": payload,
+                "created_by": created_by,
+            },
+        )
+    return fragment
+
+
+def delete_equipment_fragment(conn: Connection, equipment_id: str) -> bool:
+    result = conn.execute(
+        text(
+            """
+            UPDATE equipment_guide_fragment
+            SET is_active = false, updated_at = now()
+            WHERE equipment_id = :equipment_id AND is_active
+            """
+        ),
+        {"equipment_id": equipment_id},
+    )
+    return result.rowcount > 0
+
+
 def upsert_equipment_fragment(
     conn: Connection,
     equipment_id: str,

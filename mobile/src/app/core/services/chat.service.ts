@@ -80,7 +80,9 @@ export class ChatService {
   }
 
   formatSourceLabel(source: ChatSource): string {
-    const title = this.content.formatManualTitle(source.manual_id);
+    const title =
+      source.title?.trim() ||
+      this.content.formatManualTitle(source.manual_id);
     const page = this.formatPageLabel(source.page_start, source.page_end);
     return page ? `${title} · ${page}` : title;
   }

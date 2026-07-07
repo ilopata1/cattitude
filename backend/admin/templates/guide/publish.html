@@ -5,6 +5,11 @@
 <h1>Publish {{ vessel.name }}</h1>
 <p class="lede">Creates an immutable <code>vessel_guide_publication</code> snapshot from approved modules. Mobile clients sync when the content hash changes.</p>
 
+{% if preview_info %}
+<div class="flash flash-ok">
+  <ul>{% for message in preview_info %}<li>{{ message }}</li>{% endfor %}</ul>
+</div>
+{% endif %}
 {% if preview_error %}
 <div class="flash flash-error">
   <ul>{% for message in preview_error %}<li>{{ message }}</li>{% endfor %}</ul>

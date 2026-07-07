@@ -3,20 +3,99 @@ from __future__ import annotations
 import json
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, Form, Request
+from fastapi import APIRouter, Depends, File, Form, Query, Request, UploadFile
 from fastapi.responses import RedirectResponse
 from sqlalchemy import text
 
 from admin.auth import require_admin_user
 from admin.deps import get_engine, templates
 from admin.guide_review_meta import attach_review_meta
+from guide_assets_service import (
+    GuideAssetError,
+    add_system_photo,
+    list_vessel_guide_images,
+    save_logo_image,
+    save_system_image,
+    set_branding_logos,
+)
 from guide_generation import GuideGenerationError, load_vessel_generation_context, run_guide_generation
 from guide_equipment_coverage import gaps_for_modules, list_system_equipment_gaps
-from guide_module_catalog import GENERATION_SET_OPTIONS, modules_for_sets
+from guide_module_catalog import GENERATION_SET_OPTIONS, SYSTEM_IDS, modules_for_sets
 from guide_context_utils import emergency_contacts_count, merge_guide_context
 from guide_publish import PublishValidationError, assemble_publication, publish_vessel_guide
 
 router = APIRouter(prefix="/vessels/{vessel_id}/guide", tags=["admin-guide"])
+
+NO_APPROVED_MODULES_MSG = "No approved guide modules to publish."
+
+
+def _classify_preview_messages(
+    messages: list[str],
+) -> tuple[list[str] | None, list[str] | None]:
+    """Split informational assembly messages from hard validation errors."""
+    info = [message for message in messages if message == NO_APPROVED_MODULES_MSG]
+    errors = [message for message in messages if message != NO_APPROVED_MODULES_MSG]
+    return (errors or None), (info or None)
+
+
+def _approve_draft_module(
+    conn,
+    *,
+    vessel_id: str,
+    module_id: str,
+    approved_by: str,
+) -> bool:
+    row = conn.execute(
+        text(
+            """
+            SELECT content_type, content_key
+            FROM guide_content
+            WHERE id = :module_id
+              AND vessel_id = :vessel_id
+              AND status = 'draft'
+            """
+        ),
+        {"module_id": module_id, "vessel_id": vessel_id},
+    ).fetchone()
+    if row is None:
+        return False
+
+    conn.execute(
+        text(
+            """
+            UPDATE guide_content
+            SET status = 'superseded'
+            WHERE vessel_id = :vessel_id
+              AND content_type = :content_type
+              AND content_key = :content_key
+              AND status IN ('approved', 'published')
+              AND id <> :module_id
+            """
+        ),
+        {
+            "vessel_id": vessel_id,
+            "content_type": row[0],
+            "content_key": row[1],
+            "module_id": module_id,
+        },
+    )
+    conn.execute(
+        text(
+            """
+            UPDATE guide_content
+            SET status = 'approved', approved_at = now(), approved_by = :approved_by
+            WHERE id = :module_id
+              AND vessel_id = :vessel_id
+              AND status = 'draft'
+            """
+        ),
+        {
+            "module_id": module_id,
+            "vessel_id": vessel_id,
+            "approved_by": approved_by,
+        },
+    )
+    return True
 
 
 def _load_vessel(conn, vessel_id: str) -> dict | None:
@@ -206,6 +285,7 @@ async def vessel_guide_overview(
             stale_context = vessel["base_updated_at"] > latest[2]
 
     preview_error = None
+    preview_info = None
     preview = None
     equipment_gaps: list[dict] = []
     try:
@@ -216,7 +296,10 @@ async def vessel_guide_overview(
                 generation_context.get("equipment") or []
             )
     except PublishValidationError as exc:
-        preview_error = exc.messages
+        preview_error, preview_info = _classify_preview_messages(exc.messages)
+
+    draft_count = sum(1 for module in modules if module["status"] == "draft")
+    guide_images = list_vessel_guide_images(vessel["slug"])
 
     return templates.TemplateResponse(
         request,
@@ -225,12 +308,16 @@ async def vessel_guide_overview(
             "admin_user": admin_user,
             "vessel": vessel,
             "modules": modules,
+            "draft_count": draft_count,
             "publication": publication,
             "stale_context": stale_context,
             "preview": preview,
             "preview_error": preview_error,
+            "preview_info": preview_info,
             "generation_sets": GENERATION_SET_OPTIONS,
             "equipment_gaps": equipment_gaps,
+            "guide_images": guide_images,
+            "system_ids": SYSTEM_IDS,
         },
     )
 
@@ -268,57 +355,57 @@ async def approve_module(
     admin_user: str = Depends(require_admin_user),
 ):
     with get_engine().begin() as conn:
-        row = conn.execute(
-            text(
-                """
-                SELECT content_type, content_key
-                FROM guide_content
-                WHERE id = :module_id
-                  AND vessel_id = :vessel_id
-                  AND status = 'draft'
-                """
-            ),
-            {"module_id": module_id, "vessel_id": vessel_id},
-        ).fetchone()
-        if row is None:
-            return RedirectResponse(f"/admin/vessels/{vessel_id}/guide", status_code=303)
+        approved = _approve_draft_module(
+            conn,
+            vessel_id=vessel_id,
+            module_id=module_id,
+            approved_by=admin_user,
+        )
+    if not approved:
+        return RedirectResponse(f"/admin/vessels/{vessel_id}/guide#guide-modules", status_code=303)
+    return RedirectResponse(
+        f"/admin/vessels/{vessel_id}/guide?approved=1#module-{module_id}",
+        status_code=303,
+    )
 
-        conn.execute(
+
+@router.post("/approve-all")
+async def approve_all_modules(
+    vessel_id: str,
+    admin_user: str = Depends(require_admin_user),
+):
+    with get_engine().begin() as conn:
+        draft_rows = conn.execute(
             text(
                 """
-                UPDATE guide_content
-                SET status = 'superseded'
+                SELECT id
+                FROM guide_content
                 WHERE vessel_id = :vessel_id
-                  AND content_type = :content_type
-                  AND content_key = :content_key
-                  AND status IN ('approved', 'published')
-                  AND id <> :module_id
-                """
-            ),
-            {
-                "vessel_id": vessel_id,
-                "content_type": row[0],
-                "content_key": row[1],
-                "module_id": module_id,
-            },
-        )
-        conn.execute(
-            text(
-                """
-                UPDATE guide_content
-                SET status = 'approved', approved_at = now(), approved_by = :approved_by
-                WHERE id = :module_id
-                  AND vessel_id = :vessel_id
                   AND status = 'draft'
+                ORDER BY content_type, content_key
                 """
             ),
-            {
-                "module_id": module_id,
-                "vessel_id": vessel_id,
-                "approved_by": admin_user,
-            },
+            {"vessel_id": vessel_id},
+        ).fetchall()
+        approved_count = 0
+        for row in draft_rows:
+            if _approve_draft_module(
+                conn,
+                vessel_id=vessel_id,
+                module_id=str(row[0]),
+                approved_by=admin_user,
+            ):
+                approved_count += 1
+
+    if approved_count:
+        return RedirectResponse(
+            f"/admin/vessels/{vessel_id}/guide?approved_all={approved_count}#guide-modules",
+            status_code=303,
         )
-    return RedirectResponse(f"/admin/vessels/{vessel_id}/guide", status_code=303)
+    return RedirectResponse(
+        f"/admin/vessels/{vessel_id}/guide#guide-modules",
+        status_code=303,
+    )
 
 
 @router.post("/generate")
@@ -420,12 +507,13 @@ async def publish_preview(
             return RedirectResponse("/admin/vessels", status_code=303)
 
     preview_error = None
+    preview_info = None
     preview = None
     try:
         with get_engine().connect() as conn:
             preview = assemble_publication(conn, vessel_id, vessel["slug"])
     except PublishValidationError as exc:
-        preview_error = exc.messages
+        preview_error, preview_info = _classify_preview_messages(exc.messages)
 
     return templates.TemplateResponse(
         request,
@@ -435,6 +523,7 @@ async def publish_preview(
             "vessel": vessel,
             "preview": preview,
             "preview_error": preview_error,
+            "preview_info": preview_info,
         },
     )
 
@@ -463,6 +552,7 @@ async def publish_confirm(
                 published_by=admin_user,
             )
     except PublishValidationError as exc:
+        preview_error, preview_info = _classify_preview_messages(exc.messages)
         return templates.TemplateResponse(
             request,
             "guide/publish.html",
@@ -470,12 +560,116 @@ async def publish_confirm(
                 "admin_user": admin_user,
                 "vessel": vessel,
                 "preview": None,
-                "preview_error": exc.messages,
+                "preview_error": preview_error,
+                "preview_info": preview_info,
             },
-            status_code=400,
+            status_code=400 if preview_error else 200,
         )
 
     return RedirectResponse(
         f"/admin/vessels/{vessel_id}/guide?published={result['version']}",
+        status_code=303,
+    )
+
+
+@router.post("/assets/logo")
+async def upload_branding_logo(
+    vessel_id: str,
+    admin_user: str = Depends(require_admin_user),
+    logo_kind: str = Form(...),
+    image: UploadFile = File(...),
+):
+    from urllib.parse import quote
+
+    if logo_kind not in ("header", "hero"):
+        return RedirectResponse(
+            f"/admin/vessels/{vessel_id}/guide?asset_error={quote('Invalid logo type.')}",
+            status_code=303,
+        )
+
+    with get_engine().connect() as conn:
+        vessel = _load_vessel(conn, vessel_id)
+        if vessel is None:
+            return RedirectResponse("/admin/vessels", status_code=303)
+
+    try:
+        data = await image.read()
+        logical_path = save_logo_image(
+            vessel["slug"],
+            image.filename or "logo.png",
+            data,
+            kind=logo_kind,
+        )
+        with get_engine().begin() as conn:
+            kwargs = (
+                {"header_logo": logical_path}
+                if logo_kind == "header"
+                else {"hero_logo": logical_path}
+            )
+            set_branding_logos(
+                conn,
+                vessel_id,
+                updated_by=admin_user,
+                **kwargs,
+            )
+    except GuideAssetError as exc:
+        return RedirectResponse(
+            f"/admin/vessels/{vessel_id}/guide?asset_error={quote(str(exc))}",
+            status_code=303,
+        )
+
+    return RedirectResponse(
+        f"/admin/vessels/{vessel_id}/guide?asset_saved=logo#guide-assets",
+        status_code=303,
+    )
+
+
+@router.post("/assets/system-photo")
+async def upload_system_photo(
+    vessel_id: str,
+    admin_user: str = Depends(require_admin_user),
+    system_id: str = Form(...),
+    photo_title: str = Form(...),
+    photo_caption: str = Form(""),
+    image: UploadFile = File(...),
+):
+    from urllib.parse import quote
+
+    if system_id not in SYSTEM_IDS:
+        return RedirectResponse(
+            f"/admin/vessels/{vessel_id}/guide?asset_error={quote('Invalid system.')}",
+            status_code=303,
+        )
+
+    with get_engine().connect() as conn:
+        vessel = _load_vessel(conn, vessel_id)
+        if vessel is None:
+            return RedirectResponse("/admin/vessels", status_code=303)
+
+    try:
+        data = await image.read()
+        logical_path = save_system_image(
+            vessel["slug"],
+            image.filename or "photo.png",
+            data,
+        )
+        with get_engine().begin() as conn:
+            add_system_photo(
+                conn,
+                vessel_id,
+                system_id,
+                image_path=logical_path,
+                title=photo_title.strip(),
+                caption=photo_caption.strip(),
+                updated_by=admin_user,
+            )
+    except GuideAssetError as exc:
+        return RedirectResponse(
+            f"/admin/vessels/{vessel_id}/guide?asset_error={quote(str(exc))}",
+            status_code=303,
+        )
+
+    return RedirectResponse(
+        f"/admin/vessels/{vessel_id}/guide?asset_saved=photo#guide-assets",
         status_code=303,
     )

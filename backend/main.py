@@ -11,9 +11,12 @@ from pydantic import BaseModel, Field
 
 from admin.routes import router as admin_router
 from config import settings
+from db import postgres_connection_strings
 from english_text import extract_english
 from guide_api import router as guide_router
+from manual_titles import lookup_manual_title
 from query import ContentFilterError, run_query
+from sqlalchemy import create_engine
 
 logger = logging.getLogger(__name__)
 
@@ -44,6 +47,7 @@ class QueryRequest(BaseModel):
 class SourceItem(BaseModel):
     node_id: str | None = None
     manual_id: str
+    title: str | None = None
     source_file: str | None = None
     page_start: int | None = None
     page_end: int | None = None
@@ -109,6 +113,18 @@ async def query_manuals(req: QueryRequest) -> QueryResponse:
             item = _source_from_node(node)
             if item is not None:
                 sources.append(item)
+
+    if sources:
+        sync_url, _ = postgres_connection_strings(settings.database_url)
+        engine = create_engine(sync_url, pool_pre_ping=True)
+        with engine.connect() as conn:
+            enriched: list[SourceItem] = []
+            for item in sources:
+                title = lookup_manual_title(conn, item.manual_id)
+                enriched.append(
+                    item.model_copy(update={"title": title}) if title else item
+                )
+            sources = enriched
 
     return QueryResponse(answer=str(response), sources=sources)
 

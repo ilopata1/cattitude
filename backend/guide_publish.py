@@ -9,6 +9,7 @@ from sqlalchemy import text
 from sqlalchemy.engine import Connection
 
 from guide_bootstrap import assemble_bootstrap, build_asset_manifest, canonical_json_hash
+from manual_titles import build_manual_titles_for_vessel
 
 
 class PublishValidationError(Exception):
@@ -52,23 +53,8 @@ def load_approved_modules(conn: Connection, vessel_id: str) -> list[dict[str, An
 
 
 def load_manual_titles(conn: Connection, vessel_id: str) -> dict[str, str]:
-    row = conn.execute(
-        text(
-            """
-            SELECT payload
-            FROM vessel_guide_publication
-            WHERE vessel_id = :vessel_id
-            ORDER BY published_at DESC, version DESC
-            LIMIT 1
-            """
-        ),
-        {"vessel_id": vessel_id},
-    ).fetchone()
-    if not row:
-        return {}
-    payload = _coerce_jsonb(row[0])
-    manual_titles = payload.get("manualTitles")
-    return manual_titles if isinstance(manual_titles, dict) else {}
+    """Guest-facing Ask labels — sourced from manual_work.title for this vessel's equipment."""
+    return build_manual_titles_for_vessel(conn, vessel_id)
 
 
 def validate_publication_payload(payload: dict[str, Any]) -> list[str]:

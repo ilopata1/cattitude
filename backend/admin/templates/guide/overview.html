@@ -10,11 +10,23 @@
 {% if request.query_params.get('generated') %}
 <div class="flash flash-ok">Generated {{ request.query_params.get('generated') }} draft module(s). Review and approve below.</div>
 {% endif %}
+{% if request.query_params.get('approved') %}
+<div class="flash flash-ok">Module approved.</div>
+{% endif %}
+{% if request.query_params.get('approved_all') %}
+<div class="flash flash-ok">Approved {{ request.query_params.get('approved_all') }} draft module(s).</div>
+{% endif %}
 {% if request.query_params.get('gen_error') %}
 <div class="flash flash-error">Generation failed: {{ request.query_params.get('gen_error') }}</div>
 {% endif %}
 {% if request.query_params.get('gen_warn') %}
 <div class="flash flash-warn">{{ request.query_params.get('gen_warn') }}</div>
+{% endif %}
+{% if request.query_params.get('asset_saved') %}
+<div class="flash flash-ok">Guide image uploaded and applied.</div>
+{% endif %}
+{% if request.query_params.get('asset_error') %}
+<div class="flash flash-error">{{ request.query_params.get('asset_error') }}</div>
 {% endif %}
 
 <div class="panel-grid">
@@ -97,6 +109,11 @@
 
   <section class="panel">
     <h2>Assembly preview</h2>
+    {% if preview_info %}
+      <div class="flash flash-ok">
+        <ul>{% for message in preview_info %}<li>{{ message }}</li>{% endfor %}</ul>
+      </div>
+    {% endif %}
     {% if preview_error %}
       <div class="flash flash-error">
         <ul>{% for message in preview_error %}<li>{{ message }}</li>{% endfor %}</ul>
@@ -118,8 +135,66 @@
   </section>
 </div>
 
-<section class="panel">
-  <h2>Guide modules</h2>
+<section class="panel" id="guide-assets">
+  <h2>Guide images</h2>
+  <p class="muted">Upload logos and system photos for this vessel. Images are stored under <code>assets/images/vessels/{{ vessel.slug }}/systems/</code> and included in the asset manifest at publish.</p>
+
+  <div class="asset-upload-grid">
+    <form method="post" action="/admin/vessels/{{ vessel.id }}/guide/assets/logo" enctype="multipart/form-data" class="asset-upload-form">
+      <h3>Header logo</h3>
+      <input type="hidden" name="logo_kind" value="header">
+      <label>Image file<input type="file" name="image" accept="image/png,image/jpeg,image/webp,image/gif" required></label>
+      <button type="submit">Upload &amp; set header logo</button>
+    </form>
+
+    <form method="post" action="/admin/vessels/{{ vessel.id }}/guide/assets/logo" enctype="multipart/form-data" class="asset-upload-form">
+      <h3>Hero logo</h3>
+      <input type="hidden" name="logo_kind" value="hero">
+      <label>Image file<input type="file" name="image" accept="image/png,image/jpeg,image/webp,image/gif" required></label>
+      <button type="submit">Upload &amp; set hero logo</button>
+    </form>
+
+    <form method="post" action="/admin/vessels/{{ vessel.id }}/guide/assets/system-photo" enctype="multipart/form-data" class="asset-upload-form asset-upload-form--wide">
+      <h3>System photo</h3>
+      <label>System topic
+        <select name="system_id" required>
+          {% for system_id in system_ids %}
+          <option value="{{ system_id }}">{{ system_id | format_label }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Section title<input name="photo_title" required placeholder="e.g. Deck Layout Plan"></label>
+      <label>Caption (optional)<input name="photo_caption" placeholder="Short subtitle under the image"></label>
+      <label>Image file<input type="file" name="image" accept="image/png,image/jpeg,image/webp,image/gif" required></label>
+      <button type="submit">Upload &amp; add to system module</button>
+      <p class="muted generate-form-note">Updates the latest draft/approved system module. Replaces an existing photo section with the same title.</p>
+    </form>
+  </div>
+
+  {% if guide_images %}
+  <h3>Uploaded images</h3>
+  <ul class="note-list">
+    {% for image in guide_images %}
+    <li><code>{{ image.path }}</code> <span class="muted">({{ image.bytes }} bytes)</span></li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</section>
+
+<section class="panel" id="guide-modules">
+  <div class="panel-heading-row">
+    <h2>Guide modules</h2>
+    {% if draft_count > 0 %}
+    <form
+      method="post"
+      action="/admin/vessels/{{ vessel.id }}/guide/approve-all"
+      class="inline-form"
+      id="approve-all-form"
+    >
+      <button type="submit" class="button">Approve all drafts ({{ draft_count }})</button>
+    </form>
+    {% endif %}
+  </div>
   <table class="data-table">
     <thead>
       <tr>
@@ -133,7 +208,7 @@
     </thead>
     <tbody>
       {% for module in modules %}
-      <tr>
+      <tr id="module-{{ module.id }}">
         <td>{{ module.review.section_title }}</td>
         <td><span class="muted">{{ module.review.guest_label }}</span></td>
         <td>{{ module.source | format_label }}</td>
@@ -142,7 +217,7 @@
         <td>
           <a href="/admin/vessels/{{ vessel.id }}/guide/modules/{{ module.id }}">Review</a>
           {% if module.status == 'draft' %}
-          <form method="post" action="/admin/vessels/{{ vessel.id }}/guide/modules/{{ module.id }}/approve" class="inline-form">
+          <form method="post" action="/admin/vessels/{{ vessel.id }}/guide/modules/{{ module.id }}/approve" class="inline-form approve-module-form">
             <button type="submit">Approve</button>
           </form>
           {% endif %}
@@ -220,6 +295,33 @@
       }
       confirmField.value = 'yes';
     });
+  }
+
+  var approveAllForm = document.getElementById('approve-all-form');
+  if (approveAllForm) {
+    approveAllForm.addEventListener('submit', function (event) {
+      var count = {{ draft_count | default(0) }};
+      var message =
+        'Approve all ' + count + ' draft module(s)? ' +
+        'This replaces any current approved versions for those sections.';
+      if (!window.confirm(message)) {
+        event.preventDefault();
+      }
+    });
+  }
+
+  if (location.hash) {
+    function scrollToHash() {
+      var target = document.querySelector(location.hash);
+      if (target) {
+        target.scrollIntoView({ block: 'center' });
+        return true;
+      }
+      return false;
+    }
+    if (!scrollToHash()) {
+      document.addEventListener('DOMContentLoaded', scrollToHash);
+    }
   }
 })();
 </script>

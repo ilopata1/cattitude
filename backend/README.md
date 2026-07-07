@@ -162,7 +162,7 @@ Even when a module is not copied verbatim, a previous approved version may still
 
 1. Enter **guide context** (contacts, VHF, local rules) at base and/or vessel level
 2. Link **equipment** to the vessel
-3. Optionally curate **equipment fragments** for models you use repeatedly (“first boat pays, siblings reuse”)
+3. Optionally curate **equipment fragments** for models you use repeatedly (“first boat pays, siblings reuse”) — edit JSON on each equipment registry page
 4. **Review drafts** — compare new output to the prior approved version
 5. **Approve** modules individually
 6. **Publish** the full approved set to make it live in the app
@@ -184,7 +184,7 @@ The system fills gaps predictably rather than failing silently:
 | Branding model label missing | Hull model → previous reference → vessel type → generic “Vessel” |
 | Branding location missing | Region label → display name → previous reference |
 | System icon or location tags missing | Reference module → built-in system catalog defaults |
-| Manual tab titles (`manualTitles`) | Carried forward from the last publication (not regenerated) |
+| Manual tab titles (`manualTitles`) | Built at publish from `manual_work.title` for manuals on linked equipment; Ask live queries also resolve titles from the library |
 | Operating base context updated after last publish | Admin shows a **stale context** warning — regenerate affected sections |
 | Publish with no changes since last time | Publish is blocked (same content hash) |
 

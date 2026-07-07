@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import math
 
 from fastapi import APIRouter, Depends, Form, Query, Request
@@ -33,6 +34,11 @@ from admin.equipment_service import (
     list_equipment_option_packs,
     search_equipment_autocomplete,
     update_equipment,
+)
+from guide_equipment_fragments import (
+    delete_equipment_fragment,
+    get_equipment_fragment,
+    replace_equipment_fragment,
 )
 
 router = APIRouter(prefix="/equipment", tags=["admin-equipment"])
@@ -236,6 +242,11 @@ async def edit_equipment_form(
             return RedirectResponse("/admin/equipment", status_code=303)
         option_packs = list_equipment_option_packs(conn, equipment_id)
         constraints = list_equipment_constraints(conn, equipment_id)
+        fragment = get_equipment_fragment(conn, equipment_id)
+
+    fragment_json = ""
+    if fragment:
+        fragment_json = json.dumps(fragment["fragment"], indent=2, sort_keys=True)
 
     return templates.TemplateResponse(
         request,
@@ -246,6 +257,8 @@ async def edit_equipment_form(
             "equipment": equipment,
             "option_packs": option_packs,
             "constraints": constraints,
+            "fragment": fragment,
+            "fragment_json": fragment_json,
             "duplicate": None,
             "error": None,
             **_form_context(),
@@ -381,5 +394,57 @@ async def delete_constraint_action(
 
     return RedirectResponse(
         f"/admin/equipment/{equipment_id}?constraint_deleted=1",
+        status_code=303,
+    )
+
+
+@router.post("/{equipment_id}/fragment")
+async def save_equipment_fragment(
+    equipment_id: str,
+    admin_user: str = Depends(require_admin_user),
+    fragment_json: str = Form(""),
+    clear_fragment: str = Form(""),
+):
+    from urllib.parse import quote
+
+    with get_engine().begin() as conn:
+        equipment = get_equipment(conn, equipment_id)
+        if equipment is None:
+            return RedirectResponse("/admin/equipment", status_code=303)
+
+        if clear_fragment == "yes":
+            delete_equipment_fragment(conn, equipment_id)
+            return RedirectResponse(
+                f"/admin/equipment/{equipment_id}?fragment_cleared=1",
+                status_code=303,
+            )
+
+        raw = fragment_json.strip()
+        if not raw:
+            return RedirectResponse(
+                f"/admin/equipment/{equipment_id}?fragment_error={quote('Fragment JSON is empty.')}",
+                status_code=303,
+            )
+        try:
+            fragment = json.loads(raw)
+        except json.JSONDecodeError as exc:
+            return RedirectResponse(
+                f"/admin/equipment/{equipment_id}?fragment_error={quote(str(exc))}",
+                status_code=303,
+            )
+        if not isinstance(fragment, dict):
+            return RedirectResponse(
+                f"/admin/equipment/{equipment_id}?fragment_error={quote('Fragment must be a JSON object.')}",
+                status_code=303,
+            )
+        replace_equipment_fragment(
+            conn,
+            equipment_id,
+            fragment,
+            created_by=admin_user,
+        )
+
+    return RedirectResponse(
+        f"/admin/equipment/{equipment_id}?fragment_saved=1",
         status_code=303,
     )
