@@ -1,112 +1,112 @@
-{% extends "base.html" %}
-{% from "guide/_preview_macros.html" import preview_panel %}
-
-{% block title %}Review guide content — {{ vessel.name }}{% endblock %}
-
-{% block main_class %}admin-main--wide{% endblock %}
-
-{% block extra_head %}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
-{% endblock %}
-
-{% block content %}
-<p class="breadcrumb">
-  <a href="/admin/vessels">Vessels</a> /
-  <a href="/admin/vessels/{{ vessel.id }}/guide">{{ vessel.name }} guide</a> /
-  Review
-</p>
-
-<h1>{{ module.review.review_title }}</h1>
-<p class="review-intro">{{ module.review.review_blurb }}</p>
-
-<dl class="meta-list review-meta">
-  <dt>Status</dt><dd><span class="badge badge-{{ module.status }}">{{ module.status | format_label }}</span></dd>
-  {% if module.status == 'draft' %}
-  <dt>Reviewing</dt><dd><strong>Proposed draft</strong> — compare with the current live version below</dd>
-  {% endif %}
-  <dt>Source</dt><dd>{{ module.source | format_label }}</dd>
-  {% if module.created_at %}
-  <dt>Created</dt><dd>{{ module.created_at }}{% if module.created_by %} by {{ module.created_by }}{% endif %}</dd>
-  {% endif %}
-</dl>
-
-{% if module.status == 'draft' %}
-<div class="review-actions panel">
-  <form method="post" action="/admin/vessels/{{ vessel.id }}/guide/modules/{{ module.id }}/approve">
-    <button type="submit" class="button">Approve this draft</button>
-  </form>
-  <p class="muted">Approving replaces the current approved version with what you see under “Proposed draft”.</p>
-</div>
-{% endif %}
-
-<section class="panel guide-preview-section">
-  <h2>App preview</h2>
-  {% if module.review.preview_available %}
-  <p class="muted guide-preview-note">Shown as it appears in the guest mobile app ({{ module.review.preview_context }}).</p>
-  {% else %}
-  <p class="muted guide-preview-note">A visual preview for this section is not built yet. Use technical details below, or approve once content has been checked elsewhere.</p>
-  {% endif %}
-
-  {% if module.baseline_payload %}
-  <div class="guide-preview-compare">
-    {{ preview_panel(
-      'Current live version',
-      module.baseline_payload,
-      vessel.slug,
-      module.content_type,
-      module.content_key,
-      'baseline'
-    ) }}
-    {{ preview_panel(
-      'Proposed draft' ~ (' (pending approval)' if module.status == 'draft' else ''),
-      module.payload,
-      vessel.slug,
-      module.content_type,
-      module.content_key,
-      'draft'
-    ) }}
-  </div>
-  {% else %}
-  <p class="muted">No prior approved version — this is the first draft for this section.</p>
-  <div class="guide-preview-compare guide-preview-compare--single">
-    {{ preview_panel(
-      'Proposed content',
-      module.payload,
-      vessel.slug,
-      module.content_type,
-      module.content_key,
-      'draft'
-    ) }}
-  </div>
-  {% endif %}
-</section>
-
-<details class="panel technical-details">
-  <summary>Technical details (for developers)</summary>
-  {% if module.baseline_json %}
-  <div class="review-grid">
-    <div>
-      <h3>{{ module.baseline_label or 'Baseline' }}</h3>
-      <pre class="code-panel">{{ module.baseline_json }}</pre>
-    </div>
-    <div>
-      <h3>Draft</h3>
-      <pre class="code-panel">{{ module.payload_json }}</pre>
-    </div>
-  </div>
-  {% else %}
-  <pre class="code-panel">{{ module.payload_json }}</pre>
-  {% endif %}
-  {% if module.generation_run_id %}
-  <p class="muted">Generation run: <code>{{ module.generation_run_id }}</code></p>
-  {% endif %}
-  {% if module.review.mobile_ref %}
-  <p class="muted">Mobile reference: <code>{{ module.review.mobile_ref }}</code></p>
-  {% endif %}
-</details>
-
-<p><a href="/admin/vessels/{{ vessel.id }}/guide">← Back to guide overview</a></p>
-{% endblock %}
-
+{% extends "base.html" %}
+{% from "guide/_preview_macros.html" import preview_panel %}
+
+{% block title %}Review guide content — {{ vessel.name }}{% endblock %}
+
+{% block main_class %}admin-main--wide{% endblock %}
+
+{% block extra_head %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<p class="breadcrumb">
+  <a href="/admin/vessels">Vessels</a> /
+  <a href="/admin/vessels/{{ vessel.id }}/guide">{{ vessel.name }} guide</a> /
+  Review
+</p>
+
+<h1>{{ module.review.review_title }}</h1>
+<p class="review-intro">{{ module.review.review_blurb }}</p>
+
+<dl class="meta-list review-meta">
+  <dt>Status</dt><dd><span class="badge badge-{{ module.status }}">{{ module.status | format_label }}</span></dd>
+  {% if module.status == 'draft' %}
+  <dt>Reviewing</dt><dd><strong>Proposed draft (pending approval)</strong> — compare with the current live version</dd>
+  {% endif %}
+  <dt>Source</dt><dd>{{ module.source | format_label }}</dd>
+  {% if module.created_at %}
+  <dt>Created</dt><dd>{{ module.created_at }}{% if module.created_by %} by {{ module.created_by }}{% endif %}</dd>
+  {% endif %}
+</dl>
+
+{% if module.status == 'draft' %}
+<div class="review-actions panel">
+  <form method="post" action="/admin/vessels/{{ vessel.id }}/guide/modules/{{ module.id }}/approve">
+    <button type="submit" class="button">Approve this draft</button>
+  </form>
+  <p class="muted">Approving replaces the current approved version with what you see under “Proposed draft (pending approval)”.</p>
+</div>
+{% endif %}
+
+<section class="panel guide-preview-section">
+  <h2>App preview</h2>
+  {% if module.review.preview_available %}
+  <p class="muted guide-preview-note">Shown as it appears in the guest mobile app ({{ module.review.preview_context }}).</p>
+  {% else %}
+  <p class="muted guide-preview-note">A visual preview for this section is not built yet. Use technical details below, or approve once content has been checked elsewhere.</p>
+  {% endif %}
+
+  {% if module.baseline_payload %}
+  <div class="guide-preview-compare">
+    {{ preview_panel(
+      'Current live version',
+      module.baseline_payload,
+      vessel.slug,
+      module.content_type,
+      module.content_key,
+      'baseline'
+    ) }}
+    {{ preview_panel(
+      'Current module' if module.status != 'draft' else 'Proposed draft (pending approval)',
+      module.payload,
+      vessel.slug,
+      module.content_type,
+      module.content_key,
+      'draft'
+    ) }}
+  </div>
+  {% else %}
+  <p class="muted">No prior approved version — this is the first draft for this section.</p>
+  <div class="guide-preview-compare guide-preview-compare--single">
+    {{ preview_panel(
+      'Current module' if module.status != 'draft' else 'Proposed draft (pending approval)',
+      module.payload,
+      vessel.slug,
+      module.content_type,
+      module.content_key,
+      'draft'
+    ) }}
+  </div>
+  {% endif %}
+</section>
+
+<details class="panel technical-details">
+  <summary>Technical details (for developers)</summary>
+  {% if module.baseline_json %}
+  <div class="review-grid">
+    <div>
+      <h3>{{ module.baseline_label or 'Baseline' }}</h3>
+      <pre class="code-panel">{{ module.baseline_json }}</pre>
+    </div>
+    <div>
+      <h3>Draft</h3>
+      <pre class="code-panel">{{ module.payload_json }}</pre>
+    </div>
+  </div>
+  {% else %}
+  <pre class="code-panel">{{ module.payload_json }}</pre>
+  {% endif %}
+  {% if module.generation_run_id %}
+  <p class="muted">Generation run: <code>{{ module.generation_run_id }}</code></p>
+  {% endif %}
+  {% if module.review.mobile_ref %}
+  <p class="muted">Mobile reference: <code>{{ module.review.mobile_ref }}</code></p>
+  {% endif %}
+</details>
+
+<p><a href="/admin/vessels/{{ vessel.id }}/guide">← Back to guide overview</a></p>
+{% endblock %}
+
