@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { firstValueFrom } from 'rxjs';
 import {
   BootstrapContent,
@@ -32,6 +33,7 @@ export class ContentService {
     private readonly vesselContext: VesselContextService,
     private readonly guideSync: GuideSyncService,
     private readonly vesselRoutes: VesselRouteService,
+    private readonly title: Title,
   ) {}
 
   async loadBootstrapContent(slug: string): Promise<BootstrapContent> {
@@ -138,7 +140,16 @@ export class ContentService {
       vesselId: prepared.vesselId,
       vesselSlug: prepared.vesselSlug,
     });
+    this.applyDocumentTitle(prepared);
     return prepared;
+  }
+
+  private applyDocumentTitle(content: BootstrapContent): void {
+    const { vesselName, charterCompany } = content.branding;
+    const parts = [vesselName, charterCompany].filter(Boolean);
+    if (parts.length) {
+      this.title.setTitle(parts.join(' — '));
+    }
   }
 
   private prefixVesselRoutes(content: BootstrapContent, slug: string): BootstrapContent {
