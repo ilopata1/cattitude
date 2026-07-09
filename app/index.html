@@ -200,7 +200,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--sand);color:var(--text-da
 .fix-steps{list-style:none;margin-bottom:10px;}
 .fix-steps li{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(237,230,214,0.7);font-size:14px;line-height:1.45;}
 .fix-steps li:last-child{border-bottom:none;}
-.call-abaco{background:var(--teal-light);border-radius:var(--radius-sm);padding:10px 14px;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--teal-dark);cursor:pointer;border:none;width:100%;font-family:'DM Sans',sans-serif;}
+.fix-escalation{margin-top:4px;}
+.fix-escalation-label{margin:0 0 8px;font-size:13px;font-weight:600;color:var(--text-mid);}
+.fix-escalation-actions{display:flex;flex-direction:column;gap:8px;}
+.fix-escalation-btn{background:var(--teal-light);border-radius:var(--radius-sm);padding:10px 14px;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--teal-dark);cursor:pointer;border:none;width:100%;font-family:'DM Sans',sans-serif;}
 .cat-engine{background:#FEE8E7;color:#C0392B;}.cat-electrical{background:#FEF3E0;color:#D4800A;}.cat-plumbing{background:#E0F0FF;color:#1A6FA8;}.cat-sails{background:var(--green-light);color:#15803D;}.cat-nav{background:#EDE8FE;color:#6D28D9;}.cat-general{background:var(--sand-mid);color:var(--text-mid);}
 .modal-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.6);align-items:flex-end;justify-content:center;}
 .modal-overlay.open{display:flex;}
@@ -1331,6 +1334,9 @@ const LOCS = {
 };
 
 // ── ASK / CHAT TAB ─────────────────────────────────────
+// Set to null for private-owner vessels; set to the company name for charter boats.
+const CHARTER_COMPANY = 'Cruise Abaco';
+
 const BACKEND_URL = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
   ? 'http://localhost:8000'
   : 'https://cattitude-production.up.railway.app'; // set to Railway URL when deployed
@@ -1781,6 +1787,14 @@ function closeDetail() {
 // ── FIX TAB ────────────────────────────────────────────
 let fixFilter = 'all';
 
+function fixEscalationHtml() {
+  const askBtn = `<button class="fix-escalation-btn" type="button" onclick="switchTab('ask')">📖 Try Ask</button>`;
+  const contactBtn = CHARTER_COMPANY
+    ? `<button class="fix-escalation-btn" type="button" onclick="openEmergency()">📻 Contact ${CHARTER_COMPANY}</button>`
+    : '';
+  return `<div class="fix-escalation"><div class="fix-escalation-label">Still stuck?</div><div class="fix-escalation-actions">${askBtn}${contactBtn}</div></div>`;
+}
+
 function renderFix(filter, query) {
   filter = filter || 'all';
   query = query || '';
@@ -1802,7 +1816,7 @@ function renderFix(filter, query) {
         <ol class="fix-steps">
           ${f.steps.map((step, si) => `<li><div class="step-num">${si+1}</div><div>${step}</div></li>`).join('')}
         </ol>
-        <button class="call-abaco" onclick="openEmergency()">📻 Still stuck? Contact Cruise Abaco</button>
+        ${fixEscalationHtml()}
       </div>
     </div>`;
   });

@@ -29,7 +29,8 @@ export class GuideSyncService {
   }
 
   async fetchBundleFromApi(vesselSlug: string): Promise<BootstrapContent> {
-    return this.fetchBundle(vesselSlug);
+    // No manifest hash available here; bust caches with a timestamp instead.
+    return this.fetchBundle(vesselSlug, `${Date.now()}`);
   }
 
   async ensureGuide(vesselSlug: string): Promise<BootstrapContent> {
@@ -45,7 +46,7 @@ export class GuideSyncService {
       return this.rewriteAssetUrls(vesselSlug, stored.guide as BootstrapContent);
     }
 
-    const guide = await this.fetchBundle(vesselSlug);
+    const guide = await this.fetchBundle(vesselSlug, manifest.contentHash);
     try {
       await this.syncAssets(vesselSlug, manifest, stored?.manifest ?? null);
       await this.store.saveGuide(vesselSlug, manifest, guide);
@@ -59,8 +60,14 @@ export class GuideSyncService {
     return `${environment.apiUrl}/api/v1/vessels/${vesselSlug}/guide/manifest`;
   }
 
-  private bundleUrl(vesselSlug: string): string {
-    return `${environment.apiUrl}/api/v1/vessels/${vesselSlug}/guide/bundle.json`;
+  /**
+   * The bundle is served with a long max-age; a version-specific query param
+   * guarantees the browser HTTP cache can never return a previous publication
+   * (which would then be stored in IndexedDB under the new content hash).
+   */
+  private bundleUrl(vesselSlug: string, cacheKey: string): string {
+    const version = encodeURIComponent(cacheKey);
+    return `${environment.apiUrl}/api/v1/vessels/${vesselSlug}/guide/bundle.json?v=${version}`;
   }
 
   private assetUrl(vesselSlug: string, path: string): string {
@@ -71,8 +78,13 @@ export class GuideSyncService {
     return firstValueFrom(this.http.get<GuideManifest>(this.manifestUrl(vesselSlug)));
   }
 
-  private async fetchBundle(vesselSlug: string): Promise<BootstrapContent> {
-    return firstValueFrom(this.http.get<BootstrapContent>(this.bundleUrl(vesselSlug)));
+  private async fetchBundle(
+    vesselSlug: string,
+    cacheKey: string,
+  ): Promise<BootstrapContent> {
+    return firstValueFrom(
+      this.http.get<BootstrapContent>(this.bundleUrl(vesselSlug, cacheKey)),
+    );
   }
 
   private async syncAssets(

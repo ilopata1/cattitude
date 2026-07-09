@@ -1,62 +1,135 @@
-<app-header></app-header>
-<ion-content [fullscreen]="true" class="page-content">
-  <ion-searchbar
-    [(ngModel)]="query"
-    placeholder="Search troubleshooting..."
-    debounce="200"
-    (ionInput)="expandedIndex = null"
-  ></ion-searchbar>
-
-  <div class="filter-chips">
-    <button
-      type="button"
-      class="filter-chip"
-      *ngFor="let category of categories"
-      [class.active]="categoryFilter === category.key"
-      (click)="setCategory(category.key)"
-    >
-      {{ category.label }}
-    </button>
-  </div>
-
-  <div class="scroll-area">
-    <div
-      class="fix-card"
-      *ngFor="let fix of filteredFixes(); let i = index"
-      [class.open]="expandedIndex === i"
-    >
-      <button type="button" class="fix-header" (click)="toggle(i)">
-        <span class="fix-icon">{{ fix.icon }}</span>
-        <div class="fix-meta">
-          <span class="fix-cat" [ngClass]="categoryClass(fix.cat)">{{
-            fix.catL
-          }}</span>
-          <span class="fix-title">{{ fix.title }}</span>
-        </div>
-        <span class="fix-chevron">{{ expandedIndex === i ? '▾' : '›' }}</span>
-      </button>
-      <div *ngIf="expandedIndex === i" class="fix-body">
-        <ol class="fix-steps">
-          <li *ngFor="let step of fix.steps; let si = index">
-            <div class="step-num">{{ si + 1 }}</div>
-            <div class="step-content">
-              <div
-                *ngIf="isHtmlStep(step)"
-                [innerHTML]="step"
-                appRichHtml
-              ></div>
-              <span *ngIf="!isHtmlStep(step)">{{ step }}</span>
-            </div>
-          </li>
-        </ol>
-        <button type="button" class="call-abaco" (click)="contactAbaco()">
-          📻 Still stuck? Contact Cruise Abaco
-        </button>
-      </div>
-    </div>
-
-    <div *ngIf="filteredFixes().length === 0" class="fix-empty">
-      No results found
-    </div>
-  </div>
-</ion-content>
+<app-header></app-header>
+
+<ion-content [fullscreen]="true" class="page-content">
+
+  <ion-searchbar
+
+    [(ngModel)]="query"
+
+    placeholder="Search troubleshooting..."
+
+    debounce="200"
+
+    (ionInput)="expandedIndex = null"
+
+  ></ion-searchbar>
+
+
+
+  <div class="filter-chips">
+
+    <button
+
+      type="button"
+
+      class="filter-chip"
+
+      *ngFor="let category of categories"
+
+      [class.active]="categoryFilter === category.key"
+
+      (click)="setCategory(category.key)"
+
+    >
+
+      {{ category.label }}
+
+    </button>
+
+  </div>
+
+
+
+  <div class="scroll-area">
+
+    <div
+
+      class="fix-card"
+
+      *ngFor="let fix of filteredFixes(); let i = index"
+
+      [class.open]="expandedIndex === i"
+
+    >
+
+      <button type="button" class="fix-header" (click)="toggle(i)">
+
+        <span class="fix-icon">{{ fix.icon }}</span>
+
+        <div class="fix-meta">
+
+          <span class="fix-cat" [ngClass]="categoryClass(fix.cat)">{{
+
+            fix.catL
+
+          }}</span>
+
+          <span class="fix-title">{{ fix.title }}</span>
+
+        </div>
+
+        <span class="fix-chevron">{{ expandedIndex === i ? '▾' : '›' }}</span>
+
+      </button>
+
+      <div *ngIf="expandedIndex === i" class="fix-body">
+
+        <ol class="fix-steps">
+
+          <li *ngFor="let step of fix.steps; let si = index">
+
+            <div class="step-num">{{ si + 1 }}</div>
+
+            <div class="step-content">
+
+              <div
+
+                *ngIf="isHtmlStep(step)"
+
+                [innerHTML]="step"
+
+                appRichHtml
+
+              ></div>
+
+              <span *ngIf="!isHtmlStep(step)">{{ step }}</span>
+
+            </div>
+
+          </li>
+
+        </ol>
+
+        <div class="fix-escalation">
+          <p class="fix-escalation-label">Still stuck?</p>
+          <div class="fix-escalation-actions">
+            <button type="button" class="fix-escalation-btn" (click)="openAsk()">
+              📖 Try Ask
+            </button>
+            <button
+              *ngIf="isCharterVessel"
+              type="button"
+              class="fix-escalation-btn"
+              (click)="openEmergency()"
+            >
+              📻 Contact {{ charterCompany }}
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+    <div *ngIf="filteredFixes().length === 0" class="fix-empty">
+
+      No results found
+
+    </div>
+
+  </div>
+
+</ion-content>
+

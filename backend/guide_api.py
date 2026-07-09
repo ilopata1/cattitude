@@ -56,7 +56,9 @@ async def get_guide_bundle(slug: str) -> JSONResponse:
     return JSONResponse(
         content=payload,
         headers={
-            "Cache-Control": "public, max-age=3600",
+            # no-cache (not max-age): a stale cached bundle would be saved into
+            # the client guide store under the new manifest hash and pinned there.
+            "Cache-Control": "no-cache",
             "X-Content-Hash": publication["content_hash"],
             "X-Publication-Version": str(publication["version"]),
         },
