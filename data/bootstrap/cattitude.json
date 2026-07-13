@@ -2409,7 +2409,7 @@
       ]
     },
     {
-      "icon": "🌡️",
+      "icon": "⚠️",
       "cat": "engine",
       "catL": "Engine",
       "title": "Engine overheating alarm",
@@ -2465,7 +2465,7 @@
       ]
     },
     {
-      "icon": "🔋",
+      "icon": "🪫",
       "cat": "electrical",
       "catL": "Electrical",
       "title": "Batteries below 80% / low battery",
