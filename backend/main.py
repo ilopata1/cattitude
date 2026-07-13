@@ -115,16 +115,20 @@ async def query_manuals(req: QueryRequest) -> QueryResponse:
                 sources.append(item)
 
     if sources:
-        sync_url, _ = postgres_connection_strings(settings.database_url)
-        engine = create_engine(sync_url, pool_pre_ping=True)
-        with engine.connect() as conn:
-            enriched: list[SourceItem] = []
-            for item in sources:
-                title = lookup_manual_title(conn, item.manual_id)
-                enriched.append(
-                    item.model_copy(update={"title": title}) if title else item
-                )
-            sources = enriched
+        try:
+            sync_url, _ = postgres_connection_strings(settings.database_url)
+            engine = create_engine(sync_url, pool_pre_ping=True)
+            with engine.connect() as conn:
+                enriched: list[SourceItem] = []
+                for item in sources:
+                    title = lookup_manual_title(conn, item.manual_id)
+                    enriched.append(
+                        item.model_copy(update={"title": title}) if title else item
+                    )
+                sources = enriched
+        except Exception:
+            # Title enrichment is best-effort; never fail a successful Ask answer.
+            logger.exception("Manual title enrichment failed")
 
     return QueryResponse(answer=str(response), sources=sources)
 
