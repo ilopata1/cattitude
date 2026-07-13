@@ -74,10 +74,35 @@
     </div>
     <div class="detail-body">
       <p *ngIf="system.summary" class="summary">{{ system.summary }}</p>
-      <section *ngFor="let section of system.sections" class="detail-section">
+      <section
+        *ngFor="let section of system.sections"
+        class="detail-section"
+        [class.detail-section--warnings]="section.type === 'warnings'"
+        [class.detail-section--notes]="section.type === 'notes'"
+      >
         <h3>{{ section.t }}</h3>
         <p *ngIf="section.c" class="prose">{{ section.c }}</p>
         <div *ngIf="section.html" [innerHTML]="section.html" appRichHtml></div>
+        <ng-container *ngIf="sectionItems(section) as items">
+          <ol
+            *ngIf="section.type === 'steps' && items.length"
+            class="section-items section-items--steps"
+          >
+            <li *ngFor="let item of items">{{ item }}</li>
+          </ol>
+          <ul
+            *ngIf="section.type !== 'steps' && items.length"
+            class="section-items"
+            [class.section-items--warnings]="section.type === 'warnings'"
+          >
+            <li *ngFor="let item of items">
+              <span class="section-item-mark" aria-hidden="true">{{
+                section.type === 'warnings' ? '⚠' : '•'
+              }}</span>
+              <span>{{ item }}</span>
+            </li>
+          </ul>
+        </ng-container>
       </section>
       <div class="detail-section">
         <button type="button" class="det-fix-btn" (click)="goToFix()">

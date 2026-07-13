@@ -2,7 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ContentService } from '../../core/services/content.service';
 import { VesselRouteService } from '../../core/services/vessel-route.service';
-import { LocationZone, SystemModule } from '../../core/models/bootstrap-content.model';
+import {
+  LocationZone,
+  SystemModule,
+  SystemSection,
+} from '../../core/models/bootstrap-content.model';
 
 @Component({
   selector: 'app-know',
@@ -64,6 +68,33 @@ export class KnowPage implements OnInit {
 
   zoneLabel(zoneId: string): string {
     return this.content.getLocationZone(zoneId)?.label ?? zoneId;
+  }
+
+  /** Flatten steps/list/warnings/notes items to display strings. */
+  sectionItems(section: SystemSection): string[] {
+    const items = section.items;
+    if (!Array.isArray(items)) {
+      return [];
+    }
+    return items
+      .map((item) => this.itemLabel(item))
+      .filter((label): label is string => !!label);
+  }
+
+  itemLabel(item: unknown): string {
+    if (typeof item === 'string') {
+      return item.trim();
+    }
+    if (item && typeof item === 'object') {
+      const record = item as Record<string, unknown>;
+      for (const key of ['c', 'text', 'content', 'label', 'title', 'body', 's']) {
+        const value = record[key];
+        if (typeof value === 'string' && value.trim()) {
+          return value.trim();
+        }
+      }
+    }
+    return '';
   }
 
   goToFix(): void {
