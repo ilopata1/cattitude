@@ -74,7 +74,7 @@ Fragments are tied to equipment models, not to individual boats. Charter contact
 details are always added when content is assembled for a vessel — they are not stored
 inside the fragment.
 
-**Workflow:** upload manual → legal approval → ingest to search index → **Draft from
+**Workflow:** upload manual → legal clearance (`cleared`) → ingest to search index → **Draft from
 manual** on the equipment registry page → human review → **Approve** → regenerate
 vessel guides. Only **approved** fragments are used at generation time.
 
@@ -188,7 +188,7 @@ Even when a module is not copied verbatim, a previous approved version may still
 5. **Approve** modules individually
 6. **Publish** the full approved set to make it live in the app (or republish after image-only updates — see below)
 
-Equipment **manuals** (PDFs) feed both the Ask tab (search) and equipment fragment drafting. Upload, legally approve, and ingest before using **Draft from manual**.
+Equipment **manuals** (PDFs) feed both the Ask tab (search) and equipment fragment drafting. Upload, clear in legal review, and ingest before using **Draft from manual**.
 
 ---
 

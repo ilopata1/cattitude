@@ -118,7 +118,7 @@ def list_ingested_manuals(conn: Connection, equipment_id: str) -> list[dict[str,
             JOIN manual_edition me
                 ON me.manual_work_id = mw.id AND me.is_current = true
             WHERE mw.equipment_id = :equipment_id
-              AND mw.legal_status = 'approved'
+              AND mw.legal_status = 'cleared'
             ORDER BY mw.manual_type, mw.title
             """
         ),
@@ -260,8 +260,8 @@ def draft_equipment_fragment(
     manuals = list_ingested_manuals(conn, equipment_id)
     if not manuals:
         raise FragmentDraftingError(
-            "No approved, ingested manuals for this equipment. "
-            "Upload a PDF, approve it legally, and ingest before drafting."
+            "No legally cleared, ingested manuals for this equipment. "
+            "Upload a PDF, clear it in legal review, and ingest before drafting."
         )
 
     manual_ids = [manual["id"] for manual in manuals]
@@ -275,7 +275,7 @@ def draft_equipment_fragment(
     if not excerpts:
         raise FragmentDraftingError(
             "Manual excerpts not found in the vector index. "
-            "Re-ingest the approved manual PDF for this equipment."
+            "Re-ingest the cleared manual PDF for this equipment."
         )
 
     composed = _compose_draft_prompt(

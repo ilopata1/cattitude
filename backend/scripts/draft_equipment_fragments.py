@@ -71,7 +71,7 @@ def _equipment_with_manuals(conn) -> list[tuple[str, str, str]]:
             JOIN manual_work mw ON mw.equipment_id = e.id
             JOIN manual_edition me
                 ON me.manual_work_id = mw.id AND me.is_current = true
-            WHERE mw.legal_status = 'approved'
+            WHERE mw.legal_status = 'cleared'
             ORDER BY e.manufacturer, e.model
             """
         )
