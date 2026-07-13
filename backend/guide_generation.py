@@ -15,6 +15,7 @@ from config import settings
 from guide_bootstrap import canonical_json_hash
 from guide_context_utils import emergency_contacts_count, merge_guide_context
 from guide_equipment_coverage import (
+    build_fragment_pending_system_module,
     build_placeholder_system_module,
     equipment_for_system_categories,
     system_has_equipment,
@@ -989,25 +990,33 @@ def generate_module(
             snapshot_payload.get("equipment") or [], content_key
         )
     )
+    use_fragment_pending_placeholder = (
+        content_type == "system"
+        and system_requires_equipment(content_key)
+        and system_has_equipment(
+            snapshot_payload.get("equipment") or [], content_key
+        )
+    )
 
     # Equipment content library: shared per-equipment fragments assemble system
     # modules (skipping the LLM) and enrich fix cards with model-specific steps.
     fragment_rows: list[dict[str, Any]] = []
-    if not personalize and content_type in ("system", "fix_card_set"):
+    if content_type in ("system", "fix_card_set"):
         fragment_rows = load_vessel_fragments(conn, vessel_id)
     fragment_system_payload = None
-    if (
-        content_type == "system"
-        and not personalize
-        and not use_equipment_placeholder
-    ):
+    if content_type == "system" and not use_equipment_placeholder:
         fragment_system_payload = assemble_system_from_fragments(
             content_key, fragment_rows
         )
+        if fragment_system_payload is None and use_fragment_pending_placeholder:
+            use_fragment_pending_placeholder = True
+        else:
+            use_fragment_pending_placeholder = False
 
     uses_llm = (
         template_builder is None
         and not use_equipment_placeholder
+        and not use_fragment_pending_placeholder
         and fragment_system_payload is None
     )
 
@@ -1023,6 +1032,8 @@ def generate_module(
         model_id = "equipment_content_library"
     elif use_equipment_placeholder:
         model_id = "equipment_gap_placeholder"
+    elif use_fragment_pending_placeholder:
+        model_id = "equipment_fragment_pending"
     else:
         model_id = settings.azure_openai_chat_deployment
 
@@ -1055,6 +1066,12 @@ def generate_module(
             )
         elif use_equipment_placeholder:
             payload = build_placeholder_system_module(content_key)
+            payload = _finalize_system_payload(content_key, payload, reference)
+        elif use_fragment_pending_placeholder:
+            payload = build_fragment_pending_system_module(
+                content_key,
+                snapshot_payload.get("equipment") or [],
+            )
             payload = _finalize_system_payload(content_key, payload, reference)
         else:
             llm = llm or _build_llm()
@@ -1093,6 +1110,7 @@ def generate_module(
             "status": "completed",
             "reused_draft": reused_draft,
             "equipment_placeholder": use_equipment_placeholder,
+            "equipment_fragment_pending": use_fragment_pending_placeholder,
             "template_assembly": template_builder is not None,
             "equipment_content_library": fragment_system_payload is not None,
         }

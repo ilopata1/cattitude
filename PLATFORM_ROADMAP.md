@@ -41,8 +41,9 @@ See `clever-sailor-data-model.md`, `cursor-build-admin-portal.md`.
 - Vessel guide downloaded once per association; fully offline for guide tabs
 - Publication sync via `vessel_guide_publication` manifest + content hash
 - Push notification infrastructure (FCM) — foundation for later phases
+- **User guide overlays** (personal edits, local-first then Auth0 sync) — see workstream below; stable publication `key`s are a Phase 3 prerequisite
 
-See `mobile/README.md`, `cursor-build-intake-flow.md` (assumes Phase 3 shell exists).
+See `mobile/README.md`, `cursor-build-intake-flow.md` (assumes Phase 3 shell exists), `cursor-build-user-overlays.md`.
 
 ---
 
@@ -55,6 +56,7 @@ See `mobile/README.md`, `cursor-build-intake-flow.md` (assumes Phase 3 shell exi
 - Ask API denied when charter expired; owner subscription rules
 - Replace admin HTTP Basic Auth with role-based team access
 - **Guide generation economics** — tiered publication (free vs premium); see workstream below
+- **User overlay sync** — multi-device personal edits (`user_guide_overlay`); see User guide personalization workstream
 
 Referenced in `cursor-build-admin-portal.md`, project briefing §2.10 / §4.
 
@@ -158,6 +160,91 @@ Regeneration of the same vessel with unchanged `guide_generation_input_snapshot.
 
 ---
 
+## Workstream — User guide personalization (overlays)
+
+**Status:** planned (design locked; implementation spans Phases 3–4)
+
+**Problem:** Owners and crew often know boat-specific facts that differ from the canonical vessel guide (breaker labels, where spares live, personal routines). Today, checklist *progress* is device-local only (`localStorage`); procedure text is read-only. Users need personal edits that sync across devices and survive admin regen where possible, without forking the shared vessel guide.
+
+**Principle:** User overlays are a **fourth content layer** — personal, on top of immutable `vessel_guide_publication`. They do **not** merge into `guide_content` or publication unless admin explicitly promotes an insight.
+
+### Content stack (locked)
+
+| Layer | Scope | Editor | Sync |
+|-------|--------|--------|------|
+| Equipment fragments + content library | Fleet / model | Admin | N/A |
+| `guide_content` | Per vessel (reviewed) | Admin | N/A |
+| `vessel_guide_publication` | Per vessel snapshot | Publish | All users on vessel |
+| **`user_guide_overlay`** | Per user + vessel | Mobile only | Auth0 user, multi-device |
+
+### Edit tiers (product)
+
+| Tier | Allowed | Emergency / MAYDAY |
+|------|---------|-------------------|
+| A — Annotations | Personal notes below steps | Notes only |
+| B — Step text override | Replace one step/checklist item | Blocked |
+| C — Structural | Add/remove/reorder steps | Blocked |
+| D — Full module replace | Discouraged; “personal procedure” mode | Blocked |
+
+### Request flow
+
+```
+Mobile loads publication bundle (canonical base)
+  → load user overlay (IndexedDB + API when signed in)
+  → applyPatches(base, overlay) → effective content for UI
+Admin publishes new publication (new content_hash)
+  → client replays patches (fingerprint match → silent keep; mismatch → conflict UI)
+```
+
+### Deliverables
+
+| # | Deliverable | Phase | Notes |
+|---|-------------|-------|-------|
+| 1 | **Publication stable keys** — `fixes[].key`, checklist item keys, optional `sections[].key` | 2–3 | **Prerequisite** for regen-safe overlays; do not strip `key` at publish |
+| 2 | **Client overlay layer** — `EffectiveContentService` above `ContentService` | 3 | Apply patches at render; no mutation of cached base bundle |
+| 3 | **Local-only overlays (tier A)** — annotations in IndexedDB | 3 | No auth; proves UX |
+| 4 | **`user_guide_overlay` table + sync API** | 4 | Auth0 `user_id`; `UNIQUE (user_id, vessel_id)` |
+| 5 | **Tier B step overrides + multi-device sync** | 4 | Patch log or JSONB with `revision` |
+| 6 | **Regen conflict resolution** — fingerprinted patches vs `content_hash` | 4 | 3-way UI: keep mine / use guide / merge |
+| 7 | **Admin overlay insights** — aggregated edit hotspots, post-regen conflicts | 4 | Promote-to-`guide_content` / equipment fragment workflow |
+| 8 | **Persona policy** — owner vs charter guest lifespan, charter expiry | 4 | Document in data model |
+
+### Design rules (locked)
+
+1. **Never merge overlays into `vessel_guide_publication`** — canonical guide stays shared.
+2. **Exact path + fingerprint only** — no semantic auto-merge on safety content.
+3. **UI must distinguish** “Vessel guide” vs “Your edit” / “Your note”.
+4. **Charter guest edits are personal** — not visible as canonical; aggregation anonymized by default.
+5. **Promotion is explicit** — admin only; user overlay → `guide_content` or `equipment_guide_fragment`.
+6. **Stable keys before overrides** — ship publication keys in Phase 2–3 even before overlay UI.
+
+### Acceptance criteria
+
+- [ ] Published fix cards include stable `key` in bootstrap JSON
+- [ ] User can add a personal note on a fix step offline; note persists across app restarts
+- [ ] Signed-in user sees same overlay on second device after sync
+- [ ] After admin republish, non-conflicting user edits reapply without prompt
+- [ ] Conflicting edits surface resolution UI, not silent wrong-boat text
+- [ ] Admin can see “N users edited path X” for a vessel (aggregated)
+- [ ] Emergency/MAYDAY paths are not overridable (tier B+)
+
+### Dependencies
+
+- Phase 3: publication sync, IndexedDB guide store (in place)
+- Phase 4: Auth0 identity (required for multi-device sync)
+- **Early (Phase 2–3):** publication stable keys (#1) — no auth required
+
+### Phase ordering
+
+- Start **#1 (stable keys)** during current charter onboarding / publish work — low cost, prevents rework.
+- **#2–3 (local overlays)** can follow Cattitude publish-loop completion.
+- **#4–7** with Phase 4 auth.
+- Defer: shared crew overlay, tier C/D structural edits.
+
+**Full specification:** [`cursor-build-user-overlays.md`](cursor-build-user-overlays.md)
+
+---
+
 ## Phase 5 — Production operations
 
 **Status:** planned
@@ -230,6 +317,8 @@ When prioritising near-term work, finish **Phase 2 charter onboarding + guide ge
 
 **Before scaling self-serve owner signup**, work through **Guide generation economics (freemium)** — at minimum hull-model template publications (#4) and a no-LLM assembly path (#3), so free signups do not trigger full GPT-4o runs.
 
+When touching the **publication contract** or **fix/checklist/system payloads**, preserve or add **stable keys** for future user overlays (see **User guide personalization** workstream above).
+
 ---
 
 ## Related documents
@@ -242,3 +331,4 @@ When prioritising near-term work, finish **Phase 2 charter onboarding + guide ge
 | `cursor-build-community-phase.md` | Phase 7 detail |
 | `README.md` | Product overview |
 | `PLATFORM_ROADMAP.md` § Guide generation economics | Freemium / LLM cost workstream (this document) |
+| `cursor-build-user-overlays.md` | User guide personalization (mobile edits, sync, regen conflicts) |

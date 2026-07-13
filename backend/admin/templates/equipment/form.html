@@ -17,7 +17,13 @@
 <div class="flash flash-ok">Constraint removed.</div>
 {% endif %}
 {% if request.query_params.get('fragment_saved') %}
-<div class="flash flash-ok">Guide fragment saved.</div>
+<div class="flash flash-ok">Guide fragment saved as draft.</div>
+{% endif %}
+{% if request.query_params.get('fragment_approved') %}
+<div class="flash flash-ok">Guide fragment approved.</div>
+{% endif %}
+{% if request.query_params.get('fragment_drafted') %}
+<div class="flash flash-ok">Draft fragment generated from manual excerpts. Review and approve when ready.</div>
 {% endif %}
 {% if request.query_params.get('fragment_cleared') %}
 <div class="flash flash-ok">Guide fragment removed.</div>
@@ -221,20 +227,55 @@
   <h2>Guide content fragment</h2>
   <p class="muted">
     Shared guide content for this equipment model — reused on every vessel that links this registry item.
-    System sections, fix-card overrides, and extra fix cards are assembled without AI when a fragment exists.
+    Draft from an approved, ingested manual; review; then approve. Only <strong>approved</strong> fragments
+    are assembled into vessel guides. Charter contact details are added per vessel at assembly time.
   </p>
-  {% if fragment %}
-  <p class="muted">Last updated {{ fragment.updated_at }}{% if fragment.created_by %} by {{ fragment.created_by }}{% endif %}.</p>
+
+  {% if manuals %}
+  <h3>Linked manuals</h3>
+  <ul class="note-list">
+    {% for manual in manuals %}
+    <li>{{ manual.title }} <span class="muted">({{ manual.manual_type | format_label }}, {{ manual.legal_status | format_label }})</span></li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="muted">No manuals linked to this equipment yet. Upload and approve a manual before drafting.</p>
   {% endif %}
+
+  {% if fragment %}
+  <p class="muted">
+    Status: <strong>{{ fragment.status | format_label }}</strong>.
+    Last updated {{ fragment.updated_at }}{% if fragment.created_by %} by {{ fragment.created_by }}{% endif %}.
+  </p>
+  {% endif %}
+
+  <form method="post" action="/admin/equipment/{{ equipment.id }}/fragment/draft-from-manual" class="inline-form">
+    <button type="submit">Draft from manual</button>
+  </form>
+  {% if fragment and fragment.status == 'draft' %}
+  <form method="post" action="/admin/equipment/{{ equipment.id }}/fragment/approve" class="inline-form">
+    <button type="submit">Approve current fragment</button>
+  </form>
+  {% endif %}
+
   <form method="post" action="/admin/equipment/{{ equipment.id }}/fragment" class="form-grid">
     <label class="full-width">Fragment JSON
       <textarea name="fragment_json" rows="18" class="code-textarea" spellcheck="false">{{ fragment_json }}</textarea>
     </label>
     <div class="form-actions full-width">
-      <button type="submit">Save fragment</button>
-      <button type="submit" name="clear_fragment" value="yes" class="btn-danger" onclick="return confirm('Remove this equipment fragment? Vessels will fall back to AI or placeholders.');">Remove fragment</button>
+      <button type="submit">Save as draft</button>
+      <button type="submit" name="approve" value="yes">Save &amp; approve</button>
+      <button type="submit" name="clear_fragment" value="yes" class="btn-danger" onclick="return confirm('Remove this equipment fragment? Vessels will show a pending-content placeholder until a new fragment is approved.');">Remove fragment</button>
     </div>
   </form>
+
+  {% if citations_json %}
+  <details class="muted">
+    <summary>Source citations (from last draft)</summary>
+    <pre class="code-panel">{{ citations_json }}</pre>
+  </details>
+  {% endif %}
+
   <details class="muted">
     <summary>Fragment shape (reference)</summary>
     <pre class="code-panel">{
@@ -247,7 +288,7 @@
     }
   },
   "fix_card_overrides": {
-    "engine-wont-start": {"title": "…", "steps": ["…"]}
+    "engine_wont_start": {"title": "…", "steps": ["…"]}
   },
   "extra_fix_cards": [{"icon": "…", "cat": "…", "catL": "…", "title": "…", "steps": ["…"]}]
 }</pre>

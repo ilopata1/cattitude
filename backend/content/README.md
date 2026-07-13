@@ -58,3 +58,11 @@ python scripts/verify_content_library.py
 | `fix_card_set` / `all` | `fix_cards/cards.yaml` |
 
 Equipment-specific fix-card enrichment still happens in `guide_equipment_fragments.py` after library assembly.
+
+## Stable keys (user overlay prerequisite)
+
+Fix cards in `fix_cards/cards.yaml` already use a `key` field (e.g. `engine_wont_start`). **Keep `key` through publish** into the mobile bootstrap JSON — it is required for future per-user overlays and regen-safe patch paths.
+
+When adding checklist groups or items, add explicit `key` fields where practical. Do not rely on array index alone for content that users may personalize later.
+
+See [`cursor-build-user-overlays.md`](../../cursor-build-user-overlays.md) and `PLATFORM_ROADMAP.md` § User guide personalization.

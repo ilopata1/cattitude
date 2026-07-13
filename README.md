@@ -42,7 +42,7 @@ flowchart LR
   subgraph backend [FastAPI on Railway]
     API[REST API]
     RAG[RAG /query]
-    ADMIN[Admin portal\nplanned]
+    ADMIN[Admin portal]
   end
 
   subgraph data [Postgres]
@@ -98,7 +98,7 @@ B2B customer operating multiple vessels across **operating bases** (geographic l
 - **Onboards vessels via Admin** (create/clone vessel, equipment from registry, generate, review, publish) — not via the mobile intake wizard. See `clever-sailor-data-model.md` § Onboarding channels.
 - Reviews LLM-generated guide drafts per vessel (diff + approve workflow). Publishes immutable guide snapshots for download.
 - Manages fleet: which vessels belong to which base, charter dates, guest tokens.
-- Uses the **admin portal** (planned, FastAPI + Jinja2) — not the Ionic app.
+- Uses the **admin portal** (FastAPI + Jinja2 at `/admin/`) — not the Ionic app.
 
 ### Clever Sailor platform team
 
@@ -130,14 +130,20 @@ Internal operators building the equipment registry, manual library, and onboardi
 ```
 Cattitude/
 ├── mobile/                 # Ionic 8 + Angular 20 consumer app (production PWA)
-├── backend/                # FastAPI, RAG, Alembic migrations, future admin
+├── backend/
+│   ├── admin/              # Shipped admin portal (FastAPI + Jinja2)
+│   ├── content/            # Curated guide YAML library + assembler
+│   ├── prompts/            # LLM prompt templates for guide generation
+│   ├── scripts/            # Seed, import, verification helpers
+│   └── alembic/            # Postgres migrations (001–018)
 ├── utilities/              # Content validation, ingest helpers, GitHub Pages patch
 ├── manuals/                # Raw PDFs (gitignored)
 ├── data/                   # Local cache (gitignored)
 ├── app/                    # Archived legacy single-file PWA (reference only)
+├── PLATFORM_ROADMAP.md     # Phase delivery status
 ├── clever-sailor-data-model.md   # Canonical Postgres + vessel guide schema
-├── cursor-build-admin-portal.md  # Planned admin UI spec
-├── cursor-build-intake-flow.md   # Planned vessel onboarding spec
+├── cursor-build-admin-portal.md  # Admin spec (mostly shipped; see roadmap for gaps)
+├── cursor-build-intake-flow.md   # Planned private-owner mobile intake spec
 └── cattitude-rag-implementation-plan.md  # Original RAG staging plan
 ```
 
@@ -162,15 +168,19 @@ mobile/src/
   app/
     core/
       models/           # BootstrapContent, Postgres enum mirrors
-      services/         # ContentService, ChatService, ProgressService, VesselContextService
+      services/         # ContentService, GuideSyncService, GuideStoreService,
+                        # GuideLoadService, ChatService, ProgressService,
+                        # VesselContextService, VesselResolverService, EmergencyService
       initializers/     # Loads bootstrap JSON at startup (transitional)
-    pages/              # home, do, know, fix, ask
+    pages/              # home, do, know, fix, ask, vessel-error
     shared/             # Header, emergency modal, photo lightbox, rich HTML
     tabs/               # Tab shell + routing
-  data/bootstrap/       # cattitude.json — vessel guide payload (transitional in-repo)
-  assets/images/systems/
-  environments/         # apiUrl, vesselSlug, bootstrapContentPath
+  data/bootstrap/       # cattitude.json — frozen copy for production (transitional)
+  assets/images/vessels/{slug}/systems/
+  environments/         # apiUrl, defaultVesselSlug, bootstrapContentPath, guideSyncEnabled
 ```
+
+**Routing:** vessel-scoped URLs at `/v/{slug}/tabs/…` (e.g. `/v/cattitude/tabs/home`). Legacy `/tabs/…` paths redirect to the default vessel. Add/switch-vessel UI is not built yet.
 
 **Transitional vs target loading:**
 
@@ -199,11 +209,7 @@ mobile/src/
 
 Auth for guide download is not enforced yet (planned: charter guest / owner tokens). The mobile app still loads bundled `cattitude.json` by default; set `guideSyncEnabled: true` in environment to sync from the API into IndexedDB.
 
-**Planned API (see `clever-sailor-data-model.md`):**
-
-| Method | Path | Purpose |
-|--------|------|---------|
-| Admin + generation endpoints | — | Prompt templates, module review, publish gates |
+**Admin portal** (`/admin/`, HTTP Basic Auth): server-rendered screens for companies, operating bases, vessels (CRUD, clone, equipment, guide context), equipment registry, option packs, manuals (upload + legal review), guide generation/review/approve/publish, and prompt templates. See [`backend/README.md`](backend/README.md) for the content-author workflow. Still **planned:** intake review queue, query log UI, notifications (see roadmap).
 
 **RAG pipeline:**
 
@@ -223,6 +229,7 @@ Three conceptual layers in one database:
 **1. Equipment registry & manual library**
 
 - `equipment`, `option_pack`, `equipment_constraint`, `manufacturer_config_availability`
+- `equipment_guide_fragment` — reusable per-equipment curated content (systems, fix-card overrides)
 - `manual_work`, `manual_edition`, `manual_file` (dedupe by `file_hash`; one current edition per work)
 - `vessel_equipment` links vessels to registry rows
 - Vectors in LlamaIndex-managed tables
@@ -230,7 +237,8 @@ Three conceptual layers in one database:
 **2. Tenancy & operations**
 
 - `charter_companies` → `charter_operating_bases` → `vessels`
-- `charter_operating_bases.guide_context` — JSON: VHF, contacts, marina, local rules (injected at LLM generation)
+- `charter_operating_bases.guide_context` — JSON: VHF, contacts, marina, local rules (injected at generation)
+- `vessels.guide_context` — per-vessel overrides merged over operating base defaults
 - `charters` (dates, `guest_token`)
 - `query_log`, `notifications`
 
@@ -247,10 +255,10 @@ Three conceptual layers in one database:
 
 - Regenerate creates a **draft + diff**; never silently overwrites published content.
 - Fleet prompt updates are **manual** (stale-template badge in admin).
-- Checklist body and UI chrome (Do menu, checklistMeta) generated in the **same LLM job**.
+- Checklist body uses the curated content library by default; Do/Know navigation is assembled at **publish** (not a separate LLM job).
 - Charter guests **keep** downloaded guide after charter; Ask API denied when charter expired.
 
-**Migrations:** Alembic revisions `001`–`011` in `backend/alembic/versions/`. Apply with `python -m alembic upgrade head` from `backend/`.
+**Migrations:** Alembic revisions `001`–`018` in `backend/alembic/versions/`. Apply with `python -m alembic upgrade head` from `backend/`.
 
 ---
 
@@ -315,9 +323,9 @@ python scripts/seed_dev_data.py
 uvicorn main:app --reload --port 8000
 ```
 
-**Admin portal:** set `ADMIN_PASSWORD` in `.env`, then open http://localhost:8000/admin/ (HTTP Basic Auth). Screens: operating base `guide_context` editor, vessel guide modules, publish gate, prompt template list.
+**Admin portal:** set `ADMIN_PASSWORD` in `.env`, then open http://localhost:8000/admin/ (HTTP Basic Auth). Screens include operating base and vessel `guide_context` editors, equipment registry, option packs, manual upload/legal review, vessel guide generate/review/approve/publish, and prompt templates.
 
-**Note:** `seed_dev_data.py` does not populate guide modules. Use a DB dump from an environment where Cattitude was migrated, or add modules via future admin/generation tooling.
+**Note:** `seed_dev_data.py` seeds tenancy and equipment only — not guide modules. Use a DB dump from an environment where Cattitude was migrated, or generate modules via the admin portal.
 
 ### Manual ingest
 
@@ -366,10 +374,15 @@ Seed is for initial tenancy/equipment setup — not every deploy.
 | Document | Audience | Contents |
 |----------|----------|----------|
 | **`clever-sailor-data-model.md`** | Backend / DB developers | Full Postgres schema, vessel guide publication contract, Alembic order, acceptance criteria |
-| **`mobile/README.md`** | Frontend developers | Ionic dev commands, PWA notes, bootstrap editing |
+| **`backend/README.md`** | Content authors / operators | End-to-end guide generation, review, and publish workflow |
+| **`backend/content/README.md`** | Content authors / developers | Curated YAML content library (home rules, checklists, fix cards) |
+| **`backend/prompts/README.md`** | Backend developers | LLM prompt files for guide generation |
+| **`mobile/README.md`** | Frontend developers | Ionic dev commands, PWA notes, guide sync |
+| **`PLATFORM_ROADMAP.md`** | All | Phase delivery status and workstreams |
 | **`cattitude-rag-implementation-plan.md`** | Historical / staging | Original RAG MVP plan (Stages 1–4) |
-| **`cursor-build-admin-portal.md`** | Planned work | Internal admin screens (equipment, manuals, guide review, publish) |
+| **`cursor-build-admin-portal.md`** | Reference | Admin spec; most screens shipped — see roadmap for gaps |
 | **`cursor-build-intake-flow.md`** | Planned work | Private-owner mobile intake (five steps); charter guests do not use this |
+| **`cursor-build-user-overlays.md`** | Planned work | Personal mobile edits, multi-device sync, regen conflict resolution |
 | **`clever-sailor-schema-reference.docx`** | Schema authority | Field-level reference for core platform tables |
 | **`app/README.md`** | Reference | Archived legacy PWA |
 
@@ -382,7 +395,7 @@ Seed is for initial tenancy/equipment setup — not every deploy.
 | Ionic app (5 tabs, PWA, GitHub Pages) | **Shipped** (Cattitude) |
 | Bootstrap JSON content workflow + validation | **Shipped** |
 | FastAPI `/query` RAG + Railway deploy | **Shipped** |
-| Postgres schema migrations 001–011 | **Shipped** |
+| Postgres schema migrations 001–018 | **Shipped** |
 | Operating bases + `guide_context` | **Shipped** (schema + seed) |
 | Cattitude guide in Postgres (`guide_content` + publication) | **Shipped** (one-time migration complete) |
 | Guide sync API + mobile local store | **Shipped** (API + IndexedDB sync; `guideSyncEnabled` off by default) |
@@ -391,9 +404,10 @@ Seed is for initial tenancy/equipment setup — not every deploy.
 | LLM generation pipeline + admin review gates | **In progress** (branding, emergency, home rules, checklists & fix cards assembled from templates/content library by default — LLM opt-in via "Personalize with AI"; system modules assembled from `equipment_guide_fragment` when curated content covers the linked equipment, LLM otherwise; no freemium tier yet) |
 | Guide generation economics (freemium / template assembly) | **Planned** — [`PLATFORM_ROADMAP.md`](PLATFORM_ROADMAP.md) § Guide generation economics |
 | LLM fragment cache (Postgres-first; Redis for Ask optional) | **Planned** — same workstream |
+| User guide overlays (personal edits, sync, regen conflicts) | **Planned** — [`PLATFORM_ROADMAP.md`](PLATFORM_ROADMAP.md) § User guide personalization; [`cursor-build-user-overlays.md`](cursor-build-user-overlays.md) |
 | Admin portal (intake review, query logs, notifications) | **Planned** |
 | Vessel intake flow (Ionic) | **Planned** |
-| Multi-vessel app shell (add vessel, switch vessel) | **Planned** |
+| Multi-vessel routing (`/v/{slug}/…`) | **Shipped** (add/switch-vessel UI still **planned**) |
 | Auth0 / guest tokens / charter-scoped Ask | **Planned** (Phase 4) |
 | Owner communities + community RAG | **Planned** (Phase 7) |
 | Capacitor native builds | **Deferred** |
@@ -407,7 +421,7 @@ Seed is for initial tenancy/equipment setup — not every deploy.
 
 1. **Read `clever-sailor-data-model.md` first** if you touch the database, guide generation, or API contracts. The mobile bootstrap JSON shape is the published output contract — TypeScript types in `mobile/src/app/core/models/bootstrap-content.model.ts` must stay aligned.
 
-2. **Distinguish vessel guide from Ask.** Changing `cattitude.json` does not affect RAG. Changing manuals or ingest affects Ask only. Operating base `guide_context` affects future generation, not the live app until republication and client sync.
+2. **Distinguish vessel guide from Ask.** Guide content is authored in admin (or the curated YAML library under `backend/content/`), then published to Postgres. The bundled `cattitude.json` is a transitional frozen copy for production — do not edit it for content changes. Changing manuals or ingest affects Ask only. Operating base or vessel `guide_context` affects generation output, not the live app until republication and client sync.
 
 3. **Cattitude is a transitional deployment.** Single `vesselSlug` in environment, bootstrap file in git, GitHub Pages path prefix `/cattitude/`. Platform work should generalize without breaking this URL.
 
@@ -417,6 +431,8 @@ Seed is for initial tenancy/equipment setup — not every deploy.
 
 6. **CORS and error handling:** Backend returns JSON errors with CORS headers on `/query` failures — otherwise the browser reports a misleading CORS error on 500 responses.
 
-7. **Planned admin and intake** are spec-only in `cursor-build-*.md` where marked planned — see [`PLATFORM_ROADMAP.md`](PLATFORM_ROADMAP.md) for phase ordering. Phase 7 (owner communities + community RAG) is documented in `cursor-build-community-phase.md`.
+7. **Admin portal is shipped** for fleet onboarding, equipment, manuals, and guide review/publish — see [`backend/README.md`](backend/README.md). **Mobile intake** and admin screens for query logs, intake review, and notifications remain spec-only in `cursor-build-*.md`; see [`PLATFORM_ROADMAP.md`](PLATFORM_ROADMAP.md) for phase ordering. Phase 7 (owner communities + community RAG) is documented in `cursor-build-community-phase.md`.
+
+8. **User overlays are not vessel guide edits.** Personal mobile edits target `user_guide_overlay` (planned), not `guide_content`. When adding fields to published bootstrap JSON, preserve stable `key`s on fix cards and checklist items. See [`cursor-build-user-overlays.md`](cursor-build-user-overlays.md).
 
 For questions about original product intent and staging, see `cattitude-rag-implementation-plan.md` and `PLATFORM_ROADMAP.md`. For schema field disputes, `clever-sailor-schema-reference.docx` wins over markdown docs.

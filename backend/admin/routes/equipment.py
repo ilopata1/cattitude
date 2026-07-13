@@ -36,10 +36,13 @@ from admin.equipment_service import (
     update_equipment,
 )
 from guide_equipment_fragments import (
+    approve_equipment_fragment,
     delete_equipment_fragment,
     get_equipment_fragment,
     replace_equipment_fragment,
 )
+from fragment_drafting import FragmentDraftingError, draft_equipment_fragment
+from admin.manual_service import list_works_for_equipment
 
 router = APIRouter(prefix="/equipment", tags=["admin-equipment"])
 
@@ -243,10 +246,16 @@ async def edit_equipment_form(
         option_packs = list_equipment_option_packs(conn, equipment_id)
         constraints = list_equipment_constraints(conn, equipment_id)
         fragment = get_equipment_fragment(conn, equipment_id)
+        manuals = list_works_for_equipment(conn, equipment_id)
 
     fragment_json = ""
+    citations_json = ""
     if fragment:
         fragment_json = json.dumps(fragment["fragment"], indent=2, sort_keys=True)
+        if fragment.get("source_citations"):
+            citations_json = json.dumps(
+                fragment["source_citations"], indent=2, sort_keys=True
+            )
 
     return templates.TemplateResponse(
         request,
@@ -259,6 +268,8 @@ async def edit_equipment_form(
             "constraints": constraints,
             "fragment": fragment,
             "fragment_json": fragment_json,
+            "citations_json": citations_json,
+            "manuals": manuals,
             "duplicate": None,
             "error": None,
             **_form_context(),
@@ -404,6 +415,7 @@ async def save_equipment_fragment(
     admin_user: str = Depends(require_admin_user),
     fragment_json: str = Form(""),
     clear_fragment: str = Form(""),
+    approve: str = Form(""),
 ):
     from urllib.parse import quote
 
@@ -437,14 +449,80 @@ async def save_equipment_fragment(
                 f"/admin/equipment/{equipment_id}?fragment_error={quote('Fragment must be a JSON object.')}",
                 status_code=303,
             )
+
+        existing = get_equipment_fragment(conn, equipment_id)
+        status = "approved" if approve == "yes" else "draft"
         replace_equipment_fragment(
             conn,
             equipment_id,
             fragment,
             created_by=admin_user,
+            status=status,
+            source_citations=existing.get("source_citations") if existing else None,
+        )
+
+    query = "fragment_saved=1"
+    if approve == "yes":
+        query = "fragment_approved=1"
+    return RedirectResponse(
+        f"/admin/equipment/{equipment_id}?{query}",
+        status_code=303,
+    )
+
+
+@router.post("/{equipment_id}/fragment/draft-from-manual")
+async def draft_equipment_fragment_action(
+    equipment_id: str,
+    admin_user: str = Depends(require_admin_user),
+):
+    from urllib.parse import quote
+
+    try:
+        with get_engine().begin() as conn:
+            equipment = get_equipment(conn, equipment_id)
+            if equipment is None:
+                return RedirectResponse("/admin/equipment", status_code=303)
+            fragment, citations = draft_equipment_fragment(conn, equipment_id)
+            replace_equipment_fragment(
+                conn,
+                equipment_id,
+                fragment,
+                created_by=admin_user,
+                status="draft",
+                source_citations=citations,
+            )
+    except FragmentDraftingError as exc:
+        return RedirectResponse(
+            f"/admin/equipment/{equipment_id}?fragment_error={quote(str(exc))}",
+            status_code=303,
         )
 
     return RedirectResponse(
-        f"/admin/equipment/{equipment_id}?fragment_saved=1",
+        f"/admin/equipment/{equipment_id}?fragment_drafted=1",
+        status_code=303,
+    )
+
+
+@router.post("/{equipment_id}/fragment/approve")
+async def approve_equipment_fragment_action(
+    equipment_id: str,
+    admin_user: str = Depends(require_admin_user),
+):
+    from urllib.parse import quote
+
+    with get_engine().begin() as conn:
+        equipment = get_equipment(conn, equipment_id)
+        if equipment is None:
+            return RedirectResponse("/admin/equipment", status_code=303)
+        if not approve_equipment_fragment(
+            conn, equipment_id, created_by=admin_user
+        ):
+            return RedirectResponse(
+                f"/admin/equipment/{equipment_id}?fragment_error={quote('No fragment to approve.')}",
+                status_code=303,
+            )
+
+    return RedirectResponse(
+        f"/admin/equipment/{equipment_id}?fragment_approved=1",
         status_code=303,
     )

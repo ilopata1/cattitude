@@ -60,15 +60,23 @@ Each piece of onboard gear (engines, chartplotter, heads, windlass, and so on) i
 
 System guides and fix cards depend heavily on this list. If equipment is missing, the system cannot produce accurate detail for that topic.
 
-### 5. Equipment content library (reusable fragments)
+### 5. Equipment content library (manual-grounded fragments)
 
-For common equipment models, curated **equipment fragments** can be written once and reused across sister boats. A fragment might include:
+For each equipment model in the registry, curated **equipment fragments** are drafted
+from approved equipment manuals, reviewed by an admin, and approved once. A fragment
+might include:
 
 - System guide sections (procedures, warnings, learn checks)
 - Fix-card overrides (model-specific troubleshooting steps)
 - Extra fix cards
 
-Fragments are tied to equipment models, not to individual boats. Charter contact details are always added when content is assembled for a vessel — they are not stored inside the fragment.
+Fragments are tied to equipment models, not to individual boats. Charter contact
+details are always added when content is assembled for a vessel — they are not stored
+inside the fragment.
+
+**Workflow:** upload manual → legal approval → ingest to search index → **Draft from
+manual** on the equipment registry page → human review → **Approve** → regenerate
+vessel guides. Only **approved** fragments are used at generation time.
 
 ### 6. Curated content library (standard marine practice)
 
@@ -87,9 +95,18 @@ Do/Know **navigation** (menus, system order, zone layout) is **not** copied from
 
 It is **not** used to blindly reuse outdated facts. Fresh data always comes from the current snapshot.
 
-### 8. AI (optional)
+### 8. AI (limited roles)
 
-For some modules, an AI model can write prose when no curated fragment or library path applies, or when you explicitly choose to **personalize** content. AI receives the full snapshot, relevant equipment, and instructions — but nothing goes live without human review.
+AI is **not** used to personalize equipment system guides per vessel. Equipment-specific
+prose comes from approved manual-grounded fragments (see layer 5).
+
+AI is still used for:
+
+- **Overview** and **safety** system modules (boat layout and safety gear — no equipment registry categories)
+- **Optional personalization** of home rules, checklists, and fix cards when you check **Personalize with AI**
+- **Offline drafting** of equipment fragments from manual excerpts (admin reviews before approval)
+
+Nothing goes live without human review.
 
 ---
 
@@ -119,9 +136,10 @@ When you click **Generate** in admin (or run the generation script), each module
 |----------|--------|----------|-----|
 | 1 | **Template assembly** | Branding, emergency (MAYDAY, contacts) | Never |
 | 2 | **Equipment gap placeholder** | System topics that need equipment but none is linked | Never |
-| 3 | **Equipment content library** | System guides when curated fragments exist for linked equipment | Never |
-| 4 | **Curated content library** | Home rules, checklists, fix cards (default path) | Only if you check **Personalize** |
-| 5 | **AI generation** | System guides without fragments; any module when **Personalize** is checked | Yes |
+| 3 | **Equipment content library** | System guides when **approved** fragments exist for linked equipment | Never |
+| 4 | **Fragment pending placeholder** | System topics with linked equipment but no approved fragment yet | Never |
+| 5 | **Curated content library** | Home rules, checklists, fix cards (default path) | Only if you check **Personalize** |
+| 6 | **AI generation** | Overview and safety system modules; optional personalization of library modules | Yes |
 | *(at publish)* | **Navigation assembly** | Do menu, checklist labels, system order, Know-by-location layout | Never |
 
 **Key behaviors:**
@@ -129,7 +147,8 @@ When you click **Generate** in admin (or run the generation script), each module
 - **Branding and emergency** always use template assembly. Emergency text is built from your contacts and callsign — the system does not paraphrase MAYDAY procedures through AI.
 - **Do and Know navigation** is built automatically at **publish** from your approved systems, checklists, and `vessel_type` (see `guide_navigation.py`). You do not generate or approve navigation modules separately.
 - **Home rules, checklists, and fix cards** use the curated library **by default**. AI is opt-in via the **Personalize** checkbox.
-- **System guides** use equipment fragments when available; otherwise AI fills the gap (if equipment is linked). If required equipment is missing, you get a clear placeholder instead of invented details.
+- **Equipment system guides** use **approved** equipment fragments when available. If equipment is linked but no approved fragment exists, you get a clear “content pending” placeholder — not AI-invented detail.
+- **Overview and safety** system guides still use AI (they do not map to equipment categories).
 
 ### How reference content is reused (without copying stale facts)
 
@@ -152,7 +171,8 @@ Even when a module is not copied verbatim, a previous approved version may still
 | Branding (name, tagline, model) | Template assembly from vessel + guide context | Never |
 | Emergency (MAYDAY, contacts) | Template assembly from guide context | Never |
 | Home rules | Curated library | Only if **Personalize** is checked |
-| System guides (13 topics) | Equipment fragments if available; otherwise AI | When no fragments exist and equipment is present (or topic does not require equipment) |
+| System guides (equipment topics) | Approved equipment fragments | Never — pending placeholder if fragment missing |
+| System guides (overview, safety) | AI | Always |
 | System guides (missing equipment) | Placeholder message | Never |
 | Checklists (5) | Curated library | Only if **Personalize** is checked |
 | Fix cards | Curated library + equipment fragment enrichment | Only if **Personalize** is checked |
@@ -163,12 +183,12 @@ Even when a module is not copied verbatim, a previous approved version may still
 
 1. Enter **guide context** (contacts, VHF, local rules) at base and/or vessel level
 2. Link **equipment** to the vessel
-3. Optionally curate **equipment fragments** for models you use repeatedly (“first boat pays, siblings reuse”) — edit JSON on each equipment registry page
+3. **Draft and approve equipment fragments** for models you use repeatedly — Admin → Equipment → **Draft from manual**, review, **Approve** (“first boat pays, siblings reuse”)
 4. **Review drafts** — compare new output to the prior approved version
 5. **Approve** modules individually
 6. **Publish** the full approved set to make it live in the app (or republish after image-only updates — see below)
 
-Equipment **manuals** (PDFs for the Ask tab) are uploaded and legally reviewed separately. They are outside this pipeline.
+Equipment **manuals** (PDFs) feed both the Ask tab (search) and equipment fragment drafting. Upload, legally approve, and ingest before using **Draft from manual**.
 
 ---
 
@@ -285,6 +305,7 @@ When you duplicate a vessel, approved or published guide modules can be copied d
 | **Personalize** | Admin option to use AI instead of the curated library |
 | **Bootstrap** | The complete content package the mobile app downloads |
 | **Publication** | A versioned, immutable snapshot of the bootstrap sent to the app |
+| **User overlay** | Per-user personal patches applied on the mobile client on top of publication; planned — see [`cursor-build-user-overlays.md`](../cursor-build-user-overlays.md) |
 
 ---
 

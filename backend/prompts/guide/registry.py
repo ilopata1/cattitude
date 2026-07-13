@@ -10,6 +10,7 @@ LLM_PROMPT_FILES: dict[tuple[str, str], str] = {
     ("system", "overview"): "guide/llm/system__overview.txt",
     ("system", "engines"): "guide/llm/system__engines.txt",
     ("fix_card_set", "all"): "guide/llm/fix_card_set__all.txt",
+    ("draft", "equipment_fragment"): "guide/llm/draft_equipment_fragment.txt",
 }
 
 SCHEMA_HINT_FILES: dict[tuple[str, str], str] = {

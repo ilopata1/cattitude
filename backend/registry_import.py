@@ -80,6 +80,7 @@ class ImportReport:
     pack_hull_links: int = 0
     pack_equipment_links: int = 0
     pack_child_links: int = 0
+    vessel_equipment_links: int = 0
     warnings: list[str] = field(default_factory=list)
 
 
@@ -144,13 +145,55 @@ def _duplicate_keys(
     return [(key, lines) for key, lines in seen.items() if len(lines) > 1]
 
 
-def validate_csv_bundle(data_dir: Path) -> dict[str, list[dict[str, str]]]:
+def merge_equipment_rows(
+    base: list[dict[str, str]], extra: list[dict[str, str]]
+) -> list[dict[str, str]]:
+    """Overlay extra equipment rows onto base, keyed by (manufacturer, model).
+
+    Extra rows replace base rows with the same key; new keys are appended.
+    """
+    merged: dict[tuple[str, str], dict[str, str]] = {}
+    for row in base + extra:
+        key = (
+            (row.get("manufacturer") or "").strip(),
+            (row.get("model") or "").strip(),
+        )
+        merged[key] = row
+    return list(merged.values())
+
+
+def validate_csv_bundle(
+    data_dir: Path,
+    overrides: dict[str, Path] | None = None,
+    extra_equipment_csv: Path | None = None,
+) -> dict[str, list[dict[str, str]]]:
+    """Load and validate the CSV bundle.
+
+    ``overrides`` maps a CSV_FILES key (e.g. "equipment") to an explicit file
+    path, replacing the default ``data_dir / filename`` location.
+
+    ``extra_equipment_csv`` is merged on top of the equipment registry rather
+    than replacing it: rows matching an existing (manufacturer, model) override
+    the base row, everything else is appended.
+    """
+    overrides = overrides or {}
+    unknown = set(overrides) - set(CSV_FILES)
+    if unknown:
+        raise RegistryImportError(f"Unknown CSV override key(s): {sorted(unknown)}")
+
     bundle: dict[str, list[dict[str, str]]] = {}
     for name, filename in CSV_FILES.items():
-        path = data_dir / filename
+        path = overrides.get(name, data_dir / filename)
         if not path.is_file():
             raise RegistryImportError(f"Missing CSV: {path}")
         bundle[name] = load_csv(path)
+
+    if extra_equipment_csv is not None:
+        if not extra_equipment_csv.is_file():
+            raise RegistryImportError(f"Missing CSV: {extra_equipment_csv}")
+        bundle["equipment"] = merge_equipment_rows(
+            bundle["equipment"], load_csv(extra_equipment_csv)
+        )
 
     for key, cols in (
         ("hull_models", ("manufacturer", "model_code")),
@@ -280,8 +323,12 @@ def _warn_pack_coverage(
             )
 
 
-def validate_registry(data_dir: Path) -> ImportReport:
-    bundle = validate_csv_bundle(data_dir)
+def validate_registry(
+    data_dir: Path,
+    overrides: dict[str, Path] | None = None,
+    extra_equipment_csv: Path | None = None,
+) -> ImportReport:
+    bundle = validate_csv_bundle(data_dir, overrides, extra_equipment_csv)
     report = ImportReport()
     _warn_pack_coverage(bundle, report)
     report.warnings.insert(0, "Dry run: validation passed; no database writes.")
@@ -669,6 +716,68 @@ def import_registry_links(
         report.pack_child_links += 1
 
 
+def link_equipment_to_vessel(
+    conn: Connection,
+    vessel_slug: str,
+    rows: list[dict[str, str]],
+    report: ImportReport,
+) -> None:
+    """Link equipment rows to a vessel (by slug) in vessel_equipment.
+
+    Rows may carry an optional ``zone_instance`` column (default: "default").
+    Equipment must already exist in the registry (run after the core import).
+    """
+    vessel = conn.execute(
+        text("SELECT id FROM vessels WHERE slug = :slug"),
+        {"slug": vessel_slug},
+    ).fetchone()
+    if vessel is None:
+        raise RegistryImportError(f"Vessel slug {vessel_slug!r} not found")
+    vessel_id = str(vessel[0])
+
+    for row in rows:
+        manufacturer = (row.get("manufacturer") or "").strip()
+        model = (row.get("model") or "").strip()
+        if not manufacturer or not model:
+            continue
+        equipment = conn.execute(
+            text(
+                """
+                SELECT id FROM equipment
+                WHERE manufacturer = :manufacturer AND model = :model
+                """
+            ),
+            {"manufacturer": manufacturer, "model": model},
+        ).fetchone()
+        if equipment is None:
+            raise RegistryImportError(
+                f"Cannot link to vessel {vessel_slug!r}: equipment not found "
+                f"in registry: {manufacturer} / {model}"
+            )
+        zone_instance = (row.get("zone_instance") or "default").strip() or "default"
+        conn.execute(
+            text(
+                """
+                INSERT INTO vessel_equipment (
+                    vessel_id, equipment_id, zone_instance, confirmed_by
+                )
+                VALUES (
+                    :vessel_id, :equipment_id, :zone_instance,
+                    CAST('team_verified' AS confirmed_by_method)
+                )
+                ON CONFLICT (vessel_id, equipment_id, zone_instance) DO UPDATE SET
+                    confirmed_by = EXCLUDED.confirmed_by
+                """
+            ),
+            {
+                "vessel_id": vessel_id,
+                "equipment_id": str(equipment[0]),
+                "zone_instance": zone_instance,
+            },
+        )
+        report.vessel_equipment_links += 1
+
+
 def import_registry(
     conn: Connection,
     data_dir: Path,
@@ -707,6 +816,10 @@ def format_report(report: ImportReport) -> str:
         f"  option_pack_equipment links: {report.pack_equipment_links}",
         f"  option_pack_child_pack links: {report.pack_child_links}",
     ]
+    if report.vessel_equipment_links:
+        lines.append(
+            f"  vessel_equipment links: {report.vessel_equipment_links}"
+        )
     if report.warnings:
         lines.append("Warnings:")
         for warning in report.warnings:

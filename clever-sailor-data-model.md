@@ -28,6 +28,7 @@ If anything here conflicts with the schema reference document, **the schema refe
 | **Charter guest** | User scoped by `charters.guest_token`. Distinct from vessel guide audience (owners, crew, guests all use the same local guide). |
 | **Charter operator** | Staff of a charter company (fleet manager, base manager). Onboards vessels via **Admin**; does not use the consumer app for fleet setup. |
 | **Operating base** | A charter company's geographic base (e.g. Abacos, Split). Supplies **guide context** (VHF, contacts, marina, local rules) and optional prompt overrides. |
+| **User overlay** | Per-user personal patches on top of the downloaded publication; mobile-edited; syncs when authenticated (Auth0). Never merged into publication without explicit admin promotion. |
 
 ---
 
@@ -77,6 +78,7 @@ flowchart TB
 **Mobile runtime:**
 
 - **Vessel guide** — read only from **local storage** (downloaded once per vessel association; updated when publication hash changes). Never fetched per tab at runtime.
+- **User overlay** — optional personal patches applied client-side to the cached publication; synced per Auth0 user when signed in; never written into `vessel_guide_publication`.
 - **Ask** — live `/query` when authorized; locally cached answers acceptable; no live queries after charter end.
 
 ---
@@ -592,6 +594,7 @@ Created automatically on first ingest. Before ingestion:
 | 5 | **Guests never onboard vessels.** Operators onboard vessels; guests **associate** with a vessel (token/QR) and download an existing publication. |
 | 6 | **Freemium economics:** free tier must not require a full LLM guide run on signup; reuse hull-model templates and exemplar publications before per-vessel GPT-4o generation. |
 | 7 | **LLM cache:** fragment-level exact-key cache (Postgres-first; Redis optional for Ask). Complements tiers/templates — does not replace them. No semantic cache for guide generation. |
+| 8 | **User overlays:** personal mobile edits are a fourth layer on publication; canonical guide unchanged; promotion to `guide_content` or equipment fragment is explicit admin action. |
 
 ### Published bootstrap shape
 
@@ -602,6 +605,8 @@ vesselId, vesselSlug, branding, emergency, systems, checklists, fixes, locations
 manualTitles   ← derived at publish from manual library
 ui             ← homeRuleSections, doMenu, checklistMeta, systemOrder, locationLayout
 ```
+
+**Stable keys (overlay prerequisite):** published `fixes[]` MUST include `key` (from content library; not stripped at publish). Checklist groups and items SHOULD include `key`. System `sections[]` SHOULD include `key` (or stable slug) so user patches survive regen. See [`cursor-build-user-overlays.md`](cursor-build-user-overlays.md).
 
 Validate with `utilities/validate_bootstrap_content.mjs`.
 
@@ -768,6 +773,45 @@ CREATE INDEX idx_vessel_guide_publication_latest
 ```
 
 Only `status = approved` modules are assembled. `module_refs` records prompt versions per module for stale-template UI.
+
+### `user_guide_overlay` (planned)
+
+Personal content layer keyed by Auth0 `user_id` + `vessel_id`. Not part of publication assembly.
+
+```sql
+-- Conceptual — migrate when Phase 4 overlay sync ships
+CREATE TABLE user_guide_overlay (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id TEXT NOT NULL,
+    vessel_id UUID NOT NULL REFERENCES vessels(id) ON DELETE CASCADE,
+    base_content_hash TEXT NOT NULL,
+    base_publication_version INTEGER,
+    patches JSONB NOT NULL DEFAULT '[]',
+    revision INTEGER NOT NULL DEFAULT 1,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    CONSTRAINT uq_user_guide_overlay UNIQUE (user_id, vessel_id)
+);
+
+CREATE INDEX idx_user_guide_overlay_vessel
+    ON user_guide_overlay (vessel_id, updated_at DESC);
+```
+
+**Patch model:**
+
+- Patches use **semantic paths** (e.g. `fix/engine_wont_start/steps/seacock_check`), not raw array indices where avoidable.
+- Each patch stores `base_fingerprint` (hash of canonical value at edit time) for regen conflict detection when `content_hash` changes.
+- Client applies patches at render time: `effectiveContent = applyPatches(publication, overlay)`.
+
+**API (Phase 4):**
+
+```
+GET /api/v1/users/me/overlays/{vesselSlug}
+PUT /api/v1/users/me/overlays/{vesselSlug}
+```
+
+**Admin (Phase 4):** aggregated insights (edit hotspots, post-regen conflicts); promotion to `guide_content` or `equipment_guide_fragment` is a separate admin action — overlays are never auto-merged into publication.
+
+See [`cursor-build-user-overlays.md`](cursor-build-user-overlays.md) and `PLATFORM_ROADMAP.md` § User guide personalization.
 
 ---
 

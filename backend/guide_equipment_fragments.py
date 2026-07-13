@@ -21,21 +21,26 @@ registry row (`equipment_guide_fragment.fragment` JSONB):
 Fragments are curated once per equipment model (first boat pays, siblings
 don't) and assembled deterministically into vessel guides:
 
-- System modules: when linked equipment provides sections for a system, the
-  module is assembled from fragments instead of calling the LLM.
+- System modules: when linked equipment provides approved sections for a system,
+  the module is assembled from fragments instead of calling the LLM.
 - Fix cards: fragment overrides replace the body steps of the generic card
   with equipment-specific steps; extra cards are appended. The vessel-specific
   contact step (always the final step of a generic card) is preserved, so
   fragments never embed charter company details.
+
+Draft fragments (`status = draft`) are for admin review only. Only approved
+fragments are used at guide generation time.
 """
 
 from __future__ import annotations
 
 import json
-from typing import Any
+from typing import Any, Literal
 
 from sqlalchemy import text
 from sqlalchemy.engine import Connection
+
+FragmentStatus = Literal["draft", "approved"]
 
 
 def _coerce_jsonb(value: Any) -> Any:
@@ -44,10 +49,21 @@ def _coerce_jsonb(value: Any) -> Any:
     return value
 
 
+def _row_to_fragment(row: Any) -> dict[str, Any]:
+    return {
+        "id": str(row[0]),
+        "fragment": _coerce_jsonb(row[1]) or {},
+        "status": row[2],
+        "source_citations": _coerce_jsonb(row[3]) if row[3] else None,
+        "updated_at": row[4],
+        "created_by": row[5],
+    }
+
+
 def load_vessel_fragments(
     conn: Connection, vessel_id: str
 ) -> list[dict[str, Any]]:
-    """Active fragments for equipment linked to the vessel, deduplicated per equipment."""
+    """Approved fragments for equipment linked to the vessel."""
     rows = conn.execute(
         text(
             """
@@ -58,6 +74,7 @@ def load_vessel_fragments(
             JOIN equipment_guide_fragment f ON f.equipment_id = e.id
             WHERE ve.vessel_id = :vessel_id
               AND f.is_active
+              AND f.status = 'approved'
             ORDER BY e.id
             """
         ),
@@ -170,7 +187,7 @@ def get_equipment_fragment(
     row = conn.execute(
         text(
             """
-            SELECT id, fragment, updated_at, created_by
+            SELECT id, fragment, status, source_citations, updated_at, created_by
             FROM equipment_guide_fragment
             WHERE equipment_id = :equipment_id AND is_active
             """
@@ -179,12 +196,7 @@ def get_equipment_fragment(
     ).fetchone()
     if row is None:
         return None
-    return {
-        "id": str(row[0]),
-        "fragment": _coerce_jsonb(row[1]) or {},
-        "updated_at": row[2],
-        "created_by": row[3],
-    }
+    return _row_to_fragment(row)
 
 
 def replace_equipment_fragment(
@@ -193,6 +205,8 @@ def replace_equipment_fragment(
     fragment: dict[str, Any],
     *,
     created_by: str,
+    status: FragmentStatus = "draft",
+    source_citations: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Replace the equipment's active fragment JSON (creates row if needed)."""
     row = conn.execute(
@@ -206,12 +220,15 @@ def replace_equipment_fragment(
     ).fetchone()
 
     payload = json.dumps(fragment)
+    citations_payload = json.dumps(source_citations) if source_citations else None
     if row:
         conn.execute(
             text(
                 """
                 UPDATE equipment_guide_fragment
                 SET fragment = CAST(:fragment AS jsonb),
+                    status = :status,
+                    source_citations = CAST(:source_citations AS jsonb),
                     updated_at = now(),
                     created_by = :created_by
                 WHERE id = :id
@@ -220,6 +237,8 @@ def replace_equipment_fragment(
             {
                 "id": str(row[0]),
                 "fragment": payload,
+                "status": status,
+                "source_citations": citations_payload,
                 "created_by": created_by,
             },
         )
@@ -227,17 +246,48 @@ def replace_equipment_fragment(
         conn.execute(
             text(
                 """
-                INSERT INTO equipment_guide_fragment (equipment_id, fragment, created_by)
-                VALUES (:equipment_id, CAST(:fragment AS jsonb), :created_by)
+                INSERT INTO equipment_guide_fragment (
+                    equipment_id, fragment, status, source_citations, created_by
+                )
+                VALUES (
+                    :equipment_id,
+                    CAST(:fragment AS jsonb),
+                    :status,
+                    CAST(:source_citations AS jsonb),
+                    :created_by
+                )
                 """
             ),
             {
                 "equipment_id": equipment_id,
                 "fragment": payload,
+                "status": status,
+                "source_citations": citations_payload,
                 "created_by": created_by,
             },
         )
     return fragment
+
+
+def approve_equipment_fragment(
+    conn: Connection,
+    equipment_id: str,
+    *,
+    created_by: str,
+) -> bool:
+    result = conn.execute(
+        text(
+            """
+            UPDATE equipment_guide_fragment
+            SET status = 'approved',
+                updated_at = now(),
+                created_by = :created_by
+            WHERE equipment_id = :equipment_id AND is_active
+            """
+        ),
+        {"equipment_id": equipment_id, "created_by": created_by},
+    )
+    return result.rowcount > 0
 
 
 def delete_equipment_fragment(conn: Connection, equipment_id: str) -> bool:
@@ -260,6 +310,8 @@ def upsert_equipment_fragment(
     patch: dict[str, Any],
     *,
     created_by: str,
+    status: FragmentStatus = "approved",
+    source_citations: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Merge a patch into the equipment's active fragment (creating it if needed).
 
@@ -269,7 +321,8 @@ def upsert_equipment_fragment(
     row = conn.execute(
         text(
             """
-            SELECT id, fragment FROM equipment_guide_fragment
+            SELECT id, fragment, source_citations
+            FROM equipment_guide_fragment
             WHERE equipment_id = :equipment_id AND is_active
             """
         ),
@@ -285,12 +338,18 @@ def upsert_equipment_fragment(
         else:
             fragment[key] = value
 
+    citations = source_citations
+    if citations is None and row:
+        citations = _coerce_jsonb(row[2])
+
     if row:
         conn.execute(
             text(
                 """
                 UPDATE equipment_guide_fragment
                 SET fragment = CAST(:fragment AS jsonb),
+                    status = :status,
+                    source_citations = CAST(:source_citations AS jsonb),
                     updated_at = now(),
                     created_by = :created_by
                 WHERE id = :id
@@ -299,6 +358,8 @@ def upsert_equipment_fragment(
             {
                 "id": str(row[0]),
                 "fragment": json.dumps(fragment),
+                "status": status,
+                "source_citations": json.dumps(citations) if citations else None,
                 "created_by": created_by,
             },
         )
@@ -306,13 +367,23 @@ def upsert_equipment_fragment(
         conn.execute(
             text(
                 """
-                INSERT INTO equipment_guide_fragment (equipment_id, fragment, created_by)
-                VALUES (:equipment_id, CAST(:fragment AS jsonb), :created_by)
+                INSERT INTO equipment_guide_fragment (
+                    equipment_id, fragment, status, source_citations, created_by
+                )
+                VALUES (
+                    :equipment_id,
+                    CAST(:fragment AS jsonb),
+                    :status,
+                    CAST(:source_citations AS jsonb),
+                    :created_by
+                )
                 """
             ),
             {
                 "equipment_id": equipment_id,
                 "fragment": json.dumps(fragment),
+                "status": status,
+                "source_citations": json.dumps(citations) if citations else None,
                 "created_by": created_by,
             },
         )

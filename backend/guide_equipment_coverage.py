@@ -102,3 +102,46 @@ def build_placeholder_system_module(system_id: str) -> dict[str, Any]:
             }
         ],
     }
+
+
+def build_fragment_pending_system_module(
+    system_id: str,
+    equipment: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Deterministic module when equipment is linked but no approved fragment exists."""
+    meta = SYSTEM_CATALOG.get(system_id, {})
+    title = meta.get("review_title", system_id.replace("_", " ").title())
+    categories = meta.get("equipment_categories") or []
+    linked = equipment_for_system_categories(equipment, categories)
+    labels = sorted(
+        {
+            f"{row.get('manufacturer') or 'Unknown'} {row.get('model') or ''}".strip()
+            for row in linked
+        }
+    )
+    equipment_list = ", ".join(labels) if labels else "linked equipment"
+    return {
+        "id": system_id,
+        "icon": meta.get("icon", "⚙️"),
+        "title": title,
+        "subtitle": "Equipment-specific content pending review",
+        "locs": meta.get("locs", []),
+        "summary": (
+            f"This vessel has {equipment_list} configured for {title.lower()}, "
+            "but an approved equipment guide fragment is not yet available. "
+            "An admin must draft content from the equipment manual and approve it "
+            "before detailed procedures appear here."
+        ),
+        "sections": [
+            {
+                "t": "Content pending",
+                "type": "prose",
+                "c": (
+                    f"Equipment is linked ({equipment_list}), but model-specific "
+                    "guide content has not been approved yet. Use Admin → Equipment "
+                    "registry → Draft from manual, review the fragment, and approve it. "
+                    "Then regenerate this vessel's guide."
+                ),
+            }
+        ],
+    }
