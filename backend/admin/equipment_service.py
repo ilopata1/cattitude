@@ -54,12 +54,16 @@ def count_equipment(
     system_category: str = "",
     equipment_class: str = "",
     query: str = "",
+    has_manual: str = "",
+    has_fragment: str = "",
 ) -> int:
     clauses, params = _list_filters(
         manufacturer=manufacturer,
         system_category=system_category,
         equipment_class=equipment_class,
         query=query,
+        has_manual=has_manual,
+        has_fragment=has_fragment,
     )
     return int(
         conn.execute(
@@ -76,6 +80,8 @@ def _list_filters(
     system_category: str = "",
     equipment_class: str = "",
     query: str = "",
+    has_manual: str = "",
+    has_fragment: str = "",
 ) -> tuple[list[str], dict[str, Any]]:
     clauses = ["TRUE"]
     params: dict[str, Any] = {}
@@ -98,6 +104,44 @@ def _list_filters(
         clauses.append("equipment_class = CAST(:equipment_class AS equipment_class)")
         params["equipment_class"] = equipment_class
 
+    if has_manual == "yes":
+        clauses.append(
+            """
+            EXISTS (
+                SELECT 1 FROM manual_work mw
+                WHERE mw.equipment_id = equipment.id
+            )
+            """
+        )
+    elif has_manual == "no":
+        clauses.append(
+            """
+            NOT EXISTS (
+                SELECT 1 FROM manual_work mw
+                WHERE mw.equipment_id = equipment.id
+            )
+            """
+        )
+
+    if has_fragment == "yes":
+        clauses.append(
+            """
+            EXISTS (
+                SELECT 1 FROM equipment_guide_fragment f
+                WHERE f.equipment_id = equipment.id AND f.is_active
+            )
+            """
+        )
+    elif has_fragment == "no":
+        clauses.append(
+            """
+            NOT EXISTS (
+                SELECT 1 FROM equipment_guide_fragment f
+                WHERE f.equipment_id = equipment.id AND f.is_active
+            )
+            """
+        )
+
     return clauses, params
 
 
@@ -108,6 +152,8 @@ def list_equipment(
     system_category: str = "",
     equipment_class: str = "",
     query: str = "",
+    has_manual: str = "",
+    has_fragment: str = "",
     page: int = 1,
     per_page: int = PER_PAGE,
 ) -> list[dict[str, Any]]:
@@ -116,6 +162,8 @@ def list_equipment(
         system_category=system_category,
         equipment_class=equipment_class,
         query=query,
+        has_manual=has_manual,
+        has_fragment=has_fragment,
     )
     offset = max(page - 1, 0) * per_page
     params["limit"] = per_page
@@ -125,11 +173,26 @@ def list_equipment(
         text(
             f"""
             SELECT
-                id, manufacturer, model, system_category, equipment_class,
-                configuration_tier, has_formal_manual
+                equipment.id,
+                equipment.manufacturer,
+                equipment.model,
+                equipment.system_category,
+                equipment.equipment_class,
+                equipment.configuration_tier,
+                equipment.has_formal_manual,
+                EXISTS (
+                    SELECT 1 FROM manual_work mw
+                    WHERE mw.equipment_id = equipment.id
+                ) AS has_manual_library,
+                (
+                    SELECT f.status
+                    FROM equipment_guide_fragment f
+                    WHERE f.equipment_id = equipment.id AND f.is_active
+                    LIMIT 1
+                ) AS fragment_status
             FROM equipment
             WHERE {' AND '.join(clauses)}
-            ORDER BY manufacturer, model
+            ORDER BY equipment.manufacturer, equipment.model
             LIMIT :limit OFFSET :offset
             """
         ),
@@ -144,6 +207,8 @@ def list_equipment(
             "equipment_class": row[4],
             "configuration_tier": row[5],
             "has_formal_manual": row[6],
+            "has_manual_library": bool(row[7]),
+            "fragment_status": row[8],
         }
         for row in rows
     ]

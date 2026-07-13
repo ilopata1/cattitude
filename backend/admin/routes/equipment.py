@@ -96,6 +96,8 @@ async def list_equipment_page(
     q: str = Query(""),
     system_category: str = Query(""),
     equipment_class: str = Query(""),
+    has_manual: str = Query(""),
+    has_fragment: str = Query(""),
     page: int = Query(1, ge=1),
 ):
     with get_engine().connect() as conn:
@@ -106,6 +108,8 @@ async def list_equipment_page(
             system_category=system_category,
             equipment_class=equipment_class,
             query=q,
+            has_manual=has_manual,
+            has_fragment=has_fragment,
         )
         items = list_equipment(
             conn,
@@ -113,6 +117,8 @@ async def list_equipment_page(
             system_category=system_category,
             equipment_class=equipment_class,
             query=q,
+            has_manual=has_manual,
+            has_fragment=has_fragment,
             page=page,
         )
 
@@ -128,6 +134,8 @@ async def list_equipment_page(
             "query": q,
             "system_category": system_category,
             "equipment_class": equipment_class,
+            "has_manual": has_manual,
+            "has_fragment": has_fragment,
             "page": page,
             "total": total,
             "total_pages": total_pages,
