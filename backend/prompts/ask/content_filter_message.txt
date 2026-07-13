@@ -1,4 +1,4 @@
-# Purpose: User-facing error when Azure blocks an Ask question after retry.
+# Purpose: User-facing error when Azure blocks an Ask question.
 # Used by: query.ContentFilterError raised to main.query_manuals → HTTP 422
 # API: POST /query (mobile Ask tab displays this message)
 #

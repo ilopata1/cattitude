@@ -1,5 +1,5 @@
-# Purpose: Alternate question prefix when Azure content filter blocks the first attempt.
-# Used by: query.run_query second attempt after BadRequestError content_filter
+# Purpose: Alternate question prefix for a content-filter retry (unused — Ask fails fast on filter).
+# Kept for possible future use; query.run_query no longer does a second synthesize pass.
 # API: POST /query
 #
 [Marine diesel engine seawater cooling system — operator manual procedure]

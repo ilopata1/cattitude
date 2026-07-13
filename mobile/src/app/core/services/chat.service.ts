@@ -105,16 +105,25 @@ export class ChatService {
       return 'You appear to be offline. Connect to the internet to ask questions about the manuals.';
     }
 
-    if (error && typeof error === 'object' && 'error' in error) {
+    if (error && typeof error === 'object' && 'status' in error) {
       const err = error as { error?: { detail?: string }; status?: number };
       if (err.status === 422) {
-        return 'Your question could not be processed. Try rephrasing it.';
+        return (
+          err.error?.detail ||
+          'Your question could not be processed. Try rephrasing it.'
+        );
+      }
+      if (err.status === 502 || err.status === 504) {
+        return 'That question took too long for the manual service. Try a shorter or more specific question.';
       }
       if (err.status === 500) {
         return (
           err.error?.detail ||
           'The manual service returned an error. Check Railway logs for the backend.'
         );
+      }
+      if (err.status === 0) {
+        return 'Sorry — something went wrong reaching the manual service. Try again in a moment.';
       }
       if (err.error?.detail) {
         return err.error.detail;

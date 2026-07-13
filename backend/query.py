@@ -24,9 +24,11 @@ REFINE_PROMPT = PromptTemplate(_MARINE_CONTEXT + get_ask_text("refine"))
 
 _QUERY_PREFIX = get_ask_text("query_prefix")
 
-_RETRY_PREFIX = get_ask_text("retry_prefix")
-
 CONTENT_FILTER_MESSAGE = get_ask_text("content_filter_message")
+
+# Keep Ask synthesis under Railway/proxy gateway timeouts (~60s).
+_SIMILARITY_TOP_K = 3
+_MAX_NODE_CHARS = 1200
 
 
 def prepare_manual_query(question: str) -> str:
@@ -81,7 +83,7 @@ def build_query_engine() -> RetrieverQueryEngine:
         embed_model=embed_model,
     )
 
-    retriever = VectorIndexRetriever(index=index, similarity_top_k=5)
+    retriever = VectorIndexRetriever(index=index, similarity_top_k=_SIMILARITY_TOP_K)
 
     synthesizer = get_response_synthesizer(
         llm=llm,
@@ -104,7 +106,7 @@ def get_query_engine() -> RetrieverQueryEngine:
 
 
 class ContentFilterError(Exception):
-    """Raised when Azure blocks the prompt after a retry."""
+    """Raised when Azure blocks the prompt."""
 
 
 def _set_node_content(node: object, content: str) -> None:
@@ -118,36 +120,37 @@ def _set_node_content(node: object, content: str) -> None:
     raise TypeError(f"Cannot set content on {type(node)!r}")
 
 
+def _truncate_node_text(text: str, limit: int = _MAX_NODE_CHARS) -> str:
+    if len(text) <= limit:
+        return text
+    cut = text[:limit].rsplit(" ", 1)[0].rstrip()
+    return f"{cut or text[:limit]}…"
+
+
 def _english_nodes(nodes: list) -> list:
-    """Replace node text with English-only excerpts for synthesis and sources."""
+    """Replace node text with trimmed English excerpts for synthesis and sources."""
     kept: list = []
     for node in nodes:
         raw = node.get_content() if hasattr(node, "get_content") else getattr(node, "text", "") or ""
         english = extract_english(str(raw)).strip()
         if not english:
             continue
-        _set_node_content(node, english)
+        _set_node_content(node, _truncate_node_text(english))
         kept.append(node)
     return kept or nodes
 
 
 def run_query(question: str):
-    """Run RAG query with marine framing and one content-filter retry."""
+    """Run RAG query with marine framing. Fail fast on content-filter blocks."""
     engine = get_query_engine()
     question = question.strip()
     nodes = engine.retrieve(QueryBundle(query_str=question))
     nodes = _english_nodes(nodes)
+    prepared = prepare_manual_query(question)
 
-    attempts = (
-        prepare_manual_query(question),
-        _RETRY_PREFIX + question,
-    )
-    last_error: BaseException | None = None
-    for prepared in attempts:
-        try:
-            return engine.synthesize(QueryBundle(query_str=prepared), nodes)
-        except BadRequestError as exc:
-            if not _is_content_filter_error(exc):
-                raise
-            last_error = exc
-    raise ContentFilterError(CONTENT_FILTER_MESSAGE) from last_error
+    try:
+        return engine.synthesize(QueryBundle(query_str=prepared), nodes)
+    except BadRequestError as exc:
+        if _is_content_filter_error(exc):
+            raise ContentFilterError(CONTENT_FILTER_MESSAGE) from exc
+        raise
