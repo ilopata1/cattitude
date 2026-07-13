@@ -5,12 +5,19 @@ from __future__ import annotations
 from prompts.loader import load_prompt_text
 
 # (content_type, content_key) -> path under backend/prompts/
+# Only keys that map to Postgres guide_content_type belong here —
+# they are seeded into guide_prompt_template by ensure_default_prompt_templates.
 LLM_PROMPT_FILES: dict[tuple[str, str], str] = {
     ("ui", "homeRuleSections"): "guide/llm/ui__home_rule_sections.txt",
     ("system", "overview"): "guide/llm/system__overview.txt",
     ("system", "engines"): "guide/llm/system__engines.txt",
     ("fix_card_set", "all"): "guide/llm/fix_card_set__all.txt",
-    ("draft", "equipment_fragment"): "guide/llm/draft_equipment_fragment.txt",
+}
+
+# Offline drafting prompts — file-backed only; not stored in guide_prompt_template
+# (would require extending guide_content_type).
+DRAFT_PROMPT_FILES: dict[str, str] = {
+    "equipment_fragment": "guide/llm/draft_equipment_fragment.txt",
 }
 
 SCHEMA_HINT_FILES: dict[tuple[str, str], str] = {
@@ -40,6 +47,11 @@ DEFAULT_SCHEMA_HINT = "guide/schemas/_default.txt"
 
 def get_llm_prompt(content_type: str, content_key: str) -> str | None:
     path = LLM_PROMPT_FILES.get((content_type, content_key))
+    return load_prompt_text(path) if path else None
+
+
+def get_draft_prompt(name: str) -> str | None:
+    path = DRAFT_PROMPT_FILES.get(name)
     return load_prompt_text(path) if path else None
 
 

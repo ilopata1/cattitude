@@ -14,7 +14,7 @@ from config import settings
 from content.loader import load_yaml_cached
 from guide_module_catalog import SYSTEM_CATALOG
 from manual_retrieval import retrieve_manual_excerpts
-from prompts.guide.registry import get_llm_prompt, get_schema_hint
+from prompts.guide.registry import get_draft_prompt, get_schema_hint
 
 
 class FragmentDraftingError(Exception):
@@ -188,7 +188,7 @@ def _compose_draft_prompt(
     manuals: list[dict[str, Any]],
     excerpts: list[dict[str, Any]],
 ) -> str:
-    instruction = get_llm_prompt("draft", "equipment_fragment")
+    instruction = get_draft_prompt("equipment_fragment")
     if not instruction:
         raise FragmentDraftingError("Missing draft_equipment_fragment prompt file.")
 
