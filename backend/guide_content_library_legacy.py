@@ -740,7 +740,7 @@ def build_fix_cards_module(
         )
         cards.append(
             {
-                "icon": "🌡️",
+                "icon": "⚠️",
                 "cat": "engine",
                 "catL": "Engine",
                 "title": "Engine overheating alarm",
@@ -860,7 +860,7 @@ def build_fix_cards_module(
         )
         cards.append(
             {
-                "icon": "🔋",
+                "icon": "🪫",
                 "cat": "electrical",
                 "catL": "Electrical",
                 "title": "Low battery",

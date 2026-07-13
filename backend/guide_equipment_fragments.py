@@ -40,6 +40,8 @@ from typing import Any, Literal
 from sqlalchemy import text
 from sqlalchemy.engine import Connection
 
+from guide_fix_icons import normalize_fix_icon
+
 FragmentStatus = Literal["draft", "approved"]
 
 
@@ -164,7 +166,8 @@ def apply_fix_card_fragments(
             if override.get("title"):
                 card["title"] = override["title"]
             if override.get("icon"):
-                card["icon"] = override["icon"]
+                card["icon"] = normalize_fix_icon(override["icon"])
+        card["icon"] = normalize_fix_icon(card.get("icon"))
         result.append(card)
 
     for extra in extras:
@@ -173,6 +176,7 @@ def apply_fix_card_fragments(
             for key in ("icon", "cat", "catL", "title", "steps")
             if key in extra
         }
+        extra_card["icon"] = normalize_fix_icon(extra_card.get("icon"))
         extra_card["steps"] = list(extra_card.get("steps") or [])
         if contact_step:
             extra_card["steps"].append(contact_step)

@@ -22,6 +22,7 @@ from guide_equipment_coverage import (
     system_requires_equipment,
 )
 from guide_content_library import LIBRARY_MODULE_BUILDERS
+from guide_fix_icons import normalize_fix_card_icons, normalize_fix_icon
 from guide_equipment_fragments import (
     apply_fix_card_fragments,
     assemble_system_from_fragments,
@@ -627,6 +628,7 @@ def _validate_checklist_module(content_key: str, payload: Any) -> None:
 def _validate_fixes_module(payload: Any) -> None:
     if not isinstance(payload, list) or not payload:
         raise GuideGenerationError("fixes must be a non-empty array")
+    normalize_fix_card_icons(payload)
     for index, card in enumerate(payload):
         if not isinstance(card, dict):
             raise GuideGenerationError(f"fix card {index} must be an object")
@@ -635,6 +637,7 @@ def _validate_fixes_module(payload: Any) -> None:
                 raise GuideGenerationError(f"fix card {index} missing {key}")
         if not isinstance(card.get("steps"), list) or not card["steps"]:
             raise GuideGenerationError(f"fix card {index} missing steps")
+        card["icon"] = normalize_fix_icon(card.get("icon"))
 
 
 def _validate_locations_module(payload: Any) -> None:

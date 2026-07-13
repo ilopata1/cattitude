@@ -23,6 +23,33 @@ const CATEGORY_CLASSES: Record<string, string> = {
   general: 'cat-general',
 };
 
+/** Material / LLM icon names → emoji for plain-text Fix It rendering. */
+const FIX_ICON_NAME_MAP: Record<string, string> = {
+  warning: '⚠️',
+  warning_amber: '⚠️',
+  error: '🔴',
+  error_outline: '🔴',
+  battery_alert: '🪫',
+  battery_full: '🔋',
+  battery_charging_full: '🔋',
+  battery_std: '🔋',
+  thermostat: '⚠️',
+  device_thermostat: '⚠️',
+  water_drop: '💧',
+  bolt: '⚡',
+  electrical_services: '⚡',
+  build: '🔧',
+  handyman: '🔧',
+  anchor: '⚓',
+  sailing: '⛵',
+  directions_boat: '🚤',
+  ac_unit: '❄️',
+  kitchen: '🧊',
+  radio: '📻',
+  explore: '🧭',
+  navigation: '🧭',
+};
+
 @Component({
   selector: 'app-fix',
   templateUrl: './fix.page.html',
@@ -67,6 +94,33 @@ export class FixPage {
         fix.catL.toLowerCase().includes(q) ||
         fix.steps.some((step) => step.toLowerCase().includes(q)),
     );
+  }
+
+  /** Display emoji even when guide payload stored a Material-style icon name. */
+  displayIcon(icon: string | undefined): string {
+    const raw = (icon ?? '').trim();
+    if (!raw) {
+      return '🔧';
+    }
+    if ([...raw].some((ch) => ch.codePointAt(0)! > 127)) {
+      // Thermometer emoji is poorly supported on some Windows fonts.
+      if (raw.startsWith('🌡')) {
+        return '⚠️';
+      }
+      return raw;
+    }
+    const key = raw.toLowerCase().replace(/[-\s]/g, '_');
+    if (FIX_ICON_NAME_MAP[key]) {
+      return FIX_ICON_NAME_MAP[key];
+    }
+    const snake = raw.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase();
+    if (FIX_ICON_NAME_MAP[snake]) {
+      return FIX_ICON_NAME_MAP[snake];
+    }
+    if (/^[A-Za-z0-9_-]+$/.test(raw)) {
+      return '🔧';
+    }
+    return raw;
   }
 
   setCategory(key: string): void {

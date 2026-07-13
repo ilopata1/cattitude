@@ -24,7 +24,7 @@ cards:
   when:
     has_category:
     - propulsion
-  icon: 🌡️
+  icon: ⚠️
   cat: engine
   catL: Engine
   title: Engine overheating alarm
@@ -113,7 +113,7 @@ cards:
   when:
     has_category:
     - electrical_dc
-  icon: 🔋
+  icon: 🪫
   cat: electrical
   catL: Electrical
   title: Low battery

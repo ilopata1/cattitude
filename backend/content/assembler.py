@@ -6,6 +6,7 @@ from typing import Any, Callable
 
 from content import conditions, slots
 from content.loader import load_yaml_cached
+from guide_fix_icons import normalize_fix_icon
 
 _DANGER_PREFIXES = ("never", "do not", "don't", "no ")
 
@@ -162,6 +163,7 @@ def build_fix_cards_module(
             for key in ("icon", "cat", "catL", "title", "key")
             if key in card
         }
+        payload["icon"] = normalize_fix_icon(payload.get("icon"))
         payload["steps"] = _resolve_steps(card.get("steps") or [], snapshot)
         cards.append(payload)
     return cards

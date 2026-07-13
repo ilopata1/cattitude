@@ -8,7 +8,7 @@ Generate the Fix It troubleshooting card set for this charter vessel.
 Use INPUT SNAPSHOT equipment and operating_base.guide_context for realistic guest-fixable problems.
 Cover engines, electrical, plumbing/heads, water, batteries, anchoring, AC, dinghy as equipment supports.
 
-Each card: icon (emoji), cat (short key), catL (display category), title, steps (5-8 actionable strings).
+Each card: icon (emoji only — never Material/Flutter icon names like Warning or Battery_Alert), cat (short key), catL (display category), title, steps (5-8 actionable strings).
 Include charter company contact in steps where guests should call for help (VHF channel from context).
 
 Match REFERENCE MODULE count and categories when provided; update facts from snapshot.
