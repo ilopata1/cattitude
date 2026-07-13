@@ -1,4 +1,4 @@
-"""Draft equipment guide fragments from approved equipment manuals."""
+"""Draft equipment guide fragments from legally cleared equipment manuals."""
 
 from __future__ import annotations
 
@@ -19,6 +19,10 @@ from prompts.guide.registry import get_llm_prompt, get_schema_hint
 
 class FragmentDraftingError(Exception):
     pass
+
+
+# Postgres legal_status enum: manuals cleared in legal review (not "approved").
+CLEARED_MANUAL_LEGAL_STATUS = "cleared"
 
 
 SYSTEM_RETRIEVAL_QUERIES: dict[str, list[str]] = {
@@ -118,11 +122,14 @@ def list_ingested_manuals(conn: Connection, equipment_id: str) -> list[dict[str,
             JOIN manual_edition me
                 ON me.manual_work_id = mw.id AND me.is_current = true
             WHERE mw.equipment_id = :equipment_id
-              AND mw.legal_status = 'cleared'
+              AND mw.legal_status = CAST(:legal_status AS legal_status)
             ORDER BY mw.manual_type, mw.title
             """
         ),
-        {"equipment_id": equipment_id},
+        {
+            "equipment_id": equipment_id,
+            "legal_status": CLEARED_MANUAL_LEGAL_STATUS,
+        },
     ).fetchall()
     return [
         {

@@ -25,7 +25,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from config import settings  # noqa: E402
 from db import postgres_connection_strings  # noqa: E402
-from fragment_drafting import FragmentDraftingError, draft_equipment_fragment  # noqa: E402
+from fragment_drafting import (  # noqa: E402
+    CLEARED_MANUAL_LEGAL_STATUS,
+    FragmentDraftingError,
+    draft_equipment_fragment,
+)
 from guide_equipment_fragments import (  # noqa: E402
     replace_equipment_fragment,
 )
@@ -71,10 +75,11 @@ def _equipment_with_manuals(conn) -> list[tuple[str, str, str]]:
             JOIN manual_work mw ON mw.equipment_id = e.id
             JOIN manual_edition me
                 ON me.manual_work_id = mw.id AND me.is_current = true
-            WHERE mw.legal_status = 'cleared'
+            WHERE mw.legal_status = CAST(:legal_status AS legal_status)
             ORDER BY e.manufacturer, e.model
             """
-        )
+        ),
+        {"legal_status": CLEARED_MANUAL_LEGAL_STATUS},
     ).fetchall()
     return [(str(row[0]), row[1], row[2]) for row in rows]
 
