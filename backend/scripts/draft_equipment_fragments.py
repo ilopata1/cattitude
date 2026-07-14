@@ -160,7 +160,9 @@ def main() -> None:
 
         systems = list((fragment.get("system_sections") or {}).keys())
         fixes = list((fragment.get("fix_card_overrides") or {}).keys())
+        policy = citations.get("manual_selection_policy")
         print(f"  drafted ({status}): systems={systems or '—'}, fix_cards={fixes or '—'}")
+        print(f"  manuals: policy={policy}, count={len(citations.get('manuals') or [])}")
         print(f"  excerpts: {len(citations.get('excerpts') or [])}")
         drafted += 1
 

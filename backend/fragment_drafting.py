@@ -1,4 +1,9 @@
-"""Draft equipment guide fragments from legally cleared equipment manuals."""
+"""Draft equipment guide fragments from legally cleared equipment manuals.
+
+Policy: Know/Fix fragments are operator runbooks. Prefer ``operators`` manuals;
+never draft from ``installation`` or ``parts``. If no operators manual exists,
+fall back to ``service`` with a stricter prompt note — Ask still covers depth.
+"""
 
 from __future__ import annotations
 
@@ -24,69 +29,73 @@ class FragmentDraftingError(Exception):
 # Postgres legal_status enum: manuals cleared in legal review (not "approved").
 CLEARED_MANUAL_LEGAL_STATUS = "cleared"
 
+# Preferred then fallback for fragment drafting (never installation/parts).
+DRAFT_MANUAL_TYPE_PREFERRED = "operators"
+DRAFT_MANUAL_TYPE_FALLBACK = "service"
+
 
 SYSTEM_RETRIEVAL_QUERIES: dict[str, list[str]] = {
     "sails": [
-        "sail handling reefing furling procedures warnings",
-        "rigging inspection maintenance",
+        "sail handling reefing furling operating procedures warnings",
+        "sail controls furler winch clutch operation guest checks",
     ],
     "engines": [
         "pre-start checks starting procedure shutdown",
-        "engine warnings maintenance operating rpm fuel",
-        "raw water cooling seacock exhaust impeller",
+        "engine warnings indicators operating rpm fuel",
+        "raw water cooling seacock exhaust impeller guest checks",
     ],
     "electrical": [
-        "electrical panel operation shore power breakers",
-        "AC DC system warnings installation",
+        "electrical panel switches breakers operation",
+        "shore power connection inverter charger controls warnings",
     ],
     "batteries": [
-        "battery charging voltage absorption float",
-        "inverter charger solar monitoring",
+        "battery charging voltage absorption float monitoring",
+        "inverter charger solar charge controller operation indicators",
     ],
     "water": [
-        "fresh water system tanks pumps operation",
-        "watermaker operation flushing salinity warnings",
+        "fresh water tanks pumps operation",
+        "watermaker start stop flush salinity warnings",
     ],
     "heads": [
-        "toilet head operation flushing maintenance",
-        "waste holding tank macerator warnings",
+        "toilet head operation flushing controls",
+        "waste holding tank macerator pump-out operation warnings",
     ],
     "galley": [
         "refrigeration galley appliance operation",
-        "cooktop stove operation warnings",
+        "cooktop stove operation controls warnings",
     ],
     "nav": [
         "chartplotter autopilot VHF radio operation",
-        "navigation electronics startup warnings",
+        "navigation electronics startup power warnings",
     ],
     "anchoring": [
-        "windlass anchor operation chain counter",
-        "ground tackle warnings maintenance",
+        "windlass anchor operation chain counter controls",
+        "ground tackle operating warnings up down",
     ],
     "dinghy": [
-        "tender dinghy outboard operation",
-        "davits swim platform lift warnings",
+        "tender dinghy outboard operation start stop",
+        "davits swim platform lift operating controls warnings",
     ],
     "ac": [
-        "air conditioning operation startup shutdown",
-        "seawater cooling HVAC warnings maintenance",
+        "air conditioning operation startup shutdown controls",
+        "cabin HVAC thermostat seawater cooling strainer guest checks",
     ],
 }
 
 FIX_CARD_RETRIEVAL_QUERIES: dict[str, list[str]] = {
-    "engine_wont_start": ["engine will not start troubleshooting crank"],
-    "engine_overheating": ["engine overheating raw water impeller cooling"],
-    "toilet_wont_flush": ["toilet head will not flush troubleshooting"],
-    "holding_tank_full": ["holding tank pump out waste evacuation"],
-    "no_fresh_water": ["no fresh water pump pressure troubleshooting"],
-    "watermaker": ["watermaker not producing salinity flush troubleshooting"],
-    "something_stopped": ["circuit breaker electrical fault reset"],
-    "low_battery": ["low battery charging recovery"],
-    "fridge_not_cooling": ["refrigerator not cooling troubleshooting"],
-    "autopilot": ["autopilot not holding course troubleshooting"],
-    "vhf_not_transmitting": ["VHF radio not transmitting troubleshooting"],
-    "windlass": ["windlass not working troubleshooting"],
-    "ac_not_working": ["air conditioning not working troubleshooting"],
+    "engine_wont_start": ["engine will not start troubleshooting crank neutral"],
+    "engine_overheating": ["engine overheating raw water seacock impeller strainer"],
+    "toilet_wont_flush": ["toilet head will not flush breaker switch troubleshooting"],
+    "holding_tank_full": ["holding tank full pump out discharge procedure"],
+    "no_fresh_water": ["no fresh water pump pressure breaker switch troubleshooting"],
+    "watermaker": ["watermaker not producing salinity stop flush troubleshooting"],
+    "something_stopped": ["circuit breaker tripped electrical fault reset"],
+    "low_battery": ["low battery charging shore power generator recovery"],
+    "fridge_not_cooling": ["refrigerator not cooling breaker temperature troubleshooting"],
+    "autopilot": ["autopilot not holding course standby troubleshooting"],
+    "vhf_not_transmitting": ["VHF radio not transmitting power antenna troubleshooting"],
+    "windlass": ["windlass not working breaker isolator troubleshooting"],
+    "ac_not_working": ["air conditioning not working breaker strainer troubleshooting"],
 }
 
 
@@ -114,6 +123,7 @@ def fix_card_keys_for_category(category: str) -> list[str]:
 
 
 def list_ingested_manuals(conn: Connection, equipment_id: str) -> list[dict[str, Any]]:
+    """All cleared, ingested manuals for equipment (any manual_type)."""
     rows = conn.execute(
         text(
             """
@@ -140,6 +150,34 @@ def list_ingested_manuals(conn: Connection, equipment_id: str) -> list[dict[str,
         }
         for row in rows
     ]
+
+
+def select_manuals_for_drafting(
+    manuals: list[dict[str, Any]],
+) -> tuple[list[dict[str, Any]], str]:
+    """Prefer operators manuals; fall back to service only.
+
+    Returns (selected_manuals, selection_policy) where selection_policy is
+    ``operators`` or ``service_fallback``. Never selects installation/parts.
+    """
+    operators = [
+        m for m in manuals if m.get("manual_type") == DRAFT_MANUAL_TYPE_PREFERRED
+    ]
+    if operators:
+        return operators, DRAFT_MANUAL_TYPE_PREFERRED
+
+    service = [
+        m for m in manuals if m.get("manual_type") == DRAFT_MANUAL_TYPE_FALLBACK
+    ]
+    if service:
+        return service, "service_fallback"
+
+    types_found = sorted({str(m.get("manual_type") or "") for m in manuals})
+    raise FragmentDraftingError(
+        "No operators (or service fallback) manuals cleared and ingested for "
+        f"this equipment. Found manual_type(s): {types_found or 'none'}. "
+        "Upload/clear an operators manual, or retag an existing PDF, before drafting."
+    )
 
 
 def _parse_llm_json(raw: str) -> dict[str, Any]:
@@ -187,6 +225,7 @@ def _compose_draft_prompt(
     fix_card_keys: list[str],
     manuals: list[dict[str, Any]],
     excerpts: list[dict[str, Any]],
+    manual_selection_policy: str,
 ) -> str:
     instruction = get_draft_prompt("equipment_fragment")
     if not instruction:
@@ -219,17 +258,33 @@ def _compose_draft_prompt(
         "TARGET FIX CARD KEYS:",
         json.dumps(fix_card_keys),
         "",
-        "APPROVED MANUALS:",
-        json.dumps(manuals, indent=2),
-        "",
-        "MANUAL EXCERPTS (only permitted facts):",
-        json.dumps(excerpts, indent=2),
-        "",
-        "OUTPUT SCHEMA HINTS:",
-        "\n".join(schema_parts),
-        "",
-        "Respond with valid JSON only.",
+        "MANUAL SELECTION POLICY:",
+        manual_selection_policy,
     ]
+    if manual_selection_policy == "service_fallback":
+        parts.extend(
+            [
+                "",
+                "NOTE: No operators manual was available. Excerpts come from service "
+                "manuals only. Be extra strict: include only guest-safe operating "
+                "steps and fixes; omit all install, maintenance, and repair content.",
+            ]
+        )
+    parts.extend(
+        [
+            "",
+            "SOURCE MANUALS (drafting corpus):",
+            json.dumps(manuals, indent=2),
+            "",
+            "MANUAL EXCERPTS (only permitted facts):",
+            json.dumps(excerpts, indent=2),
+            "",
+            "OUTPUT SCHEMA HINTS:",
+            "\n".join(schema_parts),
+            "",
+            "Respond with valid JSON only.",
+        ]
+    )
     return "\n".join(parts)
 
 
@@ -264,13 +319,14 @@ def draft_equipment_fragment(
     target_systems = system_ids or system_ids_for_category(category)
     fix_card_keys = fix_card_keys_for_category(category) if include_fix_cards else []
 
-    manuals = list_ingested_manuals(conn, equipment_id)
-    if not manuals:
+    all_manuals = list_ingested_manuals(conn, equipment_id)
+    if not all_manuals:
         raise FragmentDraftingError(
             "No legally cleared, ingested manuals for this equipment. "
             "Upload a PDF, clear it in legal review, and ingest before drafting."
         )
 
+    manuals, manual_selection_policy = select_manuals_for_drafting(all_manuals)
     manual_ids = [manual["id"] for manual in manuals]
     queries = _collect_retrieval_queries(target_systems, fix_card_keys)
     if not queries:
@@ -282,7 +338,7 @@ def draft_equipment_fragment(
     if not excerpts:
         raise FragmentDraftingError(
             "Manual excerpts not found in the vector index. "
-            "Re-ingest the cleared manual PDF for this equipment."
+            "Re-ingest the cleared operators (or service fallback) manual PDF."
         )
 
     composed = _compose_draft_prompt(
@@ -291,6 +347,7 @@ def draft_equipment_fragment(
         fix_card_keys=fix_card_keys,
         manuals=manuals,
         excerpts=excerpts,
+        manual_selection_policy=manual_selection_policy,
     )
     llm = llm or _build_llm()
     response = llm.complete(composed)
@@ -301,6 +358,8 @@ def draft_equipment_fragment(
 
     citations = {
         "manuals": manuals,
+        "manuals_available": all_manuals,
+        "manual_selection_policy": manual_selection_policy,
         "excerpts": excerpts,
         "target_systems": target_systems,
         "target_fix_cards": fix_card_keys,

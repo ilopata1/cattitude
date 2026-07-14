@@ -190,7 +190,18 @@ Even when a module is not copied verbatim, a previous approved version may still
 
 Equipment **manuals** (PDFs) feed both the Ask tab (search) and equipment fragment drafting. Upload, clear in legal review, and ingest before using **Draft from manual**.
 
----
+**Fragment drafting policy:** drafts prefer manuals tagged `operators`. They never use `installation` or `parts`. If no operators manual exists, drafting may fall back to `service` with a stricter guest-safe prompt. Content is limited to operating use, warnings, and guest-safe fixes — install/service/repair depth stays in Ask. Retag PDFs accurately so the right corpus is used.
+
+### Follow-ups (fragment / Electrical quality)
+
+Still open after the drafting tighten:
+
+1. **Assemble, don’t concat** — replace blind `sections.extend` for multi-equipment systems (especially Electrical) with an ordered guest skeleton or a synthesize pass.
+2. **Narrow system targeting** — stop dual-dumping `electrical_dc` gear into both `electrical` and `batteries`; route charge/solar/regulators primarily to batteries.
+3. **Cap fragment size** — limit sections/learnChecks per equipment contribution before approve.
+4. **Approve-time quality gates** — reject install/commissioning titles, vessel/charter names, oversized dumps.
+5. **Quarantine harvest leftovers** — deactivate or unlink harvested Cattitude-specific fragments (e.g. generic SmartSolar charger) before regenerating sibling boats.
+6. **Audit manual_type tags** — many PDFs must be correctly typed as `operators` for the new filter to help.
 
 ## Defaults and fallbacks
 
