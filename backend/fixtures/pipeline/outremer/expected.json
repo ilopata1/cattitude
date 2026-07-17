@@ -1,0 +1,189 @@
+{
+  "roles": {
+    "czone_touch_7": "HUB",
+    "coi": "BRIDGE",
+    "masterbus_bridge_interface": "BRIDGE",
+    "masterbus_usb_interface": "ENDPOINT",
+    "mli_ultra_1": "ENDPOINT",
+    "mli_ultra_2": "ENDPOINT",
+    "mli_ultra_3": "ENDPOINT",
+    "mass_combi_pro_1": "ENDPOINT",
+    "mass_combi_pro_2": "ENDPOINT",
+    "victron_mppt_150_60": "ISLAND",
+    "victron_mppt": "ISLAND",
+    "silentwind": "ISLAND",
+    "alpha_pro_iii_port": "ENDPOINT",
+    "alpha_pro_iii_stbd": "ENDPOINT",
+    "ml_switch_1": "ENDPOINT",
+    "ml_switch_2": "ENDPOINT",
+    "ml_switch_3": "ENDPOINT",
+    "plain_battery_switch": "ENDPOINT",
+    "class_t_1": "PASSIVE",
+    "class_t_2": "PASSIVE",
+    "class_t_3": "PASSIVE",
+    "busbar": "PASSIVE",
+    "czone_2_0": "PLATFORM"
+  },
+  "sections": {
+    "czone_touch_7": {
+      "value": "electrical",
+      "source": "lookup"
+    },
+    "coi": {
+      "value": "electrical",
+      "source": "lookup"
+    },
+    "masterbus_bridge_interface": {
+      "value": "electrical",
+      "source": "lookup"
+    },
+    "masterbus_usb_interface": {
+      "value": "electrical",
+      "source": "lookup"
+    },
+    "mli_ultra_1": {
+      "value": "batteries",
+      "source": "lookup"
+    },
+    "mli_ultra_2": {
+      "value": "batteries",
+      "source": "lookup"
+    },
+    "mli_ultra_3": {
+      "value": "batteries",
+      "source": "lookup"
+    },
+    "mass_combi_pro_1": {
+      "value": "batteries",
+      "source": "lookup"
+    },
+    "mass_combi_pro_2": {
+      "value": "batteries",
+      "source": "lookup"
+    },
+    "victron_mppt_150_60": {
+      "value": "batteries",
+      "source": "lookup"
+    },
+    "victron_mppt": {
+      "value": "batteries",
+      "source": "lookup"
+    },
+    "silentwind": {
+      "value": "batteries",
+      "source": "lookup"
+    },
+    "alpha_pro_iii_port": {
+      "value": "batteries",
+      "source": "lookup"
+    },
+    "alpha_pro_iii_stbd": {
+      "value": "batteries",
+      "source": "lookup"
+    },
+    "ml_switch_1": {
+      "value": "electrical",
+      "source": "lookup"
+    },
+    "ml_switch_2": {
+      "value": "electrical",
+      "source": "lookup"
+    },
+    "ml_switch_3": {
+      "value": "electrical",
+      "source": "lookup"
+    },
+    "plain_battery_switch": {
+      "value": "electrical",
+      "source": "lookup"
+    },
+    "class_t_1": {
+      "value": "electrical",
+      "source": "lookup"
+    },
+    "class_t_2": {
+      "value": "electrical",
+      "source": "lookup"
+    },
+    "class_t_3": {
+      "value": "electrical",
+      "source": "lookup"
+    },
+    "busbar": {
+      "value": "electrical",
+      "source": "lookup"
+    }
+  },
+  "control_paths": [
+    {
+      "target": "mass_combi_pro_1",
+      "taught_via": "czone_touch_7"
+    },
+    {
+      "target": "mass_combi_pro_2",
+      "taught_via": "czone_touch_7"
+    }
+  ],
+  "required_relations": [
+    {
+      "kind": "parallel_synchronized",
+      "members": [
+        "mass_combi_pro_1",
+        "mass_combi_pro_2"
+      ]
+    }
+  ],
+  "required_flags": [
+    {
+      "flag": "island_with_daily_use",
+      "device": "victron_mppt"
+    },
+    {
+      "flag": "suspected_installer_line_item",
+      "device": "busbar"
+    },
+    {
+      "flag": "platform_version_unconfirmed",
+      "device": "czone_touch_7",
+      "platform_key": "czone_2_0"
+    },
+    {
+      "flag": "config_unsourced",
+      "device": "czone_touch_7"
+    }
+  ],
+  "forbidden_flags": [
+    {
+      "flag": "section_unassigned"
+    },
+    {
+      "flag": "no_hub_found"
+    },
+    {
+      "flag": "multiple_hubs"
+    }
+  ],
+  "required_cross_references": [
+    {
+      "kind": "control",
+      "in_section": "batteries",
+      "to_device": "czone_touch_7"
+    },
+    {
+      "kind": "hosts_control",
+      "in_section": "electrical",
+      "to_device": "mass_combi_pro_1"
+    }
+  ],
+  "notes": {
+    "fixture_auth": "Fixture-Auth: chat instance-policy + VESSEL_ARTIFACT batch — outremer_post_batch_b primary with distinct Combi/MLI/Alpha instances",
+    "snapshot": "outremer_post_batch_b (primary) — distinct multi-unit expansion",
+    "instance_policy": "interchangeable keeps quantity on one node; distinct expands. Stage 4 may regroup identical-role instances for prose.",
+    "quantity_encoding": "victron_mppt quantity=2 stays collapsed (interchangeable).",
+    "retired": "balmar_mc624 / czone_touch_10 / czone_system must not appear.",
+    "touch7": "material_stop closed: document_depth_difference; config_defined_operation; vessel_artifact CZone + displays_data",
+    "czone_system": "retired — hub is czone_touch_7",
+    "czone_2_0": "platform ui_pages from V1.1 extract; Climate gated supported_hvac (AC present ≠ integrated)",
+    "hub_operation_unsourced": "retired for platform-backed Touch 7 — see platform_version_unconfirmed + config_unsourced"
+  }
+}

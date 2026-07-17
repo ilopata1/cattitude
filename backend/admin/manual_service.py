@@ -679,8 +679,20 @@ def upload_manual(
         tmp_path = Path(tmp.name)
     try:
         content_hash = compute_content_hash_from_pdf(tmp_path)
+        from manual_edition_guard import check_edition_mismatch
+
+        edition_check = check_edition_mismatch(
+            pdf_path=tmp_path,
+            filename=original_filename,
+            admin_edition_label=edition_label,
+        )
     finally:
         tmp_path.unlink(missing_ok=True)
+
+    if edition_check.get("mismatch"):
+        raise ManualServiceError(
+            "EDITION_MISMATCH:" + str(edition_check.get("detail") or "edition mismatch")
+        )
 
     if work_mode == "new":
         work_id = create_manual_work(

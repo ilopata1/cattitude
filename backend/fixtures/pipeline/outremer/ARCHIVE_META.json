@@ -1,0 +1,7 @@
+{
+  "snapshot": "outremer_post_batch_b",
+  "role": "primary (live path = outremer/)",
+  "also_at": "fixtures/pipeline/outremer_post_batch_b/",
+  "pre_batch": "fixtures/pipeline/outremer_pre_batch_b/",
+  "fixture_auth": "Fixture-Auth: chat instance-policy + VESSEL_ARTIFACT batch — outremer_post_batch_b primary with distinct Combi/MLI/Alpha instances"
+}

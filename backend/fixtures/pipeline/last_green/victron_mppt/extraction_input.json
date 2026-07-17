@@ -1,0 +1,2099 @@
+{
+  "routing_mechanism": "rag_retrieval_queries",
+  "stage0_heading_routing": false,
+  "extraction_mode": "map_reduce",
+  "stability_voting": {
+    "n_requested": 3,
+    "n_completed": 3,
+    "short_circuit_identical": false,
+    "unstable_flag_count": 0,
+    "votes": [
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "configure solar charger settings via VictronConnect app",
+          "audience": "operator",
+          "context": "situational",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": "1/3",
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "action": "configure solar charger settings via VictronConnect app",
+              "audience": "operator",
+              "context": "situational"
+            }
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ]
+      }
+    ]
+  },
+  "note": "Stage 1 map-reduce with stability voting: excerpts partitioned by chapter (fallback batches); up to N=3 map-reduce passes on the same Stage 0 payload; field-level vote; then validate/derive.",
+  "retrieval_queries": [
+    "operation daily use display menu controls operator",
+    "installation wiring commissioning configuration DIP switches",
+    "troubleshooting alarms faults error codes emergency protection",
+    "network communication MasterBus NMEA CZone VE.Direct Bluetooth remote panel app",
+    "maintenance service storage winterizing",
+    "optional accessory gateway interface required for",
+    "MasterView remote panel remote control display panel monitoring panel MasterAdjust",
+    "optional remote control MasterView Easy remote panel installed",
+    "shore power AC input current limit generator mains",
+    "main switch inverter on off charger operation",
+    "DC fuse battery protection wiring supply requirement",
+    "BMS battery safety relay protective disconnect undervoltage overvoltage temperature",
+    "Class T fuse T-Fuse fuse holder positive battery cable",
+    "Close relay reset battery safety event recovery after disconnect",
+    "State of charge SOC monitoring MasterBus display"
+  ],
+  "query_diagnostics": [
+    {
+      "query": "operation daily use display menu controls operator",
+      "unique_hits_added": 14,
+      "matched": true,
+      "top_k": 14,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "installation wiring commissioning configuration DIP switches",
+      "unique_hits_added": 7,
+      "matched": true,
+      "top_k": 14,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "unique_hits_added": 14,
+      "matched": true,
+      "top_k": 14,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "network communication MasterBus NMEA CZone VE.Direct Bluetooth remote panel app",
+      "unique_hits_added": 7,
+      "matched": true,
+      "top_k": 14,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "maintenance service storage winterizing",
+      "unique_hits_added": 11,
+      "matched": true,
+      "top_k": 14,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "optional accessory gateway interface required for",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 14,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "MasterView remote panel remote control display panel monitoring panel MasterAdjust",
+      "unique_hits_added": 2,
+      "matched": true,
+      "top_k": 14,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "optional remote control MasterView Easy remote panel installed",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 14,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "shore power AC input current limit generator mains",
+      "unique_hits_added": 9,
+      "matched": true,
+      "top_k": 14,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "main switch inverter on off charger operation",
+      "unique_hits_added": 4,
+      "matched": true,
+      "top_k": 14,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "DC fuse battery protection wiring supply requirement",
+      "unique_hits_added": 6,
+      "matched": true,
+      "top_k": 14,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "BMS battery safety relay protective disconnect undervoltage overvoltage temperature",
+      "unique_hits_added": 8,
+      "matched": true,
+      "top_k": 14,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "Class T fuse T-Fuse fuse holder positive battery cable",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 14,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "Close relay reset battery safety event recovery after disconnect",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 14,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "State of charge SOC monitoring MasterBus display",
+      "unique_hits_added": 2,
+      "matched": true,
+      "top_k": 14,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "3. Features",
+      "unique_hits_added": 2,
+      "matched": true,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "3.1. Automatic battery voltage detection",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "3.2. Outstanding MPPT algorithm",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "3.3. Outstanding conversion efficiency",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "3.4. Extensive electronic protection",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "3.5. VictronConnect app",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "3.7. VE.Direct port",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "3.8. Load output",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "3.8.1. Physical load output",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "3.9. Battery charging",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "3.9.1. Adaptive 3-stage battery charging",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "3. Connect the DC loads.",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 3,
+      "phase": "heading_fill"
+    }
+  ],
+  "coverage": {
+    "chunk_count": 123,
+    "heading_count": 165,
+    "headings_covered_count": 127,
+    "heading_coverage_fraction": 0.7697,
+    "coverage_low_threshold": 0.25,
+    "coverage_low": false,
+    "top_k_used": 14,
+    "top_k_scaling": {
+      "base": 4,
+      "max": 16,
+      "chunk_coverage_target": 0.6,
+      "scaled": true
+    },
+    "heading_fill_queries": 12,
+    "heading_fill_hits": 5,
+    "headings_all": [
+      "1. Safety precautions",
+      "1.1. General safety precautions",
+      "1.2. Wiring safety precautions",
+      "1.3. Symbols used on the enclosure",
+      "1.4. SmartSolar MPPT 75/10 up to 100/20 FCC and Industry Canada Compliance",
+      "1. This device may not cause harmful interference, and",
+      "2. This device must accept any interference received, including interference that may cause undesired operation.",
+      "2. Introduction",
+      "2.1. Battery voltage, PV voltage and current rating",
+      "3. Features",
+      "3.1. Automatic battery voltage detection",
+      "3.2. Outstanding MPPT algorithm",
+      "3.3. Outstanding conversion efficiency",
+      "3.4. Extensive electronic protection",
+      "3.5. VictronConnect app",
+      "3.6. Display",
+      "3.7. VE.Direct port",
+      "3.8. Load output",
+      "3.8.1. Physical load output",
+      "3.8.2. Virtual load output",
+      "3.8.3. BatteryLife",
+      "3.9. Battery charging",
+      "3.9.1. Adaptive 3-stage battery charging",
+      "3.9.2. Flexible charge algorithm",
+      "3.9.3. Equalization charging",
+      "3.10. Temperature sensing",
+      "3.10.1. Internal temperature sensor",
+      "3.10.2. External temperature and voltage sensor",
+      "3.11. Voltage sensing",
+      "3.12. Remote on/off",
+      "3.13. WireBox",
+      "4. Installation",
+      "4.1. Mounting",
+      "4.2. Battery",
+      "MPPT 75/10 15A 20A",
+      "MPPT 100/20 25A 30A",
+      "4.3. PV array",
+      "120  W",
+      "12  V",
+      "240  W",
+      "24  V",
+      "10  A",
+      "20  A",
+      "480  W",
+      "4.4. Grounding",
+      "4.5. Connection overview",
+      "4.6. Electrical connections",
+      "1. Connect the battery: allow the solar charger to automatically recognise the system voltage (wait 10 seconds).",
+      "2. It is recommended to verify system voltage: use VictronConnect or an external control display.",
+      "3. Connect the DC loads.",
+      "4. Connect the PV.",
+      "5. If applicable, connect the VE.Direct port.",
+      "4.7. Connect the MPPT Control display",
+      "5. Configuration and settings",
+      "5.1. How to change settings",
+      "5.1.1. Settings via the VictronConnect app",
+      "5.1.2. Settings via the jumper link",
+      "5.1.3. Settings via MPPT Control display",
+      "5.2. All settings explained",
+      "5.2.1. Battery settings",
+      "5.2.2. Load output settings",
+      "5.2.3. Streetlight settings",
+      "42 minutes.",
+      "5.2.4. TX port settings",
+      "5.2.5. RX port settings",
+      "5.3. Updating firmware",
+      "5.4. Disabling and enabling Bluetooth",
+      "5.5. VE.Smart Networking",
+      "5.5.1. VE.Smart Networking setup",
+      "6. Operation",
+      "6.1. Start up",
+      "6.2. Battery charging",
+      "6.3. Automatic equalization",
+      "6.4. Lithium batteries",
+      "6.5. Shutdown and restart procedure",
+      "6.6. Maintenance procedure",
+      "7. Monitoring",
+      "7.1. LED indications",
+      "7.2. Error codes",
+      "7.3. Monitoring via the VictronConnect app",
+      "7.3.1. VictronConnect app status screen",
+      "7.3.2. VictronConnect app history screen",
+      "7.3.3. VictronConnect app error reporting",
+      "7.4. Monitoring via a GX device and VRM",
+      "8. Troubleshooting",
+      "8.1. Solar charger is damaged",
+      "8.2. Solar charger is unresponsive",
+      "8.3. Solar charger is off",
+      "8.3.1. PV voltage too low",
+      "8.3.2. Settings being edited on an external display",
+      "8.3.3. Disabled in the settings",
+      "8.3.4. Disabled by remote or BMS",
+      "8.3.5. Low lithium battery temperature",
+      "8.4. Solar charger is externally controlled",
+      "8.5. Batteries are not charged",
+      "8.5.1. Battery is full",
+      "1. Bulk stage: 0-80% SoC.",
+      "2. Absorption stage 80-100% SoC.",
+      "3. Float stage: 100% SoC.",
+      "8.5.2. Battery not connected",
+      "8.5.3. Reverse battery polarity",
+      "8.5.4. Blown fuse",
+      "chapter. Keep in mind that reverse battery polarity is not covered by warranty.",
+      "8.5.5. Battery settings too low",
+      "8.5.6. PV voltage too high",
+      "8.5.7. Reverse PV polarity",
+      "8.6. Batteries are undercharged",
+      "8.6.1. Insufficient solar supply",
+      "8.6.2. DC load too high",
+      "8.6.3. Battery cable voltage drop",
+      "8.6.4. Temperature compensation setting incorrect",
+      "8.6.5. Temperature difference between solar charger and battery",
+      "8.7. Batteries are overcharged",
+      "8.7.1. Battery voltage setting too high",
+      "8.7.2. Battery charge voltage settings too high",
+      "8.7.3. Battery unable to deal with equalisation",
+      "8.7.4. Battery old, faulty or undersized",
+      "8.8. Solar charger not achieving full output",
+      "8.8.1. PV yield lower than expected",
+      "8.8.2. Maximum output power relates to battery voltage",
+      "8.8.3. Temperature above 40°C",
+      "8.8.4. PV connections burned or melted",
+      "8.9. Communication Issues",
+      "8.9.1. Bluetooth",
+      "8.9.2. VE.Direct port",
+      "8.9.3. VE.Smart Networking",
+      "8.10. Load output issues",
+      "chapter. Note that the jumper must be removed when switching the load operation mode.",
+      "chapter.",
+      "8.10.1. Load output not able to run load",
+      "8.10.2. Incorrect load output current reading",
+      "8.11. Miscellaneous issues",
+      "8.11.1. Only voltage readings, no current or power",
+      "8.11.2. Unable to select 36V or 48V battery voltage",
+      "8.11.3. Unable to operate as a DC-DC charger or power supply",
+      "8.11.4. Interrupted firmware update",
+      "8.11.5. Ground current",
+      "8.12. Error code overview",
+      "8.12.1. Error 1 - Battery temperature too high",
+      "8.12.2. Error 2 - Battery voltage too high",
+      "8.12.3. Error 17 - Solar charger overheated despite reduced output current",
+      "8.12.4. Error 18 - Solar charger over-current",
+      "8.12.5. Error 20 - Maximum bulk time exceeded",
+      "8.12.6. Error 21 - Current sensor issue",
+      "8.12.7. Error 26 - Terminal overheated",
+      "8.12.8. Error 28 - Power stage issue",
+      "8.12.9. Error 33 - PV over voltage",
+      "8.12.10. Error 38, 39 - PV Input shutdown",
+      "8.12.11. Error 40 - PV Input failed to shutdown",
+      "8.12.12. Error 80 to 88 - PV Input shutdown",
+      "8.12.13. Error 116 - Calibration data lost",
+      "8.12.14. Error 117 - Incompatible firmware",
+      "8.12.15. Error 119 - Settings data lost",
+      "9. Technical specifications",
+      "9.1. Specifications 75/10, 75/15, 100/15 and 100/20",
+      "MPPT 75/10 MPPT 75/15 MPPT 100/15 MPPT 100/20",
+      "12V & 24V: 20A",
+      "48V: 1A",
+      "100 x 131 x",
+      "9.2. Dimension drawings",
+      "9.2.1. Dimensions 75/10 and 75/15",
+      "9.2.2. Dimensions 100/15",
+      "9.2.3. Dimensions 100/20",
+      "DETAIL A",
+      "SCALE 2 : 1"
+    ],
+    "headings_covered": [
+      "1. Safety precautions",
+      "1.1. General safety precautions",
+      "1.2. Wiring safety precautions",
+      "1.3. Symbols used on the enclosure",
+      "1.4. SmartSolar MPPT 75/10 up to 100/20 FCC and Industry Canada Compliance",
+      "1. This device may not cause harmful interference, and",
+      "2. This device must accept any interference received, including interference that may cause undesired operation.",
+      "2. Introduction",
+      "2.1. Battery voltage, PV voltage and current rating",
+      "3. Features",
+      "3.1. Automatic battery voltage detection",
+      "3.2. Outstanding MPPT algorithm",
+      "3.3. Outstanding conversion efficiency",
+      "3.6. Display",
+      "3.7. VE.Direct port",
+      "3.8. Load output",
+      "3.8.1. Physical load output",
+      "3.8.2. Virtual load output",
+      "3.8.3. BatteryLife",
+      "3.9.1. Adaptive 3-stage battery charging",
+      "3.9.2. Flexible charge algorithm",
+      "3.9.3. Equalization charging",
+      "3.10. Temperature sensing",
+      "3.10.1. Internal temperature sensor",
+      "3.10.2. External temperature and voltage sensor",
+      "3.11. Voltage sensing",
+      "3.12. Remote on/off",
+      "3.13. WireBox",
+      "4. Installation",
+      "4.1. Mounting",
+      "4.2. Battery",
+      "MPPT 75/10 15A 20A",
+      "MPPT 100/20 25A 30A",
+      "4.3. PV array",
+      "4.4. Grounding",
+      "4.5. Connection overview",
+      "4.6. Electrical connections",
+      "4.7. Connect the MPPT Control display",
+      "5.1.2. Settings via the jumper link",
+      "5.1.3. Settings via MPPT Control display",
+      "5.2. All settings explained",
+      "5.2.1. Battery settings",
+      "5.2.2. Load output settings",
+      "5.2.3. Streetlight settings",
+      "5.2.4. TX port settings",
+      "5.2.5. RX port settings",
+      "5.3. Updating firmware",
+      "5.4. Disabling and enabling Bluetooth",
+      "5.5. VE.Smart Networking",
+      "5.5.1. VE.Smart Networking setup",
+      "6. Operation",
+      "6.1. Start up",
+      "6.2. Battery charging",
+      "6.5. Shutdown and restart procedure",
+      "6.6. Maintenance procedure",
+      "7. Monitoring",
+      "7.1. LED indications",
+      "7.2. Error codes",
+      "7.3. Monitoring via the VictronConnect app",
+      "7.3.1. VictronConnect app status screen",
+      "7.3.2. VictronConnect app history screen",
+      "7.3.3. VictronConnect app error reporting",
+      "7.4. Monitoring via a GX device and VRM",
+      "8. Troubleshooting",
+      "8.1. Solar charger is damaged",
+      "8.3.2. Settings being edited on an external display",
+      "8.3.3. Disabled in the settings",
+      "8.3.4. Disabled by remote or BMS",
+      "8.4. Solar charger is externally controlled",
+      "8.5. Batteries are not charged",
+      "8.5.1. Battery is full",
+      "8.5.2. Battery not connected",
+      "8.5.3. Reverse battery polarity",
+      "8.5.4. Blown fuse",
+      "8.5.5. Battery settings too low",
+      "8.5.6. PV voltage too high",
+      "8.5.7. Reverse PV polarity",
+      "8.6. Batteries are undercharged",
+      "8.6.1. Insufficient solar supply",
+      "8.6.2. DC load too high",
+      "8.6.3. Battery cable voltage drop",
+      "8.6.4. Temperature compensation setting incorrect",
+      "8.6.5. Temperature difference between solar charger and battery",
+      "8.7. Batteries are overcharged",
+      "8.7.1. Battery voltage setting too high",
+      "8.7.2. Battery charge voltage settings too high",
+      "8.7.3. Battery unable to deal with equalisation",
+      "8.7.4. Battery old, faulty or undersized",
+      "8.8.3. Temperature above 40°C",
+      "8.8.4. PV connections burned or melted",
+      "8.9. Communication Issues",
+      "8.9.1. Bluetooth",
+      "8.9.2. VE.Direct port",
+      "8.9.3. VE.Smart Networking",
+      "8.10. Load output issues",
+      "chapter.",
+      "8.10.1. Load output not able to run load",
+      "8.10.2. Incorrect load output current reading",
+      "8.11.4. Interrupted firmware update",
+      "8.11.5. Ground current",
+      "8.12. Error code overview",
+      "8.12.1. Error 1 - Battery temperature too high",
+      "8.12.2. Error 2 - Battery voltage too high",
+      "8.12.3. Error 17 - Solar charger overheated despite reduced output current",
+      "8.12.5. Error 20 - Maximum bulk time exceeded",
+      "8.12.6. Error 21 - Current sensor issue",
+      "8.12.7. Error 26 - Terminal overheated",
+      "8.12.8. Error 28 - Power stage issue",
+      "8.12.9. Error 33 - PV over voltage",
+      "8.12.10. Error 38, 39 - PV Input shutdown",
+      "8.12.11. Error 40 - PV Input failed to shutdown",
+      "8.12.12. Error 80 to 88 - PV Input shutdown",
+      "8.12.13. Error 116 - Calibration data lost",
+      "8.12.14. Error 117 - Incompatible firmware",
+      "8.12.15. Error 119 - Settings data lost",
+      "9. Technical specifications",
+      "9.1. Specifications 75/10, 75/15, 100/15 and 100/20",
+      "MPPT 75/10 MPPT 75/15 MPPT 100/15 MPPT 100/20",
+      "12V & 24V: 20A",
+      "48V: 1A",
+      "100 x 131 x",
+      "9.2. Dimension drawings",
+      "9.2.1. Dimensions 75/10 and 75/15",
+      "9.2.2. Dimensions 100/15",
+      "9.2.3. Dimensions 100/20",
+      "DETAIL A",
+      "SCALE 2 : 1"
+    ],
+    "headings_missing": [
+      "3.4. Extensive electronic protection",
+      "3.5. VictronConnect app",
+      "3.9. Battery charging",
+      "120  W",
+      "12  V",
+      "240  W",
+      "24  V",
+      "10  A",
+      "20  A",
+      "480  W",
+      "1. Connect the battery: allow the solar charger to automatically recognise the system voltage (wait 10 seconds).",
+      "2. It is recommended to verify system voltage: use VictronConnect or an external control display.",
+      "3. Connect the DC loads.",
+      "4. Connect the PV.",
+      "5. If applicable, connect the VE.Direct port.",
+      "5. Configuration and settings",
+      "5.1. How to change settings",
+      "5.1.1. Settings via the VictronConnect app",
+      "42 minutes.",
+      "6.3. Automatic equalization",
+      "6.4. Lithium batteries",
+      "8.2. Solar charger is unresponsive",
+      "8.3. Solar charger is off",
+      "8.3.1. PV voltage too low",
+      "8.3.5. Low lithium battery temperature",
+      "1. Bulk stage: 0-80% SoC.",
+      "2. Absorption stage 80-100% SoC.",
+      "3. Float stage: 100% SoC.",
+      "chapter. Keep in mind that reverse battery polarity is not covered by warranty.",
+      "8.8. Solar charger not achieving full output",
+      "8.8.1. PV yield lower than expected",
+      "8.8.2. Maximum output power relates to battery voltage",
+      "chapter. Note that the jumper must be removed when switching the load operation mode.",
+      "8.11. Miscellaneous issues",
+      "8.11.1. Only voltage readings, no current or power",
+      "8.11.2. Unable to select 36V or 48V battery voltage",
+      "8.11.3. Unable to operate as a DC-DC charger or power supply",
+      "8.12.4. Error 18 - Solar charger over-current"
+    ]
+  },
+  "device": {
+    "manufacturer": "Victron Energy",
+    "model": "SmartSolar MPPT 75 | 15",
+    "category_freeform_hint": "Use the manual's own product category words only (never registry enums like electrical_dc)."
+  },
+  "registry_system_category": "electrical_dc",
+  "manual_selection_policy": "operators",
+  "source_manuals": [
+    {
+      "id": "f81580e6-8bcc-4984-8eaa-6121602a205d",
+      "title": "MPPT solar charger manual",
+      "manual_type": "operators",
+      "legal_status": "cleared"
+    }
+  ],
+  "excerpts": [
+    {
+      "text": "The app is available for the following platforms:\n• Android.\n• Apple iOS, note that USB is not supported, it is only possible to connect via Bluetooth.\n• MacOs.\n• Windows, note that Bluetooth is not supported, it is only possible to connect via USB.\nThe app can connect to the solar charger in the following ways:\n• Directly via its built-in Bluetooth.\n• Via Bluetooth, using an optional VE.Direct Bluetooth Smart Dongle.\n• Via USB, using an optional VE.Direct USB interface.\n• Via internet or LAN, through the VRM portal, using an optional GX device or GlobalLink 520.\nConnection via Bluetooth.\n Connection via USB.\nConnection via Internet or LAN.\n3.6. Display\nThere are a number of display options:\n• The VictronConnect app.\n• A GX device.\n• The VRM Portal, note that a GX device or a GlobalLink 520 is needed.\n• The MPPT Control - an (optional) external display that connects to the VE.Direct port. Note that the required VE.Direct cable is\nnot included with the MPPT Control.\nMPPT solar charger manual\nPage 6\n Features",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": "3.6. Display",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "For more\ninformation, see the Reverse battery polarity [46] chapter.\n8.3.2. Settings being edited on an external display\nCharging is disabled when a MPPT Control external display is used to make configuration changes.\nOnce the settings menu is closed on the display, charging will resume.\nMPPT solar charger manual\nPage 43\n Troubleshooting",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": "8.3.2. Settings being edited on an external display",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "Streetlight settings ..............................................................................................  24\n5.2.4. TX port settings ..................................................................................................  27\n5.2.5. RX port settings .................................................................................................  28\n5.3. Updating firmware .........................................................................................................  29\n5.4. Disabling and enabling Bluetooth ........................................................................................  29\n5.5. VE.Smart Networking .....................................................................................................  30\n5.5.1. VE.Smart Networking setup ....................................................................................  30\n6. Operation ............................................................................................................................  33\n6.1. Start up .....................................................................................................................  33\n6.2. Battery charging ..........",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": "MPPT solar charger manual",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "VE.Direct RX Port issues\n• Confirm the \"RX port function\" setting in VictronConnect aligns with the intended application.\n• Test the RX port's functionality using a VE.Direct non-inverting remote on/off cable.\n8.9.3. VE.Smart Networking\nA VE.Smart Network is a wireless communication network that connects multiple Victron products using Bluetooth. If you\nencounter any problems with a VE.Smart Network, please refer to VE.Smart Networking manual.\n8.10. Load output issues\nIf you encounter any issues with the load output, consider the following reasons that might explain why it is not functioning as\nexpected:\n• Battery voltage threshold:\nThe load output might be deactivated to safeguard the battery. This occurs if the battery voltage drops below the set threshold.\nCheck the battery voltage and load output settings programmed via the jumper, the VictronConnect app, or the display. This\nbehaviour is normal and not a cause for concern. Refer to the Load output settings [22] chapter for more information.\n• The (default) BatteryLife algorithm is active:\nThe load output might be deactivated in certain situations to safeguard the battery. While, you would expect the load output to\nbe active wh",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": "8.9.3. VE.Smart Networking",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "For 24V and 48V battery systems multiply the listed 12V\nvalues by respectively 2 and 4.\n5.1.3. Settings via MPPT Control display\nThe optional MPPT Control display can be used to configure solar charger settings, with the exception of advanced settings such\nas RX and TX port settings. For information on how to do this see the MPPT Control manual.\nThe MPPT Control\n5.2. All settings explained\nThis chapter lists all solar charger settings that are user-configurable and also explains how to update firmware of the solar\ncharger.\nDo not change settings unless you know what they are and what the effect of changing these settings will\nbe. Incorrect settings may cause system problems including damage to batteries. When in doubt, seek advice\nfrom an experienced Victron Energy installer, dealer or distributor.\nMPPT solar charger manual\nPage 16\n Configuration and settings",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": "5.1.3. Settings via MPPT Control display",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "Setting the Sunset action\nAt sunset you can choose any of the following actions:\n• Keep the lights off\n• Switch on for a fixed time:\nThis option will turn the light on at sunset, and then off again after a configurable interval. When the dimming feature is\nenabled1 (1), two dim-levels can be entered: one for the “on” period; and a second for the “off” period. A typical use case for\nthese options is to get a strong light during high traffic hours (right after sunset), and lower intensity during the low hours, to\nsave the battery. Set the second dim level to 0% to switch the light completely off during that second section.\n• Switch on till midnight:\nThis option turns the light on at sunset, and then off again at midnight. When the dimming feature is enabled1, two dim-levels\ncan be entered: one for the “on” period (up to midnight) and a second dim-level for the “off” period after midnight. Set the\nsecond dim level to 0% to switch the light completely off during that second section.\n• Switch on till sunrise:\nThis options turns the light on at sunset, and then off again at sunrise. When this option is selected; there is no need to also\nselect an action at sunrise, so the sunrise control",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": "Setting the Sunset action",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "• The current drawn by the loads like electronic devices, lights, fridge and so on.\n• The power drawn by the loads.\n•\n Note that for the load output readings to be reliable, all loads must be wired directly to the load output,\nincluding their negative terminals. If this is not the case consider adding a battery monitor which will\nmeasure all current going to or being drawn from the battery, including loads connected directly to the\nbattery and not just the load output terminals of the solar charger.\n7.3.2. VictronConnect app history screen\nThe history screen shows a summary of the data collected over the previous 30 days. Swipe the screen to the right or left to show\nany of the 30 days.\nTo switch between portrait or landscape screen presentation click the fragmented square icon, \n  or \n  , at the top left of the\nscreen.\nMPPT solar charger manual\nPage 38\n Monitoring",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": "7.3.2. VictronConnect app history screen",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "The correct connection order is necessary to allow the automatic system voltage detection to setup properly. It is only allowed to\nconnect PV first when the system voltage is manually set before connecting the battery. Not following the correct procedures can\ndisable or damage the charger and/or the installation.\nSee the below figure on how the basic electrical connections are made:\nID Description\nA Solar charger.\nB Battery or battery bank, lead acid or lithium.\nC Solar panel or solar panel array.\nD DC loads.\nDC fuse.\n4.7. Connect the MPPT Control display\nConnect the (optional) MPPT Control display to the VE.Direct port of the solar charger using a VE.Direct cable.\nThe VE.Direct cable is available in a variety of lengths and is not included with the MPPT control display. Note that it is not\npossible to extend the VE.Direct cable, the maximum length can not exceed 10 meters.\nFor more information, see the MPPT Control manual.\nConnect the display to the solar charger via a VE.Direct cable\nMPPT solar charger manual\nPage 14\n Installation",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": "4.7. Connect the MPPT Control display",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "• Virtual load output:\nUse this function to create a virtual load output for loads that draw more current than the load output is rated for.\nThe TX port will switch using the same conditions as set in the load output settings.\nConnect the VE.Direct TX digital output cable to a BatteryProtect module, a relay or directly to the remote on/off connector of\nthe load**.\n*) The PWM signal is 5V, 160Hz.\nMPPT solar charger manual\nPage 27\n Configuration and settings",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": "• Virtual load output:",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "These anchor points will automatically adjust depending on length of the night as\nthis changes with the seasons.\nStreetlight control\nThe solar charger controls the streetlight:\n• Via the load output terminals.\n• Via the TX port together with a VE.Direct TX digital output cable. Also see the TX port settings [27] chapter for more details.\nThe streetlight algorithm is always applied in conjunction with the settings as configured in the Load output\nmenu:\n• If the streetlight is disabled, then the (virtual) load output is controlled only by the configuration as made in\nthe load output menu.\n• If streetlight is enabled, then it's an AND function: the load output will be on when both the conditions made\nin the Load output menu are satisfied as well as the streetlight settings. Otherwise, it's off.\nMake sure that load output setting is set to \"Always on\" or to \"BatteryLife\". Do not set it to \"Always off\" as this\nwill result in the light being always off.\nFor more configurable voltage levels to force the light off, the other load output options can also be used.\nMPPT solar charger manual\nPage 24\n Configuration and settings",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": "These anchor points will automatically adjust depending on length of the night as",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "Equalization charging .............................................................................................  9\n3.10. Temperature sensing ......................................................................................................  9\n3.10.1. Internal temperature sensor ....................................................................................  9\n3.10.2. External temperature and voltage sensor .....................................................................  9\n3.11. Voltage sensing ..........................................................................................................  10\n3.12. Remote on/off ............................................................................................................  10\n3.13. WireBox ...................................................................................................................  10\n4. Installation ...........................................................................................................................  11\n4.1. Mounting ....................................................................................................................  11\n4.2. Battery ............",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": null,
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "The available operation modes are:\n• BatteryLife (default setting):\nThis algorithm is self-adapting and aims to maximise the battery's lifespan. For a detailed explanation of its functionality, please\nrefer to the BatteryLife [8] chapter for a description of its functionality.\n• Conventional algorithm 1:\n12V system: OFF when Vbatt < 11.1V, ON when Vbatt > 13.1V.\n24V system: OFF when Vbatt < 22.2V, ON when Vbatt > 26.2V.\n48V system: OFF when Vbatt < 44.4V, ON when Vbatt > 52.4V.\n• Conventional algorithm 2:\n12V system: OFF when Vbatt < 11.8V, ON when Vbatt > 14.0V.\n24V system: OFF when Vbatt < 23.6V, ON when Vbatt > 28.0V.\n48V system: OFF when Vbatt < 47.4V, ON when Vbatt > 56.0V.\n• Always off:\nThe load output is always OFF.\n• Always on:\nThe load output is always ON.\n• User defined algorithm 1:\nOFF when Vbatt < Vlow.\nON when Vbatt > Vhigh.\n• User defined algorithm 2:\nOFF when Vbatt < Vlow or Vbatt > Vhigh.\nON when Vbatt is between Vlow and Vhigh.\n• Automatic Energy Selector (AES):\nON when Vbat > Vhigh.\nOFF when Vbat < Vhigh for the pre-selected AES time.\nOFF when Vbat < Vlow.\nMPPT solar charger manual\nPage 23\n Configuration and settings",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": "The available operation modes are:",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "9.2.2. Dimensions 100/15\n 84.1 \n 98.8 \n R2(4x) \n 100.7 \n 46.9 \n 2.0  113.9 \nRev00\nDimensions in mm\nDimension Drawing - MPPT 100/15\nSCC110015060R SmartSolar MPPT 100/15 Retail\nD\nE\nF\nC\n1 2 3 4\nB\nA\n321 5\nC\nD\n4 6 7 8\nA\nB\n8765\nF\nE\nSCC010015200R BlueSolar MPPT 100/15 Retail\n9.2.3. Dimensions 100/20\n 98.6  91.7 \n 64 \n 131 \n 118.6 \n 54 \n 18.8 \n 3.7 \nA\n 5 \n R2.5 \n 6.2 \nDETAIL A\nSCALE 2 : 1\nRev02\nDimensions in mm\nDimension Drawing - SmartSolar charge controller\nSCC110020160R SmartSolar MPPT 100/20_48V Retail\nSCC110020060R SmartSolar MPPT 100/20 Retail\nSCC110020070R BlueSolar MPPT 100/20 Retail\nSCC110020170R BlueSolar MPPT 100/20_48V Retail\nD\nE\nF\nC\n1 2 3 4\nB\nA\n321 5\nC\nD\n4 6 7 8\nA\nB\n8765\nF\nE\nMPPT solar charger manual\nPage 64\n Technical specifications",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": "9.2.2. Dimensions 100/15",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "- RX pin floating or to battery positive will switch the solar charger on.\n• Load output on/off inverted:\nThis setting reverses the load output on/off control:\n- RX pin 0V will switch load output on.\n- RX pin +5V will switch load output off.\n• Load output on/off normal:\nThis setting allows load output on/off control:\n- RX pin 0V will switch the load output off.\n- RX pin +5V will switch load output on.\nFor more in depth \"developer style\" information on the VE.Direct port see the Data communication with Victron Energy products\nWhitepaper.\nMPPT solar charger manual\nPage 28\n Configuration and settings",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": "- RX pin floating or to battery positive will switch the solar charger on.",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "Note that setting \"low temperature cut-off\" is not needed for Victron Lithium Smart batteries or for Victron Super Pack batteries\nwith serial number HQ2040 and above. This setting is only needed for lithim batteries that are unable to block charging when the\ntemperature drops too low.\n5.2.2. Load output settings\nThese settings are typically used to drive the load output.\nThe load output settings are can also be used to control the VE.Direct TX port [27] enabling it to operate a BatteryProtect, a\nrelay or another load-shedding device. For more information, see the chapter TX port settings [27].\nMake sure that the jumper link [16] is removed before configuring the load output. The jumper link should\nremain removed thereafter. If the jumper is not removed, and the TX port [27] is configured as “normal\ncommunication” and/or the RX port [28] is configured as “load output config” (these are the default settings),\nthe jumper will override the VictronConnect load output settings.\nBe aware that the load output behaviour will be different than expected when the streetlight setting [24] is\nenabled (disabled by default).\nMPPT solar charger manual\nPage 22\n Configuration and settings",
+      "query": "installation wiring commissioning configuration DIP switches",
+      "source_heading_guess": "5.2.2. Load output settings",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "• At sunrise - the lighting will be adjusted before sunrise.\n• Time before sunrise - at 1h 0m before sunrise, the following adjustment will be made:\n• Dim level - full brilliance will be restored (100%).\n5.2.4. TX port settings\nThe VE.Direct-TX port can be used to send a signal to an external device. For example, to send a PWM signal to dim a\nstreetlight.\nBe aware that changing away from the default setting while a jumper link [16] is used, the jumper link will\nneed to be removed and the load output algorithm has to be configured via the VictronConnect load output\nsetting [22] instead.\nTo use the TX port, a VE.Direct TX digital output cable is needed.\nThe functionality of the TX port can be set at:\n• Normal communication:\nThis is the default setting. Use this function when connecting to a GX device, a VE.Direct Bluetooth Smart dongle, or any other\ndevice that needs to communicate with the solar charger via the VE.Direct port.\n• Pulse every 0.01 kWh:\nUse this function in combination with an energy meter.\nThe TX port will emit a pulse each time an additional 0.01kWh of energy has been harvested. The TX port is normally high and\nwill be driven low for approximately 250ms for every 0.0",
+      "query": "installation wiring commissioning configuration DIP switches",
+      "source_heading_guess": "5.2.4. TX port settings",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "• Navigate to the settings page by clicking the gear \n  symbol.\n• Click on \"VE.Smart Networking\".\n• Click on \"join existing\".\n• Select the network the device needs to be joined to.\n• Wait for confirmation that the network has been set up and click \"OK\".\n• Repeat above steps if more devices need to be added to the network.\nTo leave a network:\n• Open the VictronConnect app.\n• Select a device that needs to be removed from the VE.Direct network.\n• Navigate to the settings page by clicking the gear \n  symbol.\n• Click on \"VE.Smart Networking\".\n• Click on \"leave network\".\nCheck the network\nOnce the network has been set up all devices communicate with each other. The active LED on each connected device will now\nblink every 4 seconds. This is an indication that the device is actively communicating with the network.\nTo check if an individual device is communicating with the network, click on the VE.Smart symbol \n  in the main screen next to\nthe solar dail. A pop-up window will open showing the connection status and the shared parameters.\nMPPT solar charger manual\nPage 31\n Configuration and settings",
+      "query": "installation wiring commissioning configuration DIP switches",
+      "source_heading_guess": "• Navigate to the settings page by clicking the gear",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "5.1.2. Settings via the jumper link\nIf the load output algorithm is configured via VictronConnect or the MPPT Control display the jumper link is\nnot used and it needs to be removed. Configuration via the jumper link is only needed in case the load output\nalgorithm cannot be configured by any other means.\nIf the VE.Direct port is going to be used for communication with a GX device, MPPT display or other\nequipment, the jumper needs to be removed, and cannot be used anymore for load output configuration. If this\nis the case, configure the load output by using the VictronConnect App or a display. See chapter Load output\nsettings [22] or Settings via MPPT Control display [16] for more information.\nThe load output algorithm can be configured via a jumper link, located in the VE.Direct connector:\n• If VictronConnect or the MPPT Control display is used to configure the load output algorithm, the jumper link is not used.\nRemove the jumper.\n• If the jumper link is used, see the table below for the load output algorithm belonging to each jumper placement. Should the\nVictronConnect App or display be used at a later stage to change the load output setting, the jumper link needs to be removed\nbe",
+      "query": "installation wiring commissioning configuration DIP switches",
+      "source_heading_guess": "5.1.2. Settings via the jumper link",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "PV array grounding\nThe positive and negative of the PV array should not be grounded.\nGround the frame of the PV panels to reduce the impact of lightning.\nDo not connect the solar charger to a grounded PV array. Only one ground connection is allowed, and this should be near the\nbattery.\nGround fault detection\nThe solar charger does not have internal ground fault protection.\nThe USA National Electrical Code (NEC) requires the use of an external ground fault protection device (GFPD).\nThe system electrical negative should be bonded through a GFDI to earth ground at one (and only one) location.\nWARNING: When a ground fault is indicated, battery terminals and connected circuits may be ungrounded\nand hazardous.\n4.5. Connection overview\nID Description\nA VE.Direct socket with jumper link.\nB Fuse.\nC Battery positive (+) screw terminal.\nD Battery negative (-) screw terminal.\nE PV negative (-) screw terminal.\nF PV positive screw (+) terminal.\nG Load negative (-) screw terminal.\nH Load positive screw (+) terminal.\nI LEDs.\n4.6. Electrical connections\nWARNING: Check the polarity before connecting the battery and PV voltage.\nWARNING: Follow the correct installation procedure described in this chap",
+      "query": "installation wiring commissioning configuration DIP switches",
+      "source_heading_guess": "4.5. Connection overview",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "**) The TX port is a logic 5V signal. It can drive a maximum of a 22kOhm impedance load, where the output voltage is dropped to\n3.3V. Make sure that the connected load is within this specification.\nNote that these functionalities (other than the first functionality) do not disable the ability of the unit to communicate. What\nhappens is that the unit will automatically detect incoming data, and while data is being received, it will resume normal\ncommunication. Once the data reception has been completed, it will automatically return to its configured TX function.\nFor more in-depth \"developer style\" information on the VE.Direct port see the Data communication with Victron Energy products\ndocument.\n5.2.5. RX port settings\nThe VE.Direct-RX port can be used to receive a signal from an external device. For example to switch the solar charger on (or off)\nfrom a signal sent by a battery management system (BMS).\nBe aware that changing away from the default setting while a jumper link [16] is used, the jumper link will\nneed to be removed and the load output algorithm has to be configured via the VictronConnect load output\nsetting [22] instead.\nTo use the RX port for remote on/off control a VE",
+      "query": "installation wiring commissioning configuration DIP switches",
+      "source_heading_guess": "5.2.5. RX port settings",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "VE.Smart Networking pop-up\nTo check if all devices are actively communicating with the same VE.Smart Networking, navigate to the settings page of one of\nthe networked devices and click on \"VE.Smart Networking\". A screen will be shown containing which device parameters of this\ndevice are shared and all the other devices that are connected to the same network are shown.\nExample of a VE.Smart Network\nMore information\nFor more information see the VE.Smart Networking manual.\nMPPT solar charger manual\nPage 32\n Configuration and settings",
+      "query": "installation wiring commissioning configuration DIP switches",
+      "source_heading_guess": "VE.Smart Networking pop-up",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "The error will show up\nin a pop-up window on the status screen together with the error number, name and a short error description.\nThe VictronConnect app also displays historical errors. To see these errors, navigate to the “History” tab and look at the bottom of\neach day column. An orange dot will indicate an error on that day.\nAn active error and a historical error.\n7.4. Monitoring via a GX device and VRM\nIf the solar charger is connected to a GX device, all its data can be accessed via the GX device. The GX device will also notify in\ncase of solar charger alarms or faults.\nFor more information see the GX device manual.\nMPPT solar charger manual\nPage 39\n Monitoring",
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "source_heading_guess": "7.4. Monitoring via a GX device and VRM",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "GX device showing alarm notification and historic errors.\nIf the GX device is connected to Victron Remote Monitoring (VRM) portal, the solar charger can be monitored remotely via the\ninternet.\nAll solar charger data, alarms and errors can be accessed via the VRM portal and solar charger settings can be remotely\nchanged via the VRM portal with the VictronConnect app.\nSolar charger alarm logging via VRM\nMPPT solar charger manual\nPage 40\n Monitoring",
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "source_heading_guess": "GX device showing alarm notification and historic errors.",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "8.12. Error code overview\nThe error codes in the following subchapters are potentially displayed in the VictronConnect app, on a remote display or a\nconnected GX device. For the most up-to-date error overview, see this link: https://www.victronenergy.com/live/mppt-error-codes.\nFurthermore, the solar charger utilises specific LED indications to signal particular errors. For an overview of these LED codes,\nplease refer to the Victron Toolkit app.\n8.12.1. Error 1 - Battery temperature too high\nThis error will auto-reset after the battery temperature has dropped. The solar charger will stop charging to prevent damaging the\nbattery. The battery temperature can be received by an external sensor (like Smart Battery Sense or BMV) or measured by the\ncharger when this feature is available.\n8.12.2. Error 2 - Battery voltage too high\nThis error will auto-reset after the battery voltage has dropped. This error can be due to other charging equipment connected to\nthe battery or a fault in the solar charger.\nThis error can also occur if the battery voltage (12, 24, 48V) is set to a lower voltage than the connected battery.\n8.12.3. Error 17 - Solar charger overheated despite reduced output current\n",
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "source_heading_guess": "8.12. Error code overview",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "6.5. Shutdown and restart procedure ........................................................................................  34\n6.6. Maintenance procedure ...................................................................................................  35\n7. Monitoring ...........................................................................................................................  36\n7.1. LED indications ............................................................................................................  36\n7.2. Error codes .................................................................................................................  37\n7.3. Monitoring via the VictronConnect app .................................................................................  37\n7.3.1. VictronConnect app status screen ............................................................................  37\n7.3.2. VictronConnect app history screen ............................................................................  38\n7.3.3. VictronConnect app error reporting ...........................................................................  39\n7.4. Monitoring via a GX device and",
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "source_heading_guess": null,
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "Error recovery:\n• Error 38: First, disconnect the solar panels and then disconnect the battery. Wait for 3 minutes, then first reconnect the battery\nand then the panels.\n• Error 39: The charger will automatically resume operation once the battery voltage drops below its maximum voltage setting\n(normally Equalisation or Absorption voltages). It can also take a minute to reset the fault.\n• If the error persists, the solar charger is probably faulty.\n8.12.11. Error 40 - PV Input failed to shutdown\nIf the solar charger is unable to turn off the PV input, it will go into a safe mode in order to protect the battery from over-charging\nor having a high voltage on the battery terminals. In order to do that, the solar charger will stop charging and disconnect its own\noutput. The solar charger will become faulty.\n8.12.12. Error 80 to 88 - PV Input shutdown\nWhen these errors show, the PV Input is internally shorted in order to protect the battery from over-charging.\nPrior to any other troubleshooting, make sure to update to the latest firmware version.\nPossible reasons for this error to occur:\n• The \"Battery voltage\" (12, 24, 36 or 48V) parameter is set incorrectly. Use the VictronConnect app ",
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "source_heading_guess": "8.12.11. Error 40 - PV Input failed to shutdown",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "7. Monitoring\nThis chapter describes all various monitoring methods and for each method how to access live data, historic data and errors.\n7.1. LED indications\nThe solar charger has three LEDs to indicate operational status, a blue, green and a yellow LED. These LEDs respectively\nindicate the charge stages bulk, absorption and float, but are also used to indicate other charge situations and fault situations.\nErrors are indicated via a combination of LEDs that are on, off, or are blinking. Each LED combination has a meaning, indicating\neither a normal operation mode, or indicating an error.\nSymbol Meaning\nPermanent on\nBlinking\nOff\nOverview of LED indications:\nOperation mode Bulk LED Absorption LED Float LED\nNot charging 1\nBulk1\nAbsorption2\nManual equalisation (alternating\nblinking)2\nAutomatic equalisation2\nFloat2\n1. The bulk LED will blink briefly every 3 seconds when the system is powered but there is insufficient power to start charging.\n2. The LED(s) might blink every 4 seconds indicating that the charger is receiving data from another device, this can be a GX\ndevice (ESS) or a VE.Smart Network link via Bluetooth\nFault mode Bulk LED Absorption LED Float LED\nCharger temperature to",
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "source_heading_guess": "7. Monitoring",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "This error will not auto-reset.\nPerform the below procedure to get it working again:\nError recovery:\n• First, restore it to factory defaults. (top right in Victron Connect, click on the three dots).\n• Disconnect the solar charger from all power sources.\n• Wait 3 minutes, and power up again.\n• Reconfigure the charger.\n• Report this to your Victron dealer and ask for it to be escalated to Victron; as this error should never happen. Preferably include\nfirmware version and any other specifics (VRM URL, VictronConnect screenshots or similar).\nMPPT solar charger manual\nPage 61\n Troubleshooting",
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "source_heading_guess": "This error will not auto-reset.",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "8.12.8. Error 28 - Power stage issue\nThis error will not auto-reset.\nDisconnect all wires, and then reconnect all wires. If the error persists, the charger is probably faulty.\nNote that this error was introduced in v1.36. So when doing an update, it might look like the firmware update caused this issue;\nbut it doesn't. The solar charger was then already not performing 100% before the update; updating to v1.36 or later merely made\nthe issue more visible. The unit needs to be replaced.\n8.12.9. Error 33 - PV over voltage\nThis error will auto-reset after the PV voltage has dropped to a safe limit.\nThis error is an indication that the PV array configuration with regard to open-circuit voltage is critical for this charger. Check\nconfiguration, and if required, re-organise panels.\nFor more information, refer to the PV voltage too high [48] chapter.\n8.12.10. Error 38, 39 - PV Input shutdown\nWhen these errors show, the PV Input is internally shorted to protect the battery from overcharging. Prior to any other\ntroubleshooting, make sure to update to the latest firmware version.\nPossible reasons for this error to occur:\n• The \"Battery voltage\" parameter (12/24/36/48V) is set incorrectly. Use ",
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "source_heading_guess": "8.12.8. Error 28 - Power stage issue",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "?? chapter.\n• Errors 84 to 87: First, disconnect the solar panels and disconnect the battery. Wait for 3 minutes, then first reconnect the battery\nand then reconnect the panels.\n• If the error persists, the solar charger is probably faulty.\n8.12.13. Error 116 - Calibration data lost\nIf the unit does not work and error 116 pops up as the active error, the unit is faulty. Contact your dealer for a replacement.\nMPPT solar charger manual\nPage 60\n Troubleshooting",
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "source_heading_guess": "8.12.13. Error 116 - Calibration data lost",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "If the error is only present in the history data and the unit operates normally this error can be ignored safely. Explanation: when\nthe units power up for the very first time in the factory, it does not have calibration data and an error 116 is logged. Obviously, this\nshould have been cleared, but in the beginning, units left the factory with this message still in the history data.\nSmartSolar models (not the BlueSolar models): upgrading to v1.4x firmware is a one-way trip, you cannot go back to an older\nfirmware version once you upgrade to v1.4x. Reverting to older firmware gives error 116 (calibration data lost), this can be fixed\nby re-installing the v1.4x firmware.\n8.12.14. Error 117 - Incompatible firmware\nThis error indicates that a firmware update did not complete, so the device is only partially updated. Possible causes are: the\ndevice was out of range when updating over the air, a cable got disconnected or power was lost during the update session.\nTo fix this the update needs to be retried, download the correct firmware for your device from the Victron Professional Portal\nWhen your GX device is connected to VRM, you can do a remote firmware update using this firmware file. ",
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "source_heading_guess": "8.12.14. Error 117 - Incompatible firmware",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "8.12.9. Error 33 - PV over voltage ....................................................................................  60\n8.12.10. Error 38, 39 - PV Input shutdown ...........................................................................  60\n8.12.11. Error 40 - PV Input failed to shutdown .....................................................................  60\n8.12.12. Error 80 to 88 - PV Input shutdown ........................................................................  60\n8.12.13. Error 116 - Calibration data lost .............................................................................  60\n8.12.14. Error 117 - Incompatible firmware ..........................................................................  61\n8.12.15. Error 119 - Settings data lost ................................................................................  61\n9. Technical specifications ..........................................................................................................  62\n9.1. Specifications 75/10, 75/15, 100/15 and 100/20 .......................................................................  62\n9.2. Dimension drawings ................................................",
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "source_heading_guess": "MPPT solar charger manual",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "Maximum output power relates to battery voltage ...........................................................  54\n8.8.3. Temperature above 40°C .......................................................................................  54\n8.8.4. PV connections burned or melted .............................................................................  54\n8.9. Communication Issues ....................................................................................................  55\n8.9.1. Bluetooth .........................................................................................................  55\n8.9.2. VE.Direct port ....................................................................................................  56\n8.9.3. VE.Smart Networking ...........................................................................................  56\n8.10. Load output issues .......................................................................................................  56\n8.10.1. Load output not able to run load .............................................................................  57\n8.10.2. Incorrect load output current reading ...................................",
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "source_heading_guess": null,
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "Please note that support is not\nprovided for such situations.\n8.11.4. Interrupted firmware update\nAn interrupted firmware update is recoverable and there is no need to worry. Simply attempt to update the firmware once more.\n8.11.5. Ground current\nIf a ground current is detected in the system during normal operation, take the following steps:\n• First, thoroughly inspect all the equipment connected to the system and check for any ground faults.\n• Next, verify the number of connections to ground in the system. Ideally, there should be only one point in the system connected\nto the ground, which should be at the battery.\n• For more information on system grounding, see the \"System grounding\" chapter in the Wiring Unlimited book.\nNote that the solar charger is non-isolated and the minus of the PV input is at the same potential as the minus of the battery\noutput.\nMPPT solar charger manual\nPage 58\n Troubleshooting",
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "source_heading_guess": "8.11.4. Interrupted firmware update",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "Error 18 - Solar charger over-current ........................................................................  59\n8.12.5. Error 20 - Maximum bulk time exceeded ....................................................................  59\n8.12.6. Error 21 - Current sensor issue ..............................................................................  59\n8.12.7. Error 26 - Terminal overheated ...............................................................................  59\n8.12.8. Error 28 - Power stage issue .................................................................................  60\nMPPT solar charger manual",
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "source_heading_guess": "MPPT solar charger manual",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "5.5. VE.Smart Networking\nVE.Smart Networking allows a variety of products connected to the same network to share data via Bluetooth and is specially\ndesigned for smaller systems that do not have a GX device installed.\nWhen this product is part of a VE.Smart Network, it can receive data or communicate with the following devices:\n• All SmartSolar solar chargers.\n• All BlueSolar solar chargers connected to a VE.Direct Bluetooth Smart dongle.\n• The Smart Battery Sense.\n• A BMV or SmartShunt battery monitor equipped with Bluetooth (or VE.Direct Bluetooth Smart dongle) and an optional BMV\ntemperature sensor.\n• Certain Smart AC chargers.\n• The SUN inverter.\nFor the product compatibility list see the VE.Smart manual located on the VictronConnect app product page.\nVE.Smart Networking can be used for:\n• Temperature sensing - the measured battery temperature is used by the chargers in the network for temperature compensated\ncharging and in case of lithium battery for the low temperature cut off.\n• Battery voltage sensing - the measured battery voltage is used by the chargers in the network to to compensate the charge\nvoltage should there be a voltage drop over the battery cables.\n• Current se",
+      "query": "network communication MasterBus NMEA CZone VE.Direct Bluetooth remote panel app",
+      "source_heading_guess": "5.5. VE.Smart Networking",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "Bluetooth check\nStep 7\nCommunication without Bluetooth:\n• If Bluetooth is unavailable, the VictronConnect app can still communicate via the unit’s VE.Direct port or via\nthe VRM portal (if connected to a GX device). Refer to the VictronConnect app [5] chapter.\n8.9.2. VE.Direct port\nProblems with the VE.Direct port are uncommon, but if encountered, they are likely due to the following issues:\nJumper in VE.Direct port\n• The jumper is used to select the load output low voltage disconnect threshold and the “batteryLife” mode.\n• If connecting a VE.Direct cable, remove the jumper and configure the load output via VictronConnect.\n• In case the jumper is missing, configure the load output via VictronConnect.\n• If a replacement jumper is needed, contact your Victron Energy dealer or distributor.\nPhysical cable connector or data port issue\n• Try using a different VE.Direct cable to check if communication is established.\n• Ensure the connector is inserted properly and fully into the port.\n• Inspect the VE.Direct port for bent pins. If found, power the unit off by disconnecting it from the battery and the PV, and\nstraighten the pins using long-nose pliers.\nVE.Direct communication issues\n• Conne",
+      "query": "network communication MasterBus NMEA CZone VE.Direct Bluetooth remote panel app",
+      "source_heading_guess": "8.9.2. VE.Direct port",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "There can only be one product in the network that transmits battery voltage and/or battery temperature. It is not possible to use a\nbattery monitor together with a Smart Battery Sense, or multiple of these devices.\nFor the network to be operational all networked devices must be within Bluetooth transmission distance of each other.\nA maximum of 10 devices can be joined into a VE.Smart Network.\nSome older devices might not support VE.Smart Networking. for more information see the Limitations chapter in the VE.Smart\nNetworking manual.\nSetting up the network\nWhen setting up the network, first set up the Smart Battery Sense or battery monitor, and then add one or more solar chargers or\nAC chargers to the network.\nAll solar chargers and AC chargers need to have the same charge settings. The easiest way to do this is to use a preset battery\ntype or a saved used defined battery type. A warning #66 message will be shown if there is a difference between the devices\ncharge settings.\nTo set up a new network:\n• Open the VictronConnect app.\n• Select one of the devices that needs to become part of the new VE.Smart network.\n• Navigate to the settings page by clicking the gear \n  symbol.\n• click on",
+      "query": "network communication MasterBus NMEA CZone VE.Direct Bluetooth remote panel app",
+      "source_heading_guess": "battery monitor together with a Smart Battery Sense, or multiple of these devices.",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "Note that a VE.Smart Network can only be set up if the solar charger is capable of Bluetooth communication,\nhas Bluetooth enabled or is equipped with a VE.Direct Bluetooth Smart dongle.\nExample of a VE.Smart Network of a Smart Battery Sense and a solar charger.\n3.11. Voltage sensing\nAn optional Smart Battery Sense or battery monitor measures the battery terminal voltage and sends this via Bluetooth using the\nVE.Smart [30] network to the solar charger. If the battery voltage is less than the solar charge voltage, the solar charger will\nincrease its charge voltage to compensate for voltage losses.\n3.12. Remote on/off\nA virtual remote on/off terminal can be created by using the (optional) VE.Direct non inverting remote on/off cable.\nThe functionality can be programmed using the VictronConnect App RX port function settings.\n3.13. WireBox\nThe optional MPPT WireBox is a plastic cover that can be attached to the bottom of the solar charger. It covers the battery and\nsolar terminals, preventing accidental or inquisitive contact with the battery and PV terminals. It provides an extra level of safety,\nand is particularly useful if the solar charger is installed in a general access area.\nFor ",
+      "query": "network communication MasterBus NMEA CZone VE.Direct Bluetooth remote panel app",
+      "source_heading_guess": "3.11. Voltage sensing",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "5.3. Updating firmware\nThe firmware can be checked and updated with the VictronConnect app.\nThe VictronConnect app might ask on the first connection to update the firmware. If this is the case, let it perform a firmware\nupdate.\nIf it did not automatically update, check if the firmware is already up to date using the following procedure:\n• Connect to the solar charger.\n• Click on the settings symbol \n .\n• Click the options symbol \n .\n• Go to product info.\n• Check if you are running the latest firmware and look for the text: “This is the latest version”.\n• If the solar charger does not have the most up-to-date firmware, perform a firmware update.\n5.4. Disabling and enabling Bluetooth\nBluetooth is by default enabled. It can be disabled or enabled via the VictronConnect app.\nTo disable or enable Bluetooth:\n• Connect with the VictronConnect app to the solar charger. Note that if Bluetooth has been disabled, a connection via its built-in\nBluetooth is not possible anymore. In that case use the VE.Direct to USB interface, the VE.Direct Bluetooth Smart dongle or\nVRM to connect to the solar charger.\n• Select the solar charger from the VictronConnect list.\n• Navigate to the solar charger sett",
+      "query": "network communication MasterBus NMEA CZone VE.Direct Bluetooth remote panel app",
+      "source_heading_guess": "5.3. Updating firmware",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "Step 3\nCheck that Bluetooth is in range:\n• Bluetooth's maximum distance in open space is about 20 meters, but it may be lower inside buildings or\nvehicles.\nStep 4\nThe Windows version of the VictronConnect app does not support Bluetooth:\n• Use an Android, iOS, or macOS device or connect using a VE.Direct to USB interface.\nStep 5\nThe solar charger is missing from the VictronConnect app device list:\n• Press the orange refresh button at the bottom of the device list.\n• Ensure no other devices are connected to the solar charger simultaneously.\n• Try connecting to another Victron product to rule out device-specific issues.\n• If still unresolved, refer to the VictronConnect app manual.\nStep 6\nLost PIN code:\n• Navigate to the VictronConnect app device list.\n• Click on the options symbol (3 dots) next to the solar charger listing.\n• Enter the solar charger's unique PUK code as printed on its product information sticker.\n• Reset the PIN code.\nMPPT solar charger manual\nPage 55\n Troubleshooting",
+      "query": "network communication MasterBus NMEA CZone VE.Direct Bluetooth remote panel app",
+      "source_heading_guess": "Step 3 Check that Bluetooth is in range:",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "• Loose screw connections.\n• Using cables with rigid core wire or rigid strands.\n• Soldering the core wire ends of the cables.\n• Using thin cables may result in higher currents when the PV voltage is lower. Refer to the Wiring Unlimited book for more\ninformation.\n• Inserting cable insulation too deeply into the connector.\n• Exceeding 30A per MC4 connector pair.\n• Incorrectly crimping MC4 connectors.\n• Using low-quality MC4 connectors.\n8.9. Communication Issues\nIn this chapter, we address potential problems that may occur when connecting the solar charger to the VictronConnect app, other\nVictron devices, or third-party devices.\n8.9.1. Bluetooth\nPlease note that Bluetooth interface issues are highly unlikely. If you encounter problems, they are probably caused by other\nfactors. Use this chapter to quickly identify common causes of Bluetooth issues.\nFor a comprehensive troubleshooting guide, refer to the VictronConnect manual.\nBluetooth check\nStep 1\nCheck if the solar charger is powered up:\n• Observe the LEDs: If any LEDs are on, blinking, or pulsing with a few seconds interval, the unit is powered\nup, and Bluetooth should be functional.\n• f all LEDs are off, the unit is not powered u",
+      "query": "network communication MasterBus NMEA CZone VE.Direct Bluetooth remote panel app",
+      "source_heading_guess": "8.9. Communication Issues",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "2. Reconnect the PV supply to the solar charger by switching the PV supply on or by inserting the external fuse(s) or circuit\nbreakers(s).\n6.6. Maintenance procedure\nThe solar charger does not need regular maintenance.\nMPPT solar charger manual\nPage 35\n Operation",
+      "query": "maintenance service storage winterizing",
+      "source_heading_guess": "6.6. Maintenance procedure",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "If equalization is needed or not depends on the type of battery if (automatic) equalization is needed and under what\nconditions. Check with the battery supplier to find out if equalization is needed for the battery.\nDuring the equalization stage, the charge voltage increases up to the set \"Equalization voltage\". This is maintained as long as the\ncharge current stays below the \"equalization current percentage\" setting of the \"Maximum current\" setting.\nDuration of the Automatic equalization cycle:\n• For all VRLA battery presets and for some flooded battery presets, the automatic equalization stage ends when the voltage limit\n(maxV) has been reached.\n• For the lithium battery preset, equalization is not available.\n• When an automatic equalization stage has not been completed within one day, it will not resume the next day. The next\nequalization surge will take place according to the interval as set in the \"Auto Equalization\" setting.\nEqualisation stop mode\nThis setting determines when the equalisation stage should end:\n• Automatic: Equalization stops if the battery voltage has reached the equalisation voltage.\n• Fixed time: Equalization stops when the time has reached the time as set ",
+      "query": "maintenance service storage winterizing",
+      "source_heading_guess": "If equalization is needed or not depends on the type of battery if (automatic) equalization is needed and under what",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "6.5. Shutdown and restart procedure\nThe solar charger is always active when the PV and/or the battery terminals are powered. The solar charger does not have an\non/off switch.\nTo shut down the solar charger, perform these steps in the prescribed order:\n1. Disconnect the PV supply to the solar charger by switching the PV supply off or by removing the external fuse(s) or circuit\nbreaker(s).\n2. Disconnect the battery supply to the solar charger by switching the battery supply off or by removing the exterenal fuse(s) or\ncircuit breaker(s).\nTo restart the solar charger after it was shutdown, perform these steps in the prescribed order:\n1. Connect the battery supply to the solar charger by switching the battery supply on or by inserting the external fuse(s) or\ncircuit breaker(s).\nMPPT solar charger manual\nPage 34\n Operation",
+      "query": "maintenance service storage winterizing",
+      "source_heading_guess": "6.5. Shutdown and restart procedure",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "1. Safety precautions\n1.1. General safety precautions\n• Read this manual carefully. It contains important instructions that need to be followed during installation,\noperation and maintenance.\n• Save these instructions for future reference on operation and maintenance.\n• Danger of battery explosion from sparking.\n• Danger of electric shock.\n• Install the product in a heatproof environment. Ensure therefore that there are no chemicals, plastic parts,\ncurtains or other textiles, etc. in the immediate vicinity of the equipment.\n• The product is not allowed to be mounted in a user accessible area.\n• Ensure that the equipment is used under the correct operating conditions. Never operate it in a wet\nenvironment.\n• Never use the product at sites where gas or dust explosions could occur.\n• Ensure that there is always sufficient free space around the product for ventilation.\n• Refer to the specifications provided by the manufacturer of the battery to ensure that the battery is suitable\nfor use with this product. The battery manufacturer's safety instructions should always be observed.\n• Protect the solar modules from incident light during installation, e.g. cover them.\n• Never touch uninsula",
+      "query": "maintenance service storage winterizing",
+      "source_heading_guess": "1. Safety precautions",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "8.3.3. Disabled in the settings\nThe charger has been disabled in the settings.\nCheck the VictronConnect app battery settings page to ensure that the charger has been enabled.\nVictronConnect app charger enable/disable setting\n8.3.4. Disabled by remote or BMS\nThe charger has been switched off via its VE.Direct port.\nNote that in systems with lithium batteries together with an external BMS, it is typical for the solar charger to be switched on or\noff as needed. This happens when the BMS turns off the charger due to full batteries or low temperatures (below ~5°C). Charging\nautomatically resumes when the batteries are discharged or have warmed up.\nIf the solar charger has unexpectedly been switched off, check the following:\nVE.Direct RX port functionality check\nThe VE.Direct port can be used to switch the solar charger on or off by utilising its RX functionality in combination with, for\nexample, a VE.Direct non-inverting remote on/off cable.\nStep 1 check if the RX port has been configured correctly. For more information, see the RX port settings [28] chapter\nand the VE.direct protocol documentation.\nStep 2 If a VE.Direct non-inverting remote on/off cable) is used, check if it is in good",
+      "query": "maintenance service storage winterizing",
+      "source_heading_guess": "8.3.3. Disabled in the settings",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "Enter the maximum time in hours and minutes (hh:mm) the solar charger is allowed to spend in the absorption stage. The\nmaximum time that can be set is 12 hours and 59 minutes.\nFloat voltage\nThis setting sets the float voltage.\nRe-bulk voltage offset\nThis setting sets the re-bulk voltage offset. This offset voltage is used to determine when a charge stage stops and the bulk stage\nstarts again, i.e. the charge cycle resets and starts at the first charge stage again.\nThe re-bulk voltage is calculated by adding the re-bulk voltage offset to the lowest voltage setting (normally this is the float stage).\nAn example: If the re-bulk offset is set at 0.1V and the float voltage at 13.8V, the charge cycle will restart once the battery voltage\ndrops below 13.7V (13.8 minus 0.1) for one minute.\nEqualization voltage\nThis setting set the equalization voltage.\nEqualization current percentage\nThis setting sets the percentage of the \"maximum charge current\" setting that will be used to calculate the equalization charge\ncurrent.\nFor example: If the \"maximum charge current\" setting is set at 10A and the \"Equalization current percentage\" setting is set to\n10%, the Equalization current will be 1A (10% o",
+      "query": "maintenance service storage winterizing",
+      "source_heading_guess": "Enter the maximum time in hours and minutes (hh:mm) the solar charger is allowed to spend in the absorption stage. The",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "If the\ncharge current drops below the set tail current, for one minute, the absorption stage will end and the float stage will start. This\nsetting can be disabled by setting it to zero.\nTemperature compensation\nThis setting sets the temperature compensation coefficient that is needed for temperature compensated charging.\nMany battery types require a lower charge voltage in warm operating conditions and a higher charge voltage in cold operating\nconditions. The configured coefficient is in mV per degree Celsius for the whole battery bank, not per cell. The base temperature\nfor the compensation is 25°C (77°F).\nMPPT solar charger manual\nPage 21\n Configuration and settings",
+      "query": "maintenance service storage winterizing",
+      "source_heading_guess": "If the",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "• Pre-defined factory battery presets.\n• User-defined battery presets.\n• Create, modify or delete a user-defined preset.\nThis setting uses factory pre-defined presets for a large variety of battery types. These pre-defined charge algorithms are suitable\nfor almost all installations.\nIt is possible to also create user-defined battery presets. The chapter Customize battery charge algorithm [18] explains how to\ndo this. These user-defined presets are stored in the VictronConnect app library. This is helpful in case multiple solar chargers\nneed to be configured, eliminating the need to define the entire charge algorithm each time a new solar charger is configured.\nExpert mode\nThis setting enables or disables expert mode. It is by default set to \"disabled\".\nThe default charge algorithms work well for almost all installations. Only enable expert settings if your\nequipment has special requirements.\nWhen this setting is enabled the following parameters can be configured:\n• Charger voltages: bulk, absorption and float.\n• Bulk: re-bulk voltage offset.\n• Absorption: duration, time and tail current.\n• Equalization: current, interval, stop mode and duration.\n• Temperature voltage compensation.\n",
+      "query": "maintenance service storage winterizing",
+      "source_heading_guess": "• Pre-defined factory battery presets.",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "8. Troubleshooting\nRefer to this chapter for addressing any unforeseen behaviour of the solar charger. Start by reviewing the common issues listed\nhere during troubleshooting.\nIf the problem persists or requires technical assistance, contact the point of purchase – the Victron Energy dealer or distributor. If\nunsure whom to reach or unaware of the point of purchase, visit the Victron Energy Support webpage for guidance.\n8.1. Solar charger is damaged\nBefore proceeding with troubleshooting, it is important to inspect the solar charger for any visible damage. Please note that\ndamage to the solar charger is typically not covered by warranty.\nBy conducting this initial visual inspection, you can identify any visible damage that may impact the functionality of the solar\ncharger:\nVisual inspection\nStep 1 Examine the solar charger for any signs of mechanical damage to the housing or electrical terminals. Please be\naware that this type of damage is not covered by warranty.\nStep 2\nInspect the electrical terminals of the solar charger for signs of burning or melting. This type of damage is often\ncaused by loose electrical connections, the use of rigid core cables, or exceeding the MC4 termina",
+      "query": "maintenance service storage winterizing",
+      "source_heading_guess": "8. Troubleshooting",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "4. Installation\nThe DC (PV) input is not isolated from the battery circuit. Therefore the PV, battery and control circuit are\nconsidered hazardous and should not be user accessible.\nFor proper temperature compensated battery charging the ambient temperature of the solar charger and the\nbattery must be within 5°C (9°F).\nThe battery and PV connections must be guarded against inadvertent contact. Install the solar charger in an\nenclosure or install the optional WireBox [10].\n4.1. Mounting\nMount the solar charger vertically on a non-flammable substrate, with the electrical terminals facing downwards.\nThe Dimension drawings [63] chapter of this manual contains the dimension drawing of the solar charger, this drawing also\nindicates the mounting holes.\nObserve a minimum clearance of 10cm under and above the solar charger for optimal cooling.\nMount the solar charger within 3 meters from the battery, but never directly above the battery. This is to prevent damage due to\ngassing of the battery.\nAvoid ambient temperature differences of more than 5°C between the solar charger and the battery. These\ntemperature differences can lead to incorrect temperature compensated charging, which can reduce",
+      "query": "maintenance service storage winterizing",
+      "source_heading_guess": "4. Installation",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "Absorption\nDuring the absorption stage, the solar charger has switched to constant voltage mode. The current flowing to the battery will\ngradually decrease. Once the current has dropped below 1A (tail current), the absorption stage stops and the float stage will\ncommence.\nWhen only shallow discharges occur the absorption time is kept short. This is to prevent overcharging of the battery. But if the\nbattery was deeply discharged, the absorption time is automatically increased, to make sure that the battery is fully recharged.\nFloat\nDuring the float stage, the voltage is reduced, and the battery's fully charged state is maintained.\nA storage stage is not needed for solar chargers, unlike for AC chargers, since at night there is no solar\npower, so battery charging will stop.\n3.9.2. Flexible charge algorithm\nThe VictronConnect app allows selection of 8 pre-set charge algorithms, or alternatively the charge algorithm is fully\nprogrammable. The charge voltages, stage duration and the charge current can be customized.\n3.9.3. Equalization charging\nSome lead-acid battery types need a periodic equalization charge. During equalization the charge voltage will be increased above\nthe regular cha",
+      "query": "maintenance service storage winterizing",
+      "source_heading_guess": "3.9.2. Flexible charge algorithm",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "Le présent appareil est conforme aux CNR d'Industrie Canada applicables aux appareils radio exempts de licence. L'exploitation\nest autorisée aux deux conditions suivantes : (1) l’appareil ne doit pas produire de brouillage, et (2) l’utilisateur de l’appareil doit\naccepter tout brouillage radioélectrique subi, même si le brouillage est susceptible d’en compromettre le fonctionnement.\nChanges or modifications not expressly approved by the party responsible for compliance could void the\nuser’s authority to operate the equipment.\nNote: This equipment has been tested and found to comply with the limits for a Class B digital device, pursuant to part 15 of the\nFCC Rules. These limits are designed to provide reasonable protection against harmful interference in a residential installation.\nThis equipment generates, uses and can radiate radio frequency energy and, if not installed and used in accordance with the\ninstructions, may cause harmful interference to radio communications. However, there is no guarantee that interference will not\noccur in a particular installation. If this equipment does cause harmful interference to radio or television reception, which can be\ndetermined by turning t",
+      "query": "optional accessory gateway interface required for",
+      "source_heading_guess": "Changes or modifications not expressly approved by the party responsible for compliance could void the",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "7.2. Error codes\nIn case of an error, an error code will be displayed in the following ways:\n• Via its LEDs.\n• Via the VictronConnect app while it is connected to the solar charger.\n• Via an optional MPPT control or SmartSolar Control display.\n• Via an optional GX device or GlobalLink 520 and the VRM Portal.\nFor the meaning of blinking LED codes, see the previous chapter or the Victron Toolkit app.\nFor a full list of error codes and their meaning see the Error code overview chapter.\n7.3. Monitoring via the VictronConnect app\nThe VictronConnect app can be used to monitor the solar charger, see its historical values and if there are operational warnings\nor errors.\nThis chapter explains the solar charger-specific VictronConnect app usage. Refer to the general VictronConnect app manual for\ninformation about the VictronConnect app itself, such as: how to install the app, how to connect to the solar charger, how to\nupdate firmware and more.\nWhere battery voltage is referred in this chapter, a 12V battery is assumed.\nTo arrive at values for 24V, 36V or 48V batteries, multiply the 12V values by a factor of 2, 3 or 4 respectively.\n7.3.1. VictronConnect app status screen\nThe status screen di",
+      "query": "MasterView remote panel remote control display panel monitoring panel MasterAdjust",
+      "source_heading_guess": "7.2. Error codes",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "9. Technical specifications\n9.1. Specifications 75/10, 75/15, 100/15 and 100/20\nMPPT 75/10 MPPT 75/15 MPPT 100/15 MPPT 100/20\nBattery voltage (auto select) 12V or 24V 12V, 24V, or 48V\nMaximum battery current 10A 15A 15A 20A\nNominal PV power, 12V 1a,b 145W 220W 220 W 290W\nNominal PV power, 24V 1a,b 290W 440W 440 W 580W\nNominal PV power, 48V 1a,b - - - 1160W\nMax. PV short circuit current 2 10A 15A 15A 20A\nAutomatic load disconnect Yes\nMaximum PV open circuit voltage 75V 100V\nPeak efficiency 98%\nSelf consumption 12V: 20mA / 24V: 10mA\n12V: 25mA\n24V / 48V: 15mA\nCharge voltage 'absorption' 14.4V / 28.8V / 57.6V (adjustable)\nCharge voltage 'float' 13.8V / 27.6V / 55.2V (adjustable)\nCharge voltage 'equalization' 3 16.2V / 32.4V / 64.8V (adjustable)\nCharge algorithm Multi-stage adaptive or user defined algorithm\nTemperature compensation 12V: -16mV/°C / 24V: -32mV/°C / 48V: -64 mV/°C\nContinuous load current 15A\n12V & 24V: 20A\n48V: 1A\nLow voltage load disconnect 11.1V / 22.2V / 44.",
+      "query": "MasterView remote panel remote control display panel monitoring panel MasterAdjust",
+      "source_heading_guess": "9. Technical specifications",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "Possible causes for an over-current on the battery terminals:\n• Switching on/off a very large load on the battery side.\n• Sudden change in irradiance is causing a temporary over-power in the solar charger.\n• Overload of the inverter ac output.\nPossible solutions:\n• If possible, provide adequate cooling for the unit. A cooler unit can handle more current.\n• Reduce the load on the inverter.\n• Charge the battery before using the inverter. At higher battery voltages, the same amount of power requires less current.\n8.12.5. Error 20 - Maximum bulk time exceeded\nThe maximum bulk time protection was a feature when the solar chargers were newly released in 2015 (or prior). This feature has\nnow been removed.\nIf you see this error, update the solar charger to the latest firmware. If, after the update, you still see this error, then perform a\n\"reset to factory defaults\" and then reconfigure the solar charger.\n8.12.6. Error 21 - Current sensor issue\nIf you see this error, update the solar charger to the latest firmware. If, after the update, you still see this error, then perform a\n\"reset to factory defaults\" and then reconfigure the solar charger.\nDisconnect all wires and then reconnect all wi",
+      "query": "shore power AC input current limit generator mains",
+      "source_heading_guess": "8.12.5. Error 20 - Maximum bulk time exceeded",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "DC  loads\nSolar charger system with DC loads connected to the load output\nSome loads, particularly inverters, have a higher current rating or high start-up current rating, exceeding the load output's\ncapacity. These loads should be connected directly to the battery. The solar charger can still control these loads to prevent deep\nbattery discharges by linking the load's remote on/off terminal to the solar charger load output. Depending on the load's on/off\nterminal type, a specific interface cable, such as an Inverting remote on/off cable , might be necessary.\nMPPT solar charger manual\nPage 7\n Features",
+      "query": "shore power AC input current limit generator mains",
+      "source_heading_guess": "DC  loads Solar charger system with DC loads connected to the load output",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "The absorption time counter starts once switched from bulk to absorption.\nThe MPPT solar chargers will also end absorption and switch to float when the battery current drops below a low current\nthreshold limit, the \"tail current\". The default tail current value is 1A.\nThe default settings (voltages, absorption time multiplier and tail current) can be modified with the VictronConnect app.\nThere are two exceptions to normal operation:\n• When used in an ESS system; the solar charger algorithm is disabled; and instead it follows the curve as mandated by the\ninverter/charger.\n• For CAN-bus Lithium batteries, like BYD, the battery tells the system, including the solar charger, what charge voltage to use.\nThis Charge Voltage Limit (CVL) is for some batteries even dynamic; changes over time; based on for example maximum cell\nvoltage in the pack and other parameters.\nVariations to the expected charging behaviour\n• Pausing of the absorption time counter:\nThe absorption time counter starts when the configured absorption voltage is reached and pauses when the output voltage is\nbelow the configured absorption voltage. An example of when this voltage drop could occur is when PV power (due to clo",
+      "query": "shore power AC input current limit generator mains",
+      "source_heading_guess": "The absorption time counter starts once switched from bulk to absorption.",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "MPPT 75/10 MPPT 75/15 MPPT 100/15 MPPT 100/20\n1a) The solar charger will limit input power if more PV power is connected.\n1b) The PV voltage must exceed Vbat + 5V for the controller to start. Thereafter the minimum PV voltage is Vbat + 1V.\n2) A higher short circuit current may damage the solar charger in case of reverse polarity connection of the PV array.\n3) Equalization is by default disabled.\n4) For more information on data communication see the data communication paper in the Technical information section on\nour website.\n9.2. Dimension drawings\n9.2.1. Dimensions 75/10 and 75/15\n 84.1 \n 98.8 \n 4(4x) \n 99.7 \n 112.9 \n 38.2 \n 4.3 \nRev00\nDimensions in mm\nDimension Drawing - MPPT 75/10 - 75-15\nSCC010010050R BlueSolar MPPT 75/10 Retail\nSCC075010060R SmartSolar MPPT 75/10 Retail\nSCC075015060R SmartSolar MPPT 75/15 Retail\nD\nE\nF\nC\n1 2 3 4\nB\nA\n321 5\nC\nD\n4 6 7 8\nA\nB\n8765\nF\nE\nSCC010015050R BlueSolar MPPT 75/15 Retail\nMPPT solar charger manual\nPage 63\n Technical specifications",
+      "query": "shore power AC input current limit generator mains",
+      "source_heading_guess": "9.2. Dimension drawings",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "DC  loads\nSolar charger system with inverter connected directly to the battery and controlled by the load output\nAlternatively, a BatteryProtect can be used to control the load.\nSolar charger system with DC loads connected directly to the battery via a BatteryProtect controlled by the load output\n3.8.2. Virtual load output\nA virtual load output can be established to control loads with current ratings greater than the solar charger's load output.\nTo create a virtual load output:\n• Use the VE.Direct TX cable and enable it to act as a virtual load output via the VictronConnect App RX port function. Refer to\nthe RX port settings [28] chapter.\nThe virtual load output can be set up within the VictronConnect app and controlled using battery voltages or the BatteryLife\nalgorithm. For details on the configuration process, please consult the Load output settings [22] chapter.\n3.8.3. BatteryLife\nWhen the solar charger is not able to recharge the battery to its full capacity within one day, the result is often that the battery will\ncontinually be cycled between a ‘partially charged’ state and the ‘end of discharge’ state. This mode of operation (no regular full\nrecharge) will destroy a lead-ac",
+      "query": "shore power AC input current limit generator mains",
+      "source_heading_guess": "3.8.2. Virtual load output",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "Ensure that the correct operation mode is selected in the VictronConnect app settings. Refer to the Load output settings [22]\nchapter.\n• Delay after a setting change:\nThe load output might switch off temporarily when settings are changed. It can take up to 2 minutes before the load output\nbecomes active again. This is expected behaviour.\n• The load output is not able to run a specific load:\nRefer to the Load output not able to run load [57] subchapter.\n• There is an incorrect load output current or power reading:\nRefer to the Load output not able to run load [57] subchapter.\n8.10.1. Load output not able to run load\nThese are possible reasons why the solar charger load output might not be able to run a load:\n• The load consumes excessive power\nThe connected load draws more power than the load output can supply. refer to the \"Maximum continuous load current rating\"\nin the Technical specifications [62] chapter.\nNote that for the 100/20 model, if it is configured to 36V or 48V, the load output current rating is limited to 1A.\n• The load has a high inrush current\nSome loads with high inrush are best connected directly to the battery. In such cases, the load output controls the inverter ",
+      "query": "shore power AC input current limit generator mains",
+      "source_heading_guess": "8.10.1. Load output not able to run load",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "Note that the AES timer only runs when Vbat is below Vhigh, but is reset when Vbat goes above Vhigh.\nFor example: Let's say that the load is configured to turn on when the battery is at 14V (Vhigh) and to turn off\nat 10V (Vlow):\n• If the battery is kept above 14V, the load will never turn off, as the AES timer is continuously reset.\n• If the battery is below 14V, the AES timer counts down and the load will turn off once the AES timer expires.\n• If the battery drops below 10V, the load will turn off regardless of the state of the AES timer.\nThe \"always off\" and the \"always on\" modes will respond immediately. The other modes have a 2-minute delay before the load\noutput changes. This is so that the solar charger does not respond too quickly when, for example, an inrush current briefly lowers\nthe battery voltage below the threshold.\nThe streetlight [24] algorithm can also control the load output. The load output is off when the battery voltage is below the load\ndisconnect voltage or when streetlight dimming is at 0%. The load output turns back on when the battery voltage is above the\nload reconnect voltage and streetlight dimming is between 1 and 100%.\n5.2.3. Streetlight settings\nThe s",
+      "query": "shore power AC input current limit generator mains",
+      "source_heading_guess": "5.2.3. Streetlight settings",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "• Excessive DC load.\n• PV array issues causing reduced power output.\n• Solar charger is unable to reach full output. Refer to the Solar charger not achieving full output [52] chapter.\nPlease note that this information does not apply to an ESS system. An ESS system will continuously be in the bulk charge stage\nwhile connected to the grid.\nLeft: Example of a system that is spending all its time in the bulk stage. Right: Breakdown of the charge stages - The system\nspends time in bulk and in the absorption stage.\n8.6.2. DC load too high\nThe solar charger not only charges the batteries but also supplies power for the system's DC loads, such as lights, refrigerators,\ninverters, inverter/chargers and more.\nBattery charging occurs only when the power generated by the PV panels exceeds the power consumed by the system's DC\nloads.\nTo check the PV array's power generation and load power usage:\nTo check the PV array's power generation and load power usage:\n• Connect all DC loads to the output and check how much power the PV array is generating and how much power the loads use.\nMPPT solar charger manual\nPage 49\n Troubleshooting",
+      "query": "shore power AC input current limit generator mains",
+      "source_heading_guess": "8.6.2. DC load too high",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "1.2. Wiring safety precautions\n• Use flexible multi-stranded copper cable for the battery and PV connections.\n• The diameter of the individual strand of the cable used should not exceed 0.4mm (0.016 inch) or have a\nsurface area exceeding 0.125mm² (AWG26).\n• The maximum operating temperature is 90°C (194°F).\n• A 25mm² cable, for example, should have at least 196 strands (class 5 or higher stranding according to\nVDE 0295, IEC 60228 and BS6360). An AWG2 gauge cable should have at least 259/26 stranding (259\nstrands of AWG26). Example of suitable cable: class 5 “Tri-rated” cable (it has three approvals: American\n(UL), Canadian (CSA) and British (BS)).\n• In case of thicker strands the contact area will be too small and the resulting high contact resistance will\ncause severe overheating, eventually resulting in fire. See below figure for examples of what cable to use\nand not to use.\nFor the 20A model only:\nThe grounding terminal is located on the side of the housing and is identified by this symbol: \n .\n1.3. Symbols used on the enclosure\nThe following symbols are used on the solar charger enclosure:\nSymbol Name Meaning\nDanger of electric shock\nwarning Do not touch the electric connection",
+      "query": "shore power AC input current limit generator mains",
+      "source_heading_guess": "1.2. Wiring safety precautions",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "• Reverse battery polarity. Refer to the Reverse battery polarity [46] subchapter for more details.\n• Blown fuse. Refer to the Blown fuse [47] subchapter for more details.\n• The solar charger is disconnected from the battery, possibly due to cable, fuse, or circuit breaker issues. Refer to the Battery\nnot connected [45] subchapter for more details.\n• Incorrect charger configuration, e.g., low charge voltage or current setting. Refer to the Battery settings too low [47]\nsubchapter for more details.\n• The charger is externally controlled (ESS or DVCC), which is normal and not a fault. Refer to the Solar charger externally\ncontrolled chapter for more details.\n• The temperature-compensated charging feature is active, and the battery temperature is too high, or the feature is\nmisconfigured. Refer to the Wrong temperature compensation setting chapter for more details.\nThe VictronConnect app shows a close to zero charge current.\n8.5.1. Battery is full\nOnce the battery is full, the solar charger will stop or significantly reduce its charge current. This is especially evident when DC\nloads are not drawing power from the battery. It is important to note that this behaviour is normal and not ",
+      "query": "main switch inverter on off charger operation",
+      "source_heading_guess": "8.5.1. Battery is full",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "• The battery voltage measured at the battery terminals of the solar charger.\n• The current flowing from the solar charger in or out of the battery. A positive notation indicates that current is flowing into the\nbattery and a negative notation indicates that current is being drawn from the battery.\n• The battery state indicates the battery charge stage or if external control is active. These are the possible states:\nBulk\nDuring this stage the solar charger delivers as much charge current as possible to rapidly charge the batteries. When the\nbattery voltage reaches the absorption voltage setting, the solar charger activates the absorption stage.\nAbsorption\nDuring this stage the solar charger switches to the constant voltage mode, where a pre-set absorption voltage is applied. When\nthe charge current decreases below 1A or if the pre-set absorption time has elapsed, the battery is fully charged and the solar\ncharger will enter the Float stage. Note that when an automatic equalisation is being performed this will also be reported as\nabsorption.\nFloat\nDuring this stage the float voltage is applied to the battery to maintain a fully-charged state. When the battery voltage drops\nbelow flo",
+      "query": "main switch inverter on off charger operation",
+      "source_heading_guess": "• The battery voltage measured at the battery terminals of the solar charger.",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "6. Operation\n6.1. Start up\nThe solar charger will power up as soon as it has been connected to a battery and/or to a solar panel. As soon as the solar\ncharger has been powered up, it can communicate via the VE.Direct port and Bluetooth. The solar charger's data can be read out\nand setting configurations can be made using the VictronConnect or the optional display.\nThe solar charger will commence battery charging as soon as the PV voltage is 5V higher than the battery voltage. For charging\nto continue, the PV voltage must remain at least 1V higher than the battery voltage.\n6.2. Battery charging\nThe charge controller will start a new charge cycle every morning, when the sun starts shining and when the PV voltage is 5V\nhigher than the battery voltage.\nDefault method to determine length and end of absorption for Lead-acid batteries\nThe charging algorithm behaviour of solar chargers differ from AC connected battery chargers. Please read this section of\nthe manual carefully to understand the solar charging behaviour, and always follow the recommendations of your battery\nmanufacturer.\nThe voltage values mentioned in this chapter are for 12V systems, for 24V systems multiply by 2 and for 4",
+      "query": "main switch inverter on off charger operation",
+      "source_heading_guess": "6. Operation",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "The rationale behind this precaution is that lithium batteries are prone to damage when charged in\ntemperatures below °5C.\nIf this protection is triggered unnecessarily, please reach out to your installer to adjust the related settings.\n8.4. Solar charger is externally controlled\nManaged batteries or an inverter/charger with an external control system (e.g., ESS system) can govern the solar charger via a\nGX device. The external system determines charging permissions and sets the charge voltage and currents.\nWhen external control is active, it is visible on both the VictronConnect app and the GX device. This is normal behaviour and is\nnot a fault.\nThe VictronConnect app indicates that the charger is externally controlled.\n8.5. Batteries are not charged\nThis chapter explains scenarios where the charger is active, but the batteries are not charging. In such cases, the VictronConnect\napp will show the charger as active with the correct charge voltage, but the charge current will be at zero or very close to zero.\nThere are several reasons why this can happen, namely:\n• The battery is fully charged, and no further current is required. This is normal behaviour and is not a fault. Refer to",
+      "query": "main switch inverter on off charger operation",
+      "source_heading_guess": "8.4. Solar charger is externally controlled",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "• For full mounting instructions, see the MPPT WireBox TR quick installation guide.\n4.2. Battery\nThe battery supply must be protected by a fuse as per the below table. This is also the case even if the solar charger has already\nbeen equipped with an external fuse.\nSolar charger type Minimum battery fuse rating Maximum battery fuse rating\nMPPT 75/10 15A 20A\nMPPT 75/15 and 100/15 20A 25A\nMPPT 100/20 25A 30A\nFor Canada the battery fuse must comply with the C22.2 standards.\nThe battery installation must be done in accordance with the local storage battery rules. For Canada this is the\nCanadian Electrical Code, Part I.\nUse flexible multi stranded copper cable for the battery connections Also see chapter Wiring safety\nprecautions [2].\n4.3. PV array\nThe solar charger can be used with a PV configuration that satisfies both these two conditions:\n• The maximum open circuit PV voltage can not exceed 75V or 100V, depending on the solar charger model.\nMPPT solar charger manual\nPage 11\n Installation",
+      "query": "DC fuse battery protection wiring supply requirement",
+      "source_heading_guess": "4.2. Battery",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "Be aware that a red or positively labelled cable may not necessarily indicate the cable is positive. A wiring or\nlabelling mistake during the solar charger installation is possible.\nAlways double-check the battery polarity before reconnecting the battery wires to the solar charger.\nReverse battery polarity has the potential to damage the solar charger, causing its fuse to blow for fail-safe protection. This\nfuse might blow before the external fuse in the battery cable. If you encounter a blown solar charger fuse, before attempting\nreplacement, refer to the Blown fuse chapter to assess if replacing the fuse will fix the solar charger. In some cases, the solar\ncharger may still be considered faulty even after a fuse replacement.\nThe solar charger is not protected against reverse battery polarity, and any resulting damage is not covered under warranty.\n8.5.4. Blown fuse\nThe solar charger is equipped with an accessible fuse, which typically blows when the battery is mistakenly connected in reverse\npolarity.\nSteps to check the fuse:\nStep 1 Remove the fuse.\nStep 2\nUse a multimeter in resistance mode to check for continuity.\nStep 3 If the fuse is faulty, verify the battery polarity and co",
+      "query": "DC fuse battery protection wiring supply requirement",
+      "source_heading_guess": "8.5.4. Blown fuse",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "• A blown (or missing) fuse in the battery supply cable.\n• Open (or faulty) circuit breaker in the battery supply cable.\n• Incorrectly wired battery cables.\nBattery voltage check\nStep 1\nUse the VictronConnect app, a connected display or a GX device to read the solar charger battery voltage.\nAlternatively, use a multimeter to measure the battery voltage at the terminals of the solar charger.\nStep 2\nUse a multimeter to measure the voltage at the battery terminals.\nStep 3 Compare the two voltages.\nStep 4\nIn case of a voltage difference, investigate the reason behind it by tracing the path from the solar charger to the\nbattery to identify the cause.\n• Check and confirm that all cabling is accurately connected and that there are no wiring errors.\n• Inspect the cable connections for tightness while keeping the maximum torque levels in mind.\n• Verify the correct crimping of all cable lugs or terminals.\n• Check the fuses and circuit breakers.\nShould you come across a blown fuse, make sure to check the correct wiring of the battery\npolarity before replacing it. Refer to the Reverse battery polarity [46] chapter.\n8.5.3. Reverse battery polarity\nReverse polarity occurs when the positive and n",
+      "query": "DC fuse battery protection wiring supply requirement",
+      "source_heading_guess": "8.5.3. Reverse battery polarity",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "• If the system includes a properly installed and configured battery monitor, you can monitor the current flowing in (or out) of the\nbattery, while the solar charger indicates the current generated by the solar array.\n• Use a current clamp and compare the current flowing from the solar charger into the battery and the current flowing from the\nbattery into the DC system.\n• A positive sign alongside the current reading indicates current flowing into the battery, whereas a negative sign suggests\ncurrent being drawn from the battery.\n8.6.3. Battery cable voltage drop\nIf the battery cables experience a voltage drop, the solar charger will produce the correct voltage, but the batteries will receive a\nlower voltage, potentially leading to undercharged batteries. An excessive voltage drop of more than 2.5% is unacceptable.\nThe voltage drop can result in the following:\n• Longer battery charging times.\n• Battery receiving a charge voltage that is too low.\n• Loss of charge power.\n• Increased heat in the battery cables.\nThe voltage drop can be caused by:\n• Battery cables with insufficient cross-sectional area.\n• Poorly crimped cable lugs or terminals.\n• Loose terminal connections.\n• Faulty or ",
+      "query": "DC fuse battery protection wiring supply requirement",
+      "source_heading_guess": "8.6.3. Battery cable voltage drop",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "Double insulation symbol The appliance is double insulated and does not require a safety connection to\nelectrical earth (ground).\n1.4. SmartSolar MPPT 75/10 up to 100/20 FCC and Industry Canada Compliance\nThis device complies with part 15 of the FCC Rules and to RSS of Industry Canada.\nOperation is subject to the following two conditions:\n1. This device may not cause harmful interference, and\n2. This device must accept any interference received, including interference that may cause undesired operation.\nMPPT solar charger manual\nPage 2\n Safety precautions",
+      "query": "DC fuse battery protection wiring supply requirement",
+      "source_heading_guess": "1.4. SmartSolar MPPT 75/10 up to 100/20 FCC and Industry Canada Compliance",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "• Careful: when calculating the number of panels that can be used in series, make sure to take both its Open\ncircuit voltage (Voc) and its Temperature coefficient into account. At ambient temperatures below 25°C, the\nVoc will be higher.\n• A switch, circuit breaker, or other device, either AC or DC, shall not be installed in a grounded conductor if\noperation of that switch, circuit breaker, or other device leaves the grounded conductor in an un-grounded\nstate while the system remains energized.\n• Do not use solar panels with optimizers. In worst case, the use of optimizers will cause irreparable damage\nto the solar charger.\n• Use flexible multi stranded copper cable for the screw connections . See chapter Wiring safety\nprecautions [2].\n4.4. Grounding\nBattery grounding\nThe solar charger can be installed in a positive or in a negative grounded system.\nApply a single ground connection, preferably close to the battery, to prevent system issues or ground loops.\nChassis grounding (only for the 20A model)\nA separate ground path for the chassis ground is permitted because the chassis is isolated from the positive and the negative\nterminals.\nMPPT solar charger manual\nPage 12\n Installation",
+      "query": "DC fuse battery protection wiring supply requirement",
+      "source_heading_guess": "4.4. Grounding",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "To ensure optimal performance, always ensure that the ambient conditions are equal for both the solar charger and the battery.\n8.7. Batteries are overcharged\nWARNING: Overcharging batteries can be extremely dangerous! There is a significant risk of battery\nexplosion, fire, or acid leakage. To prevent accidents, do not smoke, create sparks, or have open flames\nin the same room where the batteries are located.\nOvercharging batteries can lead to severe battery damage and may be caused by the following factors:\n• Incorrect charge voltage settings. Refer to the Battery charge voltage settings too high [52] subchapter.\n• Battery voltage setting too high. Refer to the Battery voltage setting too high [51] subchapter.\n• Applying equalisation while the battery is not suitable for it. Refer to the Battery unable to deal with equalisation [52]\nsubchapter.\n• The battery is too small, old, has been mistreated in the past or is faulty. Refer to the Battery old, faulty or undersized [52]\nsubchapter.\n8.7.1. Battery voltage setting too high\nIf the \"battery voltage\" setting in the VictronConnect app is configured to a voltage higher than the actual system voltage, it will\nresult in overcharging the ",
+      "query": "BMS battery safety relay protective disconnect undervoltage overvoltage temperature",
+      "source_heading_guess": "8.7. Batteries are overcharged",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "8.7.2. Battery charge voltage settings too high\nBatteries can be overcharged if the battery charge voltages are set too high.\nVerify that all the battery charge voltages (absorption and float) are correctly configured to match the recommended voltages\nspecified in the battery manufacturer's documentation.\n8.7.3. Battery unable to deal with equalisation\nWhen equalisation occurs, the battery charge voltage will be considerably high, and if the battery is unsuitable for equalisation, it\nmay be overcharged.\nIt's essential to note that not all batteries can handle equalisation voltages. Check with the battery manufacturer to determine if\nthe battery you are using requires a periodic equalising charge.\nIn general, sealed batteries and lithium batteries do not require equalisation and should not undergo the equalisation process.\n8.7.4. Battery old, faulty or undersized\nA battery that has reached the end of its service life or has been damaged due to improper use may be susceptible to\novercharging.\nA battery is comprised of multiple cells connected in series. In the case of an old or damaged battery, it's possible that one of\nthese cells is no longer operational. During charging, the fault",
+      "query": "BMS battery safety relay protective disconnect undervoltage overvoltage temperature",
+      "source_heading_guess": "8.7.2. Battery charge voltage settings too high",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "Battery is full .....................................................................................................  45\n8.5.2. Battery not connected ..........................................................................................  45\n8.5.3. Reverse battery polarity ........................................................................................  46\n8.5.4. Blown fuse .......................................................................................................  47\n8.5.5. Battery settings too low .........................................................................................  47\n8.5.6. PV voltage too high .............................................................................................  48\n8.5.7. Reverse PV polarity .............................................................................................  48\n8.6. Batteries are undercharged ..............................................................................................  49\n8.6.1. Insufficient solar supply .........................................................................................  49\n8.6.2. DC load too high .............................................",
+      "query": "BMS battery safety relay protective disconnect undervoltage overvoltage temperature",
+      "source_heading_guess": null,
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "In a VE.Smart Network a Smart Battery Sense or battery monitor measures the battery terminal voltage and transmits this via\nVE.Smart Networking to the solar charger. If the battery voltage is less than the solar charge voltage, the solar charger will\nincrease its charge voltage to compensate for (small) voltage losses.\n8.6.4. Temperature compensation setting incorrect\nImproperly configuring the temperature compensation coefficient can lead to either undercharged or overcharged batteries.\nNote that temperature compensation is typically applicable only to lead-acid batteries.\nTo determine the correct temperature compensation coefficient for your battery, consult the battery documentation. If uncertain,\nuse the default value of -64.80mV/°C for lead-acid batteries, and for lithium batteries, disable the temperature compensation\nsetting.\n8.6.5. Temperature difference between solar charger and battery\nFor proper operation, it is crucial that the ambient temperatures of both the battery and the solar charger are equal, especially if\nthe solar charger is not receiving battery temperature data.\nNote that this chapter does not apply if the solar charger is connected to a VE.Smart Network wit",
+      "query": "BMS battery safety relay protective disconnect undervoltage overvoltage temperature",
+      "source_heading_guess": "8.6.4. Temperature compensation setting incorrect",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "The chart below indicates the absorption and float charge voltage behaviour at different temperatures. The graph displays the\ntemperature compensation for a 12V system and uses a -16mV/°C temperature compensation coefficient. For a 48V system\nmultiply by 4.\nTemperature compensated charge graph\nBy default, the solar charger uses its internal temperature for battery temperature compensated charging. An internal temperature\nreading is taken in the morning and then again when the e solar charger has been idle for at least one hour, for example when the\ncharger is not actively charging a battery or supplying a load.\nWhen the solar charger is part of VE.Smart Networking and receives a battery temperature reading from a Battery Sense or a\nbattery monitor with a temperature sensor, the actual battery temperature will be used for temperature compensated charging\nthroughout the day.\nLow temperature cut-off\nThis setting is used to prevent damage to a lithium battery by disabling charging at low temperatures.\nThe \"Low temperature cut-off\" feature is only active when the solar charger is part of a VE.Smart network and\nis receiving a battery temperature reading from a Battery Sense or a battery ",
+      "query": "BMS battery safety relay protective disconnect undervoltage overvoltage temperature",
+      "source_heading_guess": "temperature compensation for a 12V system and uses a -16mV/°C temperature compensation coefficient. For a 48V system",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "3.10.1. Internal temperature sensor\nThe solar charger has a built-in internal temperature sensor.\nThe internal temperature is used to set the temperature compensated charge voltages. For this, the internal temperature when\nthe solar charger is \"cold\" is used. The solar charger is \"cold\" when there is only little current flowing into the battery. Be aware\nthat this is only an estimation of the ambient and the battery temperature. Should a more accurate battery temperate be needed,\nconsider using an external battery temperature sensor, see chapter External temperature and voltage sensor [9].\nThe temperature compensation range is 6°C to 40°C (39°F to 104°F).\nThe internal temperature sensor is also used to determine if the solar charger is overheated.\n3.10.2. External temperature and voltage sensor\nThe (optional) Smart Battery Sense is a wireless battery voltage and temperature sensor and can be used with the solar charger.\nIt measures the battery temperature and the battery voltage and sends this via Bluetooth to the solar charger.\nThe solar charger uses the Smart Battery Sense measurements for:\n• Temperature compensated charging using the actual battery temperature, rather than the s",
+      "query": "BMS battery safety relay protective disconnect undervoltage overvoltage temperature",
+      "source_heading_guess": "3.10.1. Internal temperature sensor",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "1V / 22.2V / 44.4V or 11.8V / 23.6V / 47.2V or BatteryLife algorithm\nLow voltage load reconnect 13.1V / 26.2V / 52.4V or 14V / 28V / 56V or BatteryLife algorithm\nProtection PV reverse polarity, output short circuit, over temperature\nOperating temperature -30°C to +60°C (full rated output up to 40°C)\nHumidity 100%, non-condensing\nMaximum altitude 5000m (full rated output up to 2000m)\nEnvironmental condition Indoor type 1, unconditioned\nPollution degree PD3\nData communication\nVE.Direct port 4\nBluetooth, via the VictronConnect app\nENCLOSURE\nColour Blue (RAL 5012)\nPower terminals 6mm² / AWG10\nProtection category IP43 (electronic components), IP22 (connection area)\nWeight 0.5kg 0.6kg 0.65kg\nDimensions (h x w x d) 100 x 113 x 40mm 100 x 113 x\n50mm\n100 x 131 x\n60mm\nSTANDARDS\nSafety EN/IEC 62109-1 / UL 1741 / CSA C22.2 NO.107.1-16\nMPPT solar charger manual\nPage 62\n Technical specifications",
+      "query": "BMS battery safety relay protective disconnect undervoltage overvoltage temperature",
+      "source_heading_guess": "100 x 131 x",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "8.5.6. PV voltage too high\nThe PV voltage should always stay within the maximum rated limit of the solar charger, as indicated in its product name, type\nplate and Technical specifications [62]. The solar charger can sustain damage based on the extent of the PV voltage height, and\nit's important to note that such damage is not covered by warranty.\nShould the PV voltage exceed the maximum rated PV voltage, the solar charger will cease charging, showing an overvoltage\nerror #33 with rapid blinking of the absorption and float LEDs. Charging resumes only when the PV voltage drops 5V below the\nrated maximum voltage.\nDuring investigations into high voltage issues, it's essential to review the VictronConnect app, solar charger display, or GX device\nhistory. Check for the highest PV voltage recorded each day (Vmax) and past overvoltage warnings.\nTo avoid issues, check the open circuit voltage (Voc) rating of the PV array and ensure it is lower than the solar charger's\nmaximum rated voltage. Use the MPPT sizing calculator on the solar charger product page. For PV arrays in cold climates or with\nnight temperatures nearing or below 10°C, it's essential to consider possible increased output (mo",
+      "query": "BMS battery safety relay protective disconnect undervoltage overvoltage temperature",
+      "source_heading_guess": "8.5.6. PV voltage too high",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "Cet appareil numérique de Classe B est conforme à la norme Canadienne ICES-003.\nThis device contains a transmitter with FCC ID: SH6MDBT42Q.\nThis device contains a transmitter with IC: 8017A-MDBT42Q.\nTo comply with FCC and Industry Canada RF radiation exposure limits for general population, the antenna(s) used for this\ntransmitter must be installed such that a minimum separation distance of 20cm is maintained between the radiator (antenna) and\nall persons at all times and must not be co-located or operating in conjunction with any other antenna or transmitter.\nMPPT solar charger manual\nPage 3\n Safety precautions",
+      "query": "Class T fuse T-Fuse fuse holder positive battery cable",
+      "source_heading_guess": "Cet appareil numérique de Classe B est conforme à la norme Canadienne ICES-003.",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "• The solar voltage measured at the solar terminals of the solar charger.\n• The solar current flowing from the PV array into the solar charger.\nBattery\nMPPT solar charger manual\nPage 37\n Monitoring",
+      "query": "State of charge SOC monitoring MasterBus display",
+      "source_heading_guess": "• The solar voltage measured at the solar terminals of the solar charger.",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "The daily log shows:\n• Solar yield: The energy (Wh) converted for that day.\n• Solar Pmax: The maximum power (W) recorded during the day.\n• Solar Vmax: The highest voltage (V) from the PV array during the day.\n• Battery max and min: The first figure shows the maximum battery voltage (Vmax) for the day. The figure below is the minimum\nbattery voltage(Vmin) for the day.\n• Errors: This shows the daily number of errors, if any. To get more information about the error(s), click the orange dot. You may\nneed to slide the display on your device up to see the errors.)\n• Lifetime total: This shows the total energy converted by the installation (W and is not re-settable).\n• Since reset: This shows how much energy has been converted by the installation since the last reset.\nClicking on any bar (day) in the graph will expand the information. It will show the time and percentage of the total charge time\nthat the solar charger has spent in each Bulk, Absorption and Float charge stage.\nYou can use the charge times to see if the PV array is properly sized for your requirements. A system that\nnever reaches the float stage may need more panels. Or perhaps the load should be reduced?\nThe history can be",
+      "query": "State of charge SOC monitoring MasterBus display",
+      "source_heading_guess": "7.3.3. VictronConnect app error reporting",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "Table of Contents\n1. Safety precautions ...................................................................................................................  1\n1.1. General safety precautions .................................................................................................  1\n1.2. Wiring safety precautions ...................................................................................................  2\n1.3. Symbols used on the enclosure ...........................................................................................  2\n1.4. SmartSolar MPPT 75/10 up to 100/20 FCC and Industry Canada Compliance ......................................  2\n2. Introduction ...........................................................................................................................  4\n2.1. Battery voltage, PV voltage and current rating ...........................................................................  4\n3. Features ................................................................................................................................  5\n3.1. Automatic battery voltage detection ....................................................................",
+      "query": "3. Features",
+      "source_heading_guess": "Table of Contents",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "3. Features\n3.1. Automatic battery voltage detection\nThe solar charger automatically detects supported (e.g 12V, or 24V) system voltage (battery voltage) on first power up. If a\ndifferent system voltage is required at a later stage, or if the solar charger is connected to a 36V system, this can be manually\nconfigured in the solar charger settings.\n3.2. Outstanding MPPT algorithm\nUltra fast MPP tracking\nThe solar charger contains an ultra fast MPPT controller. This is especially beneficial when the solar light intensity is constantly\nchanging, as is the case during cloudy weather. Because of the ultra fast MPPT controller, 30% more energy is harvested\ncompared to solar chargers with a PWM controller and up to 10% more compared to slower MPPT controllers.\nOptimal solar yield\nThe solar charger has an innovative tracking algorithm. It will always maximize energy harvest by locking to the optimum MPP\n(Maximum Power Point). If partial shading occurs, two or more maximum power points may be present on the power-voltage\ncurve. Conventional MPPTs tend to lock to a local MPP, which may not be the optimum MPP.\n3.3. Outstanding conversion efficiency\nThe solar charger has an outstanding convers",
+      "query": "3. Features",
+      "source_heading_guess": "3. Features",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "5.2.1. Battery settings\nBattery voltage\nThe battery voltage is automatically detected at the very first power-up of the solar charger and the battery voltage is set\naccordingly. Further automatic detection is disabled. To make sure that a stable measurement is used, the charger first waits 10\nseconds, and thereafter takes an averaged measurement. Note that the solar charger will remain off during this time.\nIn case the solar charger does not measure a battery voltage, it will default to 12V and store that. This will happen if the solar\ncharger is powered via its PV terminals, while not connected to a battery.\nNote that the solar charger will not automatically detect a 36V battery. This will need to be set manually.\nAfter automatic detection has taken place, the battery voltage can be changed and set to 12, 24, 36 or 48V, if so required (36V\nand 48V setting is only possible for the 100/20 model).\nTip:\nIf the firmware of the solar charger needs to be updated, while keeping the automatic voltage detection active,\nfor example before shipping the unit to an end-user, do the following:\n• Update the firmware.\n• Once the firmware update is complete, go to the settings page in the VictronCo",
+      "query": "3.1. Automatic battery voltage detection",
+      "source_heading_guess": "5.2.1. Battery settings",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "3.7. VE.Direct port\nThe VE.Direct port is used to communicate with the solar charger. It can be used for several purposes:\n• To connect to a monitoring device, such as a GX device or the GlobalLink.\n• To connect with the VictronConnect app.\n• For external control.\n• To program the load output behaviour.\nSpecial cables or interfaces are needed to connect to this port:\n• VE.Direct cable - used to connect to a GX device or the GlobalLink.\n• VE.Direct to USB interface - used to connect via USB to the VictronConnect app.\n• VE.Direct Bluetooth Smart dongle - used to connect via Bluetooth to the VictronConnect app.\n• VE.Direct TX digital output cable - used for streetlight control or to create a virtual load output.\n• VE.Direct non inverting remote on/off cable - used to remotely switch the solar charger on or off.\n3.8. Load output\nThe solar charger is equipped with a physical and virtual load output.\n3.8.1. Physical load output\nThe DC loads in the system can be connected to the load output terminals. The solar charger controls the load output and\ndisconnects the loads if the battery voltage drops too low, safeguarding the battery against too-deep discharges.\nThe disconnect voltage of the",
+      "query": "3.8. Load output",
+      "source_heading_guess": "3.7. VE.Direct port",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    },
+    {
+      "text": "Battery charging\n3.9.1. Adaptive 3-stage battery charging\nThe solar charger is a 3-stage charger. The charge stages are: Bulk – Absorption – Float.\nBulk\nDuring the bulk stage, the solar charger delivers the maximum charge current, to rapidly charge the batteries. During this stage,\nthe battery voltage will slowly increase. Once the battery voltage has reached the set absorption voltage, the bulk stage stops and\nthe absorption stage commences.\nMPPT solar charger manual\nPage 8\n Features",
+      "query": "3.9.1. Adaptive 3-stage battery charging",
+      "source_heading_guess": "3.9.1. Adaptive 3-stage battery charging",
+      "manual_id": "f81580e6-8bcc-4984-8eaa-6121602a205d"
+    }
+  ],
+  "map_groups": [
+    {
+      "group_id": "chapter_1",
+      "is_introduction": true,
+      "partition": "chapter",
+      "chapter": "1",
+      "predicted_fields": [
+        "evidence",
+        "operator_actions",
+        "protected_by",
+        "supply_requirements"
+      ],
+      "excerpt_count": 5,
+      "raw_profile": {
+        "device": {
+          "manufacturer": "Victron Energy",
+          "model": "SmartSolar MPPT 75 | 15",
+          "category_freeform": "MPPT solar charger"
+        },
+        "control_surfaces": [],
+        "operator_actions": [],
+        "networks": {
+          "speaks": [],
+          "bridges": []
+        },
+        "data_roles": {
+          "exposes_data_to_network": false,
+          "displays_data_from_other_devices": false,
+          "controllable_from_network": false
+        },
+        "requires_devices": [],
+        "safety_role": {
+          "is_protective_device": false,
+          "has_manual_override": false,
+          "has_emergency_procedure": false
+        },
+        "protected_by": [],
+        "protects": [],
+        "supply_requirements": [
+          {
+            "description_verbatim": "Use flexible multi-stranded copper cable for the battery and PV connections."
+          }
+        ],
+        "evidence": [
+          {
+            "supports_field": "supply_requirements[0]",
+            "manual_section": "1.2. Wiring safety precautions",
+            "note": "Cables must meet specific requirements to prevent overheating."
+          }
+        ],
+        "confidence": {
+          "overall": 0.5,
+          "notes": "Limited information available; no operator actions or control surfaces found."
+        }
+      },
+      "unutilized_retry": true
+    },
+    {
+      "group_id": "chapter_2",
+      "is_introduction": false,
+      "partition": "chapter",
+      "chapter": "2",
+      "predicted_fields": [
+        "evidence",
+        "operator_actions"
+      ],
+      "excerpt_count": 1,
+      "raw_profile": {
+        "device": {
+          "manufacturer": "Victron Energy",
+          "model": "SmartSolar MPPT 75 | 15",
+          "category_freeform": "MPPT solar charger"
+        },
+        "control_surfaces": [],
+        "operator_actions": [],
+        "networks": {
+          "speaks": [],
+          "bridges": []
+        },
+        "data_roles": {
+          "exposes_data_to_network": false,
+          "displays_data_from_other_devices": false,
+          "controllable_from_network": false
+        },
+        "requires_devices": [],
+        "safety_role": {
+          "is_protective_device": false,
+          "has_manual_override": false,
+          "has_emergency_procedure": false
+        },
+        "protected_by": [],
+        "protects": [],
+        "supply_requirements": [],
+        "evidence": [],
+        "confidence": {
+          "overall": 0.5,
+          "notes": "Limited information available from the provided text."
+        }
+      },
+      "unutilized_retry": true
+    },
+    {
+      "group_id": "chapter_4",
+      "is_introduction": false,
+      "partition": "chapter",
+      "chapter": "4",
+      "predicted_fields": [
+        "control_surfaces",
+        "data_roles",
+        "evidence",
+        "operator_actions",
+        "protected_by",
+        "requires_devices",
+        "supply_requirements"
+      ],
+      "excerpt_count": 8,
+      "raw_profile": {
+        "device": {
+          "manufacturer": "Victron Energy",
+          "model": "SmartSolar MPPT 75 | 15",
+          "category_freeform": "MPPT solar charger"
+        },
+        "control_surfaces": [
+          {
+            "surface": "remote_panel_accessory",
+            "location_class": "remote_wired",
+            "optional_accessory": true,
+            "label_verbatim": "MPPT Control display",
+            "path": "control_surfaces[0]"
+          }
+        ],
+        "operator_actions": [
+          {
+            "action": "connect the display to the solar charger via a VE.Direct cable",
+            "audience": "operator",
+            "context": "situational"
+          }
+        ],
+        "networks": {
+          "speaks": [
+            {
+              "name_verbatim": "VE.Direct",
+              "physical_or_wireless": "wired"
+            }
+          ],
+          "bridges": []
+        },
+        "data_roles": {
+          "exposes_data_to_network": false,
+          "displays_data_from_other_devices": false,
+          "controllable_from_network": false
+        },
+        "requires_devices": [
+          {
+            "description_verbatim": "VE.Direct cable",
+            "needed_for": "control_surfaces[0]",
+            "requirement_kind": "cable_or_consumable"
+          }
+        ],
+        "safety_role": {
+          "is_protective_device": false,
+          "has_manual_override": false,
+          "has_emergency_procedure": false
+        },
+        "protected_by": [],
+        "protects": [],
+        "supply_requirements": [
+          {
+            "description_verbatim": "The battery supply must be protected by a fuse"
+          }
+        ],
+        "evidence": [
+          {
+            "supports_field": "control_surfaces[0]",
+            "manual_section": "4.7. Connect the MPPT Control display",
+            "note": "Display connects via VE.Direct cable"
+          },
+          {
+            "supports_field": "supply_requirements",
+            "manual_section": "4.2. Battery",
+            "note": "Battery must have a protective fuse"
+          }
+        ],
+        "confidence": {
+          "overall": 0.8,
+          "notes": "Manual excerpts cover basic operation and requirements."
+        }
+      }
+    },
+    {
+      "group_id": "chapter_5",
+      "is_introduction": false,
+      "partition": "chapter",
+      "chapter": "5",
+      "predicted_fields": [
+        "control_surfaces",
+        "data_roles",
+        "evidence",
+        "networks",
+        "operator_actions",
+        "protects",
+        "requires_devices",
+        "safety_role",
+        "supply_requirements"
+      ],
+      "excerpt_count": 19,
+      "raw_profile": {
+        "device": {
+          "manufacturer": "Victron Energy",
+          "model": "SmartSolar MPPT 75 | 15",
+          "category_freeform": "MPPT solar charger"
+        },
+        "control_surfaces": [],
+        "operator_actions": [],
+        "networks": {
+          "speaks": [
+            {
+              "name_verbatim": "VE.Direct",
+              "physical_or_wireless": "wired"
+            },
+            {
+              "name_verbatim": "VE.Smart Networking",
+              "physical_or_wireless": "wireless"
+            }
+          ],
+          "bridges": []
+        },
+        "data_roles": {
+          "exposes_data_to_network": false,
+          "displays_data_from_other_devices": false,
+          "controllable_from_network": false
+        },
+        "requires_devices": [],
+        "safety_role": {
+          "is_protective_device": false,
+          "has_manual_override": false,
+          "has_emergency_procedure": false
+        },
+        "protected_by": [],
+        "protects": [],
+        "supply_requirements": [],
+        "evidence": [
+          {
+            "supports_field": "networks.speaks[0]",
+            "manual_section": "5.5. VE.Smart Networking",
+            "note": "VE.Direct port is a wired communication interface"
+          },
+          {
+            "supports_field": "networks.speaks[1]",
+            "manual_section": "5.5. VE.Smart Networking",
+            "note": "VE.Smart Networking allows wireless communication"
+          }
+        ],
+        "confidence": {
+          "overall": 0.5,
+          "notes": "Limited information available in the provided excerpts."
+        }
+      }
+    },
+    {
+      "group_id": "chapter_6",
+      "is_introduction": false,
+      "partition": "chapter",
+      "chapter": "6",
+      "predicted_fields": [
+        "control_surfaces",
+        "evidence",
+        "operator_actions",
+        "safety_role"
+      ],
+      "excerpt_count": 8,
+      "raw_profile": {
+        "device": {
+          "manufacturer": "Victron Energy",
+          "model": "SmartSolar MPPT 75 | 15",
+          "category_freeform": "MPPT solar charger"
+        },
+        "control_surfaces": [
+          {
+            "surface": "mobile_app_bluetooth",
+            "location_class": "wireless",
+            "optional_accessory": false,
+            "label_verbatim": "VictronConnect app",
+            "path": "control_surfaces[0]"
+          }
+        ],
+        "operator_actions": [
+          {
+            "action": "monitor via the VictronConnect app",
+            "audience": "operator",
+            "context": "daily"
+          },
+          {
+            "action": "configure via the VictronConnect app",
+            "audience": "either",
+            "context": "situational"
+          },
+          {
+            "action": "shutdown the solar charger",
+            "audience": "operator",
+            "context": "situational"
+          },
+          {
+            "action": "restart the solar charger",
+            "audience": "operator",
+            "context": "situational"
+          }
+        ],
+        "networks": {
+          "speaks": [
+            {
+              "name_verbatim": "VE.Direct",
+              "physical_or_wireless": "wired"
+            },
+            {
+              "name_verbatim": "Bluetooth",
+              "physical_or_wireless": "wireless"
+            }
+          ],
+          "bridges": []
+        },
+        "data_roles": {
+          "exposes_data_to_network": true,
+          "displays_data_from_other_devices": false,
+          "controllable_from_network": false
+        },
+        "requires_devices": [
+          {
+            "description_verbatim": "GX device",
+            "needed_for": "data_roles.exposes_data_to_network",
+            "requirement_kind": "device"
+          }
+        ],
+        "safety_role": {
+          "is_protective_device": false,
+          "has_manual_override": false,
+          "has_emergency_procedure": true
+        },
+        "protected_by": [],
+        "protects": [],
+        "supply_requirements": [
+          {
+            "description_verbatim": "Insert external fuse(s) or circuit breaker(s) within 30cm of the battery."
+          }
+        ],
+        "evidence": [
+          {
+            "supports_field": "data_roles.exposes_data_to_network",
+            "manual_section": "6. Operation",
+            "note": "Device can expose data via VE.Direct and Bluetooth."
+          },
+          {
+            "supports_field": "requires_devices[0]",
+            "manual_section": "6. Operation",
+            "note": "GX device needed for data exposure."
+          },
+          {
+            "supports_field": "safety_role.has_emergency_procedure",
+            "manual_section": "6.5. Shutdown and restart procedure",
+            "note": "Shutdown and restart procedures are defined."
+          },
+          {
+            "supports_field": "control_surfaces[0]",
+            "manual_section": "7.3. Monitoring via the VictronConnect app",
+            "note": "Monitoring and configuration via app is possible."
+          }
+        ],
+        "confidence": {
+          "overall": 0.8,
+          "notes": "Manual excerpts cover key operational and safety aspects."
+        }
+      }
+    },
+    {
+      "group_id": "chapter_8",
+      "is_introduction": false,
+      "partition": "chapter",
+      "chapter": "8",
+      "predicted_fields": [
+        "control_surfaces",
+        "data_roles",
+        "evidence",
+        "networks",
+        "operator_actions",
+        "protected_by",
+        "protects",
+        "requires_devices",
+        "safety_role",
+        "supply_requirements"
+      ],
+      "excerpt_count": 45,
+      "raw_profile": {
+        "device": {
+          "manufacturer": "Victron Energy",
+          "model": "SmartSolar MPPT 75 | 15",
+          "category_freeform": "MPPT solar charger"
+        },
+        "control_surfaces": [
+          {
+            "surface": "remote_panel_accessory",
+            "location_class": "remote_wired",
+            "optional_accessory": true,
+            "label_verbatim": "MPPT Control",
+            "path": "control_surfaces[0]"
+          }
+        ],
+        "operator_actions": [],
+        "networks": {
+          "speaks": [
+            {
+              "name_verbatim": "VE.Direct",
+              "physical_or_wireless": "wired"
+            },
+            {
+              "name_verbatim": "Bluetooth",
+              "physical_or_wireless": "wireless"
+            }
+          ],
+          "bridges": []
+        },
+        "data_roles": {
+          "exposes_data_to_network": false,
+          "displays_data_from_other_devices": false,
+          "controllable_from_network": false
+        },
+        "requires_devices": [
+          {
+            "description_verbatim": "MPPT Control",
+            "needed_for": "control_surfaces[0]",
+            "requirement_kind": "device"
+          }
+        ],
+        "safety_role": {
+          "is_protective_device": false,
+          "has_manual_override": false,
+          "has_emergency_procedure": false
+        },
+        "protected_by": [],
+        "protects": [],
+        "supply_requirements": [],
+        "evidence": [],
+        "confidence": {
+          "overall": 0.8,
+          "notes": "Profile based on available manual excerpts."
+        }
+      },
+      "remote_panel_retry": true,
+      "targeted_retries": [
+        "remote_panel_retry"
+      ]
+    },
+    {
+      "group_id": "chapter_9",
+      "is_introduction": false,
+      "partition": "chapter",
+      "chapter": "9",
+      "predicted_fields": [
+        "control_surfaces",
+        "evidence",
+        "operator_actions",
+        "requires_devices"
+      ],
+      "excerpt_count": 3,
+      "raw_profile": {
+        "device": {
+          "manufacturer": "Victron Energy",
+          "model": "SmartSolar MPPT 75 | 15",
+          "category_freeform": "MPPT solar charger"
+        },
+        "control_surfaces": [],
+        "operator_actions": [],
+        "networks": {
+          "speaks": [],
+          "bridges": []
+        },
+        "data_roles": {
+          "exposes_data_to_network": false,
+          "displays_data_from_other_devices": false,
+          "controllable_from_network": false
+        },
+        "requires_devices": [],
+        "safety_role": {
+          "is_protective_device": false,
+          "has_manual_override": false,
+          "has_emergency_procedure": false
+        },
+        "protected_by": [],
+        "protects": [],
+        "supply_requirements": [],
+        "evidence": [],
+        "confidence": {
+          "overall": 1.0,
+          "notes": "Limited information available in the provided excerpts."
+        }
+      },
+      "unutilized_retry": true
+    },
+    {
+      "group_id": "batch_0",
+      "is_introduction": false,
+      "partition": "batch",
+      "chapter": null,
+      "predicted_fields": [
+        "control_surfaces",
+        "evidence",
+        "operator_actions",
+        "requires_devices"
+      ],
+      "excerpt_count": 2,
+      "raw_profile": {
+        "device": {
+          "manufacturer": "Victron Energy",
+          "model": "SmartSolar MPPT 75 | 15",
+          "category_freeform": "MPPT solar charger"
+        },
+        "control_surfaces": [],
+        "operator_actions": [],
+        "networks": {
+          "speaks": [],
+          "bridges": []
+        },
+        "data_roles": {
+          "exposes_data_to_network": false,
+          "displays_data_from_other_devices": false,
+          "controllable_from_network": false
+        },
+        "requires_devices": [],
+        "safety_role": {
+          "is_protective_device": false,
+          "has_manual_override": false,
+          "has_emergency_procedure": false
+        },
+        "protected_by": [],
+        "protects": [],
+        "supply_requirements": [],
+        "evidence": [],
+        "confidence": {
+          "overall": 1.0,
+          "notes": "Limited excerpts do not cover operator actions or control surfaces."
+        }
+      },
+      "unutilized_retry": true
+    }
+  ],
+  "merge": {
+    "conflicts": [
+      {
+        "kind": "operator_actions",
+        "attribute": "context",
+        "group_id": "chapter_6",
+        "variants": [
+          {
+            "action": "monitor via the VictronConnect app",
+            "audience": "operator",
+            "context": "daily"
+          },
+          {
+            "action": "configure via the VictronConnect app",
+            "audience": "either",
+            "context": "situational"
+          }
+        ]
+      },
+      {
+        "kind": "operator_actions",
+        "attribute": "audience",
+        "group_id": "chapter_6",
+        "variants": [
+          {
+            "action": "monitor via the VictronConnect app",
+            "audience": "operator",
+            "context": "daily"
+          },
+          {
+            "action": "configure via the VictronConnect app",
+            "audience": "either",
+            "context": "situational"
+          }
+        ]
+      }
+    ],
+    "group_contributions": {
+      "chapter_1": {
+        "operator_actions": 0,
+        "control_surfaces": 0,
+        "networks": 0,
+        "requires_devices": 0,
+        "evidence": 1,
+        "supply_requirements": 1,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "batch_0": {
+        "operator_actions": 0,
+        "control_surfaces": 0,
+        "networks": 0,
+        "requires_devices": 0,
+        "evidence": 0,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "chapter_2": {
+        "operator_actions": 0,
+        "control_surfaces": 0,
+        "networks": 0,
+        "requires_devices": 0,
+        "evidence": 0,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "chapter_4": {
+        "operator_actions": 1,
+        "control_surfaces": 1,
+        "networks": 1,
+        "requires_devices": 1,
+        "evidence": 2,
+        "supply_requirements": 1,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "chapter_5": {
+        "operator_actions": 0,
+        "control_surfaces": 0,
+        "networks": 2,
+        "requires_devices": 0,
+        "evidence": 2,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "chapter_6": {
+        "operator_actions": 4,
+        "control_surfaces": 1,
+        "networks": 2,
+        "requires_devices": 1,
+        "evidence": 4,
+        "supply_requirements": 1,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 1,
+        "safety_role": 1
+      },
+      "chapter_8": {
+        "operator_actions": 0,
+        "control_surfaces": 1,
+        "networks": 2,
+        "requires_devices": 1,
+        "evidence": 0,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "chapter_9": {
+        "operator_actions": 0,
+        "control_surfaces": 0,
+        "networks": 0,
+        "requires_devices": 0,
+        "evidence": 0,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      }
+    },
+    "utilization": [
+      {
+        "group_id": "chapter_1",
+        "is_introduction": true,
+        "excerpt_count": 5,
+        "predicted_fields": [
+          "evidence",
+          "operator_actions",
+          "protected_by",
+          "supply_requirements"
+        ],
+        "contributions": {
+          "operator_actions": 0,
+          "control_surfaces": 0,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 1,
+          "supply_requirements": 1,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 2,
+        "unutilized": false
+      },
+      {
+        "group_id": "batch_0",
+        "is_introduction": false,
+        "excerpt_count": 2,
+        "predicted_fields": [
+          "control_surfaces",
+          "evidence",
+          "operator_actions",
+          "requires_devices"
+        ],
+        "contributions": {
+          "operator_actions": 0,
+          "control_surfaces": 0,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 0,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 0,
+        "unutilized": true
+      },
+      {
+        "group_id": "chapter_2",
+        "is_introduction": false,
+        "excerpt_count": 1,
+        "predicted_fields": [
+          "evidence",
+          "operator_actions"
+        ],
+        "contributions": {
+          "operator_actions": 0,
+          "control_surfaces": 0,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 0,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 0,
+        "unutilized": true
+      },
+      {
+        "group_id": "chapter_4",
+        "is_introduction": false,
+        "excerpt_count": 8,
+        "predicted_fields": [
+          "control_surfaces",
+          "data_roles",
+          "evidence",
+          "operator_actions",
+          "protected_by",
+          "requires_devices",
+          "supply_requirements"
+        ],
+        "contributions": {
+          "operator_actions": 1,
+          "control_surfaces": 1,
+          "networks": 1,
+          "requires_devices": 1,
+          "evidence": 2,
+          "supply_requirements": 1,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 7,
+        "unutilized": false
+      },
+      {
+        "group_id": "chapter_5",
+        "is_introduction": false,
+        "excerpt_count": 19,
+        "predicted_fields": [
+          "control_surfaces",
+          "data_roles",
+          "evidence",
+          "networks",
+          "operator_actions",
+          "protects",
+          "requires_devices",
+          "safety_role",
+          "supply_requirements"
+        ],
+        "contributions": {
+          "operator_actions": 0,
+          "control_surfaces": 0,
+          "networks": 2,
+          "requires_devices": 0,
+          "evidence": 2,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 4,
+        "unutilized": false
+      },
+      {
+        "group_id": "chapter_6",
+        "is_introduction": false,
+        "excerpt_count": 8,
+        "predicted_fields": [
+          "control_surfaces",
+          "evidence",
+          "operator_actions",
+          "safety_role"
+        ],
+        "contributions": {
+          "operator_actions": 4,
+          "control_surfaces": 1,
+          "networks": 2,
+          "requires_devices": 1,
+          "evidence": 4,
+          "supply_requirements": 1,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 1,
+          "safety_role": 1
+        },
+        "contribution_total": 15,
+        "unutilized": false
+      },
+      {
+        "group_id": "chapter_8",
+        "is_introduction": false,
+        "excerpt_count": 45,
+        "predicted_fields": [
+          "control_surfaces",
+          "data_roles",
+          "evidence",
+          "networks",
+          "operator_actions",
+          "protected_by",
+          "protects",
+          "requires_devices",
+          "safety_role",
+          "supply_requirements"
+        ],
+        "contributions": {
+          "operator_actions": 0,
+          "control_surfaces": 1,
+          "networks": 2,
+          "requires_devices": 1,
+          "evidence": 0,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 4,
+        "unutilized": false
+      },
+      {
+        "group_id": "chapter_9",
+        "is_introduction": false,
+        "excerpt_count": 3,
+        "predicted_fields": [
+          "control_surfaces",
+          "evidence",
+          "operator_actions",
+          "requires_devices"
+        ],
+        "contributions": {
+          "operator_actions": 0,
+          "control_surfaces": 0,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 0,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 0,
+        "unutilized": true
+      }
+    ]
+  },
+  "prompt_instruction_path": "guide/llm/extract_interaction_profile.txt",
+  "prompt_schema_path": "guide/schemas/interaction_profile.txt",
+  "prompt_contains_evidence_priority_v33": true,
+  "prompt_contains_example_isolation": true,
+  "prompt_contains_map_partial_line": true,
+  "prompt_contains_example_m": true,
+  "repair": {
+    "evidence": {
+      "attempted": true,
+      "missing_fields": [
+        "requires_devices[1]",
+        "requires_devices[2]"
+      ],
+      "added": [
+        "requires_devices[1]",
+        "requires_devices[2]"
+      ]
+    },
+    "absence": {
+      "attempted": false
+    }
+  },
+  "instability_triage": {
+    "material_count": 0,
+    "cosmetic_count": 1
+  },
+  "rextraction": {
+    "attempted": false,
+    "max_retries": 1,
+    "still_needs_rextraction": false
+  },
+  "post_validation_flag_names": [
+    "evidence_incomplete",
+    "group_unutilized",
+    "merge_conflict"
+  ],
+  "needs_rextraction": false
+}

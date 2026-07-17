@@ -1,0 +1,23 @@
+{
+  "fixture_auth": "Fixture-Auth: chat Solar v3 — founding evidence_unattached dangling shading fact",
+  "description": "Inspection-tier shading fact cites 'inspection photos' with no resolvable artifact id.",
+  "vessel": "outremer_55n60_dangling_shading",
+  "vessel_facts": [
+    {
+      "id": "solar_shading_dangling",
+      "kind": "observation",
+      "provenance_tier": "physical_inspection",
+      "evidence_refs": [],
+      "source": "inspection photos",
+      "applies_to": ["victron_mppt_150_60", "victron_mppt"],
+      "text": "Solar array shading observed in inspection photos — operator monitoring context."
+    }
+  ],
+  "artifacts": [],
+  "expected_flags": [
+    {
+      "flag": "evidence_unattached",
+      "fact_id": "solar_shading_dangling"
+    }
+  ]
+}

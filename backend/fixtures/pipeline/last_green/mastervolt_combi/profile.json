@@ -1,0 +1,667 @@
+{
+  "device": {
+    "manufacturer": "Mastervolt",
+    "model": "Mass Combi Pro 24/3500-100",
+    "category_freeform": "Mass Combi Pro"
+  },
+  "control_surfaces": [
+    {
+      "surface": "remote_panel_accessory",
+      "location_class": "remote_wired",
+      "optional_accessory": true,
+      "label_verbatim": "MasterView Easy",
+      "path": "control_surfaces[0]"
+    },
+    {
+      "surface": "physical_controls",
+      "location_class": "on_device",
+      "optional_accessory": false,
+      "label_verbatim": "Main switch",
+      "path": "control_surfaces[1]"
+    },
+    {
+      "surface": "remote_panel_accessory",
+      "location_class": "remote_wired",
+      "optional_accessory": true,
+      "label_verbatim": "MasterView remote panel",
+      "path": "control_surfaces[2]"
+    },
+    {
+      "surface": "physical_controls",
+      "location_class": "on_device",
+      "optional_accessory": false,
+      "label_verbatim": "on/off/inverter off switch",
+      "path": "control_surfaces[3]"
+    },
+    {
+      "surface": "physical_controls",
+      "location_class": "on_device",
+      "optional_accessory": false,
+      "label_verbatim": "Display with front switch",
+      "path": "control_surfaces[4]"
+    }
+  ],
+  "operator_actions": [
+    {
+      "action": "configure DIP switches",
+      "audience": "installer_or_technician",
+      "context": "commissioning",
+      "source": "extracted"
+    },
+    {
+      "action": "check error indications with LEDs",
+      "audience": "operator",
+      "context": "emergency",
+      "source": "extracted"
+    },
+    {
+      "action": "contact Mastervolt Service Centre",
+      "audience": "either",
+      "context": "situational",
+      "source": "extracted"
+    },
+    {
+      "action": "set AC input current limit",
+      "audience": "operator",
+      "context": "situational",
+      "source": "extracted"
+    },
+    {
+      "action": "switch on the Mass Combi Pro",
+      "audience": "operator",
+      "context": "situational",
+      "source": "extracted"
+    },
+    {
+      "action": "switch off inverter to prevent battery depletion",
+      "audience": "operator",
+      "context": "situational",
+      "source": "extracted"
+    },
+    {
+      "action": "adjust DIP-switches prior to commissioning",
+      "audience": "installer_or_technician",
+      "context": "commissioning",
+      "source": "extracted"
+    },
+    {
+      "action": "check generator voltage and frequency",
+      "audience": "operator",
+      "context": "emergency",
+      "source": "extracted"
+    },
+    {
+      "action": "set DIP switches",
+      "audience": "installer_or_technician",
+      "context": "commissioning",
+      "source": "extracted"
+    },
+    {
+      "action": "perform commissioning with MasterAdjust software",
+      "audience": "installer_or_technician",
+      "context": "commissioning",
+      "source": "extracted"
+    },
+    {
+      "action": "switch off the charger",
+      "audience": "operator",
+      "context": "situational",
+      "source": "extracted"
+    },
+    {
+      "action": "enable Generator / mains support mode",
+      "audience": "either",
+      "context": "situational",
+      "source": "extracted",
+      "vote_margin": "repaired"
+    },
+    {
+      "action": "set Power Sharing level to match external circuit breaker",
+      "audience": "installer_or_technician",
+      "context": "situational",
+      "source": "extracted",
+      "vote_margin": "repaired"
+    }
+  ],
+  "networks": {
+    "speaks": [
+      {
+        "name_verbatim": "MasterBus",
+        "physical_or_wireless": "wired"
+      }
+    ],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": true,
+    "displays_data_from_other_devices": true,
+    "controllable_from_network": true
+  },
+  "requires_devices": [
+    {
+      "description_verbatim": "MasterView Easy remote panel",
+      "needed_for": "control_surfaces[0]"
+    },
+    {
+      "description_verbatim": "MasterView remote panel",
+      "needed_for": "control_surfaces[2]"
+    }
+  ],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": true
+  },
+  "protected_by": [
+    {
+      "description_verbatim": "AC-input must be protected by a fuse"
+    }
+  ],
+  "protects": [],
+  "supply_requirements": [
+    {
+      "description_verbatim": "Maximum rating of generator AC input fuse: 50 A"
+    },
+    {
+      "description_verbatim": "Mains AC input fuse: 30 A"
+    }
+  ],
+  "evidence": [
+    {
+      "supports_field": "operator_actions[0]",
+      "manual_section": "1.9 Correct disposal of this product",
+      "note": "DIP switch configuration is for commissioning"
+    },
+    {
+      "supports_field": "operator_actions[1]",
+      "manual_section": "4 Open the connection compartment of the Mass Combi",
+      "note": "Contact service center for unresolved issues"
+    },
+    {
+      "supports_field": "safety_role.has_emergency_procedure",
+      "manual_section": "4 Open the connection compartment of the Mass Combi",
+      "note": "Manual includes emergency procedures for faults"
+    },
+    {
+      "supports_field": "control_surfaces[0]",
+      "manual_section": "MasterView remote panel",
+      "note": "Mentions optional remote panel for operation"
+    },
+    {
+      "supports_field": "operator_actions[2]",
+      "manual_section": "4.5 Daily use, MasterBus monitoring",
+      "note": "Inverter off to prevent battery depletion"
+    },
+    {
+      "supports_field": "safety_role.has_emergency_procedure",
+      "manual_section": "7.3.1 Trouble shooting table",
+      "note": "Includes error codes and fault recovery procedures"
+    },
+    {
+      "supports_field": "safety_role.has_emergency_procedure",
+      "manual_section": "7.3.1 Trouble shooting table",
+      "note": "Includes troubleshooting for alarms and faults"
+    },
+    {
+      "supports_field": "data_roles.exposes_data_to_network",
+      "manual_section": "5.9 Setting up a MasterBus network",
+      "note": "MasterBus enables communication between connected devices."
+    }
+  ],
+  "confidence": {
+    "overall": 1.0,
+    "notes": "[chapter_1] Limited information available from the excerpts. | [batch_0] Manual excerpts support limited operator actions and safety role | [chapter_3] Manual excerpts provide clear instructions for actions. | [chapter_4] Manual excerpts cover basic operations and requirements. | [chapter_5] Manual excerpts primarily support commissioning actions | [chapter_6] Manual excerpts support key features and actions. | [chapter_8] Profile based on limited manual excerpts | [chapter_1] Manual covers basi"
+  },
+  "repairs": [
+    {
+      "repair": "added_requires_for_optional_surface",
+      "flag": "optional_surface_without_requires",
+      "field_path": "control_surfaces[2]",
+      "added_entry": {
+        "description_verbatim": "MasterView remote panel",
+        "needed_for": "control_surfaces[2]",
+        "source": "derived",
+        "derived_from": "control_surfaces[2]"
+      }
+    }
+  ],
+  "coverage": {
+    "chunk_count": 63,
+    "heading_count": 154,
+    "headings_covered_count": 124,
+    "heading_coverage_fraction": 0.8052,
+    "coverage_low_threshold": 0.25,
+    "top_k_used": 7
+  },
+  "group_utilization": [
+    {
+      "group_id": "chapter_1",
+      "is_introduction": true,
+      "excerpt_count": 2,
+      "predicted_fields": [
+        "control_surfaces",
+        "evidence",
+        "operator_actions",
+        "requires_devices"
+      ],
+      "contributions": {
+        "operator_actions": 1,
+        "control_surfaces": 0,
+        "networks": 0,
+        "requires_devices": 0,
+        "evidence": 1,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "contribution_total": 2,
+      "unutilized": false
+    },
+    {
+      "group_id": "batch_0",
+      "is_introduction": false,
+      "excerpt_count": 3,
+      "predicted_fields": [
+        "control_surfaces",
+        "data_roles",
+        "evidence",
+        "networks",
+        "operator_actions",
+        "requires_devices",
+        "safety_role"
+      ],
+      "contributions": {
+        "operator_actions": 2,
+        "control_surfaces": 0,
+        "networks": 0,
+        "requires_devices": 0,
+        "evidence": 3,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 1
+      },
+      "contribution_total": 6,
+      "unutilized": false
+    },
+    {
+      "group_id": "chapter_3",
+      "is_introduction": false,
+      "excerpt_count": 15,
+      "predicted_fields": [
+        "control_surfaces",
+        "evidence",
+        "operator_actions",
+        "requires_devices",
+        "safety_role"
+      ],
+      "contributions": {
+        "operator_actions": 2,
+        "control_surfaces": 1,
+        "networks": 0,
+        "requires_devices": 1,
+        "evidence": 3,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "contribution_total": 7,
+      "unutilized": false
+    },
+    {
+      "group_id": "chapter_4",
+      "is_introduction": false,
+      "excerpt_count": 11,
+      "predicted_fields": [
+        "control_surfaces",
+        "evidence",
+        "operator_actions",
+        "protects",
+        "safety_role"
+      ],
+      "contributions": {
+        "operator_actions": 3,
+        "control_surfaces": 1,
+        "networks": 1,
+        "requires_devices": 0,
+        "evidence": 6,
+        "supply_requirements": 2,
+        "protected_by": 1,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "contribution_total": 14,
+      "unutilized": false
+    },
+    {
+      "group_id": "chapter_5",
+      "is_introduction": false,
+      "excerpt_count": 10,
+      "predicted_fields": [
+        "control_surfaces",
+        "data_roles",
+        "evidence",
+        "networks",
+        "operator_actions",
+        "protected_by",
+        "requires_devices",
+        "safety_role",
+        "supply_requirements"
+      ],
+      "contributions": {
+        "operator_actions": 1,
+        "control_surfaces": 0,
+        "networks": 1,
+        "requires_devices": 0,
+        "evidence": 1,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "contribution_total": 3,
+      "unutilized": false
+    },
+    {
+      "group_id": "chapter_6",
+      "is_introduction": false,
+      "excerpt_count": 6,
+      "predicted_fields": [
+        "control_surfaces",
+        "data_roles",
+        "evidence",
+        "operator_actions",
+        "requires_devices",
+        "safety_role",
+        "supply_requirements"
+      ],
+      "contributions": {
+        "operator_actions": 1,
+        "control_surfaces": 1,
+        "networks": 0,
+        "requires_devices": 1,
+        "evidence": 2,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "contribution_total": 5,
+      "unutilized": false
+    },
+    {
+      "group_id": "chapter_8",
+      "is_introduction": false,
+      "excerpt_count": 2,
+      "predicted_fields": [
+        "control_surfaces",
+        "evidence",
+        "operator_actions",
+        "requires_devices",
+        "safety_role"
+      ],
+      "contributions": {
+        "operator_actions": 3,
+        "control_surfaces": 1,
+        "networks": 0,
+        "requires_devices": 0,
+        "evidence": 1,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 1
+      },
+      "contribution_total": 6,
+      "unutilized": false
+    }
+  ],
+  "merge_conflicts": [
+    {
+      "kind": "requires_devices",
+      "attribute": "description_verbatim",
+      "group_id": "chapter_6",
+      "variants": [
+        {
+          "description_verbatim": "MasterView Easy remote panel",
+          "needed_for": "control_surfaces[0]"
+        },
+        {
+          "description_verbatim": "MasterView remote panel",
+          "needed_for": "control_surfaces[0]"
+        }
+      ]
+    }
+  ],
+  "validation_flags": [
+    {
+      "flag": "optional_surface_without_requires",
+      "severity": "warning",
+      "detail": "repaired: added requires_devices for optional surface 'MasterView remote panel'",
+      "field_path": "control_surfaces[2]"
+    },
+    {
+      "flag": "merge_conflict",
+      "severity": "warning",
+      "detail": "cross-group conflict on requires_devices.description_verbatim (group=chapter_6)",
+      "field_path": "merge_conflicts[0]"
+    },
+    {
+      "flag": "evidence_incomplete",
+      "severity": "blocking",
+      "detail": "no evidence entry supports data_roles.displays_data_from_other_devices",
+      "field_path": "data_roles.displays_data_from_other_devices"
+    },
+    {
+      "flag": "evidence_incomplete",
+      "severity": "blocking",
+      "detail": "no evidence entry supports data_roles.controllable_from_network",
+      "field_path": "data_roles.controllable_from_network"
+    },
+    {
+      "flag": "evidence_incomplete",
+      "severity": "blocking",
+      "detail": "no evidence entry supports requires_devices[0]",
+      "field_path": "requires_devices[0]"
+    },
+    {
+      "flag": "evidence_incomplete",
+      "severity": "blocking",
+      "detail": "no evidence entry supports requires_devices[1]",
+      "field_path": "requires_devices[1]"
+    },
+    {
+      "flag": "extraction_unstable",
+      "severity": "warning",
+      "detail": "operator_actions entry unstable across runs ('switch off inverter to prevent battery depletion')",
+      "field_path": "operator_actions"
+    },
+    {
+      "flag": "extraction_unstable",
+      "severity": "warning",
+      "detail": "operator_actions entry unstable across runs ('set DIP switches')",
+      "field_path": "operator_actions"
+    },
+    {
+      "flag": "extraction_unstable",
+      "severity": "warning",
+      "detail": "operator_actions entry unstable across runs ('perform commissioning with MasterAdjust software')",
+      "field_path": "operator_actions"
+    },
+    {
+      "flag": "extraction_unstable",
+      "severity": "warning",
+      "detail": "operator_actions entry unstable across runs ('switch off the charger')",
+      "field_path": "operator_actions"
+    },
+    {
+      "flag": "extraction_unstable",
+      "severity": "warning",
+      "detail": "control_surfaces entry unstable across runs ('Display with front switch')",
+      "field_path": "control_surfaces"
+    }
+  ],
+  "needs_rextraction": false,
+  "extraction_votes": [
+    {
+      "field_path": "operator_actions",
+      "kind": "operator_actions",
+      "attribute": "presence",
+      "chosen": {
+        "action": "switch off inverter to prevent battery depletion",
+        "audience": "operator",
+        "context": "situational"
+      },
+      "variants": [
+        {
+          "run": 1,
+          "value": {
+            "action": "switch off inverter to prevent battery depletion",
+            "audience": "operator",
+            "context": "situational"
+          }
+        },
+        {
+          "run": 2,
+          "value": null
+        },
+        {
+          "run": 3,
+          "value": null
+        }
+      ]
+    },
+    {
+      "field_path": "operator_actions",
+      "kind": "operator_actions",
+      "attribute": "presence",
+      "chosen": {
+        "action": "set DIP switches",
+        "audience": "installer_or_technician",
+        "context": "commissioning"
+      },
+      "variants": [
+        {
+          "run": 1,
+          "value": null
+        },
+        {
+          "run": 2,
+          "value": {
+            "action": "set DIP switches",
+            "audience": "installer_or_technician",
+            "context": "commissioning"
+          }
+        },
+        {
+          "run": 3,
+          "value": null
+        }
+      ]
+    },
+    {
+      "field_path": "operator_actions",
+      "kind": "operator_actions",
+      "attribute": "presence",
+      "chosen": {
+        "action": "perform commissioning with MasterAdjust software",
+        "audience": "installer_or_technician",
+        "context": "commissioning"
+      },
+      "variants": [
+        {
+          "run": 1,
+          "value": null
+        },
+        {
+          "run": 2,
+          "value": {
+            "action": "perform commissioning with MasterAdjust software",
+            "audience": "installer_or_technician",
+            "context": "commissioning"
+          }
+        },
+        {
+          "run": 3,
+          "value": {
+            "action": "perform commissioning with MasterAdjust software",
+            "audience": "installer_or_technician",
+            "context": "commissioning"
+          }
+        }
+      ]
+    },
+    {
+      "field_path": "operator_actions",
+      "kind": "operator_actions",
+      "attribute": "presence",
+      "chosen": {
+        "action": "switch off the charger",
+        "audience": "operator",
+        "context": "situational"
+      },
+      "variants": [
+        {
+          "run": 1,
+          "value": null
+        },
+        {
+          "run": 2,
+          "value": {
+            "action": "switch off the charger",
+            "audience": "operator",
+            "context": "situational"
+          }
+        },
+        {
+          "run": 3,
+          "value": {
+            "action": "switch off the charger",
+            "audience": "operator",
+            "context": "situational"
+          }
+        }
+      ]
+    },
+    {
+      "field_path": "control_surfaces",
+      "kind": "control_surfaces",
+      "attribute": "presence",
+      "chosen": {
+        "surface": "physical_controls",
+        "location_class": "on_device",
+        "optional_accessory": false,
+        "label_verbatim": "Display with front switch",
+        "path": "control_surfaces[0]"
+      },
+      "variants": [
+        {
+          "run": 1,
+          "value": null
+        },
+        {
+          "run": 2,
+          "value": {
+            "surface": "physical_controls",
+            "location_class": "on_device",
+            "optional_accessory": false,
+            "label_verbatim": "Display with front switch",
+            "path": "control_surfaces[0]"
+          }
+        },
+        {
+          "run": 3,
+          "value": null
+        }
+      ]
+    }
+  ]
+}

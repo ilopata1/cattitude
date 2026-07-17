@@ -103,7 +103,7 @@ Regeneration of the same vessel with unchanged `guide_generation_input_snapshot.
 | 3 | **`assemble_guide_from_templates()`** — no LLM path to `vessel_guide_publication` | 2–3 | Hull-model baseline + intake facts (name, contacts, equipment list as structured data) |
 | 4 | **Hull-model starter publications** | 2–3 | Curated bootstrap per `hull_model` (maintain from first approved guide on that hull) |
 | 5 | **Exemplar matching** — `(hull_model + option_pack fingerprint + operating_base)` → copy modules | 2–3 | Extends `clone_vessel(copy_guide_modules)` policy globally; LLM only for unmatched modules |
-| 6 | **Equipment-level content library** | 3+ | **Shipped** — `equipment_guide_fragment` (shared prose keyed by `equipment_id`) assembles system modules and enriches fix cards without LLM; harvest + seed scripts in `backend/scripts/` |
+| 6 | **Equipment-level content library** | 3+ | **Shipped** — `equipment_guide_fragment` assembles system modules without LLM; **skeleton + primary-home routing** for Electrical/Batteries in `guide_system_assembly.py` (see `backend/guide-pipeline-plan.md`) |
 | 7 | **Tiered model policy** | 2 | GPT-4o mini for free/light paths; GPT-4o for premium; validate before publish |
 | 8 | **Token/cost logging** on `guide_generation_run` | 2 | Real unit economics per module, not estimates |
 | 9 | **Ask gating** aligned with tier | 4 | Free: offline guide only or capped/cached Ask; premium: live RAG |

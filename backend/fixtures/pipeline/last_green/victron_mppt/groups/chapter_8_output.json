@@ -1,0 +1,55 @@
+{
+  "device": {
+    "manufacturer": "Victron Energy",
+    "model": "SmartSolar MPPT 75 | 15",
+    "category_freeform": "MPPT solar charger"
+  },
+  "control_surfaces": [
+    {
+      "surface": "remote_panel_accessory",
+      "location_class": "remote_wired",
+      "optional_accessory": true,
+      "label_verbatim": "MPPT Control",
+      "path": "control_surfaces[0]"
+    }
+  ],
+  "operator_actions": [],
+  "networks": {
+    "speaks": [
+      {
+        "name_verbatim": "VE.Direct",
+        "physical_or_wireless": "wired"
+      },
+      {
+        "name_verbatim": "Bluetooth",
+        "physical_or_wireless": "wireless"
+      }
+    ],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [
+    {
+      "description_verbatim": "MPPT Control",
+      "needed_for": "control_surfaces[0]",
+      "requirement_kind": "device"
+    }
+  ],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": false
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [],
+  "evidence": [],
+  "confidence": {
+    "overall": 0.8,
+    "notes": "Profile based on available manual excerpts."
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "device_key": "monitoring_hub",
+  "manufacturer": "Example",
+  "model": "GX Monitor",
+  "description": "GX device system monitor hub",
+  "system_category": "electrical_dc"
+}

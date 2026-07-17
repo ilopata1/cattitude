@@ -1,0 +1,49 @@
+{
+  "device": {
+    "manufacturer": "Mastervolt",
+    "model": "Mass Combi Pro 24/3500-100",
+    "category_freeform": "inverter/charger"
+  },
+  "control_surfaces": [],
+  "operator_actions": [
+    {
+      "action": "adjust DIP-switches prior to commissioning",
+      "audience": "installer_or_technician",
+      "context": "commissioning"
+    }
+  ],
+  "networks": {
+    "speaks": [
+      {
+        "name_verbatim": "MasterBus",
+        "physical_or_wireless": "wired"
+      }
+    ],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": false
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [],
+  "evidence": [
+    {
+      "supports_field": "operator_actions[0]",
+      "manual_section": "7.1 Commissioning",
+      "note": "DIP-switch adjustment is necessary before use"
+    }
+  ],
+  "confidence": {
+    "overall": 0.8,
+    "notes": "Manual does not distinguish between model variants"
+  }
+}

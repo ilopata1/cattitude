@@ -1,0 +1,44 @@
+{
+  "device": {
+    "manufacturer": "Mastervolt",
+    "model": "Mass Combi Pro 24/3500-100",
+    "category_freeform": "Mass Combi Pro"
+  },
+  "control_surfaces": [],
+  "operator_actions": [
+    {
+      "action": "configure DIP switches",
+      "audience": "installer_or_technician",
+      "context": "commissioning"
+    }
+  ],
+  "networks": {
+    "speaks": [],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": false
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [],
+  "evidence": [
+    {
+      "supports_field": "operator_actions[0]",
+      "manual_section": "1.9 Correct disposal of this product",
+      "note": "DIP switch configuration is for commissioning"
+    }
+  ],
+  "confidence": {
+    "overall": 0.5,
+    "notes": "Limited information available from the excerpts."
+  }
+}

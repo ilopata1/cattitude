@@ -1,0 +1,84 @@
+{
+  "vessel": "outremer_example",
+  "notes": "Pre-batch-B snapshot (Balmar-era / czone_system hub). Stub-heavy regression.",
+  "fixture_auth": "Fixture-Auth: chat instance-policy — retain pre-batch Balmar-era snapshot",
+  "equipment": [
+    {
+      "device_key": "czone_system",
+      "manufacturer": "CZone",
+      "model": "system",
+      "description": "CZone digital switching system touchscreen",
+      "system_category": "electrical_dc"
+    },
+    {
+      "device_key": "coi",
+      "manufacturer": "Mastervolt",
+      "model": "COI",
+      "description": "MasterBus-CZone interface / output interface",
+      "system_category": "electrical_dc"
+    },
+    {
+      "device_key": "mli_ultra",
+      "manufacturer": "Mastervolt",
+      "model": "MLI Ultra 24/6000",
+      "description": "Lithium house battery with BMS",
+      "system_category": "electrical_dc"
+    },
+    {
+      "device_key": "mass_combi_pro",
+      "manufacturer": "Mastervolt",
+      "model": "Mass Combi Pro",
+      "description": "Inverter charger combi",
+      "system_category": "electrical_dc"
+    },
+    {
+      "device_key": "victron_mppt",
+      "manufacturer": "Victron Energy",
+      "model": "SmartSolar MPPT 75/15",
+      "description": "Solar MPPT charge controller",
+      "system_category": "electrical_dc"
+    },
+    {
+      "device_key": "silentwind",
+      "manufacturer": "Silentwind",
+      "model": "Hybrid 1000",
+      "description": "Wind generator with own controller",
+      "system_category": "electrical_dc"
+    },
+    {
+      "device_key": "balmar_mc624",
+      "manufacturer": "Balmar",
+      "model": "MC-624",
+      "description": "Alternator regulator",
+      "system_category": "electrical_dc"
+    },
+    {
+      "device_key": "ml_switch",
+      "manufacturer": "Blue Sea",
+      "model": "ML-Series",
+      "description": "Blue Sea ML-Series battery switch / isolation",
+      "system_category": "electrical_dc"
+    },
+    {
+      "device_key": "plain_battery_switch",
+      "manufacturer": "generic",
+      "model": "rotary battery switch",
+      "description": "plain on-device battery switch / isolation (local only)",
+      "system_category": "electrical_dc"
+    },
+    {
+      "device_key": "class_t",
+      "manufacturer": "Blue Sea",
+      "model": "Class T fuse holder",
+      "description": "Class T fuse holder",
+      "system_category": "electrical_dc"
+    },
+    {
+      "device_key": "busbar",
+      "manufacturer": "ProInstaller",
+      "model": "busbar",
+      "description": "DC distribution busbar",
+      "system_category": "electrical_dc"
+    }
+  ]
+}

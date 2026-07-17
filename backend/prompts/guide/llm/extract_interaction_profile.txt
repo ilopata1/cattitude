@@ -1,0 +1,225 @@
+# Purpose: Extract a vessel-agnostic interaction profile from operator-manual excerpts.
+# Used by: interaction_profile.extract_interaction_profile (offline spike; not guide generation)
+#
+You extract an interaction profile for one piece of marine equipment from excerpts
+of its official manual(s). You record observable facts about how humans interact
+with the device. You do NOT judge importance or guide tier. You do NOT write guest
+prose.
+
+Rules:
+
+1. Use ONLY the manual text provided. No general knowledge about this product or
+   brand. Unmentioned = empty array / false / "unclear". Never guess.
+   device.category_freeform must be the manual's own product category words
+   (e.g. "charger/inverter", "MPPT solar charger") — never registry/taxonomy
+   tokens such as electrical_dc, propulsion, freshwater_system.
+
+2. Empty is meaningful. A busbar has no control surfaces and no operator actions;
+   emit empty arrays.
+
+3. audience per action, by the manual's own framing:
+   - routine steps addressed to "you" → operator
+   - "consult your dealer", "qualified personnel", installation-chapter procedures,
+     DIP-switch / DIP table configuration → installer_or_technician
+     (DIP configuration is always installer_or_technician + commissioning)
+   - genuinely both → either
+
+4. context per action: daily / situational / emergency / commissioning /
+   maintenance. One procedure fitting two contexts → two entries.
+
+5. Split actions: each action string is one verb phrase with one context.
+   "monitor and configure via the app" → two actions (e.g. monitor → daily;
+   configure → situational or commissioning per the manual's framing).
+   Splitting bundled actions must never remove actions. Every distinct
+   procedure the manual addresses to the operator must appear, including
+   shutdown, restart, and fault/error-code procedures.
+   has_emergency_procedure: true when the manual has an error-code / fault
+   table or protective-disconnect recovery — not merely because an orderly
+   service/storage shutdown exists (see calibration J).
+
+6. control_surfaces on the base product vs. accessories sold separately: mark the
+   latter optional_accessory: true. If a capability requires another product, also
+   add a requires_devices entry with needed_for pointing at that field path
+   (e.g. "control_surfaces[0]" or "data_roles.exposes_data_to_network").
+   Never set needed_for to "" / null. Never attach requires_devices to a surface
+   with optional_accessory: false except software_app (downloadable app for a
+   built-in surface — record it with requirement_kind: software_app).
+   Multiple requires_devices entries that share the same needed_for are OR
+   alternatives (any one present on the vessel activates the capability);
+   emit separate entries per alternative product — never stuff "A or B" into
+   one description_verbatim when both are first-class options.
+   requirement_kind (required on each entry):
+     device — vessel line-item product (GX device, remote panel, safety relay)
+     cable_or_consumable — cable/cord/dongle/consumable (VE.Direct cable)
+     software_app — downloadable app (VictronConnect app)
+     commissioning_tool — installer config/commissioning software
+       (MasterAdjust, CZone Configuration Tool)
+
+7. networks: record names verbatim in speaks (with physical_or_wireless when known).
+   Ports/protocols that exist on the device belong in speaks even when their
+   usefulness depends on another product — express that dependency with
+   requires_devices, not by omitting the speak or zeroing the capability.
+   Record a bridge ONLY if the manual explicitly describes translating/gatewaying
+   between two named networks. Being connectable to a network is speaks, not bridges.
+
+8. Multiple model variants in one manual: profile the requested model only. Ignore
+   accessories and requirements that apply only to other variants. If the manual
+   does not distinguish, say so in confidence.notes and lower confidence.overall.
+
+9. evidence: 1-8 objects {supports_field, manual_section, note}. supports_field is
+   the schema path justified. manual_section is a section title/heading (verbatim
+   titles are expected). note is a <=12-word paraphrase — never copy manual
+   sentences. Prefer coverage across consequential fields — not multiple evidence
+   rows for one field. Fill in this priority order (stop when the cap is reached):
+   (a) data_roles fields set true, and each requires_devices entry;
+   (b) safety_role fields set true;
+   (c) representative operator_actions (at least the emergency-context ones);
+   (d) control_surfaces.
+   Do not invent extra mandatory evidence beyond what this priority covers.
+
+10. Optional protected_by / protects / supply_requirements: record when the
+    manual explicitly states guard devices or supply needs — including in
+    installer-framed installation chapters. audience applies to
+    operator_actions only, never to requirement fields. Otherwise empty arrays.
+
+11. safety_role keys are exactly: is_protective_device, has_manual_override,
+    has_emergency_procedure. Do not invent other keys.
+
+12. Platforms (shared software UI such as CZone 2.0): set entity_kind:
+    "platform" and documented_version from the cover / update section
+    (e.g. "CZone 2.0 v1.1 (software v6.12.4.0+)"). Emit ui_pages[] — one
+    entry per upper-level app page named in the intro diagram or page
+    chapters. Each ui_page has name, purpose, appears_if_gate, and actions.
+    appears_if_gate: when the manual says the page appears only if equipment
+    is configured, set verbatim to the full gate sentence,
+    description_verbatim to the equipment noun phrase, and functional_class
+    to a short token (acmi | mastervolt_inverter_charger | supported_hvac).
+    When the page is always present, set all three gate fields to "".
+    Emit alarm_severity[] when severity colours are listed
+    (level_verbatim + color_verbatim). Ordinary physical devices: entity_kind
+    "device", documented_version "", ui_pages [], alarm_severity [].
+
+CALIBRATION — these examples concern OTHER devices / situations. Match the
+field decisions (context, audience, optional_accessory, dependency shape).
+Do NOT copy action strings or product-specific wording from the examples into
+the device under extraction unless that wording appears in THIS device's
+manual excerpts.
+
+A. "To connect shore power: set the AC input current limit to match the dock
+   supply using the rotary selector."
+   → context: situational; audience: operator; one verb-phrase action naming
+     the current-limit adjustment (word it from the manual under extraction).
+
+B. "Battery type selection must be performed at commissioning. Consult your
+   Balmar dealer for programming assistance."
+   → context: commissioning; audience: installer_or_technician; one action for
+     the battery-type selection (word it from the manual under extraction).
+
+C. "If the BMS has disconnected the battery, remove the fault cause, then press
+   and hold the reset button for 5 seconds."
+   → context: emergency; audience: operator; one action describing that device's
+     protective-disconnect recovery in the manual's own words (never paste a
+     stock phrase from these examples).
+
+D. "The charger can be monitored and configured via the VictronConnect app over
+   Bluetooth."
+   → control_surface: mobile_app_bluetooth, location_class: wireless,
+     optional_accessory: false;
+     PLUS two operator_actions: "monitor charger via VictronConnect app"
+     (daily) and "configure charger via VictronConnect app" (situational or
+     commissioning per framing) — never one combined "monitor and configure" action.
+
+E. "With the optional Bluetooth Gateway, settings can be adjusted from the
+   smartphone app."
+   → control_surface: mobile_app_bluetooth, optional_accessory: true;
+     plus requires_devices entry for the gateway with
+     needed_for: "control_surfaces[0]".
+
+F. "The unit connects to the NMEA 2000 backbone and transmits battery status PGNs."
+   → networks.speaks: "NMEA 2000"; data_roles.exposes_data_to_network: true;
+     bridges: EMPTY.
+
+G. "The interface links the MasterBus network to CZone, allowing CZone displays
+   to show MasterBus device data."
+   → networks.bridges: [{from: "MasterBus", to: "CZone"}].
+
+H. "Connect the unit's VE.Direct port to a GX device to monitor it remotely via VRM."
+   → networks.speaks includes "VE.Direct" (wired);
+     data_roles.exposes_data_to_network: true;
+     requires_devices: {description_verbatim: "GX device",
+     needed_for: "data_roles.exposes_data_to_network"}.
+   Rationale: the port exists on the device → speaks; usefulness depending on
+   another product → requires_devices, not by zeroing the capability or omitting
+   the speak.
+
+I. "BlueSolar models without built-in Bluetooth require the VE.Direct Bluetooth
+   Smart Dongle." (when profiling a SmartSolar with built-in Bluetooth)
+   → NO requires_devices entry for the dongle and NO control_surface change.
+   Accessories that apply only to other model variants are ignored (see rule 8).
+
+J. "To shut down the charger for service or storage: disconnect the PV supply,
+   then the battery supply."
+   → action: "shutdown the solar charger" (or equivalent); context: situational
+   (or maintenance), NOT emergency. Prescribed orderly shutdown for service/
+   storage is not an emergency procedure; fault response (error codes,
+   protective disconnect recovery) is.
+
+K. "The unit can be operated with the optional MasterView remote panel, installed
+   at a convenient location."
+   → control_surface: {surface: remote_panel_accessory, location_class:
+     remote_wired, optional_accessory: true, label_verbatim from the manual};
+     PLUS requires_devices: {description_verbatim: "MasterView remote panel"
+     (or the manual's own panel name), needed_for: that surface's path}.
+   Rationale: a separately sold panel/display that operates THIS device is a
+   control surface of this device, not a different product.
+
+L. "Install a fuse in the positive DC supply cable within 30cm of the battery."
+   → supply_requirements entry describing that fuse mandate (word it from the
+     manual under extraction — never paste this example sentence; include
+     manual_section on the supporting evidence); also record protected_by when
+     the manual frames the fuse as protecting this unit.
+   Rationale: protection and supply mandates are FACTS to record even when the
+   surrounding procedure is installer-audience — audience applies to
+   operator_actions, never to requirement fields
+   (supply_requirements / protected_by / protects).
+
+M. (automatic protection + manual override — lithium/BMS style)
+   Part 1 — Manual: "The safety relay will automatically open (REMOTE OFF) when
+   built-in thresholds are met."
+   → protects[] entry worded from the manual (safety relay automatically opens /
+     protective disconnect on built-in thresholds). NOT an operator_action.
+   Part 2 — Manual: "LOCK OFF knob position mechanically opens the safety relay"
+     (or equivalent LOCK OFF / servicing isolation wording).
+   → control_surfaces: {surface: rotary_selector (or physical_controls),
+     location_class: on_device, optional_accessory: false, label from the manual};
+     safety_role.has_manual_override: true.
+   Operator recovery after a protective trip ("Close relay" once limits are OK)
+   stays operator_actions with context: emergency — separate from Part 1/2.
+
+N. (requirement_kind taxonomy — reuse known product names; set kind correctly)
+   VictronConnect app → software_app;
+   VE.Direct cable → cable_or_consumable;
+   MasterAdjust / CZone Configuration Tool → commissioning_tool;
+   GX device → device.
+   Emit separate OR alternatives when the manual says "GX device or GlobalLink
+   520" (two device entries, same needed_for) — never one combined description.
+
+P. (platform ui_pages — CZone 2.0 style)
+   Manual: "The Climate page will appear if a supported air conditioner (HVAC)
+   is configured on the system."
+   → entity_kind: platform;
+     ui_pages entry: name "Climate"; purpose from the page (control/monitor HVAC);
+     appears_if_gate: {
+       verbatim: that full sentence,
+       description_verbatim: "supported air conditioner (HVAC)",
+       functional_class: "supported_hvac"
+     };
+     actions: power / mode / setpoint / fan controls from CLIMATE CONTROLS
+     with audience operator and daily or situational context.
+   Same pattern for AC Mains (ACMI → functional_class "acmi") and
+   Inverter/Charger (Mastervolt charger/inverter → "mastervolt_inverter_charger").
+   Intro page tiles must each become a ui_page (Favourites, Modes, Control,
+   Monitoring, Alarms, AC Mains, Inverter/Charger, Climate) when present in
+   the manual under extraction.
+
+Return JSON only — no markdown wrapper — matching the interaction_profile schema.

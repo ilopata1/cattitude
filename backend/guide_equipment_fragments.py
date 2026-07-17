@@ -22,7 +22,8 @@ Fragments are curated once per equipment model (first boat pays, siblings
 don't) and assembled deterministically into vessel guides:
 
 - System modules: when linked equipment provides approved sections for a system,
-  the module is assembled from fragments instead of calling the LLM.
+  the module is assembled via ``guide_system_assembly`` (primary-home routing +
+  guest skeleton for Electrical/Batteries) instead of calling the LLM.
 - Fix cards: fragment overrides replace the body steps of the generic card
   with equipment-specific steps; extra cards are appended. The vessel-specific
   contact step (always the final step of a generic card) is preserved, so
@@ -41,8 +42,22 @@ from sqlalchemy import text
 from sqlalchemy.engine import Connection
 
 from guide_fix_icons import normalize_fix_icon
+from guide_system_assembly import assemble_system_from_fragments
 
 FragmentStatus = Literal["draft", "approved"]
+
+# Re-export assemble_system_from_fragments for guide_generation / scripts.
+__all__ = [
+    "FragmentStatus",
+    "apply_fix_card_fragments",
+    "approve_equipment_fragment",
+    "assemble_system_from_fragments",
+    "delete_equipment_fragment",
+    "get_equipment_fragment",
+    "load_vessel_fragments",
+    "replace_equipment_fragment",
+    "upsert_equipment_fragment",
+]
 
 
 def _coerce_jsonb(value: Any) -> Any:
@@ -100,39 +115,6 @@ def load_vessel_fragments(
         )
     )
     return fragments
-
-
-def assemble_system_from_fragments(
-    system_id: str, fragment_rows: list[dict[str, Any]]
-) -> dict[str, Any] | None:
-    """Assemble a system module payload from equipment fragments, or None.
-
-    Any linked equipment providing sections for the system triggers assembly
-    (LLM is skipped). Equipment without a fragment simply contributes nothing —
-    the admin review diff is the safety net for noticing missing coverage.
-    """
-    contributions: list[dict[str, Any]] = []
-    for row in fragment_rows:
-        entry = (row["fragment"].get("system_sections") or {}).get(system_id)
-        if isinstance(entry, dict) and entry.get("sections"):
-            contributions.append(entry)
-    if not contributions:
-        return None
-
-    payload: dict[str, Any] = {"id": system_id, "sections": []}
-    learn_checks: list[str] = []
-    for entry in contributions:
-        if not payload.get("subtitle") and entry.get("subtitle"):
-            payload["subtitle"] = entry["subtitle"]
-        if not payload.get("summary") and entry.get("summary"):
-            payload["summary"] = entry["summary"]
-        for check in entry.get("learnChecks") or []:
-            if check not in learn_checks:
-                learn_checks.append(check)
-        payload["sections"].extend(entry["sections"])
-    if learn_checks:
-        payload["learnChecks"] = learn_checks
-    return payload
 
 
 def apply_fix_card_fragments(

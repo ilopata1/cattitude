@@ -1,0 +1,64 @@
+{
+  "device": {
+    "manufacturer": "Example",
+    "model": "GX Monitor",
+    "category_freeform": "GX device monitoring hub"
+  },
+  "control_surfaces": [
+    {
+      "surface": "touchscreen",
+      "location_class": "remote_wired",
+      "optional_accessory": false,
+      "label_verbatim": "hub display",
+      "path": "control_surfaces[0]"
+    },
+    {
+      "surface": "web_interface",
+      "location_class": "wireless",
+      "optional_accessory": false,
+      "label_verbatim": "remote console",
+      "path": "control_surfaces[1]"
+    }
+  ],
+  "operator_actions": [
+    {
+      "action": "view system status on hub",
+      "audience": "operator",
+      "context": "daily"
+    }
+  ],
+  "networks": {
+    "speaks": [
+      {
+        "name_verbatim": "VE.Direct",
+        "physical_or_wireless": "wired"
+      }
+    ],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": true,
+    "displays_data_from_other_devices": true,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": false
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [],
+  "evidence": [
+    {
+      "supports_field": "data_roles.displays_data_from_other_devices",
+      "manual_section": "Overview",
+      "note": "Displays data from networked devices"
+    }
+  ],
+  "confidence": {
+    "overall": 0.9,
+    "notes": "Generic monitoring hub for conditional-capability Stage 2 tests"
+  }
+}

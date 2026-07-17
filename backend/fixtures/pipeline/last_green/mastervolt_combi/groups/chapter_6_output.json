@@ -1,0 +1,62 @@
+{
+  "device": {
+    "manufacturer": "Mastervolt",
+    "model": "Mass Combi Pro 24/3500-100",
+    "category_freeform": "Mass Combi Pro"
+  },
+  "control_surfaces": [
+    {
+      "surface": "remote_panel_accessory",
+      "location_class": "remote_wired",
+      "optional_accessory": true,
+      "label_verbatim": "MasterView remote panel",
+      "path": "control_surfaces[0]"
+    }
+  ],
+  "operator_actions": [
+    {
+      "action": "configure via DIP-switches",
+      "audience": "installer_or_technician",
+      "context": "commissioning"
+    }
+  ],
+  "networks": {
+    "speaks": [],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [
+    {
+      "description_verbatim": "MasterView remote panel",
+      "needed_for": "control_surfaces[0]"
+    }
+  ],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": false
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [],
+  "evidence": [
+    {
+      "supports_field": "operator_actions[0]",
+      "manual_section": "6 CONFIGURATION",
+      "note": "DIP-switch configuration is for commissioning"
+    },
+    {
+      "supports_field": "control_surfaces[0]",
+      "manual_section": "6 CONFIGURATION",
+      "note": "Remote panel operates the Mass Combi Pro"
+    }
+  ],
+  "confidence": {
+    "overall": 0.8,
+    "notes": "Profile based on limited manual excerpts"
+  }
+}

@@ -194,14 +194,31 @@ Equipment **manuals** (PDFs) feed both the Ask tab (search) and equipment fragme
 
 ### Follow-ups (fragment / Electrical quality)
 
-Still open after the drafting tighten:
+Engineering plan for the longer pipeline (interaction profiles → vessel graph →
+section views): [`guide-pipeline-plan.md`](guide-pipeline-plan.md).
 
-1. **Assemble, don’t concat** — replace blind `sections.extend` for multi-equipment systems (especially Electrical) with an ordered guest skeleton or a synthesize pass.
-2. **Narrow system targeting** — stop dual-dumping `electrical_dc` gear into both `electrical` and `batteries`; route charge/solar/regulators primarily to batteries.
+Still open after the drafting tighten and skeleton assembly:
+
+1. ~~**Assemble, don’t concat**~~ — **done**: `guide_system_assembly.py` orders Electrical /
+   Batteries by a guest role skeleton and labels multi-equipment contributions.
+2. ~~**Narrow system targeting**~~ — **done**: primary-home keywords route charge/storage
+   gear to Batteries and panel/distribution to Electrical (drafting + coverage + assembly).
 3. **Cap fragment size** — limit sections/learnChecks per equipment contribution before approve.
 4. **Approve-time quality gates** — reject install/commissioning titles, vessel/charter names, oversized dumps.
 5. **Quarantine harvest leftovers** — deactivate or unlink harvested Cattitude-specific fragments (e.g. generic SmartSolar charger) before regenerating sibling boats.
 6. **Audit manual_type tags** — many PDFs must be correctly typed as `operators` for the new filter to help.
+7. ~~**Stage 1–2 offline spike**~~ — **done (Outremer fixture):** `interaction_profile.py` +
+   `system_graph.py`; exact-match via `scripts/verify_system_graph.py`. Still **not** wired
+   into `generate_module`. Optional live extract:
+   `scripts/extract_interaction_profile.py`. **Stage 1.5** validator (every profile):
+   `scripts/verify_interaction_profile_validate.py` (+ Stage 1.6 derive). Spec:
+   [`equipment-classification-spec-v3.8.md`](equipment-classification-spec-v3.8.md).
+   Local gates: `make pipeline-verify` / `.\pipeline_verify.ps1` (fixtures);
+   `make pipeline-compare-scratch` / `.\pipeline_verify.ps1 -CompareScratch`
+   (live scratch vs SmartSolar golden). **No GitHub Actions live-extract job yet.**
+   Fixture edits require human auth — see [`tests/fixtures/POLICY.md`](tests/fixtures/POLICY.md).
+   Details: [`guide-pipeline-plan.md`](guide-pipeline-plan.md),
+   [`fixtures/pipeline/README.md`](fixtures/pipeline/README.md).
 
 ## Defaults and fallbacks
 

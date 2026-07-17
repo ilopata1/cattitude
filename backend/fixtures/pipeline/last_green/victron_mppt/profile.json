@@ -1,0 +1,608 @@
+{
+  "device": {
+    "manufacturer": "Victron Energy",
+    "model": "SmartSolar MPPT 75 | 15",
+    "category_freeform": "MPPT solar charger"
+  },
+  "control_surfaces": [
+    {
+      "surface": "remote_panel_accessory",
+      "location_class": "remote_wired",
+      "optional_accessory": true,
+      "label_verbatim": "MPPT Control display",
+      "path": "control_surfaces[0]",
+      "vote_margin": "3/3"
+    },
+    {
+      "surface": "mobile_app_bluetooth",
+      "location_class": "wireless",
+      "optional_accessory": false,
+      "label_verbatim": "VictronConnect app",
+      "path": "control_surfaces[1]",
+      "vote_margin": "3/3"
+    }
+  ],
+  "operator_actions": [
+    {
+      "action": "connect the display to the solar charger via a VE.Direct cable",
+      "audience": "operator",
+      "context": "situational",
+      "vote_margin": "3/3",
+      "source": "extracted"
+    },
+    {
+      "action": "configure solar charger settings via VictronConnect app",
+      "audience": "operator",
+      "context": "situational",
+      "vote_margin": "1/3",
+      "source": "extracted"
+    },
+    {
+      "action": "monitor via the VictronConnect app",
+      "audience": "operator",
+      "context": "daily",
+      "vote_margin": "3/3",
+      "source": "extracted"
+    },
+    {
+      "action": "consult error codes and alarms",
+      "audience": "operator",
+      "context": "emergency",
+      "source": "derived",
+      "derived_from": "evidence[3]"
+    },
+    {
+      "action": "shutdown the device",
+      "audience": "operator",
+      "context": "situational",
+      "source": "derived",
+      "derived_from": "evidence[5]"
+    },
+    {
+      "action": "restart the device",
+      "audience": "operator",
+      "context": "situational",
+      "source": "derived",
+      "derived_from": "evidence[5]"
+    },
+    {
+      "action": "set the sunset action to keep the lights off",
+      "audience": "operator",
+      "context": "situational",
+      "source": "extracted",
+      "vote_margin": "repaired"
+    },
+    {
+      "action": "set the sunset action to switch on for a fixed time",
+      "audience": "operator",
+      "context": "situational",
+      "source": "extracted",
+      "vote_margin": "repaired"
+    },
+    {
+      "action": "set the sunset action to switch on till midnight",
+      "audience": "operator",
+      "context": "situational",
+      "source": "extracted",
+      "vote_margin": "repaired"
+    },
+    {
+      "action": "set the sunset action to switch on till sunrise",
+      "audience": "operator",
+      "context": "situational",
+      "source": "extracted",
+      "vote_margin": "repaired"
+    },
+    {
+      "action": "update firmware",
+      "audience": "operator",
+      "context": "situational",
+      "source": "extracted",
+      "vote_margin": "repaired_deterministic"
+    }
+  ],
+  "networks": {
+    "speaks": [
+      {
+        "name_verbatim": "VE.Direct",
+        "physical_or_wireless": "wired",
+        "vote_margin": "3/3"
+      },
+      {
+        "name_verbatim": "VE.Smart Networking",
+        "physical_or_wireless": "wireless",
+        "vote_margin": "3/3"
+      },
+      {
+        "name_verbatim": "Bluetooth",
+        "physical_or_wireless": "wireless",
+        "vote_margin": "3/3"
+      }
+    ],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": true,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [
+    {
+      "description_verbatim": "VE.Direct TX digital output cable",
+      "needed_for": "control_surfaces[0]",
+      "requirement_kind": "cable_or_consumable",
+      "vote_margin": "3/3"
+    },
+    {
+      "description_verbatim": "GX device",
+      "needed_for": "data_roles.exposes_data_to_network",
+      "requirement_kind": "device",
+      "needed_for_normalized_from": "networks.speaks[0]",
+      "vote_margin": "3/3"
+    },
+    {
+      "description_verbatim": "MPPT Control - an (optional) external display",
+      "needed_for": "control_surfaces[0]",
+      "requirement_kind": "device",
+      "vote_margin": "3/3"
+    },
+    {
+      "description_verbatim": "GlobalLink 520",
+      "needed_for": "data_roles.exposes_data_to_network",
+      "requirement_kind": "device",
+      "vote_margin": "repaired"
+    }
+  ],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": true
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [
+    {
+      "description_verbatim": "The battery supply must be protected by a fuse",
+      "vote_margin": "3/3"
+    },
+    {
+      "description_verbatim": "Insert external fuse(s) or circuit breaker(s) within 30cm of the battery.",
+      "vote_margin": "3/3"
+    },
+    {
+      "description_verbatim": "Use flexible multi-stranded copper cable for the battery and PV connections.",
+      "vote_margin": "2/3"
+    }
+  ],
+  "evidence": [
+    {
+      "supports_field": "control_surfaces[0]",
+      "manual_section": "4.7. Connect the MPPT Control display",
+      "note": "Display connects via VE.Direct cable"
+    },
+    {
+      "supports_field": "control_surfaces[0]",
+      "manual_section": "5.1.3. Settings via MPPT Control display",
+      "note": "MPPT Control display is an optional accessory"
+    },
+    {
+      "supports_field": "operator_actions[0]",
+      "manual_section": "5.1.3. Settings via MPPT Control display",
+      "note": "Settings can be configured via the app"
+    },
+    {
+      "supports_field": "operator_actions[1]",
+      "manual_section": "GX device showing alarm notification and historic errors.",
+      "note": "Solar charger can be monitored via VRM"
+    },
+    {
+      "supports_field": "data_roles.exposes_data_to_network",
+      "manual_section": "6. Operation",
+      "note": "Device communicates via VE.Direct and Bluetooth."
+    },
+    {
+      "supports_field": "safety_role.has_emergency_procedure",
+      "manual_section": "6.5. Shutdown and restart procedure",
+      "note": "Shutdown and restart procedures are detailed."
+    },
+    {
+      "supports_field": "control_surfaces[0]",
+      "manual_section": "7.3. Monitoring via the VictronConnect app",
+      "note": "Monitoring and configuration via app is possible."
+    },
+    {
+      "supports_field": "control_surfaces[0]",
+      "manual_section": "3.7. VE.Direct port",
+      "note": "Optional external display connects to the solar charger"
+    }
+  ],
+  "confidence": {
+    "overall": 1.0,
+    "notes": "[chapter_1] Limited information available in the provided excerpts. | [batch_0] Limited excerpts do not cover operator actions or control surfaces. | [chapter_2] Limited information from the provided text. | [chapter_4] Manual excerpts cover basic operation and requirements. | [chapter_5] Manual excerpts provide clear operator actions and control surfaces. | [chapter_6] Profile based on limited manual excerpts. | [chapter_8] Profile based on available manual excerpts | [chapter_9] Limited inform"
+  },
+  "coverage": {
+    "chunk_count": 123,
+    "heading_count": 165,
+    "headings_covered_count": 127,
+    "heading_coverage_fraction": 0.7697,
+    "coverage_low_threshold": 0.25,
+    "top_k_used": 14
+  },
+  "group_utilization": [
+    {
+      "group_id": "chapter_1",
+      "is_introduction": true,
+      "excerpt_count": 5,
+      "predicted_fields": [
+        "evidence",
+        "operator_actions",
+        "protected_by",
+        "supply_requirements"
+      ],
+      "contributions": {
+        "operator_actions": 0,
+        "control_surfaces": 0,
+        "networks": 0,
+        "requires_devices": 0,
+        "evidence": 0,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "contribution_total": 0,
+      "unutilized": true
+    },
+    {
+      "group_id": "batch_0",
+      "is_introduction": false,
+      "excerpt_count": 2,
+      "predicted_fields": [
+        "control_surfaces",
+        "evidence",
+        "operator_actions",
+        "requires_devices"
+      ],
+      "contributions": {
+        "operator_actions": 0,
+        "control_surfaces": 0,
+        "networks": 0,
+        "requires_devices": 0,
+        "evidence": 0,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "contribution_total": 0,
+      "unutilized": true
+    },
+    {
+      "group_id": "chapter_2",
+      "is_introduction": false,
+      "excerpt_count": 1,
+      "predicted_fields": [
+        "evidence",
+        "operator_actions"
+      ],
+      "contributions": {
+        "operator_actions": 0,
+        "control_surfaces": 0,
+        "networks": 0,
+        "requires_devices": 0,
+        "evidence": 0,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "contribution_total": 0,
+      "unutilized": true
+    },
+    {
+      "group_id": "chapter_4",
+      "is_introduction": false,
+      "excerpt_count": 8,
+      "predicted_fields": [
+        "control_surfaces",
+        "data_roles",
+        "evidence",
+        "operator_actions",
+        "protected_by",
+        "requires_devices",
+        "supply_requirements"
+      ],
+      "contributions": {
+        "operator_actions": 1,
+        "control_surfaces": 1,
+        "networks": 1,
+        "requires_devices": 1,
+        "evidence": 2,
+        "supply_requirements": 1,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "contribution_total": 7,
+      "unutilized": false
+    },
+    {
+      "group_id": "chapter_5",
+      "is_introduction": false,
+      "excerpt_count": 19,
+      "predicted_fields": [
+        "control_surfaces",
+        "data_roles",
+        "evidence",
+        "networks",
+        "operator_actions",
+        "protects",
+        "requires_devices",
+        "safety_role",
+        "supply_requirements"
+      ],
+      "contributions": {
+        "operator_actions": 2,
+        "control_surfaces": 1,
+        "networks": 2,
+        "requires_devices": 2,
+        "evidence": 5,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "contribution_total": 12,
+      "unutilized": false
+    },
+    {
+      "group_id": "chapter_6",
+      "is_introduction": false,
+      "excerpt_count": 8,
+      "predicted_fields": [
+        "control_surfaces",
+        "evidence",
+        "operator_actions",
+        "safety_role"
+      ],
+      "contributions": {
+        "operator_actions": 4,
+        "control_surfaces": 1,
+        "networks": 2,
+        "requires_devices": 1,
+        "evidence": 3,
+        "supply_requirements": 1,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 1,
+        "safety_role": 1
+      },
+      "contribution_total": 14,
+      "unutilized": false
+    },
+    {
+      "group_id": "chapter_8",
+      "is_introduction": false,
+      "excerpt_count": 45,
+      "predicted_fields": [
+        "control_surfaces",
+        "data_roles",
+        "evidence",
+        "networks",
+        "operator_actions",
+        "protected_by",
+        "protects",
+        "requires_devices",
+        "safety_role",
+        "supply_requirements"
+      ],
+      "contributions": {
+        "operator_actions": 0,
+        "control_surfaces": 1,
+        "networks": 2,
+        "requires_devices": 1,
+        "evidence": 1,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "contribution_total": 5,
+      "unutilized": false
+    },
+    {
+      "group_id": "chapter_9",
+      "is_introduction": false,
+      "excerpt_count": 3,
+      "predicted_fields": [
+        "control_surfaces",
+        "evidence",
+        "operator_actions",
+        "requires_devices"
+      ],
+      "contributions": {
+        "operator_actions": 0,
+        "control_surfaces": 0,
+        "networks": 0,
+        "requires_devices": 0,
+        "evidence": 0,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "contribution_total": 0,
+      "unutilized": true
+    }
+  ],
+  "merge_conflicts": [
+    {
+      "kind": "operator_actions",
+      "attribute": "context",
+      "group_id": "chapter_5",
+      "variants": [
+        {
+          "action": "configure solar charger settings via VictronConnect app",
+          "audience": "operator",
+          "context": "situational"
+        },
+        {
+          "action": "monitor solar charger via VictronConnect app",
+          "audience": "operator",
+          "context": "daily"
+        }
+      ]
+    },
+    {
+      "kind": "control_surfaces",
+      "attribute": "optional_accessory",
+      "group_id": "chapter_6",
+      "variants": [
+        {
+          "surface": "mobile_app_bluetooth",
+          "location_class": "wireless",
+          "optional_accessory": true,
+          "label_verbatim": "VictronConnect app",
+          "path": "control_surfaces[1]"
+        },
+        {
+          "surface": "mobile_app_bluetooth",
+          "location_class": "wireless",
+          "optional_accessory": false,
+          "label_verbatim": "VictronConnect app",
+          "path": "control_surfaces[0]"
+        }
+      ]
+    },
+    {
+      "kind": "operator_actions",
+      "attribute": "audience",
+      "group_id": "chapter_6",
+      "variants": [
+        {
+          "action": "configure solar charger settings via VictronConnect app",
+          "audience": "operator",
+          "context": "situational"
+        },
+        {
+          "action": "configure via the VictronConnect app",
+          "audience": "either",
+          "context": "situational"
+        }
+      ]
+    }
+  ],
+  "repairs": [],
+  "validation_flags": [
+    {
+      "flag": "merge_conflict",
+      "severity": "warning",
+      "detail": "cross-group conflict on operator_actions.context (group=chapter_5)",
+      "field_path": "merge_conflicts[0]"
+    },
+    {
+      "flag": "merge_conflict",
+      "severity": "warning",
+      "detail": "cross-group conflict on control_surfaces.optional_accessory (group=chapter_6)",
+      "field_path": "merge_conflicts[1]"
+    },
+    {
+      "flag": "merge_conflict",
+      "severity": "warning",
+      "detail": "cross-group conflict on operator_actions.audience (group=chapter_6)",
+      "field_path": "merge_conflicts[2]"
+    },
+    {
+      "flag": "group_unutilized",
+      "severity": "warning",
+      "detail": "group 'chapter_1' had 5 routed excerpts but contributed zero fields; routing predicted ['evidence', 'operator_actions', 'protected_by', 'supply_requirements']",
+      "field_path": "group_utilization.chapter_1"
+    },
+    {
+      "flag": "group_unutilized",
+      "severity": "warning",
+      "detail": "group 'batch_0' had 2 routed excerpts but contributed zero fields; routing predicted ['control_surfaces', 'evidence', 'operator_actions', 'requires_devices']",
+      "field_path": "group_utilization.batch_0"
+    },
+    {
+      "flag": "group_unutilized",
+      "severity": "warning",
+      "detail": "group 'chapter_2' had 1 routed excerpts but contributed zero fields; routing predicted ['evidence', 'operator_actions']",
+      "field_path": "group_utilization.chapter_2"
+    },
+    {
+      "flag": "group_unutilized",
+      "severity": "warning",
+      "detail": "group 'chapter_9' had 3 routed excerpts but contributed zero fields; routing predicted ['control_surfaces', 'evidence', 'operator_actions', 'requires_devices']",
+      "field_path": "group_utilization.chapter_9"
+    },
+    {
+      "flag": "evidence_incomplete",
+      "severity": "blocking",
+      "detail": "no evidence entry supports requires_devices[0]",
+      "field_path": "requires_devices[0]"
+    },
+    {
+      "flag": "evidence_incomplete",
+      "severity": "blocking",
+      "detail": "no evidence entry supports requires_devices[1]",
+      "field_path": "requires_devices[1]"
+    },
+    {
+      "flag": "evidence_incomplete",
+      "severity": "blocking",
+      "detail": "no evidence entry supports requires_devices[2]",
+      "field_path": "requires_devices[2]"
+    }
+  ],
+  "needs_rextraction": false,
+  "extraction_votes": [
+    {
+      "field_path": "operator_actions",
+      "kind": "operator_actions",
+      "attribute": "presence",
+      "chosen": {
+        "action": "configure solar charger settings via VictronConnect app",
+        "audience": "operator",
+        "context": "situational",
+        "vote_margin": "1/3"
+      },
+      "vote_margin": {
+        "n_runs": 3,
+        "present_in": 1,
+        "agree_with_chosen": 1,
+        "margin": "1/3"
+      },
+      "variants": [
+        {
+          "run": 1,
+          "value": {
+            "action": "configure solar charger settings via VictronConnect app",
+            "audience": "operator",
+            "context": "situational"
+          }
+        },
+        {
+          "run": 2,
+          "value": null
+        },
+        {
+          "run": 3,
+          "value": null
+        }
+      ],
+      "instability_class": "cosmetic"
+    }
+  ],
+  "instability_triage": {
+    "material_count": 0,
+    "cosmetic_count": 1
+  }
+}

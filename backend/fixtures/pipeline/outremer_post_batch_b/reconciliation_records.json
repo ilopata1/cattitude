@@ -1,0 +1,103 @@
+{
+  "vessel": "outremer_55n60",
+  "batch": "VESSEL_ARTIFACT RECONCILIATION BATCH (Outremer 55N60) — revised",
+  "fixture_auth": "Fixture-Auth: chat VESSEL_ARTIFACT RECONCILIATION BATCH (Outremer 55N60) — revised — align graph/fixtures to owner inventory (Balmar removed; Touch 7; Alpha Pro III ×2)",
+  "records": [
+    {
+      "id": "rec_balmar_mc624_removed",
+      "device_key_was": "balmar_mc624",
+      "action": "audit_only",
+      "disposition": "owner_removed",
+      "summary": "Balmar MC-624 previously listed; superseded by Alpha Pro III evidence; owner-removed from inventory.",
+      "evidence": [
+        "folios 17, 23",
+        "synoptic 2D"
+      ],
+      "superseded_by": ["alpha_pro_iii_port", "alpha_pro_iii_stbd"],
+      "inventory_action": "none"
+    },
+    {
+      "id": "rec_touch10_to_touch7",
+      "device_key_was": "czone_touch_10",
+      "device_key_now": "czone_touch_7",
+      "action": "audit_only",
+      "disposition": "owner_corrected",
+      "summary": "CZone Touch 10 previously assumed; folio 2E TAC box shows Touch 7; owner-corrected. Touch 10 extraction artifacts retained in scratch as diff baseline for batch A; exits vessel graph.",
+      "evidence": [
+        "folio 2E TAC box — Touch 7"
+      ],
+      "inventory_action": "none",
+      "extraction_archive": "fixtures/pipeline/scratch/czone_touch_10*.json"
+    },
+    {
+      "id": "rec_alpha_pro_iii_added",
+      "device_keys_now": ["alpha_pro_iii_port", "alpha_pro_iii_stbd"],
+      "action": "audit_only",
+      "disposition": "owner_added",
+      "summary": "Alpha Pro III ×2 added per folios 17/23 + synoptic 2D (MBUS 01/10/11).",
+      "evidence": [
+        "folios 17, 23",
+        "synoptic 2D (MBUS 01/10/11)"
+      ],
+      "provenance_split": {
+        "attested": "Alternators 24V/110A rating attested on vessel documents",
+        "inferred": "Mastervolt Alpha family inferred from vessel MasterBus context + Alpha naming on synoptic",
+        "unconfirmed": "Exact model string 'Alpha Pro III' unconfirmed pending Manufacturer=Mastervolt Model=Alpha Pro III extraction"
+      },
+      "inventory_action": "none"
+    },
+    {
+      "id": "rec_combi_qty_and_ultra_label",
+      "device_key": "mass_combi_pro",
+      "action": "audit_only",
+      "disposition": "quantity_and_label_note",
+      "summary": "Combi ×2 per folio 6/4 / owner's manual. Folio 2C 'Ultra' label recorded as outvoted internal inconsistency (treat as Mass Combi Pro).",
+      "evidence": [
+        "folio 6/4",
+        "owner's manual",
+        "folio 2C 'Ultra' label (outvoted)"
+      ],
+      "quantity": 2,
+      "inventory_action": "none"
+    },
+    {
+      "id": "rec_mli_qty",
+      "device_key": "mli_ultra",
+      "action": "audit_only",
+      "disposition": "quantity_note",
+      "summary": "MLI Ultra ×3 per cover sheet and folios 3A/3B.",
+      "evidence": [
+        "cover sheet",
+        "folios 3A, 3B"
+      ],
+      "quantity": 3,
+      "inventory_action": "none"
+    },
+    {
+      "id": "rec_solar_photo_tier",
+      "action": "audit_only",
+      "disposition": "photo_tier_overrules_schematic",
+      "summary": "Solar = SmartSolar MPPT 150/60-Tr ×1 + 75/15 ×2 (photo tier). Schematic 2D MasterBus-solar claim overruled.",
+      "evidence": [
+        "inspection photos (photo tier)",
+        "schematic 2D MasterBus-solar claim (overruled)"
+      ],
+      "rationale": "Photo-identified Victron MPPTs do not speak MasterBus; schematic claim that solar is on MasterBus is overruled by photo-tier identification.",
+      "inventory_action": "none"
+    },
+    {
+      "id": "rec_masterbus_interfaces_confirmed",
+      "device_keys_now": [
+        "masterbus_bridge_interface",
+        "masterbus_usb_interface"
+      ],
+      "action": "audit_only",
+      "disposition": "confirmed_present",
+      "summary": "MasterBus Bridge Interface + USB Interface confirmed on vessel documents.",
+      "evidence": [
+        "folios 2D, 2E, 11"
+      ],
+      "inventory_action": "none"
+    }
+  ]
+}

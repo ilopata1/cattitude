@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from guide_module_catalog import SYSTEM_CATALOG
+from guide_system_assembly import equipment_belongs_on_system
 
 
 def equipment_for_system_categories(
@@ -19,6 +20,16 @@ def equipment_for_system_categories(
     ]
 
 
+def equipment_for_system(
+    equipment: list[dict[str, Any]], system_id: str
+) -> list[dict[str, Any]]:
+    """Equipment that belongs on this Know chapter (category + primary home)."""
+    meta = SYSTEM_CATALOG.get(system_id, {})
+    categories = meta.get("equipment_categories") or []
+    candidates = equipment_for_system_categories(equipment, categories)
+    return [row for row in candidates if equipment_belongs_on_system(row, system_id)]
+
+
 def system_requires_equipment(system_id: str) -> bool:
     return bool(SYSTEM_CATALOG.get(system_id, {}).get("equipment_categories"))
 
@@ -30,7 +41,7 @@ def system_has_equipment(
     categories = meta.get("equipment_categories") or []
     if not categories:
         return True
-    return bool(equipment_for_system_categories(equipment, categories))
+    return bool(equipment_for_system(equipment, system_id))
 
 
 def list_system_equipment_gaps(
@@ -41,7 +52,7 @@ def list_system_equipment_gaps(
         categories = meta.get("equipment_categories") or []
         if not categories:
             continue
-        if equipment_for_system_categories(equipment, categories):
+        if equipment_for_system(equipment, system_id):
             continue
         gaps.append(
             {
@@ -112,7 +123,7 @@ def build_fragment_pending_system_module(
     meta = SYSTEM_CATALOG.get(system_id, {})
     title = meta.get("review_title", system_id.replace("_", " ").title())
     categories = meta.get("equipment_categories") or []
-    linked = equipment_for_system_categories(equipment, categories)
+    linked = equipment_for_system(equipment, system_id)
     labels = sorted(
         {
             f"{row.get('manufacturer') or 'Unknown'} {row.get('model') or ''}".strip()

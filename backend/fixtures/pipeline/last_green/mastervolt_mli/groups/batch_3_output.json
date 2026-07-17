@@ -1,0 +1,86 @@
+{
+  "device": {
+    "manufacturer": "Mastervolt",
+    "model": "MLI Ultra 24/6000",
+    "category_freeform": "LITHIUM-ION BATTERY"
+  },
+  "control_surfaces": [],
+  "operator_actions": [
+    {
+      "action": "set safety relay to LOCK OFF",
+      "audience": "operator",
+      "context": "emergency"
+    }
+  ],
+  "networks": {
+    "speaks": [
+      {
+        "name_verbatim": "MasterBus",
+        "physical_or_wireless": "wired"
+      },
+      {
+        "name_verbatim": "CZone",
+        "physical_or_wireless": "wired"
+      }
+    ],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [
+    {
+      "description_verbatim": "MasterBus compatible charger",
+      "needed_for": "operator_actions[0]"
+    }
+  ],
+  "safety_role": {
+    "is_protective_device": true,
+    "has_manual_override": true,
+    "has_emergency_procedure": true
+  },
+  "protected_by": [
+    {
+      "description_verbatim": "battery safety relay automatically disconnects on safety events"
+    }
+  ],
+  "protects": [],
+  "supply_requirements": [
+    {
+      "description_verbatim": "integrate a fuse holder in the positive battery wire"
+    }
+  ],
+  "evidence": [
+    {
+      "supports_field": "safety_role.is_protective_device",
+      "manual_section": "Battery Safety event",
+      "note": "automatic disconnect on safety events"
+    },
+    {
+      "supports_field": "safety_role.has_manual_override",
+      "manual_section": "Battery Safety event",
+      "note": "manual override available for safety relay"
+    },
+    {
+      "supports_field": "safety_role.has_emergency_procedure",
+      "manual_section": "Non-resettable battery safety event",
+      "note": "emergency procedure for safety event recovery"
+    },
+    {
+      "supports_field": "requires_devices[0]",
+      "manual_section": "System parts",
+      "note": "charger required for operation"
+    },
+    {
+      "supports_field": "supply_requirements[0]",
+      "manual_section": "Installation procedure for a single unit",
+      "note": "fuse integration is mandatory"
+    }
+  ],
+  "confidence": {
+    "overall": 0.8,
+    "notes": "Manual covers multiple models; some details may vary."
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "device": {
+    "manufacturer": "Mastervolt",
+    "model": "Mass Combi Pro 24/3500-100",
+    "category_freeform": "inverter/charger"
+  },
+  "control_surfaces": [
+    {
+      "surface": "remote_panel_accessory",
+      "location_class": "remote_wired",
+      "optional_accessory": true,
+      "label_verbatim": "MasterView Easy",
+      "path": "control_surfaces[0]"
+    }
+  ],
+  "operator_actions": [
+    {
+      "action": "set AC input current limit",
+      "audience": "operator",
+      "context": "situational"
+    },
+    {
+      "action": "configure DIP-switches",
+      "audience": "installer_or_technician",
+      "context": "commissioning"
+    }
+  ],
+  "networks": {
+    "speaks": [],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [
+    {
+      "description_verbatim": "MasterView Easy remote panel",
+      "needed_for": "control_surfaces[0]"
+    }
+  ],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": false
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [],
+  "evidence": [
+    {
+      "supports_field": "operator_actions[0]",
+      "manual_section": "3.4.5 Gen-/Mains support",
+      "note": "Describes setting AC input current limit"
+    },
+    {
+      "supports_field": "control_surfaces[0]",
+      "manual_section": "MasterView remote panel",
+      "note": "Optional remote panel for operation"
+    },
+    {
+      "supports_field": "operator_actions[1]",
+      "manual_section": "DIP-switches and cover print",
+      "note": "DIP-switch configuration for commissioning"
+    }
+  ],
+  "confidence": {
+    "overall": 0.9,
+    "notes": "Manual excerpts provide clear instructions for actions."
+  }
+}

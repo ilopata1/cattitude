@@ -1,0 +1,531 @@
+{
+  "device": {
+    "manufacturer": "Mastervolt",
+    "model": "MLI Ultra 24/6000",
+    "category_freeform": "LITHIUM-ION BATTERY"
+  },
+  "control_surfaces": [
+    {
+      "surface": "remote_panel_accessory",
+      "location_class": "remote_wired",
+      "optional_accessory": true,
+      "label_verbatim": "SmartRemote or EasyView 5",
+      "path": "control_surfaces[0]"
+    },
+    {
+      "surface": "remote_panel_accessory",
+      "location_class": "remote_wired",
+      "optional_accessory": true,
+      "label_verbatim": "MasterView",
+      "path": "control_surfaces[1]"
+    }
+  ],
+  "operator_actions": [
+    {
+      "action": "monitor MLI Ultra via SmartRemote or EasyView 5",
+      "audience": "operator",
+      "context": "daily",
+      "source": "extracted"
+    },
+    {
+      "action": "open safety relay",
+      "audience": "operator",
+      "context": "emergency",
+      "source": "extracted"
+    },
+    {
+      "action": "close safety relay",
+      "audience": "operator",
+      "context": "emergency",
+      "source": "extracted"
+    },
+    {
+      "action": "verify that a current is flowing out of the battery",
+      "audience": "operator",
+      "context": "daily",
+      "source": "extracted"
+    },
+    {
+      "action": "switch off the load, then switch on the charger",
+      "audience": "operator",
+      "context": "situational",
+      "source": "extracted"
+    },
+    {
+      "action": "set safety relay to LOCK OFF",
+      "audience": "operator",
+      "context": "emergency",
+      "source": "extracted"
+    },
+    {
+      "action": "consult error codes and alarms",
+      "audience": "operator",
+      "context": "emergency",
+      "source": "derived",
+      "derived_from": "evidence[1]"
+    }
+  ],
+  "networks": {
+    "speaks": [
+      {
+        "name_verbatim": "MasterBus",
+        "physical_or_wireless": "wired"
+      },
+      {
+        "name_verbatim": "CZone",
+        "physical_or_wireless": "wired"
+      }
+    ],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": true,
+    "displays_data_from_other_devices": true,
+    "controllable_from_network": true
+  },
+  "requires_devices": [
+    {
+      "description_verbatim": "CZone Configuration Tool",
+      "needed_for": "control_surfaces[0]"
+    },
+    {
+      "description_verbatim": "MasterView remote panel",
+      "needed_for": "control_surfaces[0]"
+    },
+    {
+      "description_verbatim": "Mastervolt battery charger",
+      "needed_for": "data_roles.exposes_data_to_network"
+    },
+    {
+      "description_verbatim": "safety relay",
+      "needed_for": "control_surfaces[0]"
+    },
+    {
+      "description_verbatim": "SmartRemote",
+      "needed_for": "control_surfaces[0]",
+      "requirement_kind": "device",
+      "vote_margin": "repaired"
+    },
+    {
+      "description_verbatim": "EasyView 5",
+      "needed_for": "control_surfaces[0]",
+      "requirement_kind": "device",
+      "vote_margin": "repaired",
+      "needed_for_unified_from": "control_surfaces[1]"
+    }
+  ],
+  "safety_role": {
+    "is_protective_device": true,
+    "has_manual_override": true,
+    "has_emergency_procedure": true
+  },
+  "protected_by": [
+    {
+      "description_verbatim": "safety relay automatically opens on built-in thresholds"
+    },
+    {
+      "description_verbatim": "battery safety relay automatically disconnects on safety events"
+    },
+    {
+      "description_verbatim": "battery fuse in positive battery cable"
+    }
+  ],
+  "protects": [
+    {
+      "description_verbatim": "safety relay automatically opens when thresholds are met"
+    },
+    {
+      "description_verbatim": "safety relay automatically disconnects battery on safety events"
+    }
+  ],
+  "supply_requirements": [
+    {
+      "description_verbatim": "Battery fuse in positive battery cable"
+    }
+  ],
+  "evidence": [
+    {
+      "supports_field": "safety_role.is_protective_device",
+      "manual_section": "42   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "note": "describes automatic safety relay operation"
+    },
+    {
+      "supports_field": "safety_role.has_emergency_procedure",
+      "manual_section": "42   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "note": "includes recovery after safety relay trip"
+    },
+    {
+      "supports_field": "data_roles.exposes_data_to_network",
+      "manual_section": "MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "note": "MasterBus and CZone communication capabilities"
+    },
+    {
+      "supports_field": "safety_role.is_protective_device",
+      "manual_section": "MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "note": "Equipped with Battery Management System for protection"
+    },
+    {
+      "supports_field": "safety_role.has_manual_override",
+      "manual_section": "MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "note": "Manual control for safety relay is available"
+    },
+    {
+      "supports_field": "safety_role.has_emergency_procedure",
+      "manual_section": "MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "note": "Includes alarms and warnings for safety"
+    },
+    {
+      "supports_field": "safety_role.is_protective_device",
+      "manual_section": "Battery Safety event",
+      "note": "safety relay disconnects on battery safety events"
+    },
+    {
+      "supports_field": "requires_devices[0]",
+      "manual_section": "System parts",
+      "note": "charger required for safety relay operation"
+    }
+  ],
+  "confidence": {
+    "overall": 0.9,
+    "notes": "[batch_0] Profile based on specific model information | [batch_1] Manual covers multiple models; specific actions for this model are unclear. | [batch_2] Profile based on limited excerpts; some details may vary. | [batch_3] Manual covers safety and supply requirements clearly. | [batch_0] Profile based on available manual excerpts | [batch_1] Manual covers multiple models; some details may vary. | [batch_2] Profile based on limited excerpts; some details may be missing. | [batch_3] Profile based"
+  },
+  "coverage": {
+    "chunk_count": 65,
+    "heading_count": 192,
+    "headings_covered_count": 159,
+    "heading_coverage_fraction": 0.8281,
+    "coverage_low_threshold": 0.25,
+    "top_k_used": 8
+  },
+  "group_utilization": [
+    {
+      "group_id": "batch_0",
+      "is_introduction": true,
+      "excerpt_count": 14,
+      "predicted_fields": [
+        "control_surfaces",
+        "evidence",
+        "operator_actions",
+        "requires_devices",
+        "supply_requirements"
+      ],
+      "contributions": {
+        "operator_actions": 3,
+        "control_surfaces": 1,
+        "networks": 2,
+        "requires_devices": 1,
+        "evidence": 4,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 1,
+        "data_roles": 0,
+        "safety_role": 2
+      },
+      "contribution_total": 14,
+      "unutilized": false
+    },
+    {
+      "group_id": "batch_1",
+      "is_introduction": false,
+      "excerpt_count": 14,
+      "predicted_fields": [
+        "control_surfaces",
+        "data_roles",
+        "evidence",
+        "networks",
+        "operator_actions",
+        "requires_devices",
+        "safety_role",
+        "supply_requirements"
+      ],
+      "contributions": {
+        "operator_actions": 1,
+        "control_surfaces": 1,
+        "networks": 2,
+        "requires_devices": 1,
+        "evidence": 3,
+        "supply_requirements": 0,
+        "protected_by": 1,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 2
+      },
+      "contribution_total": 11,
+      "unutilized": false
+    },
+    {
+      "group_id": "batch_2",
+      "is_introduction": false,
+      "excerpt_count": 14,
+      "predicted_fields": [
+        "control_surfaces",
+        "evidence",
+        "operator_actions",
+        "requires_devices"
+      ],
+      "contributions": {
+        "operator_actions": 3,
+        "control_surfaces": 1,
+        "networks": 2,
+        "requires_devices": 1,
+        "evidence": 5,
+        "supply_requirements": 1,
+        "protected_by": 1,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 3
+      },
+      "contribution_total": 17,
+      "unutilized": false
+    },
+    {
+      "group_id": "batch_3",
+      "is_introduction": false,
+      "excerpt_count": 13,
+      "predicted_fields": [
+        "control_surfaces",
+        "data_roles",
+        "evidence",
+        "networks",
+        "operator_actions",
+        "protected_by",
+        "protects",
+        "requires_devices",
+        "safety_role",
+        "supply_requirements"
+      ],
+      "contributions": {
+        "operator_actions": 1,
+        "control_surfaces": 0,
+        "networks": 2,
+        "requires_devices": 1,
+        "evidence": 4,
+        "supply_requirements": 1,
+        "protected_by": 1,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 2
+      },
+      "contribution_total": 12,
+      "unutilized": false
+    }
+  ],
+  "merge_conflicts": [
+    {
+      "kind": "operator_actions",
+      "attribute": "context",
+      "group_id": "batch_2",
+      "variants": [
+        {
+          "action": "close safety relay",
+          "audience": "operator",
+          "context": "emergency"
+        },
+        {
+          "action": "close the safety relay by setting the knob to REMOTE ON",
+          "audience": "operator",
+          "context": "situational"
+        }
+      ]
+    }
+  ],
+  "repairs": [],
+  "validation_flags": [
+    {
+      "flag": "merge_conflict",
+      "severity": "warning",
+      "detail": "cross-group conflict on operator_actions.context (group=batch_2)",
+      "field_path": "merge_conflicts[0]"
+    },
+    {
+      "flag": "evidence_incomplete",
+      "severity": "blocking",
+      "detail": "no evidence entry supports data_roles.displays_data_from_other_devices",
+      "field_path": "data_roles.displays_data_from_other_devices"
+    },
+    {
+      "flag": "evidence_incomplete",
+      "severity": "blocking",
+      "detail": "no evidence entry supports data_roles.controllable_from_network",
+      "field_path": "data_roles.controllable_from_network"
+    },
+    {
+      "flag": "evidence_incomplete",
+      "severity": "blocking",
+      "detail": "no evidence entry supports requires_devices[1]",
+      "field_path": "requires_devices[1]"
+    },
+    {
+      "flag": "evidence_incomplete",
+      "severity": "blocking",
+      "detail": "no evidence entry supports requires_devices[2]",
+      "field_path": "requires_devices[2]"
+    },
+    {
+      "flag": "evidence_incomplete",
+      "severity": "blocking",
+      "detail": "no evidence entry supports requires_devices[3]",
+      "field_path": "requires_devices[3]"
+    },
+    {
+      "flag": "extraction_unstable",
+      "severity": "warning",
+      "detail": "requires_devices entry unstable across runs ('Mastervolt battery charger')",
+      "field_path": "requires_devices"
+    },
+    {
+      "flag": "extraction_unstable",
+      "severity": "warning",
+      "detail": "requires_devices entry unstable across runs ('safety relay')",
+      "field_path": "requires_devices"
+    },
+    {
+      "flag": "extraction_unstable",
+      "severity": "warning",
+      "detail": "protects entry unstable across runs ('safety relay automatically disconnects battery on safety events')",
+      "field_path": "protects"
+    },
+    {
+      "flag": "extraction_unstable",
+      "severity": "warning",
+      "detail": "protected_by entry unstable across runs ('battery safety relay automatically disconnects on safety events')",
+      "field_path": "protected_by"
+    },
+    {
+      "flag": "extraction_unstable",
+      "severity": "warning",
+      "detail": "protected_by entry unstable across runs ('battery fuse in positive battery cable')",
+      "field_path": "protected_by"
+    }
+  ],
+  "needs_rextraction": false,
+  "extraction_votes": [
+    {
+      "field_path": "requires_devices",
+      "kind": "requires_devices",
+      "attribute": "presence",
+      "chosen": {
+        "description_verbatim": "Mastervolt battery charger",
+        "needed_for": "data_roles.exposes_data_to_network"
+      },
+      "variants": [
+        {
+          "run": 1,
+          "value": {
+            "description_verbatim": "Mastervolt battery charger",
+            "needed_for": "data_roles.exposes_data_to_network"
+          }
+        },
+        {
+          "run": 2,
+          "value": null
+        },
+        {
+          "run": 3,
+          "value": null
+        }
+      ]
+    },
+    {
+      "field_path": "requires_devices",
+      "kind": "requires_devices",
+      "attribute": "presence",
+      "chosen": {
+        "description_verbatim": "safety relay",
+        "needed_for": "control_surfaces[0]"
+      },
+      "variants": [
+        {
+          "run": 1,
+          "value": null
+        },
+        {
+          "run": 2,
+          "value": {
+            "description_verbatim": "safety relay",
+            "needed_for": "control_surfaces[0]"
+          }
+        },
+        {
+          "run": 3,
+          "value": {
+            "description_verbatim": "safety relay",
+            "needed_for": "control_surfaces[0]"
+          }
+        }
+      ]
+    },
+    {
+      "field_path": "protects",
+      "kind": "protects",
+      "attribute": "presence",
+      "chosen": {
+        "description_verbatim": "safety relay automatically disconnects battery on safety events"
+      },
+      "variants": [
+        {
+          "run": 1,
+          "value": null
+        },
+        {
+          "run": 2,
+          "value": {
+            "description_verbatim": "safety relay automatically disconnects battery on safety events"
+          }
+        },
+        {
+          "run": 3,
+          "value": null
+        }
+      ]
+    },
+    {
+      "field_path": "protected_by",
+      "kind": "protected_by",
+      "attribute": "presence",
+      "chosen": {
+        "description_verbatim": "battery safety relay automatically disconnects on safety events"
+      },
+      "variants": [
+        {
+          "run": 1,
+          "value": {
+            "description_verbatim": "battery safety relay automatically disconnects on safety events"
+          }
+        },
+        {
+          "run": 2,
+          "value": null
+        },
+        {
+          "run": 3,
+          "value": null
+        }
+      ]
+    },
+    {
+      "field_path": "protected_by",
+      "kind": "protected_by",
+      "attribute": "presence",
+      "chosen": {
+        "description_verbatim": "battery fuse in positive battery cable"
+      },
+      "variants": [
+        {
+          "run": 1,
+          "value": null
+        },
+        {
+          "run": 2,
+          "value": {
+            "description_verbatim": "battery fuse in positive battery cable"
+          }
+        },
+        {
+          "run": 3,
+          "value": null
+        }
+      ]
+    }
+  ]
+}

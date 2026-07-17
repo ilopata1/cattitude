@@ -17,7 +17,7 @@ from guide_context_utils import emergency_contacts_count, merge_guide_context
 from guide_equipment_coverage import (
     build_fragment_pending_system_module,
     build_placeholder_system_module,
-    equipment_for_system_categories,
+    equipment_for_system,
     system_has_equipment,
     system_requires_equipment,
 )
@@ -269,10 +269,8 @@ def _schema_hint_for(content_type: str, content_key: str) -> str:
 def _equipment_for_system(
     snapshot: dict[str, Any], system_id: str
 ) -> list[dict[str, Any]]:
-    meta = SYSTEM_CATALOG.get(system_id, {})
-    categories = meta.get("equipment_categories") or []
     equipment = snapshot.get("equipment") or []
-    return equipment_for_system_categories(equipment, categories)
+    return equipment_for_system(equipment, system_id)
 
 
 def _build_generic_system_prompt(system_id: str) -> str:

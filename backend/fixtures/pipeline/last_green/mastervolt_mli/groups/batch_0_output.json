@@ -1,0 +1,100 @@
+{
+  "device": {
+    "manufacturer": "Mastervolt",
+    "model": "MLI Ultra 24/6000",
+    "category_freeform": "LITHIUM-ION BATTERY"
+  },
+  "control_surfaces": [
+    {
+      "surface": "remote_panel_accessory",
+      "location_class": "remote_wired",
+      "optional_accessory": true,
+      "label_verbatim": "SmartRemote or EasyView 5",
+      "path": "control_surfaces[0]"
+    }
+  ],
+  "operator_actions": [
+    {
+      "action": "monitor MLI Ultra via SmartRemote or EasyView 5",
+      "audience": "operator",
+      "context": "daily"
+    },
+    {
+      "action": "open safety relay",
+      "audience": "operator",
+      "context": "emergency"
+    },
+    {
+      "action": "close safety relay",
+      "audience": "operator",
+      "context": "emergency"
+    }
+  ],
+  "networks": {
+    "speaks": [
+      {
+        "name_verbatim": "MasterBus",
+        "physical_or_wireless": "wired"
+      },
+      {
+        "name_verbatim": "CZone",
+        "physical_or_wireless": "wired"
+      }
+    ],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [
+    {
+      "description_verbatim": "CZone Configuration Tool",
+      "needed_for": "control_surfaces[0]"
+    }
+  ],
+  "safety_role": {
+    "is_protective_device": true,
+    "has_manual_override": false,
+    "has_emergency_procedure": true
+  },
+  "protected_by": [],
+  "protects": [
+    {
+      "description_verbatim": "safety relay opens when built-in thresholds are met"
+    }
+  ],
+  "supply_requirements": [],
+  "evidence": [
+    {
+      "supports_field": "safety_role.is_protective_device",
+      "manual_section": "18 for details. The safety relay can also be driven by events (MasterBus) or circuit switches",
+      "note": "safety relay opens on built-in thresholds"
+    },
+    {
+      "supports_field": "safety_role.has_emergency_procedure",
+      "manual_section": "18 for details. The safety relay can also be driven by events (MasterBus) or circuit switches",
+      "note": "emergency procedures for safety relay"
+    },
+    {
+      "supports_field": "control_surfaces[0]",
+      "manual_section": "14. MASTERBUS ON THE MLI ULTRA",
+      "note": "monitoring via SmartRemote or EasyView 5"
+    },
+    {
+      "supports_field": "operator_actions[1]",
+      "manual_section": "14. MASTERBUS ON THE MLI ULTRA",
+      "note": "open safety relay action"
+    },
+    {
+      "supports_field": "operator_actions[2]",
+      "manual_section": "14. MASTERBUS ON THE MLI ULTRA",
+      "note": "close safety relay action"
+    }
+  ],
+  "confidence": {
+    "overall": 0.8,
+    "notes": "Profiled model only; some details may apply to other variants."
+  }
+}

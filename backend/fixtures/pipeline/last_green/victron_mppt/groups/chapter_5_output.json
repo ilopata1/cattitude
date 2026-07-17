@@ -1,0 +1,52 @@
+{
+  "device": {
+    "manufacturer": "Victron Energy",
+    "model": "SmartSolar MPPT 75 | 15",
+    "category_freeform": "MPPT solar charger"
+  },
+  "control_surfaces": [],
+  "operator_actions": [],
+  "networks": {
+    "speaks": [
+      {
+        "name_verbatim": "VE.Direct",
+        "physical_or_wireless": "wired"
+      },
+      {
+        "name_verbatim": "VE.Smart Networking",
+        "physical_or_wireless": "wireless"
+      }
+    ],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": false
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [],
+  "evidence": [
+    {
+      "supports_field": "networks.speaks[0]",
+      "manual_section": "5.5. VE.Smart Networking",
+      "note": "VE.Direct port is a wired communication interface"
+    },
+    {
+      "supports_field": "networks.speaks[1]",
+      "manual_section": "5.5. VE.Smart Networking",
+      "note": "VE.Smart Networking allows wireless communication"
+    }
+  ],
+  "confidence": {
+    "overall": 0.5,
+    "notes": "Limited information available in the provided excerpts."
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "device": {
+    "manufacturer": "Victron Energy",
+    "model": "SmartSolar MPPT 75 | 15",
+    "category_freeform": "MPPT solar charger"
+  },
+  "control_surfaces": [
+    {
+      "surface": "remote_panel_accessory",
+      "location_class": "remote_wired",
+      "optional_accessory": true,
+      "label_verbatim": "MPPT Control display",
+      "path": "control_surfaces[0]"
+    }
+  ],
+  "operator_actions": [
+    {
+      "action": "connect the display to the solar charger via a VE.Direct cable",
+      "audience": "operator",
+      "context": "situational"
+    }
+  ],
+  "networks": {
+    "speaks": [
+      {
+        "name_verbatim": "VE.Direct",
+        "physical_or_wireless": "wired"
+      }
+    ],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [
+    {
+      "description_verbatim": "VE.Direct cable",
+      "needed_for": "control_surfaces[0]",
+      "requirement_kind": "cable_or_consumable"
+    }
+  ],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": false
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [
+    {
+      "description_verbatim": "The battery supply must be protected by a fuse"
+    }
+  ],
+  "evidence": [
+    {
+      "supports_field": "control_surfaces[0]",
+      "manual_section": "4.7. Connect the MPPT Control display",
+      "note": "Display connects via VE.Direct cable"
+    },
+    {
+      "supports_field": "supply_requirements",
+      "manual_section": "4.2. Battery",
+      "note": "Battery must have a protective fuse"
+    }
+  ],
+  "confidence": {
+    "overall": 0.8,
+    "notes": "Manual excerpts cover basic operation and requirements."
+  }
+}

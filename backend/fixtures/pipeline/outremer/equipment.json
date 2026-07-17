@@ -1,0 +1,396 @@
+{
+  "vessel": "outremer_55n60",
+  "notes": "Touch 7 runs_platform czone_2_0; platform_version_unconfirmed + config_unsourced until version photo/.zcf. Climate gate: vessel has 230V aircon (folio 10) but CZone-supported HVAC integration unknown — AC-present ≠ CZone-supported-HVAC.",
+  "fixture_auth": "Fixture-Auth: chat instance-policy + VESSEL_ARTIFACT batch — outremer_post_batch_b primary with distinct Combi/MLI/Alpha instances; Fixture-Auth: chat Solar v3 — vessel_facts observation/inference + evidence refs; Fixture-Auth: chat Solar v4 — vessel_display_name=Supernova",
+  "installation_notes": [
+    {
+      "applies_to": [
+        "czone_2_0"
+      ],
+      "source": "AC schematic folio 10",
+      "note": "230V air conditioning present (aft cabin aircon + AC pump) but whether HVAC is CZone-integrated 'supported HVAC' is unknown — Climate page stays unresolved (AC-present ≠ CZone-supported-HVAC)."
+    }
+  ],
+  "relations": [],
+  "equipment": [
+    {
+      "device_key": "czone_touch_7",
+      "manufacturer": "CZone",
+      "model": "Touch 7",
+      "description": "CZone Touch 7 digital switching display / hub",
+      "system_category": "electrical_dc",
+      "quantity": 1,
+      "instance_handling": "interchangeable",
+      "provenance": "folio 2E TAC box; owner-corrected from Touch 10 assumption"
+    },
+    {
+      "device_key": "czone_2_0",
+      "manufacturer": "CZone",
+      "model": "CZone 2.0",
+      "description": "CZone 2.0 digital switching application (platform)",
+      "system_category": "electrical_dc",
+      "entity_kind": "platform",
+      "quantity": 1,
+      "instance_handling": "interchangeable",
+      "provenance": "Quick Start Guide extract; shared UI for Touch displays"
+    },
+    {
+      "device_key": "coi",
+      "manufacturer": "CZone / Mastervolt",
+      "model": "Combination Output Interface (COI)",
+      "description": "CZone Combination Output Interface",
+      "system_category": "electrical_dc",
+      "quantity": 1,
+      "instance_handling": "interchangeable"
+    },
+    {
+      "device_key": "masterbus_bridge_interface",
+      "manufacturer": "Mastervolt",
+      "model": "MasterBus Bridge Interface",
+      "description": "CZone-MasterBus Bridge Interface (confirmed vessel module)",
+      "system_category": "electrical_dc",
+      "quantity": 1,
+      "instance_handling": "interchangeable",
+      "provenance": "folios 2D/2E/11"
+    },
+    {
+      "device_key": "masterbus_usb_interface",
+      "manufacturer": "Mastervolt",
+      "model": "MasterBus USB Interface",
+      "description": "MasterBus USB Interface (commissioning / PC link)",
+      "system_category": "electrical_dc",
+      "quantity": 1,
+      "instance_handling": "interchangeable",
+      "provenance": "folios 2D/2E/11"
+    },
+    {
+      "device_key": "mli_ultra",
+      "catalog_key": "mli_ultra",
+      "manufacturer": "Mastervolt",
+      "model": "MLI Ultra 24/6000",
+      "description": "Lithium house battery with BMS",
+      "system_category": "electrical_dc",
+      "quantity": 3,
+      "instance_handling": "distinct",
+      "provenance": "cover sheet; folios 3A/3B",
+      "instances": [
+        {
+          "instance_key": "mli_ultra_1",
+          "instance_label": "unit 1",
+          "unit_index": 1,
+          "protected_by": [
+            {
+              "description_verbatim": "Class T fuse / battery fuse in positive cable",
+              "resolved_to_hint": "class_t_1",
+              "source": "folios 3A/3B"
+            },
+            {
+              "description_verbatim": "external safety relay",
+              "resolved_to_hint": "ml_switch_1",
+              "source": "folios 3A/3B"
+            }
+          ]
+        },
+        {
+          "instance_key": "mli_ultra_2",
+          "instance_label": "unit 2",
+          "unit_index": 2,
+          "protected_by": [
+            {
+              "description_verbatim": "Class T fuse / battery fuse in positive cable",
+              "resolved_to_hint": "class_t_2",
+              "source": "folios 3A/3B"
+            },
+            {
+              "description_verbatim": "external safety relay",
+              "resolved_to_hint": "ml_switch_2",
+              "source": "folios 3A/3B"
+            }
+          ]
+        },
+        {
+          "instance_key": "mli_ultra_3",
+          "instance_label": "unit 3",
+          "unit_index": 3,
+          "protected_by": [
+            {
+              "description_verbatim": "Class T fuse / battery fuse in positive cable",
+              "resolved_to_hint": "class_t_3",
+              "source": "folios 3A/3B"
+            },
+            {
+              "description_verbatim": "external safety relay",
+              "resolved_to_hint": "ml_switch_3",
+              "source": "folios 3A/3B"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "device_key": "mass_combi_pro",
+      "catalog_key": "mass_combi_pro",
+      "manufacturer": "Mastervolt",
+      "model": "Mass Combi Pro",
+      "description": "Inverter charger combi",
+      "system_category": "electrical_dc",
+      "quantity": 2,
+      "instance_handling": "distinct",
+      "provenance": "folio 6/4; owner's manual",
+      "label_notes": "Folio 2C 'Ultra' label outvoted as internal inconsistency — treat as Mass Combi Pro",
+      "instances": [
+        {
+          "instance_key": "mass_combi_pro_1",
+          "instance_label": "unit 1 — chart table",
+          "unit_index": 1,
+          "installation_notes": [
+            {
+              "source": "owner's manual p55",
+              "note": "Location: chart table. Fault-procedure / local access at chart table."
+            }
+          ]
+        },
+        {
+          "instance_key": "mass_combi_pro_2",
+          "instance_label": "unit 2 — fwd stbd cabin",
+          "unit_index": 2,
+          "installation_notes": [
+            {
+              "source": "owner's manual p55",
+              "note": "Location: forward starboard cabin. Fault-procedure / local access in fwd stbd cabin."
+            }
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "kind": "parallel_synchronized",
+          "members": [
+            "mass_combi_pro_1",
+            "mass_combi_pro_2"
+          ],
+          "note": "Synchronized Combi pair per folio 6",
+          "evidence": "folio 6"
+        }
+      ]
+    },
+    {
+      "device_key": "victron_mppt_150_60",
+      "manufacturer": "Victron Energy",
+      "model": "SmartSolar MPPT 150/60-Tr",
+      "description": "Solar MPPT charge controller 150/60-Tr",
+      "system_category": "electrical_dc",
+      "quantity": 1,
+      "instance_handling": "interchangeable",
+      "provenance": "photo tier; schematic 2D MasterBus-solar claim overruled"
+    },
+    {
+      "device_key": "victron_mppt",
+      "manufacturer": "Victron Energy",
+      "model": "SmartSolar MPPT 75/15",
+      "description": "Solar MPPT charge controller 75/15",
+      "system_category": "electrical_dc",
+      "quantity": 2,
+      "instance_handling": "interchangeable",
+      "provenance": "photo tier; schematic 2D MasterBus-solar claim overruled"
+    },
+    {
+      "device_key": "silentwind",
+      "manufacturer": "Silentwind",
+      "model": "Hybrid 1000",
+      "description": "Wind generator with own controller",
+      "system_category": "electrical_dc",
+      "quantity": 1,
+      "instance_handling": "interchangeable"
+    },
+    {
+      "device_key": "alpha_pro_iii_port",
+      "catalog_key": "alpha_pro_iii",
+      "manufacturer": "Mastervolt",
+      "model": "Alpha Pro III",
+      "description": "Alternator regulator / Alpha Pro III (port) — stub pending extraction",
+      "system_category": "electrical_dc",
+      "quantity": 1,
+      "instance_handling": "distinct",
+      "side": "port",
+      "instance_label": "port",
+      "provenance_split": {
+        "attested": "24V/110A alternator rating",
+        "inferred": "Mastervolt Alpha family",
+        "unconfirmed": "exact Alpha Pro III model pending extraction"
+      },
+      "provenance": "folios 17/23; synoptic 2D MBUS 01/10/11"
+    },
+    {
+      "device_key": "alpha_pro_iii_stbd",
+      "catalog_key": "alpha_pro_iii",
+      "manufacturer": "Mastervolt",
+      "model": "Alpha Pro III",
+      "description": "Alternator regulator / Alpha Pro III (stbd) — stub pending extraction",
+      "system_category": "electrical_dc",
+      "quantity": 1,
+      "instance_handling": "distinct",
+      "side": "stbd",
+      "instance_label": "stbd",
+      "provenance_split": {
+        "attested": "24V/110A alternator rating",
+        "inferred": "Mastervolt Alpha family",
+        "unconfirmed": "exact Alpha Pro III model pending extraction"
+      },
+      "provenance": "folios 17/23; synoptic 2D MBUS 01/10/11"
+    },
+    {
+      "device_key": "ml_switch",
+      "catalog_key": "ml_switch",
+      "manufacturer": "Blue Sea",
+      "model": "ML-Series",
+      "description": "Blue Sea ML-Series battery switch / isolation",
+      "system_category": "electrical_dc",
+      "quantity": 3,
+      "instance_handling": "distinct",
+      "instances": [
+        {
+          "instance_key": "ml_switch_1",
+          "instance_label": "disconnect for MLI unit 1",
+          "unit_index": 1
+        },
+        {
+          "instance_key": "ml_switch_2",
+          "instance_label": "disconnect for MLI unit 2",
+          "unit_index": 2
+        },
+        {
+          "instance_key": "ml_switch_3",
+          "instance_label": "disconnect for MLI unit 3",
+          "unit_index": 3
+        }
+      ]
+    },
+    {
+      "device_key": "plain_battery_switch",
+      "manufacturer": "generic",
+      "model": "rotary battery switch",
+      "description": "plain on-device battery switch / isolation (local only)",
+      "system_category": "electrical_dc",
+      "quantity": 1,
+      "instance_handling": "interchangeable"
+    },
+    {
+      "device_key": "class_t",
+      "catalog_key": "class_t",
+      "manufacturer": "Blue Sea",
+      "model": "Class T fuse holder",
+      "description": "Class T fuse holder",
+      "system_category": "electrical_dc",
+      "quantity": 3,
+      "instance_handling": "distinct",
+      "instances": [
+        {
+          "instance_key": "class_t_1",
+          "instance_label": "Class T for MLI unit 1",
+          "unit_index": 1
+        },
+        {
+          "instance_key": "class_t_2",
+          "instance_label": "Class T for MLI unit 2",
+          "unit_index": 2
+        },
+        {
+          "instance_key": "class_t_3",
+          "instance_label": "Class T for MLI unit 3",
+          "unit_index": 3
+        }
+      ]
+    },
+    {
+      "device_key": "busbar",
+      "manufacturer": "ProInstaller",
+      "model": "busbar",
+      "description": "DC distribution busbar",
+      "system_category": "electrical_dc",
+      "quantity": 1,
+      "instance_handling": "interchangeable"
+    }
+  ],
+  "vessel_artifact_facts": [
+    {
+      "device_key": "czone_touch_7",
+      "assertions": [
+        {
+          "kind": "network_speak",
+          "name_verbatim": "CZone",
+          "physical_or_wireless": "wired",
+          "source": "folio 2E TAC + system topology"
+        },
+        {
+          "kind": "data_role",
+          "field": "displays_data_from_other_devices",
+          "value": true,
+          "source": "folio 2E TAC + system topology"
+        }
+      ]
+    }
+  ],
+  "hub_operation_sources": [],
+  "platform_version_confirmations": [],
+  "vessel_facts": [
+    {
+      "id": "solar_davit_array_observation",
+      "kind": "observation",
+      "provenance_tier": "physical_inspection",
+      "evidence_refs": [
+        "photo_davit_array"
+      ],
+      "applies_to": [
+        "victron_mppt_150_60"
+      ],
+      "text": "Davit-mounted array: 3× rigid panels feeding the davit array controller (SmartSolar MPPT 150/60)."
+    },
+    {
+      "id": "solar_coachroof_array_observation",
+      "kind": "observation",
+      "provenance_tier": "physical_inspection",
+      "evidence_refs": [
+        "photo_coachroof_boom"
+      ],
+      "applies_to": [
+        "victron_mppt"
+      ],
+      "text": "Coachroof array: 6× semi-flex panels; boom geometry can cast shade across that array (visible in deck photo)."
+    },
+    {
+      "id": "solar_array_wattage_inventory",
+      "kind": "observation",
+      "provenance_tier": "owner_survey",
+      "document_citation": "owner survey / array inventory",
+      "source": "owner survey / array inventory",
+      "evidence_refs": [],
+      "applies_to": [
+        "victron_mppt_150_60",
+        "victron_mppt"
+      ],
+      "text": "Array survey estimate: davit ~1.0–1.2 kW primary; coachroof ~600 W.",
+      "wattage_kw": {
+        "davit_min": 1.0,
+        "davit_max": 1.2,
+        "coachroof": 0.6
+      }
+    },
+    {
+      "id": "solar_coachroof_yield_inference",
+      "kind": "entered_inference",
+      "provenance_tier": "physical_inspection",
+      "evidence_refs": [
+        "photo_coachroof_boom"
+      ],
+      "depends_on": [
+        "solar_coachroof_array_observation"
+      ],
+      "applies_to": [
+        "victron_mppt"
+      ],
+      "text": "Expect lower coachroof contribution when the boom shades those panels."
+    }
+  ],
+  "vessel_display_name": "Supernova"
+}

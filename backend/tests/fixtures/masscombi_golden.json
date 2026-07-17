@@ -1,0 +1,134 @@
+{
+  "_meta": {
+    "Fixture-Auth": "this chat — Mass Combi Pro golden: Gen-/Mains + Power sharing; AC-limit vs Power Sharing kept distinct with evidence (v4.4)",
+    "manual": "MASS COMBI PRO 12/3000-150, 24/3500-100 User and Installation Manual",
+    "adjudication_notes": [
+      "ICC as a product name is NOT present in the ingested manual text — do not require ICC wording; MasterView / remote control / MasterAdjust are the accessory class names that appear.",
+      "Shore/AC input current limit may appear as Mastervolt Power Sharing / mains-limit wording; compare harness accepts those synonyms.",
+      "v3.8 calibration K/L: accessory panel as this-device surface; audience never gates supply/protect requirement fields.",
+      "v4.3: Gen-/Mains support and Power sharing mode must be present as extracted actions (mode selection/behavior); installer audience acceptable if manual frames them that way; step-form not required.",
+      "v4.4 audience collision: 'set AC input current limit' (Mains limit A/B/C / mains fuse — MasterBus event & monitoring) is distinct from 'set Power Sharing level' (match external circuit breaker; DIP/MasterView). Keep both; distinction in evidence."
+    ]
+  },
+  "device": {
+    "manufacturer": "Mastervolt",
+    "model": "Mass Combi Pro 24/3500-100",
+    "category_freeform": "inverter/charger"
+  },
+  "control_surfaces": [
+    {
+      "surface": "physical_controls",
+      "location_class": "on_device",
+      "optional_accessory": false,
+      "label_verbatim": "Main switch",
+      "path": "control_surfaces[0]"
+    },
+    {
+      "surface": "remote_panel_accessory",
+      "location_class": "remote_wired",
+      "optional_accessory": true,
+      "label_verbatim": "MasterView",
+      "path": "control_surfaces[1]"
+    }
+  ],
+  "operator_actions": [
+    {
+      "action": "set shore power input current limit",
+      "audience": "operator",
+      "context": "situational"
+    },
+    {
+      "action": "switch inverter on/off",
+      "audience": "operator",
+      "context": "daily"
+    },
+    {
+      "action": "configure via DIP switches",
+      "audience": "installer_or_technician",
+      "context": "commissioning"
+    },
+    {
+      "action": "configure via MasterAdjust",
+      "audience": "installer_or_technician",
+      "context": "commissioning"
+    },
+    {
+      "action": "enable Generator / mains support mode",
+      "audience": "installer_or_technician",
+      "context": "commissioning"
+    },
+    {
+      "action": "set Power Sharing level",
+      "audience": "installer_or_technician",
+      "context": "commissioning"
+    }
+  ],
+  "networks": {
+    "speaks": [
+      {
+        "name_verbatim": "MasterBus",
+        "physical_or_wireless": "wired"
+      }
+    ],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": true,
+    "displays_data_from_other_devices": true,
+    "controllable_from_network": true
+  },
+  "requires_devices": [
+    {
+      "description_verbatim": "MasterView remote panel",
+      "needed_for": "control_surfaces[1]"
+    }
+  ],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": true
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [
+    {
+      "description_verbatim": "DC-fuse in the DC distribution"
+    }
+  ],
+  "evidence": [
+    {
+      "supports_field": "data_roles.exposes_data_to_network",
+      "manual_section": "4.5 Daily use, MasterBus monitoring",
+      "note": "MasterBus monitoring page exposes status"
+    },
+    {
+      "supports_field": "requires_devices[0]",
+      "manual_section": "MasterBus",
+      "note": "Remote MasterView optional for interface"
+    },
+    {
+      "supports_field": "safety_role.has_emergency_procedure",
+      "manual_section": "7.3.1 Trouble shooting table",
+      "note": "Alarm table includes restart when clear"
+    },
+    {
+      "supports_field": "supply_requirements[0]",
+      "manual_section": "5.4 Things you need",
+      "note": "DC-fuse holder required for install"
+    },
+    {
+      "supports_field": "operator_actions",
+      "manual_section": "MasterBus event commands / monitoring — Mains limit A/B/C",
+      "note": "Mains limit / fuse setting of the Mains input (AC input current limit) is distinct from Power Sharing level"
+    },
+    {
+      "supports_field": "operator_actions",
+      "manual_section": "3.4.4 Power sharing mode",
+      "note": "Power Sharing level matches external circuit breaker; DIP/MasterView adjust — commissioning framing, not the same as Mains limit events"
+    }
+  ],
+  "confidence": {
+    "overall": 0.85,
+    "notes": "Golden Mass Combi fixture. Fixture-Auth: human chat 2026-07-14."
+  }
+}

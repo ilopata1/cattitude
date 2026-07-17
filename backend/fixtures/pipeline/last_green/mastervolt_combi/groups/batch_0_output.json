@@ -1,0 +1,64 @@
+{
+  "device": {
+    "manufacturer": "Mastervolt",
+    "model": "Mass Combi Pro 24/3500-100",
+    "category_freeform": "inverter/charger"
+  },
+  "control_surfaces": [],
+  "operator_actions": [
+    {
+      "action": "check error indications with LEDs",
+      "audience": "operator",
+      "context": "emergency"
+    },
+    {
+      "action": "contact Mastervolt Service Centre for problems",
+      "audience": "either",
+      "context": "situational"
+    },
+    {
+      "action": "perform commissioning with MasterAdjust software",
+      "audience": "installer_or_technician",
+      "context": "commissioning"
+    }
+  ],
+  "networks": {
+    "speaks": [],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": true
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [],
+  "evidence": [
+    {
+      "supports_field": "operator_actions[0]",
+      "manual_section": "4 Open the connection compartment of the Mass Combi",
+      "note": "Check error indications using front LEDs"
+    },
+    {
+      "supports_field": "operator_actions[1]",
+      "manual_section": "4 Open the connection compartment of the Mass Combi",
+      "note": "Contact service center for unresolved issues"
+    },
+    {
+      "supports_field": "operator_actions[2]",
+      "manual_section": "4 Open the connection compartment of the Mass Combi",
+      "note": "Commissioning requires MasterAdjust software"
+    }
+  ],
+  "confidence": {
+    "overall": 0.8,
+    "notes": "Manual excerpts support operator actions and commissioning"
+  }
+}

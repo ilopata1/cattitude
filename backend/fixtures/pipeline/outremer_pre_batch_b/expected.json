@@ -1,0 +1,109 @@
+{
+  "roles": {
+    "czone_system": "HUB",
+    "coi": "BRIDGE",
+    "mli_ultra": "ENDPOINT",
+    "mass_combi_pro": "ENDPOINT",
+    "victron_mppt": "ISLAND",
+    "silentwind": "ISLAND",
+    "balmar_mc624": "ENDPOINT",
+    "ml_switch": "ENDPOINT",
+    "plain_battery_switch": "ENDPOINT",
+    "class_t": "PASSIVE",
+    "busbar": "PASSIVE"
+  },
+  "sections": {
+    "czone_system": {
+      "value": "electrical",
+      "source": "lookup"
+    },
+    "coi": {
+      "value": "electrical",
+      "source": "lookup"
+    },
+    "mli_ultra": {
+      "value": "batteries",
+      "source": "lookup"
+    },
+    "mass_combi_pro": {
+      "value": "batteries",
+      "source": "lookup"
+    },
+    "victron_mppt": {
+      "value": "batteries",
+      "source": "lookup"
+    },
+    "silentwind": {
+      "value": "batteries",
+      "source": "lookup"
+    },
+    "balmar_mc624": {
+      "value": "batteries",
+      "source": "lookup"
+    },
+    "ml_switch": {
+      "value": "electrical",
+      "source": "lookup"
+    },
+    "plain_battery_switch": {
+      "value": "electrical",
+      "source": "lookup"
+    },
+    "class_t": {
+      "value": "electrical",
+      "source": "lookup"
+    },
+    "busbar": {
+      "value": "electrical",
+      "source": "lookup"
+    }
+  },
+  "control_paths": [
+    {
+      "target": "mass_combi_pro",
+      "taught_via": "czone_system"
+    }
+  ],
+  "required_flags": [
+    {
+      "flag": "island_with_daily_use",
+      "device": "victron_mppt"
+    },
+    {
+      "flag": "unresolved_dependency",
+      "device": "balmar_mc624"
+    },
+    {
+      "flag": "suspected_installer_line_item",
+      "device": "busbar"
+    }
+  ],
+  "forbidden_flags": [
+    {
+      "flag": "section_unassigned"
+    },
+    {
+      "flag": "no_hub_found"
+    },
+    {
+      "flag": "multiple_hubs"
+    }
+  ],
+  "required_cross_references": [
+    {
+      "kind": "control",
+      "in_section": "batteries",
+      "to_device": "czone_system"
+    },
+    {
+      "kind": "hosts_control",
+      "in_section": "electrical",
+      "to_device": "mass_combi_pro"
+    }
+  ],
+  "notes": {
+    "snapshot": "outremer_pre_batch_b — Balmar-era / czone_system hub",
+    "protection_xrefs": "Absent when protected_by hints are empty.",
+    "balmar": "Bluetooth gateway not on equipment list → surface inactive + unresolved_dependency."
+  }
+}

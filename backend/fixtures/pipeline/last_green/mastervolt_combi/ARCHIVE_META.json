@@ -1,0 +1,167 @@
+{
+  "device_key": "mastervolt_combi",
+  "scratch_stem": "mastervolt_combi",
+  "archived_at": "2026-07-16T00:34:50.629873+00:00",
+  "stability_voting": {
+    "n_requested": 3,
+    "n_completed": 3,
+    "short_circuit_identical": false,
+    "unstable_flag_count": 5,
+    "votes": [
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "switch off inverter to prevent battery depletion",
+          "audience": "operator",
+          "context": "situational"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "action": "switch off inverter to prevent battery depletion",
+              "audience": "operator",
+              "context": "situational"
+            }
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ]
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "set DIP switches",
+          "audience": "installer_or_technician",
+          "context": "commissioning"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "set DIP switches",
+              "audience": "installer_or_technician",
+              "context": "commissioning"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ]
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "perform commissioning with MasterAdjust software",
+          "audience": "installer_or_technician",
+          "context": "commissioning"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "perform commissioning with MasterAdjust software",
+              "audience": "installer_or_technician",
+              "context": "commissioning"
+            }
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "perform commissioning with MasterAdjust software",
+              "audience": "installer_or_technician",
+              "context": "commissioning"
+            }
+          }
+        ]
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "switch off the charger",
+          "audience": "operator",
+          "context": "situational"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "switch off the charger",
+              "audience": "operator",
+              "context": "situational"
+            }
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "switch off the charger",
+              "audience": "operator",
+              "context": "situational"
+            }
+          }
+        ]
+      },
+      {
+        "field_path": "control_surfaces",
+        "kind": "control_surfaces",
+        "attribute": "presence",
+        "chosen": {
+          "surface": "physical_controls",
+          "location_class": "on_device",
+          "optional_accessory": false,
+          "label_verbatim": "Display with front switch",
+          "path": "control_surfaces[0]"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "surface": "physical_controls",
+              "location_class": "on_device",
+              "optional_accessory": false,
+              "label_verbatim": "Display with front switch",
+              "path": "control_surfaces[0]"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ]
+      }
+    ]
+  },
+  "coverage": 0.8052,
+  "note": "Golden-green voted Stage 1 payload for flap diagnosis diffs."
+}

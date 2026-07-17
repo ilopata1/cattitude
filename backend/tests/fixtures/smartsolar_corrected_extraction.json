@@ -1,0 +1,141 @@
+{
+  "device": {
+    "manufacturer": "Victron Energy",
+    "model": "SmartSolar MPPT 75 | 15",
+    "category_freeform": "MPPT solar charger"
+  },
+  "control_surfaces": [
+    {
+      "surface": "mobile_app_bluetooth",
+      "location_class": "wireless",
+      "optional_accessory": false,
+      "label_verbatim": "VictronConnect app",
+      "path": "control_surfaces[0]"
+    }
+  ],
+  "operator_actions": [
+    {
+      "action": "monitor charger via VictronConnect app",
+      "audience": "operator",
+      "context": "daily",
+      "source": "extracted"
+    },
+    {
+      "action": "configure charger via VictronConnect app",
+      "audience": "operator",
+      "context": "situational",
+      "source": "extracted"
+    },
+    {
+      "action": "shutdown the solar charger",
+      "audience": "operator",
+      "context": "situational",
+      "source": "extracted"
+    },
+    {
+      "action": "restart the solar charger",
+      "audience": "operator",
+      "context": "situational",
+      "source": "extracted"
+    },
+    {
+      "action": "consult error codes and alarms",
+      "audience": "operator",
+      "context": "emergency",
+      "source": "derived",
+      "derived_from": "evidence[2]"
+    },
+    {
+      "action": "set the sunset action",
+      "audience": "operator",
+      "context": "situational",
+      "source": "extracted",
+      "options": [
+        "keep the lights off",
+        "switch on for a fixed time",
+        "switch on till midnight",
+        "switch on till sunrise"
+      ]
+    },
+    {
+      "action": "update firmware",
+      "audience": "operator",
+      "context": "maintenance",
+      "source": "extracted"
+    }
+  ],
+  "networks": {
+    "speaks": [
+      {
+        "name_verbatim": "VE.Smart Networking",
+        "physical_or_wireless": "wireless"
+      },
+      {
+        "name_verbatim": "VE.Direct",
+        "physical_or_wireless": "wired"
+      }
+    ],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": true,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [
+    {
+      "description_verbatim": "GX device",
+      "needed_for": "data_roles.exposes_data_to_network",
+      "requirement_kind": "device"
+    },
+    {
+      "description_verbatim": "GlobalLink 520",
+      "needed_for": "data_roles.exposes_data_to_network",
+      "requirement_kind": "device"
+    }
+  ],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": true
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [],
+  "evidence": [
+    {
+      "supports_field": "control_surfaces[0]",
+      "manual_section": "VictronConnect",
+      "note": "Built-in Bluetooth for VictronConnect app"
+    },
+    {
+      "supports_field": "data_roles.exposes_data_to_network",
+      "manual_section": "VE.Direct",
+      "note": "VE.Direct port monitors via GX device"
+    },
+    {
+      "supports_field": "safety_role.has_emergency_procedure",
+      "manual_section": "Error codes",
+      "note": "Error code table for fault recovery"
+    },
+    {
+      "supports_field": "requires_devices[0]",
+      "manual_section": "VE.Direct",
+      "note": "Remote monitor needs GX device"
+    },
+    {
+      "supports_field": "requires_devices[1]",
+      "manual_section": "VE.Direct",
+      "note": "GlobalLink 520 is GX alternative"
+    },
+    {
+      "supports_field": "operator_actions",
+      "manual_section": "Shutdown and restart",
+      "note": "Prescribed shutdown and restart steps"
+    }
+  ],
+  "confidence": {
+    "overall": 0.9,
+    "notes": "Golden SmartSolar fixture. Fixture-Auth: this chat — pin situational shutdown/restart, derived/extracted consult-error-codes emergency action, has_emergency_procedure, requires_devices evidence, sunset as one action with options[], firmware as maintenance, GlobalLink 520 as GX OR-alternative (v4.3/v4.4 repair quality)."
+  }
+}

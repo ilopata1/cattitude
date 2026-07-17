@@ -1,0 +1,606 @@
+{
+  "czone_system": {
+    "device": {
+      "manufacturer": "CZone",
+      "model": "system",
+      "category_freeform": "digital switching system"
+    },
+    "control_surfaces": [
+      {
+        "surface": "touchscreen",
+        "location_class": "remote_wired",
+        "optional_accessory": false,
+        "label_verbatim": "CZone display",
+        "path": "control_surfaces[0]"
+      }
+    ],
+    "operator_actions": [
+      {
+        "action": "switch circuits from CZone pages",
+        "audience": "operator",
+        "context": "daily"
+      }
+    ],
+    "networks": {
+      "speaks": [
+        {
+          "name_verbatim": "CZone",
+          "physical_or_wireless": "wired"
+        }
+      ],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": true,
+      "displays_data_from_other_devices": true,
+      "controllable_from_network": false
+    },
+    "requires_devices": [],
+    "safety_role": {
+      "is_protective_device": false,
+      "has_manual_override": false,
+      "has_emergency_procedure": false
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [],
+    "evidence": [
+      {
+        "supports_field": "device.model",
+        "manual_section": "vessel_inventory",
+        "note": "Touch 7 hub stub; folio 2E TAC; pending full extract (batch A)"
+      },
+      {
+        "supports_field": "device.model",
+        "manual_section": "operator",
+        "note": "displays device data / operates circuits"
+      }
+    ],
+    "confidence": {
+      "overall": 0.7,
+      "notes": "stub hub pending Touch 7 extraction"
+    },
+    "source": "stub"
+  },
+  "coi": {
+    "device": {
+      "manufacturer": "Mastervolt",
+      "model": "COI",
+      "category_freeform": "MasterBus-CZone interface"
+    },
+    "control_surfaces": [],
+    "operator_actions": [],
+    "networks": {
+      "speaks": [
+        {
+          "name_verbatim": "MasterBus",
+          "physical_or_wireless": "wired"
+        },
+        {
+          "name_verbatim": "CZone",
+          "physical_or_wireless": "wired"
+        }
+      ],
+      "bridges": [
+        {
+          "from": "MasterBus",
+          "to": "CZone"
+        }
+      ]
+    },
+    "data_roles": {
+      "exposes_data_to_network": true,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": false
+    },
+    "requires_devices": [],
+    "safety_role": {
+      "is_protective_device": false,
+      "has_manual_override": false,
+      "has_emergency_procedure": false
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [],
+    "evidence": [
+      {
+        "supports_field": "device.model",
+        "manual_section": "operator",
+        "note": "links MasterBus to CZone"
+      }
+    ],
+    "confidence": {
+      "overall": 0.95,
+      "notes": ""
+    },
+    "source": "stub"
+  },
+  "mli_ultra": {
+    "device": {
+      "manufacturer": "Mastervolt",
+      "model": "MLI Ultra 24/6000",
+      "category_freeform": "lithium battery BMS"
+    },
+    "control_surfaces": [
+      {
+        "surface": "physical_controls",
+        "location_class": "on_device",
+        "optional_accessory": false,
+        "label_verbatim": "BMS reset",
+        "path": "control_surfaces[0]"
+      }
+    ],
+    "operator_actions": [
+      {
+        "action": "reset BMS after protective disconnect",
+        "audience": "operator",
+        "context": "emergency"
+      }
+    ],
+    "networks": {
+      "speaks": [
+        {
+          "name_verbatim": "MasterBus",
+          "physical_or_wireless": "wired"
+        }
+      ],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": true,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": false
+    },
+    "requires_devices": [],
+    "safety_role": {
+      "is_protective_device": true,
+      "has_manual_override": true,
+      "has_emergency_procedure": true
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [],
+    "evidence": [
+      {
+        "supports_field": "device.model",
+        "manual_section": "operator",
+        "note": "exposes battery data on MasterBus"
+      },
+      {
+        "supports_field": "device.model",
+        "manual_section": "operator",
+        "note": "BMS disconnect reset"
+      }
+    ],
+    "confidence": {
+      "overall": 0.9,
+      "notes": "protected_by omitted for degraded xref path; vessel: quantity=3 on equipment; cover sheet / folios 3A/3B"
+    }
+  },
+  "mass_combi_pro": {
+    "device": {
+      "manufacturer": "Mastervolt",
+      "model": "Mass Combi Pro",
+      "category_freeform": "inverter charger combi"
+    },
+    "control_surfaces": [
+      {
+        "surface": "physical_controls",
+        "location_class": "on_device",
+        "optional_accessory": false,
+        "label_verbatim": "Combi front panel",
+        "path": "control_surfaces[0]"
+      }
+    ],
+    "operator_actions": [
+      {
+        "action": "set AC input current limit",
+        "audience": "operator",
+        "context": "situational"
+      }
+    ],
+    "networks": {
+      "speaks": [
+        {
+          "name_verbatim": "MasterBus",
+          "physical_or_wireless": "wired"
+        }
+      ],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": true,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": true
+    },
+    "requires_devices": [],
+    "safety_role": {
+      "is_protective_device": false,
+      "has_manual_override": false,
+      "has_emergency_procedure": false
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [],
+    "evidence": [
+      {
+        "supports_field": "device.model",
+        "manual_section": "operator",
+        "note": "controllable on MasterBus"
+      },
+      {
+        "supports_field": "device.model",
+        "manual_section": "operator",
+        "note": "shore power current limit"
+      }
+    ],
+    "confidence": {
+      "overall": 0.9,
+      "notes": "vessel: quantity=2 on equipment; folio 2C Ultra label outvoted"
+    }
+  },
+  "victron_mppt": {
+    "device": {
+      "manufacturer": "Victron Energy",
+      "model": "SmartSolar MPPT 75/15",
+      "category_freeform": "solar MPPT charge controller"
+    },
+    "control_surfaces": [
+      {
+        "surface": "mobile_app_bluetooth",
+        "location_class": "wireless",
+        "optional_accessory": false,
+        "label_verbatim": "VictronConnect",
+        "path": "control_surfaces[0]"
+      }
+    ],
+    "operator_actions": [
+      {
+        "action": "check solar charge status in app",
+        "audience": "operator",
+        "context": "daily"
+      }
+    ],
+    "networks": {
+      "speaks": [
+        {
+          "name_verbatim": "Bluetooth",
+          "physical_or_wireless": "wireless"
+        }
+      ],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": false,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": false
+    },
+    "requires_devices": [],
+    "safety_role": {
+      "is_protective_device": false,
+      "has_manual_override": false,
+      "has_emergency_procedure": false
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [],
+    "evidence": [
+      {
+        "supports_field": "device.model",
+        "manual_section": "operator",
+        "note": "Bluetooth app monitoring"
+      }
+    ],
+    "confidence": {
+      "overall": 0.85,
+      "notes": ""
+    }
+  },
+  "silentwind": {
+    "device": {
+      "manufacturer": "Silentwind",
+      "model": "Hybrid 1000",
+      "category_freeform": "wind generator"
+    },
+    "control_surfaces": [
+      {
+        "surface": "physical_controls",
+        "location_class": "on_device",
+        "optional_accessory": false,
+        "label_verbatim": "Hybrid controller",
+        "path": "control_surfaces[0]"
+      }
+    ],
+    "operator_actions": [
+      {
+        "action": "brake / stop turbine from controller",
+        "audience": "operator",
+        "context": "situational"
+      }
+    ],
+    "networks": {
+      "speaks": [],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": false,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": false
+    },
+    "requires_devices": [],
+    "safety_role": {
+      "is_protective_device": false,
+      "has_manual_override": false,
+      "has_emergency_procedure": false
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [],
+    "evidence": [
+      {
+        "supports_field": "device.model",
+        "manual_section": "operator",
+        "note": "own controller; not network connected"
+      }
+    ],
+    "confidence": {
+      "overall": 0.8,
+      "notes": ""
+    },
+    "source": "stub"
+  },
+  "ml_switch": {
+    "device": {
+      "manufacturer": "Blue Sea",
+      "model": "ML-Series",
+      "category_freeform": "ML-Series battery switch isolation"
+    },
+    "control_surfaces": [
+      {
+        "surface": "physical_controls",
+        "location_class": "on_device",
+        "optional_accessory": false,
+        "label_verbatim": "manual override",
+        "path": "control_surfaces[0]"
+      },
+      {
+        "surface": "other",
+        "location_class": "remote_wired",
+        "optional_accessory": false,
+        "label_verbatim": "remote coil / MagaSwitch",
+        "path": "control_surfaces[1]"
+      }
+    ],
+    "operator_actions": [
+      {
+        "action": "manually override ML switch",
+        "audience": "operator",
+        "context": "emergency"
+      }
+    ],
+    "networks": {
+      "speaks": [],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": false,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": false
+    },
+    "requires_devices": [],
+    "safety_role": {
+      "is_protective_device": true,
+      "has_manual_override": true,
+      "has_emergency_procedure": true
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [],
+    "evidence": [
+      {
+        "supports_field": "device.model",
+        "manual_section": "operator",
+        "note": "manual override for isolation"
+      },
+      {
+        "supports_field": "control_surfaces[1]",
+        "manual_section": "operator",
+        "note": "remote coil commanded via BMS chain"
+      }
+    ],
+    "confidence": {
+      "overall": 0.9,
+      "notes": ""
+    },
+    "source": "stub"
+  },
+  "plain_battery_switch": {
+    "device": {
+      "manufacturer": "generic",
+      "model": "rotary battery switch",
+      "category_freeform": "battery switch"
+    },
+    "control_surfaces": [
+      {
+        "surface": "rotary_selector",
+        "location_class": "on_device",
+        "optional_accessory": false,
+        "label_verbatim": "battery switch",
+        "path": "control_surfaces[0]"
+      }
+    ],
+    "operator_actions": [
+      {
+        "action": "isolate battery with rotary switch",
+        "audience": "operator",
+        "context": "situational"
+      }
+    ],
+    "networks": {
+      "speaks": [],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": false,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": false
+    },
+    "requires_devices": [],
+    "safety_role": {
+      "is_protective_device": false,
+      "has_manual_override": true,
+      "has_emergency_procedure": false
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [],
+    "evidence": [
+      {
+        "supports_field": "safety_role.has_manual_override",
+        "manual_section": "operator",
+        "note": "local rotary isolates power; no remote command"
+      }
+    ],
+    "confidence": {
+      "overall": 0.85,
+      "notes": "negative fixture: isolates locally, not remote-commandable"
+    },
+    "source": "stub"
+  },
+  "class_t": {
+    "device": {
+      "manufacturer": "Blue Sea",
+      "model": "Class T fuse holder",
+      "category_freeform": "Class T fuse holder"
+    },
+    "control_surfaces": [],
+    "operator_actions": [],
+    "networks": {
+      "speaks": [],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": false,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": false
+    },
+    "requires_devices": [],
+    "safety_role": {
+      "is_protective_device": true,
+      "has_manual_override": false,
+      "has_emergency_procedure": false
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [],
+    "evidence": [
+      {
+        "supports_field": "device.model",
+        "manual_section": "operator",
+        "note": "protective fuse holder"
+      }
+    ],
+    "confidence": {
+      "overall": 0.95,
+      "notes": ""
+    },
+    "source": "stub"
+  },
+  "busbar": {
+    "device": {
+      "manufacturer": "ProInstaller",
+      "model": "busbar",
+      "category_freeform": "busbar distribution"
+    },
+    "control_surfaces": [],
+    "operator_actions": [],
+    "networks": {
+      "speaks": [],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": false,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": false
+    },
+    "requires_devices": [],
+    "safety_role": {
+      "is_protective_device": false,
+      "has_manual_override": false,
+      "has_emergency_procedure": false
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [],
+    "evidence": [
+      {
+        "supports_field": "device.model",
+        "manual_section": "fixture",
+        "note": "hand authored fixture profile"
+      }
+    ],
+    "confidence": {
+      "overall": 0.7,
+      "notes": "passive distribution hardware"
+    },
+    "source": "stub"
+  },
+  "balmar_mc624": {
+    "device": {
+      "manufacturer": "Balmar",
+      "model": "MC-624",
+      "category_freeform": "alternator regulator"
+    },
+    "control_surfaces": [
+      {
+        "surface": "mobile_app_bluetooth",
+        "location_class": "wireless",
+        "optional_accessory": true,
+        "label_verbatim": "Bluetooth Gateway",
+        "path": "control_surfaces[0]"
+      }
+    ],
+    "operator_actions": [
+      {
+        "action": "select battery type",
+        "audience": "installer_or_technician",
+        "context": "commissioning"
+      }
+    ],
+    "networks": {
+      "speaks": [],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": false,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": false
+    },
+    "requires_devices": [
+      {
+        "description_verbatim": "Balmar Bluetooth Gateway",
+        "needed_for": "control_surfaces[0]"
+      }
+    ],
+    "safety_role": {
+      "is_protective_device": false,
+      "has_manual_override": false,
+      "has_emergency_procedure": false
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [],
+    "evidence": [
+      {
+        "supports_field": "device.model",
+        "manual_section": "operator",
+        "note": "optional Bluetooth gateway for app"
+      }
+    ],
+    "confidence": {
+      "overall": 0.85,
+      "notes": ""
+    },
+    "source": "stub"
+  }
+}

@@ -1,0 +1,2579 @@
+{
+  "coi": {
+    "device": {
+      "manufacturer": "Mastervolt",
+      "model": "COI",
+      "category_freeform": "MasterBus-CZone interface"
+    },
+    "control_surfaces": [],
+    "operator_actions": [],
+    "networks": {
+      "speaks": [
+        {
+          "name_verbatim": "MasterBus",
+          "physical_or_wireless": "wired"
+        },
+        {
+          "name_verbatim": "CZone",
+          "physical_or_wireless": "wired"
+        }
+      ],
+      "bridges": [
+        {
+          "from": "MasterBus",
+          "to": "CZone"
+        }
+      ]
+    },
+    "data_roles": {
+      "exposes_data_to_network": true,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": false
+    },
+    "requires_devices": [],
+    "safety_role": {
+      "is_protective_device": false,
+      "has_manual_override": false,
+      "has_emergency_procedure": false
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [],
+    "evidence": [
+      {
+        "supports_field": "device.model",
+        "manual_section": "operator",
+        "note": "links MasterBus to CZone"
+      }
+    ],
+    "confidence": {
+      "overall": 0.95,
+      "notes": ""
+    },
+    "source": "stub"
+  },
+  "mli_ultra": {
+    "device": {
+      "manufacturer": "Mastervolt",
+      "model": "MLI Ultra 24/6000",
+      "category_freeform": "lithium battery BMS"
+    },
+    "control_surfaces": [
+      {
+        "surface": "physical_controls",
+        "location_class": "on_device",
+        "optional_accessory": false,
+        "label_verbatim": "BMS reset",
+        "path": "control_surfaces[0]"
+      }
+    ],
+    "operator_actions": [
+      {
+        "action": "reset BMS after protective disconnect",
+        "audience": "operator",
+        "context": "emergency"
+      }
+    ],
+    "networks": {
+      "speaks": [
+        {
+          "name_verbatim": "MasterBus",
+          "physical_or_wireless": "wired"
+        }
+      ],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": true,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": false
+    },
+    "requires_devices": [],
+    "safety_role": {
+      "is_protective_device": true,
+      "has_manual_override": true,
+      "has_emergency_procedure": true
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [],
+    "evidence": [
+      {
+        "supports_field": "device.model",
+        "manual_section": "operator",
+        "note": "exposes battery data on MasterBus"
+      },
+      {
+        "supports_field": "device.model",
+        "manual_section": "operator",
+        "note": "BMS disconnect reset"
+      }
+    ],
+    "confidence": {
+      "overall": 0.9,
+      "notes": "protected_by omitted for degraded xref path; vessel: quantity=3 on equipment; cover sheet / folios 3A/3B"
+    }
+  },
+  "mass_combi_pro": {
+    "device": {
+      "manufacturer": "Mastervolt",
+      "model": "Mass Combi Pro",
+      "category_freeform": "inverter charger combi"
+    },
+    "control_surfaces": [
+      {
+        "surface": "physical_controls",
+        "location_class": "on_device",
+        "optional_accessory": false,
+        "label_verbatim": "Combi front panel",
+        "path": "control_surfaces[0]"
+      }
+    ],
+    "operator_actions": [
+      {
+        "action": "set AC input current limit",
+        "audience": "operator",
+        "context": "situational"
+      }
+    ],
+    "networks": {
+      "speaks": [
+        {
+          "name_verbatim": "MasterBus",
+          "physical_or_wireless": "wired"
+        }
+      ],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": true,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": true
+    },
+    "requires_devices": [],
+    "safety_role": {
+      "is_protective_device": false,
+      "has_manual_override": false,
+      "has_emergency_procedure": false
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [],
+    "evidence": [
+      {
+        "supports_field": "device.model",
+        "manual_section": "operator",
+        "note": "controllable on MasterBus"
+      },
+      {
+        "supports_field": "device.model",
+        "manual_section": "operator",
+        "note": "shore power current limit"
+      }
+    ],
+    "confidence": {
+      "overall": 0.9,
+      "notes": "vessel: quantity=2 on equipment; folio 2C Ultra label outvoted"
+    }
+  },
+  "victron_mppt": {
+    "device": {
+      "manufacturer": "Victron Energy",
+      "model": "SmartSolar MPPT 75/15",
+      "category_freeform": "solar MPPT charge controller"
+    },
+    "control_surfaces": [
+      {
+        "surface": "mobile_app_bluetooth",
+        "location_class": "wireless",
+        "optional_accessory": false,
+        "label_verbatim": "VictronConnect",
+        "path": "control_surfaces[0]"
+      }
+    ],
+    "operator_actions": [
+      {
+        "action": "check solar charge status in app",
+        "audience": "operator",
+        "context": "daily"
+      }
+    ],
+    "networks": {
+      "speaks": [
+        {
+          "name_verbatim": "Bluetooth",
+          "physical_or_wireless": "wireless"
+        }
+      ],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": false,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": false
+    },
+    "requires_devices": [],
+    "safety_role": {
+      "is_protective_device": false,
+      "has_manual_override": false,
+      "has_emergency_procedure": false
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [],
+    "evidence": [
+      {
+        "supports_field": "device.model",
+        "manual_section": "operator",
+        "note": "Bluetooth app monitoring"
+      }
+    ],
+    "confidence": {
+      "overall": 0.85,
+      "notes": ""
+    }
+  },
+  "silentwind": {
+    "device": {
+      "manufacturer": "Silentwind",
+      "model": "Hybrid 1000",
+      "category_freeform": "wind generator"
+    },
+    "control_surfaces": [
+      {
+        "surface": "physical_controls",
+        "location_class": "on_device",
+        "optional_accessory": false,
+        "label_verbatim": "Hybrid controller",
+        "path": "control_surfaces[0]"
+      }
+    ],
+    "operator_actions": [
+      {
+        "action": "brake / stop turbine from controller",
+        "audience": "operator",
+        "context": "situational"
+      }
+    ],
+    "networks": {
+      "speaks": [],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": false,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": false
+    },
+    "requires_devices": [],
+    "safety_role": {
+      "is_protective_device": false,
+      "has_manual_override": false,
+      "has_emergency_procedure": false
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [],
+    "evidence": [
+      {
+        "supports_field": "device.model",
+        "manual_section": "operator",
+        "note": "own controller; not network connected"
+      }
+    ],
+    "confidence": {
+      "overall": 0.8,
+      "notes": ""
+    },
+    "source": "stub"
+  },
+  "ml_switch": {
+    "device": {
+      "manufacturer": "Blue Sea",
+      "model": "ML-Series",
+      "category_freeform": "ML-Series battery switch isolation"
+    },
+    "control_surfaces": [
+      {
+        "surface": "physical_controls",
+        "location_class": "on_device",
+        "optional_accessory": false,
+        "label_verbatim": "manual override",
+        "path": "control_surfaces[0]"
+      },
+      {
+        "surface": "other",
+        "location_class": "remote_wired",
+        "optional_accessory": false,
+        "label_verbatim": "remote coil / MagaSwitch",
+        "path": "control_surfaces[1]"
+      }
+    ],
+    "operator_actions": [
+      {
+        "action": "manually override ML switch",
+        "audience": "operator",
+        "context": "emergency"
+      }
+    ],
+    "networks": {
+      "speaks": [],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": false,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": false
+    },
+    "requires_devices": [],
+    "safety_role": {
+      "is_protective_device": true,
+      "has_manual_override": true,
+      "has_emergency_procedure": true
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [],
+    "evidence": [
+      {
+        "supports_field": "device.model",
+        "manual_section": "operator",
+        "note": "manual override for isolation"
+      },
+      {
+        "supports_field": "control_surfaces[1]",
+        "manual_section": "operator",
+        "note": "remote coil commanded via BMS chain"
+      }
+    ],
+    "confidence": {
+      "overall": 0.9,
+      "notes": ""
+    },
+    "source": "stub"
+  },
+  "plain_battery_switch": {
+    "device": {
+      "manufacturer": "generic",
+      "model": "rotary battery switch",
+      "category_freeform": "battery switch"
+    },
+    "control_surfaces": [
+      {
+        "surface": "rotary_selector",
+        "location_class": "on_device",
+        "optional_accessory": false,
+        "label_verbatim": "battery switch",
+        "path": "control_surfaces[0]"
+      }
+    ],
+    "operator_actions": [
+      {
+        "action": "isolate battery with rotary switch",
+        "audience": "operator",
+        "context": "situational"
+      }
+    ],
+    "networks": {
+      "speaks": [],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": false,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": false
+    },
+    "requires_devices": [],
+    "safety_role": {
+      "is_protective_device": false,
+      "has_manual_override": true,
+      "has_emergency_procedure": false
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [],
+    "evidence": [
+      {
+        "supports_field": "safety_role.has_manual_override",
+        "manual_section": "operator",
+        "note": "local rotary isolates power; no remote command"
+      }
+    ],
+    "confidence": {
+      "overall": 0.85,
+      "notes": "negative fixture: isolates locally, not remote-commandable"
+    },
+    "source": "stub"
+  },
+  "class_t": {
+    "device": {
+      "manufacturer": "Blue Sea",
+      "model": "Class T fuse holder",
+      "category_freeform": "Class T fuse holder"
+    },
+    "control_surfaces": [],
+    "operator_actions": [],
+    "networks": {
+      "speaks": [],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": false,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": false
+    },
+    "requires_devices": [],
+    "safety_role": {
+      "is_protective_device": true,
+      "has_manual_override": false,
+      "has_emergency_procedure": false
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [],
+    "evidence": [
+      {
+        "supports_field": "device.model",
+        "manual_section": "operator",
+        "note": "protective fuse holder"
+      }
+    ],
+    "confidence": {
+      "overall": 0.95,
+      "notes": ""
+    },
+    "source": "stub"
+  },
+  "busbar": {
+    "device": {
+      "manufacturer": "ProInstaller",
+      "model": "busbar",
+      "category_freeform": "busbar distribution"
+    },
+    "control_surfaces": [],
+    "operator_actions": [],
+    "networks": {
+      "speaks": [],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": false,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": false
+    },
+    "requires_devices": [],
+    "safety_role": {
+      "is_protective_device": false,
+      "has_manual_override": false,
+      "has_emergency_procedure": false
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [],
+    "evidence": [
+      {
+        "supports_field": "device.model",
+        "manual_section": "fixture",
+        "note": "hand authored fixture profile"
+      }
+    ],
+    "confidence": {
+      "overall": 0.7,
+      "notes": "passive distribution hardware"
+    },
+    "source": "stub"
+  },
+  "czone_touch_7": {
+    "device": {
+      "manufacturer": "CZone",
+      "model": "Touch 7",
+      "category_freeform": "Touch 7"
+    },
+    "control_surfaces": [
+      {
+        "surface": "touchscreen",
+        "location_class": "on_device",
+        "optional_accessory": false,
+        "label_verbatim": "Touch 7",
+        "path": "control_surfaces[0]"
+      },
+      {
+        "surface": "touchscreen",
+        "location_class": "on_device",
+        "optional_accessory": false,
+        "label_verbatim": "7\" IPS LCD panel",
+        "path": "control_surfaces[1]"
+      },
+      {
+        "surface": "touchscreen",
+        "location_class": "on_device",
+        "optional_accessory": false,
+        "label_verbatim": "Touchscreen",
+        "path": "control_surfaces[2]"
+      }
+    ],
+    "operator_actions": [
+      {
+        "action": "secure display to mounting bracket",
+        "audience": "installer_or_technician",
+        "context": "commissioning",
+        "source": "extracted"
+      },
+      {
+        "action": "remove display from mounting bracket",
+        "audience": "installer_or_technician",
+        "context": "maintenance",
+        "source": "extracted"
+      },
+      {
+        "action": "calibrate touch screen",
+        "audience": "operator",
+        "context": "situational",
+        "source": "extracted"
+      },
+      {
+        "action": "select desired WiFi Mode",
+        "audience": "installer_or_technician",
+        "context": "commissioning",
+        "source": "extracted"
+      },
+      {
+        "action": "turn on the circuit breaker or switch supplying power",
+        "audience": "operator",
+        "context": "commissioning",
+        "source": "extracted"
+      },
+      {
+        "action": "enter the display dipswitch",
+        "audience": "operator",
+        "context": "commissioning",
+        "source": "extracted"
+      }
+    ],
+    "networks": {
+      "speaks": [
+        {
+          "name_verbatim": "NMEA2000",
+          "physical_or_wireless": "wired"
+        },
+        {
+          "name_verbatim": "WiFi",
+          "physical_or_wireless": "wireless"
+        },
+        {
+          "name_verbatim": "Ethernet",
+          "physical_or_wireless": "wired"
+        },
+        {
+          "name_verbatim": "USB2.0",
+          "physical_or_wireless": "wired"
+        }
+      ],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": true,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": true
+    },
+    "requires_devices": [
+      {
+        "description_verbatim": "CZone App",
+        "needed_for": "data_roles.exposes_data_to_network",
+        "requirement_kind": "software_app"
+      },
+      {
+        "description_verbatim": "CZone Configuration Tool",
+        "needed_for": "operator_actions[1]",
+        "requirement_kind": "commissioning_tool"
+      }
+    ],
+    "safety_role": {
+      "is_protective_device": false,
+      "has_manual_override": false,
+      "has_emergency_procedure": false
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [
+      {
+        "description_verbatim": "Connect positive wire through a 3A fuse"
+      }
+    ],
+    "evidence": [
+      {
+        "supports_field": "networks.speaks",
+        "manual_section": "7 EN / CZone® Touch 7 User & Installation Manual",
+        "note": "Device communicates over NMEA2000 network"
+      },
+      {
+        "supports_field": "supply_requirements",
+        "manual_section": "15 EN / CZone® Touch 7 User & Installation Manual",
+        "note": "Positive connection requires a 3A fuse"
+      },
+      {
+        "supports_field": "operator_actions[0]",
+        "manual_section": "Mounting Instructions",
+        "note": "Securing display to the mounting bracket"
+      },
+      {
+        "supports_field": "operator_actions[1]",
+        "manual_section": "Display Removal",
+        "note": "Removing display from the mounting bracket"
+      },
+      {
+        "supports_field": "requires_devices[0]",
+        "manual_section": "4 OPERATION",
+        "note": "CZone Configuration Tool needed for dipswitch setup"
+      },
+      {
+        "supports_field": "data_roles.exposes_data_to_network",
+        "manual_section": "2.5.1 Access Point",
+        "note": "Touch 7 can control CZone system wirelessly"
+      },
+      {
+        "supports_field": "data_roles.controllable_from_network",
+        "manual_section": "2.5.2 Client Mode (Wireless)",
+        "note": "Device connects to other networks for control"
+      },
+      {
+        "supports_field": "requires_devices[1]",
+        "manual_section": "11 EN / CZone® Touch 7 User & Installation Manual",
+        "note": "DC Power connector is necessary for operation"
+      }
+    ],
+    "confidence": {
+      "overall": 0.9,
+      "notes": "[chapter_1] No specific operator actions or controls detailed in the excerpts. | [batch_0] Limited excerpts; some actions and details may be missing. | [batch_1] Manual excerpts provide clear operator actions. | [chapter_2] Manual excerpts provide clear information on device features and actions. | [chapter_3] Limited information available; primarily focused on installation. | [chapter_4] Manual excerpts provide clear operational steps. | [chapter_5] Limited information available; primarily technical specifications."
+    },
+    "repairs": [
+      {
+        "repair": "dropped_entry",
+        "flag": "contradiction_builtin_requires_accessory",
+        "field_path": "requires_devices[0].needed_for",
+        "original_entry": {
+          "description_verbatim": "NMEA2000 Drop Cable",
+          "needed_for": "control_surfaces[0]"
+        }
+      },
+      {
+        "repair": "dropped_entry",
+        "flag": "contradiction_builtin_requires_accessory",
+        "field_path": "requires_devices[1].needed_for",
+        "original_entry": {
+          "description_verbatim": "DC Power Connector",
+          "needed_for": "control_surfaces[0]"
+        }
+      }
+    ],
+    "coverage": {
+      "chunk_count": 23,
+      "heading_count": 63,
+      "headings_covered_count": 59,
+      "heading_coverage_fraction": 0.9365,
+      "coverage_low_threshold": 0.25,
+      "top_k_used": 4
+    },
+    "group_utilization": [
+      {
+        "group_id": "chapter_1",
+        "is_introduction": true,
+        "excerpt_count": 2,
+        "predicted_fields": [
+          "evidence",
+          "operator_actions",
+          "requires_devices",
+          "safety_role",
+          "supply_requirements"
+        ],
+        "contributions": {
+          "operator_actions": 0,
+          "control_surfaces": 0,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 0,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 0,
+        "unutilized": true
+      },
+      {
+        "group_id": "batch_0",
+        "is_introduction": false,
+        "excerpt_count": 7,
+        "predicted_fields": [
+          "control_surfaces",
+          "data_roles",
+          "evidence",
+          "networks",
+          "operator_actions",
+          "protected_by",
+          "requires_devices",
+          "supply_requirements"
+        ],
+        "contributions": {
+          "operator_actions": 0,
+          "control_surfaces": 1,
+          "networks": 1,
+          "requires_devices": 2,
+          "evidence": 2,
+          "supply_requirements": 1,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 7,
+        "unutilized": false
+      },
+      {
+        "group_id": "batch_1",
+        "is_introduction": false,
+        "excerpt_count": 3,
+        "predicted_fields": [
+          "control_surfaces",
+          "evidence",
+          "operator_actions"
+        ],
+        "contributions": {
+          "operator_actions": 3,
+          "control_surfaces": 1,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 3,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 7,
+        "unutilized": false
+      },
+      {
+        "group_id": "chapter_2",
+        "is_introduction": false,
+        "excerpt_count": 4,
+        "predicted_fields": [
+          "control_surfaces",
+          "data_roles",
+          "evidence",
+          "networks",
+          "requires_devices"
+        ],
+        "contributions": {
+          "operator_actions": 1,
+          "control_surfaces": 1,
+          "networks": 2,
+          "requires_devices": 1,
+          "evidence": 4,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 9,
+        "unutilized": false
+      },
+      {
+        "group_id": "chapter_3",
+        "is_introduction": false,
+        "excerpt_count": 1,
+        "predicted_fields": [
+          "control_surfaces",
+          "evidence",
+          "operator_actions"
+        ],
+        "contributions": {
+          "operator_actions": 0,
+          "control_surfaces": 1,
+          "networks": 1,
+          "requires_devices": 1,
+          "evidence": 2,
+          "supply_requirements": 1,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 6,
+        "unutilized": false
+      },
+      {
+        "group_id": "chapter_4",
+        "is_introduction": false,
+        "excerpt_count": 2,
+        "predicted_fields": [
+          "control_surfaces",
+          "evidence",
+          "operator_actions"
+        ],
+        "contributions": {
+          "operator_actions": 2,
+          "control_surfaces": 1,
+          "networks": 0,
+          "requires_devices": 1,
+          "evidence": 3,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 7,
+        "unutilized": false
+      },
+      {
+        "group_id": "chapter_5",
+        "is_introduction": false,
+        "excerpt_count": 1,
+        "predicted_fields": [
+          "control_surfaces",
+          "evidence",
+          "operator_actions",
+          "protects",
+          "safety_role"
+        ],
+        "contributions": {
+          "operator_actions": 0,
+          "control_surfaces": 1,
+          "networks": 4,
+          "requires_devices": 0,
+          "evidence": 1,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 6,
+        "unutilized": false
+      }
+    ],
+    "merge_conflicts": [
+      {
+        "kind": "requires_devices",
+        "attribute": "description_verbatim",
+        "group_id": "chapter_3",
+        "variants": [
+          {
+            "description_verbatim": "NMEA2000 Drop Cable",
+            "needed_for": "control_surfaces[0]",
+            "requirement_kind": "cable_or_consumable"
+          },
+          {
+            "description_verbatim": "NMEA2000 drop cable",
+            "needed_for": "control_surfaces[0]",
+            "requirement_kind": "cable_or_consumable"
+          }
+        ]
+      }
+    ],
+    "validation_flags": [
+      {
+        "flag": "contradiction_builtin_requires_accessory",
+        "severity": "warning",
+        "detail": "repaired: dropped_entry — needed_for pointed at a control surface with optional_accessory:false (dropped 'NMEA2000 Drop Cable')",
+        "field_path": "requires_devices[0].needed_for"
+      },
+      {
+        "flag": "contradiction_builtin_requires_accessory",
+        "severity": "warning",
+        "detail": "repaired: dropped_entry — needed_for pointed at a control surface with optional_accessory:false (dropped 'DC Power Connector')",
+        "field_path": "requires_devices[1].needed_for"
+      },
+      {
+        "flag": "merge_conflict",
+        "severity": "warning",
+        "detail": "cross-group conflict on requires_devices.description_verbatim (group=chapter_3)",
+        "field_path": "merge_conflicts[0]"
+      },
+      {
+        "flag": "group_unutilized",
+        "severity": "warning",
+        "detail": "group 'chapter_1' had 2 routed excerpts but contributed zero fields; routing predicted ['evidence', 'operator_actions', 'requires_devices', 'safety_role', 'supply_requirements']",
+        "field_path": "group_utilization.chapter_1"
+      },
+      {
+        "flag": "config_defined_operation",
+        "detail": "Station UI present; manual documents first-setup only — day-to-day operation is config-defined"
+      }
+    ],
+    "genres": [
+      "installation",
+      "commissioning"
+    ],
+    "source": "live_extraction",
+    "cross_model_diff": {
+      "vs": "czone_touch_10",
+      "vs_archive": "fixtures/pipeline/scratch/czone_touch_10.json",
+      "disposition": "document_depth_difference",
+      "rationale": "document depth / config-defined operation, not device divergence (owner review: Touch 7 PDF ~23pp, ~4pp operation, all first-setup)",
+      "material_stop": "closed",
+      "family_operational_shape_reference": "czone_touch_10"
+    },
+    "needs_rextraction": false,
+    "runs_platform": [
+      {
+        "platform_key": "czone_2_0",
+        "host_kind": "display",
+        "optional": false,
+        "note": "Touch 7 runs CZone 2.0 application UI"
+      },
+      {
+        "platform_key": "czone_2_0",
+        "host_kind": "mobile_app",
+        "optional": true,
+        "note": "iPad / CZone app — vessel-optional alternate host"
+      }
+    ]
+  },
+  "masterbus_bridge_interface": {
+    "device": {
+      "manufacturer": "Mastervolt",
+      "model": "MasterBus Bridge Interface",
+      "category_freeform": "CZone-MasterBus bridge"
+    },
+    "control_surfaces": [],
+    "operator_actions": [],
+    "networks": {
+      "speaks": [
+        {
+          "name_verbatim": "MasterBus",
+          "physical_or_wireless": "wired"
+        },
+        {
+          "name_verbatim": "CZone",
+          "physical_or_wireless": "wired"
+        }
+      ],
+      "bridges": [
+        {
+          "from": "MasterBus",
+          "to": "CZone"
+        }
+      ]
+    },
+    "data_roles": {
+      "exposes_data_to_network": true,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": false
+    },
+    "requires_devices": [],
+    "safety_role": {
+      "is_protective_device": false,
+      "has_manual_override": false,
+      "has_emergency_procedure": false
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [],
+    "evidence": [
+      {
+        "supports_field": "networks.bridges",
+        "manual_section": "vessel_inventory",
+        "note": "confirmed folios 2D/2E/11; separate module from COI"
+      }
+    ],
+    "confidence": {
+      "overall": 0.75,
+      "notes": "stub"
+    },
+    "source": "stub"
+  },
+  "masterbus_usb_interface": {
+    "device": {
+      "manufacturer": "Mastervolt",
+      "model": "MasterBus USB Interface",
+      "category_freeform": "USB interface"
+    },
+    "control_surfaces": [],
+    "operator_actions": [
+      {
+        "action": "connect PC via MasterBus USB for commissioning",
+        "audience": "installer_or_technician",
+        "context": "commissioning"
+      }
+    ],
+    "networks": {
+      "speaks": [
+        {
+          "name_verbatim": "MasterBus",
+          "physical_or_wireless": "wired"
+        }
+      ],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": false,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": false
+    },
+    "requires_devices": [],
+    "safety_role": {
+      "is_protective_device": false,
+      "has_manual_override": false,
+      "has_emergency_procedure": false
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [],
+    "evidence": [
+      {
+        "supports_field": "device.model",
+        "manual_section": "vessel_inventory",
+        "note": "confirmed folios 2D/2E/11"
+      }
+    ],
+    "confidence": {
+      "overall": 0.75,
+      "notes": "stub"
+    },
+    "source": "stub"
+  },
+  "victron_mppt_150_60": {
+    "device": {
+      "manufacturer": "Victron Energy",
+      "model": "SmartSolar MPPT 150/60-Tr",
+      "category_freeform": "solar MPPT charge controller"
+    },
+    "control_surfaces": [
+      {
+        "surface": "mobile_app_bluetooth",
+        "location_class": "wireless",
+        "optional_accessory": false,
+        "label_verbatim": "VictronConnect",
+        "path": "control_surfaces[0]"
+      }
+    ],
+    "operator_actions": [
+      {
+        "action": "check solar charge status in app",
+        "audience": "operator",
+        "context": "daily"
+      }
+    ],
+    "networks": {
+      "speaks": [
+        {
+          "name_verbatim": "Bluetooth",
+          "physical_or_wireless": "wireless"
+        }
+      ],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": false,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": false
+    },
+    "requires_devices": [],
+    "safety_role": {
+      "is_protective_device": false,
+      "has_manual_override": false,
+      "has_emergency_procedure": false
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [],
+    "evidence": [
+      {
+        "supports_field": "networks.speaks",
+        "manual_section": "vessel_inventory",
+        "note": "photo tier Victron; schematic 2D MasterBus-solar claim overruled"
+      }
+    ],
+    "confidence": {
+      "overall": 0.7,
+      "notes": "stub pending extract"
+    },
+    "source": "stub"
+  },
+  "alpha_pro_iii": {
+    "device": {
+      "manufacturer": "Mastervolt",
+      "model": "Mastervolt AlphaPro III",
+      "category_freeform": "Alpha Pro charge regulator"
+    },
+    "control_surfaces": [
+      {
+        "surface": "physical_controls",
+        "location_class": "on_device",
+        "optional_accessory": false,
+        "label_verbatim": "Charging mode selector switch",
+        "path": "control_surfaces[0]",
+        "vote_margin": "3/3"
+      }
+    ],
+    "operator_actions": [
+      {
+        "action": "remove the key from the engine ignition switch",
+        "audience": "operator",
+        "context": "maintenance",
+        "vote_margin": "3/3",
+        "source": "extracted"
+      },
+      {
+        "action": "switch off the connection with the batteries or remove the DC fuse(s)",
+        "audience": "operator",
+        "context": "maintenance",
+        "vote_margin": "3/3",
+        "source": "extracted"
+      },
+      {
+        "action": "start a new cycle when the engine is started",
+        "audience": "operator",
+        "context": "situational",
+        "vote_margin": "3/3",
+        "source": "extracted"
+      },
+      {
+        "action": "install the battery temperature sensor",
+        "audience": "operator",
+        "context": "commissioning",
+        "vote_margin": "3/3",
+        "source": "extracted"
+      },
+      {
+        "action": "set the number of pole pairs in MasterAdjust",
+        "audience": "installer_or_technician",
+        "context": "commissioning",
+        "vote_margin": "1/3",
+        "source": "extracted"
+      },
+      {
+        "action": "select charging mode",
+        "audience": "installer_or_technician",
+        "context": "commissioning",
+        "vote_margin": "3/3",
+        "source": "extracted"
+      },
+      {
+        "action": "unlock configuration in MasterAdjust",
+        "audience": "operator",
+        "context": "commissioning",
+        "vote_margin": "3/3",
+        "source": "extracted"
+      },
+      {
+        "action": "replace the battery fuse",
+        "audience": "operator",
+        "context": "emergency",
+        "vote_margin": "2/3",
+        "source": "extracted"
+      },
+      {
+        "action": "monitor device state",
+        "audience": "operator",
+        "context": "daily",
+        "vote_margin": "2/3",
+        "source": "extracted"
+      },
+      {
+        "action": "monitor charger state",
+        "audience": "operator",
+        "context": "daily",
+        "vote_margin": "2/3",
+        "source": "extracted"
+      },
+      {
+        "action": "respond to alarms",
+        "audience": "operator",
+        "context": "emergency",
+        "vote_margin": "2/3",
+        "source": "extracted"
+      },
+      {
+        "action": "monitor battery voltage",
+        "audience": "operator",
+        "context": "daily",
+        "vote_margin": "1/3",
+        "source": "extracted"
+      },
+      {
+        "action": "monitor battery temperature",
+        "audience": "operator",
+        "context": "daily",
+        "vote_margin": "1/3",
+        "source": "extracted"
+      },
+      {
+        "action": "monitor alternator voltage",
+        "audience": "operator",
+        "context": "daily",
+        "vote_margin": "1/3",
+        "source": "extracted"
+      },
+      {
+        "action": "monitor field current",
+        "audience": "operator",
+        "context": "daily",
+        "vote_margin": "1/3",
+        "source": "extracted"
+      },
+      {
+        "action": "monitor alternator temperature",
+        "audience": "operator",
+        "context": "daily",
+        "vote_margin": "1/3",
+        "source": "extracted"
+      },
+      {
+        "action": "monitor alternator shaft RPM",
+        "audience": "operator",
+        "context": "daily",
+        "vote_margin": "1/3",
+        "source": "extracted"
+      },
+      {
+        "action": "consult error codes and alarms",
+        "audience": "operator",
+        "context": "emergency",
+        "source": "derived",
+        "derived_from": "evidence[5]"
+      }
+    ],
+    "networks": {
+      "speaks": [
+        {
+          "name_verbatim": "MasterBus",
+          "physical_or_wireless": "wired",
+          "vote_margin": "3/3"
+        }
+      ],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": true,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": false
+    },
+    "requires_devices": [
+      {
+        "description_verbatim": "MasterBus USB Interface",
+        "needed_for": "operator_actions[0]",
+        "requirement_kind": "device",
+        "vote_margin": "1/3"
+      },
+      {
+        "description_verbatim": "MasterAdjust software",
+        "needed_for": "operator_actions[1]",
+        "requirement_kind": "software_app",
+        "vote_margin": "3/3"
+      },
+      {
+        "description_verbatim": "battery isolator",
+        "needed_for": "operator_actions[0]",
+        "requirement_kind": "device",
+        "vote_margin": "2/3"
+      },
+      {
+        "description_verbatim": "Master Adjust",
+        "needed_for": "operator_actions[0]",
+        "requirement_kind": "commissioning_tool",
+        "vote_margin": "2/3"
+      }
+    ],
+    "safety_role": {
+      "is_protective_device": false,
+      "has_manual_override": false,
+      "has_emergency_procedure": true
+    },
+    "protected_by": [],
+    "protects": [
+      {
+        "description_verbatim": "DC-fuse must be integrated in the positive cable",
+        "vote_margin": "1/3"
+      }
+    ],
+    "supply_requirements": [
+      {
+        "description_verbatim": "All wiring should be done by a certified technician or electrician",
+        "vote_margin": "3/3"
+      },
+      {
+        "description_verbatim": "A DC-fuse must be integrated in the positive cable between the battery and the alternator.",
+        "vote_margin": "2/3"
+      },
+      {
+        "description_verbatim": "mount the reg on wire (brown) as close to the battery as possible on the load side of the fuse",
+        "vote_margin": "3/3"
+      }
+    ],
+    "evidence": [
+      {
+        "supports_field": "operator_actions[0]",
+        "manual_section": "1.4 GENERAL SAFETY AND INSTALLATION PRECAUTIONS",
+        "note": "Remove key from ignition during maintenance"
+      },
+      {
+        "supports_field": "operator_actions[1]",
+        "manual_section": "1.4 GENERAL SAFETY AND INSTALLATION PRECAUTIONS",
+        "note": "Switch off battery connection or remove DC fuses"
+      },
+      {
+        "supports_field": "operator_actions[0].action",
+        "manual_section": "3.2 THE 3-STEP+ CHARGE PROCESS",
+        "note": "Cycle starts with engine or battery voltage drop"
+      },
+      {
+        "supports_field": "requires_devices[0]",
+        "manual_section": "6.3 MASTERBUS FUNCTIONS",
+        "note": "MasterAdjust requires a MasterBus USB Interface"
+      },
+      {
+        "supports_field": "requires_devices[1]",
+        "manual_section": "6.3.4 Configuration",
+        "note": "MasterAdjust software is available for download"
+      },
+      {
+        "supports_field": "safety_role.has_emergency_procedure",
+        "manual_section": "8 TROUBLESHOOTING",
+        "note": "Manual includes troubleshooting for issues and solutions"
+      },
+      {
+        "supports_field": "requires_devices[0]",
+        "manual_section": "4.2.6 Connection of a battery isolator",
+        "note": "Battery isolator recommended for simultaneous charging"
+      },
+      {
+        "supports_field": "data_roles.exposes_data_to_network",
+        "manual_section": "6.3.1 Monitoring",
+        "note": "Alpha Pro exposes data to MasterBus network"
+      }
+    ],
+    "confidence": {
+      "overall": 1.0,
+      "notes": "[chapter_1] Limited excerpts provide basic operational and safety information. | [batch_0] Limited excerpts provide minimal interaction details. | [chapter_2] No specific operator actions or controls found in the excerpts. | [chapter_3] Manual excerpts provide clear operator actions and control surfaces. | [chapter_4] Manual excerpts support commissioning actions for this device. | [chapter_5] Manual excerpts support commissioning actions for this device. | [chapter_6] Manual excerpts provide cl; catalog extract Alpha Pro III; shared by port/stbd instances"
+    },
+    "coverage": {
+      "chunk_count": 50,
+      "heading_count": 158,
+      "headings_covered_count": 129,
+      "heading_coverage_fraction": 0.8165,
+      "coverage_low_threshold": 0.25,
+      "top_k_used": 6
+    },
+    "group_utilization": [
+      {
+        "group_id": "chapter_1",
+        "is_introduction": true,
+        "excerpt_count": 4,
+        "predicted_fields": [
+          "evidence",
+          "operator_actions",
+          "protected_by",
+          "safety_role",
+          "supply_requirements"
+        ],
+        "contributions": {
+          "operator_actions": 2,
+          "control_surfaces": 0,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 3,
+          "supply_requirements": 1,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 6,
+        "unutilized": false
+      },
+      {
+        "group_id": "batch_0",
+        "is_introduction": false,
+        "excerpt_count": 5,
+        "predicted_fields": [
+          "control_surfaces",
+          "evidence",
+          "operator_actions",
+          "protected_by",
+          "supply_requirements"
+        ],
+        "contributions": {
+          "operator_actions": 0,
+          "control_surfaces": 0,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 1,
+          "supply_requirements": 1,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 2,
+        "unutilized": false
+      },
+      {
+        "group_id": "chapter_2",
+        "is_introduction": false,
+        "excerpt_count": 2,
+        "predicted_fields": [
+          "control_surfaces",
+          "evidence",
+          "operator_actions",
+          "requires_devices"
+        ],
+        "contributions": {
+          "operator_actions": 0,
+          "control_surfaces": 0,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 0,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 0,
+        "unutilized": true
+      },
+      {
+        "group_id": "chapter_3",
+        "is_introduction": false,
+        "excerpt_count": 4,
+        "predicted_fields": [
+          "control_surfaces",
+          "evidence",
+          "operator_actions",
+          "protects",
+          "safety_role"
+        ],
+        "contributions": {
+          "operator_actions": 2,
+          "control_surfaces": 1,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 2,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 5,
+        "unutilized": false
+      },
+      {
+        "group_id": "chapter_4",
+        "is_introduction": false,
+        "excerpt_count": 5,
+        "predicted_fields": [
+          "control_surfaces",
+          "evidence",
+          "operator_actions",
+          "protected_by",
+          "requires_devices",
+          "supply_requirements"
+        ],
+        "contributions": {
+          "operator_actions": 1,
+          "control_surfaces": 0,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 1,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 2,
+        "unutilized": false
+      },
+      {
+        "group_id": "chapter_5",
+        "is_introduction": false,
+        "excerpt_count": 8,
+        "predicted_fields": [
+          "control_surfaces",
+          "evidence",
+          "operator_actions",
+          "requires_devices",
+          "safety_role",
+          "supply_requirements"
+        ],
+        "contributions": {
+          "operator_actions": 1,
+          "control_surfaces": 0,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 1,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 2,
+        "unutilized": false
+      },
+      {
+        "group_id": "chapter_6",
+        "is_introduction": false,
+        "excerpt_count": 10,
+        "predicted_fields": [
+          "control_surfaces",
+          "data_roles",
+          "evidence",
+          "operator_actions",
+          "requires_devices",
+          "safety_role",
+          "supply_requirements"
+        ],
+        "contributions": {
+          "operator_actions": 1,
+          "control_surfaces": 0,
+          "networks": 1,
+          "requires_devices": 2,
+          "evidence": 3,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 7,
+        "unutilized": false
+      },
+      {
+        "group_id": "chapter_7+chapter_8+chapter_9",
+        "is_introduction": false,
+        "excerpt_count": 3,
+        "predicted_fields": [
+          "evidence",
+          "operator_actions",
+          "safety_role"
+        ],
+        "contributions": {
+          "operator_actions": 1,
+          "control_surfaces": 0,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 3,
+          "supply_requirements": 1,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 1
+        },
+        "contribution_total": 6,
+        "unutilized": false
+      }
+    ],
+    "merge_conflicts": [],
+    "genres": [
+      "combined"
+    ],
+    "validation_flags": [
+      {
+        "flag": "group_unutilized",
+        "severity": "warning",
+        "detail": "group 'chapter_2' had 2 routed excerpts but contributed zero fields; routing predicted ['control_surfaces', 'evidence', 'operator_actions', 'requires_devices']",
+        "field_path": "group_utilization.chapter_2"
+      },
+      {
+        "flag": "evidence_incomplete",
+        "severity": "blocking",
+        "detail": "no evidence entry supports requires_devices[2]",
+        "field_path": "requires_devices[2]"
+      },
+      {
+        "flag": "evidence_incomplete",
+        "severity": "blocking",
+        "detail": "no evidence entry supports requires_devices[3]",
+        "field_path": "requires_devices[3]"
+      }
+    ],
+    "repairs": [],
+    "extraction_votes": [
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "set the number of pole pairs in MasterAdjust",
+          "audience": "installer_or_technician",
+          "context": "commissioning",
+          "options": [],
+          "vote_margin": "1/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 1,
+          "agree_with_chosen": 1,
+          "margin": "1/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "action": "set the number of pole pairs in MasterAdjust",
+              "audience": "installer_or_technician",
+              "context": "commissioning",
+              "options": []
+            }
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "replace the battery fuse",
+          "audience": "operator",
+          "context": "emergency",
+          "options": [],
+          "vote_margin": "2/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 2,
+          "agree_with_chosen": 2,
+          "margin": "2/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "action": "replace the battery fuse",
+              "audience": "operator",
+              "context": "emergency",
+              "options": []
+            }
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "replace the battery fuse",
+              "audience": "operator",
+              "context": "emergency",
+              "options": []
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "monitor device state",
+          "audience": "operator",
+          "context": "daily",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 2,
+          "agree_with_chosen": 2,
+          "margin": "2/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "monitor device state",
+              "audience": "operator",
+              "context": "daily"
+            }
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "monitor device state",
+              "audience": "operator",
+              "context": "daily"
+            }
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "monitor charger state",
+          "audience": "operator",
+          "context": "daily",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 2,
+          "agree_with_chosen": 2,
+          "margin": "2/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "monitor charger state",
+              "audience": "operator",
+              "context": "daily"
+            }
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "monitor charger state",
+              "audience": "operator",
+              "context": "daily"
+            }
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "respond to alarms",
+          "audience": "operator",
+          "context": "emergency",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 2,
+          "agree_with_chosen": 2,
+          "margin": "2/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "respond to alarms",
+              "audience": "operator",
+              "context": "emergency"
+            }
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "respond",
+              "audience": "operator",
+              "context": "emergency",
+              "options": [
+                "high temperature alarm",
+                "battery low voltage alarm",
+                "field current too low alarm"
+              ]
+            }
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "monitor battery voltage",
+          "audience": "operator",
+          "context": "daily",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 1,
+          "agree_with_chosen": 1,
+          "margin": "1/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "monitor battery voltage",
+              "audience": "operator",
+              "context": "daily"
+            }
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "monitor battery temperature",
+          "audience": "operator",
+          "context": "daily",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 1,
+          "agree_with_chosen": 1,
+          "margin": "1/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "monitor battery temperature",
+              "audience": "operator",
+              "context": "daily"
+            }
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "monitor alternator voltage",
+          "audience": "operator",
+          "context": "daily",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 1,
+          "agree_with_chosen": 1,
+          "margin": "1/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "monitor alternator voltage",
+              "audience": "operator",
+              "context": "daily"
+            }
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "monitor field current",
+          "audience": "operator",
+          "context": "daily",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 1,
+          "agree_with_chosen": 1,
+          "margin": "1/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "monitor field current",
+              "audience": "operator",
+              "context": "daily"
+            }
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "monitor alternator temperature",
+          "audience": "operator",
+          "context": "daily",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 1,
+          "agree_with_chosen": 1,
+          "margin": "1/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "monitor alternator temperature",
+              "audience": "operator",
+              "context": "daily"
+            }
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "monitor alternator shaft RPM",
+          "audience": "operator",
+          "context": "daily",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 1,
+          "agree_with_chosen": 1,
+          "margin": "1/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "monitor alternator shaft RPM",
+              "audience": "operator",
+              "context": "daily"
+            }
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "requires_devices",
+        "kind": "requires_devices",
+        "attribute": "presence",
+        "chosen": {
+          "description_verbatim": "MasterBus USB Interface",
+          "needed_for": "operator_actions[0]",
+          "requirement_kind": "device",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 1,
+          "agree_with_chosen": 1,
+          "margin": "1/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "description_verbatim": "MasterBus USB Interface",
+              "needed_for": "operator_actions[0]",
+              "requirement_kind": "device"
+            }
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "requires_devices",
+        "kind": "requires_devices",
+        "attribute": "presence",
+        "chosen": {
+          "description_verbatim": "battery isolator",
+          "needed_for": "operator_actions[0]",
+          "requirement_kind": "device",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 2,
+          "agree_with_chosen": 2,
+          "margin": "2/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "description_verbatim": "battery isolator",
+              "needed_for": "operator_actions[0]",
+              "requirement_kind": "device"
+            }
+          },
+          {
+            "run": 3,
+            "value": {
+              "description_verbatim": "battery isolator",
+              "needed_for": "operator_actions[0]",
+              "requirement_kind": "device"
+            }
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "requires_devices",
+        "kind": "requires_devices",
+        "attribute": "presence",
+        "chosen": {
+          "description_verbatim": "Master Adjust",
+          "needed_for": "operator_actions[0]",
+          "requirement_kind": "commissioning_tool",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 2,
+          "agree_with_chosen": 2,
+          "margin": "2/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "description_verbatim": "Master Adjust",
+              "needed_for": "operator_actions[0]",
+              "requirement_kind": "commissioning_tool"
+            }
+          },
+          {
+            "run": 3,
+            "value": {
+              "description_verbatim": "Master Adjust",
+              "needed_for": "operator_actions[0]",
+              "requirement_kind": "commissioning_tool"
+            }
+          }
+        ],
+        "instability_class": "cosmetic"
+      }
+    ],
+    "instability_triage": {
+      "material_count": 0,
+      "cosmetic_count": 14
+    },
+    "source": "live_extraction"
+  },
+  "czone_2_0": {
+    "device": {
+      "manufacturer": "CZone",
+      "model": "CZone 2.0",
+      "category_freeform": "CZone digital switching network"
+    },
+    "control_surfaces": [
+      {
+        "surface": "touchscreen",
+        "location_class": "on_device",
+        "optional_accessory": false,
+        "label_verbatim": "Favourites",
+        "path": "control_surfaces[0]"
+      },
+      {
+        "surface": "touchscreen",
+        "location_class": "on_device",
+        "optional_accessory": false,
+        "label_verbatim": "Modes",
+        "path": "control_surfaces[1]"
+      },
+      {
+        "surface": "touchscreen",
+        "location_class": "on_device",
+        "optional_accessory": false,
+        "label_verbatim": "Control",
+        "path": "control_surfaces[2]"
+      },
+      {
+        "surface": "touchscreen",
+        "location_class": "on_device",
+        "optional_accessory": false,
+        "label_verbatim": "Monitoring",
+        "path": "control_surfaces[3]"
+      },
+      {
+        "surface": "touchscreen",
+        "location_class": "on_device",
+        "optional_accessory": false,
+        "label_verbatim": "Alarms",
+        "path": "control_surfaces[4]"
+      },
+      {
+        "surface": "touchscreen",
+        "location_class": "on_device",
+        "optional_accessory": true,
+        "label_verbatim": "AC Mains",
+        "path": "control_surfaces[5]"
+      },
+      {
+        "surface": "touchscreen",
+        "location_class": "on_device",
+        "optional_accessory": true,
+        "label_verbatim": "Inverter Charger",
+        "path": "control_surfaces[6]"
+      },
+      {
+        "surface": "touchscreen",
+        "location_class": "on_device",
+        "optional_accessory": true,
+        "label_verbatim": "Climate",
+        "path": "control_surfaces[7]"
+      }
+    ],
+    "operator_actions": [
+      {
+        "action": "tap the menu to access pages",
+        "audience": "operator",
+        "context": "daily"
+      },
+      {
+        "action": "press desired circuit to open controls",
+        "audience": "operator",
+        "context": "daily"
+      },
+      {
+        "action": "press desired alarm to open details",
+        "audience": "operator",
+        "context": "daily"
+      },
+      {
+        "action": "press desired meter to open data",
+        "audience": "operator",
+        "context": "daily"
+      },
+      {
+        "action": "press filter button to select category",
+        "audience": "operator",
+        "context": "daily"
+      },
+      {
+        "action": "activate Mode",
+        "audience": "operator",
+        "context": "situational",
+        "source": "extracted"
+      },
+      {
+        "action": "Press the Power button to turn Aircon unit On or Off",
+        "audience": "operator",
+        "context": "situational",
+        "source": "extracted"
+      },
+      {
+        "action": "Press the Mode button to cycle between available operating modes",
+        "audience": "operator",
+        "context": "situational",
+        "source": "extracted"
+      },
+      {
+        "action": "Currently selected operating mode is shown",
+        "audience": "operator",
+        "context": "daily",
+        "source": "extracted"
+      },
+      {
+        "action": "Press Temp Down button to adjust setpoint temperature down",
+        "audience": "operator",
+        "context": "situational",
+        "source": "extracted"
+      },
+      {
+        "action": "Press Temp Up button to adjust setpoint temperature up",
+        "audience": "operator",
+        "context": "situational",
+        "source": "extracted"
+      },
+      {
+        "action": "Ambient temperature is shown in white, and changes to blue when",
+        "audience": "operator",
+        "context": "daily",
+        "source": "extracted"
+      },
+      {
+        "action": "Press Fan Down button to adjust fan speed down",
+        "audience": "operator",
+        "context": "situational",
+        "source": "extracted"
+      },
+      {
+        "action": "Press Fan Up button to adjust fan speed up",
+        "audience": "operator",
+        "context": "situational",
+        "source": "extracted"
+      },
+      {
+        "action": "Current fan speed is shown4",
+        "audience": "operator",
+        "context": "daily",
+        "source": "extracted"
+      },
+      {
+        "action": "Ambient temperature is shown in white, and changes to blue when adjusting setpoint",
+        "audience": "operator",
+        "context": "daily",
+        "source": "extracted"
+      },
+      {
+        "action": "Current fan speed is shown",
+        "audience": "operator",
+        "context": "daily",
+        "source": "extracted"
+      }
+    ],
+    "networks": {
+      "speaks": [],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": false,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": false
+    },
+    "requires_devices": [
+      {
+        "description_verbatim": "AC Mains Interface (ACMI)",
+        "needed_for": "control_surfaces[5]",
+        "requirement_kind": "device",
+        "source": "extracted",
+        "functional_class": "acmi",
+        "gate_verbatim": "The AC Mains page will appear if an AC Mains Interface (ACMI) is configured on the system."
+      },
+      {
+        "description_verbatim": "Mastervolt Chargers",
+        "needed_for": "control_surfaces[6]",
+        "requirement_kind": "device",
+        "source": "extracted",
+        "functional_class": "mastervolt_inverter_charger",
+        "gate_verbatim": "The Inverter Charge page will appear if any Mastervolt Chargers, Inverters or Inverter/Chargers are configured on the system."
+      },
+      {
+        "description_verbatim": "Inverters",
+        "needed_for": "control_surfaces[6]",
+        "requirement_kind": "device",
+        "source": "extracted",
+        "functional_class": "mastervolt_inverter_charger",
+        "gate_verbatim": "The Inverter Charge page will appear if any Mastervolt Chargers, Inverters or Inverter/Chargers are configured on the system."
+      },
+      {
+        "description_verbatim": "Inverter/Chargers",
+        "needed_for": "control_surfaces[6]",
+        "requirement_kind": "device",
+        "source": "extracted",
+        "functional_class": "mastervolt_inverter_charger",
+        "gate_verbatim": "The Inverter Charge page will appear if any Mastervolt Chargers, Inverters or Inverter/Chargers are configured on the system."
+      },
+      {
+        "description_verbatim": "supported air conditioner (HVAC)",
+        "needed_for": "control_surfaces[7]",
+        "requirement_kind": "device",
+        "source": "extracted",
+        "functional_class": "supported_hvac",
+        "gate_verbatim": "The Climate page will appear if a supported air conditioner (HVAC) is configured on the system."
+      }
+    ],
+    "safety_role": {
+      "is_protective_device": false,
+      "has_manual_override": false,
+      "has_emergency_procedure": false
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [],
+    "evidence": [
+      {
+        "supports_field": "ui_pages[0].purpose",
+        "manual_section": "CZONE 2.0 INTRODUCTION",
+        "note": "common items are pre-configured for easy access"
+      },
+      {
+        "supports_field": "ui_pages[1].purpose",
+        "manual_section": "MODES PAGE",
+        "note": "control multiple circuits with a single touch"
+      },
+      {
+        "supports_field": "ui_pages[2].purpose",
+        "manual_section": "CONTROL PAGE",
+        "note": "list of configured circuits"
+      },
+      {
+        "supports_field": "operator_actions[0].action",
+        "manual_section": "THE MENU",
+        "note": "tap the menu to access pages"
+      },
+      {
+        "supports_field": "operator_actions[1].action",
+        "manual_section": "CONTROL PAGE",
+        "note": "press desired circuit to open controls"
+      },
+      {
+        "supports_field": "operator_actions[2].action",
+        "manual_section": "ALARMS PAGE",
+        "note": "press desired alarm to open details"
+      },
+      {
+        "supports_field": "operator_actions[3].action",
+        "manual_section": "MONITORING PAGE",
+        "note": "press desired meter to open data"
+      },
+      {
+        "supports_field": "operator_actions[4].action",
+        "manual_section": "FAVOURITES PAGES",
+        "note": "press filter button to select category"
+      }
+    ],
+    "confidence": {
+      "overall": 0.9,
+      "notes": "[batch_0] Profiled only the CZone 2.0 platform from the manual."
+    },
+    "genres": [
+      "operation"
+    ],
+    "entity_kind": "platform",
+    "documented_version": "CZone 2.0 v1.1 (software v6.12.4.0+)",
+    "ui_pages": [
+      {
+        "name": "Favourites",
+        "purpose": "common items are pre-configured for easy access",
+        "actions": []
+      },
+      {
+        "name": "Modes",
+        "purpose": "control multiple circuits with a single touch",
+        "actions": [
+          {
+            "action": "activate Mode",
+            "audience": "operator",
+            "context": "situational"
+          }
+        ]
+      },
+      {
+        "name": "Control",
+        "purpose": "list of configured circuits",
+        "actions": []
+      },
+      {
+        "name": "Monitoring",
+        "purpose": "list of configured meters",
+        "actions": []
+      },
+      {
+        "name": "Alarms",
+        "purpose": "list of active and historic alarms",
+        "actions": []
+      },
+      {
+        "name": "AC Mains",
+        "purpose": "direct power between AC mains sources and loads",
+        "appears_if_gate": {
+          "verbatim": "The AC Mains page will appear if an AC Mains Interface (ACMI) is configured on the system.",
+          "description_verbatim": "AC Mains Interface (ACMI)",
+          "functional_class": "acmi"
+        },
+        "actions": []
+      },
+      {
+        "name": "Inverter Charger",
+        "purpose": "monitor power flow from AC to DC and vice versa",
+        "appears_if_gate": {
+          "verbatim": "The Inverter Charge page will appear if any Mastervolt Chargers, Inverters or Inverter/Chargers are configured on the system.",
+          "description_verbatim": "Mastervolt Chargers, Inverters or Inverter/Chargers",
+          "functional_class": "mastervolt_inverter_charger"
+        },
+        "actions": []
+      },
+      {
+        "name": "Climate",
+        "purpose": "control/monitor HVAC",
+        "appears_if_gate": {
+          "verbatim": "The Climate page will appear if a supported air conditioner (HVAC) is configured on the system.",
+          "description_verbatim": "supported air conditioner (HVAC)",
+          "functional_class": "supported_hvac"
+        },
+        "actions": [
+          {
+            "action": "Press the Power button to turn Aircon unit On or Off",
+            "audience": "operator",
+            "context": "situational"
+          },
+          {
+            "action": "Press the Mode button to cycle between available operating modes",
+            "audience": "operator",
+            "context": "situational"
+          },
+          {
+            "action": "Currently selected operating mode is shown",
+            "audience": "operator",
+            "context": "daily"
+          },
+          {
+            "action": "Press Temp Down button to adjust setpoint temperature down",
+            "audience": "operator",
+            "context": "daily"
+          },
+          {
+            "action": "Press Temp Up button to adjust setpoint temperature up",
+            "audience": "operator",
+            "context": "daily"
+          },
+          {
+            "action": "Ambient temperature is shown in white, and changes to blue when adjusting setpoint",
+            "audience": "operator",
+            "context": "daily"
+          },
+          {
+            "action": "Press Fan Down button to adjust fan speed down",
+            "audience": "operator",
+            "context": "daily"
+          },
+          {
+            "action": "Press Fan Up button to adjust fan speed up",
+            "audience": "operator",
+            "context": "daily"
+          },
+          {
+            "action": "Current fan speed is shown",
+            "audience": "operator",
+            "context": "daily"
+          }
+        ]
+      }
+    ],
+    "alarm_severity": [
+      {
+        "level_verbatim": "Critical",
+        "color_verbatim": "Red"
+      },
+      {
+        "level_verbatim": "Important",
+        "color_verbatim": "Orange"
+      },
+      {
+        "level_verbatim": "Standard",
+        "color_verbatim": "Yellow"
+      },
+      {
+        "level_verbatim": "Warning",
+        "color_verbatim": "Blue"
+      }
+    ],
+    "source": "live_extraction",
+    "validation_flags": [
+      {
+        "flag": "evidence_incomplete",
+        "severity": "blocking",
+        "detail": "no evidence entry supports requires_devices[0]",
+        "field_path": "requires_devices[0]"
+      },
+      {
+        "flag": "evidence_incomplete",
+        "severity": "blocking",
+        "detail": "no evidence entry supports requires_devices[1]",
+        "field_path": "requires_devices[1]"
+      },
+      {
+        "flag": "evidence_incomplete",
+        "severity": "blocking",
+        "detail": "no evidence entry supports requires_devices[2]",
+        "field_path": "requires_devices[2]"
+      },
+      {
+        "flag": "evidence_incomplete",
+        "severity": "blocking",
+        "detail": "no evidence entry supports requires_devices[3]",
+        "field_path": "requires_devices[3]"
+      },
+      {
+        "flag": "evidence_incomplete",
+        "severity": "blocking",
+        "detail": "no evidence entry supports requires_devices[4]",
+        "field_path": "requires_devices[4]"
+      }
+    ],
+    "repairs": [],
+    "needs_rextraction": false
+  }
+}

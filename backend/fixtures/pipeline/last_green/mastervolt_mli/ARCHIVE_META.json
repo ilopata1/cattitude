@@ -1,0 +1,142 @@
+{
+  "device_key": "mastervolt_mli",
+  "scratch_stem": "mastervolt_mli",
+  "archived_at": "2026-07-16T00:34:50.654805+00:00",
+  "stability_voting": {
+    "n_requested": 3,
+    "n_completed": 3,
+    "short_circuit_identical": false,
+    "unstable_flag_count": 5,
+    "votes": [
+      {
+        "field_path": "requires_devices",
+        "kind": "requires_devices",
+        "attribute": "presence",
+        "chosen": {
+          "description_verbatim": "Mastervolt battery charger",
+          "needed_for": "data_roles.exposes_data_to_network"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "description_verbatim": "Mastervolt battery charger",
+              "needed_for": "data_roles.exposes_data_to_network"
+            }
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ]
+      },
+      {
+        "field_path": "requires_devices",
+        "kind": "requires_devices",
+        "attribute": "presence",
+        "chosen": {
+          "description_verbatim": "safety relay",
+          "needed_for": "control_surfaces[0]"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "description_verbatim": "safety relay",
+              "needed_for": "control_surfaces[0]"
+            }
+          },
+          {
+            "run": 3,
+            "value": {
+              "description_verbatim": "safety relay",
+              "needed_for": "control_surfaces[0]"
+            }
+          }
+        ]
+      },
+      {
+        "field_path": "protects",
+        "kind": "protects",
+        "attribute": "presence",
+        "chosen": {
+          "description_verbatim": "safety relay automatically disconnects battery on safety events"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "description_verbatim": "safety relay automatically disconnects battery on safety events"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ]
+      },
+      {
+        "field_path": "protected_by",
+        "kind": "protected_by",
+        "attribute": "presence",
+        "chosen": {
+          "description_verbatim": "battery safety relay automatically disconnects on safety events"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "description_verbatim": "battery safety relay automatically disconnects on safety events"
+            }
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ]
+      },
+      {
+        "field_path": "protected_by",
+        "kind": "protected_by",
+        "attribute": "presence",
+        "chosen": {
+          "description_verbatim": "battery fuse in positive battery cable"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "description_verbatim": "battery fuse in positive battery cable"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ]
+      }
+    ]
+  },
+  "coverage": 0.8281,
+  "note": "Golden-green voted Stage 1 payload for flap diagnosis diffs."
+}

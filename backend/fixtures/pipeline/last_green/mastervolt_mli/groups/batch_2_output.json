@@ -1,0 +1,94 @@
+{
+  "device": {
+    "manufacturer": "Mastervolt",
+    "model": "MLI Ultra 24/6000",
+    "category_freeform": "LITHIUM-ION BATTERY"
+  },
+  "control_surfaces": [
+    {
+      "surface": "remote_panel_accessory",
+      "location_class": "remote_wired",
+      "optional_accessory": true,
+      "label_verbatim": "MasterView remote panel",
+      "path": "control_surfaces[0]"
+    }
+  ],
+  "operator_actions": [
+    {
+      "action": "close the safety relay by setting the knob to REMOTE ON",
+      "audience": "operator",
+      "context": "situational"
+    },
+    {
+      "action": "verify that a current is flowing out of the battery",
+      "audience": "operator",
+      "context": "daily"
+    },
+    {
+      "action": "switch off the load, then switch on the charger",
+      "audience": "operator",
+      "context": "situational"
+    }
+  ],
+  "networks": {
+    "speaks": [
+      {
+        "name_verbatim": "MasterBus",
+        "physical_or_wireless": "wired"
+      },
+      {
+        "name_verbatim": "CZone",
+        "physical_or_wireless": "wired"
+      }
+    ],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [
+    {
+      "description_verbatim": "safety relay",
+      "needed_for": "control_surfaces[0]"
+    }
+  ],
+  "safety_role": {
+    "is_protective_device": true,
+    "has_manual_override": true,
+    "has_emergency_procedure": false
+  },
+  "protected_by": [
+    {
+      "description_verbatim": "safety relay"
+    }
+  ],
+  "protects": [],
+  "supply_requirements": [
+    {
+      "description_verbatim": "Battery fuse in positive battery cable"
+    }
+  ],
+  "evidence": [
+    {
+      "supports_field": "safety_role.is_protective_device",
+      "manual_section": "Protection",
+      "note": "Battery Management System protects cells"
+    },
+    {
+      "supports_field": "safety_role.has_manual_override",
+      "manual_section": "Safety relay connections",
+      "note": "Manual control for safety relay exists"
+    },
+    {
+      "supports_field": "control_surfaces[0]",
+      "manual_section": "optional remote control MasterView Easy remote panel installed",
+      "note": "Remote panel is an optional accessory"
+    }
+  ],
+  "confidence": {
+    "overall": 0.8,
+    "notes": "Profile based on limited excerpts; some details may vary."
+  }
+}

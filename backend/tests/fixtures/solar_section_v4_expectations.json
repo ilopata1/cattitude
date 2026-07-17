@@ -1,0 +1,40 @@
+{
+  "fixture_auth": "Fixture-Auth: chat Solar v4 — composition expectations (absence/context_shaping + task order)",
+  "version": "v4",
+  "description": "Regression expectations for Solar Stage 4 composition rules.",
+  "required_block_order_prefix": ["capability_summary", "monitoring"],
+  "forbidden_block_names": ["identity", "daily_use", "caveats", "operational_guidance"],
+  "forbidden_prose_substrings": [
+    "this vessel",
+    "does not appear",
+    "not confirmed fitted",
+    "not fitted",
+    "is described in the manuals",
+    "control surface",
+    "nameplate",
+    "Flag:",
+    "owner-survey",
+    "owner survey estimate",
+    "survey estimate)",
+    "that is where",
+    "that is how",
+    "that array is the one"
+  ],
+  "max_parentheticals_per_sentence": 1,
+  "prose_economy_criteria": ["xvii", "xviii", "xix"],
+  "required_provenance_fact_keys_on_monitoring": [
+    "fact:victronconnect_monitoring",
+    "fact:gx_telemetry_unresolved"
+  ],
+  "must_not_render_own_sentence_for": [
+    "fact:gx_telemetry_unresolved",
+    "fact:optional_display_unresolved"
+  ],
+  "obsoleted_v3_criteria": {
+    "iv": "flags_as_caveats requiring GX/optional-display caveat sentences",
+    "vi": "flag_facts_once as separately rendered flag prose",
+    "ix": "identity → daily_use → operational_guidance → caveats → reference"
+  },
+  "recorded_vessel_display_name": "Supernova",
+  "synthetic_vessel_display_name": "Testboat"
+}

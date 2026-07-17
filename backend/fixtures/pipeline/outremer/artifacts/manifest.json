@@ -1,0 +1,20 @@
+{
+  "vessel": "outremer_55n60",
+  "fixture_auth": "Fixture-Auth: chat Solar v3 — ingest deck photos into vessel artifact store",
+  "artifacts": [
+    {
+      "id": "photo_davit_array",
+      "kind": "photo",
+      "path": "photo_davit_array.jpg",
+      "caption": "Davit rigid solar array (deck inspection)",
+      "subjects": ["davit", "rigid_panels", "victron_mppt_150_60"]
+    },
+    {
+      "id": "photo_coachroof_boom",
+      "kind": "photo",
+      "path": "photo_coachroof_boom.jpg",
+      "caption": "Coachroof semi-flex array with boom shading geometry",
+      "subjects": ["coachroof", "semi_flex", "boom_shading", "victron_mppt"]
+    }
+  ]
+}

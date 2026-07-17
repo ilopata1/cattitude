@@ -1,0 +1,86 @@
+{
+  "device": {
+    "manufacturer": "Victron Energy",
+    "model": "SmartSolar MPPT 75 | 15",
+    "category_freeform": "MPPT solar charger"
+  },
+  "control_surfaces": [
+    {
+      "surface": "mobile_app_bluetooth",
+      "location_class": "wireless",
+      "optional_accessory": false,
+      "label_verbatim": "VictronConnect app",
+      "path": "control_surfaces[0]"
+    }
+  ],
+  "operator_actions": [
+    {
+      "action": "connect to the solar charger via Bluetooth",
+      "audience": "operator",
+      "context": "daily"
+    },
+    {
+      "action": "monitor and configure the charger via the VictronConnect app",
+      "audience": "operator",
+      "context": "daily"
+    },
+    {
+      "action": "shutdown the solar charger",
+      "audience": "operator",
+      "context": "situational"
+    },
+    {
+      "action": "restart the solar charger",
+      "audience": "operator",
+      "context": "situational"
+    },
+    {
+      "action": "check error codes and alarms",
+      "audience": "operator",
+      "context": "emergency"
+    }
+  ],
+  "networks": {
+    "speaks": [
+      {
+        "name_verbatim": "VE.Smart Networking",
+        "physical_or_wireless": "wireless"
+      }
+    ],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [
+    {
+      "description_verbatim": "VE.Direct Bluetooth Smart Dongle",
+      "needed_for": "control_surfaces[0]"
+    },
+    {
+      "description_verbatim": "GX device or GlobalLink 520",
+      "needed_for": ""
+    }
+  ],
+  "safety_role": {
+    "is_protective_device": false,
+    "is_emergency_control": false,
+    "can_isolate_power": false
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [],
+  "evidence": [
+    "The app can connect to the solar charger in the following ways: Directly via its built-in Bluetooth.",
+    "The VictronConnect app can monitor and configure the charger.",
+    "To shut down the solar charger, perform these steps in the prescribed order: Disconnect the PV supply.",
+    "To restart the solar charger after it was shutdown, perform these steps in the prescribed order: Connect the battery supply.",
+    "The error will show up in a pop-up window on the status screen together with the error number."
+  ],
+  "confidence": {
+    "overall": 0.9,
+    "notes": "Manual excerpts consistently refer to operator actions and device capabilities."
+  }
+}

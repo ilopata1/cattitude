@@ -1,0 +1,62 @@
+{
+  "device": {
+    "manufacturer": "Mastervolt",
+    "model": "Mass Combi Pro 24/3500-100",
+    "category_freeform": "Mass Combi Pro"
+  },
+  "control_surfaces": [
+    {
+      "surface": "physical_controls",
+      "location_class": "on_device",
+      "optional_accessory": false,
+      "label_verbatim": "on/off/inverter off switch",
+      "path": "control_surfaces[0]"
+    }
+  ],
+  "operator_actions": [
+    {
+      "action": "switch on the Mass Combi Pro",
+      "audience": "operator",
+      "context": "situational"
+    },
+    {
+      "action": "check generator voltage and frequency",
+      "audience": "operator",
+      "context": "emergency"
+    },
+    {
+      "action": "check mains voltage and frequency",
+      "audience": "operator",
+      "context": "emergency"
+    }
+  ],
+  "networks": {
+    "speaks": [],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": true
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [],
+  "evidence": [
+    {
+      "supports_field": "safety_role.has_emergency_procedure",
+      "manual_section": "7.3.1 Trouble shooting table",
+      "note": "Includes emergency procedures for faults"
+    }
+  ],
+  "confidence": {
+    "overall": 0.8,
+    "notes": "Profile based on limited manual excerpts"
+  }
+}

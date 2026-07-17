@@ -17,7 +17,7 @@ from sqlalchemy.engine import Connection
 
 from config import settings
 from content.loader import load_yaml_cached
-from guide_module_catalog import SYSTEM_CATALOG
+from guide_system_assembly import draft_target_systems
 from manual_retrieval import retrieve_manual_excerpts
 from prompts.guide.registry import get_draft_prompt, get_schema_hint
 
@@ -99,12 +99,16 @@ FIX_CARD_RETRIEVAL_QUERIES: dict[str, list[str]] = {
 }
 
 
-def system_ids_for_category(category: str) -> list[str]:
-    return [
-        system_id
-        for system_id, meta in SYSTEM_CATALOG.items()
-        if category in (meta.get("equipment_categories") or [])
-    ]
+def system_ids_for_category(
+    category: str,
+    *,
+    manufacturer: str = "",
+    model: str = "",
+) -> list[str]:
+    """Target Know chapters for a draft — primary home when classification wins."""
+    return draft_target_systems(
+        category, manufacturer=manufacturer, model=model
+    )
 
 
 def fix_card_keys_for_category(category: str) -> list[str]:
@@ -316,7 +320,11 @@ def draft_equipment_fragment(
         "system_category": row[2],
     }
     category = equipment["system_category"] or ""
-    target_systems = system_ids or system_ids_for_category(category)
+    target_systems = system_ids or system_ids_for_category(
+        category,
+        manufacturer=str(equipment["manufacturer"] or ""),
+        model=str(equipment["model"] or ""),
+    )
     fix_card_keys = fix_card_keys_for_category(category) if include_fix_cards else []
 
     all_manuals = list_ingested_manuals(conn, equipment_id)

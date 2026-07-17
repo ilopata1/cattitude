@@ -1,0 +1,101 @@
+{
+  "device": {
+    "manufacturer": "Victron Energy",
+    "model": "SmartSolar MPPT 75 | 15",
+    "category_freeform": "MPPT solar charger"
+  },
+  "control_surfaces": [
+    {
+      "surface": "mobile_app_bluetooth",
+      "location_class": "wireless",
+      "optional_accessory": false,
+      "label_verbatim": "VictronConnect app",
+      "path": "control_surfaces[0]"
+    }
+  ],
+  "operator_actions": [
+    {
+      "action": "monitor via the VictronConnect app",
+      "audience": "operator",
+      "context": "daily"
+    },
+    {
+      "action": "configure via the VictronConnect app",
+      "audience": "either",
+      "context": "situational"
+    },
+    {
+      "action": "shutdown the solar charger",
+      "audience": "operator",
+      "context": "situational"
+    },
+    {
+      "action": "restart the solar charger",
+      "audience": "operator",
+      "context": "situational"
+    }
+  ],
+  "networks": {
+    "speaks": [
+      {
+        "name_verbatim": "VE.Direct",
+        "physical_or_wireless": "wired"
+      },
+      {
+        "name_verbatim": "Bluetooth",
+        "physical_or_wireless": "wireless"
+      }
+    ],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": true,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [
+    {
+      "description_verbatim": "GX device",
+      "needed_for": "data_roles.exposes_data_to_network",
+      "requirement_kind": "device"
+    }
+  ],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": true
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [
+    {
+      "description_verbatim": "Insert external fuse(s) or circuit breaker(s) within 30cm of the battery."
+    }
+  ],
+  "evidence": [
+    {
+      "supports_field": "data_roles.exposes_data_to_network",
+      "manual_section": "6. Operation",
+      "note": "Device can expose data via VE.Direct and Bluetooth."
+    },
+    {
+      "supports_field": "requires_devices[0]",
+      "manual_section": "6. Operation",
+      "note": "GX device needed for data exposure."
+    },
+    {
+      "supports_field": "safety_role.has_emergency_procedure",
+      "manual_section": "6.5. Shutdown and restart procedure",
+      "note": "Shutdown and restart procedures are defined."
+    },
+    {
+      "supports_field": "control_surfaces[0]",
+      "manual_section": "7.3. Monitoring via the VictronConnect app",
+      "note": "Monitoring and configuration via app is possible."
+    }
+  ],
+  "confidence": {
+    "overall": 0.8,
+    "notes": "Manual excerpts cover key operational and safety aspects."
+  }
+}

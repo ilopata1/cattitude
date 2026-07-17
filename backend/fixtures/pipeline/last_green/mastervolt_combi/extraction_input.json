@@ -1,0 +1,1956 @@
+{
+  "routing_mechanism": "rag_retrieval_queries",
+  "stage0_heading_routing": false,
+  "extraction_mode": "map_reduce",
+  "stability_voting": {
+    "n_requested": 3,
+    "n_completed": 3,
+    "short_circuit_identical": false,
+    "unstable_flag_count": 5,
+    "votes": [
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "switch off inverter to prevent battery depletion",
+          "audience": "operator",
+          "context": "situational"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "action": "switch off inverter to prevent battery depletion",
+              "audience": "operator",
+              "context": "situational"
+            }
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ]
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "set DIP switches",
+          "audience": "installer_or_technician",
+          "context": "commissioning"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "set DIP switches",
+              "audience": "installer_or_technician",
+              "context": "commissioning"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ]
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "perform commissioning with MasterAdjust software",
+          "audience": "installer_or_technician",
+          "context": "commissioning"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "perform commissioning with MasterAdjust software",
+              "audience": "installer_or_technician",
+              "context": "commissioning"
+            }
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "perform commissioning with MasterAdjust software",
+              "audience": "installer_or_technician",
+              "context": "commissioning"
+            }
+          }
+        ]
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "switch off the charger",
+          "audience": "operator",
+          "context": "situational"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "switch off the charger",
+              "audience": "operator",
+              "context": "situational"
+            }
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "switch off the charger",
+              "audience": "operator",
+              "context": "situational"
+            }
+          }
+        ]
+      },
+      {
+        "field_path": "control_surfaces",
+        "kind": "control_surfaces",
+        "attribute": "presence",
+        "chosen": {
+          "surface": "physical_controls",
+          "location_class": "on_device",
+          "optional_accessory": false,
+          "label_verbatim": "Display with front switch",
+          "path": "control_surfaces[0]"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "surface": "physical_controls",
+              "location_class": "on_device",
+              "optional_accessory": false,
+              "label_verbatim": "Display with front switch",
+              "path": "control_surfaces[0]"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ]
+      }
+    ]
+  },
+  "note": "Stage 1 map-reduce with stability voting: excerpts partitioned by chapter (fallback batches); up to N=3 map-reduce passes on the same Stage 0 payload; field-level vote; then validate/derive.",
+  "retrieval_queries": [
+    "operation daily use display menu controls operator",
+    "installation wiring commissioning configuration DIP switches",
+    "troubleshooting alarms faults error codes emergency protection",
+    "network communication MasterBus NMEA CZone VE.Direct Bluetooth remote panel app",
+    "maintenance service storage winterizing",
+    "optional accessory gateway interface required for",
+    "MasterView remote panel remote control display panel monitoring panel MasterAdjust",
+    "optional remote control MasterView Easy remote panel installed",
+    "shore power AC input current limit generator mains",
+    "main switch inverter on off charger operation",
+    "DC fuse battery protection wiring supply requirement",
+    "BMS battery safety relay protective disconnect undervoltage overvoltage temperature",
+    "Class T fuse T-Fuse fuse holder positive battery cable",
+    "Close relay reset battery safety event recovery after disconnect",
+    "State of charge SOC monitoring MasterBus display"
+  ],
+  "query_diagnostics": [
+    {
+      "query": "operation daily use display menu controls operator",
+      "unique_hits_added": 7,
+      "matched": true,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "installation wiring commissioning configuration DIP switches",
+      "unique_hits_added": 5,
+      "matched": true,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "unique_hits_added": 7,
+      "matched": true,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "network communication MasterBus NMEA CZone VE.Direct Bluetooth remote panel app",
+      "unique_hits_added": 3,
+      "matched": true,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "maintenance service storage winterizing",
+      "unique_hits_added": 2,
+      "matched": true,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "optional accessory gateway interface required for",
+      "unique_hits_added": 2,
+      "matched": true,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "MasterView remote panel remote control display panel monitoring panel MasterAdjust",
+      "unique_hits_added": 2,
+      "matched": true,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "optional remote control MasterView Easy remote panel installed",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "shore power AC input current limit generator mains",
+      "unique_hits_added": 6,
+      "matched": true,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "main switch inverter on off charger operation",
+      "unique_hits_added": 3,
+      "matched": true,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "DC fuse battery protection wiring supply requirement",
+      "unique_hits_added": 2,
+      "matched": true,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "BMS battery safety relay protective disconnect undervoltage overvoltage temperature",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "Class T fuse T-Fuse fuse holder positive battery cable",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "Close relay reset battery safety event recovery after disconnect",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "State of charge SOC monitoring MasterBus display",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "3.1.1 User interface (1)",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "3.1.2 AC transfer switch (2)",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "3.1.3 Inverter/ Main charger (3)",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "3.2.1 3-Step+ charge system",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "3.2.2 Temperature compensated charging",
+      "unique_hits_added": 2,
+      "matched": true,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "3.2.3 Silent mode",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "3.3.1 General",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "3.3.2 Energy saving mode (selectable)",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "3.4.1 Inverting mode",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "3.4.2 Charging mode",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "4.1.1 Generator input LED",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "4.1.2 Mains input LED",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 3,
+      "phase": "heading_fill"
+    }
+  ],
+  "coverage": {
+    "chunk_count": 63,
+    "heading_count": 154,
+    "headings_covered_count": 124,
+    "heading_coverage_fraction": 0.8052,
+    "coverage_low_threshold": 0.25,
+    "coverage_low": false,
+    "top_k_used": 7,
+    "top_k_scaling": {
+      "base": 4,
+      "max": 16,
+      "chunk_coverage_target": 0.6,
+      "scaled": true
+    },
+    "heading_fill_queries": 12,
+    "heading_fill_hits": 5,
+    "headings_all": [
+      "MASS COMBI PRO",
+      "MULTI PURPOSE CHARGER INVERTER",
+      "USER AND INSTALLATION MANUAL",
+      "OVERVIEW MASS COMBI PRO",
+      "1. Display with front switch 6. AC output 1 (“OUT-1”) 11. Sync connector (2x)",
+      "2. Main battery negative 7. AC output 2 (“OUT-2”) (switched) 12. Temperature sensor connector",
+      "3. Main battery positive 8. DIP switch units (2x8) 13. MasterBus connector (2x)",
+      "4. Mains AC input terminal (“MAINS”) 9. Fan (3x)",
+      "5. Generator AC input terminal (“GEN”) 10. Ground stud",
+      "TABLE OF CONTENTS",
+      "1 GENERAL INFORMATION",
+      "1.1 Product description",
+      "1.2 Use of this manual",
+      "1.3 Validity of this manual",
+      "1.4 Liability",
+      "1.5 Warranty",
+      "1.6 Disclaimer",
+      "1.7 Changes to the Mass Combi Pro",
+      "1.9 Correct disposal of this product",
+      "2.1 Warnings and symbols",
+      "2.2 Use for intended purpose",
+      "1 The Mass Combi Pro is constructed as per the",
+      "2 Use the Mass Combi Pro only:",
+      "3 Use of the Mass Combi Pro  other than mentioned in",
+      "2.3 Organizational measures",
+      "2.4 Warning of special dangers",
+      "1 If the Mass Combi Pro  is switched off during",
+      "2 If maintenance and repairs are required, use only",
+      "2.5 General safety and installation precautions",
+      "2.6 Warning regarding life support applications",
+      "2.7 Warning regarding the use of batteries",
+      "3 HOW IT WORKS",
+      "3.1 Principle",
+      "3.1.1 User interface (1)",
+      "3.1.2 AC transfer switch (2)",
+      "3.1.3 Inverter/ Main charger (3)",
+      "3.2 Battery charger",
+      "3.2.1 3-Step+ charge system",
+      "3.2.2 Temperature compensated charging",
+      "3.2.3 Silent mode",
+      "3.3 Inverter",
+      "3.3.1 General",
+      "3.3.2 Energy saving mode (selectable)",
+      "chapter 6, Configuration.",
+      "230 V every 2½ seconds. When it detects a load that is",
+      "3.4 Operation modes",
+      "section 3.4.10. You  can enable these modes by means of",
+      "3.4.1 Inverting mode",
+      "3.4.2 Charging mode",
+      "3.4.3 Output 1 and 2",
+      "3.4.4 Power sharing mode",
+      "3.4.5 Gen-/Mains support",
+      "9 – 6 = 3 A.",
+      "4 OPERATION",
+      "4.1 LED indicators",
+      "4.1.1 Generator input LED",
+      "4.1.2 Mains input LED",
+      "4.1.3 Power bar LEDs",
+      "4.1.4 AC Output-1 LED",
+      "4.1.5 AC Output-2 LED",
+      "4.1.6 Charge bar LEDs",
+      "4.1.7 Main switch",
+      "1 Generator input LED,",
+      "section 4.1.2.",
+      "2 Mains input LED,",
+      "section 4.1.3.",
+      "3 Power bar LEDs,",
+      "section 4.1.4",
+      "4 AC Output-1 LED,",
+      "section 4.1.5.",
+      "5 AC Output-2 LED,",
+      "section 4.1.6.",
+      "6 Charge bar LEDs.",
+      "7 Main switch. It has two",
+      "4.2 Protections",
+      "4.2.1 Output overload or short circuit",
+      "4.2.2 Overheating",
+      "4.2.3 Under and over voltage",
+      "4.3 Operation policies",
+      "4.3.1 AC input policy",
+      "4.4 Maintenance",
+      "4.5 Daily use, MasterBus monitoring",
+      "-500..500 A 2-3 7",
+      "5 INSTALLATION",
+      "5.1 Unpacking",
+      "5.2 Environment",
+      "4 inch around the Mass Combi Pro . Keep at least 15",
+      "5.3 Wiring",
+      "5.3.1 AC-wiring",
+      "section for the AC wiring:",
+      "5.3.2 DC wiring",
+      "20 Nm / 130 - 175 In-Lbs.).",
+      "5.3.3 AC safety grounding",
+      "5.4 Things you need",
+      "5.5 Removal of the front lid",
+      "1 Loosen the two screws that secure the front cover",
+      "2 Lift the front cover plate from the cabinet; see",
+      "5.6 Mounting the cabinet to a surface",
+      "1 Determine for the four mounting spots on the basis of",
+      "2 Screw the topmost bolts somewhat into the wall.",
+      "3 Hang the cabinet with its key holes over the two bolts",
+      "4 Place the two lowermost bolts.",
+      "5 Fasten all bolts securely.",
+      "5.7 Wiring instructions",
+      "5.8 Installation overview",
+      "5.9 Setting up a MasterBus network",
+      "5.10 How to set up a MasterBus network",
+      "6 CONFIGURATION",
+      "6.1 Configuration via DIP-switches",
+      "6.1.1 Ground relay",
+      "6.2 MasterBus configuration",
+      "chapter 3",
+      "100 A 1..150 A / 1..100 A / 1..50 A",
+      "14.40/28.80/57.60 V 8..16.00/16..32.00/32..64.00 V",
+      "2 min 0-600 min",
+      "480 min 0-600 min, Max bulk time > Min bulk",
+      "30 sec 0-255 sec",
+      "14.25/28.50/57.0 V 8-16.00/16-32.00/32-64.00 V",
+      "240 min 1-65535 min",
+      "9.0 A / 6.0 A / 3.0 A 0.0-25.0",
+      "15 min 0-255 min",
+      "10 W 10-250 W",
+      "16.00/32.00/64.00V 13.00-16.00/26.00-32.00/52.00-",
+      "15.50/31.00/62.00V 13.00-16.00/26.00-32.00/52.00-",
+      "10.00/20.00/40.00V 9.50-13.00/19.00-26.00/38.00-",
+      "9.75/19.50/39.00V 9.50-13.00/19.00-26.00/38.00-",
+      "9.50/19.00/38.00V 9.50-13.00/19.00-26.00/38.00-",
+      "12.00/24.00/48.00V 10.00-13.00/20.00-26.00/40.00-",
+      "30 s 0-30 s",
+      "30 A 1-30 A",
+      "6.2.1 MasterBus alarms",
+      "6.2.2 List of event sources",
+      "6.2.3 List of event commands",
+      "7.1 Commissioning",
+      "1 Tighten all strain reliefs.",
+      "2 Check all wiring and connections.",
+      "3 Close the front cover plate of the connection",
+      "4 Place the DC -fuse(s) of the DC -distribution to connect",
+      "7.2 Decommissioning",
+      "1 Move the Main-switch of the Mass Combi Pro to “Off”.",
+      "2 Remove DC -distribution fuses and/or disconnect the",
+      "3 Remove AC -input fuse s and/or switch off the AC-",
+      "4 Open the connection compartment of the Mass Combi",
+      "5 Check with a suitable voltage meter whether the inputs",
+      "6 Disconnect all the wiring.",
+      "7.3 Trouble shooting",
+      "7.3.1 Trouble shooting table",
+      "8 TECHNICAL DATA",
+      "8.1 Specifications",
+      "3000 W 3500 W",
+      "8.2 Dimensions",
+      "T: +31 (0) 20 34 22 100",
+      "1105 AN Amsterdam",
+      "42 Apollo Drive"
+    ],
+    "headings_covered": [
+      "MASS COMBI PRO",
+      "USER AND INSTALLATION MANUAL",
+      "OVERVIEW MASS COMBI PRO",
+      "1. Display with front switch 6. AC output 1 (“OUT-1”) 11. Sync connector (2x)",
+      "2. Main battery negative 7. AC output 2 (“OUT-2”) (switched) 12. Temperature sensor connector",
+      "3. Main battery positive 8. DIP switch units (2x8) 13. MasterBus connector (2x)",
+      "4. Mains AC input terminal (“MAINS”) 9. Fan (3x)",
+      "5. Generator AC input terminal (“GEN”) 10. Ground stud",
+      "1.6 Disclaimer",
+      "1.7 Changes to the Mass Combi Pro",
+      "1.9 Correct disposal of this product",
+      "2.1 Warnings and symbols",
+      "2.2 Use for intended purpose",
+      "2.3 Organizational measures",
+      "2.4 Warning of special dangers",
+      "2.5 General safety and installation precautions",
+      "2.6 Warning regarding life support applications",
+      "2.7 Warning regarding the use of batteries",
+      "3 HOW IT WORKS",
+      "3.1 Principle",
+      "3.2 Battery charger",
+      "3.2.1 3-Step+ charge system",
+      "3.2.2 Temperature compensated charging",
+      "3.2.3 Silent mode",
+      "3.3 Inverter",
+      "3.3.1 General",
+      "chapter 6, Configuration.",
+      "230 V every 2½ seconds. When it detects a load that is",
+      "3.4 Operation modes",
+      "section 3.4.10. You  can enable these modes by means of",
+      "3.4.3 Output 1 and 2",
+      "3.4.4 Power sharing mode",
+      "3.4.5 Gen-/Mains support",
+      "4 OPERATION",
+      "4.1 LED indicators",
+      "4.1.1 Generator input LED",
+      "4.1.2 Mains input LED",
+      "4.1.3 Power bar LEDs",
+      "4.1.5 AC Output-2 LED",
+      "4.1.6 Charge bar LEDs",
+      "4.1.7 Main switch",
+      "1 Generator input LED,",
+      "section 4.1.2.",
+      "2 Mains input LED,",
+      "section 4.1.3.",
+      "3 Power bar LEDs,",
+      "section 4.1.4",
+      "4 AC Output-1 LED,",
+      "section 4.1.5.",
+      "5 AC Output-2 LED,",
+      "section 4.1.6.",
+      "6 Charge bar LEDs.",
+      "7 Main switch. It has two",
+      "4.2 Protections",
+      "4.2.1 Output overload or short circuit",
+      "4.2.2 Overheating",
+      "4.2.3 Under and over voltage",
+      "4.3 Operation policies",
+      "4.3.1 AC input policy",
+      "4.4 Maintenance",
+      "4.5 Daily use, MasterBus monitoring",
+      "-500..500 A 2-3 7",
+      "5 INSTALLATION",
+      "5.1 Unpacking",
+      "5.2 Environment",
+      "4 inch around the Mass Combi Pro . Keep at least 15",
+      "5.3 Wiring",
+      "5.3.1 AC-wiring",
+      "section for the AC wiring:",
+      "5.3.2 DC wiring",
+      "20 Nm / 130 - 175 In-Lbs.).",
+      "5.3.3 AC safety grounding",
+      "5.4 Things you need",
+      "5.5 Removal of the front lid",
+      "5.6 Mounting the cabinet to a surface",
+      "1 Determine for the four mounting spots on the basis of",
+      "2 Screw the topmost bolts somewhat into the wall.",
+      "3 Hang the cabinet with its key holes over the two bolts",
+      "4 Place the two lowermost bolts.",
+      "5 Fasten all bolts securely.",
+      "5.7 Wiring instructions",
+      "5.8 Installation overview",
+      "5.9 Setting up a MasterBus network",
+      "5.10 How to set up a MasterBus network",
+      "6 CONFIGURATION",
+      "6.1 Configuration via DIP-switches",
+      "6.1.1 Ground relay",
+      "6.2 MasterBus configuration",
+      "chapter 3",
+      "100 A 1..150 A / 1..100 A / 1..50 A",
+      "14.40/28.80/57.60 V 8..16.00/16..32.00/32..64.00 V",
+      "2 min 0-600 min",
+      "480 min 0-600 min, Max bulk time > Min bulk",
+      "30 sec 0-255 sec",
+      "14.25/28.50/57.0 V 8-16.00/16-32.00/32-64.00 V",
+      "240 min 1-65535 min",
+      "9.0 A / 6.0 A / 3.0 A 0.0-25.0",
+      "15 min 0-255 min",
+      "10.00/20.00/40.00V 9.50-13.00/19.00-26.00/38.00-",
+      "9.75/19.50/39.00V 9.50-13.00/19.00-26.00/38.00-",
+      "9.50/19.00/38.00V 9.50-13.00/19.00-26.00/38.00-",
+      "12.00/24.00/48.00V 10.00-13.00/20.00-26.00/40.00-",
+      "30 s 0-30 s",
+      "30 A 1-30 A",
+      "6.2.1 MasterBus alarms",
+      "6.2.2 List of event sources",
+      "6.2.3 List of event commands",
+      "7.1 Commissioning",
+      "1 Tighten all strain reliefs.",
+      "2 Check all wiring and connections.",
+      "3 Close the front cover plate of the connection",
+      "4 Place the DC -fuse(s) of the DC -distribution to connect",
+      "7.2 Decommissioning",
+      "1 Move the Main-switch of the Mass Combi Pro to “Off”.",
+      "4 Open the connection compartment of the Mass Combi",
+      "5 Check with a suitable voltage meter whether the inputs",
+      "6 Disconnect all the wiring.",
+      "7.3 Trouble shooting",
+      "7.3.1 Trouble shooting table",
+      "8 TECHNICAL DATA",
+      "8.1 Specifications",
+      "T: +31 (0) 20 34 22 100",
+      "1105 AN Amsterdam",
+      "42 Apollo Drive"
+    ],
+    "headings_missing": [
+      "MULTI PURPOSE CHARGER INVERTER",
+      "TABLE OF CONTENTS",
+      "1 GENERAL INFORMATION",
+      "1.1 Product description",
+      "1.2 Use of this manual",
+      "1.3 Validity of this manual",
+      "1.4 Liability",
+      "1.5 Warranty",
+      "1 The Mass Combi Pro is constructed as per the",
+      "2 Use the Mass Combi Pro only:",
+      "3 Use of the Mass Combi Pro  other than mentioned in",
+      "1 If the Mass Combi Pro  is switched off during",
+      "2 If maintenance and repairs are required, use only",
+      "3.1.1 User interface (1)",
+      "3.1.2 AC transfer switch (2)",
+      "3.1.3 Inverter/ Main charger (3)",
+      "3.3.2 Energy saving mode (selectable)",
+      "3.4.1 Inverting mode",
+      "3.4.2 Charging mode",
+      "9 – 6 = 3 A.",
+      "4.1.4 AC Output-1 LED",
+      "1 Loosen the two screws that secure the front cover",
+      "2 Lift the front cover plate from the cabinet; see",
+      "10 W 10-250 W",
+      "16.00/32.00/64.00V 13.00-16.00/26.00-32.00/52.00-",
+      "15.50/31.00/62.00V 13.00-16.00/26.00-32.00/52.00-",
+      "2 Remove DC -distribution fuses and/or disconnect the",
+      "3 Remove AC -input fuse s and/or switch off the AC-",
+      "3000 W 3500 W",
+      "8.2 Dimensions"
+    ]
+  },
+  "device": {
+    "manufacturer": "Mastervolt",
+    "model": "Mass Combi Pro 24/3500-100",
+    "category_freeform_hint": "Use the manual's own product category words only (never registry enums like electrical_dc)."
+  },
+  "registry_system_category": "electrical_dc",
+  "manual_selection_policy": "operators",
+  "source_manuals": [
+    {
+      "id": "78eeffd7-8fe8-4eb8-a475-1d070539da29",
+      "title": "MASS COMBI PRO 12/3000-150, 24/3500-100",
+      "manual_type": "operators",
+      "legal_status": "cleared"
+    }
+  ],
+  "excerpts": [
+    {
+      "text": ".......... 7 \n3.3 Inverter ............................................................... 8 \n3.4 Operation modes ................................................ 8 \n4 OPERATION ............................................................. 11 \n4.1 LED indicators .................................................. 11 \n4.2 Protections ........................................................ 12 \n4.3 Operation policies .............................................. 12 \n4.4 Maintenance ....................................",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": null,
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "Figure 6-1: DIP-switches and cover print\n\nDIP \nswitch  \nFunction  \nA1-A2  Parallel mode 0-0: Stand alone 1-0: Master 0 0-1: Slave 1-1: NA \nA3 Output frequency inverter 0: 50 Hz 1: 60 Hz \nA4 Energy saving mode 0: off 1: on (scan mode) \nA5-A6 Secondary charger 12/3000 0-0: Follow main battery 1-0: 12 V constant \nvoltage \n0-1: 12 V 3Step 1-1: 12 V constant \nvoltage \n24/3500 0-0: Follow main battery 1-0: 24 V constant \nvoltage  \n0-1: 12 V 3Step 1-1: 12 V constant \nvoltage \n48/3500 0-0: 24 V 3Step 1-0: 24 V constant \nvoltage  \n0-1: 12 V 3Step 1-1: 12 V constant \nvoltage \nA7-A8  Main battery type 0-0: Flooded 1-0: Gel 0-1: AGM 1-1: Flooded traction \nB1-B2  Fuse setting mains input 0-0: 30 A 1-0: 16 A 0-1: 10 A 1-1: 6 A \nB3 Fuse setting generator input 0: 25 A 1: 50 A \nB4 Power sharing mode 0: enabled 1: disabled \nB5 Generator / Mains support mode 0: disabled 1: enabled \nB6 AC voltage input window 0: wide (+/-40 V) 1: narrow (+/-23 V ) \nB7 Generator AC frequency window 0: wide (+8/-10 Hz)",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": "Figure 6-1: DIP-switches and cover print",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "Mass Combi Pro 12/3000-150, 24/3500-100 – User and Installation Manual 13\n\n4.4 Maintenance \nChecking all connections every 6 months is required. \nFurther, no specific maintenance is required. If necessary, \nuse a soft clean cloth to clean the Mass Combi Pro. Do not \nuse any liquids or corrosive substances, such as solvents, \nalcohol, petrol or abrasive components. \n4.5 Daily use, MasterBus monitoring \nBelow table shows the MasterBus Monitoring page. On this \npage you can adjust the daily settings.\n\nValue Meaning Default Range Group-\nitem \nIndex \nGeneral      \nDevice state The state of your Mass \nCombi Pro \n Standby; Inverting; Alarm; Charging; \nSupporting; Overload; Low battery \n1-1 16 \nMains fuse Mains fuse rating 25 A 1..30 A 1-2 19 \nInverter Option to switch Off the \ninverter to prevent depleting \nof your batteries. \nOn On, Off 1-3 20 \nMode User mode  Initializing; On; Standby; Inverter off; \nCharger off \n1-4 60 \nAC in state State of the AC input  No AC present, Generator, Mains, \nPoor quality \n1-5 4 \nAC out state State of the AC output  No AC output, AC out1 only, AC \nout1&2 \n1-6 5 \nMain charger Main charger state  On; Off 1-7 58 \nBattery (DC)      \nMain charger Main battery st",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": "4.4 Maintenance",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "..................... 12 \n4.4 Maintenance ...................................................... 13 \n4.5 Daily use, MasterBus monitoring ....................... 13 \n5 INSTALLATION ........................................................ 14 \n5.1 Unpacking ......................................................... 14 \n5.2 Environment ...................................................... 14 \n5.3 Wiring ................................................................ 14 \n5.4 Things you need .....................................",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": null,
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": ".............................. 19 \n6.1 Configuration via DIP-switches .......................... 19 \n6.2 MasterBus configuration .................................... 20 \n7 COMMISSIONING, DECOMMISSIONING ................ 23 \n7.1 Commissioning .................................................. 23 \n7.2 Decommissioning .............................................. 23 \n7.3 Trouble shooting ................................................ 23 \n8 TECHNICAL DATA ................................................... 25 \n8.1 Specifications ..............................................",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": null,
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "Other MasterBus connected devices can be configured to initia te these \ncommands\n\nEvent command Description \nInverter On/Off Change the Mass Combi Pro inverter state to On/Off \nCharger On/Off Change the Mass Combi Pro charger state to On/ Off \nBulk Changes to charge phase Bulk \nAbsorption Changes to charge phase Absorption \nFloat Changes to charge phase Float \nMains limit A Fuse setting of the Mains input is set to 6 A (adjustable) \nMains limit B Fuse setting of the Mains input is set to 10 A (adjustable) \nMains limit C Fuse setting of the Mains input is set to 16 A (adjustable) \nAC out 2 enabled Switched Output-2 is enabled \nPower off Command to switch off the charger, inverter and open the input relay \nSilent mode Command to switch on/off the silent mode",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": "Other MasterBus connected devices can be configured to initia te these",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "This \nmeans that the inverter mode is disabled. T his setting is \nuseful if you want to keep your batteries charged and \nmaintained in case you have left i.e. in the winter time.\n\n1\n2\n4\n5\n3\n6\n7\n1 Generator input LED, \nsection 4.1.2. \n2 Mains input LED, \nsection 4.1.3. \n3 Power bar LEDs, \nsection 4.1.4 \n4 AC Output-1 LED, \nsection 4.1.5. \n5 AC Output-2 LED, \nsection 4.1.6. \n6 Charge bar LEDs. \nDuring charging: \ncharging state. 4.1.7 \n7 Main switch. It has two \npositions: On (up), \nand Off (down). \n* \nFigure 4-1: Front panel",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": "1 Generator input LED,",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "Mass Combi Pro 12/3000-150, 24/3500-100 – User and Installation Manual 19\n\n6 CONFIGURATION\n\nThe Mass Combi Pro  is provided with two groups of DIP -\nswitches to adjust the Mass Combi Pro  according to the \nspecifications of the electrical installation, see figure 6 -1. \nDIP-switch settings are 0 for default values. The Mass \nCombi Pro also features the more sophisticated MasterBus \nconfiguration. \nPreviously done MasterBus settings are overruled by the \nDIP-switch settings and they are greyed out in the menu. \nWhen a DIP -switch is set to 0, the corresponding \nMasterBus setting becomes defau lt too, regardless the \nprevious setting.\n\n6.1 Configuration via DIP-switches \nThe DIP -switches are located in the connection \ncompartment. Figure 6 -1 shows the location of the DIP -\nswitches and the print on the inside of the front cover plate.\n\n6.1.1 Ground relay \nFor safe installation: \n• Residual Current Devices (RCD) must be integrated in \nthe AC inputs and AC outputs of the Mass Combi Pro.  \n• The neutral conductor (N) of the AC output of the \nInverter must be connected to the safety ground \n(PE/GND) when the Mass Combi Pr o is working as an \ninverter.  \nThe ground relay function allows",
+      "query": "installation wiring commissioning configuration DIP switches",
+      "source_heading_guess": "6 CONFIGURATION",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": ".................. 14 \n5.4 Things you need ................................................ 15 \n5.5 Removal of the front lid...................................... 15 \n5.6 Mounting the cabinet to a surface ..................... 16 \n5.7 Wiring instructions ............................................. 16 \n5.8 Installation overview .......................................... 17 \n5.9 Setting up a MasterBus network ........................ 18 \n5.10 How to set up a MasterBus network .................. 18 \n6 CONFIGURATION..................................................... 19 \n6.1 Configuration via DIP-switches ......................",
+      "query": "installation wiring commissioning configuration DIP switches",
+      "source_heading_guess": null,
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "Mass Combi Pro 12/3000-150, 24/3500-100 – User and Installation Manual 23\n\n7.1 Commissioning\n\nCAUTION! \nCheck the polarity of all wiring before \ncommissioning: plus connected to plus (red \ncables), minus connected to minus (black \ncables).  \nThe DIP -switches must be adjusted prior to \ncommissioning; see chapter 6.\n\nFollow the steps described below to switch on th e Mass \nCombi Pro. \n1 Tighten all strain reliefs. \n2 Check all wiring and connections. \n3 Close the front cover plate of the connection \ncompartment. \n4 Place the DC -fuse(s) of the DC -distribution to connect \nthe batteries to the Mass Combi Pro.\n\nWARNING \nWhen placing th is fuse, a spark can occur, \ncaused by the capacitors used in the Mass \nCombi Pro . This is particularly dangerous in \nplaces with insufficient ventilation, due to the \ngassing of the batteries an explosion can occur \nand avoid having flammable materials close by.\n\nNow the Mass Combi Pro is ready for operation.\n\n7.2 Decommissioning \nIf it is necessary to put the Mass Combi Pro  out of \noperation, follow the instructions in order of succession as \ndescribed below: \n1 Move the Main-switch of the Mass Combi Pro to “Off”. \n2 Remove DC -distribution fuses an",
+      "query": "installation wiring commissioning configuration DIP switches",
+      "source_heading_guess": "7.1 Commissioning",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "20 Mass Combi Pro 12/3000-150, 24/3500-100 – User and Installation Manual\n\n6.2 MasterBus configuration  \nParameters below can be changed via the MasterBus network. DIP switch settings overrule MasterBus settings. If DIP switches \nare not set to default, the corresponding MasterBus configuration is greyed out\n\nValue Meaning Default Adjustable range \nDevice    \nLanguage Language that is displayed on a \nmonitoring device connected to the \nMasterBus \nEnglish English, Nederlands, Deutsch, \nFrançais, Castellano, Italiano, \nNorsk, Svenska, Suomi, Dansk \nDevice name Name of this particular device in \nMasterBus. This name will be recognized \nby all devices that are connected to the \nMasterBus network. \nMCU [Serial \nnumber] \nAll names with a maximum of 12 \ncharacters. \nLock config Option to lock the configuration (installer \nlogin). \nNot checked Not checked, Checked \nFactory settings Option to reset the configuration to \ndefault (installer login). \nNot selected Not checked, Selected \nSystem    \nMasterBus power Checkbox to have the Combi power \nMasterBus or not. \nChecked Checked, Not checked \nSilent mode Activate this mode to reduce the sound of \nthe cooling fans. This may affect the \nchargin",
+      "query": "installation wiring commissioning configuration DIP switches",
+      "source_heading_guess": "6.2 MasterBus configuration",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "16 Mass Combi Pro 12/3000-150, 24/3500-100 – User and Installation Manual\n\nWARNING \nThe front panel must not be removed while the \nMass Combi Pro  is still connected to a power \nsource!\n\n5.6 Mounting the cabinet to a surface \nM6 bolts can be used for the mounting of the cabinet \nvertically to a surface. \nTake the following steps to mount the cabinet: \n1 Determine for the four mounting spots on the basis of \nthe outline drawings and 150 mm of free space \nrequired below the Mass Combi Pro for installation and \nDIP switch operation. \n2 Screw the topmost bolts somewhat into the wall. \n3 Hang the cabinet with its key holes over the two bolts \nand screw these bolts finger tight, so shifting is still \npossible. \n4 Place the two lowermost bolts. \n5 Fasten all bolts securely. \n5.7 Wiring instructions\n\nWARNING \nHave installation work done by a licensed \nelectrician only. Before connecting the wiring, \nmake the AC distribution as well as the DC \ndistribution voltage free. Move the main switch \nto the “Off”-position.\n\nCAUTION! \nShort circuiting or reversing polarity may lead to \nserious damage to the batteries, the Mass \nCombi Pro , the solar panels, the wiring and/or \nthe terminal connections",
+      "query": "installation wiring commissioning configuration DIP switches",
+      "source_heading_guess": "5.6 Mounting the cabinet to a surface",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "Restart when \nalarm is over \nCheck ventilation \n(9) red, 7 and 8 yellow Battery high Battery voltage too high, Combi \nrestarts when the alarm is over. \nCheck battery voltage setting \n(9) red, (7) yellow, (8) \noff \nTemp sense error Temperature sensor sends a \nwrong signal. \nCheck battery sensor and its cable \n(9) red, (7) yellow, (8) \noff \nBatt temperature Battery hot, Combi restart when \nalarm is over.\n\n(3) and (9) red System error,  \nSync error,  \nConfig error \nCommunication disturbed  \nConfiguration wrong \nCheck sync cables and connectors \nPermanent errors (manual reset required) \n(3) and (9) blinking fast \nred \nOverload Number of inverter overload \nrestart attempts exceeded. \nReduce the output loads, shut off and \non the Mass Combi Pro.  \nSystem error Hardware issue Switch off and on the Mass Combi \nPro. \n(5) and (6) blinking fast Install error Installation error Correct installation, shut off and on \nthe Mass Combi Pro.",
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "source_heading_guess": "Restart when alarm is over",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "22 Mass Combi Pro 12/3000-150, 24/3500-100 – User and Installation Manual\n\n6.2.1 MasterBus alarms \nThis is the Mass Combi Pro list of MasterBus alarms with their meaning\n\nAlarm Description \nOverload Combi in overload. The loads exceed the nominal inverter power. \nOver temperature Internal temperature of the Combi is too high. \nBattery low Main battery voltage is too low. \nBattery high Main battery voltage is too high. \nBatt temperature Battery temperature is out of range. \nTemp sense error An error has been detected in the temperature sensor signal. \nSync. error Two or more Mass Combi Pro’s in a multiple configuration do not synchronize well. \nConfig error Configuration error, most often in multi Combi installations. Check MasterBus and DIP switch settings. \nInstall error Installation error around the Mass Combi Pro, not inside the unit. Check all connections. \nSystem error Internal Mass Combi Pro error. Contact your Mastervolt supplier. \nCable losses Cable between Mass Combi Ultra and battery is too thin causing too high voltage drops \nShunt Mismatch \nSetting for nominal voltage (12, 24 or 48 V) at the MasterShunt or the nominal voltage of the MLi \nbatteries differs from nominal v",
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "source_heading_guess": "6.2.1 MasterBus alarms",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "24 Mass Combi Pro 12/3000-150, 24/3500-100 – User and Installation Manual\n\n7.3.1 Trouble shooting table\n\nIlluminating LEDs MasterBus alarm Explanation / Possible cause What to do \nNormal operation and warnings \nNone  The Mass Combi Pro is switched \noff manually. \nSwitch on the Mass Combi Pro by \nmeans of the main switch. \n(1) blinking slowly \n(1x/sec) \n Inverter is synchronizing voltage \nand frequency to generator AC. \nWait until the inverter is ready \nsynchronizing. After this, it will \nactivate the generator input. \n(1) blinking fast \n(4x/sec) \nMB monitoring: ACin \nLow quality \nError: generator input voltage or \nfrequency out of range \nCheck generator voltage and \nfrequency, refer to generator input \nspecifications in chapter 8. \n(2) blinking slowly \n(1x/sec) \n The inverter is synchronizing its \nvoltage and frequency to mains \nAC \nWait until the inverter is ready \nsynchronizing. After this, it will \nactivate the mains input. \n(2) blinking fast \n(5x/sec) \nMB monitoring: ACin \nLow quality \nError: mains input voltage or \nfrequency out of range \nCheck mains voltage and frequency, \nrefer to generator input specifications \nin chapter 8. \n(3) red MB monitoring: \nOverload \nInverter in ov",
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "source_heading_guess": "7.3.1 Trouble shooting table",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "Mains fuse maximum value that can be \nset in the monitoring tab \n30 A 1-30 A \nMains limit A Mains fuse value setting 6 A 1-30 A \nMains limit B Mains fuse value 10A 10 A 1-30 A \nMains limit C Mains fuse value 16A 16 A 1-30 A \nPower sharing Power sharing mode option, chapter 3. Checked Not checked, checked \nAllow AC support AC support mode option, chapter 3. Not checked Not checked, checked \nGen. high volt. Generator AC input window 275 V 184-275 V \nGen. low volt. Generator AC input window 180 V 184-275 V \nGen. high freq. Generator AC input window 58 Hz 36-68 Hz \nGen. low freq. Generator AC input window 40 Hz 36-67 Hz \nGenerator delay Time to trigger a Generator alarm 10 s 5 – 300 s \nMains high volt. Mains AC input window 275 V 184-275 V \nMains low volt. Mains AC input window 180 V 184-275 V \nMains high freq. Mains AC input window 65 Hz 35-68 Hz \nMains low freq. Mains AC input window 40 Hz 35-68 Hz \nMains delay Time to trigger a Mains alarm 10 s 5-20 s",
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "source_heading_guess": "30 A 1-30 A",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "Grounding and all other wiring must comply \nwith local rules and regulations. \n• In case of fire, you must use a fire extinguisher which is \nappropriate for electrical equipment. \n• Short circuiting or reversing polarity will lead to serious \ndamage to batteries, Mass Combi Pro and wiring. \nFuses between batteries and Mass Combi Pro cannot \nprevent damage caused by reversed polarity and \nwarranty will be void. \n• Protect all DC wiring with a proper fuse, according to \nthe guidelines in this manual. \n• Connection and protection must be done in accordance \nwith local standards. \n• Do not work on the Mass Combi Pro  or system if it is \nstill connected to a power source. Only allow changes",
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "source_heading_guess": "Grounding and all other wiring must comply",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "4 Open the connection compartment of the Mass Combi \nPro. \n5 Check with a suitable voltage meter whether the inputs \nand the outputs of the Mass Combi Pro  are voltage \nfree. \n6 Disconnect all the wiring.\n\nNow the Mass Combi Pro can be demounted in a safe way.\n\n7.3 Trouble shooting \nIf a failure occurs, the origin of the failure is displayed by \nmeans of the LEDs at the front of the Mass Combi, see \nfigure 7-1.\n\nFigure 7-1: Error LEDs\n\nThe table shows the meaning of the error indications and \ntheir solutions, together with other directions. If you cannot \nsolve a problem using this table, contact your local \nMastervolt Service Centre. See www.mastervolt.com. Make \nsure you have the following information present if you have \nto contact your local Mastervolt Service Center to solve a \nproblem:\n\n• Article and serial number (see section 1.7). \n• Software version (by means of MasterAdjust software).",
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "source_heading_guess": "4 Open the connection compartment of the Mass Combi",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "........................ 5 \n2.3 Organizational measures .................................... 5 \n2.4 Warning of special dangers ................................ 5 \n2.5 General safety and installation precautions ........ 5 \n2.6 Warning regarding life support applications ........ 6 \n2.7 Warning regarding the use of batteries ............... 6 \n3 HOW IT WORKS ........................................................ 7 \n3.1 Principle .............................................................. 7 \n3.2 Battery charger ................................................... 7 \n3.3 Inverter ..............................................",
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "source_heading_guess": null,
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "18 Mass Combi Pro 12/3000-150, 24/3500-100 – User and Installation Manual\n\n5.9 Setting up a MasterBus network\n\nAll devices that are suitable for MasterBus are \nmarked by the MasterBus symbol.\n\nMasterBus is a fully decentralized data network for \ncommunication between the different Mastervolt system \ndevices. It is CAN -bus based which has proven itself as a \nreliable bus-system in automotive applications. MasterBus \nis used as  power management system  for all connected \ndevices, such  as the inverter, battery charger, generator \nand many more. This enables communication between the \nconnected devices, for instance to start the generator when \nthe batteries are low.  MasterBus reduces complexity of \nelectrical systems by using  UTP patch cables. All system \ncomponents are simply  chained together. Therefore each \ndevice is equipped with two  MasterBus data ports. As only \na few MasterBus cables are  needed, installation and \nmaterial costs are reduced importantly. \nNew devices can be added to the existing network  easily. \nConsequently the MasterBus network is highly flexible  for \nextended system configuration. Mastervolt also offers  \nseveral interfaces like the Modbus interface,",
+      "query": "network communication MasterBus NMEA CZone VE.Direct Bluetooth remote panel app",
+      "source_heading_guess": "5.9 Setting up a MasterBus network",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "This will void \nwarranty of all MasterBus devices connected.\n\n5.10 How to set up a MasterBus network \nEvery MasterBus device is equipped with two data ports.  \nWhen two or more devices are connected via these ports, \na local data network called the MasterBus is formed. Keep \nthe following rules in mind:\n\nPlace a terminating device on both network ends.  \nOK \nConnections between the devices are made by \nstandard straight UTP patch cables.  \nOK \nAt least one device in the network must be MasterBus \npowering (see specifications). As all powering devices \nare galvanic isolated, multiple powering devices are \nallowed. \nOK \nDo not make ring networks. \nDo not make T-connections in the network.",
+      "query": "network communication MasterBus NMEA CZone VE.Direct Bluetooth remote panel app",
+      "source_heading_guess": "5.10 How to set up a MasterBus network",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "Europe, Middle East & Africa \nCustomer Service \nT: +31 (0) 20 34 22 100 \nE: info@mastervolt.com \nTechnical Support  \nT: +31 (0) 20 34 22 100 \nE: ts@mastervolt.com \nLocation & Shipping \nMastervolt \nSnijdersbergweg 93 \n1105 AN Amsterdam \nThe Netherlands \nAmericas & Caribbean \nCustomer Service \nT: +1 800 307 6702, Option 1 \nE: orderentry@marinco.com \nTechnical Support \nT: +1 800 307 6702, Option 2  \nE: tsusa@mastervolt.com \nLocation & Shipping \nPower Products, LLC \nN85 W12545 Westbrook Crossing \nMenomonee Falls, Wisconsin 53051 \nUnited States \nAsia Pacific \nCustomer Service \nT: +64 9 415 7261 Option 1 \nE: enquiries@bepmarine.com \nTechnical Support \nT: +64 9 415 7261 Option 3 \nE: technical@bepmarine.com \nLocation & Shipping \nBEP Marine \n42 Apollo Drive \nRosedale, Auckland 0632 \nNew Zealand \nCopyright © 2019 Mastervolt. All rights reserved. \nReproduction, transfer, distribution or storage of part or all of the contents in this document \nin any form without the prior written permission of Mastervolt is prohibited",
+      "query": "network communication MasterBus NMEA CZone VE.Direct Bluetooth remote panel app",
+      "source_heading_guess": "1105 AN Amsterdam",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "Once consumption  \ndecreases, the charger goes back to normal operation of \nthe 3-Step+ charge system. \nAs the Mass Combi Pro is equipped with a 3-Step+ charge \nsystem, the batteries can also remain connected to  the \nMass Combi Pro  in winter. One hour every 12 days the  \ncharger automatically switches to the Bulk phase  to keep \nthe battery working properly and prolong its life span. The \n3\n2\n1",
+      "query": "maintenance service storage winterizing",
+      "source_heading_guess": "Once consumption decreases, the charger goes back to normal operation of",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "5 Warranty ............................................................. 4 \n1.6 Disclaimer ........................................................... 4 \n1.7 Changes to the Mass Combi Pro ........................ 4 \n1.8 Identification label ............................................... 4 \n1.9 Correct disposal of this product .......................... 4 \n2 SAFETY GUIDELINES AND WARNINGS.................. 5 \n2.1 Warnings and symbols ....................................... 5 \n2.2 Use for intended purpose ................................... 5 \n2.3 Organizational measures ...............................",
+      "query": "maintenance service storage winterizing",
+      "source_heading_guess": null,
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "enabled 1: disabled \nB5 Generator / Mains support mode 0: disabled 1: enabled \nB6 AC voltage input window 0: wide (+/-40 V) 1: narrow (+/-23 V ) \nB7 Generator AC frequency window 0: wide (+8/-10 Hz) 1: narrow (+/-5 Hz ) \nB8 Ground relay 0: disabled 1: enabled",
+      "query": "optional accessory gateway interface required for",
+      "source_heading_guess": "enabled 1: disabled B5 Generator / Mains support mode 0: disabled 1: enabled",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "Connect \nthe earth terminal (PE / GND) to the hull or the chassis with \na minimum 10 mm².\n\nIn some applications automatic connection between the \nneutral conductor (N) and earth (PE / GND) is not requi red \nor acceptable.  Therefore the automatic connection \nbetween the neutral conductor (N) and earth (PE / GND) is \ndisabled by default.\n\nFor safe installation it is necessary to insert a Residual \nCurrent Device (earth leakage switch) of 30  mA in the AC \nin an d outputs of the Mass Combi Pro . Refer to local \nregulations on these issues!\n\n5.4 Things you need \nMake sure you have all the parts you need to install the \nMass Combi Pro:\n\n• Mass Combi Pro (included). \n• Battery temperature sensor  with cable and plug \n(included). \n• AC wiring. Double insulated three wire cable with wire \ncolours according to the locally applicable standards. \nThe applicable length and wire diameter depend on the \nelectrical installation. See section 5.3.1. \n• DC-wiring to co nnect the DC connections of the Mass \nCombi Pro to the DC-distribution; see section 5.3.2. \n• DC-fuse holder with a DC -fuse, to be integrated in the \npositive DC-cable. For specifications see section 5.3.2. \n• Screws / bolts (Ø 6  m",
+      "query": "optional accessory gateway interface required for",
+      "source_heading_guess": "5.4 Things you need",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "This means that the \ncharge current of the Mass Combi will be reduced to 0 A.\n\nThe Power Sharing level can be adjusted by means of the \nDIP-switches locally on the Mass Combi Ultra. Howeve r, \nwe recommend the use optional remote control, like the \nMasterView Easy.",
+      "query": "MasterView remote panel remote control display panel monitoring panel MasterAdjust",
+      "source_heading_guess": "This means that the",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "26 Mass Combi Pro 12/3000-150, 24/3500-100 – User and Installation Manual\n\nMass Combi Pro 12/3000-150 24/3500-100 \nParalleling/3-phase  \nParallel stacking Yes, up to 10 standard from hardware version D \n3-phase configuration Yes, up to 3 x 3 from hardware version D \nGeneral specifications  \nDimensions (HxWxD) 472x318x178 mm 472x318x178 mm \nWeight 15.3 kg 15.3 kg \nProtection degree IP23 (vertical wall mounting) \nSafety class IEC protection class I \nGrounding Ground relay standard, includes ground stud (ABYC compliant) configurable \nOperating temperature -25 ˚C to 60 ˚C, above 40 ˚C derating \nOvervoltage category Gen: OVII; Mains: OVIII \nPollution degree PDII \nRelative humidity Protected against humidity and condensing air by conformal coating, max \n95% relative humidity, none condensing \nStandards, approvals & listings CE, ABYC \nOptions & features  \nFront panel display Yes, shows charge state, inverter power, input/output state and includes \non/off/inverter off switch \nBattery temperature sensor Yes \nCooling Maintenance free vario fans \nMasterBus functionality  \nMasterBus powering Standard on, selectable \nOverload protection  \nGen & Mains input  \nDigital fuse Adjustable with three p",
+      "query": "MasterView remote panel remote control display panel monitoring panel MasterAdjust",
+      "source_heading_guess": "Mass Combi Pro 12/3000-150 24/3500-100",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "2 Mass Combi Pro 12/3000-150, 24/3500-100 – User and Installation Manual\n\nOVERVIEW MASS COMBI PRO\n\nFigure 0-1: Overview of the Mass Combi Pro\n\n1. Display with front switch 6. AC output 1 (“OUT-1”) 11. Sync connector (2x) \n2. Main battery negative 7. AC output 2 (“OUT-2”) (switched) 12. Temperature sensor connector \n3. Main battery positive 8. DIP switch units (2x8) 13. MasterBus connector (2x) \n4. Mains AC input terminal (“MAINS”) 9. Fan (3x)  \n5. Generator AC input terminal (“GEN”) 10. Ground stud",
+      "query": "optional remote control MasterView Easy remote panel installed",
+      "source_heading_guess": "1. Display with front switch 6. AC output 1 (“OUT-1”) 11. Sync connector (2x)",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "Therefore the AC-input must be protected by a fuse in the \nL cable, as specified below. Maximum rating of the \ngenerator AC input fuse: 50 A and Mains AC input fuse: 30  \nA. The PE/GND cable cross section must be at least equal \nto L1.",
+      "query": "shore power AC input current limit generator mains",
+      "source_heading_guess": "Therefore the AC-input must be protected by a fuse in the",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "10 Mass Combi Pro 12/3000-150, 24/3500-100 – User and Installation Manual\n\nFigure 3-7: Power Sharing level is set to a 6 A while the AC \noutputs consume a total of 4 Amps. This means that 6 – 4 \n= 2 A is left over for charging.\n\n3.4.5 Gen-/Mains support \nSee figure 3-8. If the demand for AC power is higher than \nthe available power at the AC–input, the external AC circuit \nbreaker may trip if nothing is done. This problem can be \nsolved by the Generator / mains support function. With the \nGenerator / mains support  mode enabled, the inverter will \noperate in parallel with the external AC power source. This \nmeans that energy from the batteries is added to the AC -\noutput only.\n\nUnder no circumstances AC power from the inverter can be \nfed back into the AC grid. Please m ind that several \ncountries maintain different regulations with regard to AC -\nsources operating in parallel with the AC -grid. This may \nmean that in some situations the use of the Generator / \nMains support function is not allowed. Please acquaint \nyourself with local regulations on this issue. Never use the \nGenerator / Mains support mode if this is not allowed!\n\nFigure 3-8: Example: The AC-input is limited to 6 ",
+      "query": "shore power AC input current limit generator mains",
+      "source_heading_guess": "3.4.5 Gen-/Mains support",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "ripple on DC @ full load < 5% RMS < 5% RMS \nNominal DC current at full load 300 A 175 A \nRecommended batteries 300 – 900 Ah* 200 – 600 Ah* \nNo load, DC drain   \nOff mode (hard switched) 0 W 0 W \nInverter off mode (remote) 4 W 4 W \nEnergy saving mode 7 W 7 W \nNormal operation mode 26 W 26 W \nBattery charger specifications   \nInput voltage range 184 – 275 V 184 – 275 V \nMax AC input current 12 A 16 A \nMax. charge current @Tamb=40˚C 150 A @ 14.25 V adjustable 100 A @ 28.5 V adjustable \nCharge characteristic Mastervolt 3-step+  \nBattery types AGM / Gel / MLi / Flooded / Flooded traction / Spiral / NiCad \nBattery temperature sense Input present, sensor included \nVoltage sense Only through MasterShunt, else automatic compensation \nTransfer system specifications   \nAC input 1 (“GEN”) (switched) Yes, 50 A Yes, 50 A \nAC input 2 (“MAINS”) (switched) Yes, 30 A Yes, 30 A \nAC Output 1 (“OUT-1”) Yes, 67 A Yes, 67 A \nAC Output 2 (“OUT-2”) (switched) Yes, 50 A Yes, 50 A \nAC input fuses No No \nTransfer speed Seamless (<1 ms) Seamless (<1 ms) \nTransfer voltage range (adjustable) 184 V-275 V 184 V-275 V \nTransfer frequency range (adjust.) 35 – 68 Hz 35 – 68 Hz \nPower sharing Yes Yes \nGenerator/Mains ",
+      "query": "shore power AC input current limit generator mains",
+      "source_heading_guess": "ripple on DC @ full load < 5% RMS < 5% RMS",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "Below this line the  \ninverter switches off after a delay. \n(3) Low voltage switch off without delay. Below this line \nthe inverter switches off without delay.\n\n4.3 Operation policies \nVia MasterBus configuration, the preferred behaviour of AC \nin and outputs can be set.\n\n4.3.1 AC input policy\n\nPreference Description \nMains preferent Mains input is preferred \nGen preferent Generator input is preferred \nMax fuse preferent  AC source with highest fuse setting \nMains only  No generator \nGenerator only No mains\n\nPreference Description \nEvents only Operation manually \nGenerator input Generator input only \nMains input Mains input only \nGen/mains input Generator or main input \nAlways on Always connected to the loads\n\nBy default, AC power is only available on AC output 2 if \nexternal power is available on the Main or Gen input.  \nSee section 6.2, AC transfer, to change the operation \npreferences of AC output 2.\n\nU \n% I nom",
+      "query": "shore power AC input current limit generator mains",
+      "source_heading_guess": "4.3 Operation policies",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "Mass Combi Pro 12/3000-150, 24/3500-100 – User and Installation Manual 9\n\nFigure 3-4: AC power from Generator input\n\nFigure 3-5: AC power from Mains input \n3.4.3 Output 1 and 2 \nSee figure 3-6. The Mass Combi ultra has two AC -outputs. \nAC-power is always available on output 1 and this is the \nideal output for loads that need continuous AC -power. \nOutput 2 is only available when external AC power comes \navailable on the Mains- and/or Gen input. Output 2 policy is \nconfigurable by the dipswitches locally on the Mass Combi \nUltra or a MasterBus monitoring device. (See chapter \n4.3.2).\n\n3.4.4 Power sharing mode \nSee figure 3 -7. If the available power at the AC -input is \nlimited, and the load connected to the AC output increases, \nthe external AC circuit breaker may trip if nothing is done. \nTo avoid this, the Mass Combi Ultra can automatically \nreduce the battery charger output, and thus the AC power \nconsumption. This Power sharing feature constantly \nsenses the incoming AC current which is used to supply \nboth the battery charger and the appliances connected to \nthe AC outputs.\n\nThe Power Sharing level should be set to match the value  \nof the external circuit breaker, which prot",
+      "query": "shore power AC input current limit generator mains",
+      "source_heading_guess": "3.4.3 Output 1 and 2",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "10.00/20.00/40.00V 9.50-13.00/19.00-26.00/38.00-\n52.00V \nDC low off I=2% Low battery voltage at which the inverter \nswitches off when the battery current is \n2% of nominal (12/24/48V, user def.) \n9.75/19.50/39.00V 9.50-13.00/19.00-26.00/38.00-\n52.00V \nDC low off 100% Low battery inverter switch off voltage, \nbatt. current 100% (12/24/48V, user def.) \n9.50/19.00/38.00V 9.50-13.00/19.00-26.00/38.00-\n52.00V \nDC low on Low battery inverter switch on voltage at \nDC Low off alarm (12/24/48V, user def.) \n12.00/24.00/48.00V 10.00-13.00/20.00-26.00/40.00-\n52.00V \nDC low off delay Delay time before inverter switches off on \nlow battery voltage. \n30 s 0-30 s \nAC transfer    \nAC input policy Define which AC input to be used under \nwhich conditions, refer to section 4.3 \nGen preferent Mains preferent, Gen preferent, Max \nfuse prefer \nAC out 2 policy Define under which conditions to use AC \noutput-2, refer to section 4.3 \nGen/Mains input Events only, Generator input, Mains \ninput, Gen/Mains input, Always on \nGenerator fuse Generator fuse value 25 A 1-50 A \nMains fuse max.",
+      "query": "shore power AC input current limit generator mains",
+      "source_heading_guess": "30 s 0-30 s",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "The illuminated arrow indicates that  \nAC Output-1 is powered.\n\n4.1.5 AC Output-2 LED \nSee figure 4 -1 item 5. The illuminated arrow indicates that  \nswitched AC Output-2 is powered.\n\n4.1.6 Charge bar LEDs \nSee figure 4-1 item 6.  \n• During charging the blinking LED’s indicate the charge \nphase of the 3-Step+ charge algorithm. \n• During inverting the LEDs give a rough estimation of \nthe battery voltage: the more LED’s are illuminated, the \nhigher the battery voltage.\n\n4.1.7 Main switch \nSee figure 4-1 item 7. The only control on the Mass Combi \nPro itself is the main switch on the front of the unit. This \nswitch controls on, off and Inverter off (Charger only).  \nAfter switching on, expect a three till five second delay \nbefore the unit is activated. \nWith the main switch in position “ on“, the Combi Pro \ninverter can also be switched off and on via MasterBus. \nIf AC power i s available on the AC input and within the \nspecified limits, the Mass Combi Pro switches on in \nCharger Mode and will start to charge the batteries. If the \nAC power from the external AC -source is unavailable or \noutside the specified limits, the unit switche s on as an \ninverter. \nMove the main switch to the",
+      "query": "main switch inverter on off charger operation",
+      "source_heading_guess": "4.1.5 AC Output-2 LED",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "As soon as the temperature drops below the factory default \nthreshold, the inverter is powered up automatically or the  \ncharger resumes its charge current.\n\n4.2.3 Under and over voltage \nThe AC -input of the Mass Combi Pro  is, within limits,  \nprotected against over and under voltage. See \nspecifications. If the AC -input voltage is out of operating \nrange, the Mass Combi Pro  will switch to inverter mode, \ndisconnecting both AC inputs and it will switch back if the \nAC-input voltage is within range again. The DC-input of the \nMass Combi is also  protected against over and under \nvoltage. See specifications. The Mass Combi Pro switches \noff if the DC-input voltage is out of range.\n\nFigure 4-2: Dynamic DC input window\n\nThe Dynamic DC input window is used  to switch off \ndepending on both the battery voltage and current. The \nreason for this  is that low current loads cause a small \nvoltage drop but they  are responsible for severe battery \ndamage.  \nShown in figure 4 -2 is the graph for a 24 V lead acid \nbattery. The graph shows three lines:\n\n(1) Low voltage switch on. Above this voltage the inverter  \nswitches on. \n(2) Low voltage switch off with delay. Below this line the  \ninve",
+      "query": "main switch inverter on off charger operation",
+      "source_heading_guess": "4.2.3 Under and over voltage",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "Response from idle is instant. In most cases the \noperation is not noticeable. The energy saving mode can \nbe set by  means of MasterBus or dipswitch A4, refer to \nchapter 6, Configuration. \nThe Mass Combi Pro  scans the AC outputs with pulses  of \n230 V every 2½ seconds. When it detects a load that is  \nlarger than 50 W (adjustable), it switches On the inverter  \nautomatically.\n\nSmall loads such as clocks in VCR’s or micro \nwaves are most likely not to work in this mode. \n3.4 Operation modes \nThe Mass Combi Pro  is not just a combination of an  \ninverter and a battery charger. Many additional features \nhelp to increase the total available AC power. In the next \nsections, nine different main operation modes are \ndescribed. Most of these modes can be combined, refer to \nsection 3.4.10. You  can enable these modes by means of \nfront switch, DIP switches or the MasterBus user interface. \nAll modes are enabled by default except for the Gen/Mains \nsupporting mode as there are regulations in some \ncountries that do not  allow this. After enabling by the user, \nbecoming “active“ of  a mode is determined by the Mass \nCombi Pro  itself based  on AC and DC power availability, \nbattery state ",
+      "query": "main switch inverter on off charger operation",
+      "source_heading_guess": "230 V every 2½ seconds. When it detects a load that is",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "Mass Combi Pro 12/3000-150, 24/3500-100 – User and Installation Manual 15\n\n5.3.2 DC wiring \nKeep in mind that high  current will pass through the DC \nwiring. Keep the cable length as short as possible, this will \nkeep the system efficiency as high as possible. The table \nshows recommended DC wire sizes:\n\nModel Minimum cross section:\n\nUse M8 cable lugs terminals on the ends of the wires. \nThese lugs should be crimped with a proper crimping tool. \nUse the following wire colours for DC wiring (refer to local \nrules):\n\nWire colour Meaning Must be connected to:  \nRed Positive  + (POS) \nBlack  Negative – (NEG)\n\nPosition the positive and negative cables next to each \nother to limit the electromagnetic field around the cables. \nThe negative cable should be connected directly to the \nnegative post of the battery bank or the load side of a \ncurrent shunt. Do not use the chassis frame or hull of the \nship as the negative conductor. The positive battery cable \nmust be fused and connected to the positive post of the \nbattery bank. Fuse rating depends on the applied cable \ncross section. Tighten the DC connections securely (15 - \n20 Nm / 130 - 175 In-Lbs.).\n\n5.3.3 AC safety grounding\n\nWARNING \nT",
+      "query": "DC fuse battery protection wiring supply requirement",
+      "source_heading_guess": "5.3.2 DC wiring",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "• No objects must be locat ed within a distance of 10 cm / \n4 inch around the Mass Combi Pro . Keep at least 15  \ncm / 6 inch free space below the Mass Combi Pro. \n• Do not locate the Mass Combi Pro  in the same \ncompartment as the batteries. \n• Do not install the Mass Combi Pro  straight above the \nbatteries because of possible corrosive fumes.\n\n5.3 Wiring \nThe wiring is connected inside the connection \ncompartment. If necessary, the wiring can be fed from the \ntop to the bottom side of the cabinet along the back of the \ncabinet. \nAlways use the strain reliefs to fix the wiring . Fix the phase \nline wire to terminal L, the neutral wire to terminal N and \nthe ground wire to terminal PE, see figure 5-1.\n\nWARNING \nNEVER connect shore power to the generator \ninput. This may result in an electric shock!\n\n5.3.1 AC-wiring \nFor a safe installation the correct wire cross section must \nbe applied. Don’t use a cross section that is smaller than \nindicated. See table below to select the appropriate cross \nsection for the AC wiring:\n\nAC-Current Minimum cross section:\n0-20 A 2.5 mm² AWG 13\n20-32 A 4 mm² AWG 11\n32-48 A 6 mm² AWG 9\n48-80 A 10 mm² AWG 7\n\nRecommended wire colours (refer to local ru",
+      "query": "DC fuse battery protection wiring supply requirement",
+      "source_heading_guess": "4 inch around the Mass Combi Pro . Keep at least 15",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "12 Mass Combi Pro 12/3000-150, 24/3500-100 – User and Installation Manual\n\n4.2 Protections \nThe Mass Combi Pro  is protected against overload, short  \ncircuit, overheating and under and over voltage. You can  \ndetect failures from the front panel or from the MasterBus \ncontrol panel.\n\nCAUTION! \nThe Mass Combi Pro  is not protected against  \nreversing polarity of the DC-input, AC voltage on \nthe DC -input and extreme over voltage  (>300 \nVAC ) on the AC-input or AC-outputs.\n\n4.2.1 Output overload or short circuit \nIn case of overload or short circuit during inverter mode, \nthe Power bar top LED illuminates red and the output \nvoltage of the Mass Combi Pro is limited. Mass Combi Pro \nshuts down if this overload or short circuit lasts over 5 \nseconds. The Mass Combi Pro  will automatically restart \nafter shutdown. After 5 failed start attempts the Mass \nCombi Pro  shuts down permanently, the Power bar top \nLED and the Charge bar bottom LED stay blinking red. You \ncan restart the  Mass Combi Pro  only by switching the unit \nmanually off and  on with the main switch on the Mass \nCombi Pro after the overload or short circuit is removed.\n\n4.2.2 Overheating \nIn the event of overheating the",
+      "query": "BMS battery safety relay protective disconnect undervoltage overvoltage temperature",
+      "source_heading_guess": "4.2 Protections",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "Mass Combi Pro 12/3000-150, 24/3500-100 – User and Installation Manual 17\n\n5.8 Installation overview\n\nFigure 5-4: Installation overview for one Mass Combi (stand-alone operation)\n\nCAUTION! \nEnsure correct polarities, cross sections and fuses for all wiring. An RCD according to local regulations must be \nconnected to output-1 and 2.",
+      "query": "Class T fuse T-Fuse fuse holder positive battery cable",
+      "source_heading_guess": "5.8 Installation overview",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "volt; Error \n2-1 18 \nMain battery Main battery voltage  0..16 V/ 0..32 V/ 0..64 V 2-2 6 \nMain battery Main battery current (minus is \ndischarging) \n -500..500 A 2-3 7 \nBattery temp Main battery temperature  -25..50 °C, if not connected: --- 2-4 21 \nShunt device Selected shunt device for the \nmain battery \n  2-5 22 \nBattery SoC Main battery state of charge  0..100 % 2-6 23 \nAC inputs      \nMains Mains voltage  0..300 V 4-1 8 \nMains Mains current  0..50 A 4-2 9 \nMains  Mains power  0..10000 W 4-3 94 \nGenerator Generator voltage  0..300 V 4-4 95 \nGenerator Generator current  0..50 A 4-5 96 \nGenerator  Generator power  0..20000 W 4-6 97 \nAC outputs      \nAC output 1 AC output 1 voltage  0..300 V 5-1 10 \nAC output 1 AC output 1 current  0..70 A 5-2 11 \nAC output 1 AC output 1 power  0..20000 W 5-3 98 \nAC output 2 AC output 2 voltage  0..300 V 5-5 99 \nAC output 2 AC output 2 current  0..70 A 5-5 100 \nAC output 2 AC output 2 power  0..20000 W 5-6 101",
+      "query": "Close relay reset battery safety event recovery after disconnect",
+      "source_heading_guess": "volt; Error 2-1 18",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "Check battery voltage and \nsettings of the MasterShunt or voltage of the MLi Pro battery.\n\n6.2.2 List of event sources \nThis is the Mass Combi Pro list of event sources. These can initiate an event at another MasterBus connected device.\n\nEvent source Description \nDisabled (no event programmed) \nInverting The Mass Combi Pro is in Inverter mode \nCharging The Mass Combi Pro is in Charge mode \nSupporting The Mass Combi Pro is in Supporting mode \nOverload The inverter current is too large \nLow bat The main battery voltage has dropped below the Low bat value \nAlarm A Mass Combi Pro alarm has been triggered \nGenerator input Generator input (“GEN”) is present \nMains input Mains input (“MAINS”) is present \nACout 2 enabled Switched Output-2 is enabled \nBulk Charge phase Bulk \nAbsorption Charge phase Absorption \nFloat Charge phase Float \nExternal fan Trigger point to activate an external cooling fan \nSilent mode The Mass Combi Pro  is in Silence mode\n\n6.2.3 List of event commands \nThis is the Mass Combi Pro  event commands list.",
+      "query": "State of charge SOC monitoring MasterBus display",
+      "source_heading_guess": "6.2.2 List of event sources",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "With an external AC source connected, the  \nMass Combi Pro  charger also serves the function s of an  \nAC to DC converter to supply DC loads which are \nconnected to the batteries. Simple, automatic operation is \nenabled by  the microprocessor that is the brain of the \ninverter/charger combination.\n\n3.2.1 3-Step+ charge system \nSee figure 3-2. The first step of the 3-Step+ charge system \nis the BULK phase, in which the output current of the  \ncharger is 100%, and the greater part of the battery \ncapacity is charged rapidly. The current charges the \nbatteries and gradually the voltage rises to the absorption \nvoltage, refer  to the specifications. The duration of this \nphase depends on the ratio of battery capacity to charger \ncurrent, the loads  connected and the degree to which the \nbatteries were discharged to begin with. \nThe bulk phase is followed by the absorption phase.  \nAbsorption charging ends when the battery is completely  \nfull. Battery voltage remains constant throughout this stage  \nand the charge current decreases during charging of the  \nbattery. With flooded batteries  this sta ge lasts some four  \nhours, with gel and AGM around three. Once the battery is  \n100% ful",
+      "query": "3.1.3 Inverter/ Main charger (3)",
+      "source_heading_guess": "3.2.1 3-Step+ charge system",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "100 A 1..150 A / 1..100 A / 1..50 A \nMethod Charging method selectable. 3-Step+, refer to \nchapter 3 \n3-Step+, constant voltage \nBattery type Select the main battery type. Flooded (Lead acid \nwet cell) \nUser defined, Flooded, Gel, AGM, \nSpiral, MLi, Flooded traction, Nickel \nCadmium \nBulk    \nBulk voltage Maximum Bulk voltage (adjustable if User \nDefined). \n14.40/28.80/57.60 V 8..16.00/16..32.00/32..64.00 V \nMin bulk time Minimum time that the charger stays in \nBulk mode. \n2 min 0-600 min \nStart bulk time Voltage at which to start the bulk timer. 13.25/26.50/53.00  \nMax bulk time Maximum time the bulk phase lasts \nbefore the charger changes to \nabsorption. \n480 min 0-600 min, Max bulk time > Min bulk \ntime \nBulk ret. volt. Bulk return voltage. If the battery voltage \nhas dropped below this voltage, the \ncharger will return to bulk phase. \n12.8/25.6/51.2V  \nBulk return time Delay time before the charger returns to \nBulk after reaching the Return to Bulk \nvoltage. \n30 sec 0-255 sec \nAbsorption    \nAbs. voltage Absorption voltage (adjustable if User \nDefined is selected.  \n14.25/28.50/57.0 V 8-16.00/16-32.00/32-64.00 V \nMax absorp.time Maximum time that the charger stays in \nabsorptio",
+      "query": "3.2.1 3-Step+ charge system",
+      "source_heading_guess": "100 A 1..150 A / 1..100 A / 1..50 A",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "240 min 1-65535 min \nReturn amps Charging current at which the charger \nchanges to Float phase. \n9.0 A / 6.0 A / 3.0 A 0.0-25.0 \nMin absorp.time Minimum time that the charger stays in \nabsorption mode. \n15 min 0-255 min",
+      "query": "3.2.2 Temperature compensated charging",
+      "source_heading_guess": "240 min 1-65535 min",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "8 Mass Combi Pro 12/3000-150, 24/3500-100 – User and Installation Manual\n\n3-Step+ charge system is also safe for all the connected  \nequipment.\n\n3.2.2 Temperature compensated charging \nThe Mass Combi Pro  is delivered with a battery  \ntemperature sensor. By installing this battery temp erature \nsensor (for Lead Acid batteries only) the charge voltages \nare automatically adapted for deviating temperatures.  \nWhen the battery temperature is low, the charge voltage  \nincreases. On the other hand, when the battery \ntemperature is high, the charge v oltage is decreased. \nOvercharge and gassing are prevented this way. This will \nextend the life of your batteries.\n\nTemperature compensated charging cannot \nprevent the batteries from overcharging \nsituations.\n\n3.2.3 Silent mode \nWhen the Mass Combi Pro is in operat ion, the cooling fans \nproduce audible noise. In silent mode the noise level is \nreduced. As a result: \n• the charge current may be limited; \n• the charging time may increase.\n\n3.3 Inverter \n3.3.1 General \nThe inverter provides voltage and frequency regulated AC  \npower from a battery bank. Fast acting electronic circuits  \nprotect the inverter against extreme overloads,  low and",
+      "query": "3.2.2 Temperature compensated charging",
+      "source_heading_guess": "3.2.2 Temperature compensated charging",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    },
+    {
+      "text": "Mass Combi Pro 12/3000-150, 24/3500-100 – User and Installation Manual 11\n\n4 OPERATION\n\n4.1 LED indicators \nSee figure 4 -1. The operation of the Mass Combi Pro  is \ndisplayed by means of LED indicators at the front side of \nthe housing. If the Mass Combi Pro  is activated and as \nlong as none of the red indicators are illuminated, no failure \nis detected and the unit is operating normally.\n\n4.1.1 Generator input LED \nSee figure 4-1 item 1. The arrow is illuminated if AC power \ncomes from the generator. \n• On: generator input. \n• Off: no generator input. \n• Blinking: synchronizing. \n• Blinking fast: AC input out of range.\n\n4.1.2 Mains input LED \nSee figure 4-1 item 2. The arrow is illuminated if AC power \ncomes from the mains. \n• On: mains input. \n• Off: no mains input. \n• Blinking: synchronizing. \n• Blinking fast: AC input out of range.\n\n4.1.3 Power bar LEDs \nSee figure 4-1 item 3. These LEDs have a double function, \ndepending on the mode the Mass Combi Pro is in. \nDuring charging: charge current (20% of nominal  charge \ncurrent per LED). \nDuring inverting: 20% of nominal inverter power per  LED). \nIf the upper LED illuminates red, the inverter is in overload.\n\n4.1.4 AC Output-1 L",
+      "query": "4.1.1 Generator input LED",
+      "source_heading_guess": "4 OPERATION",
+      "manual_id": "78eeffd7-8fe8-4eb8-a475-1d070539da29"
+    }
+  ],
+  "map_groups": [
+    {
+      "group_id": "chapter_1",
+      "is_introduction": true,
+      "partition": "chapter",
+      "chapter": "1",
+      "predicted_fields": [
+        "control_surfaces",
+        "evidence",
+        "operator_actions",
+        "requires_devices"
+      ],
+      "excerpt_count": 2,
+      "raw_profile": {
+        "device": {
+          "manufacturer": "Mastervolt",
+          "model": "Mass Combi Pro 24/3500-100",
+          "category_freeform": "Mass Combi Pro"
+        },
+        "control_surfaces": [],
+        "operator_actions": [
+          {
+            "action": "configure DIP switches",
+            "audience": "installer_or_technician",
+            "context": "commissioning"
+          }
+        ],
+        "networks": {
+          "speaks": [],
+          "bridges": []
+        },
+        "data_roles": {
+          "exposes_data_to_network": false,
+          "displays_data_from_other_devices": false,
+          "controllable_from_network": false
+        },
+        "requires_devices": [],
+        "safety_role": {
+          "is_protective_device": false,
+          "has_manual_override": false,
+          "has_emergency_procedure": false
+        },
+        "protected_by": [],
+        "protects": [],
+        "supply_requirements": [],
+        "evidence": [
+          {
+            "supports_field": "operator_actions[0]",
+            "manual_section": "1.9 Correct disposal of this product",
+            "note": "DIP switch configuration is for commissioning"
+          }
+        ],
+        "confidence": {
+          "overall": 0.5,
+          "notes": "Limited information available from the excerpts."
+        }
+      },
+      "dip_commission_retry": true,
+      "targeted_retries": [
+        "dip_commission_retry"
+      ]
+    },
+    {
+      "group_id": "chapter_3",
+      "is_introduction": false,
+      "partition": "chapter",
+      "chapter": "3",
+      "predicted_fields": [
+        "control_surfaces",
+        "evidence",
+        "operator_actions",
+        "requires_devices",
+        "safety_role"
+      ],
+      "excerpt_count": 15,
+      "raw_profile": {
+        "device": {
+          "manufacturer": "Mastervolt",
+          "model": "Mass Combi Pro 24/3500-100",
+          "category_freeform": "inverter/charger"
+        },
+        "control_surfaces": [
+          {
+            "surface": "remote_panel_accessory",
+            "location_class": "remote_wired",
+            "optional_accessory": true,
+            "label_verbatim": "MasterView Easy",
+            "path": "control_surfaces[0]"
+          }
+        ],
+        "operator_actions": [
+          {
+            "action": "set AC input current limit",
+            "audience": "operator",
+            "context": "situational"
+          },
+          {
+            "action": "configure DIP-switches",
+            "audience": "installer_or_technician",
+            "context": "commissioning"
+          }
+        ],
+        "networks": {
+          "speaks": [],
+          "bridges": []
+        },
+        "data_roles": {
+          "exposes_data_to_network": false,
+          "displays_data_from_other_devices": false,
+          "controllable_from_network": false
+        },
+        "requires_devices": [
+          {
+            "description_verbatim": "MasterView Easy remote panel",
+            "needed_for": "control_surfaces[0]"
+          }
+        ],
+        "safety_role": {
+          "is_protective_device": false,
+          "has_manual_override": false,
+          "has_emergency_procedure": false
+        },
+        "protected_by": [],
+        "protects": [],
+        "supply_requirements": [],
+        "evidence": [
+          {
+            "supports_field": "operator_actions[0]",
+            "manual_section": "3.4.5 Gen-/Mains support",
+            "note": "Describes setting AC input current limit"
+          },
+          {
+            "supports_field": "control_surfaces[0]",
+            "manual_section": "MasterView remote panel",
+            "note": "Optional remote panel for operation"
+          },
+          {
+            "supports_field": "operator_actions[1]",
+            "manual_section": "DIP-switches and cover print",
+            "note": "DIP-switch configuration for commissioning"
+          }
+        ],
+        "confidence": {
+          "overall": 0.9,
+          "notes": "Manual excerpts provide clear instructions for actions."
+        }
+      },
+      "ac_limit_retry": true,
+      "targeted_retries": [
+        "ac_limit_retry",
+        "remote_panel_retry",
+        "dip_commission_retry"
+      ],
+      "remote_panel_retry": true,
+      "dip_commission_retry": true
+    },
+    {
+      "group_id": "chapter_4",
+      "is_introduction": false,
+      "partition": "chapter",
+      "chapter": "4",
+      "predicted_fields": [
+        "control_surfaces",
+        "evidence",
+        "operator_actions",
+        "protects",
+        "safety_role"
+      ],
+      "excerpt_count": 11,
+      "raw_profile": {
+        "device": {
+          "manufacturer": "Mastervolt",
+          "model": "Mass Combi Pro 24/3500-100",
+          "category_freeform": "inverter/charger"
+        },
+        "control_surfaces": [
+          {
+            "surface": "physical_controls",
+            "location_class": "on_device",
+            "optional_accessory": false,
+            "label_verbatim": "Main switch",
+            "path": "control_surfaces[0]"
+          }
+        ],
+        "operator_actions": [
+          {
+            "action": "switch on the inverter",
+            "audience": "operator",
+            "context": "situational"
+          },
+          {
+            "action": "switch off the inverter",
+            "audience": "operator",
+            "context": "situational"
+          },
+          {
+            "action": "switch off the charger",
+            "audience": "operator",
+            "context": "situational"
+          }
+        ],
+        "networks": {
+          "speaks": [
+            {
+              "name_verbatim": "MasterBus",
+              "physical_or_wireless": "wired"
+            }
+          ],
+          "bridges": []
+        },
+        "data_roles": {
+          "exposes_data_to_network": false,
+          "displays_data_from_other_devices": false,
+          "controllable_from_network": false
+        },
+        "requires_devices": [],
+        "safety_role": {
+          "is_protective_device": false,
+          "has_manual_override": false,
+          "has_emergency_procedure": false
+        },
+        "protected_by": [
+          {
+            "description_verbatim": "AC-input must be protected by a fuse"
+          }
+        ],
+        "protects": [],
+        "supply_requirements": [
+          {
+            "description_verbatim": "Maximum rating of the generator AC input fuse: 50 A"
+          },
+          {
+            "description_verbatim": "Mains AC input fuse: 30 A"
+          }
+        ],
+        "evidence": [
+          {
+            "supports_field": "control_surfaces[0]",
+            "manual_section": "4.1.5 AC Output-2 LED",
+            "note": "Main switch controls inverter and charger"
+          },
+          {
+            "supports_field": "operator_actions[0]",
+            "manual_section": "4.1.5 AC Output-2 LED",
+            "note": "Inverter can be switched on via main switch"
+          },
+          {
+            "supports_field": "operator_actions[1]",
+            "manual_section": "4.1.5 AC Output-2 LED",
+            "note": "Inverter can be switched off via main switch"
+          },
+          {
+            "supports_field": "operator_actions[2]",
+            "manual_section": "4.1.5 AC Output-2 LED",
+            "note": "Charger can be switched off via main switch"
+          },
+          {
+            "supports_field": "protected_by[0]",
+            "manual_section": "Therefore the AC-input must be protected by a fuse in the",
+            "note": "Fuse protection is required for AC input"
+          },
+          {
+            "supports_field": "supply_requirements[0]",
+            "manual_section": "Therefore the AC-input must be protected by a fuse in the",
+            "note": "Generator AC input fuse rating specified"
+          },
+          {
+            "supports_field": "supply_requirements[1]",
+            "manual_section": "Therefore the AC-input must be protected by a fuse in the",
+            "note": "Mains AC input fuse rating specified"
+          }
+        ],
+        "confidence": {
+          "overall": 0.8,
+          "notes": "Profile based on limited manual excerpts"
+        }
+      }
+    },
+    {
+      "group_id": "chapter_5",
+      "is_introduction": false,
+      "partition": "chapter",
+      "chapter": "5",
+      "predicted_fields": [
+        "control_surfaces",
+        "data_roles",
+        "evidence",
+        "networks",
+        "operator_actions",
+        "protected_by",
+        "requires_devices",
+        "safety_role",
+        "supply_requirements"
+      ],
+      "excerpt_count": 10,
+      "raw_profile": {
+        "device": {
+          "manufacturer": "Mastervolt",
+          "model": "Mass Combi Pro 24/3500-100",
+          "category_freeform": "inverter/charger"
+        },
+        "control_surfaces": [],
+        "operator_actions": [
+          {
+            "action": "adjust DIP-switches prior to commissioning",
+            "audience": "installer_or_technician",
+            "context": "commissioning"
+          }
+        ],
+        "networks": {
+          "speaks": [
+            {
+              "name_verbatim": "MasterBus",
+              "physical_or_wireless": "wired"
+            }
+          ],
+          "bridges": []
+        },
+        "data_roles": {
+          "exposes_data_to_network": false,
+          "displays_data_from_other_devices": false,
+          "controllable_from_network": false
+        },
+        "requires_devices": [],
+        "safety_role": {
+          "is_protective_device": false,
+          "has_manual_override": false,
+          "has_emergency_procedure": false
+        },
+        "protected_by": [],
+        "protects": [],
+        "supply_requirements": [],
+        "evidence": [
+          {
+            "supports_field": "operator_actions[0]",
+            "manual_section": "7.1 Commissioning",
+            "note": "DIP-switch adjustment is necessary before use"
+          }
+        ],
+        "confidence": {
+          "overall": 0.8,
+          "notes": "Manual does not distinguish between model variants"
+        }
+      },
+      "dip_commission_retry": true,
+      "targeted_retries": [
+        "dip_commission_retry"
+      ]
+    },
+    {
+      "group_id": "chapter_6",
+      "is_introduction": false,
+      "partition": "chapter",
+      "chapter": "6",
+      "predicted_fields": [
+        "control_surfaces",
+        "data_roles",
+        "evidence",
+        "operator_actions",
+        "requires_devices",
+        "safety_role",
+        "supply_requirements"
+      ],
+      "excerpt_count": 6,
+      "raw_profile": {
+        "device": {
+          "manufacturer": "Mastervolt",
+          "model": "Mass Combi Pro 24/3500-100",
+          "category_freeform": "Mass Combi Pro"
+        },
+        "control_surfaces": [
+          {
+            "surface": "remote_panel_accessory",
+            "location_class": "remote_wired",
+            "optional_accessory": true,
+            "label_verbatim": "MasterView remote panel",
+            "path": "control_surfaces[0]"
+          }
+        ],
+        "operator_actions": [
+          {
+            "action": "configure via DIP-switches",
+            "audience": "installer_or_technician",
+            "context": "commissioning"
+          }
+        ],
+        "networks": {
+          "speaks": [],
+          "bridges": []
+        },
+        "data_roles": {
+          "exposes_data_to_network": false,
+          "displays_data_from_other_devices": false,
+          "controllable_from_network": false
+        },
+        "requires_devices": [
+          {
+            "description_verbatim": "MasterView remote panel",
+            "needed_for": "control_surfaces[0]"
+          }
+        ],
+        "safety_role": {
+          "is_protective_device": false,
+          "has_manual_override": false,
+          "has_emergency_procedure": false
+        },
+        "protected_by": [],
+        "protects": [],
+        "supply_requirements": [],
+        "evidence": [
+          {
+            "supports_field": "operator_actions[0]",
+            "manual_section": "6 CONFIGURATION",
+            "note": "DIP-switch configuration is for commissioning"
+          },
+          {
+            "supports_field": "control_surfaces[0]",
+            "manual_section": "6 CONFIGURATION",
+            "note": "Remote panel operates the Mass Combi Pro"
+          }
+        ],
+        "confidence": {
+          "overall": 0.8,
+          "notes": "Profile based on limited manual excerpts"
+        }
+      },
+      "remote_panel_retry": true,
+      "targeted_retries": [
+        "remote_panel_retry",
+        "dip_commission_retry"
+      ],
+      "dip_commission_retry": true
+    },
+    {
+      "group_id": "chapter_8",
+      "is_introduction": false,
+      "partition": "chapter",
+      "chapter": "8",
+      "predicted_fields": [
+        "control_surfaces",
+        "evidence",
+        "operator_actions",
+        "requires_devices",
+        "safety_role"
+      ],
+      "excerpt_count": 2,
+      "raw_profile": {
+        "device": {
+          "manufacturer": "Mastervolt",
+          "model": "Mass Combi Pro 24/3500-100",
+          "category_freeform": "Mass Combi Pro"
+        },
+        "control_surfaces": [
+          {
+            "surface": "physical_controls",
+            "location_class": "on_device",
+            "optional_accessory": false,
+            "label_verbatim": "on/off/inverter off switch",
+            "path": "control_surfaces[0]"
+          }
+        ],
+        "operator_actions": [
+          {
+            "action": "switch on the Mass Combi Pro",
+            "audience": "operator",
+            "context": "situational"
+          },
+          {
+            "action": "check generator voltage and frequency",
+            "audience": "operator",
+            "context": "emergency"
+          },
+          {
+            "action": "check mains voltage and frequency",
+            "audience": "operator",
+            "context": "emergency"
+          }
+        ],
+        "networks": {
+          "speaks": [],
+          "bridges": []
+        },
+        "data_roles": {
+          "exposes_data_to_network": false,
+          "displays_data_from_other_devices": false,
+          "controllable_from_network": false
+        },
+        "requires_devices": [],
+        "safety_role": {
+          "is_protective_device": false,
+          "has_manual_override": false,
+          "has_emergency_procedure": true
+        },
+        "protected_by": [],
+        "protects": [],
+        "supply_requirements": [],
+        "evidence": [
+          {
+            "supports_field": "safety_role.has_emergency_procedure",
+            "manual_section": "7.3.1 Trouble shooting table",
+            "note": "Includes emergency procedures for faults"
+          }
+        ],
+        "confidence": {
+          "overall": 0.8,
+          "notes": "Profile based on limited manual excerpts"
+        }
+      }
+    },
+    {
+      "group_id": "batch_0",
+      "is_introduction": false,
+      "partition": "batch",
+      "chapter": null,
+      "predicted_fields": [
+        "control_surfaces",
+        "data_roles",
+        "evidence",
+        "networks",
+        "operator_actions",
+        "requires_devices",
+        "safety_role"
+      ],
+      "excerpt_count": 3,
+      "raw_profile": {
+        "device": {
+          "manufacturer": "Mastervolt",
+          "model": "Mass Combi Pro 24/3500-100",
+          "category_freeform": "inverter/charger"
+        },
+        "control_surfaces": [],
+        "operator_actions": [
+          {
+            "action": "check error indications with LEDs",
+            "audience": "operator",
+            "context": "emergency"
+          },
+          {
+            "action": "contact Mastervolt Service Centre for problems",
+            "audience": "either",
+            "context": "situational"
+          },
+          {
+            "action": "perform commissioning with MasterAdjust software",
+            "audience": "installer_or_technician",
+            "context": "commissioning"
+          }
+        ],
+        "networks": {
+          "speaks": [],
+          "bridges": []
+        },
+        "data_roles": {
+          "exposes_data_to_network": false,
+          "displays_data_from_other_devices": false,
+          "controllable_from_network": false
+        },
+        "requires_devices": [],
+        "safety_role": {
+          "is_protective_device": false,
+          "has_manual_override": false,
+          "has_emergency_procedure": true
+        },
+        "protected_by": [],
+        "protects": [],
+        "supply_requirements": [],
+        "evidence": [
+          {
+            "supports_field": "operator_actions[0]",
+            "manual_section": "4 Open the connection compartment of the Mass Combi",
+            "note": "Check error indications using front LEDs"
+          },
+          {
+            "supports_field": "operator_actions[1]",
+            "manual_section": "4 Open the connection compartment of the Mass Combi",
+            "note": "Contact service center for unresolved issues"
+          },
+          {
+            "supports_field": "operator_actions[2]",
+            "manual_section": "4 Open the connection compartment of the Mass Combi",
+            "note": "Commissioning requires MasterAdjust software"
+          }
+        ],
+        "confidence": {
+          "overall": 0.8,
+          "notes": "Manual excerpts support operator actions and commissioning"
+        }
+      },
+      "dip_commission_retry": true,
+      "targeted_retries": [
+        "dip_commission_retry"
+      ]
+    }
+  ],
+  "merge": {
+    "conflicts": [
+      {
+        "kind": "requires_devices",
+        "attribute": "description_verbatim",
+        "group_id": "chapter_6",
+        "variants": [
+          {
+            "description_verbatim": "MasterView Easy remote panel",
+            "needed_for": "control_surfaces[0]"
+          },
+          {
+            "description_verbatim": "MasterView remote panel",
+            "needed_for": "control_surfaces[0]"
+          }
+        ]
+      }
+    ],
+    "group_contributions": {
+      "chapter_1": {
+        "operator_actions": 1,
+        "control_surfaces": 0,
+        "networks": 0,
+        "requires_devices": 0,
+        "evidence": 1,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "batch_0": {
+        "operator_actions": 3,
+        "control_surfaces": 0,
+        "networks": 0,
+        "requires_devices": 0,
+        "evidence": 3,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 1
+      },
+      "chapter_3": {
+        "operator_actions": 2,
+        "control_surfaces": 1,
+        "networks": 0,
+        "requires_devices": 1,
+        "evidence": 3,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "chapter_4": {
+        "operator_actions": 3,
+        "control_surfaces": 1,
+        "networks": 1,
+        "requires_devices": 0,
+        "evidence": 7,
+        "supply_requirements": 2,
+        "protected_by": 1,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "chapter_5": {
+        "operator_actions": 1,
+        "control_surfaces": 0,
+        "networks": 1,
+        "requires_devices": 0,
+        "evidence": 1,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "chapter_6": {
+        "operator_actions": 1,
+        "control_surfaces": 1,
+        "networks": 0,
+        "requires_devices": 1,
+        "evidence": 2,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "chapter_8": {
+        "operator_actions": 3,
+        "control_surfaces": 1,
+        "networks": 0,
+        "requires_devices": 0,
+        "evidence": 1,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 1
+      }
+    },
+    "utilization": [
+      {
+        "group_id": "chapter_1",
+        "is_introduction": true,
+        "excerpt_count": 2,
+        "predicted_fields": [
+          "control_surfaces",
+          "evidence",
+          "operator_actions",
+          "requires_devices"
+        ],
+        "contributions": {
+          "operator_actions": 1,
+          "control_surfaces": 0,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 1,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 2,
+        "unutilized": false
+      },
+      {
+        "group_id": "batch_0",
+        "is_introduction": false,
+        "excerpt_count": 3,
+        "predicted_fields": [
+          "control_surfaces",
+          "data_roles",
+          "evidence",
+          "networks",
+          "operator_actions",
+          "requires_devices",
+          "safety_role"
+        ],
+        "contributions": {
+          "operator_actions": 3,
+          "control_surfaces": 0,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 3,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 1
+        },
+        "contribution_total": 7,
+        "unutilized": false
+      },
+      {
+        "group_id": "chapter_3",
+        "is_introduction": false,
+        "excerpt_count": 15,
+        "predicted_fields": [
+          "control_surfaces",
+          "evidence",
+          "operator_actions",
+          "requires_devices",
+          "safety_role"
+        ],
+        "contributions": {
+          "operator_actions": 2,
+          "control_surfaces": 1,
+          "networks": 0,
+          "requires_devices": 1,
+          "evidence": 3,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 7,
+        "unutilized": false
+      },
+      {
+        "group_id": "chapter_4",
+        "is_introduction": false,
+        "excerpt_count": 11,
+        "predicted_fields": [
+          "control_surfaces",
+          "evidence",
+          "operator_actions",
+          "protects",
+          "safety_role"
+        ],
+        "contributions": {
+          "operator_actions": 3,
+          "control_surfaces": 1,
+          "networks": 1,
+          "requires_devices": 0,
+          "evidence": 7,
+          "supply_requirements": 2,
+          "protected_by": 1,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 15,
+        "unutilized": false
+      },
+      {
+        "group_id": "chapter_5",
+        "is_introduction": false,
+        "excerpt_count": 10,
+        "predicted_fields": [
+          "control_surfaces",
+          "data_roles",
+          "evidence",
+          "networks",
+          "operator_actions",
+          "protected_by",
+          "requires_devices",
+          "safety_role",
+          "supply_requirements"
+        ],
+        "contributions": {
+          "operator_actions": 1,
+          "control_surfaces": 0,
+          "networks": 1,
+          "requires_devices": 0,
+          "evidence": 1,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 3,
+        "unutilized": false
+      },
+      {
+        "group_id": "chapter_6",
+        "is_introduction": false,
+        "excerpt_count": 6,
+        "predicted_fields": [
+          "control_surfaces",
+          "data_roles",
+          "evidence",
+          "operator_actions",
+          "requires_devices",
+          "safety_role",
+          "supply_requirements"
+        ],
+        "contributions": {
+          "operator_actions": 1,
+          "control_surfaces": 1,
+          "networks": 0,
+          "requires_devices": 1,
+          "evidence": 2,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 5,
+        "unutilized": false
+      },
+      {
+        "group_id": "chapter_8",
+        "is_introduction": false,
+        "excerpt_count": 2,
+        "predicted_fields": [
+          "control_surfaces",
+          "evidence",
+          "operator_actions",
+          "requires_devices",
+          "safety_role"
+        ],
+        "contributions": {
+          "operator_actions": 3,
+          "control_surfaces": 1,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 1,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 1
+        },
+        "contribution_total": 6,
+        "unutilized": false
+      }
+    ]
+  },
+  "prompt_instruction_path": "guide/llm/extract_interaction_profile.txt",
+  "prompt_schema_path": "guide/schemas/interaction_profile.txt",
+  "prompt_contains_evidence_priority_v33": true,
+  "prompt_contains_example_isolation": true,
+  "prompt_contains_map_partial_line": true,
+  "prompt_contains_example_m": true,
+  "repair": {
+    "evidence": {
+      "attempted": true,
+      "missing_fields": [
+        "data_roles.exposes_data_to_network",
+        "data_roles.displays_data_from_other_devices",
+        "data_roles.controllable_from_network",
+        "requires_devices[0]",
+        "requires_devices[1]"
+      ],
+      "added": [
+        "data_roles.controllable_from_network",
+        "data_roles.displays_data_from_other_devices",
+        "data_roles.exposes_data_to_network",
+        "requires_devices[0]",
+        "requires_devices[1]"
+      ]
+    },
+    "absence": {
+      "attempted": true,
+      "flags": [
+        "speaks_but_inert"
+      ],
+      "excerpt_count": 39,
+      "patched_keys": [
+        "control_surfaces",
+        "data_roles",
+        "device",
+        "requires_devices"
+      ]
+    }
+  },
+  "rextraction": {
+    "attempted": false,
+    "max_retries": 1,
+    "still_needs_rextraction": false
+  },
+  "post_validation_flag_names": [
+    "evidence_incomplete",
+    "extraction_unstable",
+    "merge_conflict",
+    "optional_surface_without_requires"
+  ],
+  "needs_rextraction": false
+}

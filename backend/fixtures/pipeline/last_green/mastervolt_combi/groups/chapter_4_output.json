@@ -1,0 +1,108 @@
+{
+  "device": {
+    "manufacturer": "Mastervolt",
+    "model": "Mass Combi Pro 24/3500-100",
+    "category_freeform": "inverter/charger"
+  },
+  "control_surfaces": [
+    {
+      "surface": "physical_controls",
+      "location_class": "on_device",
+      "optional_accessory": false,
+      "label_verbatim": "Main switch",
+      "path": "control_surfaces[0]"
+    }
+  ],
+  "operator_actions": [
+    {
+      "action": "switch on the inverter",
+      "audience": "operator",
+      "context": "situational"
+    },
+    {
+      "action": "switch off the inverter",
+      "audience": "operator",
+      "context": "situational"
+    },
+    {
+      "action": "switch off the charger",
+      "audience": "operator",
+      "context": "situational"
+    }
+  ],
+  "networks": {
+    "speaks": [
+      {
+        "name_verbatim": "MasterBus",
+        "physical_or_wireless": "wired"
+      }
+    ],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": false
+  },
+  "protected_by": [
+    {
+      "description_verbatim": "AC-input must be protected by a fuse"
+    }
+  ],
+  "protects": [],
+  "supply_requirements": [
+    {
+      "description_verbatim": "Maximum rating of the generator AC input fuse: 50 A"
+    },
+    {
+      "description_verbatim": "Mains AC input fuse: 30 A"
+    }
+  ],
+  "evidence": [
+    {
+      "supports_field": "control_surfaces[0]",
+      "manual_section": "4.1.5 AC Output-2 LED",
+      "note": "Main switch controls inverter and charger"
+    },
+    {
+      "supports_field": "operator_actions[0]",
+      "manual_section": "4.1.5 AC Output-2 LED",
+      "note": "Inverter can be switched on via main switch"
+    },
+    {
+      "supports_field": "operator_actions[1]",
+      "manual_section": "4.1.5 AC Output-2 LED",
+      "note": "Inverter can be switched off via main switch"
+    },
+    {
+      "supports_field": "operator_actions[2]",
+      "manual_section": "4.1.5 AC Output-2 LED",
+      "note": "Charger can be switched off via main switch"
+    },
+    {
+      "supports_field": "protected_by[0]",
+      "manual_section": "Therefore the AC-input must be protected by a fuse in the",
+      "note": "Fuse protection is required for AC input"
+    },
+    {
+      "supports_field": "supply_requirements[0]",
+      "manual_section": "Therefore the AC-input must be protected by a fuse in the",
+      "note": "Generator AC input fuse rating specified"
+    },
+    {
+      "supports_field": "supply_requirements[1]",
+      "manual_section": "Therefore the AC-input must be protected by a fuse in the",
+      "note": "Mains AC input fuse rating specified"
+    }
+  ],
+  "confidence": {
+    "overall": 0.8,
+    "notes": "Profile based on limited manual excerpts"
+  }
+}

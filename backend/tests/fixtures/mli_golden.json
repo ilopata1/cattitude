@@ -1,0 +1,33 @@
+{
+  "_meta": {
+    "Fixture-Auth": "this chat — MLI Ultra golden gains SmartRemote + EasyView 5 panel alternatives (v4.3 adjudicated repair)",
+    "manual": "MLI Ultra LITHIUM-ION BATTERY 12/3000, 12/6000, 24/6000 User and Installation Manual",
+    "adjudication_notes": [
+      "MasterBus + CZone appear as network connections; golden requires MasterBus in speaks and exposes_data_to_network true.",
+      "BMS opens/triggers the safety relay on built-in voltage/temperature thresholds — record under protects, NOT as automatic operator_actions. Operator recovery is Close relay after limits are OK (emergency).",
+      "External fuse: manual calls for T-Fuse (max 500A, IR 15kA) / fuse holder in the positive battery wire — accept Class T or T-Fuse wording.",
+      "has_manual_override: safety-relay knob LOCK OFF / REMOTE OFF is manual isolation — assert true when the knob positions are in the routed text; live extract may under-fill this bool.",
+      "Calibration M shipped (v3.9): automatic safety-relay open → protects[]; LOCK OFF → has_manual_override + on-device control surface; Close relay recovery remains emergency operator_action.",
+      "v4.3: SmartRemote and EasyView 5 are separate requires_devices alternatives; if presented as MasterView alternatives, unify needed_for across the panel family."
+    ]
+  },
+  "device": {
+    "manufacturer": "Mastervolt",
+    "model": "MLI Ultra 24/6000",
+    "category_freeform": "LITHIUM-ION BATTERY"
+  },
+  "assertions": {
+    "networks_speaks_masterbus": true,
+    "data_roles_exposes_data_to_network": true,
+    "safety_is_protective_device": true,
+    "safety_has_emergency_procedure": true,
+    "safety_has_manual_override": true,
+    "protects_bms_safety_relay": true,
+    "supply_or_protected_external_fuse": true,
+    "emergency_bms_recovery_action": true,
+    "no_automatic_protection_as_operator_action": true,
+    "daily_monitoring_action": true,
+    "requires_smartremote_alternative": true,
+    "requires_easyview5_alternative": true
+  }
+}

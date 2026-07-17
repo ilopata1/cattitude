@@ -18,6 +18,7 @@ LLM_PROMPT_FILES: dict[tuple[str, str], str] = {
 # (would require extending guide_content_type).
 DRAFT_PROMPT_FILES: dict[str, str] = {
     "equipment_fragment": "guide/llm/draft_equipment_fragment.txt",
+    "interaction_profile": "guide/llm/extract_interaction_profile.txt",
 }
 
 SCHEMA_HINT_FILES: dict[tuple[str, str], str] = {

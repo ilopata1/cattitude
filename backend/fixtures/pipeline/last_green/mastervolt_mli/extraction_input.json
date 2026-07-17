@@ -1,0 +1,1769 @@
+{
+  "routing_mechanism": "rag_retrieval_queries",
+  "stage0_heading_routing": false,
+  "extraction_mode": "map_reduce",
+  "stability_voting": {
+    "n_requested": 3,
+    "n_completed": 3,
+    "short_circuit_identical": false,
+    "unstable_flag_count": 5,
+    "votes": [
+      {
+        "field_path": "requires_devices",
+        "kind": "requires_devices",
+        "attribute": "presence",
+        "chosen": {
+          "description_verbatim": "Mastervolt battery charger",
+          "needed_for": "data_roles.exposes_data_to_network"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "description_verbatim": "Mastervolt battery charger",
+              "needed_for": "data_roles.exposes_data_to_network"
+            }
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ]
+      },
+      {
+        "field_path": "requires_devices",
+        "kind": "requires_devices",
+        "attribute": "presence",
+        "chosen": {
+          "description_verbatim": "safety relay",
+          "needed_for": "control_surfaces[0]"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "description_verbatim": "safety relay",
+              "needed_for": "control_surfaces[0]"
+            }
+          },
+          {
+            "run": 3,
+            "value": {
+              "description_verbatim": "safety relay",
+              "needed_for": "control_surfaces[0]"
+            }
+          }
+        ]
+      },
+      {
+        "field_path": "protects",
+        "kind": "protects",
+        "attribute": "presence",
+        "chosen": {
+          "description_verbatim": "safety relay automatically disconnects battery on safety events"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "description_verbatim": "safety relay automatically disconnects battery on safety events"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ]
+      },
+      {
+        "field_path": "protected_by",
+        "kind": "protected_by",
+        "attribute": "presence",
+        "chosen": {
+          "description_verbatim": "battery safety relay automatically disconnects on safety events"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "description_verbatim": "battery safety relay automatically disconnects on safety events"
+            }
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ]
+      },
+      {
+        "field_path": "protected_by",
+        "kind": "protected_by",
+        "attribute": "presence",
+        "chosen": {
+          "description_verbatim": "battery fuse in positive battery cable"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "description_verbatim": "battery fuse in positive battery cable"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ]
+      }
+    ]
+  },
+  "note": "Stage 1 map-reduce with stability voting: excerpts partitioned by chapter (fallback batches); up to N=3 map-reduce passes on the same Stage 0 payload; field-level vote; then validate/derive.",
+  "retrieval_queries": [
+    "operation daily use display menu controls operator",
+    "installation wiring commissioning configuration DIP switches",
+    "troubleshooting alarms faults error codes emergency protection",
+    "network communication MasterBus NMEA CZone VE.Direct Bluetooth remote panel app",
+    "maintenance service storage winterizing",
+    "optional accessory gateway interface required for",
+    "MasterView remote panel remote control display panel monitoring panel MasterAdjust",
+    "optional remote control MasterView Easy remote panel installed",
+    "shore power AC input current limit generator mains",
+    "main switch inverter on off charger operation",
+    "DC fuse battery protection wiring supply requirement",
+    "BMS battery safety relay protective disconnect undervoltage overvoltage temperature",
+    "Class T fuse T-Fuse fuse holder positive battery cable",
+    "Close relay reset battery safety event recovery after disconnect",
+    "State of charge SOC monitoring MasterBus display"
+  ],
+  "query_diagnostics": [
+    {
+      "query": "operation daily use display menu controls operator",
+      "unique_hits_added": 8,
+      "matched": true,
+      "top_k": 8,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "installation wiring commissioning configuration DIP switches",
+      "unique_hits_added": 7,
+      "matched": true,
+      "top_k": 8,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "unique_hits_added": 6,
+      "matched": true,
+      "top_k": 8,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "network communication MasterBus NMEA CZone VE.Direct Bluetooth remote panel app",
+      "unique_hits_added": 5,
+      "matched": true,
+      "top_k": 8,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "maintenance service storage winterizing",
+      "unique_hits_added": 5,
+      "matched": true,
+      "top_k": 8,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "optional accessory gateway interface required for",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 8,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "MasterView remote panel remote control display panel monitoring panel MasterAdjust",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 8,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "optional remote control MasterView Easy remote panel installed",
+      "unique_hits_added": 2,
+      "matched": true,
+      "top_k": 8,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "shore power AC input current limit generator mains",
+      "unique_hits_added": 6,
+      "matched": true,
+      "top_k": 8,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "main switch inverter on off charger operation",
+      "unique_hits_added": 2,
+      "matched": true,
+      "top_k": 8,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "DC fuse battery protection wiring supply requirement",
+      "unique_hits_added": 3,
+      "matched": true,
+      "top_k": 8,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "BMS battery safety relay protective disconnect undervoltage overvoltage temperature",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 8,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "Class T fuse T-Fuse fuse holder positive battery cable",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 8,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "Close relay reset battery safety event recovery after disconnect",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 8,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "State of charge SOC monitoring MasterBus display",
+      "unique_hits_added": 2,
+      "matched": true,
+      "top_k": 8,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "3. WARRANTY",
+      "unique_hits_added": 2,
+      "matched": true,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "4. CYCLE LIFE AND C-RATE",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "6. PRODUCT DESCRIPTION",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "7. INSTALLATION",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "6. Connect the DC main wiring, positive to +, negative to -.",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "5. Install all fuses.",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "3. Ensure that the network is properly terminated.",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "3. Select the MLI Ultra that will act as Primary and go to the",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "4. Enter the number of batteries in the # series (S) field.",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "5. Enter the number of batteries in parallel in the # parallel (P) field.",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "3. From the Cluster Type drop-down list,",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "4. Cluster DC Instance is an NMEA2000",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 3,
+      "phase": "heading_fill"
+    }
+  ],
+  "coverage": {
+    "chunk_count": 65,
+    "heading_count": 192,
+    "headings_covered_count": 159,
+    "heading_coverage_fraction": 0.8281,
+    "coverage_low_threshold": 0.25,
+    "coverage_low": false,
+    "top_k_used": 8,
+    "top_k_scaling": {
+      "base": 4,
+      "max": 16,
+      "chunk_coverage_target": 0.6,
+      "scaled": true
+    },
+    "heading_fill_queries": 12,
+    "heading_fill_hits": 5,
+    "headings_all": [
+      "LITHIUM-ION BATTERY",
+      "USER AND INSTALLATION MANUAL",
+      "2   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "5. CORRECT DISPOSAL OF THIS",
+      "1. SAFETY INSTRUCTIONS",
+      "IMPORTANT SAFETY INSTRUCTIONS",
+      "SAVE THESE INSTRUCTIONS",
+      "4   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "6   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "2. LIABILITY",
+      "3. WARRANTY",
+      "4. CYCLE LIFE AND C-RATE",
+      "5. CORRECT DISPOSAL OF THIS PRODUCT",
+      "6. PRODUCT DESCRIPTION",
+      "622 [24.5]",
+      "197 [7.8]",
+      "355 [14.0]",
+      "341 [13.4]",
+      "8   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "1 Tiltable handle for lifting",
+      "2 Negative battery terminal (M8)",
+      "3 Positive battery terminal (M8)",
+      "4 Mounting strap location",
+      "5 MasterBus / CZone connection (see sections Network wiring on pages 18 and 27)",
+      "6 Battery Safety connector, see the Installation drawing on page 11 (single), 35 (parallel) or",
+      "36 (series)",
+      "7 DIP switch cover and LED indicators",
+      "2 short blinks, long pause; CZone identification in progress;",
+      "6000 and on the back side of the MLI Ultra 3000. Technical",
+      "10   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "7. INSTALLATION",
+      "12V 12.0V 14.6V",
+      "24V 24.0V 29.2V",
+      "12V 14.25V 13.5V",
+      "24V 28.5V 27.0V",
+      "12   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "18 for details.",
+      "18 for details. The safety relay can also be driven by events (MasterBus) or circuit switches",
+      "25. For a CZone network, see also section \"Configuration\", starting on page 28.",
+      "1. Switch off all loads and chargers.",
+      "2. Tilt the side handles to uncover the battery terminals.",
+      "3. Integrate a fuse holder in the positive battery wire but do not place the fuse yet.",
+      "4. Set the safety relay knob to “LOCK OFF”, see page 12.",
+      "5. Integrate the safety relay in the positive battery wire.",
+      "6. Connect the DC main wiring, positive to +, negative to -.",
+      "14   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "7. Close the side handles to cover the battery terminals again.",
+      "8. Connect the MasterBus/CZone cabling, see page 18/27.",
+      "9. Continue with the commissioning procedure, see next chapter.",
+      "8. COMMISSIONING",
+      "1. Check all wiring and connections. Do not place the fuses yet!",
+      "2. Set the safety relay to REMOTE OFF, see page 12.",
+      "3. Open MasterAdjust/CZone Configuration Tool, to configure the required events/circuits.",
+      "4. Test the safety relay (MasterAdjust only).",
+      "5. Install all fuses.",
+      "16   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "6. Verify that the current of the battery is 0A on the monitoring/metering page.",
+      "7. Switch on some loads.",
+      "8. Close the safety relay by setting the knob to REMOTE ON, see page 12.",
+      "9. Verify that a current is flowing out of the battery (negative value).",
+      "10. Switch off the load, then switch on the charger and verify that a current is flowing into the",
+      "11. If necessary, check if MasterBus Power mode is on by making sure that DIP switch 2 is in the",
+      "12. Charge the battery fully until the charger switches to the float stage (maintenance charge).",
+      "9. MAINTENANCE",
+      "10. DECOMMISSIONING",
+      "1. Turn AC power off.",
+      "2. Disconnect all loads and charging devices.",
+      "3. Move the safety relay(s) in the LOCK OFF position, see page 12.",
+      "4. Disconnect all wiring.",
+      "11. REPLACEMENTS",
+      "12. STORAGE",
+      "12V  13.5V",
+      "24V  27.0V",
+      "18   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "13. MASTERBUS",
+      "3) MLI 1",
+      "4) MLI 2",
+      "1. Disconnect a MasterBus cable or Terminator from the closest MasterBus device and connect it",
+      "2. Connect the new MasterBus cable to the other MasterBus device and then connect to the MLI",
+      "3. Ensure that the network is properly terminated.",
+      "14. MASTERBUS ON THE MLI ULTRA",
+      "20   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "100 0-100%",
+      "45°C 30 - 60°C",
+      "5°C -10 - 30°C",
+      "31 days 7-60 days",
+      "22   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "24   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "PLEASE CAREFULLY READ THE FOLLOWING INFORMATION!",
+      "chapter 18 for details. This event is repeated every 60 seconds. It will only stop repeating if the",
+      "IF THE SAFETY RELAY HAS BEEN TRIGGERED:",
+      "2. If within limits, click the \"Close relay\" button on the MasterBus control panel. Start charging if",
+      "3. If the relay trips again, a non-resettable battery safety event occurred. Do not try to force or",
+      "26   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "chapter 18 for details.",
+      "IF A NON-RESETTABLE BATTERY SAFETY EVENT OCCURS: SET",
+      "CONTACT A MASTERVOLT REPRESENTATIVE FOR ASSISTANCE.",
+      "1. Remove the DIP switch cover by loosening the four screws.",
+      "2. Use a small screwdriver to carefully set the DIP switches:",
+      "3. Replace the DIP switch cover and fasten with the screws. Make sure that the rubber band is",
+      "15. CZONE®",
+      "2. Set DIP switch 1 to the OFF position.",
+      "3. Set DIP switch 2 to the OFF position.",
+      "4. Set DIP switches 3 to 10 to match the unique address used in the CZone network (see the",
+      "5. Replace the DIP switch cover and fasten with the screws. Make sure that the rubber band is",
+      "1. Disconnect the backbone at the closest backbone connection and add in a tee connector.",
+      "2. Reconnect the backbone connection(s) with the new tee connector in place.",
+      "3. Connect the RJ45 CZone/MB drop cable to the black coupler on the tee and then connect to the",
+      "28   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "1. Enter an understandable Module Name.",
+      "2. From the Module Type drop-down list, select Battery (BAT).",
+      "3. Each device on a CZone network has a unique CZone address; the Dipswitch. This number",
+      "4. From the Battery Type drop-down list, select the required model.",
+      "5. Option: click the Advanced Settings button to configure advanced options.",
+      "6. If required, select the required Relay Type. In most cases ML Switch works well.",
+      "7. NMEA2000 Instances are used to differentiate between multiple monitoring sources.",
+      "8. To optimize the battery cycle life, the Depth of Discharge Remaining (DoD) is set to 80%.",
+      "9. Tick Show Battery Temperature to enable temperature monitoring.",
+      "10. Click OK to return to the Module Modification window and then click the Alarm/Switch Settings",
+      "30   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "11. Set the required alarm levels and Alarm Severities.",
+      "12. Click OK to close the Battery Alarm/Switch Settings window.",
+      "13. Click OK to close the Module Modification window.",
+      "14. Click on the Circuits tab and Add a new circuit (bottom left).",
+      "15. Enter the Circuit Name (e.g. Stop Charge) and click OK.",
+      "16. Click the Add button in the Circuit Control panel.",
+      "32   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "17. From the Control Interface drop-down list, select the required MLI Ultra unit.",
+      "18. From the Switch Type drop-down list, select Single Throw Momentary.",
+      "19. From the Input / Throw drop-down list, select Stop Charge.",
+      "20. From the Switch (Output) Function drop-down list, select Off/Restore.",
+      "21. Click OK.",
+      "22. Click the Add button in the Circuit Loads panel.",
+      "23. From the Load drop-down list, select the required charger.",
+      "24. Set the State to On.",
+      "25. Click OK to close the Circuit Load Configuration window.",
+      "26. Write the configuration to the network to use the new configuration.",
+      "34   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "36   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "38   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "2 BATTERIES IN SERIES 2 IN PARALLEL 2 PARALLEL SETS OF 2 IN SERIES",
+      "1. Right-click USB:MasterBus… and select Login.",
+      "2. Select Installer and enter the installer code.",
+      "3. Select the MLI Ultra that will act as Primary and go to the",
+      "4. Enter the number of batteries in the # series (S) field.",
+      "5. Enter the number of batteries in parallel in the # parallel (P) field.",
+      "40   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "6. Click the Confirm topology button.",
+      "7. In the S01 field, from the drop-down list, select the serial number",
+      "8. In the following fields, select the other clustered batteries.",
+      "9. Click the Activate button.",
+      "10. If required, select to base the displayed SOC on the lowest",
+      "11. To activate voltage balancing of all cells in series, select ON from",
+      "12. Series bulk and Series float define the dynamic range for the",
+      "1. In the CZone Configuration Tool, in the Modules tab, double-click the MLI Ultra that will act as",
+      "2. The Module Modifications window appears. Click the Advanced Settings button.",
+      "3. From the Cluster Type drop-down list,",
+      "4. Cluster DC Instance is an NMEA2000",
+      "5. Enter a Cluster Name.",
+      "6. If the cluster is a series connection, tick Set",
+      "7. Click the Configure Topology button.",
+      "8. Enter the number of batteries in series (S).",
+      "9. Enter the number of batteries in parallel (P).",
+      "10. To activate voltage balancing of all cells in",
+      "11. Click the OK button to return to the",
+      "12. Click the OK button to return to the Module",
+      "13. The Battery Alarm/Switch Settings window",
+      "14. Keep clicking OK until all dialog windows",
+      "15. Write the configuration to the network to",
+      "42   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "17. TROUBLESHOOTING",
+      "18. TECHNICAL DATA",
+      "14.25V 14.25V 28.5V",
+      "500A  500A  500A",
+      "44   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "127506  DC Detailed Status  State of Charge, Time remaining",
+      "127508  Battery Status  Battery Voltage, Battery Current, Battery Case Temperature",
+      "46   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "40°C / 104°F",
+      "30°C / 86°F",
+      "25°C / 77°F",
+      "20°C / 68°F",
+      "DIP SWITCH MEANING",
+      "1 1 = MasterBus",
+      "0 = CZone",
+      "2 1 = MasterBus power ON",
+      "0 = MasterBus power OFF or CZone",
+      "3 to 10 CZone's unique address",
+      "T: +31 (0) 20 34 22 100",
+      "1105 AN Amsterdam",
+      "T: +64 9 415 7261",
+      "12 Rothwell Avenue"
+    ],
+    "headings_covered": [
+      "USER AND INSTALLATION MANUAL",
+      "2   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "5. CORRECT DISPOSAL OF THIS",
+      "1. SAFETY INSTRUCTIONS",
+      "4   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "6   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "2. LIABILITY",
+      "3. WARRANTY",
+      "4. CYCLE LIFE AND C-RATE",
+      "5. CORRECT DISPOSAL OF THIS PRODUCT",
+      "6. PRODUCT DESCRIPTION",
+      "8   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "1 Tiltable handle for lifting",
+      "2 Negative battery terminal (M8)",
+      "3 Positive battery terminal (M8)",
+      "4 Mounting strap location",
+      "5 MasterBus / CZone connection (see sections Network wiring on pages 18 and 27)",
+      "6 Battery Safety connector, see the Installation drawing on page 11 (single), 35 (parallel) or",
+      "36 (series)",
+      "7 DIP switch cover and LED indicators",
+      "2 short blinks, long pause; CZone identification in progress;",
+      "6000 and on the back side of the MLI Ultra 3000. Technical",
+      "7. INSTALLATION",
+      "12V 14.25V 13.5V",
+      "24V 28.5V 27.0V",
+      "12   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "18 for details.",
+      "18 for details. The safety relay can also be driven by events (MasterBus) or circuit switches",
+      "25. For a CZone network, see also section \"Configuration\", starting on page 28.",
+      "1. Switch off all loads and chargers.",
+      "2. Tilt the side handles to uncover the battery terminals.",
+      "3. Integrate a fuse holder in the positive battery wire but do not place the fuse yet.",
+      "4. Set the safety relay knob to “LOCK OFF”, see page 12.",
+      "5. Integrate the safety relay in the positive battery wire.",
+      "14   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "7. Close the side handles to cover the battery terminals again.",
+      "8. Connect the MasterBus/CZone cabling, see page 18/27.",
+      "9. Continue with the commissioning procedure, see next chapter.",
+      "8. COMMISSIONING",
+      "1. Check all wiring and connections. Do not place the fuses yet!",
+      "2. Set the safety relay to REMOTE OFF, see page 12.",
+      "3. Open MasterAdjust/CZone Configuration Tool, to configure the required events/circuits.",
+      "4. Test the safety relay (MasterAdjust only).",
+      "16   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "6. Verify that the current of the battery is 0A on the monitoring/metering page.",
+      "7. Switch on some loads.",
+      "8. Close the safety relay by setting the knob to REMOTE ON, see page 12.",
+      "9. Verify that a current is flowing out of the battery (negative value).",
+      "10. Switch off the load, then switch on the charger and verify that a current is flowing into the",
+      "11. If necessary, check if MasterBus Power mode is on by making sure that DIP switch 2 is in the",
+      "12. Charge the battery fully until the charger switches to the float stage (maintenance charge).",
+      "9. MAINTENANCE",
+      "10. DECOMMISSIONING",
+      "1. Turn AC power off.",
+      "2. Disconnect all loads and charging devices.",
+      "3. Move the safety relay(s) in the LOCK OFF position, see page 12.",
+      "4. Disconnect all wiring.",
+      "11. REPLACEMENTS",
+      "12. STORAGE",
+      "12V  13.5V",
+      "24V  27.0V",
+      "18   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "13. MASTERBUS",
+      "2. Connect the new MasterBus cable to the other MasterBus device and then connect to the MLI",
+      "3. Ensure that the network is properly terminated.",
+      "14. MASTERBUS ON THE MLI ULTRA",
+      "20   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "100 0-100%",
+      "45°C 30 - 60°C",
+      "5°C -10 - 30°C",
+      "31 days 7-60 days",
+      "22   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "24   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "PLEASE CAREFULLY READ THE FOLLOWING INFORMATION!",
+      "2. If within limits, click the \"Close relay\" button on the MasterBus control panel. Start charging if",
+      "3. If the relay trips again, a non-resettable battery safety event occurred. Do not try to force or",
+      "26   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "chapter 18 for details.",
+      "IF A NON-RESETTABLE BATTERY SAFETY EVENT OCCURS: SET",
+      "CONTACT A MASTERVOLT REPRESENTATIVE FOR ASSISTANCE.",
+      "1. Remove the DIP switch cover by loosening the four screws.",
+      "2. Use a small screwdriver to carefully set the DIP switches:",
+      "3. Replace the DIP switch cover and fasten with the screws. Make sure that the rubber band is",
+      "15. CZONE®",
+      "2. Set DIP switch 1 to the OFF position.",
+      "3. Set DIP switch 2 to the OFF position.",
+      "4. Set DIP switches 3 to 10 to match the unique address used in the CZone network (see the",
+      "5. Replace the DIP switch cover and fasten with the screws. Make sure that the rubber band is",
+      "2. Reconnect the backbone connection(s) with the new tee connector in place.",
+      "3. Connect the RJ45 CZone/MB drop cable to the black coupler on the tee and then connect to the",
+      "28   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "1. Enter an understandable Module Name.",
+      "2. From the Module Type drop-down list, select Battery (BAT).",
+      "3. Each device on a CZone network has a unique CZone address; the Dipswitch. This number",
+      "4. From the Battery Type drop-down list, select the required model.",
+      "5. Option: click the Advanced Settings button to configure advanced options.",
+      "6. If required, select the required Relay Type. In most cases ML Switch works well.",
+      "7. NMEA2000 Instances are used to differentiate between multiple monitoring sources.",
+      "8. To optimize the battery cycle life, the Depth of Discharge Remaining (DoD) is set to 80%.",
+      "9. Tick Show Battery Temperature to enable temperature monitoring.",
+      "10. Click OK to return to the Module Modification window and then click the Alarm/Switch Settings",
+      "30   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "11. Set the required alarm levels and Alarm Severities.",
+      "12. Click OK to close the Battery Alarm/Switch Settings window.",
+      "13. Click OK to close the Module Modification window.",
+      "14. Click on the Circuits tab and Add a new circuit (bottom left).",
+      "15. Enter the Circuit Name (e.g. Stop Charge) and click OK.",
+      "16. Click the Add button in the Circuit Control panel.",
+      "32   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "17. From the Control Interface drop-down list, select the required MLI Ultra unit.",
+      "18. From the Switch Type drop-down list, select Single Throw Momentary.",
+      "19. From the Input / Throw drop-down list, select Stop Charge.",
+      "20. From the Switch (Output) Function drop-down list, select Off/Restore.",
+      "21. Click OK.",
+      "22. Click the Add button in the Circuit Loads panel.",
+      "23. From the Load drop-down list, select the required charger.",
+      "24. Set the State to On.",
+      "25. Click OK to close the Circuit Load Configuration window.",
+      "26. Write the configuration to the network to use the new configuration.",
+      "34   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "36   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "2 BATTERIES IN SERIES 2 IN PARALLEL 2 PARALLEL SETS OF 2 IN SERIES",
+      "40   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "6. Click the Confirm topology button.",
+      "7. In the S01 field, from the drop-down list, select the serial number",
+      "8. In the following fields, select the other clustered batteries.",
+      "9. Click the Activate button.",
+      "10. If required, select to base the displayed SOC on the lowest",
+      "1. In the CZone Configuration Tool, in the Modules tab, double-click the MLI Ultra that will act as",
+      "2. The Module Modifications window appears. Click the Advanced Settings button.",
+      "3. From the Cluster Type drop-down list,",
+      "4. Cluster DC Instance is an NMEA2000",
+      "5. Enter a Cluster Name.",
+      "6. If the cluster is a series connection, tick Set",
+      "7. Click the Configure Topology button.",
+      "8. Enter the number of batteries in series (S).",
+      "9. Enter the number of batteries in parallel (P).",
+      "10. To activate voltage balancing of all cells in",
+      "42   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "17. TROUBLESHOOTING",
+      "18. TECHNICAL DATA",
+      "14.25V 14.25V 28.5V",
+      "500A  500A  500A",
+      "44   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "46   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "40°C / 104°F",
+      "30°C / 86°F",
+      "25°C / 77°F",
+      "20°C / 68°F",
+      "DIP SWITCH MEANING",
+      "1 1 = MasterBus",
+      "0 = CZone",
+      "2 1 = MasterBus power ON",
+      "0 = MasterBus power OFF or CZone",
+      "3 to 10 CZone's unique address",
+      "T: +31 (0) 20 34 22 100",
+      "1105 AN Amsterdam",
+      "T: +64 9 415 7261",
+      "12 Rothwell Avenue"
+    ],
+    "headings_missing": [
+      "LITHIUM-ION BATTERY",
+      "IMPORTANT SAFETY INSTRUCTIONS",
+      "SAVE THESE INSTRUCTIONS",
+      "622 [24.5]",
+      "197 [7.8]",
+      "355 [14.0]",
+      "341 [13.4]",
+      "10   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "12V 12.0V 14.6V",
+      "24V 24.0V 29.2V",
+      "6. Connect the DC main wiring, positive to +, negative to -.",
+      "5. Install all fuses.",
+      "3) MLI 1",
+      "4) MLI 2",
+      "1. Disconnect a MasterBus cable or Terminator from the closest MasterBus device and connect it",
+      "chapter 18 for details. This event is repeated every 60 seconds. It will only stop repeating if the",
+      "IF THE SAFETY RELAY HAS BEEN TRIGGERED:",
+      "1. Disconnect the backbone at the closest backbone connection and add in a tee connector.",
+      "38   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "1. Right-click USB:MasterBus… and select Login.",
+      "2. Select Installer and enter the installer code.",
+      "3. Select the MLI Ultra that will act as Primary and go to the",
+      "4. Enter the number of batteries in the # series (S) field.",
+      "5. Enter the number of batteries in parallel in the # parallel (P) field.",
+      "11. To activate voltage balancing of all cells in series, select ON from",
+      "12. Series bulk and Series float define the dynamic range for the",
+      "11. Click the OK button to return to the",
+      "12. Click the OK button to return to the Module",
+      "13. The Battery Alarm/Switch Settings window",
+      "14. Keep clicking OK until all dialog windows",
+      "15. Write the configuration to the network to",
+      "127506  DC Detailed Status  State of Charge, Time remaining",
+      "127508  Battery Status  Battery Voltage, Battery Current, Battery Case Temperature"
+    ]
+  },
+  "device": {
+    "manufacturer": "Mastervolt",
+    "model": "MLI Ultra 24/6000",
+    "category_freeform_hint": "Use the manual's own product category words only (never registry enums like electrical_dc)."
+  },
+  "registry_system_category": "electrical_dc",
+  "manual_selection_policy": "operators",
+  "source_manuals": [
+    {
+      "id": "07e38139-a110-4c88-a35b-5783a9e7556b",
+      "title": "MLI Ultra LITHIUM-ION BATTERY 12/3000, 12/6000, 24/6000",
+      "manual_type": "operators",
+      "legal_status": "cleared"
+    }
+  ],
+  "excerpts": [
+    {
+      "text": "MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual   \n19\n\n14. MASTERBUS ON THE MLI ULTRA \nA display like the SmartRemote or EasyView 5, can be used to monitor the MLI Ultra. Advanced \nconfiguration can be done in MasterAdjust, from a Windows laptop or notebook connected to the \nMLI Ultra via a Mastervolt USB Interface. The following tables list the parameters as shown in \nMasterAdjust. \nMonitoring \nMenu Description \nBattery/Cluster  \nState of charge Battery state of charge in % \nTime remaining Time of battery use left at the actual load in hh:mm:ss \nVoltage Battery voltage measured by the cell management system \nCurrent Current measured by the cell management system \nPositive value: charging, negative value: discharging \nTemperature Internal temperature of the battery in °C. By default, this is based on the \naverage of the cell temperatures. \nRelay  \nRelay close Button to close the safety relay (connect). \nRelay open Button to open the safety relay (disconnect). \nRelay state State of the relay: open / close / not connected \nRemote opened Indication if the relay was opened by another connected MLI Ultra unit \nInstaller (you need to login as installer to see the follo",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": "14. MASTERBUS ON THE MLI ULTRA",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "22   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual\n\nMenu Description Default Adjustable \nrange \nInstaller (you need to login as installer to see the following parameters) \nDOD To optimize the battery cycle life, the Depth of \nDischarge (DOD) is set to 80%. \n80% 20-100%\n\nCAUTION! \nChanging the DoD to 100% will decrease the cycle life. \nMB power • Off: MasterBus powering disabled.  \n• Automatic: MasterBus power will be \nswitched off when the main current is in \nbetween 1.0A and -1.0A for more than 24 \nhours and the battery voltage has dropped \nbelow the float voltage. \n• Always on: the MLI Ultra will power the \nMasterBus network. Note that this will \nslowly drain the battery. \nThis option is only available if DIP switch 2 \nis in the ON position (see page 26). \nOff Off / Automatic / \nAlways on \nTemp. method Calculation of the battery temperature. The \ntemperature is shown on the Monitoring tab. \n• Average: the average value of the \ntemperature of all cells. \n• Extremes: the highest or lowest temperature \nvalue. This method helps detect local hot \nspots. \nAverage Average, \nExtremes \nFactory reset  Button to reset the MLI Ultra to its default settings \nTest batt saf",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": "22   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual   \n23\n\nEvents \nWith MasterBus a device can be programmed to initiate an action at another connected device. This \nis very helpful in automation of your system and is done by means of event-based commands. \nIn the Events tab you can program the MLI Ultra to act as an event source. Events which occur \nduring the operation of the MLI Ultra will then trigger actions from other products. \nField Description Value \nEvent x source Select an event that triggers an action, for example \nRelay open. \nSee Event \nsource list \nEvent x target Select the device that should act, for example the \ncharger. \nSelectable \ntargets are \nsystem \ndependent \nEvent x command Select the parameter that must be changed on the \ntarget device, for example No connection. \nSee command \nlist of the \nselected device \nEvent x data Data translates the input into an output.\n\n• On: status changes to On at first input signal. \n• Off: status changes to Off at first input signal. \n• Copy: status follows input signal. \n• Copy invert: status follows opposite of input. \n• Toggle: status changes at 1st signal and back at the \n2nd. \nOff, On, Copy, \nCopy Invert, \nTo",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": "MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual   \n21\n\nMenu Description Default Adjustable \nrange \nDIP switches DIP switch state 0=off, 1=on 0000000000 (read only) \nProcessor    \nVersion Firmware main version  (read only) \nRevision Product version  (read only) \nBootloader \nvers. \nFirmware bootloader version  (read only) \nRelay See also chapter \"Safety relay\" on page 12 \nRelay type Safety switch type. In most cases ML Switch \nworks well. \nSelect Daisy chain only for the secondary \nbattery in a series connection (i.e. NOT the \nbattery to which the relay is connected to). \nSelect Advanced if you are not using the ML \nSwitch relay. \nML Switch ML Switch, \nDaisy chain, \nAdvanced \n(advanced only) \nFeedback type \nClosed→closed: when the main contacts are \nclosed, the feedback signal is Close. \nClosed→open: when the main contacts are \nclosed, the feedback signal is Open. \nClosed \n→open \nClosed→closed, \nClosed→open,  \nNo feedback \n(advanced only) \nPulse interval \nThe switching pulse width 500ms 5-500ms \nCluster See also chapter \"BUILDING A BATTERY BANK\" on page 34 \nNr. in series The number of batteries in series 1 1-10 \nNr. in parallel The number of batteries in parallel 1",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": "MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "In this case, only the \n< 30% counter will increment. \nReal SOC < 20%\n\nConfiguration \nMenu Description Default Adjustable \nrange \nGeneral    \nName Name of this device. This name will be \nrecognized by all devices connected to the \nMasterBus network \nMLI[serial n\number] \n0-12 chars \nLanguage Menu language of this device English English, \nNederlands \nSerial number Serial number of the MLI Ultra  (read only) \nCZone enabled This checkbox is marked when the MLI Ultra is \nsetup to work in a CZone network \nOff (read only)",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": "In this case, only the",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "30   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual\n\n11. Set the required alarm levels and Alarm Severities. \nBattery level 1, 2 and 3 can be used for State of Charge switching. \n12. Click OK to close the Battery Alarm/Switch Settings window. \n13. Click OK to close the Module Modification window.",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": "30   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "20   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual\n\nAlarm \nMenu Description \nGeneral  \nBattery safety Indication of the occurrence of a Battery Safety event; see section Battery \nsafety event on page 25 \nOver current Indication to reduce load immediately. \nArises if, for more than 10 seconds, the battery current is more than: \n• 600A when discharging any model \n• 241.5A when charging a 12/3000 or 24/6000 \n• 483A when charging a 12/6000 \nCapacity low This alarm is raised when the State of charge (SOC) drops below a preset \nvalue (10% by default) \nCap. Very low Indicates that the State of charge drops below a preset value (0% by default) \nCheck relay Indication to check the safety relay\n\nHistory \nMenu Description \nGeneral  \nCycle count The number of cycles so far \nLast time 100% The number of days since the battery (bank) was charged up to 100% \nMax. Ah used The maximum used capacity that the MLI Ultra saw \nUBat lowest The lowest battery voltage that the MLI Ultra saw \nUBat highest The highest battery voltage that the MLI Ultra saw \nSOH The State of Health (SOH) indicates how much of the battery’s lifetime is \nleft \nReal SOC < 30% \nTotal amount of time that the S",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": "20   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "LOCK \nOFF \nTo prevent remote \noperation \nRotate the knob to the \nright.\n\nTo secure for servicing With knob in LOCK OFF \nposition, pass cable tie \nthrough hole.\n\nThe safety relay will automatically open (REMOTE OFF) when built-in thresholds are met. See chapter \n18 for details. The safety relay can also be driven by events (MasterBus) or circuit switches \n(CZone). This is explained further in the sections on events and circuits. \nSee also sections \"Battery safety event\" and \"Non-resettable battery safety event\", starting on page \n25. For a CZone network, see also section \"Configuration\", starting on page 28.",
+      "query": "operation daily use display menu controls operator",
+      "source_heading_guess": "18 for details. The safety relay can also be driven by events (MasterBus) or circuit switches",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "28   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual\n\nConfiguration \nEither do the configuration while connected to the network or use a prepared configuration file (.zcf). \nEnsure that a Dipswitch is assigned.\n\nFor detailed information on the configuration, please refer to the CZone® Configuration \nTool Instruction manual, and section Configuration on page 20 which describes the \nparameters as shown in MasterAdjust. \nAdding the MLI Ultra to a CZone system configuration \nPrecondition: This section assumes that a CZone system is already configured and the CZone \nConfiguration Tool is open.  \nIn the CZone Configuration Tool, from the Modules tab, click the Add button.\n\n1. Enter an understandable Module Name. \n2. From the Module Type drop-down list, select Battery (BAT).  \n3. Each device on a CZone network has a unique CZone address; the Dipswitch. This number \nmust match the physical DIP switch settings. When connected to the system: either select one \nfrom the drop-down list or edit graphically. \n4. From the Battery Type drop-down list, select the required model. \n5. Option: click the Advanced Settings button to configure advanced options.",
+      "query": "installation wiring commissioning configuration DIP switches",
+      "source_heading_guess": "28   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual   \n27\n\n15. CZONE® \nThe CZone network is an NMEA 2000-compliant CAN-based system. In a CZone network, the MLI \nUltra can be monitored from a remote panel like the Touch 5. The settings can only be adjusted with \nthe CZone Configuration Tool. CZone integration will be available as of the next major firmware \nupdate. \nDIP switch settings \nUse a small screwdriver to carefully set the CZone \"Dipswitch Setting\". \n1. Remove the DIP switch cover by loosening the four screws. \nThe following picture is only an example!\n\n2. Set DIP switch 1 to the OFF position. \n3. Set DIP switch 2 to the OFF position. \n4. Set DIP switches 3 to 10 to match the unique address used in the CZone network (see the \nCZone Configuration Tool Instructions manual). \n5. Replace the DIP switch cover and fasten with the screws. Make sure that the rubber band is \nplaced correctly, to make it watertight. \nNetwork wiring\n\n1) MLI Ultra 1 \n2) MLI Ultra 2 \n3) Charger \n4) Display \n5) Drop cable \n6) Drop cable \nCZone/MB \n7) NMEA 2000 Network \nTerminating Resistor \n8) NMEA 2000 Network \nExtension Cable \n9) NMEA 2000 Network \nSingle Tee Connector \nAdditional requir",
+      "query": "installation wiring commissioning configuration DIP switches",
+      "source_heading_guess": "15. CZONE®",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "32   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual\n\n17. From the Control Interface drop-down list, select the required MLI Ultra unit. \n18. From the Switch Type drop-down list, select Single Throw Momentary. \n19. From the Input / Throw drop-down list, select Stop Charge. \n20. From the Switch (Output) Function drop-down list, select Off/Restore. \n21. Click OK.  \nReturn to step 16 until all MLI Ultra units have this switch configured. \n22. Click the Add button in the Circuit Loads panel.",
+      "query": "installation wiring commissioning configuration DIP switches",
+      "source_heading_guess": "32   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "14   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual\n\n7. Close the side handles to cover the battery terminals again. \n8. Connect the MasterBus/CZone cabling, see page 18/27. \n9. Continue with the commissioning procedure, see next chapter.",
+      "query": "installation wiring commissioning configuration DIP switches",
+      "source_heading_guess": "14   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "Disconnect the backbone at the closest backbone connection and add in a tee connector. \n2. Reconnect the backbone connection(s) with the new tee connector in place. \n3. Connect the RJ45 CZone/MB drop cable to the black coupler on the tee and then connect to the \nMLI Ultra. Ensure that the network is properly terminated. LED B (item 7 in figure Main parts on \npage 8) will blink to confirm CZone network identification.",
+      "query": "installation wiring commissioning configuration DIP switches",
+      "source_heading_guess": "2. Reconnect the backbone connection(s) with the new tee connector in place.",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual   \n29\n\n6. If required, select the required Relay Type. In most cases ML Switch works well. \nSelect Daisy chain only for the secondary battery in a series connection (i.e. NOT the battery to \nwhich the relay is connected to). \nSelect Advanced if you are not using the ML Switch relay. In this case you also need to set the \nPulse Interval according to the manufacturer's specifications. \n7. NMEA2000 Instances are used to differentiate between multiple monitoring sources. \n8. To optimize the battery cycle life, the Depth of Discharge Remaining (DoD) is set to 80%.\n\nCAUTION! \nChanging the DoD to 100% will decrease the cycle life. \n9. Tick Show Battery Temperature to enable temperature monitoring. \n10. Click OK to return to the Module Modification window and then click the Alarm/Switch Settings \nbutton.",
+      "query": "installation wiring commissioning configuration DIP switches",
+      "source_heading_guess": "6. If required, select the required Relay Type. In most cases ML Switch works well.",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual   \n15\n\n8. COMMISSIONING \n1. Check all wiring and connections. Do not place the fuses yet! \n2. Set the safety relay to REMOTE OFF, see page 12. \n3. Open MasterAdjust/CZone Configuration Tool, to configure the required events/circuits.\n\nWARNING! \nIf multiple charging devices are used to charge the battery (for instance both an \nAC powered charger and an alternator) then the Stop charge circuits/events must \nbe configured for each charging device. In case of a multiple unit configuration, \nthis must be done for each battery. \nIf an alternator is part of the charging system, configure the Battery safety event. \nMLI Ultra event examples:\n\nThe settings depend on the used charger because different chargers have different state \noptions. Check the manual of the used charger for how to switch the charging state. \nDepending on the installation in which the battery is used, programming of additional \ncircuits/events may be required. \nFor more information on MasterBus events see page 23. \nFor more information on CZone circuits see page 28 and following. \n4. Test the safety relay (MasterAdjust only). \nGo to the monitoring page o",
+      "query": "installation wiring commissioning configuration DIP switches",
+      "source_heading_guess": "8. COMMISSIONING",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "42   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual\n\n17. TROUBLESHOOTING \nFailure  Possible cause  What to do  \nNo DC power \navailable  \nA fuse has blown Check all fuses and replace if necessary \nA cable or cable connection is \ndefective  \nCheck all cables and their connections. \nReplace if necessary. \nA relay has accidentally \nswitched position. \nCheck all relays. \nThe Battery Safety Event has \ntriggered the safety relay. \nRefer to chapter 14, page 25. \nMasterBus \ndisplay shows \nno MLI Ultra \nThe MasterView Easy has been \nconfigured to display selected \ndevices only. \nCheck the option All devices or select the \nMLI Ultra to be displayed.  \nError in the wiring. Check the MasterBus cables. \nNo terminating device placed at \nthe ends of the network. \nMasterBus needs a terminating device on \nboth ends of the network. Check if present.  \nMasterBus network is \nconfigured as a ring network. \nRing networks are not allowed. Check the \nconnections of the network. \nBatteries are completely empty. Contact your Mastervolt dealer. \nOvercurrent \nalarm \nToo heavy load on the battery. Reduce the load immediately if the battery \ncurrent is more than: \n• 600A when discharging any ",
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "source_heading_guess": "42   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "See page 45. \n4) Trigger point for battery safety event. \nResettable battery safety event; occurs when one of the following conditions is true: \n12V battery \nAny temperature: >15V 10s\n\n<5°C / 41°F: <10.75V 10s \n>10°C / 50°F: <12V 10s \n24V battery \nAny temperature: >30V 10s \n<5°C / 41°F: <21.5V 10s \n>10°C / 50°F: <24V 10s \nIndividual cell \nAny temperature: >3.8V 1s \n<5°C / 41°F: <2.7V 10s or <2.4V 1s \n>10°C / 50°F: <3.0V 10s or <2.7V 1s \n>65°C / 149°F: Any voltage (immediate)\n\nNon-resettable battery safety event; occurs when one of the following conditions is true: \n12V battery \nAny temperature: >15.5V 1s\n\n<5°C / 41°F: <10V 10s \n>10°C / 50°F: <11V 10s \n24V battery \nAny temperature: >31V 1s \n<5°C / 41°F: <20V 10s \n>10°C / 50°F: <22V 10s \nIndividual cell \nAny temperature: >3.85V 1s \n<5°C / 41°F: <2.4V 10s or <2.2V 1s \n>10°C / 50°F: <2.7V 10s or <2.5V 1s \n>75°C / 167°F: Any voltage (immediate)",
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "source_heading_guess": "See page 45.",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "8   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual\n\nMain parts\n\nMain parts \n1 Tiltable handle for lifting \n2 Negative battery terminal (M8) \n3 Positive battery terminal (M8) \n4 Mounting strap location \n5 MasterBus / CZone connection (see sections Network wiring on pages 18 and 27) \nWhen waterproof protection is required, Mastervolt can also supply waterproof cable \nglands.\n\nCAUTION! \nMake sure that the protective caps are correctly attached if the Auxiliary \nand/or MasterBus/CZone connectors are not used! \n6 Battery Safety connector, see the Installation drawing on page 11 (single), 35 (parallel) or \n36 (series)\n\n(1) Relay Control (RC) positive (12/24V)  \n(2) Close relay pulse (12/24V) \n(3) Open relay pulse (12/24V) \n(4) RC minus (12/24V) \n(5) FeedBack signal relay \n(6) RC open relay from other battery \n(7) RC minus from other battery \n(8) Relay connector detect (connect to RC \nminus) \n7 DIP switch cover and LED indicators \nA (red): on indicates an unrecoverable error; contact your Mastervolt dealer. \nB (yellow): 1 short blink, long pause; a low State of Charge; \n2 short blinks, long pause; CZone identification in progress; \nSteady blinking; firmware update in p",
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "source_heading_guess": "8   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "See Configuration tab - Event levels \nfor adjustment of the threshold level \nLast time 100% Last time the MLI Ultra was fully \ncharged \nSee Configuration tab - Event levels \nfor adjustment of the threshold level \nRelay open Relay has been opened, either by an \nevent or by a user action\n\nRelay close Relay has been closed, either by an \nevent or by a user action\n\nOver current The current exceeds 600A Corresponds to the Overcurrent \nAlarm \nBattery < 20% State of Charge < 20 % \nCan be used to control the LEDs on \na MasterBus display for example \nBattery < 40% State of Charge < 40 % \nBattery < 60% State of Charge < 60 % \nBattery < 80% State of Charge < 80 % \nBattery < 100% State of Charge < 100 %",
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "source_heading_guess": "See Configuration tab - Event levels",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "24   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual\n\nEvents sources \nEvent source Condition Comments \nDisabled (no event programmed)  \nBattery Safety  Battery Safety event occurred. At the \nsame time the safety relay is triggered \nto disconnect the battery from loads \nand charger. \nSee page 25 for what to do if the \nsafety relay has been triggered. \nStop charge Battery voltage > 14.5V/29V (12V/24V \nbattery), or voltage or temperature of \none of the individual cells is too high. \nStrongly recommended event!  \nSee the related step of the \ninstallation procedure. \nCharging Battery charging current > 1A Indicates that the battery is being \ncharged \nCapacity low State of Charge < Capacity low  See Configuration tab - Event levels \nfor adjustment of the threshold level \nCapacity very \nlow \nState of Charge < Capacity very low  See Configuration tab - Event levels \nfor adjustment of the threshold level \nSee the related step of the \ninstallation procedure. \nBattery full State of Charge > Battery full.  See Configuration tab - Event levels \nfor adjustment of the threshold level \nBattery > 20% State of Charge > 19.5 % \nCan be used to control the LEDs on \na MasterBus displa",
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "source_heading_guess": "24   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "On the MasterBus control panel, check that the voltage is within limits; higher than 10V (20V) \nand lower than 15.5V (31V) and within temperature range; 0°C - 50°C / 32°F – 122°F. \n2. If within limits, click the \"Close relay\" button on the MasterBus control panel. Start charging if \nvoltage is low (10V/20V) or discharging when high (15.5V/31V). \n3. If the relay trips again, a non-resettable battery safety event occurred. Do not try to force or \nreset the safety relay again! Isolate the battery and contact a Mastervolt representative.",
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "source_heading_guess": "2. If within limits, click the \"Close relay\" button on the MasterBus control panel. Start charging if",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "REPLACEMENTS ............................... 17 \n12. STORAGE .......................................... 17 \n13. MASTERBUS ...................................... 18 \nAbout MasterBus ................................. 18 \nHow to set up a MasterBus network .... 18 \nNetwork wiring ..................................... 18 \n14. MASTERBUS ON THE MLI ULTRA ..... 19 \nMonitoring ............................................ 19 \nAlarm ................................................... 20 \nHistory ................................................. 20 \nConfiguration ....................................... 20 \nEvents .................................................. 23 \nEvents sources ................................... 24 \nEvent commands ................................ 25 \nStop charge event ................................ 25 \nBattery safety event ............................. 25 \nHow to activate MasterBus powering ... 26 \n15. CZONE® .............................................. 27 \nDIP switch settings ............................... 27 \nNetwork wiring ..................................... 27 \nConfiguration ....................................... 28 \n16. BUILDING A BATTERY BANK ............ 34",
+      "query": "network communication MasterBus NMEA CZone VE.Direct Bluetooth remote panel app",
+      "source_heading_guess": "Series connection with one 48V",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "18   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual\n\n13. MASTERBUS \nAbout MasterBus \nAll devices that are compatible with MasterBus are marked with the MasterBus symbol. \nMasterBus is a CAN based, fully decentralized data network for communication between Mastervolt \ndevices. MasterBus is used as power management system for all connected equipment, such as the \ninverter, battery charger, generator and many more. \nEvery device that is compatible with MasterBus is equipped with two data ports. The devices are \nsimply daisy chained together, forming a local data network. Monitoring panels such as the \nSmartRemote or EasyView 5 can be used for monitoring and control of all connected MasterBus \nequipment.\n\nCAUTION! \nNever connect a non-MasterBus device to the MasterBus network directly! This will \nvoid warranty of all MasterBus devices connected. \nHow to set up a MasterBus network \n- Connections between the devices are made by standard straight MasterBus cables. Mastervolt \ncan supply these cables. \n- Up to 63 MasterBus devices can be interconnected. \n- MasterBus needs a terminating device on both ends of the network. \n- The electric power for the network comes from ",
+      "query": "network communication MasterBus NMEA CZone VE.Direct Bluetooth remote panel app",
+      "source_heading_guess": "18   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual   \n47\n\nSelf-discharge in reflection to the storage temperature \nCapacity (%)\n\n40°C / 104°F \n 30°C / 86°F \n 25°C / 77°F \n 20°C / 68°F \nStorage in months*  \n* Provided that MasterBus power is off and there is no communication to the BMS.\n\nDIP switch settings \nDIP SWITCH MEANING \n1 1 = MasterBus \n0 = CZone \n2 1 = MasterBus power ON \n0 = MasterBus power OFF or CZone \n3 to 10 CZone's unique address \n(DIP switches 3 to 10 are not used in MasterBus)",
+      "query": "network communication MasterBus NMEA CZone VE.Direct Bluetooth remote panel app",
+      "source_heading_guess": "1 1 = MasterBus",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "- Keep at least 1cm [3/8\"] between two Li-Ion batteries for air flow. \n- The MLI Ultra must be secured to its foundation with the two included straps. \n- If the MLI Ultra is installed in a network, take the network powering into consideration. \nRequired tools \n- Hexagon socket wrench (13mm / ½\") \n- Flat blade screwdriver to fasten the relay wiring (2mm / 1/16\") \n- MasterBus USB interface \n- Windows laptop or notebook with free MasterAdjust software or free CZone configuration tool.  \nMasterAdjust software can be downloaded at www.mastervolt.com \nThe CZone Configuration Tool software is available to technical CZone customers from the CZone \nPortal at downloads.czone.net",
+      "query": "network communication MasterBus NMEA CZone VE.Direct Bluetooth remote panel app",
+      "source_heading_guess": "- Keep at least 1cm [3/8\"] between two Li-Ion batteries for air flow.",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "We welcome your feedback and suggestions!  \nSend feedback on this document to info@mastervolt.com \nEurope, Middle East & Africa \nTechnical Support  \nT: +31 (0) 20 34 22 100 \nE: ts.emea@navicogroup.com \nLocation & Shipping \nNavico Group EMEA \nSnijdersbergweg 93 \n1105 AN Amsterdam \nThe Netherlands \nAmericas & Caribbean \nTechnical Support \nT: +1 262 293 0600 / 800 307 6702 \nE: tech.mastervolt@navicogroup.com \nLocation & Shipping \nNavico Group  Americas LLC \nN85 W12545 Westbrook Crossing \nMenomonee Falls, WI 53051 \nUnited States \nAsia Pacific \nTechnical Support \nT: +64 9 415 7261 \nE: technical.apac@navicogroup.com \nLocation & Shipping \nNavico Group APAC \n12 Rothwell Avenue \nRosedale, Auckland 0632 \nNew Zealand \nDocument version: 10000019442/11 (April 26) \nCopyright ©2026 Navico Group EMEA. All rights reserved.",
+      "query": "network communication MasterBus NMEA CZone VE.Direct Bluetooth remote panel app",
+      "source_heading_guess": "1105 AN Amsterdam",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "If the battery will not be used for a period exceeding 3 months, we advise the following: \n• If external AC power is available switch off all loads and switch on the charger. Apply a float \nvoltage as specified in the following table. \nModel  Float voltage setting \n12V  13.5V \n24V  27.0V \n• If no external AC power is available: \n- Charge the battery to > 80% of its capacity before storage. \n- Set the safety relay knob to “LOCK OFF”, see page 12.  \n- Make sure MasterBus powering is not set to \"Always on\" (see Configuration tab in \nMasterAdjust).  \nIn this setup the batteries can be kept at least 6 months without maintenance. However, it is highly \nrecommended to charge the battery to > 80% of its capacity every 100 days.",
+      "query": "maintenance service storage winterizing",
+      "source_heading_guess": "If the battery will not be used for a period exceeding 3 months, we advise the following:",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual   \n17\n\n9. MAINTENANCE \nNo specific maintenance is required. If necessary, use a soft, clean cloth to clean the MLI Ultra. \nNever use any liquids or acids. \nFor reliable and optimum function examine your electrical installation on a regular base, at least \nonce a year. Defects such as loose connections, damaged wiring etc. must be corrected \nimmediately. \n10. DECOMMISSIONING \nIf it is necessary to take the MLI Ultra out of operation, follow the instructions in order of succession \nas described below: \n1. Turn AC power off. \n2. Disconnect all loads and charging devices. \n3. Move the safety relay(s) in the LOCK OFF position, see page 12. \n4. Disconnect all wiring. \n11. REPLACEMENTS \nIf MLI Ultra batteries need to be replaced individually, make sure that the open circuit voltage of \nthese batteries equals the voltage of the replaced or paralleled batteries. \nIn case of a MasterBus network: when exchanging charging devices that are used to charge the \nbattery, the event configuration (such as the Stop Charge event), as well as other settings (such as \ncharge voltage settings) needs to be redone for every new device. \n12.",
+      "query": "maintenance service storage winterizing",
+      "source_heading_guess": "9. MAINTENANCE",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "46   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual\n\nCapacity retention over lifetime at ambient temperature 25ºC/77ºF \nCapacity retention (%)\n\n100% DoD \n 80% DoD \n 50% DoD \nNumber of cycles  \nCapacity retention at different cell temperatures \nCapacity retention (%)\n\nAvailable \ncapacity \nCell temperature (°C)*  \n* Cell temperatures are not necessarily equal to the ambient temperature of the battery! \nCycle life retention at different ambient temperatures \nCycle life retention (%)",
+      "query": "maintenance service storage winterizing",
+      "source_heading_guess": "46   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual   \n9\n\nProtection \nThe MLI Ultra is equipped with a Battery Management System (BMS). The BMS: \n- balances the voltages between the cells; \n- protects each cell from undercharging and overcharging; \n- prevents too deep battery discharges; \n- monitors the temperature of battery cells; \n- communicates with Mastervolt charge devices over MasterBus or CZone; \n- sends out warnings and alarms (to a display like the SmartRemote or EasyView 5 e.g.). \nThese protection and alarm features can be programmed as MasterBus events/CZone circuits, \nthat display warnings or intervene on the electrical system. \nIdentification label \nThe following picture is only an example!\n\nThe identification label is located on the top side of the MLI Ultra \n6000 and on the back side of the MLI Ultra 3000. Technical \ninformation required for service and maintenance (part number \naka product code, serial number and revision code) can be \nderived from the identification label.\n\nCAUTION! \nNever remove the identification label. \nThis will void the warranty.",
+      "query": "maintenance service storage winterizing",
+      "source_heading_guess": "6000 and on the back side of the MLI Ultra 3000. Technical",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "16   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual\n\n6. Verify that the current of the battery is 0A on the monitoring/metering page. \n7. Switch on some loads. \n8. Close the safety relay by setting the knob to REMOTE ON, see page 12. \n9. Verify that a current is flowing out of the battery (negative value). \n10. Switch off the load, then switch on the charger and verify that a current is flowing into the \nbattery (positive value). \n11. If necessary, check if MasterBus Power mode is on by making sure that DIP switch 2 is in the \non position (see page 26). Note that this will slowly drain the battery. \n12. Charge the battery fully until the charger switches to the float stage (maintenance charge). \nNow the battery, or multiple battery system, is ready for operation.",
+      "query": "maintenance service storage winterizing",
+      "source_heading_guess": "16   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual   \n35\n\nParallel connection",
+      "query": "optional accessory gateway interface required for",
+      "source_heading_guess": "MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual   \n39\n\nSet up clusters \nPreconditions: \n✓ All batteries are fully charged before connecting in series. \n✓ The batteries have the same product code and software version. \nNote: It is advisable to have the battery that is connected to the relay, configured as Primary \nbattery. \nA cluster of batteries (battery bank) can be created to be able to show a group of batteries as one, \nfor monitoring the State Of Charge (SOC) for example. A clustered battery will show the (average) \nSOC of the cluster as a whole.  \nOn monitoring panels such as the EasyView 5, only the Primary battery is shown on the main \nscreen. In MasterAdjust, unfold the cluster (i.e. click the plus sign) to access the individual batteries \nif required. \nSeveral batteries in series and/or parallel is called a cluster. A series string can be up to 10 devices. \nA cluster can contain up to 24 devices in total. The following figure explains the cluster topology. \n2 BATTERIES IN SERIES 2 IN PARALLEL 2 PARALLEL SETS OF 2 IN SERIES\n\nHow to create a cluster in MasterAdjust \nWhen all batteries are connected to MasterBus, open MasterAdjust. The MLI Ultra will be \nre",
+      "query": "MasterView remote panel remote control display panel monitoring panel MasterAdjust",
+      "source_heading_guess": "2 BATTERIES IN SERIES 2 IN PARALLEL 2 PARALLEL SETS OF 2 IN SERIES",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "12   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual\n\nNote: for safety reasons, the jumper wire is intentionally factory-set on pins 4 and 5, to generate an \nalarm and as a reminder to install the relay. To void the alarm: wire the relay and move the \njumper wire to pins 4 and 8. \nSafety relay connections \nWire Connect to (pin) Description \nRed wire  1 Relay Control (RC) positive \nBrown wire  2 Close relay pulse \nOrange wire  3 Open relay pulse \nBlack wire  4 RC minus \nYellow wire  5 FeedBack signal relay \nJumper wire  to  8–4 Relays connector detect, connect to RC minus \nSafety relay \nThe use of a safety relay is a mandatory part of the battery installation. In our examples we use Blue \nSea Systems' ML RBS Remote Battery Switch with Manual Control. If using a safety relay from \nanother manufacturer, make sure that it offers the same contacts. In MasterAdjust/CZone \nConfiguration Tool, select that you have another type than the ML switch, and configure accordingly.\n\nBlue Sea \nswitch \nFunction Description Action End \nposition \nREMOTE \nON \nTo connect the MLI Ultra \nto load and charging \ndevices \n Rotate the knob to \nthe left \n Push the button \ndown until latched.  ",
+      "query": "optional remote control MasterView Easy remote panel installed",
+      "source_heading_guess": "12   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "36   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual\n\nSystem parts \nA MLI Ultra battery \nB Battery fuse in positive battery cable \nC Safety relay \nD MasterBus/CZone connection (see section Network wiring on pages 18 and 27) \nE MasterBus compatible charger \nF Fuse to protect the charger cable \nG Negative busbar \nH Positive busbar\n\nRelay wires Connect to Description \n(1) Red wire  Relay Control (RC) positive \n(2) Brown wire  Close relay pulse \n(3) Orange wire  Open relay pulse \n(4) Black wire  RC minus \n(5) Yellow wire  FeedBack signal relay \n(8) Jumper wire (comes \nwith MLI Ultra)  to  \nRelays connector detect, connect to RC minus",
+      "query": "optional remote control MasterView Easy remote panel installed",
+      "source_heading_guess": "36   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "500A. Minimum DC breaking capacity (IR): 15kA \nPulse current (10 sec) 2000A 2000A 2000A \nRated capacity and cycle life \nRated capacity  230Ah 460Ah 230Ah \nCycle life  ~3500 @ 80% DoD ~3500 @ 80% DoD ~3500 @ 80% DoD \nDimensions    \nLength (L) 341±2mm / 22.3±0.1\" 622±2mm / 24.5±0.1\" 622±2mm / 24.5±0.1\" \nWidth (W) 197±2mm / 7.8±0.1\" 197±2mm / 7.8±0.1\" 197±2mm / 7.8±0.1\" \nHeight (H) 355±2mm / 14.0±0.1\" 355±2mm / 14.0±0.1\" 355±2mm / 14.0±0.1\" \nInstallation angle Upright (recommended) or on the long side \nGeneral    \nParallel configuration Yes, up to 24 \nSeries configuration Yes, up to 10 \nOperating temperature 2) / 3) –25 to 50ºC / –13 to 122ºF \nNominal operating temp. 3) 25ºC / 77ºF \nStorage temperature 3) –25 to 50ºC / –13 to 122ºF \nSelf-discharge < 4% per month @ 20ºC / 68ºF \nWarranty  2 years \nProtection degree IP65 (electronics cabinet) \nStandards, approvals & listings CE, E-Mark, RVIA, UN38.3, UL1642 (cells only), RINA",
+      "query": "shore power AC input current limit generator mains",
+      "source_heading_guess": "500A. Minimum DC breaking capacity (IR): 15kA",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual   \n43\n\n18. TECHNICAL DATA \nTechnical specifications \n  MLI Ultra 12/3000 MLI Ultra 12/6000 MLI Ultra 24/6000 \nProduct code 66013000 66016000 66026000 \nNominal voltage 12V 12V 24V \nNo load voltage, fully charged 13.2V 13.2V 26.4V \nNominal capacity (Cn) 230Ah 460Ah 230Ah \nNominal energy 3000Wh 6000Wh 6000Wh \nApproximate weight 25.4 kg (56 lb) 46.4  kg (102 lb) 46.4  kg (102 lb) \nNumber of cells 4 8 8 \nTerminal type Bolts M8 Bolts M8 Bolts M8 \nCharge/discharge parameters  \nCharge voltage, \nBulk/absorption phase 1) \n14.25V 14.25V 28.5V \nCharge voltage, Float phase 13.5V 13.5V 27V \nMaximum charge current 230A 460A 230A \nRecommended charge current ≤ 80A ≤ 160A ≤ 80A \nMaximum discharge current \n(20 minutes at 25ºC / 77ºF) \n500A  500A  500A  \nContinuous discharge current ≤ 200A  ≤ 300A ≤ 200A \nDischarge cut-off voltage 4) 11V 11V 22V \nRequired fuse Max. 500A.",
+      "query": "shore power AC input current limit generator mains",
+      "source_heading_guess": "18. TECHNICAL DATA",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual   \n11\n\nRequired materials \n- DC main wiring (cross section depending on the maximum system current) \n- Safety relay(s) suitable for nominal voltage, Mastervolt can supply these relays \n- Wiring for control circuit of the safety relay(s) (minimum cross section: 0.5mm2 / AWG 20) \n- T-Fuse holder + T-Fuse of max. 500A and min. DC breaking capacity (IR): 15kA. \n- Mastervolt battery charger \n- MasterBus/CZone cabling \nCharger settings \nA single battery can be charged with any Mastervolt battery charger. Set the battery type to MLI or \nadjust the 3-step+ (also known as IUoUo) charge characteristic as follows: \nModel Bulk / Absorption voltage setting Float voltage setting \n12V 14.25V 13.5V \n24V 28.5V 27.0V \nInstallation drawing of a single unit\n\nSystem parts \nA MLI Ultra \nB Battery fuse in positive cable \nC Safety relay \nD MasterBus / CZone connection (see sections Network wiring on pages 18 and 27) \nE Negative busbar \nF Positive busbar",
+      "query": "shore power AC input current limit generator mains",
+      "source_heading_guess": "MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "Connect the DC main wiring, positive to +, negative to -.\n\nWARNING! \nIn installations with a negative earth: Connect the negative cable last of all to \nprevent short circuiting. \nNote: Use properly sized and reliable cables, cable lugs and battery terminals. Tighten all \nconnections. For the main DC connections use 14.7 to 19.6 Nm / 130 to 170 InLbs torque. \nSee the following illustration detail for the right order of placing the spring washer (A) and the \nflat washer (B).",
+      "query": "shore power AC input current limit generator mains",
+      "source_heading_guess": "Connect the DC main wiring, positive to +, negative to -.",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual   \n31\n\nThe following steps configure the safety behavior. For example, a Stop Charge switch that stops a \nbattery charger. \nNote: This must be done for all MLI Ultra units and for all charging devices. \n14. Click on the Circuits tab and Add a new circuit (bottom left).\n\n15. Enter the Circuit Name (e.g. Stop Charge) and click OK. \n16. Click the Add button in the Circuit Control panel.",
+      "query": "shore power AC input current limit generator mains",
+      "source_heading_guess": "14. Click on the Circuits tab and Add a new circuit (bottom left).",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "A fully charged \nbattery rated at 100Ah, provides 100A for one hour. The same battery discharging at C/2 provides \n50A for two hours. At 2C it provides 200A for 30 minutes. Charge and discharge rates can have an \nimpact on the number of life cycles. What also affects the cycle life is the Depth of Discharge (DOD). \nThe deeper you discharge, the lower the possible number of charge cycles. Which is why the DOD \nof an MLI Ultra is set to 80% by default (this setting can be altered). While setting a lower DOD \nmeans that the battery's full capacity is not used, it can significantly prolong the battery's lifespan. \nThe MLI Ultra batteries offer 3500 cycles at 80% DoD at 25ºC. To reach the specified number of \ncycles, we advise a maximum charge rate of C/3 and a discharge rate of C/2. This corresponds, \nroughly, to the following values: \n  MLI Ultra 12/3000 MLI Ultra 12/6000 MLI Ultra 24/6000 \nRecommended discharge current  ≤ 120A ≤ 240A ≤ 120 A \nRecommended charge current  ≤ 80A ≤ 160A ≤ 80A\n\n5. CORRECT DISPOSAL OF THIS PRODUCT\n\nThis product is designed and manufactured with high quality materials and \ncomponents, which can be recycled and reused. Act according to your local rules \nand ",
+      "query": "shore power AC input current limit generator mains",
+      "source_heading_guess": "5. CORRECT DISPOSAL OF THIS PRODUCT",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual   \n33\n\n23. From the Load drop-down list, select the required charger. \n24. Set the State to On. \n25. Click OK to close the Circuit Load Configuration window. \nOptionally, return to step 22 to do this for all chargers. \n26. Write the configuration to the network to use the new configuration.",
+      "query": "main switch inverter on off charger operation",
+      "source_heading_guess": "23. From the Load drop-down list, select the required charger.",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual   \n25\n\nEvent commands \nWhen the MLI Ultra is configured as an event target by another device, this device can initiate an \nevent command and an event action to be performed by the MLI Ultra. \nEvent command Meaning \nRelay open The battery safety relay will be opened. \nRelay close The battery safety relay will be closed.\n\nStop charge event \nBefore the battery reaches the limits of the operating specifications, the Stop Charge event is \ntriggered. When configured (see page 15), this event forces the Mastervolt charger to switch off and \nresume charging after 10 minutes. The settings depend on the used charger because different \nchargers have different state options. Check the manual of the used charger for how to switch the \ncharging state. \nBattery safety event \nPLEASE CAREFULLY READ THE FOLLOWING INFORMATION! \nA battery safety event triggers the safety relay to automatically disconnect the battery from the loads \nand charging devices. There are two kinds of battery safety events: a resettable and a non-\nresettable.  \n• Resettable battery safety event \nA resettable safety event occurs if the internal temperature of on",
+      "query": "main switch inverter on off charger operation",
+      "source_heading_guess": "MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "System parts \nA MLI Ultra battery \nB Battery fuse in positive battery cable \nC Safety relay \nD MasterBus / CZone connection (see sections Network wiring on pages 18 and 27) \nE MasterBus compatible charger \nF Fuse to protect the charger cable \nG Negative busbar \nH Positive busbar\n\nRelay wires Connect to Description \n(1) Red wire   on connector block A1 Relay Control (RC) positive \n(2) Brown wire  on connector block A1 Close relay pulse \n(3) Orange wire  on connector block A1 Open relay pulse \n(4) Black wire  on connector block A1 RC minus \n(5) Yellow wire  on connector block A1 FeedBack signal relay \n(6) Red (not included) from    \nto  \non connector block A1 \non connector block A2 \nRC open relay from other \nbattery \n(7) Black (not included) from    \nto  \non connector block A1 \non connector block A2 \nRC minus from other \nbattery \n(8) Jumper wire \n(included) \n  to   on connector block A1 Relays connector detect, \nconnect to RC minus",
+      "query": "DC fuse battery protection wiring supply requirement",
+      "source_heading_guess": "System parts A MLI Ultra battery",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual   \n13\n\nIt may be that the safety relay is mounted on top of the MLI Ultra. For example with an Ultra \nConnection Kit (product code 79007712 or 79007724), or as part of a Soft Start Module (SSM). The \nSSM is only used in 48V systems, where it is occasionally active to guarantee the lifespan of the \nsafety relay. \nInstallation procedure for a single unit\n\nWARNING! \nAlways comply with all local rules and regulations.\n\nWARNING! \nDo not use a sensor for temperature compensated charging. Temperatures of the \nbattery and its cells are monitored by the built-in BMS. \n1. Switch off all loads and chargers. \n2. Tilt the side handles to uncover the battery terminals.\n\n3. Integrate a fuse holder in the positive battery wire but do not place the fuse yet. \n4. Set the safety relay knob to “LOCK OFF”, see page 12.  \n5. Integrate the safety relay in the positive battery wire. \nDisconnect the battery safety connector, item (6) in figure Main Parts on page 8, by loosening \nits screws. Connect the wires of the safety relay onto the battery safety connector as shown in \nthe installation diagram on page 11 (see also chapter 16 in case of",
+      "query": "DC fuse battery protection wiring supply requirement",
+      "source_heading_guess": "1. Switch off all loads and chargers.",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "34   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual\n\nCAUTION! \nOnly create multiple battery systems with batteries of the same type and capacity.  \n Make sure that all batteries are fully charged. \n In case of replacing, make sure that the batteries have been charged and have the same \nproduct codes. \n If connected in series, then two units can be protected by one safety relay. \nIf connected in parallel, then each unit requires its own safety relay! \n Use properly sized fuses and wiring. \nNote: Keep the various interconnect cables as short as possible and the same length. As you \ncan see in the following figures, all short cables connecting the MLI Ultra units together, \nand all long cables are of equal length. The cables in question are marked by one or more \nslashes.",
+      "query": "DC fuse battery protection wiring supply requirement",
+      "source_heading_guess": "34   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "44   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual\n\nMLI Ultra 12/3000 MLI Ultra 12/6000 MLI Ultra 24/6000 \nChemistry Lithium Iron Phosphate \nInterfacing   \nMasterBus connectivity Yes \nPowering capabilities for \nMasterBus \nYes \nCZone Yes \nExternal disconnect switch Yes, MANDATORY, direct connection for safety relay \nImportant available monitoring/events \nBattery Safety event  Preventing unsafe overcharge, over discharge and \novertemperature \nStop Charge event Communication to charging devices preventing overcharging \n1) If a Bulk/Absorption voltage of 14V is used (User Defined battery type), the Stop Charge Event is not required. \n2) Charging at temperatures below -5ºC / 23ºF may result in battery not accepting charge current . \n3) Temperatures below 5ºC / 41ºF and above 25ºC / 77ºF may affect lifetime and cycle life. See page 45. \n4) Trigger point for battery safety event.",
+      "query": "BMS battery safety relay protective disconnect undervoltage overvoltage temperature",
+      "source_heading_guess": "44   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "26   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual\n\n• Non-resettable battery safety event \nA non-resettable safety event occurs if the internal temperature of one of the individual cells \nexceeds 75°C / 167°F, or if the voltage level exceeds the major minimum or maximum levels. See \nchapter 18 for details.\n\nWARNING! \nIF A NON-RESETTABLE BATTERY SAFETY EVENT OCCURS: SET \nTHE SAFETY RELAY(S) TO “LOCK OFF”, SEE PAGE 12, AND \nCONTACT A MASTERVOLT REPRESENTATIVE FOR ASSISTANCE. \nHow to activate MasterBus powering \n1. Remove the DIP switch cover by loosening the four screws. \n2. Use a small screwdriver to carefully set the DIP switches: \n• Set DIP switch 1 ON to select MasterBus. \n• Set DIP switch 2 ON to set MasterBus powering to Automatic. \nThe following picture is only an example!\n\n3. Replace the DIP switch cover and fasten with the screws. Make sure that the rubber band is \nplaced correctly, to make it watertight. \nIn most cases this is the desired setting. MasterBus powering can also be set to Always on. This \ncan only be selected in MasterAdjust. See MB power in section Configuration on page 20. \n.",
+      "query": "Close relay reset battery safety event recovery after disconnect",
+      "source_heading_guess": "26   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "very low Level below which the Cap. very low event can \nbe triggered \n0% 0-100% \nBattery full Level above which the Battery full event can \nbe triggered \n100 0-100% \nHigh \ntemperature \nInternal temperature of the MLI Ultra serves as \nan event source \n45°C 30 - 60°C \nLow \ntemperature \nInternal temperature of the MLI Ultra serves as \nan event source \n5°C -10 - 30°C \nVoltage low Level below which the Voltage low event can \nbe triggered \n12.5V \n25.0V \n12.25-12.75V \n24.5-25.5V \nVolt. low delay Delay time to trigger the Voltage low event \nafter the level was reached \n10s 1-120s \nLast time 100% Last time fully charged serves as an event \nsource. To get accurate SOC readings, \nregularly charge the battery to 100%. \n31 days 7-60 days",
+      "query": "State of charge SOC monitoring MasterBus display",
+      "source_heading_guess": "100 0-100%",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "40   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual\n\n6. Click the Confirm topology button.\n\nNotice the status of the cluster topology. It can be: \n- Approved; \n- Needs approval: the topology was not confirmed; \n- Not activated: the topology still requires activation; \n- Too many devices/Double device/Incomplete/Missing self: the \nproposed topology is not possible or other units need to be \nselected.  \nAfter confirmation, the cluster topology is defined and fields to \nselect the other units will appear. Note that S01-P01 is pre-filled \nwith this unit but can be changed later.\n\n7. In the S01 field, from the drop-down list, select the serial number \nof the Primary battery. This battery will be the Cluster Primary \nbattery and will show the Cluster state. \n8. In the following fields, select the other clustered batteries. \n9. Click the Activate button. \nNow, each battery will show its individual data in the monitoring \ntab while the Primary battery will show both the individual data \nand the data of the cluster.  \nActivation will fail if the battery is already in another cluster.\n\n10. If required, select to base the displayed SOC on the lowest \n(minimum) instead of t",
+      "query": "State of charge SOC monitoring MasterBus display",
+      "source_heading_guess": "40   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "2   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual\n\nTable of contents\n\n1. SAFETY INSTRUCTIONS .................... 3 \nWarnings and symbols .......................... 3 \nSafety warnings ..................................... 3 \nSafety guidelines ................................... 5 \n2. LIABILITY .............................................. 6 \n3. WARRANTY.......................................... 6 \n4. CYCLE LIFE AND C-RATE ................... 6 \n5. CORRECT DISPOSAL OF THIS \nPRODUCT ............................................ 6 \n6. PRODUCT DESCRIPTION ................... 7 \nIntroduction ........................................... 7 \nDimensions ........................................... 7 \nMain parts ............................................. 8 \nProtection .............................................. 9 \nIdentification label ................................. 9 \n7. INSTALLATION ................................... 10 \nUnpacking ........................................... 10 \nCheck the battery ................................ 10 \nChoosing a location to install ............... 10 \nRequired tools ..................................... 10 \nRequired materials .....",
+      "query": "3. WARRANTY",
+      "source_heading_guess": "2   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "6   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual\n\n2. LIABILITY \nMastervolt cannot be held liable for:  \n- Consequential damage resulting from the use of the MLI Ultra. \n- Possible errors in the included manual and the consequences of these.  \n- Use that is inconsistent with the purpose of the MLI Ultra. \nDisclaimer:  Our products are subject to continual development and improvement. Therefore, \nadditions or modifications to the products may cause changes to the technical data and functional \nspecifications. No rights can be derived from this document. Please consult our online Terms & \nConditions of Sale. \n3. WARRANTY \nThe Mastervolt product warranty covers the MLI Ultra for the first two years after the purchase date, \non the condition that the product is installed and used according to the instructions in this manual. \nInstallation or use that does not comply with these instructions may result in under performance, \ndamage or failure of the product and may void this warranty. The warranty is limited to the cost of \nrepair and/or replacement of the product. Costs of labor or shipping are not covered by this \nwarranty. \n4. CYCLE LIFE AND C-RATE \nThe C-rate ind",
+      "query": "3. WARRANTY",
+      "source_heading_guess": "6   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "Disconnect a MasterBus cable or Terminator from the closest MasterBus device and connect it \nto the MLI Ultra. \n2. Connect the new MasterBus cable to the other MasterBus device and then connect to the MLI \nUltra. \n3. Ensure that the network is properly terminated.",
+      "query": "3. Ensure that the network is properly terminated.",
+      "source_heading_guess": "2. Connect the new MasterBus cable to the other MasterBus device and then connect to the MLI",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "To access the individual batteries, unfold the cluster (i.e. click the plus sign) in the left panel of \nMasterAdjust. \nTo identify the Primary battery, go to the configuration page of one of the (other) batteries. \nTo remove a battery from a cluster, click the Detach button on the Configuration tab of the battery in \nquestion. \nTo breakdown a cluster, in the configuration of the Primary battery: set the cluster to 1 (series) by 1 \n(parallel) and click the Confirm topology button.",
+      "query": "4. Enter the number of batteries in the # series (S) field.",
+      "source_heading_guess": "To access the individual batteries, unfold the cluster (i.e. click the plus sign) in the left panel of",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    },
+    {
+      "text": "MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual   \n41\n\nHow to create a cluster in CZone \nPreconditions: - a CZone system is already configured, including all batteries; \n - the CZone Configuration Tool opened the required configuration file. \n1. In the CZone Configuration Tool, in the Modules tab, double-click the MLI Ultra that will act as \nPrimary battery. \n2. The Module Modifications window appears. Click the Advanced Settings button. \n3. From the Cluster Type drop-down list, \nselect Cluster Primary. \n4. Cluster DC Instance is an NMEA2000 \ninstance that is used to differentiate \nbetween multiple monitoring sources. \n5. Enter a Cluster Name. \n6. If the cluster is a series connection, tick Set \nRelay type of all secondary batteries to \nDaisy Chain. \n7. Click the Configure Topology button. \nThe Configured Battery Cluster Topology \nwindow appears. \n8. Enter the number of batteries in series (S). \nIf there are no batteries in series, enter 1. \n9. Enter the number of batteries in parallel (P). \nIf there are no batteries in parallel, enter 1. \n10. To activate voltage balancing of all cells in \nseries, select ON from the Series Balancing \ndrop-down list. \n11. Click th",
+      "query": "3. From the Cluster Type drop-down list,",
+      "source_heading_guess": "1. In the CZone Configuration Tool, in the Modules tab, double-click the MLI Ultra that will act as",
+      "manual_id": "07e38139-a110-4c88-a35b-5783a9e7556b"
+    }
+  ],
+  "map_groups": [
+    {
+      "group_id": "batch_0",
+      "is_introduction": true,
+      "partition": "batch",
+      "chapter": null,
+      "predicted_fields": [
+        "control_surfaces",
+        "evidence",
+        "operator_actions",
+        "requires_devices",
+        "supply_requirements"
+      ],
+      "excerpt_count": 14,
+      "raw_profile": {
+        "device": {
+          "manufacturer": "Mastervolt",
+          "model": "MLI Ultra 24/6000",
+          "category_freeform": "LITHIUM-ION BATTERY"
+        },
+        "control_surfaces": [
+          {
+            "surface": "remote_panel_accessory",
+            "location_class": "remote_wired",
+            "optional_accessory": true,
+            "label_verbatim": "SmartRemote or EasyView 5",
+            "path": "control_surfaces[0]"
+          }
+        ],
+        "operator_actions": [
+          {
+            "action": "monitor MLI Ultra via SmartRemote or EasyView 5",
+            "audience": "operator",
+            "context": "daily"
+          },
+          {
+            "action": "open safety relay",
+            "audience": "operator",
+            "context": "emergency"
+          },
+          {
+            "action": "close safety relay",
+            "audience": "operator",
+            "context": "emergency"
+          }
+        ],
+        "networks": {
+          "speaks": [
+            {
+              "name_verbatim": "MasterBus",
+              "physical_or_wireless": "wired"
+            },
+            {
+              "name_verbatim": "CZone",
+              "physical_or_wireless": "wired"
+            }
+          ],
+          "bridges": []
+        },
+        "data_roles": {
+          "exposes_data_to_network": false,
+          "displays_data_from_other_devices": false,
+          "controllable_from_network": false
+        },
+        "requires_devices": [
+          {
+            "description_verbatim": "CZone Configuration Tool",
+            "needed_for": "control_surfaces[0]"
+          }
+        ],
+        "safety_role": {
+          "is_protective_device": true,
+          "has_manual_override": false,
+          "has_emergency_procedure": true
+        },
+        "protected_by": [],
+        "protects": [
+          {
+            "description_verbatim": "safety relay opens when built-in thresholds are met"
+          }
+        ],
+        "supply_requirements": [],
+        "evidence": [
+          {
+            "supports_field": "safety_role.is_protective_device",
+            "manual_section": "18 for details. The safety relay can also be driven by events (MasterBus) or circuit switches",
+            "note": "safety relay opens on built-in thresholds"
+          },
+          {
+            "supports_field": "safety_role.has_emergency_procedure",
+            "manual_section": "18 for details. The safety relay can also be driven by events (MasterBus) or circuit switches",
+            "note": "emergency procedures for safety relay"
+          },
+          {
+            "supports_field": "control_surfaces[0]",
+            "manual_section": "14. MASTERBUS ON THE MLI ULTRA",
+            "note": "monitoring via SmartRemote or EasyView 5"
+          },
+          {
+            "supports_field": "operator_actions[1]",
+            "manual_section": "14. MASTERBUS ON THE MLI ULTRA",
+            "note": "open safety relay action"
+          },
+          {
+            "supports_field": "operator_actions[2]",
+            "manual_section": "14. MASTERBUS ON THE MLI ULTRA",
+            "note": "close safety relay action"
+          }
+        ],
+        "confidence": {
+          "overall": 0.8,
+          "notes": "Profiled model only; some details may apply to other variants."
+        }
+      },
+      "bms_protect_retry": true,
+      "targeted_retries": [
+        "bms_protect_retry"
+      ]
+    },
+    {
+      "group_id": "batch_1",
+      "is_introduction": false,
+      "partition": "batch",
+      "chapter": null,
+      "predicted_fields": [
+        "control_surfaces",
+        "data_roles",
+        "evidence",
+        "networks",
+        "operator_actions",
+        "requires_devices",
+        "safety_role",
+        "supply_requirements"
+      ],
+      "excerpt_count": 14,
+      "raw_profile": {
+        "device": {
+          "manufacturer": "Mastervolt",
+          "model": "MLI Ultra 24/6000",
+          "category_freeform": "LITHIUM-ION BATTERY"
+        },
+        "control_surfaces": [
+          {
+            "surface": "remote_panel_accessory",
+            "location_class": "remote_wired",
+            "optional_accessory": true,
+            "label_verbatim": "MasterView",
+            "path": "control_surfaces[0]"
+          }
+        ],
+        "operator_actions": [
+          {
+            "action": "close relay",
+            "audience": "operator",
+            "context": "emergency"
+          }
+        ],
+        "networks": {
+          "speaks": [
+            {
+              "name_verbatim": "MasterBus",
+              "physical_or_wireless": "wired"
+            },
+            {
+              "name_verbatim": "CZone",
+              "physical_or_wireless": "wired"
+            }
+          ],
+          "bridges": []
+        },
+        "data_roles": {
+          "exposes_data_to_network": false,
+          "displays_data_from_other_devices": false,
+          "controllable_from_network": false
+        },
+        "requires_devices": [
+          {
+            "description_verbatim": "MasterView remote panel",
+            "needed_for": "control_surfaces[0]"
+          }
+        ],
+        "safety_role": {
+          "is_protective_device": true,
+          "has_manual_override": false,
+          "has_emergency_procedure": true
+        },
+        "protected_by": [
+          {
+            "description_verbatim": "safety relay automatically opens on battery safety events"
+          }
+        ],
+        "protects": [],
+        "supply_requirements": [],
+        "evidence": [
+          {
+            "supports_field": "safety_role.is_protective_device",
+            "manual_section": "42   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+            "note": "describes automatic safety relay operation"
+          },
+          {
+            "supports_field": "safety_role.has_emergency_procedure",
+            "manual_section": "42   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+            "note": "includes recovery steps after safety relay trip"
+          },
+          {
+            "supports_field": "control_surfaces[0]",
+            "manual_section": "8   MLI Ultra 12/3000, 12/6000, 24/6000 – User and Installation Manual",
+            "note": "MasterView is an optional remote panel"
+          }
+        ],
+        "confidence": {
+          "overall": 0.8,
+          "notes": "Manual covers multiple models; some details may vary."
+        }
+      },
+      "remote_panel_retry": true,
+      "targeted_retries": [
+        "remote_panel_retry",
+        "bms_protect_retry"
+      ],
+      "bms_protect_retry": true
+    },
+    {
+      "group_id": "batch_2",
+      "is_introduction": false,
+      "partition": "batch",
+      "chapter": null,
+      "predicted_fields": [
+        "control_surfaces",
+        "evidence",
+        "operator_actions",
+        "requires_devices"
+      ],
+      "excerpt_count": 14,
+      "raw_profile": {
+        "device": {
+          "manufacturer": "Mastervolt",
+          "model": "MLI Ultra 24/6000",
+          "category_freeform": "LITHIUM-ION BATTERY"
+        },
+        "control_surfaces": [
+          {
+            "surface": "remote_panel_accessory",
+            "location_class": "remote_wired",
+            "optional_accessory": true,
+            "label_verbatim": "MasterView remote panel",
+            "path": "control_surfaces[0]"
+          }
+        ],
+        "operator_actions": [
+          {
+            "action": "close the safety relay by setting the knob to REMOTE ON",
+            "audience": "operator",
+            "context": "situational"
+          },
+          {
+            "action": "verify that a current is flowing out of the battery",
+            "audience": "operator",
+            "context": "daily"
+          },
+          {
+            "action": "switch off the load, then switch on the charger",
+            "audience": "operator",
+            "context": "situational"
+          }
+        ],
+        "networks": {
+          "speaks": [
+            {
+              "name_verbatim": "MasterBus",
+              "physical_or_wireless": "wired"
+            },
+            {
+              "name_verbatim": "CZone",
+              "physical_or_wireless": "wired"
+            }
+          ],
+          "bridges": []
+        },
+        "data_roles": {
+          "exposes_data_to_network": false,
+          "displays_data_from_other_devices": false,
+          "controllable_from_network": false
+        },
+        "requires_devices": [
+          {
+            "description_verbatim": "safety relay",
+            "needed_for": "control_surfaces[0]"
+          }
+        ],
+        "safety_role": {
+          "is_protective_device": true,
+          "has_manual_override": true,
+          "has_emergency_procedure": false
+        },
+        "protected_by": [
+          {
+            "description_verbatim": "safety relay"
+          }
+        ],
+        "protects": [],
+        "supply_requirements": [
+          {
+            "description_verbatim": "Battery fuse in positive battery cable"
+          }
+        ],
+        "evidence": [
+          {
+            "supports_field": "safety_role.is_protective_device",
+            "manual_section": "Protection",
+            "note": "Battery Management System protects cells"
+          },
+          {
+            "supports_field": "safety_role.has_manual_override",
+            "manual_section": "Safety relay connections",
+            "note": "Manual control for safety relay exists"
+          },
+          {
+            "supports_field": "control_surfaces[0]",
+            "manual_section": "optional remote control MasterView Easy remote panel installed",
+            "note": "Remote panel is an optional accessory"
+          }
+        ],
+        "confidence": {
+          "overall": 0.8,
+          "notes": "Profile based on limited excerpts; some details may vary."
+        }
+      }
+    },
+    {
+      "group_id": "batch_3",
+      "is_introduction": false,
+      "partition": "batch",
+      "chapter": null,
+      "predicted_fields": [
+        "control_surfaces",
+        "data_roles",
+        "evidence",
+        "networks",
+        "operator_actions",
+        "protected_by",
+        "protects",
+        "requires_devices",
+        "safety_role",
+        "supply_requirements"
+      ],
+      "excerpt_count": 13,
+      "raw_profile": {
+        "device": {
+          "manufacturer": "Mastervolt",
+          "model": "MLI Ultra 24/6000",
+          "category_freeform": "LITHIUM-ION BATTERY"
+        },
+        "control_surfaces": [],
+        "operator_actions": [
+          {
+            "action": "set safety relay to LOCK OFF",
+            "audience": "operator",
+            "context": "emergency"
+          }
+        ],
+        "networks": {
+          "speaks": [
+            {
+              "name_verbatim": "MasterBus",
+              "physical_or_wireless": "wired"
+            },
+            {
+              "name_verbatim": "CZone",
+              "physical_or_wireless": "wired"
+            }
+          ],
+          "bridges": []
+        },
+        "data_roles": {
+          "exposes_data_to_network": false,
+          "displays_data_from_other_devices": false,
+          "controllable_from_network": false
+        },
+        "requires_devices": [
+          {
+            "description_verbatim": "MasterBus compatible charger",
+            "needed_for": "operator_actions[0]"
+          }
+        ],
+        "safety_role": {
+          "is_protective_device": true,
+          "has_manual_override": true,
+          "has_emergency_procedure": true
+        },
+        "protected_by": [
+          {
+            "description_verbatim": "battery safety relay automatically disconnects on safety events"
+          }
+        ],
+        "protects": [],
+        "supply_requirements": [
+          {
+            "description_verbatim": "integrate a fuse holder in the positive battery wire"
+          }
+        ],
+        "evidence": [
+          {
+            "supports_field": "safety_role.is_protective_device",
+            "manual_section": "Battery Safety event",
+            "note": "automatic disconnect on safety events"
+          },
+          {
+            "supports_field": "safety_role.has_manual_override",
+            "manual_section": "Battery Safety event",
+            "note": "manual override available for safety relay"
+          },
+          {
+            "supports_field": "safety_role.has_emergency_procedure",
+            "manual_section": "Non-resettable battery safety event",
+            "note": "emergency procedure for safety event recovery"
+          },
+          {
+            "supports_field": "requires_devices[0]",
+            "manual_section": "System parts",
+            "note": "charger required for operation"
+          },
+          {
+            "supports_field": "supply_requirements[0]",
+            "manual_section": "Installation procedure for a single unit",
+            "note": "fuse integration is mandatory"
+          }
+        ],
+        "confidence": {
+          "overall": 0.8,
+          "notes": "Manual covers multiple models; some details may vary."
+        }
+      },
+      "bms_protect_retry": true,
+      "targeted_retries": [
+        "bms_protect_retry"
+      ]
+    }
+  ],
+  "merge": {
+    "conflicts": [
+      {
+        "kind": "operator_actions",
+        "attribute": "context",
+        "group_id": "batch_2",
+        "variants": [
+          {
+            "action": "close safety relay",
+            "audience": "operator",
+            "context": "emergency"
+          },
+          {
+            "action": "close the safety relay by setting the knob to REMOTE ON",
+            "audience": "operator",
+            "context": "situational"
+          }
+        ]
+      }
+    ],
+    "group_contributions": {
+      "batch_0": {
+        "operator_actions": 3,
+        "control_surfaces": 1,
+        "networks": 2,
+        "requires_devices": 1,
+        "evidence": 5,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 1,
+        "data_roles": 0,
+        "safety_role": 2
+      },
+      "batch_1": {
+        "operator_actions": 1,
+        "control_surfaces": 1,
+        "networks": 2,
+        "requires_devices": 1,
+        "evidence": 3,
+        "supply_requirements": 0,
+        "protected_by": 1,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 2
+      },
+      "batch_2": {
+        "operator_actions": 3,
+        "control_surfaces": 1,
+        "networks": 2,
+        "requires_devices": 1,
+        "evidence": 3,
+        "supply_requirements": 1,
+        "protected_by": 1,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 2
+      },
+      "batch_3": {
+        "operator_actions": 1,
+        "control_surfaces": 0,
+        "networks": 2,
+        "requires_devices": 1,
+        "evidence": 5,
+        "supply_requirements": 1,
+        "protected_by": 1,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 3
+      }
+    },
+    "utilization": [
+      {
+        "group_id": "batch_0",
+        "is_introduction": true,
+        "excerpt_count": 14,
+        "predicted_fields": [
+          "control_surfaces",
+          "evidence",
+          "operator_actions",
+          "requires_devices",
+          "supply_requirements"
+        ],
+        "contributions": {
+          "operator_actions": 3,
+          "control_surfaces": 1,
+          "networks": 2,
+          "requires_devices": 1,
+          "evidence": 5,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 1,
+          "data_roles": 0,
+          "safety_role": 2
+        },
+        "contribution_total": 15,
+        "unutilized": false
+      },
+      {
+        "group_id": "batch_1",
+        "is_introduction": false,
+        "excerpt_count": 14,
+        "predicted_fields": [
+          "control_surfaces",
+          "data_roles",
+          "evidence",
+          "networks",
+          "operator_actions",
+          "requires_devices",
+          "safety_role",
+          "supply_requirements"
+        ],
+        "contributions": {
+          "operator_actions": 1,
+          "control_surfaces": 1,
+          "networks": 2,
+          "requires_devices": 1,
+          "evidence": 3,
+          "supply_requirements": 0,
+          "protected_by": 1,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 2
+        },
+        "contribution_total": 11,
+        "unutilized": false
+      },
+      {
+        "group_id": "batch_2",
+        "is_introduction": false,
+        "excerpt_count": 14,
+        "predicted_fields": [
+          "control_surfaces",
+          "evidence",
+          "operator_actions",
+          "requires_devices"
+        ],
+        "contributions": {
+          "operator_actions": 3,
+          "control_surfaces": 1,
+          "networks": 2,
+          "requires_devices": 1,
+          "evidence": 3,
+          "supply_requirements": 1,
+          "protected_by": 1,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 2
+        },
+        "contribution_total": 14,
+        "unutilized": false
+      },
+      {
+        "group_id": "batch_3",
+        "is_introduction": false,
+        "excerpt_count": 13,
+        "predicted_fields": [
+          "control_surfaces",
+          "data_roles",
+          "evidence",
+          "networks",
+          "operator_actions",
+          "protected_by",
+          "protects",
+          "requires_devices",
+          "safety_role",
+          "supply_requirements"
+        ],
+        "contributions": {
+          "operator_actions": 1,
+          "control_surfaces": 0,
+          "networks": 2,
+          "requires_devices": 1,
+          "evidence": 5,
+          "supply_requirements": 1,
+          "protected_by": 1,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 3
+        },
+        "contribution_total": 14,
+        "unutilized": false
+      }
+    ]
+  },
+  "prompt_instruction_path": "guide/llm/extract_interaction_profile.txt",
+  "prompt_schema_path": "guide/schemas/interaction_profile.txt",
+  "prompt_contains_evidence_priority_v33": true,
+  "prompt_contains_example_isolation": true,
+  "prompt_contains_map_partial_line": true,
+  "prompt_contains_example_m": true,
+  "repair": {
+    "evidence": {
+      "attempted": true,
+      "missing_fields": [
+        "data_roles.displays_data_from_other_devices",
+        "data_roles.controllable_from_network",
+        "requires_devices[1]",
+        "requires_devices[2]",
+        "requires_devices[3]"
+      ],
+      "added": []
+    },
+    "absence": {
+      "attempted": true,
+      "flags": [
+        "speaks_but_inert"
+      ],
+      "excerpt_count": 46,
+      "patched_keys": [
+        "control_surfaces",
+        "data_roles",
+        "device",
+        "requires_devices"
+      ]
+    }
+  },
+  "rextraction": {
+    "attempted": false,
+    "max_retries": 1,
+    "still_needs_rextraction": false
+  },
+  "post_validation_flag_names": [
+    "evidence_incomplete",
+    "extraction_unstable",
+    "merge_conflict"
+  ],
+  "needs_rextraction": false
+}

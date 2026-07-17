@@ -1,0 +1,8 @@
+# Fixture and pipeline review owners.
+# See backend/tests/fixtures/POLICY.md for change authorization rules.
+
+backend/tests/fixtures/ @ilopa
+backend/fixtures/pipeline/outremer/ @ilopa
+backend/equipment-classification-spec-*.md @ilopa
+backend/prompts/guide/llm/extract_interaction_profile.txt @ilopa
+backend/prompts/guide/schemas/interaction_profile.txt @ilopa

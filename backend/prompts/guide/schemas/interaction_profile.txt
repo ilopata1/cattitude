@@ -1,0 +1,111 @@
+# Purpose: JSON shape for interaction_profile extraction (Stage 1).
+# Used by: interaction_profile prompt composition / structured outputs / Stage 1.5.
+#
+# needed_for: non-empty path to ANY profile field whose value is conditional on
+# the dependency (e.g. "control_surfaces[0]", "data_roles.exposes_data_to_network").
+# Multiple requires_devices entries sharing the same needed_for are OR
+# alternatives — capability active if ANY is satisfied on the vessel (Stage 2).
+# Prefer separate entries per alternative (reduce OR-splits combined "A or B").
+# requirement_kind: device | cable_or_consumable | software_app | commissioning_tool
+# entity_kind: device (default) | platform (shared software UI)
+# ui_pages: platform page inventory; appears_if_gate empty strings = always present
+# additionalProperties are forbidden at every object level.
+#
+{
+  "device": {
+    "manufacturer": "string",
+    "model": "string",
+    "category_freeform": "string — manual's own product category words"
+  },
+  "entity_kind": "device|platform",
+  "documented_version": "string — empty for ordinary devices",
+  "ui_pages": [
+    {
+      "name": "string — page title",
+      "purpose": "string",
+      "appears_if_gate": {
+        "verbatim": "full gate sentence or empty",
+        "description_verbatim": "equipment noun phrase or empty",
+        "functional_class": "acmi|mastervolt_inverter_charger|supported_hvac|empty"
+      },
+      "actions": [
+        {
+          "action": "string",
+          "audience": "operator|installer_or_technician|either",
+          "context": "daily|situational|emergency|commissioning|maintenance"
+        }
+      ]
+    }
+  ],
+  "alarm_severity": [
+    {
+      "level_verbatim": "Critical|Important|Standard|Warning|…",
+      "color_verbatim": "Red|Orange|Yellow|Blue|…"
+    }
+  ],
+  "control_surfaces": [
+    {
+      "surface": "touchscreen|remote_panel_accessory|mobile_app_bluetooth|mobile_app_wifi_cloud|web_interface|physical_controls|rotary_selector|other",
+      "location_class": "on_device|remote_wired|wireless|unknown",
+      "optional_accessory": false,
+      "label_verbatim": "optional short label from the manual",
+      "path": "control_surfaces[0]"
+    }
+  ],
+  "operator_actions": [
+    {
+      "action": "string — one verb phrase, one context",
+      "audience": "operator|installer_or_technician|either",
+      "context": "daily|situational|emergency|commissioning|maintenance",
+      "options": ["optional — discrete option-value tails for the same setting"]
+    }
+  ],
+  "networks": {
+    "speaks": [
+      {
+        "name_verbatim": "string",
+        "physical_or_wireless": "wired|wireless|unknown"
+      }
+    ],
+    "bridges": [
+      { "from": "string", "to": "string" }
+    ]
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [
+    {
+      "description_verbatim": "string — one alternative product/dependency",
+      "needed_for": "non-empty field path (control_surfaces[N] | data_roles.<key> | …)",
+      "requirement_kind": "device|cable_or_consumable|software_app|commissioning_tool"
+    }
+  ],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": false
+  },
+  "protected_by": [
+    { "description_verbatim": "string" }
+  ],
+  "protects": [
+    { "description_verbatim": "string" }
+  ],
+  "supply_requirements": [
+    { "description_verbatim": "string" }
+  ],
+  "evidence": [
+    {
+      "supports_field": "schema field path this evidence justifies",
+      "manual_section": "section title or short heading",
+      "note": "<=12-word paraphrase — never copy manual sentences"
+    }
+  ],
+  "confidence": {
+    "overall": 0.0,
+    "notes": "string"
+  }
+}
