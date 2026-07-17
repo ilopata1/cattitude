@@ -26,7 +26,7 @@
   },
   "sections": {
     "czone_touch_7": {
-      "value": "electrical",
+      "value": "controls",
       "source": "lookup"
     },
     "coi": {
@@ -171,7 +171,7 @@
     },
     {
       "kind": "hosts_control",
-      "in_section": "electrical",
+      "in_section": "controls",
       "to_device": "mass_combi_pro_1"
     }
   ],
@@ -183,7 +183,9 @@
     "retired": "balmar_mc624 / czone_touch_10 / czone_system must not appear.",
     "touch7": "material_stop closed: document_depth_difference; config_defined_operation; vessel_artifact CZone + displays_data",
     "czone_system": "retired — hub is czone_touch_7",
+    "controls_home": "Touch 7 + platform → controls (v4.10); hosts_control xrefs in_section=controls",
     "czone_2_0": "platform ui_pages from V1.1 extract; Climate gated supported_hvac (AC present ≠ integrated)",
-    "hub_operation_unsourced": "retired for platform-backed Touch 7 — see platform_version_unconfirmed + config_unsourced"
+    "hub_operation_unsourced": "retired for platform-backed Touch 7 — see platform_version_unconfirmed + config_unsourced",
+    "fixture_auth": "Fixture-Auth: chat instance-policy + controls home v4.10 — outremer_post_batch_b"
   }
 }

@@ -81,6 +81,13 @@ SECTION_LOOKUP: dict[str, tuple[str, ...]] = {
         "alpha",
         "alternator regulator",
     ),
+    "controls": (
+        "touch 7",
+        "touch 10",
+        "czone touch",
+        "czone 2.0",
+        "czone 2",
+    ),
     "electrical": (
         "busbar",
         "fuse",
@@ -92,9 +99,6 @@ SECTION_LOOKUP: dict[str, tuple[str, ...]] = {
         "distribution",
         "isolation",
         "galvanic",
-        "czone",
-        "touch 7",
-        "touch 10",
         "class t",
         "coi",
         "masterbus-czone",

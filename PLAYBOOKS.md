@@ -112,10 +112,14 @@ graph, and vessel facts without leaking pipeline machinery.
 
 ### A. Assemble inputs
 
-- [ ] Select the device profiles and quantities/instances that belong in the
-      section.
 - [ ] Build the deterministic vessel graph, roles, dependencies, homes,
       cross-references, and content tiers.
+- [ ] Run `assemble_section_inputs` for the section id; persist `inputs.json`
+      beside the draft.
+- [ ] Confirm depths: members + platforms = `full`; visibility-gated boundary
+      targets = `summary`; path bridges/COIs = `provenance` (unnamed in body).
+- [ ] Remember: graph reachability = candidacy; documented present page or
+      member surface = membership (`PRINCIPLES.md` §9).
 - [ ] Collect vessel facts: topology, installation notes, charging/supply
       targets, configuration, and relevant consequences.
 - [ ] Separate human-entered `observation` from `entered_inference`.
@@ -126,11 +130,13 @@ graph, and vessel facts without leaking pipeline machinery.
 - [ ] Define reader-facing display names for every device/instance.
 - [ ] Classify flags as `operator_caveat`, `scope_limit`, `context_shaping`,
       or `internal`.
+- [ ] For `config_unsourced`, plan a boat-upgradeable placeholder — never block
+      the section (ship-with-honest-gaps).
 - [ ] Confirm `vessel_display_name` is recorded (composition hard-fails without
       it).
 
 **Gate:** all input facts have provenance; inference inputs have attached
-evidence or document citations; boat name is recorded.
+evidence or document citations; boat name is recorded; input set reviewable.
 
 ### B. Compose in the v4 template
 
@@ -167,12 +173,21 @@ evidence or document citations; boat name is recorded.
 - [ ] **ix′ — Task order:** capability → monitoring → adjusting →
       troubleshooting.
 - [ ] **x — Evidence-clean inference.**
-- [ ] **xi — Vessel named** / no “this vessel”.
+- [ ] **xi — Vessel established** by recorded display name in prose (hard).
+      Deictics / name overuse are **style warnings** only — after the name,
+      prefer “the …” / bare facts; use she/her only when the boat is the
+      actor/owner (`guide_reader_voice.py`; PRINCIPLES §10).
 - [ ] **xii — Role-first**, model on first use only.
 - [ ] **xiii — No catalog vocabulary.**
 - [ ] **xiv — No hedging** of verified facts; conditions for real uncertainty.
 - [ ] **xv — No untagged absence sentences.**
 - [ ] **xvi — Task ordering** matches template.
+- [ ] **xvii–xix — Prose economy:** confidence via phrasing; ≤1 parenthetical;
+      no clause restatement.
+- [ ] **xx — Input set** matches fixture.
+- [ ] **xxi — Summary depth** stays summary (no home-manual restatement).
+- [ ] **xxii — Config placeholder** present and boat-upgradeable when
+      config is unsourced.
 
   Obsoleted from v3: **(iv)** flags-as-caveats with GX prose, **(vi)** rendered
   flag-fact once, **(ix)** identity→daily→guidance→caveats→reference.

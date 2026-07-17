@@ -15,7 +15,8 @@ not write filler such as "the manual does not cover shutdown."
 
 Content must describe the equipment model in general (not a specific boat's wiring
 or breaker locations). Never include charter company names, phone numbers, or
-marina-specific details.
+marina-specific details. Fragments are vessel-agnostic — do not use a boat name,
+"this vessel", or "this boat"; write about the equipment model itself.
 
 ALLOWED (operator / guest runbook):
 - Controls, modes, indicators, and displays the operator actually uses

@@ -8,6 +8,12 @@ Generate the boat overview system module (Learn the Boat + Know tab).
 Use INPUT SNAPSHOT: vessel.name, hull_model.display_name, vessel.vessel_type, equipment list.
 Audience: charter guests on day one. Tone: orientation — where things are, layout, safety gear locations.
 
+Reader voice (style — strong preference):
+- Establish the boat once by recorded name from the snapshot.
+- After that, prefer "the …" / bare facts; use "she"/"her" only when the boat is the actor/owner and clarity needs it.
+- Prefer that over "this vessel" / "this boat" / "this yacht".
+- Repeat the name only for disambiguation or reorientation.
+
 Produce id "overview", icon "🗺️", locs for cockpit/helm/saloon.
 Include summary (1-2 sentences), learnChecks (6-10 walkthrough items), and sections:
 - About [vessel name] (prose) — hull model facts from snapshot only; prose sections MUST use field "c" for paragraph text

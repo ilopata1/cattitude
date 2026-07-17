@@ -147,7 +147,41 @@ not erase where a fact came from.
 - When several facts support one sentence, retain the extra facts as
   provenance metadata rather than rendering duplicate prose.
 
-## 9. Uncertainty is data
+## 9. Candidacy vs membership for section inputs
+
+Graph reachability establishes **candidacy** for section inputs; documented
+visibility establishes **membership**.
+
+- A control path (or platform edge) that crosses a section boundary makes a
+  device a *candidate* for that section’s input set.
+- Summary-depth membership requires a **documented present platform page** or
+  a **documented member surface** that shows the device is controllable or
+  monitorable from this station.
+- Reachable-but-undocumented candidates stay out of summary prose (they may
+  later join when config-layer evidence documents them).
+- Path devices (bridges, COIs) that enable the edge stay at provenance /
+  troubleshooting depth — never named in body prose.
+
+## 10. Reader voice is global style guidance
+
+Guest-facing guide prose (Know, Do, Fix, Home rules, Stage 4 composers) shares
+one reader-voice standard — not a Solar-only rule.
+
+- Establish the boat once by recorded display name. Missing name remains a
+  hard composition error when a section requires it.
+- After that, prefer direct system / equipment / screen references (“the …”)
+  or omit any vessel reference.
+- Use “she” / “her” only when the boat itself is meaningfully the actor or
+  owner and the pronoun improves clarity — not as a default stand-in for
+  “the” or the name.
+- Prefer the above over deictics (“this vessel”, “this boat”, “this yacht”,
+  bare “the vessel” as a name substitute).
+- Repeat the vessel name only for disambiguation or deliberate reorientation.
+- These are **strong style preferences**. Detectors emit `style_warnings` for
+  review; they do not fail Stage 4 `pass` or block `generate_module` by
+  default. See `guide_reader_voice.py`.
+
+## 11. Uncertainty is data
 
 Flags are part of the model, not embarrassing residue.
 
@@ -162,7 +196,7 @@ Flags are part of the model, not embarrassing residue.
 - Operator caveats and conditional scope limits become integrated prose once
   per underlying fact.
 
-## 10. Promotion follows review, not mere execution
+## 12. Promotion follows review, not mere execution
 
 A successful command is not sufficient evidence of correctness.
 
@@ -176,7 +210,8 @@ A successful command is not sufficient evidence of correctness.
 ## Reference documents
 
 - `backend/guide-pipeline-plan.md`
-- `backend/equipment-classification-spec-v3.1.md` through `v4.8.md`
+- `backend/equipment-classification-spec-v3.1.md` through `v4.11.md`
+- `backend/guide_reader_voice.py`
 - `backend/tests/fixtures/POLICY.md`
 - `backend/tests/fixtures/README.md`
 - `backend/fixtures/pipeline/README.md`

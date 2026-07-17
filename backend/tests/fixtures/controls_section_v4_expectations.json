@@ -1,0 +1,42 @@
+{
+  "fixture_auth": "Fixture-Auth: chat Controls v4.10 — section inputs + composition expectations (xx–xxii); Alphas excluded pending config-layer evidence",
+  "version": "v4.10",
+  "description": "Controls and Monitoring Stage 4 expectations for Outremer / Supernova.",
+  "recorded_vessel_display_name": "Supernova",
+  "must_exclude_from_summary": [
+    "alpha_pro_iii_port",
+    "alpha_pro_iii_stbd"
+  ],
+  "alpha_exclusion_note": "Alphas are network-reachable candidates but not on a documented present platform page or member surface in current sources; config-layer evidence may later admit them.",
+  "expected_inputs": {
+    "contributors": [
+      {"device_key": "czone_2_0", "depth": "full"},
+      {"device_key": "czone_touch_7", "depth": "full"},
+      {"device_key": "mass_combi_pro_1", "depth": "summary"},
+      {"device_key": "mass_combi_pro_2", "depth": "summary"},
+      {"device_key": "mli_ultra_1", "depth": "summary"},
+      {"device_key": "mli_ultra_2", "depth": "summary"},
+      {"device_key": "mli_ultra_3", "depth": "summary"},
+      {"device_key": "coi", "depth": "provenance"},
+      {"device_key": "masterbus_bridge_interface", "depth": "provenance"}
+    ]
+  },
+  "solar_leaf_member_keys": ["victron_mppt_150_60", "victron_mppt"],
+  "required_present_pages": [
+    "Favourites",
+    "Modes",
+    "Control",
+    "Monitoring",
+    "Alarms",
+    "Inverter Charger"
+  ],
+  "gated_off_pages": ["AC Mains", "Climate"],
+  "forbidden_prose_substrings": [
+    "control surface",
+    "masterbus_bridge",
+    "alpha_pro",
+    "not fitted",
+    "does not appear"
+  ],
+  "style_deictics_soft": ["this vessel", "this boat", "this yacht"]
+}

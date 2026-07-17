@@ -15,6 +15,7 @@ SYSTEM_IDS: list[str] = [
     "safety",
     "sails",
     "engines",
+    "controls",
     "electrical",
     "batteries",
     "water",
@@ -73,6 +74,14 @@ SYSTEM_CATALOG: dict[str, dict[str, Any]] = {
         "focus": "Twin diesel engines, compartments, start/stop, raw water seacocks",
         "review_title": "Engines & compartments",
         "guest_label": "Learn + Know — propulsion",
+    },
+    "controls": {
+        "icon": "🎛️",
+        "locs": ["saloon", "helm"],
+        "equipment_categories": ["electrical_dc"],
+        "focus": "CZone / digital switching station — modes, circuits, monitoring, alarms",
+        "review_title": "Controls and Monitoring",
+        "guest_label": "Learn + Know — controls",
     },
     "electrical": {
         "icon": "⚡",

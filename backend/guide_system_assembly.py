@@ -20,7 +20,7 @@ from typing import Any
 from guide_module_catalog import SYSTEM_CATALOG
 
 # Systems that share equipment categories and therefore need home routing.
-_OVERLAP_PAIR: tuple[str, str] = ("electrical", "batteries")
+_OVERLAP_CATEGORIES = frozenset({"electrical_dc", "electrical_ac_shore_power"})
 
 # Keywords scored against "manufacturer model" (lowercased).
 # Higher-specificity phrases should be listed; first matching table wins via scores.
@@ -55,6 +55,14 @@ _BATTERIES_HOME_KEYWORDS: tuple[str, ...] = (
     "hub 1",
 )
 
+_CONTROLS_HOME_KEYWORDS: tuple[str, ...] = (
+    "czone",
+    "touch 7",
+    "touch 10",
+    "digital switching",
+    "output interface",
+)
+
 _ELECTRICAL_HOME_KEYWORDS: tuple[str, ...] = (
     "busbar",
     "fuse",
@@ -63,27 +71,39 @@ _ELECTRICAL_HOME_KEYWORDS: tuple[str, ...] = (
     "battery switch",
     "ml switch",
     "ml-remote",
-    "digital switching",
-    "output interface",
-    "coi",
-    "czone",
     "distribution",
     "isolation",
     "galvanic",
     "panel",
     "shore inlet",
     "ac inlet",
+    "coi",
+    "masterbus",
 )
 
 # Role buckets interior to a system module (ordered guest skeleton).
 _SYSTEM_ROLE_SKELETONS: dict[str, list[dict[str, Any]]] = {
+    "controls": [
+        {
+            "id": "station",
+            "title": "Control station",
+            "blurb": "How you switch and monitor systems day to day.",
+            "keywords": (
+                "czone",
+                "touch",
+                "touchscreen",
+                "display",
+                "digital switching",
+            ),
+        },
+        {"id": "other", "title": None, "blurb": None, "keywords": ()},
+    ],
     "electrical": [
         {
             "id": "hub_controls",
             "title": "Controls & displays",
             "blurb": "How you switch and monitor loads day to day.",
             "keywords": (
-                "czone",
                 "touchscreen",
                 "display",
                 "panel",
@@ -112,6 +132,7 @@ _SYSTEM_ROLE_SKELETONS: dict[str, list[dict[str, Any]]] = {
                 "galvanic",
                 "distribution",
                 "coi",
+                "masterbus",
             ),
         },
         {"id": "other", "title": None, "blurb": None, "keywords": ()},
@@ -184,11 +205,10 @@ def _keyword_hits(text: str, keywords: tuple[str, ...]) -> int:
 def primary_system_for_equipment(row: dict[str, Any]) -> str | None:
     """Confident primary Know chapter, or None when category membership alone applies.
 
-    Only resolves the Electrical ↔ Batteries overlap today. Other categories keep
-    the catalog's multi-system membership (usually a single system).
+    Resolves Controls ↔ Electrical ↔ Batteries overlap for ``electrical_dc``.
     """
     category = row.get("system_category") or ""
-    if category not in ("electrical_dc", "electrical_ac_shore_power"):
+    if category not in _OVERLAP_CATEGORIES:
         return None
     if category == "electrical_ac_shore_power":
         return "electrical"
@@ -197,18 +217,21 @@ def primary_system_for_equipment(row: dict[str, Any]) -> str | None:
     if not text:
         return None
 
-    batteries_score = _keyword_hits(text, _BATTERIES_HOME_KEYWORDS)
-    electrical_score = _keyword_hits(text, _ELECTRICAL_HOME_KEYWORDS)
-    if batteries_score == 0 and electrical_score == 0:
+    scores = {
+        "controls": _keyword_hits(text, _CONTROLS_HOME_KEYWORDS),
+        "batteries": _keyword_hits(text, _BATTERIES_HOME_KEYWORDS),
+        "electrical": _keyword_hits(text, _ELECTRICAL_HOME_KEYWORDS),
+    }
+    if not any(scores.values()):
         return None
-    if batteries_score > electrical_score:
-        return "batteries"
-    if electrical_score > batteries_score:
-        return "electrical"
-    # Tie: prefer batteries for charge/storage phrasing already half-matched;
-    # otherwise leave unclassified so legacy dual membership remains.
-    if batteries_score and electrical_score:
+    ranked = sorted(scores.items(), key=lambda kv: (-kv[1], kv[0]))
+    best, best_score = ranked[0]
+    second_score = ranked[1][1] if len(ranked) > 1 else 0
+    if best_score == 0:
         return None
+    if best_score > second_score:
+        return best
+    # Tie involving batteries/electrical without a clear winner — leave dual.
     return None
 
 
@@ -222,6 +245,9 @@ def equipment_belongs_on_system(row: dict[str, Any], system_id: str) -> bool:
         return False
     primary = primary_system_for_equipment(row)
     if primary is None:
+        # Controls is keyword-primary only — never via category dual membership.
+        if system_id == "controls":
+            return False
         return True
     return primary == system_id
 
@@ -245,6 +271,7 @@ def draft_target_systems(
         system_id
         for system_id, meta in SYSTEM_CATALOG.items()
         if category in (meta.get("equipment_categories") or [])
+        and system_id != "controls"
     ]
 
 
@@ -281,10 +308,17 @@ def _pick_system_entry(
     if primary != system_id:
         return None
 
-    # Legacy fragments often wrote energy gear into electrical only (or both).
-    # When this system is the primary home, accept the overlap partner's copy.
-    alt = _OVERLAP_PAIR[1] if system_id == _OVERLAP_PAIR[0] else _OVERLAP_PAIR[0]
-    if system_id in _OVERLAP_PAIR:
+    # Legacy fragments often wrote energy / hub gear into electrical only.
+    # When this system is the primary home, accept a legacy copy from electrical
+    # (or batteries for the electrical↔batteries dual-dump case).
+    legacy_alts: tuple[str, ...] = ()
+    if system_id == "batteries":
+        legacy_alts = ("electrical",)
+    elif system_id == "electrical":
+        legacy_alts = ("batteries",)
+    elif system_id == "controls":
+        legacy_alts = ("electrical",)
+    for alt in legacy_alts:
         entry = sections_map.get(alt)
         if isinstance(entry, dict) and entry.get("sections"):
             return entry

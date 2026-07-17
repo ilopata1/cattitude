@@ -1091,6 +1091,29 @@ def generate_module(
                 payload = _finalize_system_payload(content_key, payload, reference)
         _validate_module_payload(content_type, content_key, payload)
 
+        reader_voice_style = None
+        try:
+            from guide_reader_voice import assess_module_reader_voice
+
+            vessel_name = ""
+            vessel_blob = (snapshot_payload.get("vessel") or {}) if isinstance(
+                snapshot_payload, dict
+            ) else {}
+            guide_ctx = vessel_blob.get("guide_context") or {}
+            if isinstance(guide_ctx, dict):
+                vessel_name = str(
+                    guide_ctx.get("display_name")
+                    or guide_ctx.get("vessel_display_name")
+                    or ""
+                ).strip()
+            if not vessel_name:
+                vessel_name = str(vessel_blob.get("name") or "").strip()
+            reader_voice_style = assess_module_reader_voice(
+                payload, vessel_display_name=vessel_name
+            )
+        except Exception:
+            reader_voice_style = None
+
         module_id, reused_draft = _save_generated_draft(
             conn,
             vessel_id=vessel_id,
@@ -1103,7 +1126,7 @@ def generate_module(
         )
 
         _complete_generation_run(conn, run_id)
-        return {
+        result = {
             "run_id": run_id,
             "module_id": module_id,
             "content_type": content_type,
@@ -1115,6 +1138,10 @@ def generate_module(
             "template_assembly": template_builder is not None,
             "equipment_content_library": fragment_system_payload is not None,
         }
+        if reader_voice_style is not None:
+            # Report-only — style warnings never fail generation.
+            result["reader_voice_style"] = reader_voice_style
+        return result
     except Exception as exc:
         _fail_generation_run(conn, run_id, str(exc))
         raise GuideGenerationError(

@@ -23,4 +23,6 @@ If no propulsion equipment is listed, produce a short placeholder module explain
 
 Do NOT include photo sections. Do not invent engine specs not in snapshot or reference.
 
+Reader voice (style): establish the boat once by recorded name; then prefer "the …" / bare facts. Use she/her only when the boat is the actor/owner. Prefer over "this vessel" / "this boat".
+
 Return JSON only — one system object, no wrapper.

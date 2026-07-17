@@ -2,8 +2,10 @@
 
 Section order: capability_summary → monitoring → adjusting → troubleshooting.
 
-Rules (spec v4.9):
-  - Vessel addressed by recorded vessel_display_name (+ she); never 'this vessel'
+Rules (spec v4.9 + global reader voice):
+  - Establish boat by recorded vessel_display_name; then prefer “the …” / bare facts
+  - She/her only when the boat is the actor/owner and clarity needs it (style)
+  - Prefer over deictics; avoid decorative vessel pronouns
   - Role/function first; manufacturer+model in parentheses on first use only
   - ≤1 parenthetical per sentence (split overloaded sentences)
   - Confidence via phrasing (about / ranges / up to); no source cites in prose
@@ -28,6 +30,23 @@ from vessel_evidence import (
     merge_evidence_flags_into_graph_flags,
     validate_evidence_attachments,
 )
+from guide_reader_voice import (
+    VesselNameMissing,
+    assess_reader_voice_style,
+    resolve_vessel_display_name,
+)
+
+# Re-export for callers that historically imported from this module.
+__all__ = [
+    "VesselNameMissing",
+    "compose_solar_section",
+    "evaluate_solar_draft",
+    "resolve_vessel_display_name",
+    "flag_reader_relevance",
+    "lint_absence_prose",
+    "lint_prose_economy",
+    "lint_reader_vocabulary",
+]
 
 FLAG_READER_RELEVANCE: dict[str, str] = {
     # Absences / gated-off — shape wording, never render as 'not fitted'
@@ -82,7 +101,8 @@ _FORBIDDEN_VOCAB_RES = (
     re.compile(r"\bquantity\s+\d+\b", re.I),
     re.compile(r"\b(?:when needed|if needed|as needed)\b", re.I),
     re.compile(r"\bcontrol surfaces?\b", re.I),
-    re.compile(r"\bthis vessel\b", re.I),
+    # Deictics (this vessel/boat) are style warnings in guide_reader_voice —
+    # not hard vocabulary failures.
     re.compile(r"\bdoes not appear\b", re.I),
     re.compile(r"\bis described in the manuals\b", re.I),
     re.compile(r"\bnot (?:confirmed )?fitted\b", re.I),
@@ -108,10 +128,6 @@ SECTION_ORDER = (
 )
 
 
-class VesselNameMissing(ValueError):
-    """Raised when composition needs vessel_display_name and it is absent."""
-
-
 def flag_reader_relevance(
     flag_name: str,
     *,
@@ -122,22 +138,6 @@ def flag_reader_relevance(
     if fname == "unresolved_dependency":
         return "context_shaping"
     return base
-
-
-def resolve_vessel_display_name(equipment_doc: dict[str, Any]) -> str:
-    """Return recorded display name or raise — never invent."""
-    for key in ("vessel_display_name", "vessel_name", "display_name"):
-        val = str(equipment_doc.get(key) or "").strip()
-        if val and val.lower() not in {"outremer_55n60", "outremer_example"}:
-            # Reject fixture keys mistaken for names.
-            if re.fullmatch(r"[a-z0-9_]+", val) and "_" in val:
-                continue
-            return val
-    raise VesselNameMissing(
-        "vessel_display_name is not recorded on the vessel fixture "
-        f"(key={equipment_doc.get('vessel')!r}). Supply the boat's name; "
-        "do not invent one."
-    )
 
 
 def display_name(device_key: str) -> str:
@@ -856,8 +856,9 @@ def evaluate_solar_draft(composed: dict[str, Any]) -> dict[str, Any]:
     no_gx_sentence = "gx" not in lower and "vrm" not in lower
     no_mppt_display_caveat = "mppt control" not in lower or "optional" not in lower
 
-    # (xi) vessel named
-    named_ok = bool(boat) and boat.lower() in lower and "this vessel" not in lower
+    # (xi) vessel established by name — hard. Deictics / name budget — style only.
+    voice = assess_reader_voice_style(draft, vessel_display_name=boat)
+    named_ok = bool(boat) and voice["established"]
 
     # (xii) first-use paren pattern present; avoid repeating full Victron SmartSolar strings many times
     model_repeats = len(re.findall(r"Victron SmartSolar MPPT", draft))
@@ -905,7 +906,11 @@ def evaluate_solar_draft(composed: dict[str, Any]) -> dict[str, Any]:
         "viii": "No per-action enumeration" if checks["no_per_action_enumeration"] else "fail",
         "ix′": f"Order {block_order}" if checks["ordering_follows_template"] else f"bad {block_order}",
         "x": "Evidence-clean inference" if checks["inference_evidence_clean"] else "fail",
-        "xi": "Vessel named" if checks["vessel_named"] else "missing/forbidden this vessel",
+        "xi": (
+            "Vessel established by name"
+            if checks["vessel_named"]
+            else "missing recorded vessel display name in prose"
+        ),
         "xii": "Role-first, model once" if checks["role_first_model_once"] else "fail",
         "xiii": "No catalog vocabulary" if checks["no_catalog_vocabulary"] else "fail",
         "xiv": "No verified-fact hedging" if checks["no_verified_hedging"] else "fail",
@@ -924,6 +929,8 @@ def evaluate_solar_draft(composed: dict[str, Any]) -> dict[str, Any]:
     return {
         "checks": checks,
         "pass": all(checks.values()),
+        "style_warnings": voice.get("style_warnings") or [],
+        "reader_voice": voice,
         "version": "v4",
         "obsoleted_criteria": {
             "iv": "flags_as_caveats (GX/optional-display caveat sentences)",

@@ -15,4 +15,11 @@ Prose sections MUST use field "c" for paragraph text (not "text" or "content").
 
 Use ONLY facts from INPUT SNAPSHOT and RELEVANT EQUIPMENT below. Match REFERENCE structure and tone when provided.
 
+Reader voice (style — strong preference, not a hard schema rule):
+- Establish the boat once by recorded display name from the snapshot.
+- After that, prefer direct system/equipment/screen references using "the", or omit any vessel reference.
+- Use "she"/"her" only when the boat itself is meaningfully the actor or owner and the pronoun helps clarity.
+- Prefer the above over deictics such as "this vessel", "this boat", "this yacht", or bare "the vessel".
+- Repeat the vessel name only for disambiguation or a deliberate reorientation.
+
 Return JSON only — one system object, no wrapper.

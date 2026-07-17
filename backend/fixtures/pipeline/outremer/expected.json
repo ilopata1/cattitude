@@ -26,7 +26,7 @@
   },
   "sections": {
     "czone_touch_7": {
-      "value": "electrical",
+      "value": "controls",
       "source": "lookup"
     },
     "coi": {
@@ -171,12 +171,13 @@
     },
     {
       "kind": "hosts_control",
-      "in_section": "electrical",
+      "in_section": "controls",
       "to_device": "mass_combi_pro_1"
     }
   ],
   "notes": {
-    "fixture_auth": "Fixture-Auth: chat instance-policy + VESSEL_ARTIFACT batch — outremer_post_batch_b primary with distinct Combi/MLI/Alpha instances",
+    "hosts_control_section": "controls after Touch 7 home move (v4.10)",
+    "fixture_auth": "Fixture-Auth: chat instance-policy + VESSEL_ARTIFACT batch — outremer_post_batch_b primary with distinct Combi/MLI/Alpha instances; controls home + section inputs v4.10",
     "snapshot": "outremer_post_batch_b (primary) — distinct multi-unit expansion",
     "instance_policy": "interchangeable keeps quantity on one node; distinct expands. Stage 4 may regroup identical-role instances for prose.",
     "quantity_encoding": "victron_mppt quantity=2 stays collapsed (interchangeable).",

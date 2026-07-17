@@ -29,6 +29,8 @@ Invoke-Step "Stage 1 stability voting + partition" "python scripts/verify_intera
 Invoke-Step "Stage 1 procedure inventory" "python scripts/verify_interaction_profile_procedures.py"
 Invoke-Step "Stage 2 system graph fixtures" "python scripts/verify_system_graph.py"
 Invoke-Step "System assembly fixtures" "python scripts/verify_system_assembly.py"
+Invoke-Step "Solar section v4" "python scripts/verify_solar_section_v4.py"
+Invoke-Step "Controls section v4.10" "python scripts/verify_controls_section_v4.py"
 
 if ($CompareScratch -or $Regression) {
     Invoke-Step "Live scratch vs SmartSolar golden" "python scripts/compare_smartsolar_scratch.py"

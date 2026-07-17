@@ -62,7 +62,8 @@ def main() -> int:
         ("Balmar", "MC-624 regulator", "electrical_dc", "batteries"),
         ("Silentwind", "Hybrid 1000", "electrical_dc", "batteries"),
         ("Mass", "Combi Pro", "electrical_dc", "batteries"),
-        ("CZone", "system touchscreen", "electrical_dc", "electrical"),
+        ("CZone", "system touchscreen", "electrical_dc", "controls"),
+        ("CZone", "Touch 7", "electrical_dc", "controls"),
         ("Blue Sea", "ML switch", "electrical_dc", "electrical"),
         ("Blue Sea", "Class T fuse holder", "electrical_dc", "electrical"),
         ("ProInstaller", "busbar", "electrical_dc", "electrical"),
@@ -122,9 +123,9 @@ def main() -> int:
     fragments = [
         _row(
             "CZone",
-            "system",
+            "Touch 7",
             "electrical_dc",
-            systems={"electrical": ["CZone home page"]},
+            systems={"electrical": ["CZone home page"], "controls": ["CZone home page"]},
         ),
         _row(
             "Victron Energy",
@@ -151,6 +152,18 @@ def main() -> int:
         ),
     ]
 
+    controls = assemble_system_from_fragments("controls", fragments)
+    assert controls is not None
+    ctitles = [s["t"] for s in controls["sections"]]
+    check(
+        "CZone home page" in ctitles,
+        f"controls missing CZone; got {ctitles}",
+    )
+    check(
+        "Class T location" not in ctitles,
+        f"controls must not include Class T; got {ctitles}",
+    )
+
     electrical = assemble_system_from_fragments("electrical", fragments)
     assert electrical is not None
     titles = [s["t"] for s in electrical["sections"]]
@@ -163,14 +176,12 @@ def main() -> int:
         f"electrical must not include MLI; got {titles}",
     )
     check(
-        "CZone home page" in titles and "Class T location" in titles,
-        f"electrical missing panel gear; got {titles}",
+        "CZone home page" not in titles,
+        f"electrical must not include CZone after controls home; got {titles}",
     )
     check(
-        titles.index("Controls & displays")
-        < titles.index("CZone system")
-        < titles.index("Distribution & protection"),
-        f"electrical skeleton order wrong: {titles}",
+        "Class T location" in titles,
+        f"electrical missing panel gear; got {titles}",
     )
 
     batteries = assemble_system_from_fragments("batteries", fragments)

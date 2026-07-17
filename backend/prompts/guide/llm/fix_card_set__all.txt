@@ -11,5 +11,7 @@ Cover engines, electrical, plumbing/heads, water, batteries, anchoring, AC, ding
 Each card: icon (emoji only — never Material/Flutter icon names like Warning or Battery_Alert), cat (short key), catL (display category), title, steps (5-8 actionable strings).
 Include charter company contact in steps where guests should call for help (VHF channel from context).
 
+Reader voice (style): when a vessel reference is needed, establish by recorded name; then prefer "the …" / bare facts over she/her decoration or "this boat".
+
 Match REFERENCE MODULE count and categories when provided; update facts from snapshot.
 Return JSON only — a JSON array of fix cards, no wrapper.
