@@ -33,6 +33,7 @@ _CORROBORATION: list[tuple[str, re.Pattern[str]]] = [
     ("climate", re.compile(r"clim|air.?cond|hvac", re.I)),
     ("solar", re.compile(r"solar|mppt|panneau", re.I)),
     ("zeus", re.compile(r"\bzeus\b", re.I)),
+    ("electronic", re.compile(r"\belectronic\b", re.I)),
 ]
 
 

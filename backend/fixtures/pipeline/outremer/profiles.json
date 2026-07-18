@@ -2575,5 +2575,59 @@
     ],
     "repairs": [],
     "needs_rextraction": false
+  },
+  "bg_zeus_sr": {
+    "device": {
+      "manufacturer": "B&G",
+      "model": "Zeus SR 12",
+      "category_freeform": "chartplotter / MFD"
+    },
+    "control_surfaces": [],
+    "operator_actions": [],
+    "networks": {
+      "speaks": [],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": false,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": false
+    },
+    "requires_devices": [],
+    "safety_role": {
+      "is_protective_device": false,
+      "has_manual_override": false,
+      "has_emergency_procedure": false
+    },
+    "ui_pages": [],
+    "validation_flags": [],
+    "notes": "Owner-confirmed inventory stub — interaction profile pending extraction"
+  },
+  "bg_halo_20_plus": {
+    "device": {
+      "manufacturer": "B&G",
+      "model": "Halo 20+",
+      "category_freeform": "radar"
+    },
+    "control_surfaces": [],
+    "operator_actions": [],
+    "networks": {
+      "speaks": [],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": false,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": false
+    },
+    "requires_devices": [],
+    "safety_role": {
+      "is_protective_device": false,
+      "has_manual_override": false,
+      "has_emergency_procedure": false
+    },
+    "ui_pages": [],
+    "validation_flags": [],
+    "notes": "Owner-confirmed inventory stub — interaction profile pending extraction"
   }
 }

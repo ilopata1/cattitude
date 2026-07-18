@@ -1,7 +1,7 @@
 {
   "vessel": "outremer_55n60",
   "notes": "Touch 7 runs_platform czone_2_0; platform_version_unconfirmed until version photo. Circuit/monitoring inventory sourced from channel_map Ind C (p46); Modes/Favourites/alarm config still config_unsourced until .zcf or screen walkthrough. Climate gate unchanged.",
-  "fixture_auth": "Fixture-Auth: chat instance-policy + VESSEL_ARTIFACT batch — outremer_post_batch_b primary with distinct Combi/MLI/Alpha instances; Fixture-Auth: chat Solar v3 — vessel_facts observation/inference + evidence refs; Fixture-Auth: chat Solar v4 — vessel_display_name=Supernova; Fixture-Auth: chat channel_map founding — Ind C adjudicated channel_map + COI located instances",
+  "fixture_auth": "Fixture-Auth: chat instance-policy + VESSEL_ARTIFACT batch — outremer_post_batch_b primary with distinct Combi/MLI/Alpha instances; Fixture-Auth: chat Solar v3 — vessel_facts observation/inference + evidence refs; Fixture-Auth: chat Solar v4 — vessel_display_name=Supernova; Fixture-Auth: chat channel_map founding — Ind C adjudicated channel_map + COI located instances; Fixture-Auth: chat owner OPT corroboration — Zeus SR 12 x2, Halo 20+, freezer/wifi/electronic/windlass/winches",
   "installation_notes": [
     {
       "applies_to": [
@@ -9,6 +9,14 @@
       ],
       "source": "AC schematic folio 10",
       "note": "230V air conditioning present (aft cabin aircon + AC pump) but whether HVAC is CZone-integrated 'supported HVAC' is unknown — Climate page stays unresolved (AC-present ≠ CZone-supported-HVAC)."
+    },
+    {
+      "applies_to": [
+        "czone_2_0",
+        "coi"
+      ],
+      "source": "owner confirmation",
+      "note": "Owner-confirmed fitted CZone OPT circuits: freezer; wifi; electronic; windlass control; electric winch port and starboard. See inventory for Zeus SR 12 chartplotters x2 and B&G Halo 20+ radar."
     }
   ],
   "relations": [],
@@ -341,6 +349,40 @@
       "system_category": "electrical_dc",
       "quantity": 1,
       "instance_handling": "interchangeable"
+    },
+    {
+      "device_key": "bg_zeus_sr",
+      "catalog_key": "bg_zeus_sr",
+      "manufacturer": "B&G",
+      "model": "Zeus SR 12",
+      "description": "B&G Zeus SR 12 inch chartplotter / MFD",
+      "system_category": "navigation_electronics",
+      "quantity": 2,
+      "instance_handling": "distinct",
+      "provenance": "owner confirmation; channel_map Ind C [OPT] Zeus x2",
+      "instances": [
+        {
+          "instance_key": "bg_zeus_sr_1",
+          "instance_label": "Zeus SR 12 (unit 1)",
+          "unit_index": 1
+        },
+        {
+          "instance_key": "bg_zeus_sr_2",
+          "instance_label": "Zeus SR 12 (unit 2)",
+          "unit_index": 2
+        }
+      ]
+    },
+    {
+      "device_key": "bg_halo_20_plus",
+      "catalog_key": "bg_halo_20_plus",
+      "manufacturer": "B&G",
+      "model": "Halo 20+",
+      "description": "B&G Halo 20+ radar",
+      "system_category": "navigation_electronics",
+      "quantity": 1,
+      "instance_handling": "interchangeable",
+      "provenance": "owner confirmation; channel_map Ind C [OPT] Radar"
     }
   ],
   "vessel_artifact_facts": [

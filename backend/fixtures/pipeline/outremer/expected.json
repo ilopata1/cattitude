@@ -24,7 +24,10 @@
     "czone_2_0": "PLATFORM",
     "coi_1": "BRIDGE",
     "coi_2": "BRIDGE",
-    "coi_3": "BRIDGE"
+    "coi_3": "BRIDGE",
+    "bg_zeus_sr_1": "ENDPOINT",
+    "bg_zeus_sr_2": "ENDPOINT",
+    "bg_halo_20_plus": "ENDPOINT"
   },
   "sections": {
     "czone_touch_7": {
@@ -121,6 +124,18 @@
     },
     "coi_3": {
       "value": "electrical",
+      "source": "lookup"
+    },
+    "bg_zeus_sr_1": {
+      "value": "nav",
+      "source": "lookup"
+    },
+    "bg_zeus_sr_2": {
+      "value": "nav",
+      "source": "lookup"
+    },
+    "bg_halo_20_plus": {
+      "value": "nav",
       "source": "lookup"
     }
   },

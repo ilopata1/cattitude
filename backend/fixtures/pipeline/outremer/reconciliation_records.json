@@ -13,7 +13,10 @@
         "folios 17, 23",
         "synoptic 2D"
       ],
-      "superseded_by": ["alpha_pro_iii_port", "alpha_pro_iii_stbd"],
+      "superseded_by": [
+        "alpha_pro_iii_port",
+        "alpha_pro_iii_stbd"
+      ],
       "inventory_action": "none"
     },
     {
@@ -31,7 +34,10 @@
     },
     {
       "id": "rec_alpha_pro_iii_added",
-      "device_keys_now": ["alpha_pro_iii_port", "alpha_pro_iii_stbd"],
+      "device_keys_now": [
+        "alpha_pro_iii_port",
+        "alpha_pro_iii_stbd"
+      ],
       "action": "audit_only",
       "disposition": "owner_added",
       "summary": "Alpha Pro III ×2 added per folios 17/23 + synoptic 2D (MBUS 01/10/11).",
@@ -98,6 +104,21 @@
         "folios 2D, 2E, 11"
       ],
       "inventory_action": "none"
+    },
+    {
+      "id": "rec_channel_map_opt_nav_owner",
+      "action": "audit_only",
+      "disposition": "owner_confirmed_fitted",
+      "summary": "Owner confirmed channel_map OPT nav/ancillary circuits as fitted: freezer; Zeus SR 12 chartplotters x2; wifi; electronic; Halo 20+ radar; windlass control; electric winches port/stbd. Inventory rows added for Zeus SR and Halo 20+; other tokens via installation_note. CUS courtesy / other OPT (watermaker, fans, WC, deck wash, etc.) unchanged.",
+      "evidence": [
+        "owner confirmation (chat)",
+        "channel_map Ind C [OPT] Zeus x2 / Radar / Freezer / Wifi / Electronic / Windlass / ELEC WINCH"
+      ],
+      "device_keys_now": [
+        "bg_zeus_sr",
+        "bg_halo_20_plus"
+      ],
+      "inventory_action": "added"
     }
   ]
 }
