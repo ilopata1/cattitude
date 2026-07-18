@@ -104,7 +104,8 @@ attest, where it can mislead, and how conflicts were resolved.
 | Manufacturer manual | Model capabilities, procedures, conditional features | Describes options not installed; may be wrong edition or setup-only |
 | Filename / admin metadata | Discovery and cataloging | Can disagree with the document's self-declared edition |
 | Schematic / commissioning drawing | Intended topology and identifiers | Can be stale, generic, or internally inconsistent |
-| Device configuration | Vessel-specific screens, circuits, and modes | May be absent, exported from another revision, or incomplete |
+| Builder documentation (`channel_map`, etc.) | Human-readable shadow of yard switching / circuit config | Unbounded formats; column-shift and option-vs-fitted confusion — adjudicated extract only |
+| Device configuration (machine, e.g. `.zcf`) | Vessel-specific screens, circuits, and modes | May be absent, exported from another revision, or incomplete |
 | Owner inventory / survey | Current target state, quantities, labels | May mix attestation, inference, and shorthand |
 | Physical inspection / photo | Installed identity, placement, visible geometry | Shows one moment; does not by itself prove behavior or network membership |
 | Live LLM extraction | Scalable structured reading | Can omit, flap, merge alternatives, or infer from taxonomy leakage |

@@ -1,20 +1,63 @@
 {
   "vessel": "outremer_55n60",
-  "fixture_auth": "Fixture-Auth: chat Solar v3 — ingest deck photos into vessel artifact store",
+  "fixture_auth": "Fixture-Auth: chat channel_map founding — Ind C C-ZONE CHANELS adjudicated and approved; deck photos retained",
   "artifacts": [
     {
       "id": "photo_davit_array",
       "kind": "photo",
       "path": "photo_davit_array.jpg",
       "caption": "Davit rigid solar array (deck inspection)",
-      "subjects": ["davit", "rigid_panels", "victron_mppt_150_60"]
+      "subjects": [
+        "davit",
+        "rigid_panels",
+        "victron_mppt_150_60"
+      ]
     },
     {
       "id": "photo_coachroof_boom",
       "kind": "photo",
       "path": "photo_coachroof_boom.jpg",
       "caption": "Coachroof semi-flex array with boom shading geometry",
-      "subjects": ["coachroof", "semi_flex", "boom_shading", "victron_mppt"]
+      "subjects": [
+        "coachroof",
+        "semi_flex",
+        "boom_shading",
+        "victron_mppt"
+      ]
+    },
+    {
+      "id": "channel_map_czone_chanels_ind_c",
+      "kind": "channel_map",
+      "source_class": "channel_map",
+      "tier": 4,
+      "layer": "config",
+      "path": "channel_map_czone_chanels_ind_c.pdf",
+      "caption": "Owners' manual 55N60 p46 C-ZONE CHANELS",
+      "citation": {
+        "source_doc": "Owners' manual 55N60 / OUTREMER YACHTING",
+        "page": 46,
+        "title_verbatim": "C-ZONE CHANELS",
+        "boat_model": "OUT55N60",
+        "version_line": "Offshore / MFS Custom : Bureau Lit",
+        "revision_date": "05/05/2026",
+        "revision_index": "Ind C"
+      },
+      "supersedes_where_conflicting": [
+        {
+          "target_class": "schematic",
+          "note": "Revision 05/05/2026 Ind C postdates 2023-era DC folios; prefer this map for circuit naming / COI channel assignment where they conflict"
+        }
+      ],
+      "adjudication_status": "approved",
+      "subjects": [
+        "czone",
+        "coi",
+        "output_interface",
+        "fuse_box",
+        "circuit_inventory"
+      ],
+      "extract_path": "channel_map_extract.json",
+      "parsed_path": "channel_map_parsed.md"
     }
   ]
 }

@@ -13,6 +13,7 @@ Reader voice (style — strong preference):
 - After that, prefer "the …" / bare facts; use "she"/"her" only when the boat is the actor/owner and clarity needs it.
 - Prefer that over "this vessel" / "this boat" / "this yacht".
 - Repeat the name only for disambiguation or reorientation.
+- Cross-section pointers: "can be found in the <Section> section of this guide" — not "lives in" / "home procedures".
 
 Produce id "overview", icon "🗺️", locs for cockpit/helm/saloon.
 Include summary (1-2 sentences), learnChecks (6-10 walkthrough items), and sections:

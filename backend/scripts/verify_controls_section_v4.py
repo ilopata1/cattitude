@@ -122,12 +122,31 @@ def main() -> int:
     if not evaluation.get("pass"):
         failures.append(f"evaluation failed: {evaluation.get('notes')}")
 
-    # Style warnings are report-only (do not fail).
+    # Style warnings are report-only (do not fail), except authorial xref
+    # voice should be clean on the Controls composer after v4.13.
     style = evaluation.get("style_warnings") or []
     for soft in expect.get("style_deictics_soft") or []:
         if soft.lower() in draft.lower():
             # Composer should prefer name/she; warn in output if still present.
             print(f"STYLE — deictic still present: {soft!r}")
+
+    authorial = [w for w in style if w.get("code") == "authorial_xref_voice"]
+    if authorial:
+        failures.append(f"authorial xref voice still present: {authorial}")
+
+    link_targets = {
+        str(link.get("target_id"))
+        for link in (composed.get("guide_links") or [])
+        if link.get("target_kind") == "system"
+    }
+    for tid in expect.get("expected_guide_link_targets") or []:
+        if tid not in link_targets:
+            failures.append(f"missing guide_link target_id={tid!r}")
+
+    if "lives in" in draft.lower() or "home procedures" in draft.lower():
+        failures.append("authorial xref phrasing leaked into draft")
+    if "section of this guide" not in draft.lower():
+        failures.append("expected reader-facing section xref phrase")
 
     if failures:
         print("FAIL:")
@@ -138,11 +157,12 @@ def main() -> int:
         print(json.dumps(inputs, indent=2)[:2000])
         return 1
 
-    print("OK — controls v4.10 composition + xx/xxi/xxii")
+    print("OK — controls v4.13 composition + xx–xxv + xref links")
     if style:
         print("style_warnings:", json.dumps(style, indent=2))
     else:
         print("style_warnings: []")
+    print("guide_links:", json.dumps(composed.get("guide_links") or [], indent=2))
     print("summary:", keys_at_depth(inputs, "summary"))
     print("provenance:", keys_at_depth(inputs, "provenance"))
     return 0

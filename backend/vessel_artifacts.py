@@ -3,12 +3,26 @@
 Vessel facts cite commissioning drawings / topology / owner inventory — not
 manual extraction. Used when the catalog profile under-states network membership
 or hub data roles (e.g. Touch 7 CZone membership + displays_data).
+
+Config-layer subclasses (tier 4):
+  - ``device_configuration`` — vendor machine artifacts (``.zcf``); parsers OK
+  - ``channel_map`` — builder documentation (human-readable circuit shadow);
+    adjudicated LLM extract against ``channel_map_schema`` only — never
+    per-builder parsers (see equipment-classification-spec-v4.12)
 """
 
 from __future__ import annotations
 
 from copy import deepcopy
 from typing import Any
+
+# Tier-4 config-layer source classes (content provenance).
+CONFIG_LAYER_SOURCE_CLASSES = frozenset(
+    {
+        "device_configuration",
+        "channel_map",
+    }
+)
 
 
 def apply_vessel_artifact_facts(

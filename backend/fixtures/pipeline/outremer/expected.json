@@ -1,7 +1,6 @@
 {
   "roles": {
     "czone_touch_7": "HUB",
-    "coi": "BRIDGE",
     "masterbus_bridge_interface": "BRIDGE",
     "masterbus_usb_interface": "ENDPOINT",
     "mli_ultra_1": "ENDPOINT",
@@ -22,15 +21,14 @@
     "class_t_2": "PASSIVE",
     "class_t_3": "PASSIVE",
     "busbar": "PASSIVE",
-    "czone_2_0": "PLATFORM"
+    "czone_2_0": "PLATFORM",
+    "coi_1": "BRIDGE",
+    "coi_2": "BRIDGE",
+    "coi_3": "BRIDGE"
   },
   "sections": {
     "czone_touch_7": {
       "value": "controls",
-      "source": "lookup"
-    },
-    "coi": {
-      "value": "electrical",
       "source": "lookup"
     },
     "masterbus_bridge_interface": {
@@ -110,6 +108,18 @@
       "source": "lookup"
     },
     "busbar": {
+      "value": "electrical",
+      "source": "lookup"
+    },
+    "coi_1": {
+      "value": "electrical",
+      "source": "lookup"
+    },
+    "coi_2": {
+      "value": "electrical",
+      "source": "lookup"
+    },
+    "coi_3": {
       "value": "electrical",
       "source": "lookup"
     }

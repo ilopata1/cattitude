@@ -99,4 +99,5 @@ Do **not** replace the fragment + approve path in one rewrite.
 | **Solar Stage 4 v4** | Done — capability→task template; context_shaping absences; reader voice; `verify_solar_section_v4.py` |
 | **Section input assembly + Controls pilot (v4.10)** | Done — `section_inputs.py`; Know chapter `controls`; ship-with-honest-gaps; criteria xx–xxii; `verify_controls_section_v4.py` |
 | **Global reader voice (v4.11)** | Done — `guide_reader_voice.py`; style_warnings; prompts; generate report-only |
+| **Xref reader voice + links (v4.13)** | Done — `format_section_xref` / `guide_links`; authorial xref lint; Controls wired |
 | Evidence attachment (`evidence_unattached`) | Done — `vessel_evidence.py`; founding fixture + Outremer deck-photo retrofit |

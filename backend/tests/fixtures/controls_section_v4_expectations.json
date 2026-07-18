@@ -1,8 +1,9 @@
 {
-  "fixture_auth": "Fixture-Auth: chat Controls v4.10 — section inputs + composition expectations (xx–xxii); Alphas excluded pending config-layer evidence",
-  "version": "v4.10",
+  "fixture_auth": "Fixture-Auth: chat Controls v4.13 — xref reader voice + structured guide_links",
+  "version": "v4.13",
   "description": "Controls and Monitoring Stage 4 expectations for Outremer / Supernova.",
   "recorded_vessel_display_name": "Supernova",
+  "expected_guide_link_targets": ["batteries"],
   "must_exclude_from_summary": [
     "alpha_pro_iii_port",
     "alpha_pro_iii_stbd"
@@ -17,7 +18,9 @@
       {"device_key": "mli_ultra_1", "depth": "summary"},
       {"device_key": "mli_ultra_2", "depth": "summary"},
       {"device_key": "mli_ultra_3", "depth": "summary"},
-      {"device_key": "coi", "depth": "provenance"},
+      {"device_key": "coi_1", "depth": "provenance"},
+      {"device_key": "coi_2", "depth": "provenance"},
+      {"device_key": "coi_3", "depth": "provenance"},
       {"device_key": "masterbus_bridge_interface", "depth": "provenance"}
     ]
   },

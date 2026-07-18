@@ -35,6 +35,8 @@ DOCUMENT_TIERS = frozenset(
         "schematic",
         "commissioning_artifact",
         "manual",
+        "channel_map",
+        "device_configuration",
     }
 )
 

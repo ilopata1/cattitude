@@ -97,6 +97,7 @@ SYSTEM_CATALOG: dict[str, dict[str, Any]] = {
         "equipment_categories": ["electrical_dc"],
         "focus": "House batteries, Victron Cerbo GX / HUB-1, solar, charging targets",
         "review_title": "Batteries & energy",
+        "guest_section_title": "Batteries & Energy",
         "guest_label": "Learn + Know — batteries",
     },
     "water": {

@@ -17,6 +17,10 @@ Style preferences
 - Prefer the above over deictics: “this vessel”, “this boat”, “this yacht”,
   bare “the vessel” used as a name substitute.
 - Repeat the vessel name only for disambiguation or deliberate reorientation.
+- Cross-section pointers are reader navigation (“… in the X section of this
+  guide”), not author/structure notes (“lives in”, “home procedures”,
+  “stay in”). Emit structured ``links`` with catalog ``target_id`` for
+  eventual in-app navigation.
 
 Detectors emit ``style_warnings`` for review. They do not flip Stage 4
 ``pass`` or block ``generate_module`` by default.
@@ -26,6 +30,8 @@ from __future__ import annotations
 
 import re
 from typing import Any
+
+from guide_module_catalog import SYSTEM_CATALOG, SYSTEM_IDS
 
 # ---------------------------------------------------------------------------
 # Hard data requirement (not style)
@@ -71,6 +77,20 @@ _DEICTIC_RES = (
 # Soft budget: after first establish, more than this many name hits is noisy.
 DEFAULT_NAME_REPEAT_SOFT_MAX = 3
 
+# Author/structure phrasing that should not appear in guest-facing prose.
+_AUTHORIAL_XREF_RES = (
+    (re.compile(r"\blives in\b", re.I), "lives in"),
+    (re.compile(r"\bstay(?:s)? in\b", re.I), "stay(s) in"),
+    (re.compile(r"\bhome procedures?\b", re.I), "home procedure(s)"),
+    (re.compile(r"\bhomes? in\b", re.I), "home(s) in"),
+    (re.compile(r"\bbelongs in\b", re.I), "belongs in"),
+    (re.compile(r"\bdeferred to\b", re.I), "deferred to"),
+    (re.compile(r"\bwill be filled in when\b", re.I), "will be filled in when"),
+    (re.compile(r"\bwhen that source is attached\b", re.I), "when that source is attached"),
+)
+
+_MINOR_WORDS = frozenset({"and", "or", "of", "the", "a", "an", "to", "for", "in"})
+
 READER_VOICE_STYLE_GUIDANCE = """\
 Reader voice (all guest-facing guide modules):
 - Establish the boat once by recorded display name.
@@ -78,8 +98,60 @@ Reader voice (all guest-facing guide modules):
 - Use "she"/"her" only when the boat itself is meaningfully the actor or owner and the pronoun helps clarity — not as decoration or a default substitute for "the".
 - Prefer the above over deictics such as "this vessel", "this boat", "this yacht", or bare "the vessel".
 - Repeat the vessel name only for disambiguation or a deliberate reorientation.
+- Cross-section pointers: write as reader navigation — "can be found in the <Section> section of this guide" — never author/structure notes such as "lives in", "stay in", or "home procedures".
+- Pair each cross-section pointer with a structured link (target_kind=system, target_id=catalog key); do not encode app routes in prose.
 - These are strong style preferences for authors and models — not hard publish blocks.
 """
+
+
+def guest_section_title(system_id: str) -> str:
+    """Published section title for guest prose (not raw review_title casing)."""
+    entry = SYSTEM_CATALOG.get(system_id) or {}
+    explicit = str(entry.get("guest_section_title") or "").strip()
+    if explicit:
+        return explicit
+    review = str(entry.get("review_title") or system_id).strip()
+    parts: list[str] = []
+    for i, word in enumerate(review.split()):
+        if word == "&":
+            parts.append("&")
+        elif i > 0 and word.lower() in _MINOR_WORDS:
+            parts.append(word.lower())
+        else:
+            parts.append(word[:1].upper() + word[1:] if word else word)
+    return " ".join(parts)
+
+
+def format_section_xref(system_id: str) -> dict[str, str]:
+    """Reader phrase + structured link target for a Know system module.
+
+    ``target_id`` matches ``SystemModule.id`` / ``SYSTEM_IDS`` so publish/render
+    can resolve to in-app navigation (e.g. Know ``?system=<id>``) without
+    baking routes into Stage 4 prose.
+    """
+    if system_id not in SYSTEM_IDS and system_id not in SYSTEM_CATALOG:
+        raise ValueError(f"unknown guide system id for xref: {system_id!r}")
+    title = guest_section_title(system_id)
+    label = f"{title} section of this guide"
+    return {
+        "target_kind": "system",
+        "target_id": system_id,
+        "section_title": title,
+        "label": label,
+        "phrase": f"the {label}",
+        "data_guide_link": f"system:{system_id}",
+    }
+
+
+def section_xref_link(system_id: str) -> dict[str, str]:
+    """Compact link object for provenance / publish (no phrase fields)."""
+    xref = format_section_xref(system_id)
+    return {
+        "target_kind": xref["target_kind"],
+        "target_id": xref["target_id"],
+        "label": xref["label"],
+        "data_guide_link": xref["data_guide_link"],
+    }
 
 
 def lint_vessel_deictics(text: str) -> list[dict[str, str]]:
@@ -101,6 +173,33 @@ def lint_vessel_deictics(text: str) -> list[dict[str, str]]:
                         "Prefer a direct system/equipment reference or omit "
                         "the vessel reference. Use the recorded name or "
                         "she/her only when needed for orientation or clarity."
+                    ),
+                }
+            )
+    return warnings
+
+
+def lint_authorial_xref_voice(text: str) -> list[dict[str, str]]:
+    """Warn on author/structure phrasing in guest-facing cross-refs / gaps."""
+    warnings: list[dict[str, str]] = []
+    seen: set[str] = set()
+    for pat, label in _AUTHORIAL_XREF_RES:
+        for m in pat.finditer(text or ""):
+            hit = m.group(0)
+            key = hit.lower()
+            if key in seen:
+                continue
+            seen.add(key)
+            warnings.append(
+                {
+                    "code": "authorial_xref_voice",
+                    "match": hit,
+                    "pattern": label,
+                    "guidance": (
+                        "Write as a finished guide for the guest. Prefer "
+                        "'can be found in the <Section> section of this guide' "
+                        "with a structured system target_id — not 'lives in', "
+                        "'stay in', or 'home procedures'."
                     ),
                 }
             )
@@ -156,10 +255,14 @@ def assess_reader_voice_style(
     """Aggregate style assessment for any guide prose blob.
 
     ``established`` is a hard expectation for Stage 4 composers (name must
-    appear). Deictics and name budget are warnings only.
+    appear). Deictics, name budget, and authorial xref voice are warnings only.
     """
-    warnings = lint_vessel_deictics(text) + lint_vessel_name_budget(
-        text, vessel_display_name, soft_max=name_soft_max
+    warnings = (
+        lint_vessel_deictics(text)
+        + lint_vessel_name_budget(
+            text, vessel_display_name, soft_max=name_soft_max
+        )
+        + lint_authorial_xref_voice(text)
     )
     return {
         "established": vessel_established(text, vessel_display_name),

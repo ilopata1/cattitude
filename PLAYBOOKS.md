@@ -321,6 +321,31 @@ patching production behavior.
 - Verification results
 - Specification/revision-history update
 
+## 5. Builder `channel_map` ingest (adjudicated)
+
+**Goal:** take an unbounded-format builder sheet (owner's-manual channel table)
+into tier-4 config facts without writing a per-builder parser.
+
+Founding fixture: Outremer 55N60 p46 **C-ZONE CHANELS**, Ind C 05/05/2026.
+
+- [ ] Store PDF in the vessel artifact store (`kind` / `source_class`:
+      `channel_map`); cite source doc, page, revision/date.
+- [ ] Extract with LLM against `channel_map_schema`
+      (`channel_entries[]` + `device_locations[]`) — never a format parser.
+- [ ] Emit `channel_map_parsed.md` for human review; mark ambiguous cells;
+      do **not** commit facts until adjudication (column-shift is the highest
+      reader-visible error class).
+- [ ] On approval: commit facts with citations; split `config_unsourced`
+      (circuits sourced; modes/favourites/alarms still unsourced); locate COI
+      instances; wire Controls config-layer; re-run vessel and surface
+      contradictions without auto-resolve.
+- [ ] OPT/CUS channels are fitted only when inventory-corroborated; else
+      `context_shaping`.
+
+Machine artifacts (`.zcf`) stay on the `device_configuration` parser path.
+
+---
+
 ## Quick decision rules
 
 - **A check is red:** investigate; do not rewrite its expected output first.

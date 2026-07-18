@@ -19,6 +19,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from channel_map_circuits import assertable_circuits
 from system_graph import ComputedDevice, ControlPath, VesselGraphResult
 
 DEPTH_FULL = "full"
@@ -72,8 +73,10 @@ def assemble_section_inputs(
     ``member_keys`` optionally restricts step-1 members (leaf / subsection
     pilots such as Solar). Platforms, summary targets, and path devices are
     still derived from that member set.
+
+    ``equipment_doc`` supplies config-layer inventory (adjudicated
+    ``channel_map``) for Controls — it does not expand graph membership.
     """
-    _ = equipment_doc
     contributors: dict[str, dict[str, Any]] = {}
     candidates_excluded: list[dict[str, Any]] = []
     present_pages: list[dict[str, Any]] = []
@@ -314,6 +317,11 @@ def assemble_section_inputs(
         "present_platform_pages": present_pages,
         "candidates_excluded": candidates_excluded,
         "flags": flags,
+        "channel_map_circuits": (
+            assertable_circuits(equipment_doc)
+            if section_id == "controls"
+            else None
+        ),
         "principle": (
             "graph reachability establishes candidacy; "
             "documented visibility establishes membership"

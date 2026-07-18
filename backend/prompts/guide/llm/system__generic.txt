@@ -21,5 +21,6 @@ Reader voice (style — strong preference, not a hard schema rule):
 - Use "she"/"her" only when the boat itself is meaningfully the actor or owner and the pronoun helps clarity.
 - Prefer the above over deictics such as "this vessel", "this boat", "this yacht", or bare "the vessel".
 - Repeat the vessel name only for disambiguation or a deliberate reorientation.
+- Cross-section pointers: "can be found in the <Section> section of this guide" — never "lives in", "stay in", or "home procedures".
 
 Return JSON only — one system object, no wrapper.

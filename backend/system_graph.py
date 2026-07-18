@@ -1362,9 +1362,10 @@ def structural_flags(
                         "flag": "config_unsourced",
                         "device": hub.device_key,
                         "detail": (
-                            "Boat-specific modes/circuits/favourites unsourced — "
+                            "Boat-specific modes/favourites/alarms unsourced — "
                             "need device_configuration (.zcf) or owner "
-                            "screen-walkthrough (tier 5)"
+                            "screen-walkthrough (tier 5). Circuit inventory may "
+                            "already be sourced from an adjudicated channel_map."
                         ),
                     }
                 )

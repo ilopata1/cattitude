@@ -17,7 +17,9 @@ from typing import Any
 from guide_reader_voice import (
     VesselNameMissing,
     assess_reader_voice_style,
+    format_section_xref,
     resolve_vessel_display_name,
+    section_xref_link,
 )
 from guide_section_solar import (
     flag_reader_relevance,
@@ -32,6 +34,7 @@ from section_inputs import (
     assemble_section_inputs,
     keys_at_depth,
 )
+from channel_map_circuits import control_page_circuit_names
 from system_graph import VesselGraphResult
 
 SECTION_ORDER = (
@@ -137,6 +140,7 @@ def compose_controls_section(
         block: str = "capability_summary",
         planted_expectation: bool = False,
         config_placeholder: bool = False,
+        links: list[dict[str, str]] | None = None,
     ) -> str:
         sid = f"S{len(provenance_map) + 1}"
         if planted_expectation:
@@ -179,6 +183,8 @@ def compose_controls_section(
         if config_placeholder:
             entry["config_placeholder"] = True
             config_placeholder_ids.append(sid)
+        if links:
+            entry["links"] = list(links)
         provenance_map.append(entry)
         if block not in block_order:
             block_order.append(block)
@@ -253,21 +259,35 @@ def compose_controls_section(
         )
 
     # ========== MONITORING ==========
-    _emit(
-        "Open Monitoring to read configured meters, including the house "
-        "battery bank state that the station can display.",
-        f"profile.{platform_key}.ui_pages[Monitoring]",
-        "section_inputs.summary:mli",
-        block="monitoring",
-    )
+    circuits = inputs.get("channel_map_circuits") or {}
+    circuit_names = control_page_circuit_names(circuits)
+    if circuits.get("sourced"):
+        _emit(
+            "Open Monitoring to read the boat's configured meters and status "
+            "channels from the CZone switching map.",
+            f"profile.{platform_key}.ui_pages[Monitoring]",
+            f"vessel_fact.channel_map:{circuits.get('artifact_id')}",
+            "section_inputs.summary:mli",
+            block="monitoring",
+        )
+    else:
+        _emit(
+            "Open Monitoring to read configured meters, including the house "
+            "battery bank state that the station can display.",
+            f"profile.{platform_key}.ui_pages[Monitoring]",
+            "section_inputs.summary:mli",
+            block="monitoring",
+        )
     mli_summaries = [k for k in summary_keys if k.startswith("mli")]
     if mli_summaries:
+        batteries_xref = format_section_xref("batteries")
         _emit(
             "House-bank monitoring is available from this screen; full "
-            "battery detail lives in Batteries & energy.",
+            f"battery detail can be found in {batteries_xref['phrase']}.",
             *[f"graph.control_path->{k}" for k in mli_summaries],
             "xref.batteries",
             block="monitoring",
+            links=[section_xref_link("batteries")],
         )
 
     severities = platform.get("alarm_severity") or []
@@ -294,32 +314,75 @@ def compose_controls_section(
         f"profile.{platform_key}.operator_actions",
         block="adjusting",
     )
-    _emit(
-        "On Control, press a circuit to open its controls.",
-        f"profile.{platform_key}.ui_pages[Control]",
-        f"profile.{platform_key}.operator_actions",
-        block="adjusting",
-    )
+
+    if circuits.get("sourced") and circuit_names:
+        sample = ", ".join(circuit_names[:8])
+        more = len(circuit_names) - 8
+        tail = f" (and {more} more)" if more > 0 else ""
+        _emit(
+            f"On Control, named circuits include {sample}{tail}. "
+            f"Press a circuit to open its controls.",
+            f"profile.{platform_key}.ui_pages[Control]",
+            f"profile.{platform_key}.operator_actions",
+            f"vessel_fact.channel_map:{circuits.get('artifact_id')}",
+            block="adjusting",
+        )
+        for row in circuits.get("context_shaping") or []:
+            context_shaping_consumed.append(
+                {
+                    "kind": "channel_map_opt_uncorroborated",
+                    "channel_ref": row.get("channel_ref"),
+                    "display_name": row.get("display_name"),
+                    "option_flag": row.get("option_flag"),
+                    "note": (
+                        "OPT/CUS on channel map without inventory corroboration "
+                        "— not asserted as fitted"
+                    ),
+                }
+            )
+    else:
+        _emit(
+            "On Control, press a circuit to open its controls.",
+            f"profile.{platform_key}.ui_pages[Control]",
+            f"profile.{platform_key}.operator_actions",
+            block="adjusting",
+        )
 
     combi_keys = [k for k in summary_keys if "combi" in k]
     if combi_keys:
         mm = MANUFACTURER_MODEL.get("mass_combi_pro") or ("Mastervolt", "Mass Combi Pro")
+        batteries_xref = format_section_xref("batteries")
         _emit(
             f"The Inverter Charger page shows the two inverter-chargers "
-            f"({mm[0]} {mm[1]}) for AC/DC power flow; their home procedures "
-            f"stay in Batteries & energy.",
+            f"({mm[0]} {mm[1]}) for AC/DC power flow; those procedures can "
+            f"be found in {batteries_xref['phrase']}.",
             f"profile.{platform_key}.ui_pages[Inverter Charger]",
             *[f"graph.control_path->{k}" for k in combi_keys],
             "xref.batteries",
             block="adjusting",
+            links=[section_xref_link("batteries")],
         )
 
-    # Config placeholder — ship-with-honest-gaps (B)
+    # Config placeholder — modes/favourites/alarms still unsourced (xxv);
+    # circuit inventory may already be sourced from channel_map.
+    if circuits.get("sourced"):
+        placeholder = (
+            f"{CONFIG_PLACEHOLDER_MARKER} "
+            f"Exact Modes, Favourites shortcuts, and alarm details are not "
+            f"yet recorded for this installation; they will appear here once "
+            f"the CZone configuration or an owner screen walkthrough is "
+            f"available."
+        )
+    else:
+        placeholder = (
+            f"{CONFIG_PLACEHOLDER_MARKER} "
+            f"Exact Modes, Favourites shortcuts, and circuit labels are not "
+            f"yet recorded for this installation; they will appear here once "
+            f"the CZone configuration or an owner screen walkthrough is "
+            f"available."
+        )
     _emit(
-        f"{CONFIG_PLACEHOLDER_MARKER} "
-        f"Exact Modes, Favourites shortcuts, and circuit labels come from "
-        f"the CZone configuration — they will be filled in when that "
-        f"configuration or an owner walkthrough is attached.",
+        placeholder,
         "graph.flag:config_unsourced",
         f"profile.{hub_key}.validation_flags",
         "policy:ship_with_honest_gaps",
@@ -393,9 +456,21 @@ def compose_controls_section(
     absence = lint_absence_prose(draft)
     economy = lint_prose_economy(draft)
 
+    guide_links: list[dict[str, Any]] = []
+    for row in provenance_map:
+        for link in row.get("links") or []:
+            guide_links.append(
+                {
+                    "sentence_id": row["id"],
+                    "block": row.get("block"),
+                    **dict(link),
+                }
+            )
+
     return {
         "draft_markdown": draft,
         "provenance_map": provenance_map,
+        "guide_links": guide_links,
         "section_inputs": inputs,
         "block_order": block_order,
         "section_order_template": list(SECTION_ORDER),
@@ -412,7 +487,7 @@ def compose_controls_section(
         "absence_lint": absence,
         "prose_economy_lint": economy,
         "vessel_display_name": boat,
-        "version": "v4.10",
+        "version": "v4.13",
     }
 
 
@@ -468,11 +543,73 @@ def evaluate_controls_draft(
     placeholder_rows = [
         p for p in prov if p.get("config_placeholder") or p.get("kind") == "config_placeholder"
     ]
-    placeholder_ok = bool(placeholder_rows) and any(
-        "configuration pending" in str(p.get("sentence") or "").lower()
-        or "will be filled" in str(p.get("sentence") or "").lower()
-        for p in placeholder_rows
+    placeholder_text = " ".join(str(p.get("sentence") or "") for p in placeholder_rows).lower()
+    draft_for_placeholder = str(composed.get("draft_markdown") or "").lower()
+    placeholder_ok = bool(placeholder_rows) and (
+        "configuration pending" in draft_for_placeholder
+        or "will appear here" in placeholder_text
+        or "will be filled" in placeholder_text
+        or "not yet recorded" in placeholder_text
     )
+    modes_gap_ok = (
+        "modes" in placeholder_text and "favourites" in placeholder_text
+    ) or (
+        "modes" in lower and "favourites" in lower and placeholder_ok
+    )
+
+    circuits = (composed.get("section_inputs") or {}).get("channel_map_circuits") or {}
+    asserted_names = {
+        re.sub(
+            r"^\[(OPT|CUS)\]\s*",
+            "",
+            str(r.get("display_name") or r.get("circuit_name_en") or ""),
+            flags=re.I,
+        ).strip().lower()
+        for r in (circuits.get("asserted") or [])
+        if r.get("display_name") or r.get("circuit_name_en")
+    }
+    # xxiii — every rendered circuit name traces to adjudicated channel_entry
+    rendered_circuit_ok = True
+    if circuits.get("sourced"):
+        for p in prov:
+            if "vessel_fact.channel_map" not in " ".join(
+                str(s) for s in (p.get("sources") or [])
+            ):
+                continue
+            sent = str(p.get("sentence") or "")
+            if "named circuits" not in sent.lower():
+                continue
+            # Extract names between "include " and ". Press"
+            m = re.search(
+                r"include (.+?)(?:\s*\(and \d+ more\))?\. Press",
+                sent,
+                re.I,
+            )
+            if not m:
+                continue
+            for part in m.group(1).split(","):
+                name = part.strip().lower()
+                if name and name not in asserted_names and not any(
+                    name in a or a in name for a in asserted_names
+                ):
+                    rendered_circuit_ok = False
+                    break
+
+    # xxiv — no uncorroborated OPT/CUS asserted as fitted
+    shaping_names = {
+        str(r.get("display_name") or "").lower()
+        for r in (circuits.get("context_shaping") or [])
+    }
+    opt_not_asserted = True
+    for name in shaping_names:
+        clean = re.sub(r"^\[(OPT|CUS)\]\s*", "", name, flags=re.I).strip()
+        if clean and clean in lower and f"[opt] {clean}" not in lower:
+            # Allow mention only if we didn't claim fitted — hard check: name
+            # should not appear in Control circuit list sentence.
+            for p in prov:
+                sent = str(p.get("sentence") or "").lower()
+                if "named circuits" in sent and clean in sent:
+                    opt_not_asserted = False
 
     # xx — input set matches fixture
     input_match = True
@@ -509,6 +646,9 @@ def evaluate_controls_draft(
         "input_set_matches_fixture": input_match,  # xx
         "summary_stays_summary": not combi_manual_leak,  # xxi
         "config_placeholder_present": placeholder_ok,  # xxii
+        "circuit_names_trace_to_channel_map": rendered_circuit_ok,  # xxiii
+        "opt_uncorroborated_not_asserted": opt_not_asserted,  # xxiv
+        "modes_favourites_gap_explicit": modes_gap_ok,  # xxv
         "pages_mentioned": any(
             p.lower() in lower
             for p in ("favourites", "modes", "monitoring", "alarms", "control")
@@ -527,6 +667,15 @@ def evaluate_controls_draft(
         "xxii": "Config placeholder present"
         if checks["config_placeholder_present"]
         else "missing boat-upgradeable placeholder",
+        "xxiii": "Rendered circuit names trace to channel_map"
+        if checks["circuit_names_trace_to_channel_map"]
+        else "ungrounded circuit name in draft",
+        "xxiv": "Uncorroborated OPT/CUS not asserted"
+        if checks["opt_uncorroborated_not_asserted"]
+        else "OPT/CUS asserted without inventory corroboration",
+        "xxv": "Modes/Favourites gap explicit"
+        if checks["modes_favourites_gap_explicit"]
+        else "modes/favourites gap missing",
     }
     return {
         "checks": checks,
@@ -534,6 +683,6 @@ def evaluate_controls_draft(
         "style_warnings": voice.get("style_warnings") or [],
         "reader_voice": voice,
         "notes": notes,
-        "version": "v4.10",
-        "criteria": ["xx", "xxi", "xxii"],
+        "version": "v4.13",
+        "criteria": ["xx", "xxi", "xxii", "xxiii", "xxiv", "xxv"],
     }
