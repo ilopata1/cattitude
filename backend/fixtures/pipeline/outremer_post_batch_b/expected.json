@@ -1,7 +1,7 @@
 {
   "roles": {
     "czone_touch_7": "HUB",
-    "coi": "BRIDGE",
+    "coi": "ENDPOINT",
     "masterbus_bridge_interface": "BRIDGE",
     "masterbus_usb_interface": "ENDPOINT",
     "mli_ultra_1": "ENDPOINT",
@@ -23,7 +23,7 @@
     "bg_zeus_sr": "HUB",
     "bg_zeus_sr_1": "HUB",
     "bg_zeus_sr_2": "HUB",
-    "blue_sea_acr": "ENDPOINT"
+    "blue_sea_acr": "ISLAND"
   },
   "sections": {
     "czone_touch_7": {

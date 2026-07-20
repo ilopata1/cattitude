@@ -1,0 +1,66 @@
+{
+  "device": {
+    "manufacturer": "CZone / Mastervolt",
+    "model": "Combination Output Interface (COI)",
+    "category_freeform": "Combination Output Interface"
+  },
+  "entity_kind": "device",
+  "documented_version": "",
+  "ui_pages": [],
+  "alarm_severity": [],
+  "control_surfaces": [],
+  "operator_actions": [
+    {
+      "action": "label the circuits",
+      "audience": "installer_or_technician",
+      "context": "commissioning",
+      "occasion": "to match the load list and connections"
+    },
+    {
+      "action": "label the inputs",
+      "audience": "installer_or_technician",
+      "context": "commissioning",
+      "occasion": "to match the input list and connections"
+    },
+    {
+      "action": "insert appropriately rated ATC fuses",
+      "audience": "installer_or_technician",
+      "context": "commissioning",
+      "occasion": "to ensure normal operation"
+    }
+  ],
+  "networks": {
+    "speaks": [],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": false
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [],
+  "evidence": [
+    {
+      "supports_field": "operator_actions",
+      "manual_section": "LABELS & FUSES 4.7",
+      "note": "Instructions for labeling circuits and inputs"
+    },
+    {
+      "supports_field": "operator_actions",
+      "manual_section": "INSERT FUSES 4.8",
+      "note": "Procedure for inserting ATC fuses"
+    }
+  ],
+  "confidence": {
+    "overall": 0.8,
+    "notes": "Manual includes commissioning actions for installer audience."
+  }
+}

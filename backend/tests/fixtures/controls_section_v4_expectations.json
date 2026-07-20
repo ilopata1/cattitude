@@ -1,6 +1,6 @@
 {
-  "fixture_auth": "Fixture-Auth: chat Controls v4.13 — xref reader voice + structured guide_links",
-  "version": "v4.13",
+  "fixture_auth": "Fixture-Auth: chat Controls v4.13 — xref reader voice; COI live extract → summary via monitor path",
+  "version": "v4.14",
   "description": "Controls and Monitoring Stage 4 expectations for Outremer / Supernova.",
   "recorded_vessel_display_name": "Supernova",
   "expected_guide_link_targets": ["batteries"],
@@ -18,9 +18,9 @@
       {"device_key": "mli_ultra_1", "depth": "summary"},
       {"device_key": "mli_ultra_2", "depth": "summary"},
       {"device_key": "mli_ultra_3", "depth": "summary"},
-      {"device_key": "coi_1", "depth": "provenance"},
-      {"device_key": "coi_2", "depth": "provenance"},
-      {"device_key": "coi_3", "depth": "provenance"},
+      {"device_key": "coi_1", "depth": "summary"},
+      {"device_key": "coi_2", "depth": "summary"},
+      {"device_key": "coi_3", "depth": "summary"},
       {"device_key": "masterbus_bridge_interface", "depth": "provenance"}
     ]
   },

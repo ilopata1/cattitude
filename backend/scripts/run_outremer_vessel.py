@@ -145,32 +145,46 @@ def build_vessel_profiles(
             }
         )
         mli["protected_by"] = protected
-    # Ensure "safety relay" require uses external-relay wording for tier-3 report.
+    # Tier-3 "external safety relay" → ml_switch* only when that switch is on
+    # the vessel. Supernova uses Blue Sea ACR + Class-T, not ML-Series RBS.
+    has_ml_switch = any(
+        str(row.get("catalog_key") or row.get("device_key") or "") == "ml_switch"
+        for row in equipment
+        if isinstance(row, dict)
+    )
     requires = list(mli.get("requires_devices") or [])
-    if not any(
-        "safety relay" in str(r.get("description_verbatim") or "").lower()
-        for r in requires
-        if isinstance(r, dict)
-    ):
-        requires.append(
-            {
-                "description_verbatim": "external safety relay",
-                "needed_for": "safety_role.is_protective_device",
-                "source": "vessel_regression_hint",
-            }
-        )
-        mli["requires_devices"] = requires
+    if has_ml_switch:
+        if not any(
+            "safety relay" in str(r.get("description_verbatim") or "").lower()
+            for r in requires
+            if isinstance(r, dict)
+        ):
+            requires.append(
+                {
+                    "description_verbatim": "external safety relay",
+                    "needed_for": "safety_role.is_protective_device",
+                    "source": "vessel_regression_hint",
+                }
+            )
+            mli["requires_devices"] = requires
+        else:
+            for r in requires:
+                if not isinstance(r, dict):
+                    continue
+                desc = str(r.get("description_verbatim") or "")
+                if "safety relay" in desc.lower():
+                    r["description_verbatim"] = "external safety relay"
+                    r["needed_for"] = "safety_role.is_protective_device"
+            mli["requires_devices"] = requires
     else:
-        # Prefer wording that matches the regression assertion; keep needed_for
-        # off optional UI surfaces so a satisfied relay does not activate SmartRemote.
-        for r in requires:
-            if not isinstance(r, dict):
-                continue
-            desc = str(r.get("description_verbatim") or "")
-            if "safety relay" in desc.lower():
-                r["description_verbatim"] = "external safety relay"
-                r["needed_for"] = "safety_role.is_protective_device"
-        mli["requires_devices"] = requires
+        # Drop extract stubs that named an ML-style external relay so the
+        # resolver cannot latch onto Touch / ACR / Class-T by mistake.
+        mli["requires_devices"] = [
+            r
+            for r in requires
+            if not isinstance(r, dict)
+            or "safety relay" not in str(r.get("description_verbatim") or "").lower()
+        ]
 
     return equipment, profiles, relations, equipment_doc
 
@@ -336,7 +350,10 @@ def assert_regression(result, tiers: dict[str, dict[str, Any]]) -> list[str]:
         f"retired keys still present in roles: {sorted(summary['roles'])}",
     )
 
-    # Resolver tier 3: external safety relay → ml_switch_*; negatives rejected.
+    # Resolver tier 3: external safety relay → ml_switch_* when present.
+    has_ml_switch = any(
+        k.startswith("ml_switch") for k in result.devices
+    )
     mli = result.devices["mli_ultra_1"]
     relay_hits = [
         r
@@ -344,8 +361,15 @@ def assert_regression(result, tiers: dict[str, dict[str, Any]]) -> list[str]:
         if isinstance(r, dict)
         and "safety relay" in str(r.get("description_verbatim") or "").lower()
     ]
-    check(bool(relay_hits), "MLI missing safety-relay requires_devices entry")
-    if relay_hits:
+    if has_ml_switch:
+        check(bool(relay_hits), "MLI missing safety-relay requires_devices entry")
+    else:
+        check(
+            not relay_hits,
+            "MLI must not carry external safety-relay require without ml_switch "
+            f"on vessel; have {relay_hits}",
+        )
+    if has_ml_switch and relay_hits:
         hit = relay_hits[0]
         check(hit.get("satisfied") is True, f"safety relay not satisfied: {hit}")
         resolved = str(hit.get("resolved_to") or "")
@@ -519,14 +543,22 @@ def assert_regression(result, tiers: dict[str, dict[str, Any]]) -> list[str]:
         ),
         f"missing MLI protected_by → Class T instance; have {prot}",
     )
-    check(
-        any(
-            str(x.get("to_device") or "").startswith("ml_switch")
-            and x.get("in_section") == "batteries"
-            for x in prot
-        ),
-        f"missing MLI protected_by → ML switch instance; have {prot}",
-    )
+    if has_ml_switch:
+        check(
+            any(
+                str(x.get("to_device") or "").startswith("ml_switch")
+                and x.get("in_section") == "batteries"
+                for x in prot
+            ),
+            f"missing MLI protected_by → ML switch instance; have {prot}",
+        )
+    else:
+        check(
+            not any(
+                str(x.get("to_device") or "").startswith("ml_switch") for x in prot
+            ),
+            f"MLI must not xref retired ml_switch after ACR inventory; have {prot}",
+        )
 
     # Flags
     flags = summary["flags"]

@@ -8,8 +8,8 @@
     "mli_ultra_3": "ENDPOINT",
     "mass_combi_pro_1": "ENDPOINT",
     "mass_combi_pro_2": "ENDPOINT",
-    "victron_mppt_150_60": "ISLAND",
-    "victron_mppt": "ISLAND",
+    "victron_mppt_150_60": "ENDPOINT",
+    "victron_mppt": "ENDPOINT",
     "alpha_pro_iii_port": "ENDPOINT",
     "alpha_pro_iii_stbd": "ENDPOINT",
     "plain_battery_switch": "ENDPOINT",
@@ -18,14 +18,13 @@
     "class_t_3": "PASSIVE",
     "busbar": "PASSIVE",
     "czone_2_0": "PLATFORM",
-    "coi_1": "BRIDGE",
-    "coi_2": "BRIDGE",
-    "coi_3": "BRIDGE",
+    "coi_1": "ENDPOINT",
+    "coi_2": "ENDPOINT",
+    "coi_3": "ENDPOINT",
     "bg_zeus_sr_1": "HUB",
     "bg_zeus_sr_2": "HUB",
-    "bg_halo_20_plus": "ENDPOINT",
-    "bg_zeus_sr": "HUB",
-    "blue_sea_acr": "ENDPOINT"
+    "bg_halo_20_plus": "PASSIVE",
+    "blue_sea_acr": "ISLAND"
   },
   "sections": {
     "czone_touch_7": {
@@ -145,10 +144,6 @@
     }
   ],
   "required_flags": [
-    {
-      "flag": "island_with_daily_use",
-      "device": "victron_mppt"
-    },
     {
       "flag": "suspected_installer_line_item",
       "device": "busbar"

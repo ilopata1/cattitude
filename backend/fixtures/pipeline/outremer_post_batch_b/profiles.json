@@ -1,16 +1,94 @@
 {
   "coi": {
     "device": {
-      "manufacturer": "Mastervolt",
-      "model": "COI",
-      "category_freeform": "MasterBus-CZone interface"
+      "manufacturer": "CZone / Mastervolt",
+      "model": "Combination Output Interface (COI)",
+      "category_freeform": "Combination Output Interface"
     },
-    "control_surfaces": [],
-    "operator_actions": [],
+    "control_surfaces": [
+      {
+        "surface": "physical_controls",
+        "location_class": "on_device",
+        "optional_accessory": false,
+        "label_verbatim": "USB Programing Button & Status LED",
+        "path": "control_surfaces[0]"
+      }
+    ],
+    "operator_actions": [
+      {
+        "action": "set dipswitch on the COI",
+        "audience": "installer_or_technician",
+        "context": "commissioning",
+        "occasion": "to function correctly on the CZone network",
+        "source": "extracted"
+      },
+      {
+        "action": "configure DIP switches",
+        "audience": "installer_or_technician",
+        "context": "commissioning",
+        "source": "extracted"
+      },
+      {
+        "action": "label the circuits",
+        "audience": "installer_or_technician",
+        "context": "commissioning",
+        "occasion": "to match the load list and connections",
+        "source": "extracted"
+      },
+      {
+        "action": "label the inputs",
+        "audience": "installer_or_technician",
+        "context": "commissioning",
+        "occasion": "to match the input list and connections",
+        "source": "extracted"
+      },
+      {
+        "action": "insert appropriately rated ATC fuses",
+        "audience": "installer_or_technician",
+        "context": "commissioning",
+        "occasion": "to ensure normal operation",
+        "source": "extracted"
+      },
+      {
+        "action": "press the USB button for 5 seconds",
+        "audience": "operator",
+        "context": "situational",
+        "occasion": "to update the system configuration",
+        "source": "extracted"
+      },
+      {
+        "action": "screw the COI to the surface",
+        "audience": "operator",
+        "context": "commissioning",
+        "occasion": "to securely mount the device",
+        "source": "extracted"
+      },
+      {
+        "action": "connect High-Current Outputs",
+        "audience": "operator",
+        "context": "commissioning",
+        "occasion": "to establish connections for high-current loads",
+        "source": "extracted"
+      },
+      {
+        "action": "connect the Digital Switch Breakout",
+        "audience": "operator",
+        "context": "commissioning",
+        "occasion": "to connect digital switches if needed",
+        "source": "extracted"
+      },
+      {
+        "action": "consult error codes and alarms",
+        "audience": "operator",
+        "context": "emergency",
+        "source": "derived",
+        "derived_from": "evidence[2]"
+      }
+    ],
     "networks": {
       "speaks": [
         {
-          "name_verbatim": "MasterBus",
+          "name_verbatim": "NMEA 2000",
           "physical_or_wireless": "wired"
         },
         {
@@ -18,12 +96,7 @@
           "physical_or_wireless": "wired"
         }
       ],
-      "bridges": [
-        {
-          "from": "MasterBus",
-          "to": "CZone"
-        }
-      ]
+      "bridges": []
     },
     "data_roles": {
       "exposes_data_to_network": true,
@@ -34,23 +107,188 @@
     "safety_role": {
       "is_protective_device": false,
       "has_manual_override": false,
-      "has_emergency_procedure": false
+      "has_emergency_procedure": true
     },
     "protected_by": [],
     "protects": [],
-    "supply_requirements": [],
+    "supply_requirements": [
+      {
+        "description_verbatim": "use appropriately rated ATC fuses for all circuits"
+      }
+    ],
     "evidence": [
       {
-        "supports_field": "device.model",
-        "manual_section": "operator",
-        "note": "links MasterBus to CZone"
+        "supports_field": "operator_actions[action=set dipswitch on the COI]",
+        "manual_section": "SET DIPSWITCH",
+        "note": "Dipswitch must match configuration for correct function"
+      },
+      {
+        "supports_field": "data_roles.exposes_data_to_network",
+        "manual_section": "127508 Battery Status Battery Voltage",
+        "note": "COI sends NMEA 2000 PGNs"
+      },
+      {
+        "supports_field": "safety_role.has_emergency_procedure",
+        "manual_section": "Alarm / fault codes",
+        "note": "Channel LED status codes indicate faults"
+      },
+      {
+        "supports_field": "operator_actions",
+        "manual_section": "LABELS & FUSES 4.7",
+        "note": "Instructions for labeling circuits and inputs"
+      },
+      {
+        "supports_field": "operator_actions[action=press the USB button for 5 seconds]",
+        "manual_section": "COI Combination Output Interface",
+        "note": "to update the system configuration"
+      },
+      {
+        "supports_field": "operator_actions[action=screw the COI to the surface]",
+        "manual_section": "COI Combination Output Interface",
+        "note": "to securely mount the device"
+      },
+      {
+        "supports_field": "operator_actions[action=connect High-Current Outputs]",
+        "manual_section": "COI Combination Output Interface",
+        "note": "to establish connections for high-current loads"
+      },
+      {
+        "supports_field": "operator_actions[action=connect Low-Current Outputs]",
+        "manual_section": "COI Combination Output Interface",
+        "note": "to establish connections for low-current loads"
       }
     ],
     "confidence": {
-      "overall": 0.95,
-      "notes": ""
+      "overall": 0.9,
+      "notes": "[batch_0] Manual excerpts provide clear instructions for operator actions. | [batch_1] Manual excerpts provide sufficient details for profiling. | [batch_2] Manual includes commissioning actions for installer audience. | [batch_3] Manual excerpts provide clear operator actions and supply requirements."
     },
-    "source": "stub"
+    "coverage": {
+      "chunk_count": 38,
+      "heading_count": 273,
+      "headings_covered_count": 230,
+      "heading_coverage_fraction": 0.8425,
+      "coverage_low_threshold": 0.25,
+      "top_k_used": 4
+    },
+    "group_utilization": [
+      {
+        "group_id": "batch_0",
+        "is_introduction": true,
+        "excerpt_count": 8,
+        "predicted_fields": [
+          "control_surfaces",
+          "evidence",
+          "operator_actions",
+          "requires_devices",
+          "supply_requirements"
+        ],
+        "contributions": {
+          "operator_actions": 1,
+          "control_surfaces": 1,
+          "networks": 1,
+          "requires_devices": 0,
+          "evidence": 1,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 4,
+        "unutilized": false
+      },
+      {
+        "group_id": "batch_1",
+        "is_introduction": false,
+        "excerpt_count": 8,
+        "predicted_fields": [
+          "control_surfaces",
+          "data_roles",
+          "evidence",
+          "networks",
+          "operator_actions",
+          "requires_devices",
+          "safety_role"
+        ],
+        "contributions": {
+          "operator_actions": 1,
+          "control_surfaces": 0,
+          "networks": 1,
+          "requires_devices": 0,
+          "evidence": 2,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 1,
+          "safety_role": 1
+        },
+        "contribution_total": 6,
+        "unutilized": false
+      },
+      {
+        "group_id": "batch_2",
+        "is_introduction": false,
+        "excerpt_count": 8,
+        "predicted_fields": [
+          "control_surfaces",
+          "evidence",
+          "operator_actions",
+          "protected_by",
+          "requires_devices",
+          "supply_requirements",
+          "ui_pages"
+        ],
+        "contributions": {
+          "operator_actions": 3,
+          "control_surfaces": 0,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 2,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 5,
+        "unutilized": false
+      },
+      {
+        "group_id": "batch_3",
+        "is_introduction": false,
+        "excerpt_count": 6,
+        "predicted_fields": [
+          "control_surfaces",
+          "evidence",
+          "operator_actions"
+        ],
+        "contributions": {
+          "operator_actions": 5,
+          "control_surfaces": 0,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 6,
+          "supply_requirements": 1,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 12,
+        "unutilized": false
+      }
+    ],
+    "merge_conflicts": [],
+    "genres": [
+      "commissioning",
+      "installation",
+      "operation"
+    ],
+    "entity_kind": "device",
+    "ui_pages": [],
+    "validation_flags": [],
+    "repairs": [],
+    "source": "live_extraction"
   },
   "mli_ultra": {
     "device": {

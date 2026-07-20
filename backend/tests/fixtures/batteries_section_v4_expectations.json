@@ -1,8 +1,8 @@
 {
 
-  "fixture_auth": "Fixture-Auth: chat 2026-07-19 — xli charge-path enabling conditions; forbid under-way≈alternator proxy",
+  "fixture_auth": "Fixture-Auth: chat 2026-07-20 — COI live extract → summary on Batteries monitor path",
 
-  "version": "v4.21",
+  "version": "v4.22",
 
   "description": "Batteries & Energy Stage 4 expectations for Outremer / Supernova.",
 
@@ -30,11 +30,11 @@
 
       {"device_key": "victron_mppt_150_60", "depth": "full"},
 
-      {"device_key": "coi_1", "depth": "provenance"},
+      {"device_key": "coi_1", "depth": "summary"},
 
-      {"device_key": "coi_2", "depth": "provenance"},
+      {"device_key": "coi_2", "depth": "summary"},
 
-      {"device_key": "coi_3", "depth": "provenance"},
+      {"device_key": "coi_3", "depth": "summary"},
 
       {"device_key": "masterbus_bridge_interface", "depth": "provenance"}
 

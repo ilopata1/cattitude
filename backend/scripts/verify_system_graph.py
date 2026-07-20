@@ -173,6 +173,13 @@ def main() -> int:
         equipment, profiles, top_level_relations=relations
     )
 
+    # Tier-3 "external safety relay" → ml_switch* only when that switch is fitted.
+    has_ml_switch = any(
+        str(row.get("catalog_key") or row.get("device_key") or "").startswith("ml_switch")
+        or str(row.get("device_key") or "").startswith("ml_switch")
+        for row in expanded_eq
+        if isinstance(row, dict)
+    )
     relay_desc = "external safety relay"
     rejected: list[dict[str, Any]] = []
     relay_hit = resolve_requirement(
@@ -197,15 +204,24 @@ def main() -> int:
             f"failed={cand.get('failed_criteria')!r} reason={cand.get('reason')!r}"
         )
 
-    check(
-        relay_hit is not None
-        and str(relay_hit.get("device_key") or "").startswith("ml_switch"),
-        f"tier3 positive: external safety relay → ml_switch*; got {relay_hit!r}",
-    )
-    check(
-        relay_hit is not None and relay_hit.get("resolution_tier") == 3,
-        f"tier3 positive: expected resolution_tier 3; got {relay_hit!r}",
-    )
+    if has_ml_switch:
+        check(
+            relay_hit is not None
+            and str(relay_hit.get("device_key") or "").startswith("ml_switch"),
+            f"tier3 positive: external safety relay → ml_switch*; got {relay_hit!r}",
+        )
+        check(
+            relay_hit is not None and relay_hit.get("resolution_tier") == 3,
+            f"tier3 positive: expected resolution_tier 3; got {relay_hit!r}",
+        )
+    else:
+        # Without ML-Series on the vessel, "external safety relay" must not
+        # latch onto Touch ("digital switching"), ACR, Class-T, or busbars.
+        check(
+            relay_hit is None,
+            f"tier3 must not resolve safety relay without ml_switch; got {relay_hit!r}",
+        )
+
     rejected_by_key = {str(c.get("device_key")): c for c in rejected}
     plain = rejected_by_key.get("plain_battery_switch")
     check(
@@ -238,12 +254,13 @@ def main() -> int:
             "protective but not a switch" in (class_t_rej.get("failed_criteria") or []),
             f"class_t failing criterion: {class_t_rej}",
         )
-    check(
-        not str((relay_hit or {}).get("device_key") or "").startswith("class_t")
-        and (relay_hit or {}).get("device_key")
-        not in {"plain_battery_switch", "busbar"},
-        f"tier3 must not over-match negatives; got {relay_hit!r}",
-    )
+    if has_ml_switch:
+        check(
+            not str((relay_hit or {}).get("device_key") or "").startswith("class_t")
+            and (relay_hit or {}).get("device_key")
+            not in {"plain_battery_switch", "busbar"},
+            f"tier3 must not over-match negatives; got {relay_hit!r}",
+        )
 
     # Tier-2 family-only: Configuration Tool must NOT resolve to CZone hub.
     from interaction_profile_kinds import classify_requirement_kind
@@ -332,15 +349,23 @@ def main() -> int:
         ),
         f"per-instance protection xref Class T missing: {prot}",
     )
-    check(
-        any(
-            x.get("kind") == "protection"
-            and x.get("in_section") == "batteries"
-            and str(x.get("to_device") or "").startswith("ml_switch")
-            for x in prot
-        ),
-        f"per-instance protection xref ML switch missing: {prot}",
-    )
+    if has_ml_switch:
+        check(
+            any(
+                x.get("kind") == "protection"
+                and x.get("in_section") == "batteries"
+                and str(x.get("to_device") or "").startswith("ml_switch")
+                for x in prot
+            ),
+            f"per-instance protection xref ML switch missing: {prot}",
+        )
+    else:
+        check(
+            not any(
+                str(x.get("to_device") or "").startswith("ml_switch") for x in prot
+            ),
+            f"ML switch protection xref must be absent after ACR inventory; got {prot}",
+        )
 
     # --- conditional capability via needed_for (general rule, any equipment) ---
     # Same device profile: capability true + requires_devices → data_roles path.
@@ -364,18 +389,18 @@ def main() -> int:
     )
 
     cond_key = "conditional_device"
-    base_equipment = list(equipment) + [
-        {
-            "device_key": cond_key,
-            "manufacturer": cond_device["device"]["manufacturer"],
-            "model": cond_device["device"]["model"],
-            "description": cond_device["device"].get("category_freeform")
-            or "charge controller",
-            "system_category": "electrical_dc",
-        }
-    ]
-    base_profiles = dict(profiles)
-    base_profiles[cond_key] = cond_device
+    # Isolate from the full vessel: Zeus Bluetooth would otherwise make the
+    # conditional device an ENDPOINT even when its GX dependency is unsatisfied.
+    cond_line = {
+        "device_key": cond_key,
+        "manufacturer": cond_device["device"]["manufacturer"],
+        "model": cond_device["device"]["model"],
+        "description": cond_device["device"].get("category_freeform")
+        or "charge controller",
+        "system_category": "electrical_dc",
+    }
+    base_equipment = [cond_line]
+    base_profiles = {cond_key: cond_device}
 
     without_hub = build_vessel_graph(base_equipment, base_profiles)
     without_summary = without_hub.summary()

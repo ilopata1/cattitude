@@ -71,12 +71,12 @@ def main() -> int:
             }
         ],
         networks={
-            "speaks": [{"name_verbatim": "MasterBus", "physical_or_wireless": "wired"}],
+            "speaks": [{"name_verbatim": "NMEA 2000", "physical_or_wireless": "wired"}],
             "bridges": [],
         },
         device={
-            "manufacturer": "Mastervolt",
-            "model": "Mass Combi Pro",
+            "manufacturer": "Example Marine",
+            "model": "Test Inverter",
             "category_freeform": "electrical_dc",
         },
     )

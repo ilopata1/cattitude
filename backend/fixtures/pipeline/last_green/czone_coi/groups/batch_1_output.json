@@ -1,0 +1,59 @@
+{
+  "device": {
+    "manufacturer": "CZone / Mastervolt",
+    "model": "Combination Output Interface (COI)",
+    "category_freeform": "Combination Output Interface"
+  },
+  "entity_kind": "device",
+  "documented_version": "",
+  "ui_pages": [],
+  "alarm_severity": [],
+  "control_surfaces": [],
+  "operator_actions": [
+    {
+      "action": "configure DIP switches",
+      "audience": "installer_or_technician",
+      "context": "commissioning",
+      "occasion": ""
+    }
+  ],
+  "networks": {
+    "speaks": [
+      {
+        "name_verbatim": "NMEA 2000",
+        "physical_or_wireless": "wired"
+      }
+    ],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": true,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": true
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [],
+  "evidence": [
+    {
+      "supports_field": "data_roles.exposes_data_to_network",
+      "manual_section": "127508 Battery Status Battery Voltage",
+      "note": "COI sends NMEA 2000 PGNs"
+    },
+    {
+      "supports_field": "safety_role.has_emergency_procedure",
+      "manual_section": "1 _________________________",
+      "note": "Channel LED status codes indicate faults"
+    }
+  ],
+  "confidence": {
+    "overall": 0.8,
+    "notes": "Manual excerpts provide sufficient details for profiling."
+  }
+}

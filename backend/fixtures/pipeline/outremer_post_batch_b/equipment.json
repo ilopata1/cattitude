@@ -229,7 +229,7 @@
       "catalog_key": "blue_sea_acr",
       "manufacturer": "Blue Sea Systems",
       "model": "Automatic Charging Relays (ACR)",
-      "description": "ML-Series Automatic Charging Relay — combines/isolates battery banks",
+      "description": "Automatic Charging Relay — combines/isolates battery banks",
       "system_category": "electrical_dc",
       "quantity": 1,
       "instance_handling": "interchangeable",

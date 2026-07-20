@@ -572,9 +572,13 @@ def _is_switch_or_relay_disconnect(
         return False
     # Require switch/relay language on the equipment line — presence of any
     # control surface alone must not classify e.g. wind controllers as disconnects.
-    return any(
-        t in hay
-        for t in ("switch", "relay", "contactor", "isolation", "ml-series", "ml series")
+    # Word boundaries so "digital switching" (Touch / CZone UI) is not a disconnect.
+    return bool(
+        re.search(
+            r"\b(switch|relay|contactor|isolation|ml-series|ml series)\b",
+            hay,
+            flags=re.IGNORECASE,
+        )
     )
 
 
