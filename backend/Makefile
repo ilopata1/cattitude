@@ -15,7 +15,9 @@ pipeline-verify:
 	python scripts/verify_system_graph.py
 	python scripts/verify_system_assembly.py
 	python scripts/verify_solar_section_v4.py
+	python scripts/verify_batteries_section_v4.py
 	python scripts/verify_controls_section_v4.py
+	python scripts/verify_electrical_section_v4.py
 
 pipeline-compare-scratch:
 	python scripts/compare_smartsolar_scratch.py

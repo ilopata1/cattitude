@@ -618,6 +618,96 @@ def lint_pointer_paragraph_final(text: str) -> list[dict[str, str]]:
     return warnings
 
 
+_WHEN_USE_SURFACE_RE = re.compile(
+    r"^When\b.+?,\s+use the\s+(?P<surface>.+?)[.!]?\s*$",
+    re.I | re.S,
+)
+
+
+def format_action_first_occasions(
+    *,
+    surface_function: str,
+    occasions: list[str],
+) -> str:
+    """xlii — one surface/action, many occasions → lead, then bullet occasions.
+
+    Lead states what the control is and what it achieves. Occasions follow as
+    bullets under ``Use it when:`` (keeps xxxix occasion cue on the imperative).
+    """
+    lead = str(surface_function or "").strip()
+    occs = [str(o or "").strip().rstrip(".") for o in occasions if str(o or "").strip()]
+    if not lead:
+        raise ValueError("surface_function required")
+    if not lead.endswith("."):
+        lead += "."
+    if len(occs) == 0:
+        return lead
+    if len(occs) == 1:
+        return f"{lead} Use it when {occs[0]}."
+    bullets = "\n".join(f"- {o}" for o in occs)
+    return f"{lead} Use it when:\n\n{bullets}"
+
+
+def lint_repeated_action_occasions(
+    text: str,
+    provenance_map: list[dict[str, Any]] | None = None,
+) -> list[dict[str, str]]:
+    """xlii — do not emit one When…use-<surface> sentence per occasion.
+
+    When ≥2 adjusting sentences share the same surface under the When…, use…
+    pattern, collapse to action-first + occasion list instead.
+    """
+    adjusting: list[str] = []
+    for row in provenance_map or []:
+        if normalize_block(str(row.get("block") or "")) != "adjusting":
+            continue
+        s = str(row.get("sentence") or "").strip()
+        if s:
+            adjusting.append(s)
+    if not adjusting:
+        # Fall back to draft paragraphs that look like isolated When…use lines.
+        body = re.sub(r"(?m)^#.+$", "", text or "")
+        adjusting = [
+            p.strip()
+            for p in re.split(r"\n\s*\n+", body)
+            if p.strip() and _WHEN_USE_SURFACE_RE.match(p.strip())
+        ]
+
+    by_surface: dict[str, list[str]] = {}
+    for sent in adjusting:
+        # Multi-line action-first clusters are already compliant.
+        if "\n" in sent and re.search(r"\buse it when:\s*$", sent.split("\n")[0], re.I):
+            continue
+        if "\n-" in sent or sent.lstrip().startswith("-"):
+            continue
+        for part in _sentence_split(sent):
+            m = _WHEN_USE_SURFACE_RE.match(part.strip())
+            if not m:
+                continue
+            surface = re.sub(r"\s+", " ", m.group("surface").strip().lower())
+            surface = re.sub(r"^(?:the\s+)?acr\s+", "", surface)
+            by_surface.setdefault(surface, []).append(part[:120])
+
+    warnings: list[dict[str, str]] = []
+    for surface, matches in by_surface.items():
+        if len(matches) < 2:
+            continue
+        warnings.append(
+            {
+                "code": "repeated_action_occasions",
+                "match": surface,
+                "count": str(len(matches)),
+                "guidance": (
+                    "When several occasions share one control surface / action, "
+                    "state the surface and what it achieves once, then list the "
+                    "occasions (bullets preferred). Do not repeat When…, use "
+                    "the <surface> as separate paragraphs."
+                ),
+            }
+        )
+    return warnings
+
+
 def lint_instruction_occasions(
     text: str,
     provenance_map: list[dict[str, Any]] | None = None,
@@ -625,6 +715,8 @@ def lint_instruction_occasions(
     """xxxix — rendered instructions need a when/why occasion in the same sentence.
 
     Reference-block sentences are exempt (capability inventory, not imperatives).
+    Multi-occasion clusters (xlii) may put occasions in a bullet list under a
+    lead that already carries ``when`` (``Use it when:``).
     """
     ref_sents: set[str] = set()
     for row in provenance_map or []:
@@ -733,6 +825,7 @@ def assess_global_composition(
     numeral_hits = lint_sentence_initial_numerals(draft)
     evasive_hits = lint_evasive_adjusting_instructions(draft)
     occasion_hits = lint_instruction_occasions(draft, prov)
+    multi_occasion_hits = lint_repeated_action_occasions(draft, prov)
     pointer_hits = lint_pointer_paragraph_final(draft)
     wisdom_restatement_hits = lint_wisdom_quantity_restatement(
         composed, peer_capability_texts=peer_capability_texts
@@ -760,6 +853,7 @@ def assess_global_composition(
         "sentence_initial_numerals_ok": len(numeral_hits) == 0,
         "surface_bound_adjusting_ok": len(evasive_hits) == 0,
         "instruction_occasion_ok": len(occasion_hits) == 0,
+        "multi_occasion_action_first_ok": len(multi_occasion_hits) == 0,
         "pointer_paragraph_final_ok": len(pointer_hits) == 0,
         "charge_path_enabling_ok": len(charge_path_hits) == 0,
     }
@@ -776,11 +870,12 @@ def assess_global_composition(
             "sentence_initial_numerals": numeral_hits,
             "evasive_adjusting": evasive_hits,
             "instruction_occasion": occasion_hits,
+            "repeated_action_occasions": multi_occasion_hits,
             "pointer_paragraph_final": pointer_hits,
             "wisdom_restatement": wisdom_restatement_hits,
             "charge_path_enabling": charge_path_hits,
         },
-        "version": "v4.21",
+        "version": "v4.22",
         "criteria": [
             "xxxii",
             "xxxiii",
@@ -792,5 +887,6 @@ def assess_global_composition(
             "xxxix",
             "xl",
             "xli",
+            "xlii",
         ],
     }

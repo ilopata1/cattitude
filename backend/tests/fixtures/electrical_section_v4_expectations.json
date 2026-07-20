@@ -1,7 +1,7 @@
 {
-  "fixture_auth": "Fixture-Auth: chat Electrical Stage 4 v4.35 — Blue Sea ACR replace ml_switch; operator-voice retained",
-  "version": "v4.35",
-  "description": "Electrical Panel Stage 4 expectations for Outremer / Supernova.",
+  "fixture_auth": "Fixture-Auth: chat Electrical Stage 4 freeze v4.36 — multi-occasion action-first; post-COI recompose reviewed",
+  "version": "v4.36",
+  "description": "Electrical Panel Stage 4 expectations for Outremer / Supernova (frozen).",
   "recorded_vessel_display_name": "Supernova",
   "expected_guide_link_targets": ["controls", "batteries"],
   "expected_inputs": {

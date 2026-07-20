@@ -68,7 +68,7 @@ def main() -> int:
             f"evaluation failed: {json.dumps(evaluation.get('checks'), indent=2)}"
         )
     else:
-        print("OK — electrical v4.35 composition + lvi–lxvi/lxviii")
+        print("OK — electrical v4.36 composition + lvi–lxvi/lxviii–lxix")
 
     draft = str(composed.get("draft_markdown") or "").lower()
     for s in expect.get("forbidden_prose_substrings") or []:
@@ -93,7 +93,7 @@ def main() -> int:
         for f in failures:
             print("FAIL —", f, file=sys.stderr)
         return 1
-    print("OK — electrical section v4.35")
+    print("OK — electrical section v4.36")
     return 0
 
 

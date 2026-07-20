@@ -70,7 +70,7 @@ def main() -> int:
     )
     payload = {
         "section": "electrical",
-        "version": "v4.35",
+        "version": "v4.36",
         "vessel": equipment_doc.get("vessel"),
         "vessel_display_name": composed.get("vessel_display_name"),
         "draft_markdown": composed["draft_markdown"],

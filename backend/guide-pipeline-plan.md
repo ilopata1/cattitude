@@ -99,7 +99,7 @@ Do **not** replace the fragment + approve path in one rewrite.
 | **Solar Stage 4 v4** | Done — capability→task template; context_shaping absences; reader voice; `verify_solar_section_v4.py` |
 | **Section input assembly + Controls pilot (v4.10)** | Composer introduced — ship-with-honest-gaps; criteria xx–xxii; `verify_controls_section_v4.py` |
 | **Controls and Monitoring Stage 4 (frozen)** | Done — frozen for reuse (spec v4.30); xx–xxv; honest-gap Modes/Favourites placeholder; frozen-section regression with Solar + Batteries |
-| **Electrical Panel Stage 4 (v4.31→v4.35)** | Done — ACR live extract replaces ml_switch; lvi–lxviii; not frozen |
+| **Electrical Panel Stage 4 (frozen)** | Done — frozen for reuse (spec v4.36); lvi–lxix; ACR + live COI; multi-occasion action-first; frozen-section regression with Solar + Batteries + Controls |
 | **Global reader voice (v4.11)** | Done — `guide_reader_voice.py`; style_warnings; prompts; generate report-only |
 | **Xref reader voice + links (v4.13)** | Done — `format_section_xref` / `guide_links`; authorial xref lint; Controls wired |
 | **Batteries Stage 4 (v4.14)** | Composer introduced — xxvi–xxxi; Controls/Electrical xrefs; Solar leaf pointer |

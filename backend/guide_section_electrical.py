@@ -19,6 +19,7 @@ from guide_composition_rules import (
     SECTION_SPINE,
     WISDOM_PENDING,
     assess_global_composition,
+    format_action_first_occasions,
     normalize_block,
 )
 from guide_reader_voice import (
@@ -85,7 +86,7 @@ def compose_electrical_section(
     equipment_doc: dict[str, Any],
     section_inputs: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Compose Electrical Panel Stage 4 for the vessel (v4.35)."""
+    """Compose Electrical Panel Stage 4 for the vessel (v4.36)."""
     boat = resolve_vessel_display_name(equipment_doc)
     inputs = section_inputs or assemble_section_inputs(
         graph, "electrical", equipment_doc=equipment_doc
@@ -306,24 +307,17 @@ def compose_electrical_section(
     # ========== ADJUSTING (exceptional isolate / combine) ==========
     if has_acr:
         _emit(
-            "When you need to combine battery banks manually, use the ACR "
-            "Manual Control Override Knob.",
-            *[f"graph.device:{k}" for k in acr_keys],
-            "profile.blue_sea_acr.operator_actions",
-            "profile.blue_sea_acr.control_surfaces",
-            block="adjusting",
-        )
-        _emit(
-            "When remote operation must be blocked, use the Manual Control "
-            "Override Knob to prevent remote control.",
-            *[f"graph.device:{k}" for k in acr_keys],
-            "profile.blue_sea_acr.operator_actions",
-            "profile.blue_sea_acr.control_surfaces",
-            block="adjusting",
-        )
-        _emit(
-            "When the ACR must be secured for servicing, use the Manual "
-            "Control Override Knob.",
+            format_action_first_occasions(
+                surface_function=(
+                    "The ACR Manual Control Override Knob takes manual "
+                    "control of bank combine and isolate"
+                ),
+                occasions=[
+                    "you need to combine battery banks manually",
+                    "remote operation must be blocked",
+                    "the ACR must be secured for servicing",
+                ],
+            ),
             *[f"graph.device:{k}" for k in acr_keys],
             "profile.blue_sea_acr.operator_actions",
             "profile.blue_sea_acr.control_surfaces",
@@ -454,7 +448,7 @@ def compose_electrical_section(
         "vessel_display_name": boat,
         "guide_links": guide_links,
         "wisdom_slot": wisdom_slot,
-        "version": "v4.35",
+        "version": "v4.36",
     }
 
 
@@ -463,7 +457,7 @@ def evaluate_electrical_draft(
     *,
     expected_inputs: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Evaluate Electrical draft: lvi–lxvi + lxviii + shared voice / spine checks."""
+    """Evaluate Electrical draft: lvi–lxvi + lxviii–lxix + shared voice / spine checks."""
     draft = str(composed.get("draft_markdown") or "")
     lower = draft.lower()
     boat = str(composed.get("vessel_display_name") or "")
@@ -577,6 +571,25 @@ def evaluate_electrical_draft(
         and "local rotary" in lower
     )
 
+    # lxix / xlii — ACR multi-occasion adjusting is action-first + list
+    acr_adjust_rows = [
+        str(p.get("sentence") or "")
+        for p in prov
+        if p.get("block") == "adjusting"
+        and "manual control override" in str(p.get("sentence") or "").lower()
+    ]
+    has_acr_member = any(
+        str(k).startswith("blue_sea_acr") for k in (composed.get("full_keys") or [])
+    )
+    multi_occasion_ok = True
+    if has_acr_member:
+        multi_occasion_ok = bool(acr_adjust_rows) and all(
+            "use it when:" in row.lower() and "\n-" in row for row in acr_adjust_rows
+        ) and not any(
+            row.lower().startswith("when ") and "\n-" not in row
+            for row in acr_adjust_rows
+        )
+
     checks = {
         "zero_unsourced": len(unsourced) == 0,
         "no_absence_prose": len(absence_hits) == 0,
@@ -604,6 +617,7 @@ def evaluate_electrical_draft(
         "normal_leave_alone_stated": leave_alone_ok,
         "normal_before_fault_order": normal_before_fault,
         "no_invented_vessel_place": no_invented_place_ok,
+        "multi_occasion_action_first": multi_occasion_ok,
         **{f"global_{k}": v for k, v in (global_comp.get("checks") or {}).items()},
     }
     notes = {
@@ -626,6 +640,9 @@ def evaluate_electrical_draft(
         "lxviii": "local only; no invented place"
         if no_invented_place_ok
         else "invented vessel place (e.g. on-deck from on_device)",
+        "lxix": "ACR occasions action-first + list"
+        if multi_occasion_ok
+        else "ACR occasions still repeated as When…use paragraphs",
     }
     return {
         "checks": checks,
@@ -635,7 +652,7 @@ def evaluate_electrical_draft(
         "global_composition": global_comp,
         "notes": notes,
         "queued_fact_queries": composed.get("queued_fact_queries") or [],
-        "version": "v4.35",
+        "version": "v4.36",
         "criteria": [
             "lvi",
             "lvii",
@@ -649,6 +666,7 @@ def evaluate_electrical_draft(
             "lxv",
             "lxvi",
             "lxviii",
+            "lxix",
         ],
     }
 

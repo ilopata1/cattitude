@@ -375,7 +375,7 @@ From `backend/`:
 
 | Role | Path |
 |------|------|
-| Spec tip | `backend/equipment-classification-spec-v4.34.md` (tip chain; Electrical v4.35 ACR) |
+| Spec tip | `backend/equipment-classification-spec-v4.36.md` (Electrical Stage 4 freeze; xlii multi-occasion) |
 | Pipeline plan | `backend/guide-pipeline-plan.md` |
 | Fixture policy | `backend/tests/fixtures/POLICY.md` |
 | Extract → scratch | `backend/scripts/extract_interaction_profile.py` |
