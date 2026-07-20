@@ -1,0 +1,74 @@
+{
+  "device": {
+    "manufacturer": "B&G",
+    "model": "Halo 20+",
+    "category_freeform": "Dome Radar"
+  },
+  "entity_kind": "device",
+  "documented_version": "",
+  "ui_pages": [],
+  "alarm_severity": [],
+  "control_surfaces": [],
+  "operator_actions": [
+    {
+      "action": "power on by switch",
+      "audience": "installer_or_technician",
+      "context": "commissioning",
+      "occasion": "to control the unit's power state"
+    },
+    {
+      "action": "power controlled",
+      "audience": "installer_or_technician",
+      "context": "commissioning",
+      "occasion": "to connect the scanner to a power control bus"
+    }
+  ],
+  "networks": {
+    "speaks": [],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": true
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [
+    {
+      "description_verbatim": "Recommended wire gauges for extending power wire length"
+    }
+  ],
+  "evidence": [
+    {
+      "supports_field": "operator_actions[0]",
+      "manual_section": "on/off the system to be master.",
+      "note": "Describes how to power on the unit"
+    },
+    {
+      "supports_field": "operator_actions[1]",
+      "manual_section": "on/off the system to be master.",
+      "note": "Details connecting to a power control bus"
+    },
+    {
+      "supports_field": "safety_role.has_emergency_procedure",
+      "manual_section": "1. Recharge and check supply voltage",
+      "note": "Includes error codes and recovery steps"
+    },
+    {
+      "supports_field": "supply_requirements",
+      "manual_section": "Wiring guidelines",
+      "note": "Specifies wire gauge requirements"
+    }
+  ],
+  "confidence": {
+    "overall": 0.8,
+    "notes": "Manual primarily covers installation and wiring."
+  }
+}

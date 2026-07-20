@@ -184,6 +184,26 @@ def select_manuals_for_drafting(
     )
 
 
+def select_manuals_for_interaction_profile(
+    manuals: list[dict[str, Any]],
+) -> tuple[list[dict[str, Any]], str]:
+    """Stage 1 corpus selection — may use installation when no operators/service.
+
+    Guest fragment drafting still never uses installation/parts. Interaction
+    profiles may honestly extract installer / commissioning facts from an
+    installation manual (often setup-only for MFD-hosted operation).
+    """
+    try:
+        return select_manuals_for_drafting(manuals)
+    except FragmentDraftingError:
+        installation = [
+            m for m in manuals if m.get("manual_type") == "installation"
+        ]
+        if installation:
+            return installation, "installation_only"
+        raise
+
+
 def _parse_llm_json(raw: str) -> dict[str, Any]:
     text = raw.strip()
     if text.startswith("```"):

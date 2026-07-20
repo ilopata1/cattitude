@@ -1,0 +1,154 @@
+{
+  "device": {
+    "manufacturer": "B&G",
+    "model": "Zeus SR Software",
+    "category_freeform": "multi-function display (MFD)"
+  },
+  "control_surfaces": [
+    {
+      "surface": "touchscreen",
+      "location_class": "on_device",
+      "optional_accessory": false,
+      "label_verbatim": "Touchscreen",
+      "path": "control_surfaces[0]",
+      "vote_margin": "2/2"
+    }
+  ],
+  "operator_actions": [
+    {
+      "action": "turn the unit on",
+      "audience": "operator",
+      "context": "situational",
+      "vote_margin": "2/2",
+      "source": "extracted"
+    },
+    {
+      "action": "turn the unit off",
+      "audience": "operator",
+      "context": "situational",
+      "vote_margin": "2/2",
+      "source": "extracted"
+    },
+    {
+      "action": "activate a MOB",
+      "audience": "operator",
+      "context": "emergency",
+      "occasion": "to respond to a man overboard situation",
+      "vote_margin": "2/2",
+      "source": "extracted"
+    }
+  ],
+  "networks": {
+    "speaks": [],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": false
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [],
+  "evidence": [
+    {
+      "supports_field": "operator_actions[action=\"turn the unit on\"]",
+      "manual_section": "BASIC CONTROLS",
+      "note": "Describes powering on the unit"
+    },
+    {
+      "supports_field": "operator_actions[action=\"turn the unit off\"]",
+      "manual_section": "BASIC CONTROLS",
+      "note": "Describes powering off the unit"
+    },
+    {
+      "supports_field": "operator_actions[action=\"activate a MOB\"]",
+      "manual_section": "CONNECT TO MOBILE APP",
+      "note": "Describes activating a man overboard waypoint"
+    },
+    {
+      "supports_field": "operator_actions[action=\"turn the unit on\"]",
+      "manual_section": "BASIC CONTROLS",
+      "note": "Procedure to power up the device"
+    },
+    {
+      "supports_field": "operator_actions[action=\"turn the unit off\"]",
+      "manual_section": "BASIC CONTROLS",
+      "note": "Procedure to power down the device"
+    },
+    {
+      "supports_field": "operator_actions[action=\"activate a MOB\"]",
+      "manual_section": "CONNECT TO MOBILE APP",
+      "note": "Procedure to respond to a man overboard situation"
+    }
+  ],
+  "confidence": {
+    "overall": 0.9,
+    "notes": "[batch_0] Manual excerpts provide clear operator actions and device controls. | [batch_0] Manual excerpts provide clear operator actions and device controls."
+  },
+  "repairs": [
+    {
+      "repair": "cleared_circular_occasion",
+      "flag": "occasion_circular",
+      "field_path": "operator_actions[0].occasion",
+      "original_value": "to power up the device"
+    },
+    {
+      "repair": "cleared_circular_occasion",
+      "flag": "occasion_circular",
+      "field_path": "operator_actions[1].occasion",
+      "original_value": "to power down the device"
+    }
+  ],
+  "coverage": {
+    "chunk_count": 4,
+    "heading_count": 8,
+    "headings_covered_count": 6,
+    "heading_coverage_fraction": 0.75,
+    "coverage_low_threshold": 0.25,
+    "top_k_used": 4
+  },
+  "group_utilization": [
+    {
+      "group_id": "batch_0",
+      "is_introduction": true,
+      "excerpt_count": 4,
+      "predicted_fields": [
+        "control_surfaces",
+        "evidence",
+        "operator_actions"
+      ],
+      "contributions": {
+        "operator_actions": 3,
+        "control_surfaces": 1,
+        "networks": 0,
+        "requires_devices": 0,
+        "evidence": 3,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "contribution_total": 7,
+      "unutilized": false
+    }
+  ],
+  "merge_conflicts": [],
+  "genres": [
+    "commissioning",
+    "operation"
+  ],
+  "entity_kind": "platform",
+  "ui_pages": [],
+  "validation_flags": [],
+  "source": "live_extraction",
+  "documented_version": "Zeus SR Software v2.5",
+  "needs_rextraction": false
+}

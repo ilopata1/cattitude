@@ -1,0 +1,1218 @@
+{
+  "inventory": {
+    "procedures": [
+      {
+        "title": "Recommended wire gauges for extending power wire length for a 12 V system",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "17 Recommended wire gauges for extending power wire length for a 12 V system: Extension wiring length 2 m (6.56 ft) 5 m (16.40 ft) 10 m (32.80 ft) 20 m (65.61 ft) 30 m (98.42 ft) Interconnection cable length 5 m (16.40 ft) Min. AWG 16 16 16",
+        "source": "heuristic",
+        "excerpt_text": "17\nRecommended wire gauges for extending power wire length for a 12 V system:\nExtension wiring length\n2 m (6.56 ft) 5 m (16.40 ft) 10 m (32.80 ft) 20 m (65.61 ft) 30 m (98.42 ft)\nInterconnection cable length\n5 m (16.40 ft)\nMin. AWG\n16\n16 16 16 14\n10 m (32.80 ft) 16 16 14 12\n20 m (65.61 ft) 16 16 14 12\n30 m (98.42 ft) 14 12 8 6\n5 m (16.40 ft)\n Min. Cross-\nsection (mm2)\n1.00\n1.00 1.00 1.00 2.50\n10 m (32.80 ft) 1.00 1.00 2.50 4.00\n20 m (65.61 ft) 1.00 1.00 2.50 4.00\n30 m (98.42 ft) 2.50 4.00 10.00 16.00\nPower control connection \nThe yellow wire in the power cable is used to control how the unit is turned on and off.\nPower control by supply power\nThe scanner will turn on/off when power is applied/removed. Connect the yellow wire to the red wire after the fuse.\nA Key Wire color Description\nA Yellow Power control wire, connected to supply power\nPower on by switch\nThe unit will be turned on as long as the switch is closed.\nA\nB\nKey Wire color Description\nA Yellow Power control wire\nB Power switch\nPower controlled\nThe scanner can be connected to a common power control bus, and will turn on when power is applied to the bus by a display unit.",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:wiring"
+      },
+      {
+        "title": "Restart the radar",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "2. Restart the radar 0x00010016 LED Lighting fault Turn accent lighting off then retry 0x00010018 Radar interface box fault Check the interconnection cable for damage Mechanical 0x00010001 Zero bearing sensor fault Contact service 0x0001000",
+        "source": "heuristic",
+        "excerpt_text": "Switch to STBY, Allow unit cool\n0x0001000E Transmitter overheat (hard) Switch to STBY, Isolate power to the radar\n and contact service\n0x0001000F Signal processing error Unit should revert to STBY. Select transmit\nIf problem persists. power cycle the radar\n0x00010017 Scanner failure Contact service\nPower supply\n0x00010010 Power supply overheating Switch to STBY, Allow unit cool then retry\n0x00010011 Power supply voltage error Check scanner cable for connections for corrosion or damage\n0x00010012 Power supply overload Contact service\n0x00010013 Power supply hardware fault Contact service\n0x00010014 Power supply comms fault Contact service\n0x00010019 Low battery voltage (Supply \nvoltage low)\n1. Recharge and check supply voltage\n2. Restart the radar\n0x00010016 LED Lighting fault Turn accent lighting off then retry\n0x00010018 Radar interface box fault Check the interconnection cable for damage\nMechanical\n0x00010001 Zero bearing sensor fault Contact service\n0x00010002 Bearing sensor fault Contact service\n0x00010015 Mechanical transmission fault Contact service\n0x00010003 Motor drive fault Contact service\n0x0001001A Motor or antenna has stalled Contact service",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:halo_error_code_recovery",
+        "status": "classified"
+      },
+      {
+        "title": "Switch to STBY, Allow unit cool",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "2. Switch to STBY, Allow unit cool",
+        "source": "heuristic",
+        "excerpt_text": "20 \nNo scanner\nHappens when Ethernet connection is established between radar and display, but an internal error in the scanner prevents normal \nradar operation.\nRecommendations\n• Check supply voltage/current\n• If persistent, power cycle the system, check the scanner cable / RJ45\n• Possible internal fault with the radar, contact service\nNo spoke data\nHappens when Ethernet connection is established between radar and display, but an internal error in the scanner prevents normal \nradar operation.\nRecommendations\n• Check supply voltage/current\n• If persistent, power cycle the system, check the scanner cable / RJ45\n• Possible internal fault with the radar, contact service\nError codes\nIf the error code repeats, please refer to list below.\nError code Description Recommendation\n0x00000001 Radar saved settings corrupted Radar will revert to factory defaults. Re-enter your settings including \ninstallation settings \n0x0001000C Scanner not detected 1. Check the pedestal interconnection  cable  connections\n2. Power cycle the radar\n3. Check input Voltage\n0x0001000D Transmitter overheat (soft) 1. Try changing to shorter ranges <6 NM\n2. Switch to STBY, Allow unit cool",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:halo_error_code_recovery",
+        "status": "classified"
+      },
+      {
+        "title": "Introduction",
+        "kind": "headed_procedure",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "5 CONTENTS 6 Introduction 6 Parts included 7 Installation 7 Wiring guidelines 8 Choose the scanner location 9 Considerations for roof mounting 12 Wiring overview 13 Scanner connection 14 Installing the scanner 15 Ethernet connection 16 Powe",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:spec_or_front_matter",
+        "classification_rule": "rule:spec_or_front_matter"
+      },
+      {
+        "title": "CONTENTS",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "5 CONTENTS 6 Introduction 6 Parts included 7 Installation 7 Wiring guidelines 8 Choose the scanner location 9 Considerations for roof mounting 12 Wiring overview 13 Scanner connection 14 Installing the scanner 15 Ethernet connection 16 Powe",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:spec_or_front_matter",
+        "classification_rule": "rule:spec_or_front_matter"
+      },
+      {
+        "title": "Parts included",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "5 CONTENTS 6 Introduction 6 Parts included 7 Installation 7 Wiring guidelines 8 Choose the scanner location 9 Considerations for roof mounting 12 Wiring overview 13 Scanner connection 14 Installing the scanner 15 Ethernet connection 16 Powe",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:wiring"
+      },
+      {
+        "title": "Installation",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "5 CONTENTS 6 Introduction 6 Parts included 7 Installation 7 Wiring guidelines 8 Choose the scanner location 9 Considerations for roof mounting 12 Wiring overview 13 Scanner connection 14 Installing the scanner 15 Ethernet connection 16 Powe",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:wiring"
+      },
+      {
+        "title": "Wiring guidelines",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "5 CONTENTS 6 Introduction 6 Parts included 7 Installation 7 Wiring guidelines 8 Choose the scanner location 9 Considerations for roof mounting 12 Wiring overview 13 Scanner connection 14 Installing the scanner 15 Ethernet connection 16 Powe",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:wiring"
+      },
+      {
+        "title": "Choose the scanner location",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "5 CONTENTS 6 Introduction 6 Parts included 7 Installation 7 Wiring guidelines 8 Choose the scanner location 9 Considerations for roof mounting 12 Wiring overview 13 Scanner connection 14 Installing the scanner 15 Ethernet connection 16 Powe",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:wiring"
+      },
+      {
+        "title": "Considerations for roof mounting",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "5 CONTENTS 6 Introduction 6 Parts included 7 Installation 7 Wiring guidelines 8 Choose the scanner location 9 Considerations for roof mounting 12 Wiring overview 13 Scanner connection 14 Installing the scanner 15 Ethernet connection 16 Powe",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:mounting"
+      },
+      {
+        "title": "Wiring overview",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "5 CONTENTS 6 Introduction 6 Parts included 7 Installation 7 Wiring guidelines 8 Choose the scanner location 9 Considerations for roof mounting 12 Wiring overview 13 Scanner connection 14 Installing the scanner 15 Ethernet connection 16 Powe",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:wiring"
+      },
+      {
+        "title": "Scanner connection",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "5 CONTENTS 6 Introduction 6 Parts included 7 Installation 7 Wiring guidelines 8 Choose the scanner location 9 Considerations for roof mounting 12 Wiring overview 13 Scanner connection 14 Installing the scanner 15 Ethernet connection 16 Powe",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:wiring"
+      },
+      {
+        "title": "Installing the scanner",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "5 CONTENTS 6 Introduction 6 Parts included 7 Installation 7 Wiring guidelines 8 Choose the scanner location 9 Considerations for roof mounting 12 Wiring overview 13 Scanner connection 14 Installing the scanner 15 Ethernet connection 16 Powe",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:wiring"
+      },
+      {
+        "title": "Ethernet connection",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "5 CONTENTS 6 Introduction 6 Parts included 7 Installation 7 Wiring guidelines 8 Choose the scanner location 9 Considerations for roof mounting 12 Wiring overview 13 Scanner connection 14 Installing the scanner 15 Ethernet connection 16 Powe",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:wiring"
+      },
+      {
+        "title": "Power control connection",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "17 Power control connection 18 Setup and configuration 18 Maintenance 18 Replacing a Broadband 3G/4G Radar 19 RI-10 Radar interface box and wiring 19 Troubleshooting 19 Status LED 19 Error messages 20 Error codes 21 Dimensional drawings 21 ",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:wiring",
+        "deduped_from": "Power connection"
+      },
+      {
+        "title": "Setup and configuration",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "18 Setup and configuration 18 Maintenance 18 Replacing a Broadband 3G/4G Radar 19 RI-10 Radar interface box and wiring 19 Troubleshooting 19 Status LED 19 Error messages 20 Error codes 21 Dimensional drawings 21 Halo dome radar dimensions 2",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:wiring"
+      },
+      {
+        "title": "Maintenance",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "18 Maintenance 18 Replacing a Broadband 3G/4G Radar 19 RI-10 Radar interface box and wiring 19 Troubleshooting 19 Status LED 19 Error messages 20 Error codes 21 Dimensional drawings 21 Halo dome radar dimensions 22 Technical specifications ",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:wiring"
+      },
+      {
+        "title": "Replacing a Broadband 3G/4G Radar",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "18 Replacing a Broadband 3G/4G Radar 19 RI-10 Radar interface box and wiring 19 Troubleshooting 19 Status LED 19 Error messages 20 Error codes 21 Dimensional drawings 21 Halo dome radar dimensions 22 Technical specifications 22 Halo20/20+ R",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:wiring"
+      },
+      {
+        "title": "RI-10 Radar interface box and wiring",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "19 RI-10 Radar interface box and wiring 19 Troubleshooting 19 Status LED 19 Error messages 20 Error codes 21 Dimensional drawings 21 Halo dome radar dimensions 22 Technical specifications 22 Halo20/20+ Radar 23 Halo24 Radar 23 Accessories",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:spec_or_front_matter",
+        "classification_rule": "rule:spec_or_front_matter"
+      }
+    ],
+    "alternatives": [],
+    "filtered": [
+      {
+        "title": "SETUP AND CONFIGURATION",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "18 SETUP AND CONFIGURATION Setup and configuration of the Halo Radar has been simplified compared to traditional pulse radars. There is no zero range adjustment (time delay), no warm up time and no burn in required. Make the following setti",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Tighten the boot gland",
+        "kind": "headed_procedure",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "16 8 Connect the cables together first inserting the RJ45 socket, then turn and lock the cable boot (A) to the adapter cable (B). AB 9 Tighten the boot gland. Ethernet adapter cable details 1 3 2 5 4 1 8 5-pin plug RJ45 socket 5-pin plug R",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Shield -- Drain",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "5 Shield -- Drain -- 4-5 -- Not used -- 7-8 -- Not used Power connection The unit is designed to be powered by a 12 or 24 V DC system. It is protected against reverse polarity, under voltage, and over voltage (for a limited duration of time",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "White/Orange Data transmit +",
+        "kind": "headed_procedure",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[5]",
+        "snippet": "15 Ethernet connection The scanner can be connected either directly to a RJ45 Ethernet socket or to a 5-pin Ethernet socket via the supplied Ethernet adapter. A C Ethernet Ethernet B C D E F Key Description A Display unit or Ethernet switc",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Ethernet connection",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[5]",
+        "snippet": "15 Ethernet connection The scanner can be connected either directly to a RJ45 Ethernet socket or to a 5-pin Ethernet socket via the supplied Ethernet adapter. A C Ethernet Ethernet B C D E F Key Description A Display unit or Ethernet switch",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "White/Green Data receive +",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[5]",
+        "snippet": "3 White/Green Data receive + 4 Blue Not used 5 White/Blue Not used 6 Green Data receive - 7 White/Brown Not used 8 Brown Not used Ethernet adapter cable The ethernet adapter cable is used to connect the scanner to a 5-pin Ethernet connector",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "White/Blue Not used",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[5]",
+        "snippet": "5 White/Blue Not used 6 Green Data receive - 7 White/Brown Not used 8 Brown Not used Ethernet adapter cable The ethernet adapter cable is used to connect the scanner to a 5-pin Ethernet connector. Use the supplied waterproof cable boot to s",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb",
+        "deduped_from": "Blue Not used"
+      },
+      {
+        "title": "Brown Not used",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[5]",
+        "snippet": "8 Brown Not used Ethernet adapter cable The ethernet adapter cable is used to connect the scanner to a 5-pin Ethernet connector. Use the supplied waterproof cable boot to seal the connection between the interconnection cable and the Etherne",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Recharge and check supply voltage",
+        "kind": "headed_procedure",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "Switch to STBY, Allow unit cool 0x0001000E Transmitter overheat (hard) Switch to STBY, Isolate power to the radar and contact service 0x0001000F Signal processing error Unit should revert to STBY. Select transmit If problem persists. power",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Power cycle the radar",
+        "kind": "headed_procedure",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "20 No scanner Happens when Ethernet connection is established between radar and display, but an internal error in the scanner prevents normal radar operation. Recommendations • Check supply voltage/current • If persistent, power cycle the",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "No scanner",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "20 No scanner Happens when Ethernet connection is established between radar and display, but an internal error in the scanner prevents normal radar operation. Recommendations • Check supply voltage/current • If persistent, power cycle the s",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Check input Voltage",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "3. Check input Voltage 0x0001000D Transmitter overheat (soft) 1. Try changing to shorter ranges <6 NM 2. Switch to STBY, Allow unit cool",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "TROUBLESHOOTING",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[3]",
+        "snippet": "19 TROUBLESHOOTING Status LED There is a status LED (A) at the back of the scanner that indicates the status of the scanner. A Condition Flash repeat sequence Priority Booting-up/Upgrading Continuous ON 1 (highest) Fault Rapidly flashing 2 ",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "Status LED",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "disposition": "filtered",
+        "filter": "filter:classified_without_verb"
+      },
+      {
+        "title": "Error messages",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "disposition": "filtered",
+        "filter": "filter:classified_without_verb"
+      },
+      {
+        "title": "Error codes",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "disposition": "filtered",
+        "filter": "filter:classified_without_verb"
+      },
+      {
+        "title": "Dimensional drawings",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "disposition": "filtered",
+        "filter": "filter:classified_without_verb"
+      },
+      {
+        "title": "Halo dome radar dimensions",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "disposition": "filtered",
+        "filter": "filter:classified_without_verb"
+      },
+      {
+        "title": "Technical specifications",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "disposition": "filtered",
+        "filter": "filter:classified_without_verb"
+      },
+      {
+        "title": "Halo20/20+ Radar",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "22 Halo20/20+ Radar 23 Halo24 Radar 23 Accessories",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Halo24 Radar",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "23 Halo24 Radar 23 Accessories",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Accessories",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "23 Accessories",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "60 rpm (mode and MFD dependent)",
+        "kind": "numbered_heading",
+        "group_id": "batch_2",
+        "excerpt_ref": "excerpt[1]",
+        "disposition": "filtered",
+        "filter": "filter:classified_without_verb"
+      },
+      {
+        "title": "mm0.40 m",
+        "kind": "numbered_heading",
+        "group_id": "batch_2",
+        "excerpt_ref": "excerpt[5]",
+        "snippet": "11 Optimum performance For best performance, the radar should be positioned to allow the full beam to clear the superstructure of the boat. Halo20/20+ Radar 70 mm0.40 m 0.25 m 0.80 m 1.00 m 1.40 m 1.20 m 1.60 m 1.80 m 2.20 m 2.00 m 2.40 m2.",
+        "disposition": "filtered",
+        "filter": "filter:toc_artifact"
+      },
+      {
+        "title": "Optimum performance",
+        "kind": "numbered_heading",
+        "group_id": "batch_2",
+        "excerpt_ref": "excerpt[5]",
+        "snippet": "11 Optimum performance For best performance, the radar should be positioned to allow the full beam to clear the superstructure of the boat. Halo20/20+ Radar 70 mm0.40 m 0.25 m 0.80 m 1.00 m 1.40 m 1.20 m 1.60 m 1.80 m 2.20 m 2.00 m 2.40 m2.",
+        "disposition": "filtered",
+        "filter": "filter:toc_artifact"
+      },
+      {
+        "title": "m (0.0 ft)",
+        "kind": "numbered_heading",
+        "group_id": "batch_2",
+        "excerpt_ref": "excerpt[6]",
+        "snippet": "4 Radio Frequency (RF) Exposure System 100 W/m2 occupational safe distance 10 W /m2 public safe distance Halo20 Radar 0.0 m (0.0 ft) 0.0 m (0.0 ft) Halo20+ Radar 0.1 m (0.33 ft) Halo24 Radar 0.1 m (0.33 ft) Safe distances as measured by an",
+        "disposition": "filtered",
+        "filter": "filter:toc_artifact"
+      },
+      {
+        "title": "Radio Frequency (RF) Exposure",
+        "kind": "numbered_heading",
+        "group_id": "batch_2",
+        "excerpt_ref": "excerpt[6]",
+        "snippet": "4 Radio Frequency (RF) Exposure System 100 W/m2 occupational safe distance 10 W /m2 public safe distance Halo20 Radar 0.0 m (0.0 ft) 0.0 m (0.0 ft) Halo20+ Radar 0.1 m (0.33 ft) Halo24 Radar 0.1 m (0.33 ft) Safe distances as measured by an ",
+        "disposition": "filtered",
+        "filter": "filter:toc_artifact"
+      },
+      {
+        "title": "m0.80 m1.00 m1.20 m1.40 m1.60 m",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "10 Possible performance loss 50% of beam power 50% of beam power Above illustrates an installation with the Halo Radar mounted directly on to a large hard top. This installation could suffer decreased performance as the radar energy is ei",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Possible performance loss",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "10 Possible performance loss 50% of beam power 50% of beam power Above illustrates an installation with the Halo Radar mounted directly on to a large hard top. This installation could suffer decreased performance as the radar energy is eith",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      }
+    ],
+    "groups_scanned": [
+      "batch_0",
+      "batch_1",
+      "batch_2",
+      "batch_3"
+    ],
+    "procedure_count": 19,
+    "alternative_count": 0,
+    "filtered_count": 29
+  },
+  "reconciliation": {
+    "accounted": [],
+    "classified": [
+      {
+        "title": "Recommended wire gauges for extending power wire length for a 12 V system",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "17 Recommended wire gauges for extending power wire length for a 12 V system: Extension wiring length 2 m (6.56 ft) 5 m (16.40 ft) 10 m (32.80 ft) 20 m (65.61 ft) 30 m (98.42 ft) Interconnection cable length 5 m (16.40 ft) Min. AWG 16 16 16",
+        "source": "heuristic",
+        "excerpt_text": "17\nRecommended wire gauges for extending power wire length for a 12 V system:\nExtension wiring length\n2 m (6.56 ft) 5 m (16.40 ft) 10 m (32.80 ft) 20 m (65.61 ft) 30 m (98.42 ft)\nInterconnection cable length\n5 m (16.40 ft)\nMin. AWG\n16\n16 16 16 14\n10 m (32.80 ft) 16 16 14 12\n20 m (65.61 ft) 16 16 14 12\n30 m (98.42 ft) 14 12 8 6\n5 m (16.40 ft)\n Min. Cross-\nsection (mm2)\n1.00\n1.00 1.00 1.00 2.50\n10 m (32.80 ft) 1.00 1.00 2.50 4.00\n20 m (65.61 ft) 1.00 1.00 2.50 4.00\n30 m (98.42 ft) 2.50 4.00 10.00 16.00\nPower control connection \nThe yellow wire in the power cable is used to control how the unit is turned on and off.\nPower control by supply power\nThe scanner will turn on/off when power is applied/removed. Connect the yellow wire to the red wire after the fuse.\nA Key Wire color Description\nA Yellow Power control wire, connected to supply power\nPower on by switch\nThe unit will be turned on as long as the switch is closed.\nA\nB\nKey Wire color Description\nA Yellow Power control wire\nB Power switch\nPower controlled\nThe scanner can be connected to a common power control bus, and will turn on when power is applied to the bus by a display unit.",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:wiring",
+        "status": "classified"
+      },
+      {
+        "title": "Introduction",
+        "kind": "headed_procedure",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "5 CONTENTS 6 Introduction 6 Parts included 7 Installation 7 Wiring guidelines 8 Choose the scanner location 9 Considerations for roof mounting 12 Wiring overview 13 Scanner connection 14 Installing the scanner 15 Ethernet connection 16 Powe",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:spec_or_front_matter",
+        "classification_rule": "rule:spec_or_front_matter",
+        "status": "classified"
+      },
+      {
+        "title": "CONTENTS",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "5 CONTENTS 6 Introduction 6 Parts included 7 Installation 7 Wiring guidelines 8 Choose the scanner location 9 Considerations for roof mounting 12 Wiring overview 13 Scanner connection 14 Installing the scanner 15 Ethernet connection 16 Powe",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:spec_or_front_matter",
+        "classification_rule": "rule:spec_or_front_matter",
+        "status": "classified"
+      },
+      {
+        "title": "Parts included",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "5 CONTENTS 6 Introduction 6 Parts included 7 Installation 7 Wiring guidelines 8 Choose the scanner location 9 Considerations for roof mounting 12 Wiring overview 13 Scanner connection 14 Installing the scanner 15 Ethernet connection 16 Powe",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:wiring",
+        "status": "classified"
+      },
+      {
+        "title": "Installation",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "5 CONTENTS 6 Introduction 6 Parts included 7 Installation 7 Wiring guidelines 8 Choose the scanner location 9 Considerations for roof mounting 12 Wiring overview 13 Scanner connection 14 Installing the scanner 15 Ethernet connection 16 Powe",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:wiring",
+        "status": "classified"
+      },
+      {
+        "title": "Wiring guidelines",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "5 CONTENTS 6 Introduction 6 Parts included 7 Installation 7 Wiring guidelines 8 Choose the scanner location 9 Considerations for roof mounting 12 Wiring overview 13 Scanner connection 14 Installing the scanner 15 Ethernet connection 16 Powe",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:wiring",
+        "status": "classified"
+      },
+      {
+        "title": "Choose the scanner location",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "5 CONTENTS 6 Introduction 6 Parts included 7 Installation 7 Wiring guidelines 8 Choose the scanner location 9 Considerations for roof mounting 12 Wiring overview 13 Scanner connection 14 Installing the scanner 15 Ethernet connection 16 Powe",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:wiring",
+        "status": "classified"
+      },
+      {
+        "title": "Considerations for roof mounting",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "5 CONTENTS 6 Introduction 6 Parts included 7 Installation 7 Wiring guidelines 8 Choose the scanner location 9 Considerations for roof mounting 12 Wiring overview 13 Scanner connection 14 Installing the scanner 15 Ethernet connection 16 Powe",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:mounting",
+        "status": "classified"
+      },
+      {
+        "title": "Wiring overview",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "5 CONTENTS 6 Introduction 6 Parts included 7 Installation 7 Wiring guidelines 8 Choose the scanner location 9 Considerations for roof mounting 12 Wiring overview 13 Scanner connection 14 Installing the scanner 15 Ethernet connection 16 Powe",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:wiring",
+        "status": "classified"
+      },
+      {
+        "title": "Scanner connection",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "5 CONTENTS 6 Introduction 6 Parts included 7 Installation 7 Wiring guidelines 8 Choose the scanner location 9 Considerations for roof mounting 12 Wiring overview 13 Scanner connection 14 Installing the scanner 15 Ethernet connection 16 Powe",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:wiring",
+        "status": "classified"
+      },
+      {
+        "title": "Installing the scanner",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "5 CONTENTS 6 Introduction 6 Parts included 7 Installation 7 Wiring guidelines 8 Choose the scanner location 9 Considerations for roof mounting 12 Wiring overview 13 Scanner connection 14 Installing the scanner 15 Ethernet connection 16 Powe",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:wiring",
+        "status": "classified"
+      },
+      {
+        "title": "Ethernet connection",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "5 CONTENTS 6 Introduction 6 Parts included 7 Installation 7 Wiring guidelines 8 Choose the scanner location 9 Considerations for roof mounting 12 Wiring overview 13 Scanner connection 14 Installing the scanner 15 Ethernet connection 16 Powe",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:wiring",
+        "status": "classified"
+      },
+      {
+        "title": "Power control connection",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "17 Power control connection 18 Setup and configuration 18 Maintenance 18 Replacing a Broadband 3G/4G Radar 19 RI-10 Radar interface box and wiring 19 Troubleshooting 19 Status LED 19 Error messages 20 Error codes 21 Dimensional drawings 21 ",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:wiring",
+        "deduped_from": "Power connection",
+        "status": "classified"
+      },
+      {
+        "title": "Setup and configuration",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "18 Setup and configuration 18 Maintenance 18 Replacing a Broadband 3G/4G Radar 19 RI-10 Radar interface box and wiring 19 Troubleshooting 19 Status LED 19 Error messages 20 Error codes 21 Dimensional drawings 21 Halo dome radar dimensions 2",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:wiring",
+        "status": "classified"
+      },
+      {
+        "title": "Maintenance",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "18 Maintenance 18 Replacing a Broadband 3G/4G Radar 19 RI-10 Radar interface box and wiring 19 Troubleshooting 19 Status LED 19 Error messages 20 Error codes 21 Dimensional drawings 21 Halo dome radar dimensions 22 Technical specifications ",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:wiring",
+        "status": "classified"
+      },
+      {
+        "title": "Replacing a Broadband 3G/4G Radar",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "18 Replacing a Broadband 3G/4G Radar 19 RI-10 Radar interface box and wiring 19 Troubleshooting 19 Status LED 19 Error messages 20 Error codes 21 Dimensional drawings 21 Halo dome radar dimensions 22 Technical specifications 22 Halo20/20+ R",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:wiring",
+        "status": "classified"
+      },
+      {
+        "title": "RI-10 Radar interface box and wiring",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "19 RI-10 Radar interface box and wiring 19 Troubleshooting 19 Status LED 19 Error messages 20 Error codes 21 Dimensional drawings 21 Halo dome radar dimensions 22 Technical specifications 22 Halo20/20+ Radar 23 Halo24 Radar 23 Accessories",
+        "source": "heuristic",
+        "excerpt_text": "5\nCONTENTS\n6 Introduction\n6 Parts included\n7 Installation\n7 Wiring guidelines\n8 Choose the scanner location\n9 Considerations for roof mounting\n12 Wiring overview\n13 Scanner connection\n14 Installing the scanner\n15 Ethernet connection\n16 Power connection\n17 Power control connection \n18 Setup and configuration\n18 Maintenance\n18 Replacing a Broadband 3G/4G Radar\n19 RI-10 Radar interface box and wiring\n19 Troubleshooting\n19 Status LED\n19 Error messages\n20 Error codes\n21 Dimensional drawings\n21 Halo dome radar dimensions\n22 Technical specifications\n22 Halo20/20+ Radar\n23 Halo24 Radar\n23 Accessories",
+        "classification": "not_operator_relevant:spec_or_front_matter",
+        "classification_rule": "rule:spec_or_front_matter",
+        "status": "classified"
+      }
+    ],
+    "unaccounted": [
+      {
+        "title": "Restart the radar",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "2. Restart the radar 0x00010016 LED Lighting fault Turn accent lighting off then retry 0x00010018 Radar interface box fault Check the interconnection cable for damage Mechanical 0x00010001 Zero bearing sensor fault Contact service 0x0001000",
+        "source": "heuristic",
+        "excerpt_text": "Switch to STBY, Allow unit cool\n0x0001000E Transmitter overheat (hard) Switch to STBY, Isolate power to the radar\n and contact service\n0x0001000F Signal processing error Unit should revert to STBY. Select transmit\nIf problem persists. power cycle the radar\n0x00010017 Scanner failure Contact service\nPower supply\n0x00010010 Power supply overheating Switch to STBY, Allow unit cool then retry\n0x00010011 Power supply voltage error Check scanner cable for connections for corrosion or damage\n0x00010012 Power supply overload Contact service\n0x00010013 Power supply hardware fault Contact service\n0x00010014 Power supply comms fault Contact service\n0x00010019 Low battery voltage (Supply \nvoltage low)\n1. Recharge and check supply voltage\n2. Restart the radar\n0x00010016 LED Lighting fault Turn accent lighting off then retry\n0x00010018 Radar interface box fault Check the interconnection cable for damage\nMechanical\n0x00010001 Zero bearing sensor fault Contact service\n0x00010002 Bearing sensor fault Contact service\n0x00010015 Mechanical transmission fault Contact service\n0x00010003 Motor drive fault Contact service\n0x0001001A Motor or antenna has stalled Contact service",
+        "status": "unaccounted"
+      },
+      {
+        "title": "Switch to STBY, Allow unit cool",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "2. Switch to STBY, Allow unit cool",
+        "source": "heuristic",
+        "excerpt_text": "20 \nNo scanner\nHappens when Ethernet connection is established between radar and display, but an internal error in the scanner prevents normal \nradar operation.\nRecommendations\n• Check supply voltage/current\n• If persistent, power cycle the system, check the scanner cable / RJ45\n• Possible internal fault with the radar, contact service\nNo spoke data\nHappens when Ethernet connection is established between radar and display, but an internal error in the scanner prevents normal \nradar operation.\nRecommendations\n• Check supply voltage/current\n• If persistent, power cycle the system, check the scanner cable / RJ45\n• Possible internal fault with the radar, contact service\nError codes\nIf the error code repeats, please refer to list below.\nError code Description Recommendation\n0x00000001 Radar saved settings corrupted Radar will revert to factory defaults. Re-enter your settings including \ninstallation settings \n0x0001000C Scanner not detected 1. Check the pedestal interconnection  cable  connections\n2. Power cycle the radar\n3. Check input Voltage\n0x0001000D Transmitter overheat (soft) 1. Try changing to shorter ranges <6 NM\n2. Switch to STBY, Allow unit cool",
+        "status": "unaccounted"
+      }
+    ],
+    "unaccounted_procedures": [
+      {
+        "title": "Restart the radar",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "2. Restart the radar 0x00010016 LED Lighting fault Turn accent lighting off then retry 0x00010018 Radar interface box fault Check the interconnection cable for damage Mechanical 0x00010001 Zero bearing sensor fault Contact service 0x0001000",
+        "source": "heuristic",
+        "excerpt_text": "Switch to STBY, Allow unit cool\n0x0001000E Transmitter overheat (hard) Switch to STBY, Isolate power to the radar\n and contact service\n0x0001000F Signal processing error Unit should revert to STBY. Select transmit\nIf problem persists. power cycle the radar\n0x00010017 Scanner failure Contact service\nPower supply\n0x00010010 Power supply overheating Switch to STBY, Allow unit cool then retry\n0x00010011 Power supply voltage error Check scanner cable for connections for corrosion or damage\n0x00010012 Power supply overload Contact service\n0x00010013 Power supply hardware fault Contact service\n0x00010014 Power supply comms fault Contact service\n0x00010019 Low battery voltage (Supply \nvoltage low)\n1. Recharge and check supply voltage\n2. Restart the radar\n0x00010016 LED Lighting fault Turn accent lighting off then retry\n0x00010018 Radar interface box fault Check the interconnection cable for damage\nMechanical\n0x00010001 Zero bearing sensor fault Contact service\n0x00010002 Bearing sensor fault Contact service\n0x00010015 Mechanical transmission fault Contact service\n0x00010003 Motor drive fault Contact service\n0x0001001A Motor or antenna has stalled Contact service",
+        "status": "unaccounted"
+      },
+      {
+        "title": "Switch to STBY, Allow unit cool",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "2. Switch to STBY, Allow unit cool",
+        "source": "heuristic",
+        "excerpt_text": "20 \nNo scanner\nHappens when Ethernet connection is established between radar and display, but an internal error in the scanner prevents normal \nradar operation.\nRecommendations\n• Check supply voltage/current\n• If persistent, power cycle the system, check the scanner cable / RJ45\n• Possible internal fault with the radar, contact service\nNo spoke data\nHappens when Ethernet connection is established between radar and display, but an internal error in the scanner prevents normal \nradar operation.\nRecommendations\n• Check supply voltage/current\n• If persistent, power cycle the system, check the scanner cable / RJ45\n• Possible internal fault with the radar, contact service\nError codes\nIf the error code repeats, please refer to list below.\nError code Description Recommendation\n0x00000001 Radar saved settings corrupted Radar will revert to factory defaults. Re-enter your settings including \ninstallation settings \n0x0001000C Scanner not detected 1. Check the pedestal interconnection  cable  connections\n2. Power cycle the radar\n3. Check input Voltage\n0x0001000D Transmitter overheat (soft) 1. Try changing to shorter ranges <6 NM\n2. Switch to STBY, Allow unit cool",
+        "status": "unaccounted"
+      }
+    ],
+    "unaccounted_alternatives": [],
+    "accounting_trail": [
+      {
+        "title": "SETUP AND CONFIGURATION",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "18 SETUP AND CONFIGURATION Setup and configuration of the Halo Radar has been simplified compared to traditional pulse radars. There is no zero range adjustment (time delay), no warm up time and no burn in required. Make the following setti",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Tighten the boot gland",
+        "kind": "headed_procedure",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "16 8 Connect the cables together first inserting the RJ45 socket, then turn and lock the cable boot (A) to the adapter cable (B). AB 9 Tighten the boot gland. Ethernet adapter cable details 1 3 2 5 4 1 8 5-pin plug RJ45 socket 5-pin plug R",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Shield -- Drain",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "5 Shield -- Drain -- 4-5 -- Not used -- 7-8 -- Not used Power connection The unit is designed to be powered by a 12 or 24 V DC system. It is protected against reverse polarity, under voltage, and over voltage (for a limited duration of time",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "White/Orange Data transmit +",
+        "kind": "headed_procedure",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[5]",
+        "snippet": "15 Ethernet connection The scanner can be connected either directly to a RJ45 Ethernet socket or to a 5-pin Ethernet socket via the supplied Ethernet adapter. A C Ethernet Ethernet B C D E F Key Description A Display unit or Ethernet switc",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Ethernet connection",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[5]",
+        "snippet": "15 Ethernet connection The scanner can be connected either directly to a RJ45 Ethernet socket or to a 5-pin Ethernet socket via the supplied Ethernet adapter. A C Ethernet Ethernet B C D E F Key Description A Display unit or Ethernet switch",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "White/Green Data receive +",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[5]",
+        "snippet": "3 White/Green Data receive + 4 Blue Not used 5 White/Blue Not used 6 Green Data receive - 7 White/Brown Not used 8 Brown Not used Ethernet adapter cable The ethernet adapter cable is used to connect the scanner to a 5-pin Ethernet connector",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "White/Blue Not used",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[5]",
+        "snippet": "5 White/Blue Not used 6 Green Data receive - 7 White/Brown Not used 8 Brown Not used Ethernet adapter cable The ethernet adapter cable is used to connect the scanner to a 5-pin Ethernet connector. Use the supplied waterproof cable boot to s",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb",
+        "deduped_from": "Blue Not used"
+      },
+      {
+        "title": "Brown Not used",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[5]",
+        "snippet": "8 Brown Not used Ethernet adapter cable The ethernet adapter cable is used to connect the scanner to a 5-pin Ethernet connector. Use the supplied waterproof cable boot to seal the connection between the interconnection cable and the Etherne",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Recharge and check supply voltage",
+        "kind": "headed_procedure",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "Switch to STBY, Allow unit cool 0x0001000E Transmitter overheat (hard) Switch to STBY, Isolate power to the radar and contact service 0x0001000F Signal processing error Unit should revert to STBY. Select transmit If problem persists. power",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Power cycle the radar",
+        "kind": "headed_procedure",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "20 No scanner Happens when Ethernet connection is established between radar and display, but an internal error in the scanner prevents normal radar operation. Recommendations • Check supply voltage/current • If persistent, power cycle the",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "No scanner",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "20 No scanner Happens when Ethernet connection is established between radar and display, but an internal error in the scanner prevents normal radar operation. Recommendations • Check supply voltage/current • If persistent, power cycle the s",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Check input Voltage",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "3. Check input Voltage 0x0001000D Transmitter overheat (soft) 1. Try changing to shorter ranges <6 NM 2. Switch to STBY, Allow unit cool",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "TROUBLESHOOTING",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[3]",
+        "snippet": "19 TROUBLESHOOTING Status LED There is a status LED (A) at the back of the scanner that indicates the status of the scanner. A Condition Flash repeat sequence Priority Booting-up/Upgrading Continuous ON 1 (highest) Fault Rapidly flashing 2 ",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "Status LED",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "disposition": "filtered",
+        "filter": "filter:classified_without_verb"
+      },
+      {
+        "title": "Error messages",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "disposition": "filtered",
+        "filter": "filter:classified_without_verb"
+      },
+      {
+        "title": "Error codes",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "disposition": "filtered",
+        "filter": "filter:classified_without_verb"
+      },
+      {
+        "title": "Dimensional drawings",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "disposition": "filtered",
+        "filter": "filter:classified_without_verb"
+      },
+      {
+        "title": "Halo dome radar dimensions",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "disposition": "filtered",
+        "filter": "filter:classified_without_verb"
+      },
+      {
+        "title": "Technical specifications",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "disposition": "filtered",
+        "filter": "filter:classified_without_verb"
+      },
+      {
+        "title": "Halo20/20+ Radar",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "22 Halo20/20+ Radar 23 Halo24 Radar 23 Accessories",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Halo24 Radar",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "23 Halo24 Radar 23 Accessories",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Accessories",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "23 Accessories",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "60 rpm (mode and MFD dependent)",
+        "kind": "numbered_heading",
+        "group_id": "batch_2",
+        "excerpt_ref": "excerpt[1]",
+        "disposition": "filtered",
+        "filter": "filter:classified_without_verb"
+      },
+      {
+        "title": "mm0.40 m",
+        "kind": "numbered_heading",
+        "group_id": "batch_2",
+        "excerpt_ref": "excerpt[5]",
+        "snippet": "11 Optimum performance For best performance, the radar should be positioned to allow the full beam to clear the superstructure of the boat. Halo20/20+ Radar 70 mm0.40 m 0.25 m 0.80 m 1.00 m 1.40 m 1.20 m 1.60 m 1.80 m 2.20 m 2.00 m 2.40 m2.",
+        "disposition": "filtered",
+        "filter": "filter:toc_artifact"
+      },
+      {
+        "title": "Optimum performance",
+        "kind": "numbered_heading",
+        "group_id": "batch_2",
+        "excerpt_ref": "excerpt[5]",
+        "snippet": "11 Optimum performance For best performance, the radar should be positioned to allow the full beam to clear the superstructure of the boat. Halo20/20+ Radar 70 mm0.40 m 0.25 m 0.80 m 1.00 m 1.40 m 1.20 m 1.60 m 1.80 m 2.20 m 2.00 m 2.40 m2.",
+        "disposition": "filtered",
+        "filter": "filter:toc_artifact"
+      },
+      {
+        "title": "m (0.0 ft)",
+        "kind": "numbered_heading",
+        "group_id": "batch_2",
+        "excerpt_ref": "excerpt[6]",
+        "snippet": "4 Radio Frequency (RF) Exposure System 100 W/m2 occupational safe distance 10 W /m2 public safe distance Halo20 Radar 0.0 m (0.0 ft) 0.0 m (0.0 ft) Halo20+ Radar 0.1 m (0.33 ft) Halo24 Radar 0.1 m (0.33 ft) Safe distances as measured by an",
+        "disposition": "filtered",
+        "filter": "filter:toc_artifact"
+      },
+      {
+        "title": "Radio Frequency (RF) Exposure",
+        "kind": "numbered_heading",
+        "group_id": "batch_2",
+        "excerpt_ref": "excerpt[6]",
+        "snippet": "4 Radio Frequency (RF) Exposure System 100 W/m2 occupational safe distance 10 W /m2 public safe distance Halo20 Radar 0.0 m (0.0 ft) 0.0 m (0.0 ft) Halo20+ Radar 0.1 m (0.33 ft) Halo24 Radar 0.1 m (0.33 ft) Safe distances as measured by an ",
+        "disposition": "filtered",
+        "filter": "filter:toc_artifact"
+      },
+      {
+        "title": "m0.80 m1.00 m1.20 m1.40 m1.60 m",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "10 Possible performance loss 50% of beam power 50% of beam power Above illustrates an installation with the Halo Radar mounted directly on to a large hard top. This installation could suffer decreased performance as the radar energy is ei",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Possible performance loss",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "10 Possible performance loss 50% of beam power 50% of beam power Above illustrates an installation with the Halo Radar mounted directly on to a large hard top. This installation could suffer decreased performance as the radar energy is eith",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Recommended wire gauges for extending power wire length for a 12 V system",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[0]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:wiring"
+      },
+      {
+        "title": "Restart the radar",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[1]",
+        "disposition": "unaccounted"
+      },
+      {
+        "title": "Switch to STBY, Allow unit cool",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[2]",
+        "disposition": "unaccounted"
+      },
+      {
+        "title": "Introduction",
+        "kind": "headed_procedure",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:spec_or_front_matter",
+        "rule": "rule:spec_or_front_matter"
+      },
+      {
+        "title": "CONTENTS",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:spec_or_front_matter",
+        "rule": "rule:spec_or_front_matter"
+      },
+      {
+        "title": "Parts included",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:wiring"
+      },
+      {
+        "title": "Installation",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:wiring"
+      },
+      {
+        "title": "Wiring guidelines",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:wiring"
+      },
+      {
+        "title": "Choose the scanner location",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:wiring"
+      },
+      {
+        "title": "Considerations for roof mounting",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:mounting"
+      },
+      {
+        "title": "Wiring overview",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:wiring"
+      },
+      {
+        "title": "Scanner connection",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:wiring"
+      },
+      {
+        "title": "Installing the scanner",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:wiring"
+      },
+      {
+        "title": "Ethernet connection",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:wiring"
+      },
+      {
+        "title": "Power control connection",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:wiring"
+      },
+      {
+        "title": "Setup and configuration",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:wiring"
+      },
+      {
+        "title": "Maintenance",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:wiring"
+      },
+      {
+        "title": "Replacing a Broadband 3G/4G Radar",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:wiring"
+      },
+      {
+        "title": "RI-10 Radar interface box and wiring",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:spec_or_front_matter",
+        "rule": "rule:spec_or_front_matter"
+      }
+    ],
+    "counts": {
+      "accounted": 0,
+      "classified": 17,
+      "unaccounted": 2,
+      "filtered": 29,
+      "trail": 48
+    },
+    "corpus_sizes": {
+      "actions": 6,
+      "surfaces": 0,
+      "requires": 1
+    }
+  },
+  "repair": {
+    "attempted": false,
+    "enabled": true,
+    "skipped": true,
+    "unaccounted_in": 2,
+    "scope": "adjudicated_classes_only",
+    "adjudicated_ids": [
+      "smartsolar_sunset",
+      "smartsolar_firmware",
+      "smartsolar_globallink",
+      "combi_gen_mains",
+      "combi_power_sharing",
+      "mli_panel_alts"
+    ],
+    "adjudicated_unaccounted": 0,
+    "skipped_non_adjudicated": 2,
+    "skipped_reason": "no_adjudicated_targets"
+  },
+  "repair_enabled": true,
+  "accounting_trail": [
+    {
+      "title": "Restart the radar",
+      "kind": "numbered_heading",
+      "group_id": "batch_1",
+      "excerpt_ref": "excerpt[1]",
+      "disposition": "classified",
+      "auto_classified": "not_operator_relevant:installer",
+      "rule": "rule:installer:halo_error_code_recovery",
+      "note": "Fixture-Auth: chat Halo 20+ promote — error-code / STBY cool-down lines from installation troubleshooting are not guest operator runbook steps"
+    },
+    {
+      "title": "Switch to STBY, Allow unit cool",
+      "kind": "numbered_heading",
+      "group_id": "batch_1",
+      "excerpt_ref": "excerpt[2]",
+      "disposition": "classified",
+      "auto_classified": "not_operator_relevant:installer",
+      "rule": "rule:installer:halo_error_code_recovery",
+      "note": "Fixture-Auth: chat Halo 20+ promote — error-code / STBY cool-down lines from installation troubleshooting are not guest operator runbook steps"
+    }
+  ],
+  "unaccounted": []
+}

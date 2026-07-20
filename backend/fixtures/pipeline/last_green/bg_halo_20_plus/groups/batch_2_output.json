@@ -1,0 +1,67 @@
+{
+  "device": {
+    "manufacturer": "B&G",
+    "model": "Halo 20+",
+    "category_freeform": "Radar"
+  },
+  "entity_kind": "device",
+  "documented_version": "",
+  "ui_pages": [],
+  "alarm_severity": [],
+  "control_surfaces": [],
+  "operator_actions": [],
+  "networks": {
+    "speaks": [
+      {
+        "name_verbatim": "Ethernet 100Base-T",
+        "physical_or_wireless": "wired"
+      }
+    ],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [
+    {
+      "description_verbatim": "RI-10 Radar interface box",
+      "needed_for": "operator_actions",
+      "requirement_kind": "device"
+    }
+  ],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": false
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [
+    {
+      "description_verbatim": "Recommended fuse rating 5 A"
+    }
+  ],
+  "evidence": [
+    {
+      "supports_field": "networks.speaks",
+      "manual_section": "TECHNICAL SPECIFICATIONS",
+      "note": "Device communicates via Ethernet 100Base-T"
+    },
+    {
+      "supports_field": "requires_devices",
+      "manual_section": "After removing the RI-10 Radar interface box, reterminate the",
+      "note": "Interface box may be required for connection"
+    },
+    {
+      "supports_field": "supply_requirements",
+      "manual_section": "TECHNICAL SPECIFICATIONS",
+      "note": "Fuse rating specified for device operation"
+    }
+  ],
+  "confidence": {
+    "overall": 0.8,
+    "notes": "Limited information available; focused on installation context."
+  }
+}

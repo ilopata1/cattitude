@@ -24,7 +24,7 @@ from fragment_drafting import (
     CLEARED_MANUAL_LEGAL_STATUS,
     FragmentDraftingError,
     list_ingested_manuals,
-    select_manuals_for_drafting,
+    select_manuals_for_interaction_profile,
 )
 from interaction_profile_derive import apply_derived_actions
 from interaction_profile_merge import (
@@ -976,7 +976,9 @@ def extract_interaction_profile(
         )
 
     try:
-        manuals, manual_selection_policy = select_manuals_for_drafting(all_manuals)
+        manuals, manual_selection_policy = select_manuals_for_interaction_profile(
+            all_manuals
+        )
     except FragmentDraftingError as exc:
         raise InteractionProfileError(str(exc)) from exc
 

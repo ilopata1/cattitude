@@ -1,0 +1,330 @@
+{
+  "manuals": [
+    {
+      "id": "c552792a-bd10-485f-a1f0-d7820ea7f9cb",
+      "title": "Zeus SR Quick Start Guide V2.5",
+      "manual_type": "operators",
+      "legal_status": "cleared"
+    }
+  ],
+  "manuals_available": [
+    {
+      "id": "c552792a-bd10-485f-a1f0-d7820ea7f9cb",
+      "title": "Zeus SR Quick Start Guide V2.5",
+      "manual_type": "operators",
+      "legal_status": "cleared"
+    }
+  ],
+  "manual_selection_policy": "operators",
+  "excerpts": [
+    {
+      "manual_id": "c552792a-bd10-485f-a1f0-d7820ea7f9cb",
+      "source_file": "e29641496febe657_ZEUS-SR_QG_EN_988-13244-002_w.pdf",
+      "page_start": 1,
+      "page_end": 1,
+      "query": "operation daily use display menu controls operator",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.4737321909397427,
+      "text": "Select your language, country, \nand time zone, then set up the boat network and follow the on-\nscreen prompts.\nSETUP GUIDE\nOn the Welcome screen, select Continue device setup to \ncomplete the device settings. Alternatively, select the settings \nicon \n , located on the app drawer and the quick access menu, \nthen select Setup guide to set up the unit.\n \u00bc Note:  Complete the setup to ensure accurate and reliable \nnavigation.\nQUICK ACCESS MENU\nThe quick access menu gives you immediate access to basic \nsystem settings and features. Press the power key or  to \ndisplay the quick access menu. \n \u00bc Note: To hide the quick access menu, tap anywhere on the \nscreen.\nAPPS AND STATUS BAR\nAn app is a program for a unique feature or function. The \navailability of some apps depends on the size of your unit and \nthe hardware that is connected.\nFor app-specific user guides, download the B&G app on your \nmobile device and connect it to your display unit, or visit:  \nwww.bandg.com/downloads/zeus-sr.\nSelect  to open the app drawer, where you can launch apps \nand access system settings. The status bar at the top of the \nscreen shows live system status and alerts.\nB\nA\nC ED F",
+      "source_heading_guess": "SETUP GUIDE"
+    },
+    {
+      "manual_id": "c552792a-bd10-485f-a1f0-d7820ea7f9cb",
+      "source_file": "e29641496febe657_ZEUS-SR_QG_EN_988-13244-002_w.pdf",
+      "page_start": 1,
+      "page_end": 1,
+      "query": "operation daily use display menu controls operator",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.46981659749541294,
+      "text": "Zeus\n\u00ae\n SR\nQuick Start Guide\n*988-13244-002*\nThis document describes the basic controls of the B&G Zeus\u00ae \nSR multi-function display (MFD).\nFor the latest version of this document and other app guides, \ndownload the B&G mobile app, scan the QR code\u00ae, and \nconnect with your Zeus\u00ae SR, or visit:  \nwww.bandg.com/downloads/zeus-sr. \n \u00bc Note: Refer to the enclosed installation manual before you \nturn on the unit.\nBASIC CONTROLS\nTo turn the unit on, press and hold the power button (G). A \nbeep indicates the unit is powering up.\nTo turn the unit off, press and hold the power button, or select \nPower off from the quick access menu.\nA\nB\nC\nD\nE\nF\nG\nH\nI\nA Touchscreen\nB Home\nC App Menu\nD Scroll wheel\nE Exit\nF Waypoint\nG Power\nH Customizable keys\n\u2022 1x 10\" unit\n\u2022 2x 12\" and 16\" units\nI Memory card door\nPOWER CONTROL\nPower to the unit can be controlled by an external switch or \nother units. For details about available power options, refer to \nthe unit\u2019s installation manual.\n \u00bc Note: If your MFD is controlled by an external power source, \nit can\u2019t be powered off using the power button. Instead, pressing \nand holding the power button puts the unit in standby mode. To",
+      "source_heading_guess": "BASIC CONTROLS"
+    },
+    {
+      "manual_id": "c552792a-bd10-485f-a1f0-d7820ea7f9cb",
+      "source_file": "e29641496febe657_ZEUS-SR_QG_EN_988-13244-002_w.pdf",
+      "page_start": 1,
+      "page_end": 1,
+      "query": "operation daily use display menu controls operator",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.4109706563717127,
+      "text": "To activate a MOB, select the MOB icon (1) in the quick access \nmenu to immediately create a MOB waypoint at your vessel\u2019s \ncurrent location and begin.\nAlternatively, open the MOB app (2). This automatically creates \na MOB waypoint at your vessel\u2019s current location.\nAfter the MOB is activated, select  and follow the on-screen \ninstructions to respond to the emergency.\n1\n2\n \u00bc Note: Select Stop Navigation to end MOB navigation. You \ncan then Deactivate the MOB.\nALERTS\nThe unit continuously monitors connected sensors and \ndevices for alerts, system faults and environmental changes. \nAlerts display on the top left of your screen and can be \nconfigured by setting up rules\nTo view a list of all your alert messages, select  then \n  on \nthe quick access menu.\nWhen triggered, an alert rule generates one of the following \nmessage types:\n\u2022 Alarm (red)\u2014a message that stays on the screen until you \nmute it. If your system\u2019s siren is on, it is also accompanied \nby an audible alarm. \n\u2022 Warning (amber)\u2014a message that stays on the screen until \nyou mute it.\n\u2022 Notification (blue)\u2014an informational message used to \nnotify of a non-critical event e.g. software updates.\nCONNECT TO MOBILE APP",
+      "source_heading_guess": "CONNECT TO MOBILE APP"
+    },
+    {
+      "manual_id": "c552792a-bd10-485f-a1f0-d7820ea7f9cb",
+      "source_file": "e29641496febe657_ZEUS-SR_QG_EN_988-13244-002_w.pdf",
+      "page_start": 1,
+      "page_end": 1,
+      "query": "operation daily use display menu controls operator",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.37301467718810266,
+      "text": "\u00a9 2026 Navico Group. All Rights Reserved. Navico Group is a division of Brunswick Corporation. \n\u00aeReg. U.S. Pat. & Tm. Off, and \u2122 common law marks. Visit www.navico.com/intellectual-property to review the global \ntrademark rights and accreditations for Navico Group and other entities.\nEN\nScan to save a copy",
+      "source_heading_guess": "EN Scan to save a copy"
+    }
+  ],
+  "query_diagnostics": [
+    {
+      "query": "operation daily use display menu controls operator",
+      "unique_hits_added": 4,
+      "matched": true,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "installation wiring commissioning configuration DIP switches",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "network communication MasterBus NMEA CZone VE.Direct Bluetooth remote panel app",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "maintenance service storage winterizing",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "optional accessory gateway interface required for",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "MasterView remote panel remote control display panel monitoring panel MasterAdjust",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "optional remote control MasterView Easy remote panel installed",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "shore power AC input current limit generator mains",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "main switch inverter on off charger operation",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "DC fuse battery protection wiring supply requirement",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "BMS battery safety relay protective disconnect undervoltage overvoltage temperature",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "Class T fuse T-Fuse fuse holder positive battery cable",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "Close relay reset battery safety event recovery after disconnect",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "State of charge SOC monitoring MasterBus display",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "Climate page HVAC air conditioner aircon temperature control fan setpoint",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "CLIMATE CONTROLS Power Mode Temp Fan air conditioning",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "supported air conditioner HVAC climate operating modes fan speed",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    }
+  ],
+  "coverage": {
+    "heading_count": 8,
+    "headings_covered_count": 6,
+    "heading_coverage_fraction": 0.75,
+    "coverage_low_threshold": 0.25,
+    "coverage_low": false,
+    "headings_all": [
+      "BASIC CONTROLS",
+      "POWER CONTROL",
+      "FIRST STARTUP",
+      "SETUP GUIDE",
+      "QUICK ACCESS MENU",
+      "APPS AND STATUS BAR",
+      "EMERGENCY AND MOB",
+      "CONNECT TO MOBILE APP"
+    ],
+    "headings_covered": [
+      "BASIC CONTROLS",
+      "POWER CONTROL",
+      "SETUP GUIDE",
+      "QUICK ACCESS MENU",
+      "APPS AND STATUS BAR",
+      "CONNECT TO MOBILE APP"
+    ],
+    "headings_missing": [
+      "FIRST STARTUP",
+      "EMERGENCY AND MOB"
+    ],
+    "chunk_count": 4,
+    "top_k_used": 4,
+    "heading_fill_queries": 0,
+    "heading_fill_hits": 0,
+    "top_k_scaling": {
+      "base": 4,
+      "max": 16,
+      "chunk_coverage_target": 0.6,
+      "scaled": false
+    }
+  },
+  "map_group_count": 1,
+  "legal_status_required": "cleared",
+  "validation_issues": [],
+  "validation_flags": [],
+  "needs_rextraction": false,
+  "repairs": [
+    {
+      "repair": "cleared_circular_occasion",
+      "flag": "occasion_circular",
+      "field_path": "operator_actions[0].occasion",
+      "original_value": "to power up the device"
+    },
+    {
+      "repair": "cleared_circular_occasion",
+      "flag": "occasion_circular",
+      "field_path": "operator_actions[1].occasion",
+      "original_value": "to power down the device"
+    }
+  ],
+  "repair": {
+    "evidence": {
+      "attempted": false
+    },
+    "absence": {
+      "attempted": false
+    }
+  },
+  "rextraction": {
+    "attempted": false,
+    "max_retries": 1,
+    "still_needs_rextraction": false
+  },
+  "stability_voting": {
+    "n_requested": 3,
+    "n_completed": 2,
+    "short_circuit_identical": true,
+    "unstable_flag_count": 0,
+    "votes": []
+  },
+  "procedure_inventory": {
+    "inventory": {
+      "procedures": [],
+      "alternatives": [],
+      "filtered": [
+        {
+          "title": "To activate a MOB, select the MOB icon (1) in the quick access",
+          "kind": "step_block",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[2]",
+          "snippet": "To activate a MOB, select the MOB icon (1) in the quick access menu to immediately create a MOB waypoint at your vessel\u2019s current location and begin. Alternatively, open the MOB app (2). This automatically creates a MOB waypoint at your ves",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        }
+      ],
+      "groups_scanned": [
+        "batch_0"
+      ],
+      "procedure_count": 0,
+      "alternative_count": 0,
+      "filtered_count": 1
+    },
+    "reconciliation": {
+      "accounted": [],
+      "classified": [],
+      "unaccounted": [],
+      "unaccounted_procedures": [],
+      "unaccounted_alternatives": [],
+      "accounting_trail": [
+        {
+          "title": "To activate a MOB, select the MOB icon (1) in the quick access",
+          "kind": "step_block",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[2]",
+          "snippet": "To activate a MOB, select the MOB icon (1) in the quick access menu to immediately create a MOB waypoint at your vessel\u2019s current location and begin. Alternatively, open the MOB app (2). This automatically creates a MOB waypoint at your ves",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        }
+      ],
+      "counts": {
+        "accounted": 0,
+        "classified": 0,
+        "unaccounted": 0,
+        "filtered": 1,
+        "trail": 1
+      },
+      "corpus_sizes": {
+        "actions": 3,
+        "surfaces": 2,
+        "requires": 0
+      }
+    },
+    "repair": {
+      "attempted": false,
+      "enabled": false
+    },
+    "repair_enabled": true
+  },
+  "structured_outputs": true
+}

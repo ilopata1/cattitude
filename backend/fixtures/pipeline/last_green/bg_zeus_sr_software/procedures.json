@@ -1,0 +1,58 @@
+{
+  "inventory": {
+    "procedures": [],
+    "alternatives": [],
+    "filtered": [
+      {
+        "title": "To activate a MOB, select the MOB icon (1) in the quick access",
+        "kind": "step_block",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "To activate a MOB, select the MOB icon (1) in the quick access menu to immediately create a MOB waypoint at your vessel\u2019s current location and begin. Alternatively, open the MOB app (2). This automatically creates a MOB waypoint at your ves",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      }
+    ],
+    "groups_scanned": [
+      "batch_0"
+    ],
+    "procedure_count": 0,
+    "alternative_count": 0,
+    "filtered_count": 1
+  },
+  "reconciliation": {
+    "accounted": [],
+    "classified": [],
+    "unaccounted": [],
+    "unaccounted_procedures": [],
+    "unaccounted_alternatives": [],
+    "accounting_trail": [
+      {
+        "title": "To activate a MOB, select the MOB icon (1) in the quick access",
+        "kind": "step_block",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "To activate a MOB, select the MOB icon (1) in the quick access menu to immediately create a MOB waypoint at your vessel\u2019s current location and begin. Alternatively, open the MOB app (2). This automatically creates a MOB waypoint at your ves",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      }
+    ],
+    "counts": {
+      "accounted": 0,
+      "classified": 0,
+      "unaccounted": 0,
+      "filtered": 1,
+      "trail": 1
+    },
+    "corpus_sizes": {
+      "actions": 3,
+      "surfaces": 2,
+      "requires": 0
+    }
+  },
+  "repair": {
+    "attempted": false,
+    "enabled": false
+  },
+  "repair_enabled": true
+}

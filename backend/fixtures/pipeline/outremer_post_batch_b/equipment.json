@@ -1,7 +1,7 @@
 {
   "vessel": "outremer_55n60",
-  "notes": "Touch 7 runs_platform czone_2_0; platform_version_unconfirmed + config_unsourced until version photo/.zcf. Climate gate: vessel has 230V aircon (folio 10) but CZone-supported HVAC integration unknown — AC-present ≠ CZone-supported-HVAC.",
-  "fixture_auth": "Fixture-Auth: chat instance-policy + VESSEL_ARTIFACT batch — outremer_post_batch_b primary with distinct Combi/MLI/Alpha instances; Fixture-Auth: chat Solar v3 — vessel_facts observation/inference + evidence refs; Fixture-Auth: chat Solar v4 — vessel_display_name=Supernova; Fixture-Auth: chat Zeus SR promote — scratch bg_zeus_sr validated into vessel profiles; Fixture-Auth: chat CZone ui_pages reextract — Favourites/Alarms/Control/Monitoring actions from QSG V1.1 targeted map",
+  "notes": "Touch 7 runs_platform czone_2_0; platform_version_unconfirmed + config_unsourced until version photo/.zcf. Climate gate: vessel has 230V aircon (folio 10) but CZone-supported HVAC integration unknown — AC-present ≠ CZone-supported-HVAC. Zeus SR runs_platform bg_zeus_sr_software; platform_version_unconfirmed until settings photo confirms v2.5.",
+  "fixture_auth": "Fixture-Auth: chat instance-policy + VESSEL_ARTIFACT batch — outremer_post_batch_b primary with distinct Combi/MLI/Alpha instances; Fixture-Auth: chat Solar v3 — vessel_facts observation/inference + evidence refs; Fixture-Auth: chat Solar v4 — vessel_display_name=Supernova; Fixture-Auth: chat Zeus SR promote — scratch bg_zeus_sr validated into vessel profiles; Fixture-Auth: chat CZone ui_pages reextract — Favourites/Alarms/Control/Monitoring actions from QSG V1.1 targeted map; Fixture-Auth: chat Zeus SR Software platform — QSG V2.5 as shared UI platform (CZone-style runs_platform)",
   "installation_notes": [
     {
       "applies_to": [
@@ -279,6 +279,18 @@
       "system_category": "electrical_dc",
       "quantity": 1,
       "instance_handling": "interchangeable"
+    },
+    {
+      "device_key": "bg_zeus_sr_software",
+      "catalog_key": "bg_zeus_sr_software",
+      "manufacturer": "B&G",
+      "model": "Zeus SR Software",
+      "description": "B&G Zeus SR shared MFD software platform (v2.5)",
+      "system_category": "navigation_electronics",
+      "entity_kind": "platform",
+      "quantity": 1,
+      "instance_handling": "interchangeable",
+      "provenance": "admin vessel link Zeus SR Software + Quick Start Guide V2.5 (988-13244-002); shared UI for Zeus SR displays"
     }
   ],
   "vessel_artifact_facts": [

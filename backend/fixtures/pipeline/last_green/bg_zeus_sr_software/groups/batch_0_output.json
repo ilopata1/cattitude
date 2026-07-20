@@ -1,0 +1,79 @@
+{
+  "device": {
+    "manufacturer": "B&G",
+    "model": "Zeus SR Software",
+    "category_freeform": "multi-function display (MFD)"
+  },
+  "entity_kind": "device",
+  "documented_version": "",
+  "ui_pages": [],
+  "alarm_severity": [],
+  "control_surfaces": [
+    {
+      "surface": "touchscreen",
+      "location_class": "on_device",
+      "optional_accessory": false,
+      "label_verbatim": "Touchscreen",
+      "path": "control_surfaces[0]"
+    }
+  ],
+  "operator_actions": [
+    {
+      "action": "turn the unit on",
+      "audience": "operator",
+      "context": "situational",
+      "occasion": "to power up the device"
+    },
+    {
+      "action": "turn the unit off",
+      "audience": "operator",
+      "context": "situational",
+      "occasion": "to power down the device"
+    },
+    {
+      "action": "activate a MOB",
+      "audience": "operator",
+      "context": "emergency",
+      "occasion": "to respond to a man overboard situation"
+    }
+  ],
+  "networks": {
+    "speaks": [],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": false
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [],
+  "evidence": [
+    {
+      "supports_field": "operator_actions[action=\"turn the unit on\"]",
+      "manual_section": "BASIC CONTROLS",
+      "note": "Procedure to power up the device"
+    },
+    {
+      "supports_field": "operator_actions[action=\"turn the unit off\"]",
+      "manual_section": "BASIC CONTROLS",
+      "note": "Procedure to power down the device"
+    },
+    {
+      "supports_field": "operator_actions[action=\"activate a MOB\"]",
+      "manual_section": "CONNECT TO MOBILE APP",
+      "note": "Procedure to respond to a man overboard situation"
+    }
+  ],
+  "confidence": {
+    "overall": 0.8,
+    "notes": "Manual excerpts provide clear operator actions and device controls."
+  }
+}
