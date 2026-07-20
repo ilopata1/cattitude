@@ -18,6 +18,9 @@
 {% if request.query_params.get('edition_current') %}
 <div class="flash flash-ok">Current edition updated.</div>
 {% endif %}
+{% if request.query_params.get('reassigned') %}
+<div class="flash flash-ok">Manual reassigned to the selected equipment.</div>
+{% endif %}
 {% if request.query_params.get('error') %}
 <div class="flash flash-error">{{ request.query_params.get('error') }}</div>
 {% endif %}
@@ -55,6 +58,33 @@
     <a href="/admin/manuals">Back to library</a>
   </div>
 </form>
+
+<section class="panel">
+  <h2>Linked equipment</h2>
+  <p class="muted">Currently linked to <strong>{{ work.manufacturer }} — {{ work.model }}</strong>.</p>
+  <form method="post" action="/admin/manuals/{{ work.id }}/reassign" class="form-grid">
+    <fieldset class="full-width">
+      <legend>Reassign to another equipment</legend>
+      <div data-equipment-autocomplete data-autocomplete-url="/admin/equipment/autocomplete">
+        <label>Registry equipment
+          <input type="text" placeholder="Search manufacturer or model" autocomplete="off" value="">
+          <input type="hidden" name="equipment_id" value="">
+          <input type="hidden" name="equipment_label" value="">
+        </label>
+        <ul class="combobox-options" role="listbox" hidden></ul>
+      </div>
+      <p class="muted">Moves this manual work (and all editions/files) without re-uploading. Ingested chunks stay attached to this manual ID.</p>
+    </fieldset>
+    <div class="form-actions full-width">
+      <button type="submit">Reassign</button>
+    </div>
+  </form>
+  <form method="post" action="/admin/manuals/{{ work.id }}/delete" class="form-grid" onsubmit="return confirm('Delete this manual work, all editions/files, stored PDFs, and ingested chunks? This cannot be undone.');">
+    <div class="form-actions full-width">
+      <button type="submit" class="btn-danger">Delete manual</button>
+    </div>
+  </form>
+</section>
 
 <section class="panel">
   <h2>Editions</h2>
@@ -108,4 +138,7 @@
   <p class="muted">No editions yet. <a href="/admin/manuals/new">Upload a manual</a>.</p>
   {% endfor %}
 </section>
+{% endblock %}
+{% block scripts %}
+<script src="/admin/static/equipment-autocomplete.js"></script>
 {% endblock %}

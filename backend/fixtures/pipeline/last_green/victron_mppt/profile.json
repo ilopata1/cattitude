@@ -28,14 +28,16 @@
       "audience": "operator",
       "context": "situational",
       "vote_margin": "3/3",
-      "source": "extracted"
+      "source": "extracted",
+      "occasion": "when connecting an optional MPPT Control display via VE.Direct"
     },
     {
       "action": "configure solar charger settings via VictronConnect app",
       "audience": "operator",
       "context": "situational",
       "vote_margin": "1/3",
-      "source": "extracted"
+      "source": "extracted",
+      "occasion": "when changing solar charger settings via VictronConnect or an optional display"
     },
     {
       "action": "monitor via the VictronConnect app",
@@ -56,49 +58,56 @@
       "audience": "operator",
       "context": "situational",
       "source": "derived",
-      "derived_from": "evidence[5]"
+      "derived_from": "evidence[5]",
+      "occasion": "when shutting down the solar charger (disconnect PV supply first)"
     },
     {
       "action": "restart the device",
       "audience": "operator",
       "context": "situational",
       "source": "derived",
-      "derived_from": "evidence[5]"
+      "derived_from": "evidence[5]",
+      "occasion": "when restarting the solar charger after a shutdown (reconnect battery supply first)"
     },
     {
       "action": "set the sunset action to keep the lights off",
       "audience": "operator",
       "context": "situational",
       "source": "extracted",
-      "vote_margin": "repaired"
+      "vote_margin": "repaired",
+      "occasion": "at sunset, for load-output lighting control"
     },
     {
       "action": "set the sunset action to switch on for a fixed time",
       "audience": "operator",
       "context": "situational",
       "source": "extracted",
-      "vote_margin": "repaired"
+      "vote_margin": "repaired",
+      "occasion": "at sunset, for load-output lighting control"
     },
     {
       "action": "set the sunset action to switch on till midnight",
       "audience": "operator",
       "context": "situational",
       "source": "extracted",
-      "vote_margin": "repaired"
+      "vote_margin": "repaired",
+      "occasion": "at sunset, for load-output lighting control"
     },
     {
       "action": "set the sunset action to switch on till sunrise",
       "audience": "operator",
       "context": "situational",
       "source": "extracted",
-      "vote_margin": "repaired"
+      "vote_margin": "repaired",
+      "occasion": "at sunset, for load-output lighting control"
     },
     {
       "action": "update firmware",
       "audience": "operator",
       "context": "situational",
       "source": "extracted",
-      "vote_margin": "repaired_deterministic"
+      "vote_margin": "repaired_deterministic",
+      "occasion": "when updating the solar charger firmware"
     }
   ],
   "networks": {
@@ -214,6 +223,51 @@
       "supports_field": "control_surfaces[0]",
       "manual_section": "3.7. VE.Direct port",
       "note": "Optional external display connects to the solar charger"
+    },
+    {
+      "supports_field": "operator_actions[6].occasion",
+      "manual_section": "Setting the Sunset action",
+      "note": "At sunset you can choose load-output actions"
+    },
+    {
+      "supports_field": "operator_actions[7].occasion",
+      "manual_section": "Setting the Sunset action",
+      "note": "At sunset you can choose load-output actions"
+    },
+    {
+      "supports_field": "operator_actions[8].occasion",
+      "manual_section": "Setting the Sunset action",
+      "note": "At sunset you can choose load-output actions"
+    },
+    {
+      "supports_field": "operator_actions[9].occasion",
+      "manual_section": "Setting the Sunset action",
+      "note": "At sunset you can choose load-output actions"
+    },
+    {
+      "supports_field": "operator_actions[1].occasion",
+      "manual_section": "Configuration and settings",
+      "note": "configure settings via app or MPPT Control display"
+    },
+    {
+      "supports_field": "operator_actions[4].occasion",
+      "manual_section": "6.5. Shutdown and restart procedure",
+      "note": "prescribed shutdown order: PV then battery"
+    },
+    {
+      "supports_field": "operator_actions[5].occasion",
+      "manual_section": "6.5. Shutdown and restart procedure",
+      "note": "prescribed restart order after shutdown"
+    },
+    {
+      "supports_field": "operator_actions[10].occasion",
+      "manual_section": "5.3. Updating firmware",
+      "note": "firmware update procedure in settings chapter"
+    },
+    {
+      "supports_field": "operator_actions[0].occasion",
+      "manual_section": "Display / VE.Direct",
+      "note": "optional MPPT Control connects via VE.Direct cable"
     }
   ],
   "confidence": {
@@ -604,5 +658,6 @@
   "instability_triage": {
     "material_count": 0,
     "cosmetic_count": 1
-  }
+  },
+  "profile_schema_version": "v4.19"
 }

@@ -58,25 +58,29 @@
       "action": "contact Mastervolt Service Centre",
       "audience": "either",
       "context": "situational",
-      "source": "extracted"
+      "source": "extracted",
+      "occasion": "when a problem cannot be solved using the troubleshooting table"
     },
     {
       "action": "set AC input current limit",
       "audience": "operator",
       "context": "situational",
-      "source": "extracted"
+      "source": "extracted",
+      "occasion": "when shore or mains AC input is limited, to avoid tripping the external AC circuit breaker"
     },
     {
       "action": "switch on the Mass Combi Pro",
       "audience": "operator",
       "context": "situational",
-      "source": "extracted"
+      "source": "extracted",
+      "occasion": "when the Mass Combi Pro was switched off manually"
     },
     {
       "action": "switch off inverter to prevent battery depletion",
       "audience": "operator",
       "context": "situational",
-      "source": "extracted"
+      "source": "extracted",
+      "occasion": "to prevent depleting the batteries"
     },
     {
       "action": "adjust DIP-switches prior to commissioning",
@@ -106,21 +110,24 @@
       "action": "switch off the charger",
       "audience": "operator",
       "context": "situational",
-      "source": "extracted"
+      "source": "extracted",
+      "occasion": "when charger-off is required from the Mass Combi operating modes"
     },
     {
       "action": "enable Generator / mains support mode",
       "audience": "either",
       "context": "situational",
       "source": "extracted",
-      "vote_margin": "repaired"
+      "vote_margin": "repaired",
+      "occasion": "when AC demand is higher than available AC input power"
     },
     {
       "action": "set Power Sharing level to match external circuit breaker",
       "audience": "installer_or_technician",
       "context": "situational",
       "source": "extracted",
-      "vote_margin": "repaired"
+      "vote_margin": "repaired",
+      "occasion": "to match the external circuit breaker rating"
     }
   ],
   "networks": {
@@ -206,6 +213,41 @@
       "supports_field": "data_roles.exposes_data_to_network",
       "manual_section": "5.9 Setting up a MasterBus network",
       "note": "MasterBus enables communication between connected devices."
+    },
+    {
+      "supports_field": "operator_actions[3].occasion",
+      "manual_section": "3.4.4 Power sharing mode",
+      "note": "limited AC input; external breaker may trip"
+    },
+    {
+      "supports_field": "operator_actions[12].occasion",
+      "manual_section": "3.4.4 Power sharing mode",
+      "note": "Power Sharing level vs external breaker"
+    },
+    {
+      "supports_field": "operator_actions[5].occasion",
+      "manual_section": "4.5 Daily use, MasterBus monitoring",
+      "note": "Inverter Option: switch Off to prevent depleting batteries"
+    },
+    {
+      "supports_field": "operator_actions[10].occasion",
+      "manual_section": "4.5 Daily use, MasterBus monitoring",
+      "note": "Mode includes Charger off"
+    },
+    {
+      "supports_field": "operator_actions[4].occasion",
+      "manual_section": "operation and warnings",
+      "note": "Switch on after manual off via main switch"
+    },
+    {
+      "supports_field": "operator_actions[11].occasion",
+      "manual_section": "3.4.5 Gen-/Mains support",
+      "note": "support mode when demand exceeds AC input"
+    },
+    {
+      "supports_field": "operator_actions[2].occasion",
+      "manual_section": "troubleshooting",
+      "note": "contact Service Centre if table does not solve problem"
     }
   ],
   "confidence": {
@@ -663,5 +705,6 @@
         }
       ]
     }
-  ]
+  ],
+  "profile_schema_version": "v4.19"
 }

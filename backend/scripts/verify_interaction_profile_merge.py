@@ -371,6 +371,151 @@ def main() -> int:
         "action/surface same_fn remain fuzzy-identity helpers",
     )
 
+    check(
+        _action_same(
+            {"action": "close quick access menu"},
+            {"action": "open quick access menu"},
+        )
+        is False,
+        "antonym open/close must not collapse",
+    )
+    check(
+        _action_same(
+            {"action": "clean the display"},
+            {"action": "clean the screen"},
+        )
+        is True,
+        "synonym display/screen must collapse",
+    )
+    check(
+        fuzzy_text_similar("turn unit on", "turn unit off") is False,
+        "antonym on/off must not fuzzy-match",
+    )
+
+    # --- v4.27: per-group index→action rewrite before merge (Zeus founding) ---
+    zeus_intro = {
+        "group_id": "batch_0",
+        "is_introduction": True,
+        "excerpts": [{"text": "intro"}],
+        "predicted_fields": ["operator_actions", "evidence"],
+        "profile": _prof(
+            device={
+                "manufacturer": "B&G",
+                "model": "Zeus SR",
+                "category_freeform": "display",
+            },
+            operator_actions=[
+                {
+                    "action": "turn off the device",
+                    "audience": "operator",
+                    "context": "situational",
+                },
+                {
+                    "action": "set all radars to standby",
+                    "audience": "operator",
+                    "context": "situational",
+                },
+            ],
+            evidence=[
+                {
+                    "supports_field": "operator_actions",
+                    "manual_section": "Quick access menu",
+                    "note": "Actions for accessing and closing the quick access menu",
+                }
+            ],
+        ),
+    }
+    zeus_batch1 = {
+        "group_id": "batch_1",
+        "is_introduction": False,
+        "excerpts": [{"text": "startup alerts"}],
+        "predicted_fields": ["operator_actions", "evidence"],
+        "profile": {
+            "device": {
+                "manufacturer": "B&G",
+                "model": "Zeus SR",
+                "category_freeform": "display",
+            },
+            "control_surfaces": [],
+            "operator_actions": [
+                {
+                    "action": (
+                        "complete initial setup for Language, Country selection, "
+                        "Time zone, and Boat network"
+                    ),
+                    "audience": "operator",
+                    "context": "commissioning",
+                },
+                {
+                    "action": "view alert messages",
+                    "audience": "operator",
+                    "context": "daily",
+                },
+                {
+                    "action": "manage alert rules",
+                    "audience": "operator",
+                    "context": "situational",
+                },
+            ],
+            "networks": {"speaks": [], "bridges": []},
+            "data_roles": {
+                "exposes_data_to_network": False,
+                "displays_data_from_other_devices": False,
+                "controllable_from_network": False,
+            },
+            "requires_devices": [],
+            "safety_role": {
+                "is_protective_device": False,
+                "has_manual_override": False,
+                "has_emergency_procedure": False,
+            },
+            "protected_by": [],
+            "protects": [],
+            "supply_requirements": [],
+            "evidence": [
+                {
+                    "supports_field": "operator_actions[0]",
+                    "manual_section": "FIRST STARTUP",
+                    "note": "Initial setup steps for first use",
+                },
+                {
+                    "supports_field": "operator_actions[1]",
+                    "manual_section": "ALERTS",
+                    "note": "Viewing alert messages on the display",
+                },
+                {
+                    "supports_field": "operator_actions[2]",
+                    "manual_section": "Manage alert rules",
+                    "note": "Editing and creating alert rules",
+                },
+            ],
+            "confidence": {"overall": 0.8, "notes": ""},
+        },
+    }
+    # Without per-group rewrite, post-merge index resolve would bind [0] to
+    # "turn off the device". With rewrite, setup note stays on setup action.
+    zeus_merged = merge_group_profiles([zeus_intro, zeus_batch1])["profile"]
+    by_note = {
+        str(e.get("note") or ""): str(e.get("supports_field") or "")
+        for e in (zeus_merged.get("evidence") or [])
+        if isinstance(e, dict)
+    }
+    check(
+        "complete initial setup" in by_note.get("Initial setup steps for first use", ""),
+        "Zeus founding: FIRST STARTUP evidence must stay on initial-setup action; "
+        f"got {by_note.get('Initial setup steps for first use')!r}",
+    )
+    check(
+        "view alert messages" in by_note.get("Viewing alert messages on the display", ""),
+        "Zeus founding: ALERTS evidence must stay on view-alert action; "
+        f"got {by_note.get('Viewing alert messages on the display')!r}",
+    )
+    check(
+        "turn off the device"
+        not in by_note.get("Initial setup steps for first use", ""),
+        "Zeus founding: setup evidence must not retarget to turn-off",
+    )
+
     if failures:
         print("FAIL")
         for item in failures:

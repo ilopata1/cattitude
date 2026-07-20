@@ -1,10 +1,13 @@
-"""Stage 1 procedure inventory — reference-free recall check (v4.2 / v4.3).
+"""Stage 1 procedure inventory — reference-free recall check (v4.2 / v4.3 / v4.24).
 
 Builds a procedure / enumerated-alternative inventory from routed excerpts
 (heuristics first; optional cheap LLM fallback when a group yields nothing),
 reconciles against the **full profile** (extracted+derived actions,
 control_surfaces, requires_devices), and emits ``procedure_unaccounted`` /
 ``alternative_unaccounted`` warnings.
+
+Sibling-only features in multi-variant manuals classify as
+``not_applicable:other_variant`` (v4.24) — not unaccounted, not repair.
 
 Targeted map-retry repair is **enabled** but **scoped** to adjudicated
 classes only (v4.3). Non-adjudicated unaccounted items keep their flags.
@@ -385,6 +388,145 @@ def _classify_not_operator_relevant(
     return None, None
 
 
+# Multi-variant manuals: section scoped to sibling models only (Zeus founding).
+_VARIANT_APPLIES_ONLY_RE = re.compile(
+    r"(?is)(?:this\s+(?:functionality|feature|section|option)\s+)?"
+    r"applies\s+to\s+(.+?)\s+only\b"
+)
+_VARIANT_FOR_UNITS_ONLY_RE = re.compile(
+    r"(?is)\b(?:for|on)\s+(.+?)\s+(?:units?|models?|displays?)\s+only\b"
+)
+_VARIANT_AVAILABLE_ONLY_RE = re.compile(
+    r"(?is)\b(?:available|supported)\s+only\s+(?:on|for|with)\s+(.+?)(?:\.|$|\n)"
+)
+_VARIANT_NOT_ON_RE = re.compile(
+    r"(?is)\b(?:not\s+available|not\s+supported|does\s+not\s+apply|"
+    r"not\s+applicable)\s+(?:on|for|to)\s+(.+?)(?:\.|$|\n)"
+)
+
+
+def _norm_model_phrase(text: str) -> str:
+    s = (text or "").lower()
+    s = s.replace("&", " ")
+    s = re.sub(r"[®™]", "", s)
+    s = re.sub(r"[^a-z0-9.\s]+", " ", s)
+    return " ".join(s.split())
+
+
+def _model_phrase_in(haystack: str, model: str) -> bool:
+    """True when ``model`` appears in ``haystack`` as a whole-token phrase.
+
+    Word boundaries prevent ``Zeus SR`` matching ``Zeus SRX``.
+    """
+    h = _norm_model_phrase(haystack)
+    m = _norm_model_phrase(model)
+    if not h or not m:
+        return False
+    pat = r"\b" + r"\s+".join(re.escape(t) for t in m.split()) + r"\b"
+    return bool(re.search(pat, h))
+
+
+def _split_variant_model_list(phrase: str) -> list[str]:
+    raw = (phrase or "").strip()
+    if not raw:
+        return []
+    # Cut trailing clause noise after the model list.
+    raw = re.split(r"(?i)\b(?:see|refer|note|when|if)\b", raw, maxsplit=1)[0]
+    parts = re.split(r"\s+and\s+|,\s*|\s*/\s*|\s*;\s*|\s+or\s+", raw)
+    out: list[str] = []
+    for p in parts:
+        cleaned = p.strip(" .:—–-\t")
+        cleaned = re.sub(r"(?i)^(the|a|an)\s+", "", cleaned).strip()
+        if cleaned and len(cleaned) >= 2:
+            out.append(cleaned)
+    return out
+
+
+def _target_model_aliases(profile: dict[str, Any]) -> list[str]:
+    device = profile.get("device") if isinstance(profile.get("device"), dict) else {}
+    model = str(device.get("model") or "").strip()
+    mfr = str(device.get("manufacturer") or "").strip()
+    aliases: list[str] = []
+    if model:
+        aliases.append(model)
+    if mfr and model:
+        aliases.append(f"{mfr} {model}")
+    # Drop redundant empties / dupes.
+    seen: set[str] = set()
+    out: list[str] = []
+    for a in aliases:
+        key = _norm_model_phrase(a)
+        if key and key not in seen:
+            seen.add(key)
+            out.append(a)
+    return out
+
+
+def _target_in_named_models(named: list[str], aliases: list[str]) -> bool:
+    for n in named:
+        for alias in aliases:
+            if _model_phrase_in(n, alias) or _model_phrase_in(alias, n):
+                return True
+    return False
+
+
+def classify_other_variant_scope(
+    title: str,
+    snippet: str,
+    profile: dict[str, Any],
+    *,
+    excerpt_text: str | None = None,
+) -> tuple[str | None, str | None]:
+    """Classify procedures scoped only to sibling models in a shared manual.
+
+    Founding (B&G Zeus SR): ``This functionality applies to NSO 4 and Zeus SRX
+    only`` — not applicable to Zeus SR (``SR`` ≠ ``SRX``).
+    """
+    aliases = _target_model_aliases(profile)
+    if not aliases:
+        return None, None
+    blob = "\n".join(
+        [
+            str(title or ""),
+            str(snippet or ""),
+            str(excerpt_text or ""),
+        ]
+    )
+    if not blob.strip():
+        return None, None
+
+    for pat, rule in (
+        (_VARIANT_APPLIES_ONLY_RE, "rule:variant_scope:applies_to_only"),
+        (_VARIANT_FOR_UNITS_ONLY_RE, "rule:variant_scope:for_units_only"),
+        (_VARIANT_AVAILABLE_ONLY_RE, "rule:variant_scope:available_only_on"),
+    ):
+        m = pat.search(blob)
+        if not m:
+            continue
+        named = _split_variant_model_list(m.group(1))
+        if not named:
+            continue
+        if not _target_in_named_models(named, aliases):
+            return "not_applicable:other_variant", rule
+
+    m = _VARIANT_NOT_ON_RE.search(blob)
+    if m:
+        named = _split_variant_model_list(m.group(1))
+        if named and _target_in_named_models(named, aliases):
+            return "not_applicable:other_variant", "rule:variant_scope:not_on_target"
+
+    return None, None
+
+
+def _excerpt_text_by_ref(
+    excerpts: list[dict[str, Any]] | list[str] | None,
+) -> dict[str, str]:
+    out: dict[str, str] = {}
+    for ei, raw in enumerate(excerpts or []):
+        out[f"excerpt[{ei}]"] = _excerpt_text(raw)
+    return out
+
+
 def _join_truncated_title(title: str, following: str) -> str:
     """Join truncated openers with the next line (same excerpt only)."""
     t = (title or "").strip().rstrip(":").strip()
@@ -441,6 +583,27 @@ def _complete_title_from_corpus(
     return best
 
 
+def _excerpt_window(text: str, start: int, *, before: int = 220, after: int = 280) -> str:
+    """Snippet window including preceding section-scope lines when present.
+
+    Lookback snaps to a line start so scope sentences are not mid-word clipped
+    (e.g. ``applies to`` → ``ies to``).
+    """
+    start = max(0, int(start))
+    lo = max(0, start - before)
+    if lo > 0:
+        nl = text.rfind("\n", lo, start)
+        if nl >= lo:
+            lo = nl + 1
+        else:
+            while lo < start and not text[lo].isspace():
+                lo += 1
+            while lo < start and text[lo].isspace():
+                lo += 1
+    hi = min(len(text), start + after)
+    return text[lo:hi]
+
+
 def inventory_procedures_from_excerpts(
     excerpts: list[dict[str, Any]] | list[str] | None,
     *,
@@ -464,7 +627,7 @@ def inventory_procedures_from_excerpts(
         following: str = "",
         section_num: str | None = None,
     ) -> None:
-        joined = _join_truncated_title(title, following or snippet)
+        joined = _join_truncated_title(title, following)
         completed = _complete_title_from_corpus(
             joined, group_corpus, section_num=section_num
         )
@@ -516,6 +679,9 @@ def inventory_procedures_from_excerpts(
             "excerpt_ref": excerpt_ref,
             "snippet": " ".join(snippet.split())[:240],
             "source": source,
+            # Full excerpt text for variant-scope classify (map-group refs are
+            # local; top-level excerpt[i] indexing is not reliable at reconcile).
+            "excerpt_text": text[:2500],
         }
         if classification:
             row["classification"] = classification
@@ -552,7 +718,7 @@ def inventory_procedures_from_excerpts(
 
         for m in _NUMBERED_HEADING_RE.finditer(text):
             title = re.split(r"\s{2,}|\t", m.group("title"))[0]
-            snippet = text[m.start() : m.start() + 280]
+            snippet = _excerpt_window(text, m.start())
             if "...." in text[m.start() : m.start() + 80]:
                 continue
             _add(
@@ -572,7 +738,7 @@ def inventory_procedures_from_excerpts(
                 title=title,
                 kind="imperative_heading",
                 excerpt_ref=ref,
-                snippet=text[m.start() : m.start() + 280],
+                snippet=_excerpt_window(text, m.start()),
                 following=text[m.end() : m.end() + 120],
             )
 
@@ -590,7 +756,7 @@ def inventory_procedures_from_excerpts(
                 title=title,
                 kind="headed_procedure",
                 excerpt_ref=ref,
-                snippet=text[m.start() : m.start() + 280],
+                snippet=_excerpt_window(text, m.start()),
             )
 
         if _STEP_BLOCK_RE.search(text):
@@ -941,6 +1107,8 @@ def _alt_part_match(
 def reconcile_procedure_inventory(
     inventory: dict[str, Any],
     profile: dict[str, Any],
+    *,
+    excerpts: list[dict[str, Any]] | list[str] | None = None,
 ) -> dict[str, Any]:
     """Map inventory rows to full-profile content; emit accounting trail."""
     action_rows = _action_rows(profile)
@@ -952,6 +1120,7 @@ def reconcile_procedure_inventory(
     unaccounted: list[dict[str, Any]] = []
     trail: list[dict[str, Any]] = []
     flags: list[dict[str, str]] = []
+    excerpt_texts = _excerpt_text_by_ref(excerpts)
 
     # Filtered items from inventory build.
     for row in inventory.get("filtered") or []:
@@ -966,6 +1135,9 @@ def reconcile_procedure_inventory(
         snippet = str(entry.get("snippet") or "")
         prior = str(entry.get("classification") or "")
         prior_rule = str(entry.get("classification_rule") or "")
+        excerpt_blob = str(entry.get("excerpt_text") or "").strip() or excerpt_texts.get(
+            str(entry.get("excerpt_ref") or ""), ""
+        )
 
         def _trail_base(**extra: Any) -> dict[str, Any]:
             base = {
@@ -977,7 +1149,9 @@ def reconcile_procedure_inventory(
             base.update(extra)
             return base
 
-        if prior.startswith("not_operator_relevant"):
+        if prior.startswith("not_operator_relevant") or prior.startswith(
+            "not_applicable"
+        ):
             entry["status"] = "classified"
             classified.append(entry)
             trail.append(
@@ -985,6 +1159,23 @@ def reconcile_procedure_inventory(
                     disposition="classified",
                     auto_classified=prior,
                     rule=prior_rule or prior,
+                )
+            )
+            continue
+
+        variant_cls, variant_rule = classify_other_variant_scope(
+            title, snippet, profile, excerpt_text=excerpt_blob
+        )
+        if variant_cls:
+            entry["classification"] = variant_cls
+            entry["classification_rule"] = variant_rule
+            entry["status"] = "classified"
+            classified.append(entry)
+            trail.append(
+                _trail_base(
+                    disposition="classified",
+                    auto_classified=variant_cls,
+                    rule=variant_rule,
                 )
             )
             continue
@@ -1650,7 +1841,9 @@ def run_procedure_inventory_pass(
     inventory = build_procedure_inventory(
         excerpts, map_groups=map_groups, llm_fallback=llm_fallback
     )
-    reconciliation = reconcile_procedure_inventory(inventory, profile)
+    reconciliation = reconcile_procedure_inventory(
+        inventory, profile, excerpts=excerpts
+    )
     out = dict(profile)
     flags = list(out.get("validation_flags") or [])
     existing = {
@@ -1675,7 +1868,9 @@ def run_procedure_inventory_pass(
             map_fn=repair_map_fn,
             enabled=True,
         )
-        reconciliation = reconcile_procedure_inventory(inventory, out)
+        reconciliation = reconcile_procedure_inventory(
+            inventory, out, excerpts=excerpts
+        )
         flags = [
             f
             for f in (out.get("validation_flags") or [])

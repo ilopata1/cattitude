@@ -125,6 +125,7 @@ SECTION_ORDER = (
     "monitoring",
     "adjusting",
     "troubleshooting",
+    "reference",
 )
 
 
@@ -160,7 +161,10 @@ def first_mention(device_key: str, *, quantity: int = 1) -> str:
 _SOURCE_CITATION_IN_PROSE_RES = (
     re.compile(r"\bowner[\s-]survey\b", re.I),
     re.compile(r"\bsurvey estimate\b", re.I),
-    re.compile(r"\bper the (?:manual|survey|inventory)\b", re.I),
+    re.compile(r"\bsurveyed\b", re.I),
+    re.compile(r"\battested\b", re.I),
+    re.compile(r"\bper inspection\b", re.I),
+    re.compile(r"\bper the (?:manual|survey|inventory|inspection)\b", re.I),
     re.compile(r"\baccording to\b", re.I),
     re.compile(r"\bas (?:documented|attested|recorded) in\b", re.I),
     re.compile(r"\b\(owner[^\)]*\)", re.I),
@@ -681,12 +685,8 @@ def compose_solar_section(
         a for a in (buckets.get("situational") or []) if "sunset" in a["action"].lower()
     ]
     if configure:
-        _emit(
-            "To change charger settings, open VictronConnect on the controller "
-            "you are working with.",
-            *[a["source"] for a in configure[:2]],
-            block="adjusting",
-        )
+        # Deferred: occasion demotion emits in reference after troubleshooting.
+        pass
     if sunset:
         _emit(
             "The sunset action turns off load output at dusk if loads are wired "
@@ -762,6 +762,13 @@ def compose_solar_section(
         else:
             continue
         break
+
+    if configure:
+        _emit(
+            "Charger settings are available in VictronConnect on each controller.",
+            *[a["source"] for a in configure[:2]],
+            block="reference",
+        )
 
     draft = "## Solar\n\n" + "\n\n".join(s["text"] for s in section_sentences)
     economy = lint_prose_economy(draft)

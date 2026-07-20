@@ -87,6 +87,19 @@ _AUTHORIAL_XREF_RES = (
     (re.compile(r"\bdeferred to\b", re.I), "deferred to"),
     (re.compile(r"\bwill be filled in when\b", re.I), "will be filled in when"),
     (re.compile(r"\bwhen that source is attached\b", re.I), "when that source is attached"),
+    # Chapter/structure framing as opening context (v4.33) — vessel name is
+    # the orientation signal; do not also announce "this chapter covers…".
+    # Keep reader xrefs: "… section of this guide" / "notes that accompany
+    # this chapter" are navigation, not opening meta.
+    (re.compile(r"\bthis chapter covers\b", re.I), "this chapter covers"),
+    (re.compile(r"\bfocus of this chapter\b", re.I), "focus of this chapter"),
+    (re.compile(r"\bthis chapter is about\b", re.I), "this chapter is about"),
+)
+
+# Vessel-place words that must not be inferred from control_surfaces.location_class.
+# ``on_device`` means the control lives on the equipment body — never "on deck".
+_VESSEL_PLACE_FROM_SURFACE_RES = (
+    (re.compile(r"\bon[- ]deck\b", re.I), "on-deck / on deck"),
 )
 
 _MINOR_WORDS = frozenset({"and", "or", "of", "the", "a", "an", "to", "for", "in"})
@@ -99,6 +112,7 @@ Reader voice (all guest-facing guide modules):
 - Prefer the above over deictics such as "this vessel", "this boat", "this yacht", or bare "the vessel".
 - Repeat the vessel name only for disambiguation or a deliberate reorientation.
 - Cross-section pointers: write as reader navigation — "can be found in the <Section> section of this guide" — never author/structure notes such as "lives in", "stay in", or "home procedures".
+- Open by establishing the boat (recorded display name) with a direct system fact — not "this chapter covers…" / "focus of this chapter" (guide structure is already signaled by the section title).
 - Pair each cross-section pointer with a structured link (target_kind=system, target_id=catalog key); do not encode app routes in prose.
 - These are strong style preferences for authors and models — not hard publish blocks.
 """
@@ -206,6 +220,38 @@ def lint_authorial_xref_voice(text: str) -> list[dict[str, str]]:
     return warnings
 
 
+def lint_vessel_place_from_surface(text: str) -> list[dict[str, str]]:
+    """Warn when guest prose uses vessel-place words that often leak from
+    ``location_class: on_device`` (control on the device ≠ place on the boat).
+
+    Vessel places belong only when a vessel location fact is cited
+    (``device_locations``, installation note, owner confirmation). Until then,
+    say ``local`` / omit place.
+    """
+    warnings: list[dict[str, str]] = []
+    seen: set[str] = set()
+    for pat, label in _VESSEL_PLACE_FROM_SURFACE_RES:
+        for m in pat.finditer(text or ""):
+            hit = m.group(0)
+            key = hit.lower()
+            if key in seen:
+                continue
+            seen.add(key)
+            warnings.append(
+                {
+                    "code": "vessel_place_from_surface",
+                    "match": hit,
+                    "pattern": label,
+                    "guidance": (
+                        "Do not render control_surfaces.location_class "
+                        "'on_device' as a vessel place (on-deck, locker, panel). "
+                        "Use 'local' until a vessel location fact is sourced."
+                    ),
+                }
+            )
+    return warnings
+
+
 def count_vessel_name_mentions(text: str, vessel_display_name: str) -> int:
     name = (vessel_display_name or "").strip()
     if not name:
@@ -263,6 +309,7 @@ def assess_reader_voice_style(
             text, vessel_display_name, soft_max=name_soft_max
         )
         + lint_authorial_xref_voice(text)
+        + lint_vessel_place_from_surface(text)
     )
     return {
         "established": vessel_established(text, vessel_display_name),

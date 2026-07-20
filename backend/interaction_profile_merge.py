@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from typing import Any
 
 from interaction_profile_derive import actions_semantically_similar
@@ -15,6 +16,45 @@ def _tokens(text: str) -> set[str]:
     }
 
 
+# Directional antonyms — high token overlap must not collapse these pairs
+# (Zeus: open/close quick access menu).
+_ACTION_ANTONYM_PAIRS = frozenset(
+    {
+        frozenset({"open", "close"}),
+        frozenset({"on", "off"}),
+        frozenset({"show", "hide"}),
+        frozenset({"enable", "disable"}),
+        frozenset({"start", "stop"}),
+        frozenset({"lock", "unlock"}),
+        frozenset({"connect", "disconnect"}),
+    }
+)
+
+# Near-synonym tokens treated as equal for action dedup (Zeus: display/screen).
+_ACTION_TOKEN_SYNONYMS: dict[str, str] = {
+    "display": "screen",
+    "displays": "screen",
+    "screen": "screen",
+    "screens": "screen",
+}
+
+
+def _canonicalize_action_tokens(text: str) -> set[str]:
+    return {_ACTION_TOKEN_SYNONYMS.get(t, t) for t in _tokens(text)}
+
+
+def action_texts_antonym_conflict(a: str, b: str) -> bool:
+    """True when both strings share a directional antonym pair."""
+    ta, tb = _tokens(a), _tokens(b)
+    if not ta or not tb:
+        return False
+    for pair in _ACTION_ANTONYM_PAIRS:
+        x, y = tuple(pair)
+        if (x in ta and y in tb) or (y in ta and x in tb):
+            return True
+    return False
+
+
 def fuzzy_text_similar(a: str, b: str, *, threshold: float = 0.7) -> bool:
     """General fuzzy match; reuses Stage 1.6 action matcher when applicable."""
     aa = (a or "").strip().lower()
@@ -23,12 +63,119 @@ def fuzzy_text_similar(a: str, b: str, *, threshold: float = 0.7) -> bool:
         return False
     if aa == bb or aa.replace(" the ", " ") == bb.replace(" the ", " "):
         return True
+    if action_texts_antonym_conflict(aa, bb):
+        return False
     if actions_semantically_similar(aa, bb):
         return True
-    ta, tb = _tokens(aa), _tokens(bb)
+    ta, tb = _canonicalize_action_tokens(aa), _canonicalize_action_tokens(bb)
     if not ta or not tb:
         return False
     return len(ta & tb) / min(len(ta), len(tb)) >= threshold
+
+
+_OPERATOR_ACTION_INDEX_RE = re.compile(
+    r"^operator_actions\[(\d+)\](.*)$", re.DOTALL
+)
+_OPERATOR_ACTION_TEXT_RE = re.compile(
+    r"^operator_actions\[action=(.+)\](.*)$", re.DOTALL
+)
+
+
+def operator_action_support_path(action_text: str, suffix: str = "") -> str:
+    text = " ".join(str(action_text or "").split())
+    return f"operator_actions[action={text}]{suffix}"
+
+
+def parse_operator_action_text_path(field: str) -> tuple[str | None, str]:
+    """Parse ``operator_actions[action=…]`` → (action_text, suffix) or (None, "")."""
+    m = _OPERATOR_ACTION_TEXT_RE.match((field or "").strip())
+    if not m:
+        return None, ""
+    return m.group(1).strip(), (m.group(2) or "")
+
+
+def rewrite_operator_action_evidence_paths(
+    profile: dict[str, Any],
+) -> dict[str, Any]:
+    """Rewrite ``operator_actions[i]`` evidence links to action-text form.
+
+    Index links are group-local. Call this on each map output **before** merge
+    (and again after single-profile normalize). Resolving indices against a
+    merged action list retargets ``supports_field`` while leaving note/section
+    on the original action (Zeus founding: batch_1 ``[0]`` setup → merged
+    ``turn off the device``). Unknown indices are left unchanged for validators.
+    """
+    if not isinstance(profile, dict):
+        return profile
+    actions = [
+        a for a in (profile.get("operator_actions") or []) if isinstance(a, dict)
+    ]
+    by_norm = {
+        " ".join(str(a.get("action") or "").lower().split()): i
+        for i, a in enumerate(actions)
+        if str(a.get("action") or "").strip()
+    }
+    evidence = profile.get("evidence")
+    if not isinstance(evidence, list):
+        return profile
+    out_ev: list[Any] = []
+    for item in evidence:
+        if not isinstance(item, dict):
+            out_ev.append(item)
+            continue
+        entry = dict(item)
+        field = str(entry.get("supports_field") or "").strip()
+        m_idx = _OPERATOR_ACTION_INDEX_RE.match(field)
+        if m_idx:
+            idx = int(m_idx.group(1))
+            suffix = m_idx.group(2) or ""
+            if 0 <= idx < len(actions):
+                text = str(actions[idx].get("action") or "").strip()
+                if text:
+                    entry["supports_field"] = operator_action_support_path(
+                        text, suffix
+                    )
+            out_ev.append(entry)
+            continue
+        m_text = _OPERATOR_ACTION_TEXT_RE.match(field)
+        if m_text:
+            raw = m_text.group(1)
+            suffix = m_text.group(2) or ""
+            norm = " ".join(raw.lower().split())
+            # Re-canonicalize whitespace; leave as-is if action missing.
+            if norm in by_norm:
+                text = str(actions[by_norm[norm]].get("action") or "").strip()
+                entry["supports_field"] = operator_action_support_path(text, suffix)
+            out_ev.append(entry)
+            continue
+        out_ev.append(entry)
+    profile["evidence"] = out_ev
+    return profile
+
+
+def resolve_operator_action_support(
+    profile: dict[str, Any], path: str
+) -> tuple[bool, Any, str | None]:
+    """Resolve index or action-text ``operator_actions[...]`` support paths."""
+    field = (path or "").strip()
+    m_text = _OPERATOR_ACTION_TEXT_RE.match(field)
+    if m_text:
+        needle = " ".join(m_text.group(1).lower().split())
+        suffix = m_text.group(2) or ""
+        actions = profile.get("operator_actions") or []
+        for i, act in enumerate(actions):
+            if not isinstance(act, dict):
+                continue
+            if " ".join(str(act.get("action") or "").lower().split()) == needle:
+                if not suffix:
+                    return True, act, None
+                from interaction_profile_schema import resolve_field_path
+
+                return resolve_field_path(profile, f"operator_actions[{i}]{suffix}")
+        return False, None, f"no operator_actions entry matching action={needle!r}"
+    from interaction_profile_schema import resolve_field_path
+
+    return resolve_field_path(profile, field)
 
 
 def _empty_profile_shell() -> dict[str, Any]:
@@ -314,6 +461,10 @@ def merge_group_profiles(
     for group in ordered:
         group_id = str(group.get("group_id") or "group")
         profile = group.get("profile") if isinstance(group.get("profile"), dict) else {}
+        # Bind evidence indices to this group's action texts before union —
+        # merged-list rewrite would scramble note/section pairing (v4.27).
+        if profile:
+            profile = rewrite_operator_action_evidence_paths(dict(profile))
         device = profile.get("device") if isinstance(profile.get("device"), dict) else {}
         if not manufacturer:
             manufacturer = str(device.get("manufacturer") or "")
@@ -497,8 +648,9 @@ def merge_group_profiles(
     # Cap after full union, preferring priority-field evidence (v3.3 a–c).
     merged["evidence"] = prioritize_evidence(list(merged["evidence"] or []), max_evidence=8)
 
-    # v4.0: OR-split combined descriptions post-merge; exact-key dedupe;
-    # remap evidence supports_field indices.
+    # v4.0: OR-split combined descriptions post-merge; exact-key dedupe.
+    # Post-merge rewrite is a safety net only — indices should already be
+    # action-text from the per-group rewrite above (v4.27).
     from interaction_profile_kinds import finalize_profile_requires
     from interaction_profile_options import collapse_option_value_actions
 
@@ -507,10 +659,15 @@ def merge_group_profiles(
         list(merged.get("operator_actions") or [])
     )
     # Expand platform ui_pages into Stage 2 surfaces/requires after merge.
+    # Gate-verbatim requires get derived evidence inside expand (v4.28).
     if merged.get("ui_pages"):
         from interaction_profile_ui_pages import expand_ui_pages
 
         expand_ui_pages(merged)
+        merged["evidence"] = prioritize_evidence(
+            list(merged.get("evidence") or []), max_evidence=8
+        )
+    rewrite_operator_action_evidence_paths(merged)
 
     utilization = []
     for group in ordered:

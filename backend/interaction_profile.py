@@ -248,6 +248,9 @@ def normalize_profile(raw: dict[str, Any]) -> dict[str, Any]:
             cleaned = [str(o).strip() for o in options if str(o).strip()]
             if cleaned:
                 entry["options"] = cleaned
+        occasion = str(item.get("occasion") or "").strip()
+        if occasion:
+            entry["occasion"] = occasion
         if item.get("deterministic_fill") is True:
             entry["deterministic_fill"] = True
         _keep_margin(entry, item)
@@ -510,6 +513,14 @@ def normalize_profile(raw: dict[str, Any]) -> dict[str, Any]:
         from interaction_profile_ui_pages import expand_ui_pages
 
         expand_ui_pages(base)
+    else:
+        from interaction_profile_ui_pages import consolidate_device_control_surfaces
+
+        consolidate_device_control_surfaces(base)
+
+    from interaction_profile_merge import rewrite_operator_action_evidence_paths
+
+    rewrite_operator_action_evidence_paths(base)
 
     runs: list[dict[str, Any]] = []
     for item in raw.get("runs_platform") or []:
@@ -547,6 +558,15 @@ def normalize_profile(raw: dict[str, Any]) -> dict[str, Any]:
         ]
     if isinstance(raw.get("repairs"), list) and raw.get("repairs"):
         base["repairs"] = [dict(f) for f in raw["repairs"] if isinstance(f, dict)]
+    if isinstance(raw.get("demoted_ui_pages"), list) and raw.get("demoted_ui_pages"):
+        base["demoted_ui_pages"] = [
+            str(x) for x in raw["demoted_ui_pages"] if str(x).strip()
+        ]
+    # Adjudication metadata — must survive normalize / repair / promote.
+    if isinstance(raw.get("extraction_votes"), list):
+        base["extraction_votes"] = list(raw["extraction_votes"])
+    if isinstance(raw.get("instability_triage"), dict):
+        base["instability_triage"] = dict(raw["instability_triage"])
     return base
 
 

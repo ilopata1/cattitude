@@ -15,6 +15,7 @@ from pathlib import Path
 _BACKEND = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_BACKEND))
 
+from guide_composition_rules import assess_global_composition
 from guide_section_controls import compose_controls_section, evaluate_controls_draft
 from section_inputs import assemble_section_inputs, keys_at_depth
 from system_graph import build_vessel_graph
@@ -121,6 +122,10 @@ def main() -> int:
 
     if not evaluation.get("pass"):
         failures.append(f"evaluation failed: {evaluation.get('notes')}")
+
+    global_comp = assess_global_composition(composed, require_filled_wisdom=False)
+    if not global_comp.get("pass"):
+        failures.append(f"global composition failed: {global_comp.get('findings')}")
 
     # Style warnings are report-only (do not fail), except authorial xref
     # voice should be clean on the Controls composer after v4.13.

@@ -713,6 +713,121 @@ def main() -> int:
         f"orphan truncation must use filter:truncated_heading; got {orphan_filt}",
     )
 
+    # --- v4.24: other-variant scope (Zeus SR founding) ---
+    from interaction_profile_procedures import (
+        classify_other_variant_scope,
+        _model_phrase_in,
+    )
+
+    check(
+        _model_phrase_in("Zeus SRX", "Zeus SR") is False,
+        "Zeus SR must not word-boundary-match Zeus SRX",
+    )
+    check(
+        _model_phrase_in("B&G Zeus SR", "Zeus SR") is True,
+        "Zeus SR must match inside B&G Zeus SR",
+    )
+    zeus_excerpt = (
+        "VIDEO INPUT (TOUCH CONTROL)\n"
+        "This functionality applies to NSO 4 and Zeus SRX only.\n"
+        "Use the Video In port to connect an external video source.\n"
+        "To enable touch control, navigate to the Video input app > Settings > "
+        "Source settings and turn on the Touch control option.\n"
+        "Note: Not all multi-function displays are supported.\n"
+    )
+    zeus_profile = {
+        "device": {
+            "manufacturer": "B&G",
+            "model": "Zeus SR",
+            "category_freeform": "display unit",
+        },
+        "control_surfaces": [
+            {
+                "surface": "touchscreen",
+                "location_class": "on_device",
+                "optional_accessory": False,
+                "label_verbatim": "Touchscreen",
+                "path": "control_surfaces[0]",
+            }
+        ],
+        "operator_actions": [],
+        "networks": {"speaks": [], "bridges": []},
+        "data_roles": {
+            "exposes_data_to_network": False,
+            "displays_data_from_other_devices": False,
+            "controllable_from_network": False,
+        },
+        "requires_devices": [],
+        "safety_role": {
+            "is_protective_device": False,
+            "has_manual_override": False,
+            "has_emergency_procedure": False,
+        },
+        "protected_by": [],
+        "protects": [],
+        "supply_requirements": [],
+        "evidence": [],
+        "confidence": {"overall": 0.5, "notes": ""},
+    }
+    v_cls, v_rule = classify_other_variant_scope(
+        "To enable touch control, navigate to the Video input app",
+        "turn on the Touch control option",
+        zeus_profile,
+        excerpt_text=zeus_excerpt,
+    )
+    check(
+        v_cls == "not_applicable:other_variant",
+        f"Zeus Video Input must classify other_variant; got {v_cls!r} {v_rule!r}",
+    )
+    check(
+        v_rule == "rule:variant_scope:applies_to_only",
+        f"expected applies_to_only rule; got {v_rule!r}",
+    )
+    # Sibling model that IS in scope must not classify.
+    srx_profile = deepcopy(zeus_profile)
+    srx_profile["device"] = {
+        "manufacturer": "B&G",
+        "model": "Zeus SRX",
+        "category_freeform": "display unit",
+    }
+    srx_cls, _ = classify_other_variant_scope(
+        "To enable touch control",
+        "Touch control",
+        srx_profile,
+        excerpt_text=zeus_excerpt,
+    )
+    check(
+        srx_cls is None,
+        f"Zeus SRX must remain in-scope for Video Input; got {srx_cls!r}",
+    )
+
+    zeus_excerpts = [{"text": zeus_excerpt}]
+    zeus_inv = build_procedure_inventory(zeus_excerpts)
+    zeus_recon = reconcile_procedure_inventory(
+        zeus_inv, zeus_profile, excerpts=zeus_excerpts
+    )
+    check(
+        not any(
+            f.get("flag") == PROCEDURE_UNACCOUNTED
+            for f in (zeus_recon.get("validation_flags") or [])
+        ),
+        "Zeus SR Video Input must not emit procedure_unaccounted",
+    )
+    check(
+        any(
+            str(c.get("classification") or "") == "not_applicable:other_variant"
+            or str(c.get("auto_classified") or "") == "not_applicable:other_variant"
+            for c in (zeus_recon.get("classified") or [])
+        )
+        or any(
+            str(t.get("auto_classified") or "") == "not_applicable:other_variant"
+            for t in (zeus_recon.get("accounting_trail") or [])
+        ),
+        f"Zeus founding must land in classified other_variant; "
+        f"classified={zeus_recon.get('classified')} "
+        f"trail={zeus_recon.get('accounting_trail')}",
+    )
+
     # Persist SmartSolar fixture inventory from synthetic excerpts (pinned titles).
     fixture_path = FIXTURES / "smartsolar_procedure_inventory.json"
     fixture_path.write_text(

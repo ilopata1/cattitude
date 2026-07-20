@@ -87,7 +87,9 @@ def main() -> int:
 
     print("ui_pages completeness:")
     print(json.dumps(completeness, indent=2))
-    if not completeness["complete"]:
+    # inventory_ui_pages_completeness returns ``ok`` (legacy callers used complete).
+    complete = bool(completeness.get("ok") or completeness.get("complete"))
+    if not complete:
         parts = []
         if completeness.get("missing"):
             parts.append(f"missing tiles={completeness['missing']}")
@@ -104,7 +106,7 @@ def main() -> int:
         encoding="utf-8",
     )
     if args.check_only:
-        return 0 if completeness["complete"] else 1
+        return 0 if complete else 1
 
     for folder in (OUTREMER, POST):
         profiles_path = folder / "profiles.json"
@@ -214,7 +216,7 @@ def main() -> int:
     )
     print("documented_version=", platform.get("documented_version"))
     print("expected tiles=", list(CZONE_2_0_INTRO_PAGE_TILES))
-    return 0 if completeness["complete"] else 1
+    return 0 if complete else 1
 
 
 if __name__ == "__main__":

@@ -20,6 +20,7 @@ from admin.manual_service import (
     ManualServiceError,
     add_language_file,
     count_manual_works,
+    delete_manual_work,
     get_manual_work,
     ingest_current_edition_file,
     list_edition_files,
@@ -27,6 +28,7 @@ from admin.manual_service import (
     list_manual_works,
     list_pending_manual_works,
     list_works_for_equipment,
+    reassign_manual_work,
     set_current_edition,
     set_legal_status,
     update_manual_work,
@@ -333,6 +335,44 @@ async def update_manual_work_action(
             )
 
     return RedirectResponse(f"/admin/manuals/{work_id}?saved=1", status_code=303)
+
+
+@router.post("/{work_id}/reassign")
+async def reassign_manual_work_action(
+    work_id: str,
+    admin_user: str = Depends(require_admin_user),
+    equipment_id: str = Form(""),
+):
+    with get_engine().begin() as conn:
+        try:
+            reassign_manual_work(conn, work_id, equipment_id)
+        except ManualServiceError as exc:
+            return RedirectResponse(
+                f"/admin/manuals/{work_id}?error={quote(str(exc))}",
+                status_code=303,
+            )
+
+    return RedirectResponse(
+        f"/admin/manuals/{work_id}?reassigned=1",
+        status_code=303,
+    )
+
+
+@router.post("/{work_id}/delete")
+async def delete_manual_work_action(
+    work_id: str,
+    admin_user: str = Depends(require_admin_user),
+):
+    with get_engine().begin() as conn:
+        try:
+            delete_manual_work(conn, work_id)
+        except ManualServiceError as exc:
+            return RedirectResponse(
+                f"/admin/manuals/{work_id}?error={quote(str(exc))}",
+                status_code=303,
+            )
+
+    return RedirectResponse("/admin/manuals?deleted=1", status_code=303)
 
 
 @router.post("/{work_id}/editions/{edition_id}/set-current")

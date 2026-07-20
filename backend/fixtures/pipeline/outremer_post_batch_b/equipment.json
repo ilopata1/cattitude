@@ -1,7 +1,7 @@
 {
   "vessel": "outremer_55n60",
   "notes": "Touch 7 runs_platform czone_2_0; platform_version_unconfirmed + config_unsourced until version photo/.zcf. Climate gate: vessel has 230V aircon (folio 10) but CZone-supported HVAC integration unknown — AC-present ≠ CZone-supported-HVAC.",
-  "fixture_auth": "Fixture-Auth: chat instance-policy + VESSEL_ARTIFACT batch — outremer_post_batch_b primary with distinct Combi/MLI/Alpha instances; Fixture-Auth: chat Solar v3 — vessel_facts observation/inference + evidence refs; Fixture-Auth: chat Solar v4 — vessel_display_name=Supernova",
+  "fixture_auth": "Fixture-Auth: chat instance-policy + VESSEL_ARTIFACT batch — outremer_post_batch_b primary with distinct Combi/MLI/Alpha instances; Fixture-Auth: chat Solar v3 — vessel_facts observation/inference + evidence refs; Fixture-Auth: chat Solar v4 — vessel_display_name=Supernova; Fixture-Auth: chat Zeus SR promote — scratch bg_zeus_sr validated into vessel profiles; Fixture-Auth: chat CZone ui_pages reextract — Favourites/Alarms/Control/Monitoring actions from QSG V1.1 targeted map",
   "installation_notes": [
     {
       "applies_to": [
@@ -83,11 +83,6 @@
               "description_verbatim": "Class T fuse / battery fuse in positive cable",
               "resolved_to_hint": "class_t_1",
               "source": "folios 3A/3B"
-            },
-            {
-              "description_verbatim": "external safety relay",
-              "resolved_to_hint": "ml_switch_1",
-              "source": "folios 3A/3B"
             }
           ]
         },
@@ -100,11 +95,6 @@
               "description_verbatim": "Class T fuse / battery fuse in positive cable",
               "resolved_to_hint": "class_t_2",
               "source": "folios 3A/3B"
-            },
-            {
-              "description_verbatim": "external safety relay",
-              "resolved_to_hint": "ml_switch_2",
-              "source": "folios 3A/3B"
             }
           ]
         },
@@ -116,11 +106,6 @@
             {
               "description_verbatim": "Class T fuse / battery fuse in positive cable",
               "resolved_to_hint": "class_t_3",
-              "source": "folios 3A/3B"
-            },
-            {
-              "description_verbatim": "external safety relay",
-              "resolved_to_hint": "ml_switch_3",
               "source": "folios 3A/3B"
             }
           ]
@@ -240,31 +225,15 @@
       "provenance": "folios 17/23; synoptic 2D MBUS 01/10/11"
     },
     {
-      "device_key": "ml_switch",
-      "catalog_key": "ml_switch",
-      "manufacturer": "Blue Sea",
-      "model": "ML-Series",
-      "description": "Blue Sea ML-Series battery switch / isolation",
+      "device_key": "blue_sea_acr",
+      "catalog_key": "blue_sea_acr",
+      "manufacturer": "Blue Sea Systems",
+      "model": "Automatic Charging Relays (ACR)",
+      "description": "ML-Series Automatic Charging Relay — combines/isolates battery banks",
       "system_category": "electrical_dc",
-      "quantity": 3,
-      "instance_handling": "distinct",
-      "instances": [
-        {
-          "instance_key": "ml_switch_1",
-          "instance_label": "disconnect for MLI unit 1",
-          "unit_index": 1
-        },
-        {
-          "instance_key": "ml_switch_2",
-          "instance_label": "disconnect for MLI unit 2",
-          "unit_index": 2
-        },
-        {
-          "instance_key": "ml_switch_3",
-          "instance_label": "disconnect for MLI unit 3",
-          "unit_index": 3
-        }
-      ]
+      "quantity": 1,
+      "instance_handling": "interchangeable",
+      "provenance": "owner confirmation; replaces prior ml_switch inventory assumption"
     },
     {
       "device_key": "plain_battery_switch",

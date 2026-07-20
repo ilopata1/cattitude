@@ -263,8 +263,8 @@ def compose_controls_section(
     circuit_names = control_page_circuit_names(circuits)
     if circuits.get("sourced"):
         _emit(
-            "Open Monitoring to read the boat's configured meters and status "
-            "channels from the CZone switching map.",
+            "Day-to-day, open Monitoring to read the boat's configured meters "
+            "and status channels from the CZone switching map.",
             f"profile.{platform_key}.ui_pages[Monitoring]",
             f"vessel_fact.channel_map:{circuits.get('artifact_id')}",
             "section_inputs.summary:mli",
@@ -272,8 +272,8 @@ def compose_controls_section(
         )
     else:
         _emit(
-            "Open Monitoring to read configured meters, including the house "
-            "battery bank state that the station can display.",
+            "Day-to-day, open Monitoring to read configured meters, including "
+            "the house battery bank state that the station can display.",
             f"profile.{platform_key}.ui_pages[Monitoring]",
             "section_inputs.summary:mli",
             block="monitoring",
@@ -299,8 +299,8 @@ def compose_controls_section(
         )
         if levels:
             _emit(
-                f"Alarms use severity levels ({levels}); open an alarm on the "
-                f"Alarms page for details and to acknowledge it.",
+                f"Alarms use severity levels ({levels}); when an alarm appears, "
+                f"open it on the Alarms page for details and to acknowledge it.",
                 f"profile.{platform_key}.alarm_severity",
                 f"profile.{platform_key}.operator_actions",
                 block="monitoring",
@@ -321,7 +321,7 @@ def compose_controls_section(
         tail = f" (and {more} more)" if more > 0 else ""
         _emit(
             f"On Control, named circuits include {sample}{tail}. "
-            f"Press a circuit to open its controls.",
+            f"When you need one, press it to open its controls.",
             f"profile.{platform_key}.ui_pages[Control]",
             f"profile.{platform_key}.operator_actions",
             f"vessel_fact.channel_map:{circuits.get('artifact_id')}",
@@ -342,7 +342,7 @@ def compose_controls_section(
             )
     else:
         _emit(
-            "On Control, press a circuit to open its controls.",
+            "On Control, when you need a circuit, press it to open its controls.",
             f"profile.{platform_key}.ui_pages[Control]",
             f"profile.{platform_key}.operator_actions",
             block="adjusting",
@@ -579,9 +579,9 @@ def evaluate_controls_draft(
             sent = str(p.get("sentence") or "")
             if "named circuits" not in sent.lower():
                 continue
-            # Extract names between "include " and ". Press"
+            # Extract names between "include " and ". When"
             m = re.search(
-                r"include (.+?)(?:\s*\(and \d+ more\))?\. Press",
+                r"include (.+?)(?:\s*\(and \d+ more\))?\. When",
                 sent,
                 re.I,
             )

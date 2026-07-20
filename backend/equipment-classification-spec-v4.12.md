@@ -73,4 +73,4 @@ inventory or other sources; otherwise they are `context_shaping`.
 | **4.12** | `channel_map` source class; builder-doc adjudicated extract vs machine parsers; founding Outremer Ind C fixture; eval xxiii–xxv |
 | 4.11 | Global reader voice; style_warnings; `guide_reader_voice.py` |
 | 4.10 | Section input assembly; controls; ship-with-honest-gaps; xx–xxii |
-| → | See [`equipment-classification-spec-v4.13.md`](equipment-classification-spec-v4.13.md) for xref reader voice + structured links |
+| → | See [`equipment-classification-spec-v4.14.md`](equipment-classification-spec-v4.14.md) for Batteries Stage 4 |

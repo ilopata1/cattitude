@@ -29,9 +29,12 @@
       root.classList.toggle("is-open", items.length > 0);
     }
 
-    function fetchResults() {
+    function fetchResults({ clearOnEdit = false } = {}) {
       const query = textInput.value.trim();
-      hiddenInput.value = "";
+      // Preserve a committed selection on focus; only clear when the user edits.
+      if (clearOnEdit || !query) {
+        hiddenInput.value = "";
+      }
       if (!query) {
         hideList();
         return;
@@ -48,10 +51,10 @@
 
     textInput.addEventListener("input", () => {
       window.clearTimeout(timer);
-      timer = window.setTimeout(fetchResults, 200);
+      timer = window.setTimeout(() => fetchResults({ clearOnEdit: true }), 200);
     });
 
-    textInput.addEventListener("focus", fetchResults);
+    textInput.addEventListener("focus", () => fetchResults());
 
     list.addEventListener("mousedown", (event) => {
       const option = event.target.closest("[data-value]");

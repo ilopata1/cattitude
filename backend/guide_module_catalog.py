@@ -89,6 +89,7 @@ SYSTEM_CATALOG: dict[str, dict[str, Any]] = {
         "equipment_categories": ["electrical_dc", "electrical_ac_shore_power"],
         "focus": "DC panel, bilge pump switches, shore power, Victron Multi Control",
         "review_title": "Electrical panel",
+        "guest_section_title": "Electrical Panel",
         "guest_label": "Learn + Know — electrical",
     },
     "batteries": {

@@ -13,6 +13,10 @@
 
 <p class="lede">{{ total }} manual work{% if total != 1 %}s{% endif %} in the library.</p>
 
+{% if request.query_params.get('deleted') %}
+<div class="flash flash-ok">Manual deleted from the library.</div>
+{% endif %}
+
 <form method="get" class="search-row">
   <input name="q" value="{{ query }}" placeholder="Search equipment or title">
   <select name="legal_status">

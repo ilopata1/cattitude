@@ -1,0 +1,976 @@
+{
+  "manuals": [
+    {
+      "id": "5edc1271-3293-42db-a456-16ca44de7d10",
+      "title": "ML\u2013 ACR Automatic Charging Relays",
+      "manual_type": "operators",
+      "legal_status": "cleared"
+    }
+  ],
+  "manuals_available": [
+    {
+      "id": "5edc1271-3293-42db-a456-16ca44de7d10",
+      "title": "ML\u2013 ACR Automatic Charging Relays",
+      "manual_type": "operators",
+      "legal_status": "cleared"
+    }
+  ],
+  "manual_selection_policy": "operators",
+  "excerpts": [
+    {
+      "manual_id": "5edc1271-3293-42db-a456-16ca44de7d10",
+      "source_file": "902832aa7e163acb_990180180-005.pdf",
+      "page_start": 2,
+      "page_end": 2,
+      "query": "operation daily use display menu controls operator",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.3873684360857239,
+      "text": "Manual Control Override Knob Operations* \u2020 \nTo combine battery banks With\tOverride\tKnob\tin\tREMOTE\tposition,\t\npush\tbutton\tuntil\tlatched\t(Push\tto\tLatch\tOn).\nTo isolate battery banks that \nare connected\nRotate Override Knob to right to release button \nfrom\tLatch\tOn\tmode\t(button\tpops\tup).\tRotate\t\nOverride\tKnob\tto\tleft\t(REMOTE\tposition).\t\nT o\tprevent\tremote\toperation Rotate Override Knob to right \n(LOCK\tOFF\tposition).\nTo secure for servicing With\tOverride\tKnob\tin\tLOCK\tOFF\tposition,\npass\tcable\ttie\tthrough\thole.\n1 2\n*\t Operating\tthe\tManual\tControl\tOverride\tKnob\twill\toverride\tautomatic\toperation\tof\tthe\tML-Series\t ACR\tfor\t\n 10 minutes if the override forces a change in switch state.\n\u2020 The\tML-Series\tACR\twill\twait\t10\tminutes\tif\tit\tattempts\tto\tautomatically\tclose\twhile\tthe\tmanual\tknob\tis\n rotated to LOCK OFF.\n990180180 Rev.005",
+      "source_heading_guess": "990180180 Rev.005"
+    },
+    {
+      "manual_id": "5edc1271-3293-42db-a456-16ca44de7d10",
+      "source_file": "902832aa7e163acb_990180180-005.pdf",
+      "page_start": 2,
+      "page_end": 2,
+      "query": "operation daily use display menu controls operator",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.363158925992888,
+      "text": "4.\tConnect\tpin\t8\tto\tDC+\tthrough\ta\t2A\t(min)\tcircuit\tprotection\tdevice.\n5.\tConnect\tpin\t7\tto\tACR\t\u201cLED\u201d\tground\twire\t(yellow).\n1.965\"\n49.91mm\n1.010\"\n25.65mm\n.549\"\n13.95mm\n1.125\"\n28.58mm\nTEST CUT\nHOLE IN\nACTUAL\nCENTER\n1.450\"\n36.83mm\n0.830\"\n21.08mm\n\t These\tinstructions\tare\tintended\tto\tprovide\tassistance\twith\tthe\tinstallation\tof\tthis\tproduct,\tand\tare\t\t \t\n\t not\ta\tsubstitute\tfor\ta\tmore\tcomprehensive\tunderstanding\tof\telectrical\tsystems.\tWe\tstrongly\t\n\t recommend\tthat\ta\tcompetent\telectrical\tprofessional\tperform\tthe\tinstallation\tof\tthis\tproduct.\n The\tillustrated\twiring\tdiagram\trepresents\ta\tcommon\tinstallation\tand\tis\tnot\tmeant\tto\tbe\ta\tguide\tfor\twiring\n\t a\tspecific\tvessel.\t The\twiring\tdiagram\tshows\ta\tsingle\tbattery\tbank\tinstallation.\n Disconnect\tall\tnegative\tbattery\tconnections\tbefore\tbeginning\tthe\tinstallation.\n All unused control wires should be carefully insulated from each other and from accidental contact \n\t using\theat\tshrink\ttubing\tor\telectrical\ttape.\t\tExternal\tcontact\tor\tshorting\tbetween\tcontrol\twires\tcan\tlead\n to malfunction.\nCAUTION\nManual Control Override Knob  PN 7622 / PN 7623\nThe Manual Control Override Knob provides:",
+      "source_heading_guess": "990180180 Rev.005"
+    },
+    {
+      "manual_id": "5edc1271-3293-42db-a456-16ca44de7d10",
+      "source_file": "902832aa7e163acb_990180180-005.pdf",
+      "page_start": 1,
+      "page_end": 1,
+      "query": "operation daily use display menu controls operator",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.34608156660967637,
+      "text": "Configure\tStart\tIsolation\twhen\tthere\tare\theavy\tcranking\tloads\t\n\t causing\tsags\tand\tspikes\tthat\tmight\tdamage\telectronics\tin\tthe\tHouse\tcircuit.\tSee\tpage\t3.\n\u2022 Engine Isolation\t-\tIsolate\ttwo\tengines\twhile\tboth\tare\trunning\tto\tprotect\tengine\telectronics,\tand\tto\t\n\t maximize\talternator\toutput.\tConfigure\tEngine\tIsolation\twhen\tthe\tengine\tmanufacturer\trequires\tit,\tand\t\n\t when\tthere\tare\tseparate\tbatteries\tfor\teach\tengine.\tSee\tpage\t3.\nUndervoltage or Overvoltage Lockout. \n\u2022\t Undervoltage\tlockout\tprevents\tbatteries\tfrom\tbeing\tcombined\twhen\teither\tbattery\tis\tbelow\t9.6V@12V\tDC\n\t operation\tor\t19.2V@24V\tDC\toperation.\t\n\u2022\t Overvoltage\tlockout\tprevents\tbatteries\tfrom\tbeing\tcombined\twhen\teither\tbattery\tis\tabove\t16.2V@12V\tDC\n\t operation\tor\t32.4V@24V\tDC\toperation.\t\nControl Switch Remote Operation. Included\tContura\tControl\tSwitch\u2014sustained\t(SPDT)\tON-OFF-ON.\nThe Control Switch should be mounted in a convenient location near helm controls to allow for quick access.\nNOTE: Alternatively use a momentary (SPDT) (ON)-OFF-(ON) or momentary push button switch to provide cross connect and/or battery isolation.\nTo cross connect \n(combine) battery banks",
+      "source_heading_guess": "Configure\tStart\tIsolation\twhen\tthere\tare\theavy\tcranking\tloads"
+    },
+    {
+      "manual_id": "5edc1271-3293-42db-a456-16ca44de7d10",
+      "source_file": "902832aa7e163acb_990180180-005.pdf",
+      "page_start": 2,
+      "page_end": 2,
+      "query": "operation daily use display menu controls operator",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.3411308570329723,
+      "text": "When the Control Switch is returned to AUTO, the ACR returns to automatic mode.\n To enable cross connect and isolation, connect:\n\t \u2022\t Red\twire\tfrom\tharness\tto\tcenter\t(common)\tof\tSPDT \tswitch.\n \u2022 Cross Connect\tterminal\tof\tSPDT\tswitch\tto\tDC\tpositive\tthrough\t2A\tcircuit\tprotection.\n \u2022 Isolate terminal\tof\tSPDT\tswitch\tto\tDC\tnegative\t(ground).\t\n To enable temporary cross connect using momentary push-button switch:\n\t \u2022\t Connect\tthe\tred\twire\tfrom\tthe\tharness\tto\tone\tside\tof\ta\tmomentary\tpush-button\tswitch\t(sold\tseparately).\n\t \u2022\t Connect\tthe\tother\tside\tof\tthe\tpush\tbutton\tswitch\tto\tDC\tpositive\tthrough\t2A \tcircuit\tprotection.\npage\t2\tof\t4\n  Overview of Application (continued)\nTo Connect Sustained (SPDT) ON-OFF-ON Contura Control Switch: \n1.\tConnect\tpin\t3\tof\tthe\tControl\tSwitch\tto\tDC+\tthrough\ta\t2A\t(min)\tcircuit\tprotection\tdevice.\n2.\tConnect\tpin\t1\tto\tDC\tground.\n3.\tConnect\tpin\t2\tto\tACR\t\u201cREMOTE\u201d\twire\t(red).\n4.\tConnect\tpin\t8\tto\tDC+\tthrough\ta\t2A\t(min)\tcircuit\tprotection\tdevice.\n5.\tConnect\tpin\t7\tto\tACR\t\u201cLED\u201d\tground\twire\t(yellow).",
+      "source_heading_guess": "990180180 Rev.005"
+    },
+    {
+      "manual_id": "5edc1271-3293-42db-a456-16ca44de7d10",
+      "source_file": "902832aa7e163acb_990180180-005.pdf",
+      "page_start": 3,
+      "page_end": 3,
+      "query": "installation wiring commissioning configuration DIP switches",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.44488165538884017,
+      "text": "This\tconnection\tmust\tbe\tto\tthe\tline\tthat\n\t \t is\tpositive\twhile\tthe\tengine\tis\tnormally\trunning.\t\n\t \u2022\t Connect\tthe\tgreen\twire\t(ISOLATION\t#2)\tto\tENGINE\t#2\tin\tthe\tsame\tmanner\tas\tabove.\nTo enable Engine Isolation for three engines:\n\t \u2022\t Connect\tthe\tbrown\twire\t(ISOLATION\t#1)\tto\tENGINE\t#1,\tthe\tgreen\twire\t(ISOLATION\t#2)\tto\tENGINE\t#2,\tand\t\t\n\t \t the\torange\twire\t(ISOLATION\t#3)\tto\tENGINE\t#3\tin\tthe\tsame\tmanner\tas\tabove.\n990180180 Rev.005 page\t3\tof\t4\nREMOTE (Red)\nAB LED (Yellow)\nISOLATION #1 (Brown)\nGROUND (Black)\nLED\n1\n2\nSTART \nBATTERY\nENGINE\nML-SERIES\nREMOTE \nBATTERY\nSWITCH\nML-SERIES\nREMOTE \nBATTERY\nSWITCH\nHOUSE \nBATTERY\nHOUSE \nDISTRIBUTION\nISOLATION #2 (Green)\nISOLATION #3 (Orange)\n2 AMPS\nENGINE\nSTART \nSWITCH\nON\nOFF\nSTART\nML-SERIES\nAUTOMATIC\nCHARGING\nRELAY\n3\n+8 -7LED\nNOTE: The remote \nswitch has two LEDs.\nThese LEDs operate \nsimultaneously and \nare either both ON \nor both OFF.\nNOTE: Use circuit protection \nonly if ACR is not used for \nemergency cross-connect.\n   Installation Instructions \nStart Isolation\nThe\tML-Series\tACR\tcan\tbe\tconfigured\tto\tautomatically\topen\ttemporarily\t(3-5\tminutes)\twhen\tvoltage\tis",
+      "source_heading_guess": "990180180 Rev.005 page\t3\tof\t4"
+    },
+    {
+      "manual_id": "5edc1271-3293-42db-a456-16ca44de7d10",
+      "source_file": "902832aa7e163acb_990180180-005.pdf",
+      "page_start": 3,
+      "page_end": 3,
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.42429502039765543,
+      "text": "REMOTE (Red)\nAB\nLED (Yellow)\nISOLATION #1 (Brown)\nGROUND (Black)\nLED\n1\n2\nSTART \nBATTERY\nENGINE\nML-SERIES\nREMOTE \nBATTERY\nSWITCH\nHOUSE \nBATTERY\nHOUSE \nDISTIBUTION\nISOLATION #2 (Green)\nISOLATION #3 (Orange)\n2 AMPS\nENGINE\nSTART \nSWITCH\nON\nOFF\nSTART\n3\n+8 -7\nENGINEENGINE\nSTART SWITCH\nON\nOFF\nSTART\nML-SERIES\nREMOTE \nBATTERY\nSWITCH\nML-SERIES\nAUTOMATIC\nCHARGING\nRELAY\nLED\nNOTE: The remote \nswitch has two LEDs.\nThese LEDs operate \nsimultaneously and \nare either both ON \nor both OFF.\nNOTE: Use circuit protection \nonly if ACR is not used for \nemergency cross-connect.\nEngine Isolation\nThe\tML-Series\tACR\tcan\tbe\tconfigured\tto\tautomatically\topen\twhen\ttwo\tengines\tare\tsimultaneously\trunning\t\t\t\nto\tensure\tthat\ttwo\trunning\tengines\tare\tnever\telectrically\tconnected.\tEnable\tthis\tfeature\tto\treduce\t\t \t\nnoise\tand\tcommunication\tcross-talk\tbetween\tengines,\tand\tto\tmaximize\ttotal\tpotential\talternator\toutput.\nTo enable Engine Isolation for two engines:\n \u2022 Connect the brown wire (ISOLATION #1) from the harness to the ON terminal of the start key switch on   \n\t \t one\tengine.\tMake\tthis\tconnection\tthrough\ta\t2\t Amp\tin-line\tfuse.\tThis\tconnection\tmust\tbe\tto\tthe\tline\tthat",
+      "source_heading_guess": "2 AMPS"
+    },
+    {
+      "manual_id": "5edc1271-3293-42db-a456-16ca44de7d10",
+      "source_file": "902832aa7e163acb_990180180-005.pdf",
+      "page_start": 1,
+      "page_end": 1,
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.41437191641591375,
+      "text": "13.5V\t 27.0V\n\t -Combine\t(90\tsec.)\t \t 13.0V\t 26.0V\n\t -Open\tLow\t(10\tsec.)\t \t 12.35V\t 24.7V\n\t -Open\tLow\t(30\tsec.)\t \t 12.75V\t 25.5V\n\t -Open\tHigh\t \t 16.2V\t 32.4V\nLive\tCurrent\tSwitching\t \t 300A\t@\t12V\tDC\t-\t10,000\tCycles\t 150A\t@\t24V\tDC\t-\t10,000\tCycles\nTerminal Stud Size  3/8\"-16\t\t 3/8\"-16\nMaximum Terminal Stud Torque 140 in-lb (15.8 N\u2022m)  140 in-lb (15.8 N\u2022m)\nRing Terminal Size  3/8\" (M10)  3/8\" (M10)\nT erminal\tRing\tDiameter\tClearance\t 1.18\" (30 mm) 1.18\" (30 mm)\nControl\tCircuit\tCurrent\tDraw\t \t <40\tmA\t <40\tmA\nRemote Switch 2146\nAction\t Sustained\tSPDT\tON-OFF-ON\nSeals\t\t\t\t\t Internal\t&\tExternal\tGasket\tPanel\tSeal\nMounting\tHole\t\t\t\t\t 0.83\"x 1.45\"\t(21.08\tmm\tx\t36.83\tmm)\nLED\tRating\t\t\t\t\t\t\t\t\t 100,000\thours\thalf-life\nRegulatory Meets ISO 8846 and SAE J1171 external ignition protection requirements, CE marked, Rated IP66\nGuarantee\nBlue\tSea\tSystems\tstands\tbehind\tits\tproducts\tfor\tas\tlong\tas\tyou\town\tthem.\t\nFind\tdetailed\tinformation\tat\twww.bluesea.com/about.\tFor\tcustomer\tservice,\tcall\t800.222.7617.",
+      "source_heading_guess": "13.5V\t 27.0V"
+    },
+    {
+      "manual_id": "5edc1271-3293-42db-a456-16ca44de7d10",
+      "source_file": "902832aa7e163acb_990180180-005.pdf",
+      "page_start": 1,
+      "page_end": 1,
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.4137498924431381,
+      "text": "To isolate battery banks \nSwitch to \u201cOFF\u201d- when the battery banks are isolated using the Control \nSwitch, the battery banks remain isolated, and for at least 30 seconds after \nthe\tcontrol\tswitch\tis\treturned\tto\tthe\t\u201cAUTO\u201d\tposition.\t\nControl Switch Remote Indication or ML-ACR Status \nNOTE: The remote switch has two LEDs (top and bottom). These LEDs operate simultaneously-either they are both ON or both OFF.\npage\t1\tof\t4\nPN Termination Manual\nControl\nControl \nCircuit\n7620 Tinned Wires No 12V\tDC\n7621 Tinned Wires No 24V\tDC\nPN Termination Manual\nControl\nControl \nCircuit\n7622 Tinned Wires Yes 12V\tDC\n7623 Tinned Wires Yes 24V\tDC\nLED INDICATION ACR STATE OR CONDITION\nRemote Switch Set to \u201cAUTO\u201d or no Remote Switch Installed\nLEDs\tOFF Batteries are isolated\nLEDs\tON Batteries are combined\nLEDs\tslow\tsteady\tblink,\tON-OFF Start\tor\tEngine\tIsolation\tis\tcausing\tbatteries\tto\tbe\tisolated\nLEDs\tquick\tsteady\tblink,\tON-OFF\nUndervoltage lockout--either battery is below 9.6V@12V DC\noperation or 19.2V@24V DC operation. \nOvervoltage lockout--either battery is above 16.2V@12V DC\noperation or 32.4V@24V DC operation.\nRemote Switch Set to OVERRIDE \u201cON\u201d or \u201cOFF\u201d\u2014Automatic operation is suspended for 10 minutes",
+      "source_heading_guess": "7620 Tinned Wires No 12V\tDC"
+    },
+    {
+      "manual_id": "5edc1271-3293-42db-a456-16ca44de7d10",
+      "source_file": "902832aa7e163acb_990180180-005.pdf",
+      "page_start": 1,
+      "page_end": 1,
+      "query": "network communication MasterBus NMEA CZone VE.Direct Bluetooth remote panel app",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.35743242602730785,
+      "text": "Intermittent \n5 min. \nContinuous\n(UL 1107)\n2/0\tAWG\t(70\tmm\u00b2) 1,000A 400A 225A\n4/0\tAWG\t(120\tmm\u00b2) 1,100A 400A 300A\n2\u00d7\t4/0\tAWG\t(2x\t120\tmm\u00b2) 1,450A 700A 500A\nBlue Sea Systems, Inc.\n4600\tRyzex\tWay\nBellingham, WA  \n98226\t\tUSA\t\nPhone\t360.738.8230\nwww.bluesea.com",
+      "source_heading_guess": "5 min."
+    },
+    {
+      "manual_id": "5edc1271-3293-42db-a456-16ca44de7d10",
+      "source_file": "902832aa7e163acb_990180180-005.pdf",
+      "page_start": 4,
+      "page_end": 4,
+      "query": "network communication MasterBus NMEA CZone VE.Direct Bluetooth remote panel app",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.35202579212588514,
+      "text": "To install a remote LED indicator:\n\t \u2022\t Connect\tswitch\t pin\t8\tto\tDC\tpositive\tprotected\tby\ta\t2\tAmp\tin-line\tfuse.\n\t \u2022\t Connect\tpin\t7\tto \tthe\tyellow\twire\tfrom\tthe\tharness.\n4.50\"\n114.30mm\n3.00\"\n76.20mm\n5.47\"\n138.94mm\n3.75\"\n95.25mm\n2.03\"\n51.56mm\n1.90\"\n48.26mm\n1.03\"\n26.16mm\n   Installation Instructions (continued) \npage\t4\tof\t4990180180 Rev.005",
+      "source_heading_guess": "To install a remote LED indicator:"
+    },
+    {
+      "manual_id": "5edc1271-3293-42db-a456-16ca44de7d10",
+      "source_file": "902832aa7e163acb_990180180-005.pdf",
+      "page_start": 3,
+      "page_end": 3,
+      "query": "maintenance service storage winterizing",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.3758435137477665,
+      "text": "Enable\tthis\tfeature\tto\tisolate\tStart\tcircuits\tfrom\tthe\t\nHouse\tcircuit\tand\tprevent\tstarting\tcurrent\ttransients\tfrom\tinterfering\twith\tsensitive\thouse\telectronics.\nTo enable Start Isolation:\n \u2022 Connect the brown wire (ISOLATION #1) from the harness to the terminal or wire running from the start \n\t \t key\tswitch\tto\tthe\tstarter\tsolenoid.\tMake\tthis\tconnection\tthrough\ta\t2\t Amp\tin-line\tfuse.\tThis\tconnection\n\t \t can\tbe\tmade\tat\tthe\tstart\tkey\tswitch\tor\tat\tthe\tstarter\tsolenoid,\tbut\tmust\tbe\tto\tthe\tline\tthat\tis\tpositive\tonly\t\t \t\n  when cranking the engine. as shown below.\nTo enable Start Isolation for two or three engines starting from the same battery:\n\t \u2022\t Connect\tthe\tgreen\twire\t(ISOLATION\t#2)\tto\tENGINE\t#2\tin\tthe\tsame\tmanner\tas\tabove.\n\t \u2022\t Connect\tthe\torange\twire\t(ISOLATION\t#3)\tto\tENGINE\t#3\tin\tthe\tsame\tmanner\tas\tabove.\nStart Isolation Installation \n   Installation Instructions (continued) \nEngine Isolation Installation\nLegend\nOptional\tconnection\nLegend\nOptional\tconnection",
+      "source_heading_guess": "Enable\tthis\tfeature\tto\tisolate\tStart\tcircuits\tfrom\tthe"
+    },
+    {
+      "manual_id": "5edc1271-3293-42db-a456-16ca44de7d10",
+      "source_file": "902832aa7e163acb_990180180-005.pdf",
+      "page_start": 1,
+      "page_end": 1,
+      "query": "maintenance service storage winterizing",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.3704379416936243,
+      "text": "Find\tdetailed\tinformation\tat\twww.bluesea.com/about.\tFor\tcustomer\tservice,\tcall\t800.222.7617.\t\nMarine\tElectrical\tProducts Overview of Application\nThe ML-Series ACR automatically combines batteries during charging, and isolates batteries when there is no \ncharging sensed on either battery bank. \nML-Series ACR Function 12 Volt DC Operation 24 Volt DC Operation\nAutomatically combines battery \nbanks when sensed voltage \nlevels are:\nAbove 13.5V for 30 sec.\nAbove 13.0V for 90 sec.\nAbove 27.0V for 30 sec.\nAbove 26.0V for 90 sec.\nAutomatically isolates battery \nbanks when sensed voltage \nlevels are: \nBelow 9.6V (undervoltage lockout)\nBelow 12.35V for 10 sec.\nBelow 12.75V for 30 sec.\nAbove 16.2V (overvoltage lockout)\nBelow 19.2V (undervoltage lockout)\nBelow 24.7V for 10 sec.\nBelow 25.5V for 30 sec.\nAbove 32.4V (overvoltage lockout)\nStart Isolation or Engine Isolation.\tThe\tisolation\tinputs\tenable\tone\tof\ttwo\tfunctions\tdepending\ton\t\nhow\tthe\tinputs\tare\tconfigured.\t\nNOTE: The ML-Series ACR can be configured for Start Isolation or Engine Isolation, but not both. \n\u2022 Start Isolation\t-\tT emporary\tisolation\t(3\u22125 minutes) of house loads from the engine circuit during engine",
+      "source_heading_guess": "Marine\tElectrical\tProducts Overview of Application"
+    },
+    {
+      "manual_id": "5edc1271-3293-42db-a456-16ca44de7d10",
+      "source_file": "902832aa7e163acb_990180180-005.pdf",
+      "page_start": 2,
+      "page_end": 2,
+      "query": "optional accessory gateway interface required for",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.32513402407698866,
+      "text": "If\tthe\tACR\tis\tnot\tused\tfor\tcross\tconnect,\t\n\t \t install\tfuses\tto\tprevent\ta\thazard\tif\tthere\tis\tdamage\tto\tthe\twires\tconnecting\tthe\tbatteries\tto\tthe\t ACR.\t\t\n\t \t The\tfuses\tshould\tbe\tplaced\tas\tclose\tas\tpossible\tto\tthe\tbatteries\tso\tthat\tmost\tof\tthe\twire\tis\tprotected.\nControl Circuit Connection (wire contained in the wire harness)\nGround Connection \nConnect\tthe\tblack\twire\tin\tthe\twire\tharness\tto\tDC\tground\tat\tthe\tmain\tground\tterminal\tbusbar.\nOptional Control Circuit Connections (wires contained in the wire harness)\nCross Connect or Isolate Battery Banks\nUse\tthe\tincluded\tControl\tSwitch\u2014sustained\t(SPDT)\tON-OFF-ON.\nAlternatively\tuse\ta\tmomentary\t(SPDT)\t(ON)-OFF-(ON)\tor\tmomentary\tpush\tbutton\tswitch\t(sold\tseparately)\tto\t\nprovide\tcross\tconnect\tand/or\tbattery\tisolation.\tThe\tControl\tSwitch\tshould\tbe\tmounted\tin\ta\tconvenient\tlocation\t\nnear helm controls to allow for quick access.\nNOTE:\tUse\t16\tAWG wire for all Control Circuit connections to meet ABYC minimum wire size requirement.\n    Cross Connect or Isolate Battery Banks Using Optional Control Switch\n\t Use\tControl\tSwitch\t\u2013\tmomentary\tor\tsustained\tsingle\tpole\tdouble\tthrow\t(SPDT)\tto\tprovide\tthese\tsettings:",
+      "source_heading_guess": "If\tthe\tACR\tis\tnot\tused\tfor\tcross\tconnect,"
+    },
+    {
+      "manual_id": "5edc1271-3293-42db-a456-16ca44de7d10",
+      "source_file": "902832aa7e163acb_990180180-005.pdf",
+      "page_start": 1,
+      "page_end": 1,
+      "query": "shore power AC input current limit generator mains",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.4429934231846726,
+      "text": "ML\u2013 ACR\nAutomatic Charging Relays\n PN 7620 / PN 7621 (without manual control)\nPN 7622 / PN 7623 (with manual control)\n990180180 Rev.005\n\u2022 Magnetic Latch (ML)\u2014draws very low current in the ON or OFF states, and draws moderate current for very \n short time when changing state\n\u2022\tStart\tIsolation\t(SI)\u2014can\tbe\tconfigured\tfor\ttemporary\tisolation\tof\tHouse\tloads\tfrom\tEngine\tcircuit\tduring\tengine\t\n\t cranking\tto\tprotect\tsensitive\telectronics\n\u2022\tEngine\tIsolation\t(EI)\u2014can\tbe\tconfigured\tfor\tisolation\tof\ttwo\tengines\twhile\tboth\tare\trunning\tto\tprotect\tengine\t\n\t electronics\tand\tmaximize\talternator\toutput\n\u2022 Senses charging on two battery banks\n\u2022\tLED\toutput\tto\tremotely\tindicate\twhen\tbatteries\tare\tcombined\tor\tisolated\n\u2022\tTin-plated\tcopper\tstuds\tfor\tmaximum\tconductivity\tand\tcorrosion\tresistance\t\n\u2022\tLabel\trecesses\tfor\tcircuit\tidentification\t\n\u2022\tSilver\talloy\tcontacts\tprovide\thigh\treliability\tfor\tswitching\tlive\tloads\nSpecifications  12V DC 24V DC\nCranking Rating  See table below See table below\nIntermittent Rating  See table below See table below\nContinuous Rating  See table below See table below\nML-Coil Function  Bi-stable Bi-stable",
+      "source_heading_guess": "990180180 Rev.005"
+    },
+    {
+      "manual_id": "5edc1271-3293-42db-a456-16ca44de7d10",
+      "source_file": "902832aa7e163acb_990180180-005.pdf",
+      "page_start": 2,
+      "page_end": 2,
+      "query": "shore power AC input current limit generator mains",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.44147596943101464,
+      "text": "Installation Instructions \nMounting\nInstall\tthe\tML-Series\tACR\tas\tclose\tas\tpossible\tto\tboth\tbattery\tbanks\tso\tthat\tpositive\tand\tnegative\twires\tare\t\nas\tshort\tas\tpossible,\tand\tvoltage\tdrop\tin\tthese\twires\tis\tkept\tto\ta\tminimum\u2021. To avoid corrosion to terminals \nand\tconnecting\twires,\tmount\tin\ta\tdry\tand\tprotected\tlocation.\t\tAvoid\tmounting\tdirectly\tabove\tvented\tlead\tacid\t\nbatteries\tso\tthat\tthe\tACR\tis\tnot\texposed\tto\tcorrosive\tgasses\texpelled\tfrom\tthe\tbatteries.\t\n\u2021\tBecause\tthe\tACR\tsenses\tthe\tvoltage\tbetween\tits\tnegative\tground\tconnection\tand\tits\tpositive\tsense\t\n\t connections,\tboth\tpositive\tand\tnegative\twires\tshould\tbe\tas\tshort\tas\tpossible\tso\tthat\tthe\tinfluence\tof\t\n\t voltage\tdrop\ton\tsensed\tvoltage\tlevels\tis\tminimized.\nHigh Current Primary Circuit Connections (stud terminals A and B)\nFor\thelp\tselecting\tthe\tappropriate\twire\tsize\tand\tcircuit\tprotection\trating,\tgo\tto\twww.bluesea.com\tand\tclick\tthe\t\nCircuit Wizard quick link.\nTo connect high current circuit wires:\n1. Connect the battery banks to the stud terminals marked A and B.\n2. Torque the high current terminal stud nuts to 140 in-lbs (15.5 N\u2022m) maximum.",
+      "source_heading_guess": "If\tthe\tACR\tis\tnot\tused\tfor\tcross\tconnect,"
+    }
+  ],
+  "query_diagnostics": [
+    {
+      "query": "operation daily use display menu controls operator",
+      "unique_hits_added": 4,
+      "matched": true,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "installation wiring commissioning configuration DIP switches",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "unique_hits_added": 3,
+      "matched": true,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "network communication MasterBus NMEA CZone VE.Direct Bluetooth remote panel app",
+      "unique_hits_added": 2,
+      "matched": true,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "maintenance service storage winterizing",
+      "unique_hits_added": 2,
+      "matched": true,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "optional accessory gateway interface required for",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "MasterView remote panel remote control display panel monitoring panel MasterAdjust",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "optional remote control MasterView Easy remote panel installed",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "shore power AC input current limit generator mains",
+      "unique_hits_added": 2,
+      "matched": true,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "main switch inverter on off charger operation",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "DC fuse battery protection wiring supply requirement",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "BMS battery safety relay protective disconnect undervoltage overvoltage temperature",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "Class T fuse T-Fuse fuse holder positive battery cable",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "Close relay reset battery safety event recovery after disconnect",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "State of charge SOC monitoring MasterBus display",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "Climate page HVAC air conditioner aircon temperature control fan setpoint",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "CLIMATE CONTROLS Power Mode Temp Fan air conditioning",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "supported air conditioner HVAC climate operating modes fan speed",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    }
+  ],
+  "coverage": {
+    "heading_count": 27,
+    "headings_covered_count": 27,
+    "heading_coverage_fraction": 1.0,
+    "coverage_low_threshold": 0.25,
+    "coverage_low": false,
+    "headings_all": [
+      "ML\u2013 ACR",
+      "990180180 Rev.005",
+      "13.5V\t 27.0V",
+      "7620 Tinned Wires No 12V\tDC",
+      "7621 Tinned Wires No 24V\tDC",
+      "7622 Tinned Wires Yes 12V\tDC",
+      "7623 Tinned Wires Yes 24V\tDC",
+      "LED INDICATION ACR STATE OR CONDITION",
+      "30 sec.",
+      "5 min.",
+      "(UL 1107)",
+      "4600\tRyzex\tWay",
+      "98226\t\tUSA",
+      "1. Connect the battery banks to the stud terminals marked A and B.",
+      "2. Torque the high current terminal stud nuts to 140 in-lbs (15.5 N\u2022m) maximum.",
+      "1.\tConnect\tpin\t3\tof\tthe\tControl\tSwitch\tto\tDC+\tthrough\ta\t2A\t(min)\tcircuit\tprotection\tdevice.",
+      "2.\tConnect\tpin\t1\tto\tDC\tground.",
+      "3.\tConnect\tpin\t2\tto\tACR\t\u201cREMOTE\u201d\twire\t(red).",
+      "4.\tConnect\tpin\t8\tto\tDC+\tthrough\ta\t2A\t(min)\tcircuit\tprotection\tdevice.",
+      "5.\tConnect\tpin\t7\tto\tACR\t\u201cLED\u201d\tground\twire\t(yellow).",
+      "TEST CUT",
+      "HOLE IN",
+      "10 minutes if the override forces a change in switch state.",
+      "2 AMPS",
+      "START SWITCH",
+      "990180180 Rev.005 page\t3\tof\t4",
+      "+8 -7LED"
+    ],
+    "headings_covered": [
+      "ML\u2013 ACR",
+      "990180180 Rev.005",
+      "13.5V\t 27.0V",
+      "7620 Tinned Wires No 12V\tDC",
+      "7621 Tinned Wires No 24V\tDC",
+      "7622 Tinned Wires Yes 12V\tDC",
+      "7623 Tinned Wires Yes 24V\tDC",
+      "LED INDICATION ACR STATE OR CONDITION",
+      "30 sec.",
+      "5 min.",
+      "(UL 1107)",
+      "4600\tRyzex\tWay",
+      "98226\t\tUSA",
+      "1. Connect the battery banks to the stud terminals marked A and B.",
+      "2. Torque the high current terminal stud nuts to 140 in-lbs (15.5 N\u2022m) maximum.",
+      "1.\tConnect\tpin\t3\tof\tthe\tControl\tSwitch\tto\tDC+\tthrough\ta\t2A\t(min)\tcircuit\tprotection\tdevice.",
+      "2.\tConnect\tpin\t1\tto\tDC\tground.",
+      "3.\tConnect\tpin\t2\tto\tACR\t\u201cREMOTE\u201d\twire\t(red).",
+      "4.\tConnect\tpin\t8\tto\tDC+\tthrough\ta\t2A\t(min)\tcircuit\tprotection\tdevice.",
+      "5.\tConnect\tpin\t7\tto\tACR\t\u201cLED\u201d\tground\twire\t(yellow).",
+      "TEST CUT",
+      "HOLE IN",
+      "10 minutes if the override forces a change in switch state.",
+      "2 AMPS",
+      "START SWITCH",
+      "990180180 Rev.005 page\t3\tof\t4",
+      "+8 -7LED"
+    ],
+    "headings_missing": [],
+    "chunk_count": 15,
+    "top_k_used": 4,
+    "heading_fill_queries": 0,
+    "heading_fill_hits": 0,
+    "top_k_scaling": {
+      "base": 4,
+      "max": 16,
+      "chunk_coverage_target": 0.6,
+      "scaled": false
+    }
+  },
+  "map_group_count": 1,
+  "legal_status_required": "cleared",
+  "validation_issues": [],
+  "validation_flags": [
+    {
+      "flag": "contradiction_builtin_requires_accessory",
+      "severity": "warning",
+      "detail": "repaired: dropped_entry \u2014 needed_for pointed at a control surface with optional_accessory:false (dropped 'momentary push button switch')",
+      "field_path": "requires_devices[0].needed_for"
+    },
+    {
+      "flag": "procedure_unaccounted",
+      "severity": "warning",
+      "detail": "procedure 'Configure Start Isolation when there are heavy cranking loads' unaccounted (source excerpt[2]@batch_0)",
+      "field_path": "operator_actions"
+    },
+    {
+      "flag": "procedure_unaccounted",
+      "severity": "warning",
+      "detail": "procedure 'To Connect Sustained (SPDT) ON-OFF-ON Contura Control Switch' unaccounted (source excerpt[3]@batch_0)",
+      "field_path": "operator_actions"
+    },
+    {
+      "flag": "procedure_unaccounted",
+      "severity": "warning",
+      "detail": "procedure 'To enable Start Isolation for two or three engines starting from the same battery' unaccounted (source excerpt[10]@batch_0)",
+      "field_path": "operator_actions"
+    },
+    {
+      "flag": "procedure_unaccounted",
+      "severity": "warning",
+      "detail": "procedure 'To install a remote LED indicator' unaccounted (source excerpt[9]@batch_0)",
+      "field_path": "operator_actions"
+    },
+    {
+      "flag": "procedure_unaccounted",
+      "severity": "warning",
+      "detail": "procedure 'To connect high current circuit wires' unaccounted (source excerpt[14]@batch_0)",
+      "field_path": "operator_actions"
+    }
+  ],
+  "needs_rextraction": false,
+  "repairs": [
+    {
+      "repair": "dropped_entry",
+      "flag": "contradiction_builtin_requires_accessory",
+      "field_path": "requires_devices[0].needed_for",
+      "original_entry": {
+        "description_verbatim": "momentary push button switch",
+        "needed_for": "control_surfaces[0]"
+      }
+    }
+  ],
+  "repair": {
+    "evidence": {
+      "attempted": true,
+      "missing_fields": [
+        "safety_role.has_manual_override"
+      ],
+      "added": [
+        "safety_role.has_manual_override"
+      ]
+    },
+    "absence": {
+      "attempted": false
+    }
+  },
+  "rextraction": {
+    "attempted": false,
+    "max_retries": 1,
+    "still_needs_rextraction": false
+  },
+  "stability_voting": {
+    "n_requested": 3,
+    "n_completed": 3,
+    "short_circuit_identical": false,
+    "unstable_flag_count": 0,
+    "votes": [
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "prevent remote operation via Manual Control Override Knob",
+          "audience": "operator",
+          "context": "situational",
+          "occasion": "to prevent remote operation",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": "2/3",
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "action": "prevent remote operation via Manual Control Override Knob",
+              "audience": "operator",
+              "context": "situational",
+              "occasion": "to prevent remote operation"
+            }
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "prevent remote operation via Manual Control Override Knob",
+              "audience": "operator",
+              "context": "situational",
+              "occasion": "to prevent remote operation",
+              "options": []
+            }
+          }
+        ]
+      },
+      {
+        "field_path": "requires_devices",
+        "kind": "requires_devices",
+        "attribute": "presence",
+        "chosen": {
+          "description_verbatim": "momentary push button switch",
+          "needed_for": "control_surfaces[0]",
+          "requirement_kind": "device",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": "1/3",
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "description_verbatim": "momentary push button switch",
+              "needed_for": "control_surfaces[0]",
+              "requirement_kind": "device"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ]
+      }
+    ]
+  },
+  "procedure_inventory": {
+    "inventory": {
+      "procedures": [
+        {
+          "title": "Configure Start Isolation when there are heavy cranking loads",
+          "kind": "headed_procedure",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[2]",
+          "snippet": "Configure Start Isolation when there are heavy cranking loads causing sags and spikes that might damage electronics in the House circuit. See page 3. \u2022 Engine Isolation - Isolate two engines while both are running to protect engine elect",
+          "source": "heuristic",
+          "excerpt_text": "Configure\tStart\tIsolation\twhen\tthere\tare\theavy\tcranking\tloads\t\n\t causing\tsags\tand\tspikes\tthat\tmight\tdamage\telectronics\tin\tthe\tHouse\tcircuit.\tSee\tpage\t3.\n\u2022 Engine Isolation\t-\tIsolate\ttwo\tengines\twhile\tboth\tare\trunning\tto\tprotect\tengine\telectronics,\tand\tto\t\n\t maximize\talternator\toutput.\tConfigure\tEngine\tIsolation\twhen\tthe\tengine\tmanufacturer\trequires\tit,\tand\t\n\t when\tthere\tare\tseparate\tbatteries\tfor\teach\tengine.\tSee\tpage\t3.\nUndervoltage or Overvoltage Lockout. \n\u2022\t Undervoltage\tlockout\tprevents\tbatteries\tfrom\tbeing\tcombined\twhen\teither\tbattery\tis\tbelow\t9.6V@12V\tDC\n\t operation\tor\t19.2V@24V\tDC\toperation.\t\n\u2022\t Overvoltage\tlockout\tprevents\tbatteries\tfrom\tbeing\tcombined\twhen\teither\tbattery\tis\tabove\t16.2V@12V\tDC\n\t operation\tor\t32.4V@24V\tDC\toperation.\t\nControl Switch Remote Operation. Included\tContura\tControl\tSwitch\u2014sustained\t(SPDT)\tON-OFF-ON.\nThe Control Switch should be mounted in a convenient location near helm controls to allow for quick access.\nNOTE: Alternatively use a momentary (SPDT) (ON)-OFF-(ON) or momentary push button switch to provide cross connect and/or battery isolation.\nTo cross connect \n(combine) battery banks"
+        },
+        {
+          "title": "To Connect Sustained (SPDT) ON-OFF-ON Contura Control Switch",
+          "kind": "imperative_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[3]",
+          "snippet": "To Connect Sustained (SPDT) ON-OFF-ON Contura Control Switch: 1. Connect pin 3 of the Control Switch to DC+ through a 2A (min) circuit protection device. 2. Connect pin 1 to DC ground. 3. Connect pin 2 to ACR \u201cREMOTE\u201d wire (red). 4. Connect",
+          "source": "heuristic",
+          "excerpt_text": "When the Control Switch is returned to AUTO, the ACR returns to automatic mode.\n To enable cross connect and isolation, connect:\n\t \u2022\t Red\twire\tfrom\tharness\tto\tcenter\t(common)\tof\tSPDT \tswitch.\n \u2022 Cross Connect\tterminal\tof\tSPDT\tswitch\tto\tDC\tpositive\tthrough\t2A\tcircuit\tprotection.\n \u2022 Isolate terminal\tof\tSPDT\tswitch\tto\tDC\tnegative\t(ground).\t\n To enable temporary cross connect using momentary push-button switch:\n\t \u2022\t Connect\tthe\tred\twire\tfrom\tthe\tharness\tto\tone\tside\tof\ta\tmomentary\tpush-button\tswitch\t(sold\tseparately).\n\t \u2022\t Connect\tthe\tother\tside\tof\tthe\tpush\tbutton\tswitch\tto\tDC\tpositive\tthrough\t2A \tcircuit\tprotection.\npage\t2\tof\t4\n  Overview of Application (continued)\nTo Connect Sustained (SPDT) ON-OFF-ON Contura Control Switch: \n1.\tConnect\tpin\t3\tof\tthe\tControl\tSwitch\tto\tDC+\tthrough\ta\t2A\t(min)\tcircuit\tprotection\tdevice.\n2.\tConnect\tpin\t1\tto\tDC\tground.\n3.\tConnect\tpin\t2\tto\tACR\t\u201cREMOTE\u201d\twire\t(red).\n4.\tConnect\tpin\t8\tto\tDC+\tthrough\ta\t2A\t(min)\tcircuit\tprotection\tdevice.\n5.\tConnect\tpin\t7\tto\tACR\t\u201cLED\u201d\tground\twire\t(yellow)."
+        },
+        {
+          "title": "To enable Start Isolation for two or three engines starting from the same battery",
+          "kind": "imperative_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[10]",
+          "snippet": "To enable Start Isolation for two or three engines starting from the same battery: \u2022 Connect the green wire (ISOLATION #2) to ENGINE #2 in the same manner as above. \u2022 Connect the orange wire (ISOLATION #3) to ENGINE #3 in the same manner as",
+          "source": "heuristic",
+          "excerpt_text": "Enable\tthis\tfeature\tto\tisolate\tStart\tcircuits\tfrom\tthe\t\nHouse\tcircuit\tand\tprevent\tstarting\tcurrent\ttransients\tfrom\tinterfering\twith\tsensitive\thouse\telectronics.\nTo enable Start Isolation:\n \u2022 Connect the brown wire (ISOLATION #1) from the harness to the terminal or wire running from the start \n\t \t key\tswitch\tto\tthe\tstarter\tsolenoid.\tMake\tthis\tconnection\tthrough\ta\t2\t Amp\tin-line\tfuse.\tThis\tconnection\n\t \t can\tbe\tmade\tat\tthe\tstart\tkey\tswitch\tor\tat\tthe\tstarter\tsolenoid,\tbut\tmust\tbe\tto\tthe\tline\tthat\tis\tpositive\tonly\t\t \t\n  when cranking the engine. as shown below.\nTo enable Start Isolation for two or three engines starting from the same battery:\n\t \u2022\t Connect\tthe\tgreen\twire\t(ISOLATION\t#2)\tto\tENGINE\t#2\tin\tthe\tsame\tmanner\tas\tabove.\n\t \u2022\t Connect\tthe\torange\twire\t(ISOLATION\t#3)\tto\tENGINE\t#3\tin\tthe\tsame\tmanner\tas\tabove.\nStart Isolation Installation \n   Installation Instructions (continued) \nEngine Isolation Installation\nLegend\nOptional\tconnection\nLegend\nOptional\tconnection",
+          "deduped_from": "To enable Engine Isolation for three engines"
+        },
+        {
+          "title": "To install a remote LED indicator",
+          "kind": "headed_procedure",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[9]",
+          "snippet": "To install a remote LED indicator: \u2022 Connect switch pin 8 to DC positive protected by a 2 Amp in-line fuse. \u2022 Connect pin 7 to the yellow wire from the harness. 4.50\" 114.30mm 3.00\" 76.20mm 5.47\" 138.94mm 3.75\" 95.25mm 2.03\" 51.56mm",
+          "source": "heuristic",
+          "excerpt_text": "To install a remote LED indicator:\n\t \u2022\t Connect\tswitch\t pin\t8\tto\tDC\tpositive\tprotected\tby\ta\t2\tAmp\tin-line\tfuse.\n\t \u2022\t Connect\tpin\t7\tto \tthe\tyellow\twire\tfrom\tthe\tharness.\n4.50\"\n114.30mm\n3.00\"\n76.20mm\n5.47\"\n138.94mm\n3.75\"\n95.25mm\n2.03\"\n51.56mm\n1.90\"\n48.26mm\n1.03\"\n26.16mm\n   Installation Instructions (continued) \npage\t4\tof\t4990180180 Rev.005"
+        },
+        {
+          "title": "Connect the battery banks to the stud terminals marked A and B",
+          "kind": "numbered_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[14]",
+          "snippet": "1. Connect the battery banks to the stud terminals marked A and B. 2. Torque the high current terminal stud nuts to 140 in-lbs (15.5 N\u2022m) maximum.",
+          "source": "heuristic",
+          "excerpt_text": "Installation Instructions \nMounting\nInstall\tthe\tML-Series\tACR\tas\tclose\tas\tpossible\tto\tboth\tbattery\tbanks\tso\tthat\tpositive\tand\tnegative\twires\tare\t\nas\tshort\tas\tpossible,\tand\tvoltage\tdrop\tin\tthese\twires\tis\tkept\tto\ta\tminimum\u2021. To avoid corrosion to terminals \nand\tconnecting\twires,\tmount\tin\ta\tdry\tand\tprotected\tlocation.\t\tAvoid\tmounting\tdirectly\tabove\tvented\tlead\tacid\t\nbatteries\tso\tthat\tthe\tACR\tis\tnot\texposed\tto\tcorrosive\tgasses\texpelled\tfrom\tthe\tbatteries.\t\n\u2021\tBecause\tthe\tACR\tsenses\tthe\tvoltage\tbetween\tits\tnegative\tground\tconnection\tand\tits\tpositive\tsense\t\n\t connections,\tboth\tpositive\tand\tnegative\twires\tshould\tbe\tas\tshort\tas\tpossible\tso\tthat\tthe\tinfluence\tof\t\n\t voltage\tdrop\ton\tsensed\tvoltage\tlevels\tis\tminimized.\nHigh Current Primary Circuit Connections (stud terminals A and B)\nFor\thelp\tselecting\tthe\tappropriate\twire\tsize\tand\tcircuit\tprotection\trating,\tgo\tto\twww.bluesea.com\tand\tclick\tthe\t\nCircuit Wizard quick link.\nTo connect high current circuit wires:\n1. Connect the battery banks to the stud terminals marked A and B.\n2. Torque the high current terminal stud nuts to 140 in-lbs (15.5 N\u2022m) maximum.",
+          "classification": "not_operator_relevant:installer",
+          "classification_rule": "rule:installer:wiring_connect_step"
+        },
+        {
+          "title": "To connect high current circuit wires",
+          "kind": "imperative_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[14]",
+          "snippet": "To connect high current circuit wires: 1. Connect the battery banks to the stud terminals marked A and B. 2. Torque the high current terminal stud nuts to 140 in-lbs (15.5 N\u2022m) maximum.",
+          "source": "heuristic",
+          "excerpt_text": "Installation Instructions \nMounting\nInstall\tthe\tML-Series\tACR\tas\tclose\tas\tpossible\tto\tboth\tbattery\tbanks\tso\tthat\tpositive\tand\tnegative\twires\tare\t\nas\tshort\tas\tpossible,\tand\tvoltage\tdrop\tin\tthese\twires\tis\tkept\tto\ta\tminimum\u2021. To avoid corrosion to terminals \nand\tconnecting\twires,\tmount\tin\ta\tdry\tand\tprotected\tlocation.\t\tAvoid\tmounting\tdirectly\tabove\tvented\tlead\tacid\t\nbatteries\tso\tthat\tthe\tACR\tis\tnot\texposed\tto\tcorrosive\tgasses\texpelled\tfrom\tthe\tbatteries.\t\n\u2021\tBecause\tthe\tACR\tsenses\tthe\tvoltage\tbetween\tits\tnegative\tground\tconnection\tand\tits\tpositive\tsense\t\n\t connections,\tboth\tpositive\tand\tnegative\twires\tshould\tbe\tas\tshort\tas\tpossible\tso\tthat\tthe\tinfluence\tof\t\n\t voltage\tdrop\ton\tsensed\tvoltage\tlevels\tis\tminimized.\nHigh Current Primary Circuit Connections (stud terminals A and B)\nFor\thelp\tselecting\tthe\tappropriate\twire\tsize\tand\tcircuit\tprotection\trating,\tgo\tto\twww.bluesea.com\tand\tclick\tthe\t\nCircuit Wizard quick link.\nTo connect high current circuit wires:\n1. Connect the battery banks to the stud terminals marked A and B.\n2. Torque the high current terminal stud nuts to 140 in-lbs (15.5 N\u2022m) maximum."
+        }
+      ],
+      "alternatives": [],
+      "filtered": [
+        {
+          "title": "Rev.005 page 3 of 4",
+          "kind": "headed_procedure",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[4]",
+          "snippet": "This connection must be to the line that is positive while the engine is normally running. \u2022 Connect the green wire (ISOLATION #2) to ENGINE #2 in the same manner as above. To enable Engine Isolation for three engines: \u2022 Connect",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb",
+          "deduped_from": "Rev.005"
+        },
+        {
+          "title": "Connect",
+          "kind": "numbered_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[1]",
+          "snippet": "4. Connect pin 8 to DC+ through a 2A (min) circuit protection device. 5. Connect pin 7 to ACR \u201cLED\u201d ground wire (yellow). 1.965\" 49.91mm 1.010\" 25.65mm .549\" 13.95mm 1.125\" 28.58mm TEST CUT HOLE IN ACTUAL CENTER 1.450\" 36.83mm 0.830\" 21.08m",
+          "disposition": "filtered",
+          "filter": "filter:too_few_tokens"
+        },
+        {
+          "title": "START",
+          "kind": "numbered_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[4]",
+          "snippet": "2 START BATTERY ENGINE ML-SERIES REMOTE BATTERY SWITCH ML-SERIES REMOTE BATTERY SWITCH HOUSE BATTERY HOUSE DISTRIBUTION ISOLATION #2 (Green) ISOLATION #3 (Orange) 2 AMPS ENGINE START SWITCH ON OFF START ML-SERIES AUTOMATIC CHARGING RELAY 3 ",
+          "disposition": "filtered",
+          "filter": "filter:too_short"
+        },
+        {
+          "title": "AMPS ENGINE",
+          "kind": "numbered_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[4]",
+          "snippet": "2 AMPS ENGINE START SWITCH ON OFF START ML-SERIES AUTOMATIC CHARGING RELAY 3 +8 -7LED NOTE: The remote switch has two LEDs. These LEDs operate simultaneously and are either both ON or both OFF. NOTE: Use circuit protection only if ACR is no",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "Tinned Wires No 12V DC",
+          "kind": "headed_procedure",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[7]",
+          "snippet": "To isolate battery banks Switch to \u201cOFF\u201d- when the battery banks are isolated using the Control Switch, the battery banks remain isolated, and for at least 30 seconds after the control switch is returned to the \u201cAUTO\u201d position. Control",
+          "disposition": "filtered",
+          "filter": "filter:truncated_heading"
+        },
+        {
+          "title": "Tinned Wires Yes 24V",
+          "kind": "numbered_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[7]",
+          "snippet": "7623 Tinned Wires Yes 24V DC LED INDICATION ACR STATE OR CONDITION Remote Switch Set to \u201cAUTO\u201d or no Remote Switch Installed LEDs OFF Batteries are isolated LEDs ON Batteries are combined LEDs slow steady blink, ON-OFF Start or Engine Isola",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "min",
+          "kind": "numbered_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[8]",
+          "snippet": "Intermittent 5 min. Continuous (UL 1107) 2/0 AWG (70 mm\u00b2) 1,000A 400A 225A 4/0 AWG (120 mm\u00b2) 1,100A 400A 300A 2\u00d7 4/0 AWG (2x 120 mm\u00b2) 1,450A 700A 500A Blue Sea Systems, Inc. 4600 Ryzex Way Bellingham, WA 98226 USA Phone 360.738.8230 w",
+          "disposition": "filtered",
+          "filter": "filter:too_short"
+        },
+        {
+          "title": "Ryzex",
+          "kind": "numbered_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[8]",
+          "snippet": "Intermittent 5 min. Continuous (UL 1107) 2/0 AWG (70 mm\u00b2) 1,000A 400A 225A 4/0 AWG (120 mm\u00b2) 1,100A 400A 300A 2\u00d7 4/0 AWG (2x 120 mm\u00b2) 1,450A 700A 500A Blue Sea Systems, Inc. 4600 Ryzex Way Bellingham, WA 98226 USA Phone 360.738.8230 www.blu",
+          "disposition": "filtered",
+          "filter": "filter:too_short"
+        },
+        {
+          "title": "USA Phone 360.738.8230",
+          "kind": "numbered_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[8]",
+          "snippet": "Intermittent 5 min. Continuous (UL 1107) 2/0 AWG (70 mm\u00b2) 1,000A 400A 225A 4/0 AWG (120 mm\u00b2) 1,100A 400A 300A 2\u00d7 4/0 AWG (2x 120 mm\u00b2) 1,450A 700A 500A Blue Sea Systems, Inc. 4600 Ryzex Way Bellingham, WA 98226 USA Phone 360.738.8230 www.blu",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        }
+      ],
+      "groups_scanned": [
+        "batch_0"
+      ],
+      "procedure_count": 6,
+      "alternative_count": 0,
+      "filtered_count": 9
+    },
+    "reconciliation": {
+      "accounted": [],
+      "classified": [
+        {
+          "title": "Connect the battery banks to the stud terminals marked A and B",
+          "kind": "numbered_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[14]",
+          "snippet": "1. Connect the battery banks to the stud terminals marked A and B. 2. Torque the high current terminal stud nuts to 140 in-lbs (15.5 N\u2022m) maximum.",
+          "source": "heuristic",
+          "excerpt_text": "Installation Instructions \nMounting\nInstall\tthe\tML-Series\tACR\tas\tclose\tas\tpossible\tto\tboth\tbattery\tbanks\tso\tthat\tpositive\tand\tnegative\twires\tare\t\nas\tshort\tas\tpossible,\tand\tvoltage\tdrop\tin\tthese\twires\tis\tkept\tto\ta\tminimum\u2021. To avoid corrosion to terminals \nand\tconnecting\twires,\tmount\tin\ta\tdry\tand\tprotected\tlocation.\t\tAvoid\tmounting\tdirectly\tabove\tvented\tlead\tacid\t\nbatteries\tso\tthat\tthe\tACR\tis\tnot\texposed\tto\tcorrosive\tgasses\texpelled\tfrom\tthe\tbatteries.\t\n\u2021\tBecause\tthe\tACR\tsenses\tthe\tvoltage\tbetween\tits\tnegative\tground\tconnection\tand\tits\tpositive\tsense\t\n\t connections,\tboth\tpositive\tand\tnegative\twires\tshould\tbe\tas\tshort\tas\tpossible\tso\tthat\tthe\tinfluence\tof\t\n\t voltage\tdrop\ton\tsensed\tvoltage\tlevels\tis\tminimized.\nHigh Current Primary Circuit Connections (stud terminals A and B)\nFor\thelp\tselecting\tthe\tappropriate\twire\tsize\tand\tcircuit\tprotection\trating,\tgo\tto\twww.bluesea.com\tand\tclick\tthe\t\nCircuit Wizard quick link.\nTo connect high current circuit wires:\n1. Connect the battery banks to the stud terminals marked A and B.\n2. Torque the high current terminal stud nuts to 140 in-lbs (15.5 N\u2022m) maximum.",
+          "classification": "not_operator_relevant:installer",
+          "classification_rule": "rule:installer:wiring_connect_step",
+          "status": "classified"
+        }
+      ],
+      "unaccounted": [
+        {
+          "title": "Configure Start Isolation when there are heavy cranking loads",
+          "kind": "headed_procedure",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[2]",
+          "snippet": "Configure Start Isolation when there are heavy cranking loads causing sags and spikes that might damage electronics in the House circuit. See page 3. \u2022 Engine Isolation - Isolate two engines while both are running to protect engine elect",
+          "source": "heuristic",
+          "excerpt_text": "Configure\tStart\tIsolation\twhen\tthere\tare\theavy\tcranking\tloads\t\n\t causing\tsags\tand\tspikes\tthat\tmight\tdamage\telectronics\tin\tthe\tHouse\tcircuit.\tSee\tpage\t3.\n\u2022 Engine Isolation\t-\tIsolate\ttwo\tengines\twhile\tboth\tare\trunning\tto\tprotect\tengine\telectronics,\tand\tto\t\n\t maximize\talternator\toutput.\tConfigure\tEngine\tIsolation\twhen\tthe\tengine\tmanufacturer\trequires\tit,\tand\t\n\t when\tthere\tare\tseparate\tbatteries\tfor\teach\tengine.\tSee\tpage\t3.\nUndervoltage or Overvoltage Lockout. \n\u2022\t Undervoltage\tlockout\tprevents\tbatteries\tfrom\tbeing\tcombined\twhen\teither\tbattery\tis\tbelow\t9.6V@12V\tDC\n\t operation\tor\t19.2V@24V\tDC\toperation.\t\n\u2022\t Overvoltage\tlockout\tprevents\tbatteries\tfrom\tbeing\tcombined\twhen\teither\tbattery\tis\tabove\t16.2V@12V\tDC\n\t operation\tor\t32.4V@24V\tDC\toperation.\t\nControl Switch Remote Operation. Included\tContura\tControl\tSwitch\u2014sustained\t(SPDT)\tON-OFF-ON.\nThe Control Switch should be mounted in a convenient location near helm controls to allow for quick access.\nNOTE: Alternatively use a momentary (SPDT) (ON)-OFF-(ON) or momentary push button switch to provide cross connect and/or battery isolation.\nTo cross connect \n(combine) battery banks",
+          "status": "unaccounted"
+        },
+        {
+          "title": "To Connect Sustained (SPDT) ON-OFF-ON Contura Control Switch",
+          "kind": "imperative_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[3]",
+          "snippet": "To Connect Sustained (SPDT) ON-OFF-ON Contura Control Switch: 1. Connect pin 3 of the Control Switch to DC+ through a 2A (min) circuit protection device. 2. Connect pin 1 to DC ground. 3. Connect pin 2 to ACR \u201cREMOTE\u201d wire (red). 4. Connect",
+          "source": "heuristic",
+          "excerpt_text": "When the Control Switch is returned to AUTO, the ACR returns to automatic mode.\n To enable cross connect and isolation, connect:\n\t \u2022\t Red\twire\tfrom\tharness\tto\tcenter\t(common)\tof\tSPDT \tswitch.\n \u2022 Cross Connect\tterminal\tof\tSPDT\tswitch\tto\tDC\tpositive\tthrough\t2A\tcircuit\tprotection.\n \u2022 Isolate terminal\tof\tSPDT\tswitch\tto\tDC\tnegative\t(ground).\t\n To enable temporary cross connect using momentary push-button switch:\n\t \u2022\t Connect\tthe\tred\twire\tfrom\tthe\tharness\tto\tone\tside\tof\ta\tmomentary\tpush-button\tswitch\t(sold\tseparately).\n\t \u2022\t Connect\tthe\tother\tside\tof\tthe\tpush\tbutton\tswitch\tto\tDC\tpositive\tthrough\t2A \tcircuit\tprotection.\npage\t2\tof\t4\n  Overview of Application (continued)\nTo Connect Sustained (SPDT) ON-OFF-ON Contura Control Switch: \n1.\tConnect\tpin\t3\tof\tthe\tControl\tSwitch\tto\tDC+\tthrough\ta\t2A\t(min)\tcircuit\tprotection\tdevice.\n2.\tConnect\tpin\t1\tto\tDC\tground.\n3.\tConnect\tpin\t2\tto\tACR\t\u201cREMOTE\u201d\twire\t(red).\n4.\tConnect\tpin\t8\tto\tDC+\tthrough\ta\t2A\t(min)\tcircuit\tprotection\tdevice.\n5.\tConnect\tpin\t7\tto\tACR\t\u201cLED\u201d\tground\twire\t(yellow).",
+          "status": "unaccounted"
+        },
+        {
+          "title": "To enable Start Isolation for two or three engines starting from the same battery",
+          "kind": "imperative_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[10]",
+          "snippet": "To enable Start Isolation for two or three engines starting from the same battery: \u2022 Connect the green wire (ISOLATION #2) to ENGINE #2 in the same manner as above. \u2022 Connect the orange wire (ISOLATION #3) to ENGINE #3 in the same manner as",
+          "source": "heuristic",
+          "excerpt_text": "Enable\tthis\tfeature\tto\tisolate\tStart\tcircuits\tfrom\tthe\t\nHouse\tcircuit\tand\tprevent\tstarting\tcurrent\ttransients\tfrom\tinterfering\twith\tsensitive\thouse\telectronics.\nTo enable Start Isolation:\n \u2022 Connect the brown wire (ISOLATION #1) from the harness to the terminal or wire running from the start \n\t \t key\tswitch\tto\tthe\tstarter\tsolenoid.\tMake\tthis\tconnection\tthrough\ta\t2\t Amp\tin-line\tfuse.\tThis\tconnection\n\t \t can\tbe\tmade\tat\tthe\tstart\tkey\tswitch\tor\tat\tthe\tstarter\tsolenoid,\tbut\tmust\tbe\tto\tthe\tline\tthat\tis\tpositive\tonly\t\t \t\n  when cranking the engine. as shown below.\nTo enable Start Isolation for two or three engines starting from the same battery:\n\t \u2022\t Connect\tthe\tgreen\twire\t(ISOLATION\t#2)\tto\tENGINE\t#2\tin\tthe\tsame\tmanner\tas\tabove.\n\t \u2022\t Connect\tthe\torange\twire\t(ISOLATION\t#3)\tto\tENGINE\t#3\tin\tthe\tsame\tmanner\tas\tabove.\nStart Isolation Installation \n   Installation Instructions (continued) \nEngine Isolation Installation\nLegend\nOptional\tconnection\nLegend\nOptional\tconnection",
+          "deduped_from": "To enable Engine Isolation for three engines",
+          "status": "unaccounted"
+        },
+        {
+          "title": "To install a remote LED indicator",
+          "kind": "headed_procedure",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[9]",
+          "snippet": "To install a remote LED indicator: \u2022 Connect switch pin 8 to DC positive protected by a 2 Amp in-line fuse. \u2022 Connect pin 7 to the yellow wire from the harness. 4.50\" 114.30mm 3.00\" 76.20mm 5.47\" 138.94mm 3.75\" 95.25mm 2.03\" 51.56mm",
+          "source": "heuristic",
+          "excerpt_text": "To install a remote LED indicator:\n\t \u2022\t Connect\tswitch\t pin\t8\tto\tDC\tpositive\tprotected\tby\ta\t2\tAmp\tin-line\tfuse.\n\t \u2022\t Connect\tpin\t7\tto \tthe\tyellow\twire\tfrom\tthe\tharness.\n4.50\"\n114.30mm\n3.00\"\n76.20mm\n5.47\"\n138.94mm\n3.75\"\n95.25mm\n2.03\"\n51.56mm\n1.90\"\n48.26mm\n1.03\"\n26.16mm\n   Installation Instructions (continued) \npage\t4\tof\t4990180180 Rev.005",
+          "status": "unaccounted"
+        },
+        {
+          "title": "To connect high current circuit wires",
+          "kind": "imperative_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[14]",
+          "snippet": "To connect high current circuit wires: 1. Connect the battery banks to the stud terminals marked A and B. 2. Torque the high current terminal stud nuts to 140 in-lbs (15.5 N\u2022m) maximum.",
+          "source": "heuristic",
+          "excerpt_text": "Installation Instructions \nMounting\nInstall\tthe\tML-Series\tACR\tas\tclose\tas\tpossible\tto\tboth\tbattery\tbanks\tso\tthat\tpositive\tand\tnegative\twires\tare\t\nas\tshort\tas\tpossible,\tand\tvoltage\tdrop\tin\tthese\twires\tis\tkept\tto\ta\tminimum\u2021. To avoid corrosion to terminals \nand\tconnecting\twires,\tmount\tin\ta\tdry\tand\tprotected\tlocation.\t\tAvoid\tmounting\tdirectly\tabove\tvented\tlead\tacid\t\nbatteries\tso\tthat\tthe\tACR\tis\tnot\texposed\tto\tcorrosive\tgasses\texpelled\tfrom\tthe\tbatteries.\t\n\u2021\tBecause\tthe\tACR\tsenses\tthe\tvoltage\tbetween\tits\tnegative\tground\tconnection\tand\tits\tpositive\tsense\t\n\t connections,\tboth\tpositive\tand\tnegative\twires\tshould\tbe\tas\tshort\tas\tpossible\tso\tthat\tthe\tinfluence\tof\t\n\t voltage\tdrop\ton\tsensed\tvoltage\tlevels\tis\tminimized.\nHigh Current Primary Circuit Connections (stud terminals A and B)\nFor\thelp\tselecting\tthe\tappropriate\twire\tsize\tand\tcircuit\tprotection\trating,\tgo\tto\twww.bluesea.com\tand\tclick\tthe\t\nCircuit Wizard quick link.\nTo connect high current circuit wires:\n1. Connect the battery banks to the stud terminals marked A and B.\n2. Torque the high current terminal stud nuts to 140 in-lbs (15.5 N\u2022m) maximum.",
+          "status": "unaccounted"
+        }
+      ],
+      "unaccounted_procedures": [
+        {
+          "title": "Configure Start Isolation when there are heavy cranking loads",
+          "kind": "headed_procedure",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[2]",
+          "snippet": "Configure Start Isolation when there are heavy cranking loads causing sags and spikes that might damage electronics in the House circuit. See page 3. \u2022 Engine Isolation - Isolate two engines while both are running to protect engine elect",
+          "source": "heuristic",
+          "excerpt_text": "Configure\tStart\tIsolation\twhen\tthere\tare\theavy\tcranking\tloads\t\n\t causing\tsags\tand\tspikes\tthat\tmight\tdamage\telectronics\tin\tthe\tHouse\tcircuit.\tSee\tpage\t3.\n\u2022 Engine Isolation\t-\tIsolate\ttwo\tengines\twhile\tboth\tare\trunning\tto\tprotect\tengine\telectronics,\tand\tto\t\n\t maximize\talternator\toutput.\tConfigure\tEngine\tIsolation\twhen\tthe\tengine\tmanufacturer\trequires\tit,\tand\t\n\t when\tthere\tare\tseparate\tbatteries\tfor\teach\tengine.\tSee\tpage\t3.\nUndervoltage or Overvoltage Lockout. \n\u2022\t Undervoltage\tlockout\tprevents\tbatteries\tfrom\tbeing\tcombined\twhen\teither\tbattery\tis\tbelow\t9.6V@12V\tDC\n\t operation\tor\t19.2V@24V\tDC\toperation.\t\n\u2022\t Overvoltage\tlockout\tprevents\tbatteries\tfrom\tbeing\tcombined\twhen\teither\tbattery\tis\tabove\t16.2V@12V\tDC\n\t operation\tor\t32.4V@24V\tDC\toperation.\t\nControl Switch Remote Operation. Included\tContura\tControl\tSwitch\u2014sustained\t(SPDT)\tON-OFF-ON.\nThe Control Switch should be mounted in a convenient location near helm controls to allow for quick access.\nNOTE: Alternatively use a momentary (SPDT) (ON)-OFF-(ON) or momentary push button switch to provide cross connect and/or battery isolation.\nTo cross connect \n(combine) battery banks",
+          "status": "unaccounted"
+        },
+        {
+          "title": "To Connect Sustained (SPDT) ON-OFF-ON Contura Control Switch",
+          "kind": "imperative_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[3]",
+          "snippet": "To Connect Sustained (SPDT) ON-OFF-ON Contura Control Switch: 1. Connect pin 3 of the Control Switch to DC+ through a 2A (min) circuit protection device. 2. Connect pin 1 to DC ground. 3. Connect pin 2 to ACR \u201cREMOTE\u201d wire (red). 4. Connect",
+          "source": "heuristic",
+          "excerpt_text": "When the Control Switch is returned to AUTO, the ACR returns to automatic mode.\n To enable cross connect and isolation, connect:\n\t \u2022\t Red\twire\tfrom\tharness\tto\tcenter\t(common)\tof\tSPDT \tswitch.\n \u2022 Cross Connect\tterminal\tof\tSPDT\tswitch\tto\tDC\tpositive\tthrough\t2A\tcircuit\tprotection.\n \u2022 Isolate terminal\tof\tSPDT\tswitch\tto\tDC\tnegative\t(ground).\t\n To enable temporary cross connect using momentary push-button switch:\n\t \u2022\t Connect\tthe\tred\twire\tfrom\tthe\tharness\tto\tone\tside\tof\ta\tmomentary\tpush-button\tswitch\t(sold\tseparately).\n\t \u2022\t Connect\tthe\tother\tside\tof\tthe\tpush\tbutton\tswitch\tto\tDC\tpositive\tthrough\t2A \tcircuit\tprotection.\npage\t2\tof\t4\n  Overview of Application (continued)\nTo Connect Sustained (SPDT) ON-OFF-ON Contura Control Switch: \n1.\tConnect\tpin\t3\tof\tthe\tControl\tSwitch\tto\tDC+\tthrough\ta\t2A\t(min)\tcircuit\tprotection\tdevice.\n2.\tConnect\tpin\t1\tto\tDC\tground.\n3.\tConnect\tpin\t2\tto\tACR\t\u201cREMOTE\u201d\twire\t(red).\n4.\tConnect\tpin\t8\tto\tDC+\tthrough\ta\t2A\t(min)\tcircuit\tprotection\tdevice.\n5.\tConnect\tpin\t7\tto\tACR\t\u201cLED\u201d\tground\twire\t(yellow).",
+          "status": "unaccounted"
+        },
+        {
+          "title": "To enable Start Isolation for two or three engines starting from the same battery",
+          "kind": "imperative_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[10]",
+          "snippet": "To enable Start Isolation for two or three engines starting from the same battery: \u2022 Connect the green wire (ISOLATION #2) to ENGINE #2 in the same manner as above. \u2022 Connect the orange wire (ISOLATION #3) to ENGINE #3 in the same manner as",
+          "source": "heuristic",
+          "excerpt_text": "Enable\tthis\tfeature\tto\tisolate\tStart\tcircuits\tfrom\tthe\t\nHouse\tcircuit\tand\tprevent\tstarting\tcurrent\ttransients\tfrom\tinterfering\twith\tsensitive\thouse\telectronics.\nTo enable Start Isolation:\n \u2022 Connect the brown wire (ISOLATION #1) from the harness to the terminal or wire running from the start \n\t \t key\tswitch\tto\tthe\tstarter\tsolenoid.\tMake\tthis\tconnection\tthrough\ta\t2\t Amp\tin-line\tfuse.\tThis\tconnection\n\t \t can\tbe\tmade\tat\tthe\tstart\tkey\tswitch\tor\tat\tthe\tstarter\tsolenoid,\tbut\tmust\tbe\tto\tthe\tline\tthat\tis\tpositive\tonly\t\t \t\n  when cranking the engine. as shown below.\nTo enable Start Isolation for two or three engines starting from the same battery:\n\t \u2022\t Connect\tthe\tgreen\twire\t(ISOLATION\t#2)\tto\tENGINE\t#2\tin\tthe\tsame\tmanner\tas\tabove.\n\t \u2022\t Connect\tthe\torange\twire\t(ISOLATION\t#3)\tto\tENGINE\t#3\tin\tthe\tsame\tmanner\tas\tabove.\nStart Isolation Installation \n   Installation Instructions (continued) \nEngine Isolation Installation\nLegend\nOptional\tconnection\nLegend\nOptional\tconnection",
+          "deduped_from": "To enable Engine Isolation for three engines",
+          "status": "unaccounted"
+        },
+        {
+          "title": "To install a remote LED indicator",
+          "kind": "headed_procedure",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[9]",
+          "snippet": "To install a remote LED indicator: \u2022 Connect switch pin 8 to DC positive protected by a 2 Amp in-line fuse. \u2022 Connect pin 7 to the yellow wire from the harness. 4.50\" 114.30mm 3.00\" 76.20mm 5.47\" 138.94mm 3.75\" 95.25mm 2.03\" 51.56mm",
+          "source": "heuristic",
+          "excerpt_text": "To install a remote LED indicator:\n\t \u2022\t Connect\tswitch\t pin\t8\tto\tDC\tpositive\tprotected\tby\ta\t2\tAmp\tin-line\tfuse.\n\t \u2022\t Connect\tpin\t7\tto \tthe\tyellow\twire\tfrom\tthe\tharness.\n4.50\"\n114.30mm\n3.00\"\n76.20mm\n5.47\"\n138.94mm\n3.75\"\n95.25mm\n2.03\"\n51.56mm\n1.90\"\n48.26mm\n1.03\"\n26.16mm\n   Installation Instructions (continued) \npage\t4\tof\t4990180180 Rev.005",
+          "status": "unaccounted"
+        },
+        {
+          "title": "To connect high current circuit wires",
+          "kind": "imperative_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[14]",
+          "snippet": "To connect high current circuit wires: 1. Connect the battery banks to the stud terminals marked A and B. 2. Torque the high current terminal stud nuts to 140 in-lbs (15.5 N\u2022m) maximum.",
+          "source": "heuristic",
+          "excerpt_text": "Installation Instructions \nMounting\nInstall\tthe\tML-Series\tACR\tas\tclose\tas\tpossible\tto\tboth\tbattery\tbanks\tso\tthat\tpositive\tand\tnegative\twires\tare\t\nas\tshort\tas\tpossible,\tand\tvoltage\tdrop\tin\tthese\twires\tis\tkept\tto\ta\tminimum\u2021. To avoid corrosion to terminals \nand\tconnecting\twires,\tmount\tin\ta\tdry\tand\tprotected\tlocation.\t\tAvoid\tmounting\tdirectly\tabove\tvented\tlead\tacid\t\nbatteries\tso\tthat\tthe\tACR\tis\tnot\texposed\tto\tcorrosive\tgasses\texpelled\tfrom\tthe\tbatteries.\t\n\u2021\tBecause\tthe\tACR\tsenses\tthe\tvoltage\tbetween\tits\tnegative\tground\tconnection\tand\tits\tpositive\tsense\t\n\t connections,\tboth\tpositive\tand\tnegative\twires\tshould\tbe\tas\tshort\tas\tpossible\tso\tthat\tthe\tinfluence\tof\t\n\t voltage\tdrop\ton\tsensed\tvoltage\tlevels\tis\tminimized.\nHigh Current Primary Circuit Connections (stud terminals A and B)\nFor\thelp\tselecting\tthe\tappropriate\twire\tsize\tand\tcircuit\tprotection\trating,\tgo\tto\twww.bluesea.com\tand\tclick\tthe\t\nCircuit Wizard quick link.\nTo connect high current circuit wires:\n1. Connect the battery banks to the stud terminals marked A and B.\n2. Torque the high current terminal stud nuts to 140 in-lbs (15.5 N\u2022m) maximum.",
+          "status": "unaccounted"
+        }
+      ],
+      "unaccounted_alternatives": [],
+      "accounting_trail": [
+        {
+          "title": "Rev.005 page 3 of 4",
+          "kind": "headed_procedure",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[4]",
+          "snippet": "This connection must be to the line that is positive while the engine is normally running. \u2022 Connect the green wire (ISOLATION #2) to ENGINE #2 in the same manner as above. To enable Engine Isolation for three engines: \u2022 Connect",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb",
+          "deduped_from": "Rev.005"
+        },
+        {
+          "title": "Connect",
+          "kind": "numbered_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[1]",
+          "snippet": "4. Connect pin 8 to DC+ through a 2A (min) circuit protection device. 5. Connect pin 7 to ACR \u201cLED\u201d ground wire (yellow). 1.965\" 49.91mm 1.010\" 25.65mm .549\" 13.95mm 1.125\" 28.58mm TEST CUT HOLE IN ACTUAL CENTER 1.450\" 36.83mm 0.830\" 21.08m",
+          "disposition": "filtered",
+          "filter": "filter:too_few_tokens"
+        },
+        {
+          "title": "START",
+          "kind": "numbered_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[4]",
+          "snippet": "2 START BATTERY ENGINE ML-SERIES REMOTE BATTERY SWITCH ML-SERIES REMOTE BATTERY SWITCH HOUSE BATTERY HOUSE DISTRIBUTION ISOLATION #2 (Green) ISOLATION #3 (Orange) 2 AMPS ENGINE START SWITCH ON OFF START ML-SERIES AUTOMATIC CHARGING RELAY 3 ",
+          "disposition": "filtered",
+          "filter": "filter:too_short"
+        },
+        {
+          "title": "AMPS ENGINE",
+          "kind": "numbered_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[4]",
+          "snippet": "2 AMPS ENGINE START SWITCH ON OFF START ML-SERIES AUTOMATIC CHARGING RELAY 3 +8 -7LED NOTE: The remote switch has two LEDs. These LEDs operate simultaneously and are either both ON or both OFF. NOTE: Use circuit protection only if ACR is no",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "Tinned Wires No 12V DC",
+          "kind": "headed_procedure",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[7]",
+          "snippet": "To isolate battery banks Switch to \u201cOFF\u201d- when the battery banks are isolated using the Control Switch, the battery banks remain isolated, and for at least 30 seconds after the control switch is returned to the \u201cAUTO\u201d position. Control",
+          "disposition": "filtered",
+          "filter": "filter:truncated_heading"
+        },
+        {
+          "title": "Tinned Wires Yes 24V",
+          "kind": "numbered_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[7]",
+          "snippet": "7623 Tinned Wires Yes 24V DC LED INDICATION ACR STATE OR CONDITION Remote Switch Set to \u201cAUTO\u201d or no Remote Switch Installed LEDs OFF Batteries are isolated LEDs ON Batteries are combined LEDs slow steady blink, ON-OFF Start or Engine Isola",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "min",
+          "kind": "numbered_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[8]",
+          "snippet": "Intermittent 5 min. Continuous (UL 1107) 2/0 AWG (70 mm\u00b2) 1,000A 400A 225A 4/0 AWG (120 mm\u00b2) 1,100A 400A 300A 2\u00d7 4/0 AWG (2x 120 mm\u00b2) 1,450A 700A 500A Blue Sea Systems, Inc. 4600 Ryzex Way Bellingham, WA 98226 USA Phone 360.738.8230 w",
+          "disposition": "filtered",
+          "filter": "filter:too_short"
+        },
+        {
+          "title": "Ryzex",
+          "kind": "numbered_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[8]",
+          "snippet": "Intermittent 5 min. Continuous (UL 1107) 2/0 AWG (70 mm\u00b2) 1,000A 400A 225A 4/0 AWG (120 mm\u00b2) 1,100A 400A 300A 2\u00d7 4/0 AWG (2x 120 mm\u00b2) 1,450A 700A 500A Blue Sea Systems, Inc. 4600 Ryzex Way Bellingham, WA 98226 USA Phone 360.738.8230 www.blu",
+          "disposition": "filtered",
+          "filter": "filter:too_short"
+        },
+        {
+          "title": "USA Phone 360.738.8230",
+          "kind": "numbered_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[8]",
+          "snippet": "Intermittent 5 min. Continuous (UL 1107) 2/0 AWG (70 mm\u00b2) 1,000A 400A 225A 4/0 AWG (120 mm\u00b2) 1,100A 400A 300A 2\u00d7 4/0 AWG (2x 120 mm\u00b2) 1,450A 700A 500A Blue Sea Systems, Inc. 4600 Ryzex Way Bellingham, WA 98226 USA Phone 360.738.8230 www.blu",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "Configure Start Isolation when there are heavy cranking loads",
+          "kind": "headed_procedure",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[2]",
+          "disposition": "unaccounted"
+        },
+        {
+          "title": "To Connect Sustained (SPDT) ON-OFF-ON Contura Control Switch",
+          "kind": "imperative_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[3]",
+          "disposition": "unaccounted"
+        },
+        {
+          "title": "To enable Start Isolation for two or three engines starting from the same battery",
+          "kind": "imperative_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[10]",
+          "disposition": "unaccounted"
+        },
+        {
+          "title": "To install a remote LED indicator",
+          "kind": "headed_procedure",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[9]",
+          "disposition": "unaccounted"
+        },
+        {
+          "title": "Connect the battery banks to the stud terminals marked A and B",
+          "kind": "numbered_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[14]",
+          "disposition": "classified",
+          "auto_classified": "not_operator_relevant:installer",
+          "rule": "rule:installer:wiring_connect_step"
+        },
+        {
+          "title": "To connect high current circuit wires",
+          "kind": "imperative_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[14]",
+          "disposition": "unaccounted"
+        }
+      ],
+      "counts": {
+        "accounted": 0,
+        "classified": 1,
+        "unaccounted": 5,
+        "filtered": 9,
+        "trail": 15
+      },
+      "corpus_sizes": {
+        "actions": 3,
+        "surfaces": 2,
+        "requires": 0
+      }
+    },
+    "repair": {
+      "attempted": false,
+      "enabled": true,
+      "skipped": true,
+      "unaccounted_in": 5,
+      "scope": "adjudicated_classes_only",
+      "adjudicated_ids": [
+        "smartsolar_sunset",
+        "smartsolar_firmware",
+        "smartsolar_globallink",
+        "combi_gen_mains",
+        "combi_power_sharing",
+        "mli_panel_alts"
+      ],
+      "adjudicated_unaccounted": 0,
+      "skipped_non_adjudicated": 5,
+      "skipped_reason": "no_adjudicated_targets"
+    },
+    "repair_enabled": true
+  },
+  "structured_outputs": true
+}

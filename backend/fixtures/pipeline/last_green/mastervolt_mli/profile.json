@@ -49,7 +49,8 @@
       "action": "switch off the load, then switch on the charger",
       "audience": "operator",
       "context": "situational",
-      "source": "extracted"
+      "source": "extracted",
+      "occasion": "when verifying charge current into the battery during installation checks"
     },
     {
       "action": "set safety relay to LOCK OFF",
@@ -183,6 +184,11 @@
       "supports_field": "requires_devices[0]",
       "manual_section": "System parts",
       "note": "charger required for safety relay operation"
+    },
+    {
+      "supports_field": "operator_actions[4].occasion",
+      "manual_section": "installation / verification",
+      "note": "verify current into battery after load off / charger on"
     }
   ],
   "confidence": {
@@ -527,5 +533,6 @@
         }
       ]
     }
-  ]
+  ],
+  "profile_schema_version": "v4.19"
 }

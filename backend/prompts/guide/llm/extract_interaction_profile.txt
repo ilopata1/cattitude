@@ -27,6 +27,12 @@ Rules:
 4. context per action: daily / situational / emergency / commissioning /
    maintenance. One procedure fitting two contexts → two entries.
 
+4b. occasion per action (optional): when/why the operator performs the action,
+   paraphrased from THIS text only (trigger, purpose, "if …", "to avoid …").
+   Leave empty / omit when the manual does not state when or why. Never invent
+   vessel SOP (e.g. "every new dock") not in THIS text. Purpose-only restatements
+   of the verb ("to set the limit") are not occasions.
+
 5. Split actions: each action string is one verb phrase with one context.
    "monitor and configure via the app" → two actions (e.g. monitor → daily;
    configure → situational or commissioning per the manual's framing).
@@ -59,18 +65,46 @@ Rules:
    Ports/protocols that exist on the device belong in speaks even when their
    usefulness depends on another product — express that dependency with
    requires_devices, not by omitting the speak or zeroing the capability.
-   Record a bridge ONLY if the manual explicitly describes translating/gatewaying
-   between two named networks. Being connectable to a network is speaks, not bridges.
+   Speak / bridge names must appear verbatim (or as clear tokens) in THESE
+   excerpts — never import bus names from calibration examples (MasterBus,
+   VE.Direct, etc.). Record a bridge ONLY if the manual explicitly describes
+   translating/gatewaying between two named networks. Being connectable to a
+   network is speaks, not bridges.
+
+7b. data_roles — subject is ALWAYS the device under extraction:
+   - exposes_data_to_network: this device publishes its own data onto a network
+   - displays_data_from_other_devices: this device shows data originating
+     elsewhere
+   - controllable_from_network: THIS device's own functions can be commanded by
+     another node/app over a network
+   Anti-pattern: controlling other devices (CZone circuits/loads, radar
+   standby, connected gear) is NOT controllable_from_network — record those as
+   operator_actions / displays_data / speaks as appropriate. Do not attach
+   evidence notes like "control devices via the CZone network" to
+   controllable_from_network.
 
 8. Multiple model variants in one manual: profile the requested model only. Ignore
-   accessories and requirements that apply only to other variants. If the manual
-   does not distinguish, say so in confidence.notes and lower confidence.overall.
+   accessories, requirements, operator_actions, ui_pages, and procedures that the
+   manual scopes only to other variants (e.g. "applies to NSO 4 and Zeus SRX only"
+   when extracting Zeus SR — SR ≠ SRX). Do not omit shared content that applies to
+   the requested model. If the manual does not distinguish, say so in
+   confidence.notes and lower confidence.overall. Procedure-inventory reconcile
+   classifies sibling-only items as not_applicable:other_variant (not an
+   extraction miss).
 
 9. evidence: 1-8 objects {supports_field, manual_section, note}. supports_field is
-   the schema path justified. manual_section is a section title/heading (verbatim
-   titles are expected). note is a <=12-word paraphrase — never copy manual
-   sentences. Prefer coverage across consequential fields — not multiple evidence
-   rows for one field. Fill in this priority order (stop when the cap is reached):
+   the schema path justified. Prefer operator_actions[action=<exact action text>]
+   over brittle operator_actions[N] indices. manual_section is a short section
+   title/heading only (verbatim heading words — never a sentence, never letter
+   crumbs like "D E"). Prefer each excerpt's source_heading_guess when present.
+   Never take headings from diagram/figure callout labels (lone letters or
+   letter-runs such as "A B C" / "D E", or "I Alerts Select…" caption keys) —
+   those are figure markers, not section titles. When a supporting excerpt
+   opens mid-figure, use the carried section title (source_heading_guess from
+   the preceding page), not the first line of the chunk. note is a <=12-word
+   paraphrase — never copy manual sentences. Prefer coverage across
+   consequential fields — not multiple evidence rows for one field. Fill in
+   this priority order (stop when the cap is reached):
    (a) data_roles fields set true, and each requires_devices entry;
    (b) safety_role fields set true;
    (c) representative operator_actions (at least the emergency-context ones);
@@ -96,8 +130,13 @@ Rules:
     to a short token (acmi | mastervolt_inverter_charger | supported_hvac).
     When the page is always present, set all three gate fields to "".
     Emit alarm_severity[] when severity colours are listed
-    (level_verbatim + color_verbatim). Ordinary physical devices: entity_kind
-    "device", documented_version "", ui_pages [], alarm_severity [].
+    (level_verbatim + color_verbatim).
+    Physical devices with an on-device screen (MFDs, chargers with menus):
+    entity_kind "device"; one control_surfaces row per physical screen
+    (typically one touchscreen); named menus / panels / tabs / drawers go in
+    ui_pages[], never as extra touchscreen surfaces. Omit empty settings /
+    setup pages with no in-page actions. Ordinary devices with no software UI:
+    documented_version "", ui_pages [], alarm_severity [].
 
 CALIBRATION — these examples concern OTHER devices / situations. Match the
 field decisions (context, audience, optional_accessory, dependency shape).
@@ -203,6 +242,15 @@ N. (requirement_kind taxonomy — reuse known product names; set kind correctly)
    GX device → device.
    Emit separate OR alternatives when the manual says "GX device or GlobalLink
    520" (two device entries, same needed_for) — never one combined description.
+
+O. "Control devices via the CZone network" / CZone Digital switching on an MFD
+   → data_roles.controllable_from_network: false (the MFD commands other
+     loads — it is not itself network-commanded by that sentence);
+     displays_data_from_other_devices: true when the manual says the display
+     shows CZone / connected-device status;
+     operator_actions for switching worded from the manual.
+   Contrast D/E: configuring THIS charger via VictronConnect / app →
+     controllable_from_network: true.
 
 P. (platform ui_pages — CZone 2.0 style)
    Manual: "The Climate page will appear if a supported air conditioner (HVAC)

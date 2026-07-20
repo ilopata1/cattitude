@@ -418,6 +418,117 @@ def update_manual_work(
         raise ManualServiceError("Manual work not found.")
 
 
+def _equipment_exists(conn: Connection, equipment_id: str) -> bool:
+    row = conn.execute(
+        text("SELECT 1 FROM equipment WHERE id = :id"),
+        {"id": equipment_id},
+    ).fetchone()
+    return row is not None
+
+
+def list_storage_paths_for_work(conn: Connection, work_id: str) -> list[str]:
+    rows = conn.execute(
+        text(
+            """
+            SELECT mf.storage_path
+            FROM manual_file mf
+            JOIN manual_edition me ON me.id = mf.manual_edition_id
+            WHERE me.manual_work_id = :work_id
+            """
+        ),
+        {"work_id": work_id},
+    ).fetchall()
+    return [str(r[0]) for r in rows if r[0]]
+
+
+def reassign_manual_work(
+    conn: Connection,
+    work_id: str,
+    new_equipment_id: str,
+) -> None:
+    """Move an existing manual work (and its editions/files) to another equipment.
+
+    Vector chunks stay keyed by ``work_id``; Stage 1 resolves manuals via
+    ``equipment_id``, so reassignment is enough without re-ingest.
+    """
+    new_equipment_id = (new_equipment_id or "").strip()
+    if not new_equipment_id:
+        raise ManualServiceError("Select equipment from the registry.")
+    if not _equipment_exists(conn, new_equipment_id):
+        raise ManualServiceError("Target equipment not found.")
+
+    work = get_manual_work(conn, work_id)
+    if work is None:
+        raise ManualServiceError("Manual work not found.")
+    if work["equipment_id"] == new_equipment_id:
+        raise ManualServiceError("Manual is already linked to that equipment.")
+
+    result = conn.execute(
+        text(
+            """
+            UPDATE manual_work
+            SET equipment_id = CAST(:equipment_id AS uuid)
+            WHERE id = CAST(:id AS uuid)
+            """
+        ),
+        {"id": work_id, "equipment_id": new_equipment_id},
+    )
+    if result.rowcount == 0:
+        raise ManualServiceError("Manual work not found.")
+
+
+def _delete_vector_chunks_for_work(conn: Connection, work_id: str) -> int:
+    """Best-effort cleanup of ingested chunks keyed by this manual work id."""
+    try:
+        result = conn.execute(
+            text(
+                """
+                DELETE FROM data_cattitude
+                WHERE metadata_->>'manual_id' = :work_id
+                """
+            ),
+            {"work_id": str(work_id)},
+        )
+        return int(result.rowcount or 0)
+    except Exception:
+        # Table may be absent in some environments; library rows still delete.
+        return 0
+
+
+def _unlink_stored_files(storage_paths: list[str]) -> None:
+    manuals_dir = get_manuals_dir()
+    for storage_path in storage_paths:
+        name = Path(storage_path).name
+        candidates = [
+            manuals_dir / name,
+            _REPO_ROOT / storage_path,
+        ]
+        for path in candidates:
+            try:
+                if path.is_file():
+                    path.unlink()
+                    break
+            except OSError:
+                continue
+
+
+def delete_manual_work(conn: Connection, work_id: str) -> None:
+    """Delete a manual work, cascading editions/files; remove stored PDFs + chunks."""
+    work = get_manual_work(conn, work_id)
+    if work is None:
+        raise ManualServiceError("Manual work not found.")
+
+    storage_paths = list_storage_paths_for_work(conn, work_id)
+    _delete_vector_chunks_for_work(conn, work_id)
+    result = conn.execute(
+        text("DELETE FROM manual_work WHERE id = CAST(:id AS uuid)"),
+        {"id": work_id},
+    )
+    if result.rowcount == 0:
+        raise ManualServiceError("Manual work not found.")
+    _unlink_stored_files(storage_paths)
+
+
 def set_legal_status(conn: Connection, work_id: str, legal_status: str) -> None:
     status = _validate_choice(legal_status, LEGAL_STATUSES, "legal_status")
     result = conn.execute(

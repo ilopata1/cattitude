@@ -98,7 +98,13 @@ def build_evidence_repair_prompt(
             "Each evidence item must be "
             "{supports_field, manual_section, note}.",
             "manual_section: section title/heading from the excerpts (verbatim).",
+            "Prefer each excerpt's source_heading_guess when present.",
+            "Never use diagram callout letters (D E, A B C) or callout captions "
+            "as manual_section.",
             "note: <=12-word paraphrase — never copy manual sentences.",
+            "data_roles.controllable_from_network evidence must show THIS device "
+            "being commanded over a network/app — never 'control devices via "
+            "CZone/network' (that is controlling others).",
             "Emit evidence entries for EXACTLY these supports_field values "
             "(one entry each, no others):",
             json.dumps(missing_fields, indent=2),
@@ -208,8 +214,16 @@ def build_absence_repair_prompt(
             '   "requires_devices": [...], "device": {"category_freeform": "..."}}',
             "Rules:",
             "- Re-evaluate control_surfaces and data_roles from the excerpts.",
-            "- If MasterBus/network monitoring or control is described, set the",
-            "  matching data_roles true (and requires_devices when conditional).",
+            "- data_roles polarity (subject = device under extract):",
+            "  exposes_data_to_network: this device publishes its data onto a",
+            "  network; displays_data_from_other_devices: this device shows data",
+            "  from elsewhere; controllable_from_network: THIS device's own",
+            "  functions can be commanded by another node/app over a network.",
+            "- Controlling other devices (CZone loads, radar standby, connected",
+            "  gear) does NOT set controllable_from_network.",
+            "- If network monitoring/publishing or remote command of THIS unit",
+            "  is described, set the matching data_roles true (and",
+            "  requires_devices when conditional).",
             "- Built-in on-device controls (main switch, front display) →",
             "  optional_accessory: false.",
             "- Optional remote panel / MasterView / MasterAdjust display →",

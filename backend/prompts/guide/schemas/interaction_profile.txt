@@ -9,6 +9,11 @@
 # requirement_kind: device | cable_or_consumable | software_app | commissioning_tool
 # entity_kind: device (default) | platform (shared software UI)
 # ui_pages: platform page inventory; appears_if_gate empty strings = always present
+# data_roles polarity (subject = device under extraction):
+#   exposes_data_to_network — this device publishes its data onto a network
+#   displays_data_from_other_devices — this device shows data from elsewhere
+#   controllable_from_network — THIS device can be commanded over a network;
+#     NOT that it controls other devices (CZone loads, connected gear, etc.)
 # additionalProperties are forbidden at every object level.
 #
 {
@@ -32,7 +37,8 @@
         {
           "action": "string",
           "audience": "operator|installer_or_technician|either",
-          "context": "daily|situational|emergency|commissioning|maintenance"
+          "context": "daily|situational|emergency|commissioning|maintenance",
+          "occasion": "optional — when/why from THIS text only; empty if unstated"
         }
       ]
     }
@@ -57,7 +63,8 @@
       "action": "string — one verb phrase, one context",
       "audience": "operator|installer_or_technician|either",
       "context": "daily|situational|emergency|commissioning|maintenance",
-      "options": ["optional — discrete option-value tails for the same setting"]
+      "options": ["optional — discrete option-value tails for the same setting"],
+      "occasion": "optional — when/why from THIS text only; empty if unstated"
     }
   ],
   "networks": {

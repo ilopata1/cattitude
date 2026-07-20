@@ -31,10 +31,26 @@
       root.classList.toggle("is-open", items.length > 0);
     }
 
-    function fetchResults() {
-      const query = textInput.value.trim();
+    function clearSelection() {
       hiddenInput.value = "";
+      if (labelHidden) {
+        labelHidden.value = "";
+      }
+    }
+
+    function fetchResults({ clearOnEdit = false } = {}) {
+      const query = textInput.value.trim();
+      // Only invalidate a committed selection when the user edits the text.
+      // Clearing on focus left the visible label in place but dropped equipment_id,
+      // so later submit failed and the file input was lost on re-render.
+      if (clearOnEdit) {
+        const committed = labelHidden ? labelHidden.value : "";
+        if (textInput.value !== committed) {
+          clearSelection();
+        }
+      }
       if (!query) {
+        clearSelection();
         hideList();
         return;
       }
@@ -49,10 +65,10 @@
 
     textInput.addEventListener("input", () => {
       window.clearTimeout(timer);
-      timer = window.setTimeout(fetchResults, 200);
+      timer = window.setTimeout(() => fetchResults({ clearOnEdit: true }), 200);
     });
 
-    textInput.addEventListener("focus", fetchResults);
+    textInput.addEventListener("focus", () => fetchResults());
 
     textInput.addEventListener("keydown", (event) => {
       if (event.key === "Escape") {

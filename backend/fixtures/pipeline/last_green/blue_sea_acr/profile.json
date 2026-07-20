@@ -1,0 +1,273 @@
+{
+  "device": {
+    "manufacturer": "Blue Sea Systems",
+    "model": "Automatic Charging Relays (ACR)",
+    "category_freeform": "Automatic Charging Relays"
+  },
+  "control_surfaces": [
+    {
+      "surface": "physical_controls",
+      "location_class": "on_device",
+      "optional_accessory": false,
+      "label_verbatim": "Manual Control Override Knob",
+      "path": "control_surfaces[0]",
+      "vote_margin": "3/3"
+    }
+  ],
+  "operator_actions": [
+    {
+      "action": "combine battery banks via Manual Control Override Knob",
+      "audience": "operator",
+      "context": "situational",
+      "occasion": "to combine battery banks when needed",
+      "vote_margin": "3/3",
+      "source": "extracted"
+    },
+    {
+      "action": "prevent remote operation via Manual Control Override Knob",
+      "audience": "operator",
+      "context": "situational",
+      "occasion": "to prevent remote operation",
+      "vote_margin": "2/3",
+      "source": "extracted"
+    },
+    {
+      "action": "secure for servicing via Manual Control Override Knob",
+      "audience": "operator",
+      "context": "maintenance",
+      "occasion": "to secure the device for servicing",
+      "vote_margin": "3/3",
+      "source": "extracted"
+    }
+  ],
+  "networks": {
+    "speaks": [],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": true,
+    "has_emergency_procedure": false
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [
+    {
+      "description_verbatim": "Install a fuse in the positive DC supply cable",
+      "vote_margin": "1/3"
+    },
+    {
+      "description_verbatim": "install fuses to prevent hazards",
+      "vote_margin": "2/3"
+    }
+  ],
+  "evidence": [
+    {
+      "supports_field": "control_surfaces[0]",
+      "manual_section": "990180180 Rev.005",
+      "note": "Manual Control Override Knob operations described"
+    },
+    {
+      "supports_field": "operator_actions[action=combine battery banks via Manual Control Override Knob]",
+      "manual_section": "990180180 Rev.005",
+      "note": "Combining battery banks via the knob"
+    },
+    {
+      "supports_field": "operator_actions[action=isolate battery banks via Manual Control Override Knob]",
+      "manual_section": "990180180 Rev.005",
+      "note": "Isolating battery banks via the knob"
+    },
+    {
+      "supports_field": "operator_actions[action=prevent remote operation via Manual Control Override Knob]",
+      "manual_section": "990180180 Rev.005",
+      "note": "Preventing remote operation via the knob"
+    },
+    {
+      "supports_field": "operator_actions[action=secure for servicing via Manual Control Override Knob]",
+      "manual_section": "990180180 Rev.005",
+      "note": "Securing for servicing via the knob"
+    },
+    {
+      "supports_field": "supply_requirements[0]",
+      "manual_section": "990180180 Rev.005",
+      "note": "Fuse installation requirement stated"
+    },
+    {
+      "supports_field": "supply_requirements",
+      "manual_section": "If the ACR is not used for cross connect,",
+      "note": "Install fuses to prevent hazards"
+    },
+    {
+      "supports_field": "safety_role.has_manual_override",
+      "manual_section": "990180180 Rev.005",
+      "note": "Manual Control Override Knob allows manual operation"
+    }
+  ],
+  "confidence": {
+    "overall": 0.9,
+    "notes": "[batch_0] Manual excerpts provide clear operator actions and control surface details. | [batch_0] Manual provides clear operator actions and control surface details. | [batch_0] Manual excerpts provide clear operator actions and control surface details."
+  },
+  "repairs": [
+    {
+      "repair": "dropped_entry",
+      "flag": "contradiction_builtin_requires_accessory",
+      "field_path": "requires_devices[0].needed_for",
+      "original_entry": {
+        "description_verbatim": "momentary push button switch",
+        "needed_for": "control_surfaces[0]"
+      }
+    }
+  ],
+  "coverage": {
+    "chunk_count": 15,
+    "heading_count": 27,
+    "headings_covered_count": 27,
+    "heading_coverage_fraction": 1.0,
+    "coverage_low_threshold": 0.25,
+    "top_k_used": 4
+  },
+  "group_utilization": [
+    {
+      "group_id": "batch_0",
+      "is_introduction": true,
+      "excerpt_count": 15,
+      "predicted_fields": [
+        "control_surfaces",
+        "data_roles",
+        "evidence",
+        "networks",
+        "operator_actions",
+        "requires_devices",
+        "safety_role",
+        "supply_requirements"
+      ],
+      "contributions": {
+        "operator_actions": 4,
+        "control_surfaces": 1,
+        "networks": 0,
+        "requires_devices": 0,
+        "evidence": 6,
+        "supply_requirements": 1,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 1
+      },
+      "contribution_total": 13,
+      "unutilized": false
+    }
+  ],
+  "merge_conflicts": [],
+  "genres": [
+    "installation",
+    "operation"
+  ],
+  "entity_kind": "device",
+  "ui_pages": [],
+  "validation_flags": [
+    {
+      "flag": "contradiction_builtin_requires_accessory",
+      "severity": "warning",
+      "detail": "repaired: dropped_entry — needed_for pointed at a control surface with optional_accessory:false (dropped 'momentary push button switch')",
+      "field_path": "requires_devices[0].needed_for"
+    },
+    {
+      "flag": "procedure_adjudicated_installer",
+      "severity": "info",
+      "detail": "Fixture-Auth: chat ACR promote — residual unaccounted procedures classified installer (Start Isolation wiring, Contura switch, remote LED, high-current studs)"
+    }
+  ],
+  "extraction_votes": [
+    {
+      "field_path": "operator_actions",
+      "kind": "operator_actions",
+      "attribute": "presence",
+      "chosen": {
+        "action": "prevent remote operation via Manual Control Override Knob",
+        "audience": "operator",
+        "context": "situational",
+        "occasion": "to prevent remote operation",
+        "vote_margin": "2/3"
+      },
+      "vote_margin": {
+        "n_runs": 3,
+        "present_in": 2,
+        "agree_with_chosen": 2,
+        "margin": "2/3"
+      },
+      "variants": [
+        {
+          "run": 1,
+          "value": {
+            "action": "prevent remote operation via Manual Control Override Knob",
+            "audience": "operator",
+            "context": "situational",
+            "occasion": "to prevent remote operation"
+          }
+        },
+        {
+          "run": 2,
+          "value": null
+        },
+        {
+          "run": 3,
+          "value": {
+            "action": "prevent remote operation via Manual Control Override Knob",
+            "audience": "operator",
+            "context": "situational",
+            "occasion": "to prevent remote operation",
+            "options": []
+          }
+        }
+      ],
+      "instability_class": "cosmetic"
+    },
+    {
+      "field_path": "requires_devices",
+      "kind": "requires_devices",
+      "attribute": "presence",
+      "chosen": {
+        "description_verbatim": "momentary push button switch",
+        "needed_for": "control_surfaces[0]",
+        "requirement_kind": "device",
+        "vote_margin": "1/3"
+      },
+      "vote_margin": {
+        "n_runs": 3,
+        "present_in": 1,
+        "agree_with_chosen": 1,
+        "margin": "1/3"
+      },
+      "variants": [
+        {
+          "run": 1,
+          "value": null
+        },
+        {
+          "run": 2,
+          "value": {
+            "description_verbatim": "momentary push button switch",
+            "needed_for": "control_surfaces[0]",
+            "requirement_kind": "device"
+          }
+        },
+        {
+          "run": 3,
+          "value": null
+        }
+      ],
+      "instability_class": "cosmetic"
+    }
+  ],
+  "instability_triage": {
+    "material_count": 0,
+    "cosmetic_count": 2
+  },
+  "source": "live_extraction"
+}

@@ -16,7 +16,8 @@
         "group_id": null,
         "excerpt_ref": "excerpt[0]",
         "snippet": "5.3. Updating firmware The firmware can be checked and updated with the VictronConnect app. \u2022 Connect to the solar charger. \u2022 Perform a firmware update.",
-        "source": "heuristic"
+        "source": "heuristic",
+        "excerpt_text": "5.3. Updating firmware\nThe firmware can be checked and updated with the VictronConnect app.\n\u2022 Connect to the solar charger.\n\u2022 Perform a firmware update.\n"
       },
       {
         "title": "Disabling and enabling Bluetooth",
@@ -24,7 +25,8 @@
         "group_id": null,
         "excerpt_ref": "excerpt[1]",
         "snippet": "5.4. Disabling and enabling Bluetooth Bluetooth is by default enabled. It can be disabled or enabled via the VictronConnect app. To disable or enable Bluetooth: \u2022 Connect with the VictronConnect app.",
-        "source": "heuristic"
+        "source": "heuristic",
+        "excerpt_text": "5.4. Disabling and enabling Bluetooth\nBluetooth is by default enabled. It can be disabled or enabled via the VictronConnect app.\nTo disable or enable Bluetooth:\n\u2022 Connect with the VictronConnect app.\n"
       },
       {
         "title": "Setting the Sunset action",
@@ -32,7 +34,8 @@
         "group_id": null,
         "excerpt_ref": "excerpt[2]",
         "snippet": "Setting the Sunset action At sunset you can choose any of the following actions: \u2022 Keep the lights off \u2022 Switch on for a fixed time",
-        "source": "heuristic"
+        "source": "heuristic",
+        "excerpt_text": "Setting the Sunset action\nAt sunset you can choose any of the following actions:\n\u2022 Keep the lights off\n\u2022 Switch on for a fixed time\n"
       }
     ],
     "alternatives": [

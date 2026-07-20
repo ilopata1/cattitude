@@ -43,11 +43,15 @@ OPERATOR_ACTION_KEYS = frozenset(
         "action",
         "audience",
         "context",
+        "options",
+        # Stage 4 / field-pack: when/why for guest instructions (optional)
+        "occasion",
         # Stage 1.6 provenance (code-added; not emitted by extraction schema)
         "source",
         "derived_from",
         # Stage 1 stability (code-added on voted items)
         "vote_margin",
+        "deterministic_fill",
     }
 )
 
@@ -122,6 +126,8 @@ UI_PAGE_ACTION_KEYS = frozenset(
         "action",
         "audience",
         "context",
+        "occasion",
+        "source",
     }
 )
 
@@ -175,6 +181,8 @@ PROFILE_KEYS = frozenset(
         "runs_platform",
         "ui_pages",
         "alarm_severity",
+        # Device surface consolidate audit (v4.22)
+        "demoted_ui_pages",
         # Vessel overlays applied in Stage 2 (annotation)
         "vessel_artifact_facts",
         # Stage 1.5 annotation (added by validator; not from extraction)
@@ -190,6 +198,8 @@ PROFILE_KEYS = frozenset(
         "cross_model_diff",
         "extraction_pending_review",
         "source",
+        # Field-pack migration epoch (v4.19+)
+        "profile_schema_version",
     }
 )
 
@@ -205,6 +215,7 @@ EXTRACTED_PROFILE_KEYS = PROFILE_KEYS - {
     "extraction_votes",
     "instability_triage",
     "vessel_artifact_facts",
+    "demoted_ui_pages",
 }
 
 # Internal taxonomy tokens — never valid as category_freeform.
@@ -375,6 +386,7 @@ INTERACTION_PROFILE_JSON_SCHEMA: dict[str, Any] = _obj(
                                 "action": _STRING,
                                 "audience": _STRING,
                                 "context": _STRING,
+                                "occasion": _STRING,
                             }
                         ),
                     },
@@ -412,6 +424,7 @@ INTERACTION_PROFILE_JSON_SCHEMA: dict[str, Any] = _obj(
                     "audience": _STRING,
                     "context": _STRING,
                     "options": {"type": "array", "items": _STRING},
+                    "occasion": _STRING,
                 },
                 "required": ["action", "audience", "context"],
             },

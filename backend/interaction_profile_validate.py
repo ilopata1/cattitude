@@ -3,15 +3,15 @@
 Runs between Stage 1 extraction and Stage 2 system graph. Annotates the profile
 with ``validation_flags``, ``repairs``, and ``needs_rextraction``.
 
-Mechanical auto-repair: ``contradiction_builtin_requires_accessory`` drops the
-offending ``requires_devices`` entry (warning + ``repairs[]`` audit) and does
-**not** set ``needs_rextraction``.
+Mechanical auto-repair (warning + ``repairs[]``, no ``needs_rextraction``):
+``contradiction_builtin_requires_accessory``, repairable ``dangling_needed_for``,
+``fewshot_leakage`` stock phrases that can be dropped, and
+``data_role_polarity`` (inverted controllable_from_network evidence).
 
-``needs_rextraction`` is reserved for defect classes with no mechanical repair
-(currently ``fewshot_leakage`` and unresolvable ``dangling_needed_for``).
-
-``evidence_incomplete`` may trigger a one-shot LLM repair pass (see
-``interaction_profile_repair``) before Stage 1.6 derived actions.
+Blocking ``BLOCKING_FLAGS`` remaining after repair attempts set
+``needs_rextraction`` and fail ``stage15_gate_passes``. ``evidence_incomplete``
+triggers a one-shot LLM evidence repair pass first (see
+``interaction_profile_repair``); if blocking gaps remain, the gate fails.
 """
 
 from __future__ import annotations
@@ -90,6 +90,9 @@ FEWSHOT_PHRASE_ATTRACTORS: tuple[str, ...] = (
     "czone configuration tool -> commissioning_tool",
     "masteradjust software -> commissioning_tool",
     "gx device -> device",
+    # Example G/H network bus names (speaks leakage — Zeus founding)
+    "masterbus",
+    "ve.direct",
 )
 # Distinctive markers that MUST appear in excerpts for the matched attractor
 # to count as grounded (prevents soft topical overlap, e.g. any fuse text).
@@ -116,6 +119,8 @@ FEWSHOT_ATTRACTOR_MARKERS: dict[str, tuple[str, ...]] = {
     "czone configuration tool -> commissioning_tool": ("commissioning_tool",),
     "masteradjust software -> commissioning_tool": ("commissioning_tool",),
     "gx device -> device": ("requirement_kind", "software_app"),
+    "masterbus": ("masterbus",),
+    "ve.direct": ("ve.direct", "ve direct"),
 }
 # Back-compat alias used by older tests/imports.
 FEWSHOT_ACTION_ATTRACTORS = FEWSHOT_PHRASE_ATTRACTORS
@@ -124,27 +129,491 @@ FEWSHOT_GROUNDING_RATIO = 0.55
 FEWSHOT_PHRASE_MATCH_RATIO = FEWSHOT_ACTION_MATCH_RATIO
 FEWSHOT_PHRASE_GROUNDING_RATIO = FEWSHOT_GROUNDING_RATIO
 
-# Flags that still mean "this profile is defective" at blocking severity, but
-# only NEEDS_REXTRACTION_FLAGS force a re-extraction retry.
+# Flags that mean "this profile is defective" at blocking severity. Any
+# remaining blocking member after repair passes forces ``needs_rextraction``.
 BLOCKING_FLAGS = frozenset(
     {
         "dangling_needed_for",
         "unknown_field",
         "evidence_shape_invalid",
+        "evidence_heading_invalid",
         "fewshot_leakage",
         "evidence_incomplete",
         "derived_ungrounded",
+        "direction_mismatch",
     }
 )
 
-# Defect classes with no mechanical repair — temp-0 re-extract (max 1, with a
-# differing targeted instruction) then human review.
+# Explicit re-extract attractors (also in BLOCKING_FLAGS). Kept for callers that
+# special-case these names; the gate itself is severity+BLOCKING_FLAGS.
 NEEDS_REXTRACTION_FLAGS = frozenset(
     {
         "fewshot_leakage",
         "dangling_needed_for",
     }
 )
+
+# manual_section must look like a heading/title, not body prose or OCR crumbs.
+_MANUAL_SECTION_LETTER_CRUMB = re.compile(
+    r"^(?:[A-Za-z]\s+){1,}[A-Za-z]$"
+)
+
+# Evidence notes that describe THIS device commanding others — not being
+# commanded. Founding: Zeus "Control devices via the CZone network".
+_CONTROLS_OTHERS_NOTE = re.compile(
+    r"(?:"
+    r"control(?:s|ling)?\s+(?:devices?|loads?|circuits?|equipment|connected)"
+    r"|control\s+[\w\s]{0,40}\s+via\s+(?:the\s+)?(?:czone|nmea|network)"
+    r"|czone\s+control\s+from"
+    r"|control(?:ling)?\s+other\s+devices?"
+    r"|configur(?:e|ing)\s+(?:internal\s+and\s+)?(?:external\s+)?"
+    r"connected\s+devices?"
+    r")",
+    re.IGNORECASE,
+)
+
+# Evidence notes that support true controllable_from_network (this unit is
+# the object of remote command).
+_THIS_UNIT_CONTROLLABLE_NOTE = re.compile(
+    r"(?:"
+    r"(?:this\s+)?(?:unit|charger|inverter|battery|device|mfd|display)\s+"
+    r"(?:can\s+be\s+)?(?:controlled|configured|monitored|adjusted)"
+    r"|(?:controlled|configured|adjusted|monitored)\s+"
+    r"(?:remotely|from\s+(?:the\s+)?(?:app|smartphone|phone|tablet|vrm|"
+    r"masterview))"
+    r"|via\s+(?:the\s+)?(?:victronconnect|masteradjust|app|bluetooth|vrm)"
+    r"|remote(?:ly)?\s+(?:control|configure|monitor)"
+    r"|settings?\s+(?:can\s+be\s+)?(?:adjusted|changed|configured)\s+from"
+    r"|command(?:ed|s)?\s+(?:over|via|from)\s+(?:the\s+)?"
+    r"(?:network|app|bus)"
+    r")",
+    re.IGNORECASE,
+)
+
+CONTROLLABLE_FROM_NETWORK_PATH = "data_roles.controllable_from_network"
+
+# Hub-commanding evidence — this device controls others; not a data_roles
+# direction. Founding: Zeus "CZone app controls devices via the network".
+_HUB_COMMANDING_EVIDENCE = re.compile(
+    r"(?:"
+    r"(?:control|controls|controlling|command|commands|commanding|"
+    r"switch|switches|switching)\s+"
+    r"(?:various\s+)?(?:lights|pumps|devices?|loads?|circuits?|equipment|"
+    r"connected)"
+    r"|control(?:s|ling)?\s+[\w\s]{0,40}\s+via\s+(?:the\s+)?"
+    r"(?:czone|nmea|network)"
+    r"|czone\s+app\s+controls"
+    r")",
+    re.IGNORECASE,
+)
+
+# Content tokens ignored when scoring evidence↔action coherence (v4.27).
+_EVIDENCE_COHERENCE_STOPWORDS = frozenset(
+    {
+        "a",
+        "an",
+        "the",
+        "to",
+        "for",
+        "of",
+        "and",
+        "or",
+        "on",
+        "in",
+        "via",
+        "from",
+        "with",
+        "its",
+        "this",
+        "that",
+        "when",
+        "how",
+        "you",
+        "your",
+        "unit",
+        "device",
+        "actions",
+        "action",
+        "steps",
+        "step",
+        "describes",
+        "describing",
+        "using",
+        "use",
+        "first",
+    }
+)
+
+# Note better-matches a different action than supports_field names.
+_EVIDENCE_MISMATCH_MIN_BEST = 0.3
+_EVIDENCE_MISMATCH_MARGIN = 0.15
+
+
+def controllable_evidence_is_controls_others(note: str, section: str = "") -> bool:
+    """True when evidence describes commanding other devices, not this unit.
+
+    This-unit remote-command wording wins when both patterns match.
+    """
+    blob = f"{note or ''} {section or ''}".strip()
+    if not blob:
+        return False
+    if _THIS_UNIT_CONTROLLABLE_NOTE.search(blob):
+        return False
+    return bool(_CONTROLS_OTHERS_NOTE.search(blob))
+
+
+def apply_data_role_polarity_repairs(
+    profile: dict[str, Any],
+) -> tuple[dict[str, Any], list[dict[str, str]]]:
+    """Clear ``controllable_from_network`` when only controls-others evidence.
+
+    Warning + ``repairs[]``; does not set ``needs_rextraction``. Founding:
+    Zeus CZone "Control devices via the CZone network".
+    """
+    out = deepcopy(profile) if isinstance(profile, dict) else {}
+    roles = out.get("data_roles") if isinstance(out.get("data_roles"), dict) else {}
+    if not bool(roles.get("controllable_from_network")):
+        return out, []
+
+    evidence = [dict(e) for e in (out.get("evidence") or []) if isinstance(e, dict)]
+    supporting = [
+        e
+        for e in evidence
+        if str(e.get("supports_field") or "").strip() == CONTROLLABLE_FROM_NETWORK_PATH
+    ]
+    if not supporting:
+        return out, []
+
+    inverted = [
+        e
+        for e in supporting
+        if controllable_evidence_is_controls_others(
+            str(e.get("note") or ""),
+            str(e.get("manual_section") or ""),
+        )
+    ]
+    if not inverted or len(inverted) < len(supporting):
+        # Keep the flag when at least one supporting note is not inverted.
+        if inverted:
+            # Drop only the inverted rows; leave the role true.
+            drop_notes = {
+                (
+                    str(e.get("note") or ""),
+                    str(e.get("manual_section") or ""),
+                )
+                for e in inverted
+            }
+            kept_ev = [
+                e
+                for e in evidence
+                if not (
+                    str(e.get("supports_field") or "").strip()
+                    == CONTROLLABLE_FROM_NETWORK_PATH
+                    and (
+                        str(e.get("note") or ""),
+                        str(e.get("manual_section") or ""),
+                    )
+                    in drop_notes
+                )
+            ]
+            out["evidence"] = kept_ev
+            repairs = [dict(r) for r in (out.get("repairs") or []) if isinstance(r, dict)]
+            warnings: list[dict[str, str]] = []
+            for e in inverted:
+                repairs.append(
+                    {
+                        "repair": "dropped_entry",
+                        "flag": "data_role_polarity",
+                        "field_path": CONTROLLABLE_FROM_NETWORK_PATH,
+                        "original_entry": dict(e),
+                    }
+                )
+                warnings.append(
+                    _flag(
+                        "data_role_polarity",
+                        "repaired: dropped_entry — evidence describes controlling "
+                        f"other devices ({e.get('note')!r})",
+                        CONTROLLABLE_FROM_NETWORK_PATH,
+                        severity="warning",
+                    )
+                )
+            out["repairs"] = repairs
+            return out, warnings
+        return out, []
+
+    # All supporting evidence is polarity-inverted → clear the role.
+    kept_ev = [
+        e
+        for e in evidence
+        if str(e.get("supports_field") or "").strip() != CONTROLLABLE_FROM_NETWORK_PATH
+    ]
+    out["evidence"] = kept_ev
+    roles = dict(roles)
+    roles["controllable_from_network"] = False
+    out["data_roles"] = roles
+    repairs = [dict(r) for r in (out.get("repairs") or []) if isinstance(r, dict)]
+    notes = [str(e.get("note") or "") for e in inverted]
+    repairs.append(
+        {
+            "repair": "cleared_controllable_from_network",
+            "flag": "data_role_polarity",
+            "field_path": CONTROLLABLE_FROM_NETWORK_PATH,
+            "original_value": True,
+            "inverted_notes": notes,
+        }
+    )
+    out["repairs"] = repairs
+    warnings = [
+        _flag(
+            "data_role_polarity",
+            "repaired: cleared controllable_from_network — evidence describes "
+            f"controlling other devices ({notes!r})",
+            CONTROLLABLE_FROM_NETWORK_PATH,
+            severity="warning",
+        )
+    ]
+    return out, warnings
+
+
+def _evidence_content_tokens(text: str) -> set[str]:
+    return {
+        t
+        for t in _tokens(text)
+        if t not in _EVIDENCE_COHERENCE_STOPWORDS and len(t) > 1
+    }
+
+
+def evidence_note_action_overlap(note_blob: str, action_text: str) -> float:
+    """Content-token overlap of note/section blob vs an action string."""
+    nt = _evidence_content_tokens(note_blob)
+    at = _evidence_content_tokens(action_text)
+    if not nt or not at:
+        return 0.0
+    return len(nt & at) / min(len(nt), len(at))
+
+
+def evidence_action_support_mismatch(
+    profile: dict[str, Any],
+    *,
+    note: str,
+    section: str,
+    linked_action: str,
+) -> str | None:
+    """If note better matches another operator_action, return that action text.
+
+    Scores the **note** only — shared ``manual_section`` titles (e.g. both
+    software-update actions under "Update software") must not scramble pairing.
+    Occasion-style notes that match nothing strongly return None (no flag).
+    Empty notes fall back to section.
+    """
+    actions = [
+        str(a.get("action") or "").strip()
+        for a in (profile.get("operator_actions") or [])
+        if isinstance(a, dict) and str(a.get("action") or "").strip()
+    ]
+    if not actions or not linked_action.strip():
+        return None
+    blob = (note or "").strip() or (section or "").strip()
+    if not blob:
+        return None
+    linked_score = evidence_note_action_overlap(blob, linked_action)
+    best_action = linked_action
+    best_score = linked_score
+    for action in actions:
+        score = evidence_note_action_overlap(blob, action)
+        if score > best_score:
+            best_score = score
+            best_action = action
+    if best_score < _EVIDENCE_MISMATCH_MIN_BEST:
+        return None
+    if best_action == linked_action:
+        return None
+    if best_score < linked_score + _EVIDENCE_MISMATCH_MARGIN:
+        return None
+    return best_action
+
+
+def check_evidence_support_mismatch(
+    profile: dict[str, Any],
+) -> list[dict[str, str]]:
+    """Warn when evidence note better matches a different operator_action."""
+    from interaction_profile_merge import parse_operator_action_text_path
+
+    flags: list[dict[str, str]] = []
+    for i, item in enumerate(profile.get("evidence") or []):
+        if not isinstance(item, dict):
+            continue
+        field = str(item.get("supports_field") or "").strip()
+        linked, _suffix = parse_operator_action_text_path(field)
+        if not linked:
+            continue
+        better = evidence_action_support_mismatch(
+            profile,
+            note=str(item.get("note") or ""),
+            section=str(item.get("manual_section") or ""),
+            linked_action=linked,
+        )
+        if not better:
+            continue
+        flags.append(
+            _flag(
+                "evidence_support_mismatch",
+                f"evidence note better matches action {better!r} than "
+                f"linked {linked!r}",
+                f"evidence[{i}].supports_field",
+                severity="warning",
+            )
+        )
+    return flags
+
+
+def evidence_note_is_hub_commanding(note: str, section: str = "") -> bool:
+    """True when note describes this device commanding other devices."""
+    blob = f"{note or ''} {section or ''}".strip()
+    return bool(blob and _HUB_COMMANDING_EVIDENCE.search(blob))
+
+
+def check_data_role_direction_mismatch(
+    profile: dict[str, Any],
+) -> list[dict[str, str]]:
+    """Blocking: hub-commanding notes cannot support any data_roles field."""
+    flags: list[dict[str, str]] = []
+    for i, item in enumerate(profile.get("evidence") or []):
+        if not isinstance(item, dict):
+            continue
+        field = str(item.get("supports_field") or "").strip()
+        if not field.startswith("data_roles."):
+            continue
+        note = str(item.get("note") or "")
+        section = str(item.get("manual_section") or "")
+        if not evidence_note_is_hub_commanding(note, section):
+            continue
+        flags.append(
+            _flag(
+                "direction_mismatch",
+                "evidence describes this device commanding other devices — "
+                f"supports none of data_roles (got {field!r}; note={note!r})",
+                f"evidence[{i}].supports_field",
+                severity="blocking",
+            )
+        )
+    return flags
+
+
+# Occasion circularity — purpose restates the action (v4.29).
+_OCCASION_CIRCULAR_STOP = frozenset(
+    {
+        "a",
+        "an",
+        "the",
+        "to",
+        "for",
+        "of",
+        "and",
+        "or",
+        "your",
+        "its",
+        "unit",
+        "device",
+        "display",
+    }
+)
+_OCCASION_TOKEN_CANON: dict[str, str] = {
+    "power": "power",
+    "down": "off",
+    "off": "off",
+    "on": "on",
+    "start": "on",
+    "starting": "on",
+    "stop": "off",
+    "shut": "off",
+    "turn": "switch",
+    "switch": "switch",
+    "switches": "switch",
+}
+_POWER_OFF_PAIR = re.compile(
+    r"(?:turn\s+(?:\w+\s+){0,3}off|power\s+down|shut\s+down|switch\s+off)",
+    re.I,
+)
+_POWER_ON_PAIR = re.compile(
+    r"(?:turn\s+(?:\w+\s+){0,3}on|power\s+up|switch\s+on|\bstart(?:ing)?\b)",
+    re.I,
+)
+
+
+def _occasion_canon_tokens(text: str) -> set[str]:
+    out: set[str] = set()
+    for t in _tokens(text):
+        if t in _OCCASION_CIRCULAR_STOP:
+            continue
+        out.add(_OCCASION_TOKEN_CANON.get(t, t))
+    return out
+
+
+def occasion_is_circular(action: str, occasion: str) -> bool:
+    """True when occasion is only a purpose-restatement of the action."""
+    act = (action or "").strip()
+    occ = (occasion or "").strip()
+    if not act or not occ:
+        return False
+    occ_body = re.sub(r"^(?:to|for)\s+", "", occ, flags=re.I).strip()
+    # Power on/off purpose restatements (Zeus founding).
+    if _POWER_OFF_PAIR.search(act) and _POWER_OFF_PAIR.search(occ_body):
+        return True
+    if _POWER_ON_PAIR.search(act) and _POWER_ON_PAIR.search(occ_body):
+        return True
+    ta = _occasion_canon_tokens(act)
+    to = _occasion_canon_tokens(occ_body)
+    if not ta or not to:
+        return False
+    # Exact canon-token identity (no novel content either way).
+    return ta == to
+
+
+def apply_occasion_circular_repairs(
+    profile: dict[str, Any],
+) -> tuple[dict[str, Any], list[dict[str, str]]]:
+    """Clear circular occasions (warning). They do not satisfy xxxix."""
+    out = deepcopy(profile) if isinstance(profile, dict) else {}
+    actions = out.get("operator_actions")
+    if not isinstance(actions, list):
+        return out, []
+    repairs = [dict(r) for r in (out.get("repairs") or []) if isinstance(r, dict)]
+    warnings: list[dict[str, str]] = []
+    changed = False
+    for i, act in enumerate(actions):
+        if not isinstance(act, dict):
+            continue
+        action = str(act.get("action") or "")
+        occasion = str(act.get("occasion") or "").strip()
+        if not occasion or not occasion_is_circular(action, occasion):
+            continue
+        path = f"operator_actions[{i}].occasion"
+        repairs.append(
+            {
+                "repair": "cleared_circular_occasion",
+                "flag": "occasion_circular",
+                "field_path": path,
+                "original_value": occasion,
+            }
+        )
+        warnings.append(
+            _flag(
+                "occasion_circular",
+                f"repaired: cleared circular occasion {occasion!r} for "
+                f"action {action!r}",
+                path,
+                severity="warning",
+            )
+        )
+        act = dict(act)
+        act.pop("occasion", None)
+        actions[i] = act
+        changed = True
+    if changed:
+        out["operator_actions"] = actions
+        out["repairs"] = repairs
+    return out, warnings
 
 
 def _flag(
@@ -370,8 +839,47 @@ def _fewshot_candidate_phrases(profile: dict[str, Any]) -> list[tuple[str, str]]
                     str(item.get("description_verbatim") or ""),
                 )
             )
+    networks = profile.get("networks") if isinstance(profile.get("networks"), dict) else {}
+    for i, speak in enumerate(networks.get("speaks") or []):
+        if not isinstance(speak, dict):
+            continue
+        name = str(speak.get("name_verbatim") or "").strip()
+        if name:
+            out.append((f"networks.speaks[{i}].name_verbatim", name))
+    for i, bridge in enumerate(networks.get("bridges") or []):
+        if not isinstance(bridge, dict):
+            continue
+        for endpoint in ("from", "to"):
+            name = str(bridge.get(endpoint) or "").strip()
+            if name:
+                out.append((f"networks.bridges[{i}].{endpoint}", name))
     return out
 
+
+def network_name_grounded_in_corpus(
+    name: str, corpus: list[str]
+) -> bool:
+    """True when a speak/bridge name appears in excerpts (verbatim or tokens).
+
+    Founding: ``MasterBus`` / ``VE.Direct`` absent from Zeus System Guide
+    excerpts must fail; Victron manuals that name ``VE.Direct`` must pass.
+    """
+    n = (name or "").strip()
+    if not n or not corpus:
+        return False
+    joined = "\n".join(corpus)
+    lower = joined.lower()
+    if n.lower() in lower:
+        return True
+    toks = _tokens(n)
+    if not toks:
+        return False
+    joined_norm = " ".join(_tokens(joined))
+    phrase = " ".join(toks)
+    if phrase and phrase in joined_norm:
+        return True
+    words = set(joined_norm.split())
+    return all(t in words for t in toks)
 
 def evidence_supports_paths(profile: dict[str, Any]) -> set[str]:
     supports: set[str] = set()
@@ -390,8 +898,59 @@ def _path_has_evidence(path: str, supports: set[str]) -> bool:
     return any(s == path or s.startswith(path + ".") for s in supports)
 
 
+def manual_section_is_heading(section: str) -> bool:
+    """True when ``manual_section`` looks like a title/heading, not body text.
+
+    Rejects sentence dumps and ``D E``-class letter crumbs (Zeus founding).
+    """
+    s = (section or "").strip()
+    if not s:
+        return False
+    if _MANUAL_SECTION_LETTER_CRUMB.fullmatch(s):
+        return False
+    toks = [t for t in re.split(r"\s+", s) if t]
+    if not toks:
+        return False
+    # Single-letter token majority (OCR/fragment noise).
+    letterish = sum(1 for t in toks if len(re.sub(r"[^A-Za-z0-9]", "", t)) <= 1)
+    if len(toks) >= 2 and letterish / len(toks) >= 0.75:
+        return False
+    # Headings stay short; long runs are body excerpts mistaken for titles.
+    if len(toks) > 12:
+        return False
+    if re.search(r"[.!?]\s*$", s) and len(toks) > 6:
+        return False
+    # Prose openers ("I Alerts Select to view…").
+    if re.match(r"(?i)^i\s+\w+", s) and len(toks) > 4:
+        return False
+    if re.search(r"(?i)\b(select to|including|your display has)\b", s):
+        return False
+    return True
+
+
+def stage15_gate_passes(profile: dict[str, Any]) -> bool:
+    """True when Stage 1.5 leaves the profile eligible for Stage 2."""
+    if not isinstance(profile, dict):
+        return False
+    if profile.get("needs_rextraction") is True:
+        return False
+    for item in profile.get("validation_flags") or []:
+        if not isinstance(item, dict):
+            continue
+        if (
+            str(item.get("severity") or "") == "blocking"
+            and str(item.get("flag") or "") in BLOCKING_FLAGS
+        ):
+            return False
+    return True
+
+
 def missing_priority_evidence_paths(profile: dict[str, Any]) -> list[str]:
-    """Priority (a)+(b): true data_roles, each requires_devices, true safety_role."""
+    """Priority (a)+(b): true data_roles, each requires_devices, true safety_role.
+
+    Requires that carry ``gate_verbatim`` are self-evidencing (platform
+    appears-if gate) and do not need a separate LLM evidence row (v4.28).
+    """
     supports = evidence_supports_paths(profile)
     missing: list[str] = []
     data_roles = profile.get("data_roles")
@@ -403,6 +962,10 @@ def missing_priority_evidence_paths(profile: dict[str, Any]) -> list[str]:
                     missing.append(path)
     for i, req in enumerate(profile.get("requires_devices") or []):
         if not isinstance(req, dict):
+            continue
+        from interaction_profile_ui_pages import requires_entry_self_evidencing
+
+        if requires_entry_self_evidencing(req):
             continue
         path = f"requires_devices[{i}]"
         if not _path_has_evidence(path, supports):
@@ -452,6 +1015,9 @@ def apply_contradiction_auto_repairs(
     ``software_app`` entries targeting built-in surfaces are **kept** (v4.0:
     downloadable apps are recorded + auto-satisfied in Stage 2). Hardware
     accessories incorrectly required for a built-in surface are still dropped.
+
+    Evidence ``supports_field: requires_devices[N]`` paths are remapped (or
+    dropped) so a mechanical drop cannot leave a false ``evidence_incomplete``.
     """
     from interaction_profile_kinds import classify_requirement_kind
 
@@ -461,9 +1027,11 @@ def apply_contradiction_auto_repairs(
     ]
     warning_flags: list[dict[str, str]] = []
     kept: list[Any] = []
+    kept_orig_indices: list[int] = []
     for i, req in enumerate(out.get("requires_devices") or []):
         if not isinstance(req, dict):
             kept.append(req)
+            kept_orig_indices.append(i)
             continue
         needed_for = str(req.get("needed_for") or "").strip()
         field_path = f"requires_devices[{i}].needed_for"
@@ -511,7 +1079,26 @@ def apply_contradiction_auto_repairs(
             repairs.append(repair)
             continue
         kept.append(req)
+        kept_orig_indices.append(i)
     out["requires_devices"] = kept
+    # Remap / drop requires_devices evidence indices after list surgery.
+    old_to_new = {old: new for new, old in enumerate(kept_orig_indices)}
+    remapped_evidence: list[Any] = []
+    for item in out.get("evidence") or []:
+        if not isinstance(item, dict):
+            remapped_evidence.append(item)
+            continue
+        entry = dict(item)
+        field = str(entry.get("supports_field") or "").strip()
+        m = re.fullmatch(r"requires_devices\[(\d+)\](.*)", field)
+        if m:
+            old_i = int(m.group(1))
+            suffix = m.group(2) or ""
+            if old_i not in old_to_new:
+                continue  # evidence for a dropped require
+            entry["supports_field"] = f"requires_devices[{old_to_new[old_i]}]{suffix}"
+        remapped_evidence.append(entry)
+    out["evidence"] = remapped_evidence
     out["repairs"] = repairs
     for repair in repairs:
         if (
@@ -788,6 +1375,10 @@ def apply_fewshot_leak_auto_repairs(
     Prevents example-L paste (``within 30cm…``) from permanently setting
     ``needs_rextraction`` when the rest of the profile is usable. Actions that
     leak are also dropped when they match attractors without grounding.
+
+    Also drops ``networks.speaks`` / ``bridges`` whose names are absent from
+    the excerpt corpus (v4.25 — Zeus MasterBus / VE.Direct founding). Skipped
+    when no excerpts are provided (cannot verify grounding).
     """
     out = deepcopy(profile) if isinstance(profile, dict) else {}
     corpus = _excerpt_corpus(excerpts)
@@ -878,6 +1469,82 @@ def apply_fewshot_leak_auto_repairs(
             if isinstance(surface, dict):
                 surface["path"] = f"control_surfaces[{i}]"
 
+    # Universal speak/bridge grounding (any invented bus name, not only G/H).
+    if corpus:
+        networks = out.get("networks") if isinstance(out.get("networks"), dict) else {}
+        networks = dict(networks)
+        speaks_in = networks.get("speaks") or []
+        if isinstance(speaks_in, list):
+            kept_speaks: list[Any] = []
+            for i, speak in enumerate(speaks_in):
+                if not isinstance(speak, dict):
+                    kept_speaks.append(speak)
+                    continue
+                name = str(speak.get("name_verbatim") or "").strip()
+                if not name or network_name_grounded_in_corpus(name, corpus):
+                    kept_speaks.append(speak)
+                    continue
+                field_path = f"networks.speaks[{i}].name_verbatim"
+                repairs.append(
+                    {
+                        "repair": "dropped_entry",
+                        "flag": "fewshot_leakage",
+                        "field_path": field_path,
+                        "original_entry": dict(speak),
+                        "attractor": name,
+                    }
+                )
+                warnings.append(
+                    _flag(
+                        "fewshot_leakage",
+                        f"repaired: dropped_entry — networks.speaks name "
+                        f"{name!r} not grounded in excerpts",
+                        field_path,
+                        severity="warning",
+                    )
+                )
+            networks["speaks"] = kept_speaks
+        bridges_in = networks.get("bridges") or []
+        if isinstance(bridges_in, list):
+            kept_bridges: list[Any] = []
+            for i, bridge in enumerate(bridges_in):
+                if not isinstance(bridge, dict):
+                    kept_bridges.append(bridge)
+                    continue
+                endpoints = [
+                    str(bridge.get("from") or "").strip(),
+                    str(bridge.get("to") or "").strip(),
+                ]
+                bad = [
+                    ep
+                    for ep in endpoints
+                    if ep and not network_name_grounded_in_corpus(ep, corpus)
+                ]
+                if not bad:
+                    kept_bridges.append(bridge)
+                    continue
+                field_path = f"networks.bridges[{i}]"
+                repairs.append(
+                    {
+                        "repair": "dropped_entry",
+                        "flag": "fewshot_leakage",
+                        "field_path": field_path,
+                        "original_entry": dict(bridge),
+                        "attractor": ", ".join(bad),
+                    }
+                )
+                warnings.append(
+                    _flag(
+                        "fewshot_leakage",
+                        f"repaired: dropped_entry — networks.bridges endpoint(s) "
+                        f"{bad!r} not grounded in excerpts",
+                        field_path,
+                        severity="warning",
+                    )
+                )
+            networks["bridges"] = kept_bridges
+        out["networks"] = networks
+
     out["repairs"] = repairs
     return out, warnings
 
@@ -928,10 +1595,17 @@ def validate_interaction_profile(
     flags.extend(repair_warnings)
     out, fewshot_warnings = apply_fewshot_leak_auto_repairs(out, excerpts)
     flags.extend(fewshot_warnings)
+    out, polarity_warnings = apply_data_role_polarity_repairs(out)
+    flags.extend(polarity_warnings)
+    out, occasion_warnings = apply_occasion_circular_repairs(out)
+    flags.extend(occasion_warnings)
     out, optional_warnings = apply_optional_surface_requires(out)
     flags.extend(optional_warnings)
     out, fuse_warnings = apply_grounded_dc_fuse_fill(out, excerpts)
     flags.extend(fuse_warnings)
+    from interaction_profile_ui_pages import derive_gate_verbatim_evidence
+
+    derive_gate_verbatim_evidence(out)
     # v4.0: OR-expand + exact-key dedupe + requirement_kind backstop.
     from interaction_profile_kinds import finalize_profile_requires
 
@@ -981,6 +1655,7 @@ def validate_interaction_profile(
             "runs_platform",
             "ui_pages",
             "alarm_severity",
+            "demoted_ui_pages",
             "cross_model_diff",
             "extraction_pending_review",
             "source",
@@ -1292,7 +1967,17 @@ def validate_interaction_profile(
             )
             continue
         # manual_section is expected to be a verbatim title/heading — never
-        # run similarity against excerpts for it.
+        # run similarity against excerpts for it; reject sentence dumps / crumbs.
+        if not manual_section_is_heading(section):
+            flags.append(
+                _flag(
+                    "evidence_heading_invalid",
+                    "manual_section must be a short heading/title "
+                    "(not a sentence or letter-fragment)",
+                    f"{epath}.manual_section",
+                    severity="blocking",
+                )
+            )
         note_words = _tokens(note)
         if len(note_words) > EVIDENCE_NOTE_MAX_WORDS:
             flags.append(
@@ -1320,6 +2005,9 @@ def validate_interaction_profile(
                     )
                     break
 
+    flags.extend(check_evidence_support_mismatch(out))
+    flags.extend(check_data_role_direction_mismatch(out))
+
     # Genre multi-select + config_defined_operation / genre_content_mismatch.
     out["validation_flags"] = flags
     from interaction_profile_genre import annotate_profile_genres
@@ -1343,7 +2031,9 @@ def validate_interaction_profile(
 
     out["validation_flags"] = unique
     out["needs_rextraction"] = any(
-        f.get("flag") in NEEDS_REXTRACTION_FLAGS for f in unique
+        str(f.get("severity") or "") == "blocking"
+        and str(f.get("flag") or "") in BLOCKING_FLAGS
+        for f in unique
     )
     return out
 

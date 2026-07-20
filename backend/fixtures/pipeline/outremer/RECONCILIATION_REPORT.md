@@ -13,6 +13,7 @@
 - **rec_mli_qty** — MLI Ultra ×3 per cover sheet and folios 3A/3B.
 - **rec_solar_photo_tier** — Solar = SmartSolar MPPT 150/60-Tr ×1 + 75/15 ×2 (photo tier). Schematic 2D MasterBus-solar claim overruled.
 - **rec_masterbus_interfaces_confirmed** — MasterBus Bridge Interface + USB Interface confirmed on vessel documents.
+- **rec_silentwind_removed** — Silentwind Hybrid 1000 previously listed; owner/admin confirmed not fitted (2026-07-18). Removed from live `outremer/` inventory; see `INVENTORY_EVENT_silentwind_removed.md`. Historical batch snapshots retain prior listing as audit.
 
 ## Installation notes
 

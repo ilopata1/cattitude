@@ -1,0 +1,152 @@
+{
+
+  "fixture_auth": "Fixture-Auth: chat 2026-07-19 — xli charge-path enabling conditions; forbid under-way≈alternator proxy",
+
+  "version": "v4.21",
+
+  "description": "Batteries & Energy Stage 4 expectations for Outremer / Supernova.",
+
+  "recorded_vessel_display_name": "Supernova",
+
+  "expected_inputs": {
+
+    "contributors": [
+
+      {"device_key": "alpha_pro_iii_port", "depth": "full"},
+
+      {"device_key": "alpha_pro_iii_stbd", "depth": "full"},
+
+      {"device_key": "mass_combi_pro_1", "depth": "full"},
+
+      {"device_key": "mass_combi_pro_2", "depth": "full"},
+
+      {"device_key": "mli_ultra_1", "depth": "full"},
+
+      {"device_key": "mli_ultra_2", "depth": "full"},
+
+      {"device_key": "mli_ultra_3", "depth": "full"},
+
+      {"device_key": "victron_mppt", "depth": "full"},
+
+      {"device_key": "victron_mppt_150_60", "depth": "full"},
+
+      {"device_key": "coi_1", "depth": "provenance"},
+
+      {"device_key": "coi_2", "depth": "provenance"},
+
+      {"device_key": "coi_3", "depth": "provenance"},
+
+      {"device_key": "masterbus_bridge_interface", "depth": "provenance"}
+
+    ]
+
+  },
+
+  "solar_leaf_member_keys": ["victron_mppt_150_60", "victron_mppt"],
+
+  "expected_guide_link_targets": ["controls", "electrical"],
+
+  "required_block_order_prefix": [
+
+    "capability_summary",
+
+    "how_it_works",
+
+    "monitoring",
+
+    "adjusting",
+
+    "troubleshooting",
+
+    "reference"
+
+  ],
+
+  "forbidden_prose_substrings": [
+
+    "masterbus_bridge",
+
+    "masteradjust",
+
+    "dip switch",
+
+    "pole pairs",
+
+    "battery temperature sensor",
+
+    "protective status",
+
+    "control surface",
+
+    "not fitted",
+
+    "does not appear",
+
+    "use the brake",
+
+    "To change the AC input current limit",
+
+    "surveyed",
+
+    "attested",
+
+    "per inspection",
+
+    "wind generator",
+
+    "Silentwind",
+
+    "under way, those alternators",
+
+    "underway, those alternators"
+
+  ],
+
+  "style_deictics_soft": ["this vessel", "this boat", "this yacht"],
+
+  "expected_fact_query_ids": [],
+
+  "forbidden_fact_query_ids": [
+
+    "combi_ac_input_limit_occasion",
+
+    "silentwind_brake_occasion"
+
+  ],
+
+  "required_prose_substrings": [
+
+    "24 V / 110 A",
+
+    "Solar notes that accompany this chapter",
+
+    "AC input current limit",
+
+    "external AC circuit breaker",
+
+    "when the engines are running, those alternators"
+
+  ],
+
+  "founding_counterexample_notes": [
+
+    "B&E v1: protective status → owner language",
+
+    "B&E v1: Silentwind brake-only orphan (device later removed — not fitted)",
+
+    "B&E v1: Controls xref repeated in non-adjacent slots",
+
+    "B&E v4.16: floating brake / AC-limit imperatives without occasion",
+
+    "B&E v4.16: Solar leaf pointer mid charge paragraph",
+
+    "B&E v4.17: surveyed solar capacity provenance leak",
+
+    "B&E v4.19: Combi occasion via field pack",
+
+    "B&E v4.19: Silentwind inventory removal (owner/admin)"
+
+  ]
+
+}
+

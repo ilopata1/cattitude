@@ -19,6 +19,7 @@ _BACKEND = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_BACKEND))
 
 from content_tiers import assign_content_tiers
+from guide_composition_rules import assess_global_composition
 from guide_section_solar import (
     VesselNameMissing,
     compose_solar_section,
@@ -164,6 +165,10 @@ def main() -> int:
 
     if not evaluation.get("pass"):
         failures.append(f"evaluation failed: {evaluation.get('notes')}")
+
+    global_comp = assess_global_composition(composed, require_filled_wisdom=True)
+    if not global_comp.get("pass"):
+        failures.append(f"global composition failed: {global_comp.get('findings')}")
 
     for row in composed.get("provenance_map") or []:
         if row.get("kind") == "flag_prose" and (

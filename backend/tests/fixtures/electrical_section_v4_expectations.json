@@ -1,0 +1,33 @@
+{
+  "fixture_auth": "Fixture-Auth: chat Electrical Stage 4 v4.35 — Blue Sea ACR replace ml_switch; operator-voice retained",
+  "version": "v4.35",
+  "description": "Electrical Panel Stage 4 expectations for Outremer / Supernova.",
+  "recorded_vessel_display_name": "Supernova",
+  "expected_guide_link_targets": ["controls", "batteries"],
+  "expected_inputs": {
+    "contributors": [
+      {"device_key": "blue_sea_acr", "depth": "full"},
+      {"device_key": "busbar", "depth": "full"},
+      {"device_key": "class_t_1", "depth": "full"},
+      {"device_key": "class_t_2", "depth": "full"},
+      {"device_key": "class_t_3", "depth": "full"},
+      {"device_key": "coi_1", "depth": "full"},
+      {"device_key": "coi_2", "depth": "full"},
+      {"device_key": "coi_3", "depth": "full"},
+      {"device_key": "masterbus_bridge_interface", "depth": "full"},
+      {"device_key": "masterbus_usb_interface", "depth": "full"},
+      {"device_key": "plain_battery_switch", "depth": "full"}
+    ]
+  },
+  "forbidden_prose_substrings": [
+    "favourites",
+    "victronconnect",
+    "this vessel",
+    "dip switch",
+    "masteradjust",
+    "kwh",
+    "ml-series battery",
+    "opening loads on the bank"
+  ],
+  "style_deictics_soft": ["this vessel", "this boat", "this yacht"]
+}

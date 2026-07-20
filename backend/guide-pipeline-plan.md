@@ -93,11 +93,20 @@ Do **not** replace the fragment + approve path in one rewrite.
 | Quarantine bad harvested fragments / manual_type audit | Open (ops) |
 | Stage 1–2 offline spike | Done — Stage 1 map-reduce + voting + cal K/L/M; vessel Outremer live+stub Stage 2+3; see `equipment-classification-spec-v3.9.md` |
 | Stage 3–4 production wire-up | Stage 3 content-tier **preview** (deterministic) shipped for vessel harness; LLM Stage 3 + Stage 4 views still open |
-| **Queued:** CZone platform ui_pages action completeness | Favourites / Control / Monitoring / Alarms still 0-action — same Climate routing-fix pattern (CONTROLS vocabulary + targeted group re-extract) |
+| **Queued:** CZone platform ui_pages action completeness | **Done** — Favourites/Alarms/Control/Monitoring via `reextract_czone_ui_pages.py` (Climate already); completeness `ok`; `promote_czone_2_0.py` |
 | Solar Stage 4 composition pilot (v2 rendering) | Superseded by v3 |
 | **Solar Stage 4 v3 (frozen)** | Superseded by v4 (spec v4.9) |
 | **Solar Stage 4 v4** | Done — capability→task template; context_shaping absences; reader voice; `verify_solar_section_v4.py` |
-| **Section input assembly + Controls pilot (v4.10)** | Done — `section_inputs.py`; Know chapter `controls`; ship-with-honest-gaps; criteria xx–xxii; `verify_controls_section_v4.py` |
+| **Section input assembly + Controls pilot (v4.10)** | Composer introduced — ship-with-honest-gaps; criteria xx–xxii; `verify_controls_section_v4.py` |
+| **Controls and Monitoring Stage 4 (frozen)** | Done — frozen for reuse (spec v4.30); xx–xxv; honest-gap Modes/Favourites placeholder; frozen-section regression with Solar + Batteries |
+| **Electrical Panel Stage 4 (v4.31→v4.35)** | Done — ACR live extract replaces ml_switch; lvi–lxviii; not frozen |
 | **Global reader voice (v4.11)** | Done — `guide_reader_voice.py`; style_warnings; prompts; generate report-only |
 | **Xref reader voice + links (v4.13)** | Done — `format_section_xref` / `guide_links`; authorial xref lint; Controls wired |
+| **Batteries Stage 4 (v4.14)** | Composer introduced — xxvi–xxxi; Controls/Electrical xrefs; Solar leaf pointer |
+| **Batteries & Energy Stage 4 (frozen)** | Done — frozen for reuse (reaffirmed spec v4.30); xxvi–xli; `verify_batteries_section_v4.py`; frozen-section regression with Solar + Controls |
+| **Global composition spine (v4.15)** | Done — `guide_composition_rules.py`; orphan/vocab/wisdom slot; B&E v2; xxxii–xxxv |
+| **Composition clarifications (v4.16)** | Done — same-breath check; sentence-initial spell-out; surface-bound adjusting |
+| **Composition clarifications (v4.17)** | Done — instruction occasion; paragraph-final pointers; ratings/daily/BMS co-location |
+| **Composition clarifications (v4.18)** | Done — provenance-leak vocabulary (`surveyed`/`attested`/…); Combi occasion re-check |
+| **Field-pack migrations (v4.19)** | Done — `profile_field_packs.py`; occasion schema + Combi offline pack #1 + vessel promote |
 | Evidence attachment (`evidence_unattached`) | Done — `vessel_evidence.py`; founding fixture + Outremer deck-photo retrofit |

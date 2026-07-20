@@ -94,6 +94,9 @@ SECTION_LOOKUP: dict[str, tuple[str, ...]] = {
         "breaker",
         "battery switch",
         "ml switch",
+        "acr",
+        "charging relay",
+        "automatic charging",
         "digital switching",
         "output interface",
         "distribution",
@@ -1309,6 +1312,77 @@ def control_paths(
     return paths, flags
 
 
+def _hub_domain_notes(device: ComputedDevice) -> list[str]:
+    """Heuristic domain cues for hub_domain_split judgment (not a merge)."""
+    notes: list[str] = []
+    profile = device.profile if isinstance(device.profile, dict) else {}
+    cat = str((profile.get("device") or {}).get("category_freeform") or "").lower()
+    model = str((profile.get("device") or {}).get("model") or "").lower()
+    desc = str(device.line_item.get("description") or "").lower()
+    blob = f"{cat} {model} {desc}"
+    if any(
+        t in blob
+        for t in ("chart", "plotter", "mfd", "nav", "display", "zeus", "radar")
+    ):
+        notes.append("navigation / display domain")
+    if any(t in blob for t in ("switch", "touch", "czone", "power", "digital")):
+        notes.append("switching / power domain")
+    runs = profile.get("runs_platform") or []
+    seen_plat: set[str] = set()
+    for r in runs:
+        if not isinstance(r, dict):
+            continue
+        pk = str(r.get("platform_key") or "").strip()
+        if pk and pk not in seen_plat:
+            seen_plat.add(pk)
+            notes.append(f"hosts platform {pk}")
+    pages = [
+        str(p.get("name") or "").strip()
+        for p in (profile.get("ui_pages") or [])
+        if isinstance(p, dict) and str(p.get("name") or "").strip()
+    ]
+    czone_pages = [n for n in pages if "czone" in n.lower()]
+    if czone_pages:
+        notes.append(
+            "documented CZone window on ui_pages: " + ", ".join(czone_pages)
+        )
+    speaks = [
+        str(s.get("name_verbatim") or "").strip()
+        for s in ((profile.get("networks") or {}).get("speaks") or [])
+        if isinstance(s, dict) and str(s.get("name_verbatim") or "").strip()
+    ]
+    if speaks:
+        notes.append("speaks " + ", ".join(speaks))
+    if not notes:
+        notes.append("domain cues sparse — inspect surfaces/pages")
+    return notes
+
+
+def hub_domain_split_judgment(
+    hubs: list[ComputedDevice],
+) -> dict[str, Any]:
+    """Articulate multi-hub domains without resolving/merging hubs.
+
+    First-occurrence judgment when ``multiple_hubs`` fires. Does not pick a
+    single hub — records per-hub domain notes for human adjudication.
+    """
+    domains: list[dict[str, Any]] = []
+    lines: list[str] = [
+        "multiple_hubs: vessel has more than one HUB. Domain split judgment "
+        "(raw articulation — do not treat as resolved):"
+    ]
+    for hub in hubs:
+        notes = _hub_domain_notes(hub)
+        domains.append({"device": hub.device_key, "domain_notes": notes})
+        lines.append(f"  - {hub.device_key}: " + "; ".join(notes))
+    return {
+        "flag": "hub_domain_split",
+        "devices": [h.device_key for h in hubs],
+        "domains": domains,
+        "judgment": "\n".join(lines),
+    }
+
+
 def structural_flags(
     devices: dict[str, ComputedDevice],
     extra: list[dict[str, Any]] | None = None,
@@ -1328,6 +1402,7 @@ def structural_flags(
                 "devices": [d.device_key for d in hubs],
             }
         )
+        flags.append(hub_domain_split_judgment(hubs))
 
     # Platform-backed hubs: split former hub_operation_unsourced (v4.6).
     for hub in hubs:

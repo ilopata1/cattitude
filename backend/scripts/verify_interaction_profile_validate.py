@@ -194,8 +194,17 @@ def main() -> int:
         "calibration-C stock action must flag fewshot_leakage without BMS grounding",
     )
     check(
-        leak_ann.get("needs_rextraction") is True,
-        "fewshot_leakage must set needs_rextraction",
+        leak_ann.get("needs_rextraction") is False,
+        "mechanically repaired fewshot_leakage must not set needs_rextraction",
+    )
+    leak_warn = [
+        f
+        for f in (leak_ann.get("validation_flags") or [])
+        if f.get("flag") == "fewshot_leakage"
+    ]
+    check(
+        leak_warn and leak_warn[0].get("severity") == "warning",
+        "repaired fewshot_leakage must be warning severity",
     )
 
     # Example K leakage: MasterView remote panel surface without grounding.
@@ -334,6 +343,438 @@ def main() -> int:
         clean_ann.get("needs_rextraction") is False
         and validation_flag_names(clean_ann) == set(),
         f"clean profile unexpectedly flagged: {clean_ann.get('validation_flags')}",
+    )
+
+    # Blocking evidence_incomplete must set needs_rextraction (Zeus gate).
+    from interaction_profile_validate import stage15_gate_passes
+
+    incomplete = {
+        "device": {
+            "manufacturer": "B&G",
+            "model": "Zeus SR",
+            "category_freeform": "MFD",
+        },
+        "control_surfaces": [],
+        "operator_actions": [],
+        "networks": {"speaks": [], "bridges": []},
+        "data_roles": {
+            "exposes_data_to_network": False,
+            "displays_data_from_other_devices": True,
+            "controllable_from_network": False,
+        },
+        "requires_devices": [],
+        "safety_role": {
+            "is_protective_device": False,
+            "has_manual_override": False,
+            "has_emergency_procedure": False,
+        },
+        "protected_by": [],
+        "protects": [],
+        "supply_requirements": [],
+        "evidence": [
+            {
+                "supports_field": "device.model",
+                "manual_section": "Overview",
+                "note": "Model named on cover",
+            }
+        ],
+        "confidence": {"overall": 0.5, "notes": ""},
+    }
+    incomplete_ann = validate_interaction_profile(incomplete, excerpts=[])
+    check(
+        "evidence_incomplete" in validation_flag_names(incomplete_ann),
+        "true data_roles without evidence must fire evidence_incomplete",
+    )
+    check(
+        incomplete_ann.get("needs_rextraction") is True,
+        "blocking evidence_incomplete must set needs_rextraction",
+    )
+    check(
+        stage15_gate_passes(incomplete_ann) is False,
+        "blocking evidence gaps must fail stage15_gate_passes",
+    )
+
+    # --- v4.25: networks.speaks grounding (Zeus founding + Victron control) ---
+    from interaction_profile_validate import network_name_grounded_in_corpus
+
+    zeus_net_excerpts = [
+        {
+            "text": (
+                "NMEA 2000 backbone connection. CZone Digital switching. "
+                "Bluetooth pairing with the mobile app."
+            )
+        }
+    ]
+    check(
+        network_name_grounded_in_corpus("MasterBus", ["NMEA 2000 CZone Bluetooth"])
+        is False,
+        "MasterBus must not ground in Zeus-like corpus",
+    )
+    check(
+        network_name_grounded_in_corpus(
+            "VE.Direct", ["VE.Direct port connection to a GX device"]
+        )
+        is True,
+        "VE.Direct must ground when named in excerpts",
+    )
+    zeus_leak = {
+        "device": {
+            "manufacturer": "B&G",
+            "model": "Zeus SR",
+            "category_freeform": "display unit",
+        },
+        "control_surfaces": [
+            {
+                "surface": "touchscreen",
+                "location_class": "on_device",
+                "optional_accessory": False,
+                "label_verbatim": "Touchscreen",
+                "path": "control_surfaces[0]",
+            }
+        ],
+        "operator_actions": [],
+        "networks": {
+            "speaks": [
+                {"name_verbatim": "NMEA 2000", "physical_or_wireless": "wired"},
+                {"name_verbatim": "MasterBus", "physical_or_wireless": "wired"},
+                {"name_verbatim": "CZone", "physical_or_wireless": "wired"},
+                {"name_verbatim": "VE.Direct", "physical_or_wireless": "wired"},
+                {"name_verbatim": "Bluetooth", "physical_or_wireless": "wireless"},
+            ],
+            "bridges": [
+                {"from": "MasterBus", "to": "CZone"},
+            ],
+        },
+        "data_roles": {
+            "exposes_data_to_network": True,
+            "displays_data_from_other_devices": True,
+            "controllable_from_network": True,
+        },
+        "requires_devices": [],
+        "safety_role": {
+            "is_protective_device": False,
+            "has_manual_override": False,
+            "has_emergency_procedure": False,
+        },
+        "protected_by": [],
+        "protects": [],
+        "supply_requirements": [],
+        "evidence": [
+            {
+                "supports_field": "data_roles.exposes_data_to_network",
+                "manual_section": "NMEA 2000",
+                "note": "Unit speaks on the backbone",
+            },
+            {
+                "supports_field": "data_roles.displays_data_from_other_devices",
+                "manual_section": "Connected devices",
+                "note": "Shows data from connected sensors",
+            },
+            {
+                "supports_field": "data_roles.controllable_from_network",
+                "manual_section": "CZone Digital switching",
+                "note": "CZone control from the display",
+            },
+        ],
+        "confidence": {"overall": 0.7, "notes": ""},
+    }
+    zeus_ann = validate_interaction_profile(zeus_leak, excerpts=zeus_net_excerpts)
+    kept_speaks = {
+        str(s.get("name_verbatim") or "")
+        for s in ((zeus_ann.get("networks") or {}).get("speaks") or [])
+        if isinstance(s, dict)
+    }
+    check(
+        "MasterBus" not in kept_speaks and "VE.Direct" not in kept_speaks,
+        f"ungrounded MasterBus/VE.Direct must be dropped; kept {kept_speaks}",
+    )
+    check(
+        {"NMEA 2000", "CZone", "Bluetooth"} <= kept_speaks,
+        f"grounded speaks must remain; kept {kept_speaks}",
+    )
+    check(
+        not ((zeus_ann.get("networks") or {}).get("bridges") or []),
+        "ungrounded MasterBus bridge must be dropped",
+    )
+    check(
+        "fewshot_leakage" in validation_flag_names(zeus_ann),
+        "ungrounded speaks must flag fewshot_leakage warning",
+    )
+    check(
+        zeus_ann.get("needs_rextraction") is False,
+        "repaired speak leakage must not set needs_rextraction",
+    )
+    # Existing Zeus leak note is also polarity-inverted (controls others).
+    check(
+        (zeus_ann.get("data_roles") or {}).get("controllable_from_network") is False,
+        "Zeus CZone-control-from-display note must clear controllable_from_network",
+    )
+    check(
+        "data_role_polarity" in validation_flag_names(zeus_ann),
+        "Zeus inverted controllable evidence must flag data_role_polarity",
+    )
+
+    # --- v4.26: data_roles controllable_from_network polarity ---
+    from interaction_profile_validate import controllable_evidence_is_controls_others
+
+    check(
+        controllable_evidence_is_controls_others(
+            "Control devices via the CZone network",
+            "CZone Digital switching Controller",
+        )
+        is True,
+        "Zeus founding note must classify as controls-others",
+    )
+    check(
+        controllable_evidence_is_controls_others(
+            "configure charger via VictronConnect app",
+            "VictronConnect",
+        )
+        is False,
+        "VictronConnect this-unit note must not classify as controls-others",
+    )
+    zeus_polarity = {
+        "device": {
+            "manufacturer": "B&G",
+            "model": "Zeus SR",
+            "category_freeform": "display unit",
+        },
+        "control_surfaces": [
+            {
+                "surface": "touchscreen",
+                "location_class": "on_device",
+                "optional_accessory": False,
+                "label_verbatim": "Touchscreen",
+                "path": "control_surfaces[0]",
+            }
+        ],
+        "operator_actions": [],
+        "networks": {
+            "speaks": [
+                {"name_verbatim": "NMEA 2000", "physical_or_wireless": "wired"},
+                {"name_verbatim": "CZone", "physical_or_wireless": "wired"},
+            ],
+            "bridges": [],
+        },
+        "data_roles": {
+            "exposes_data_to_network": False,
+            "displays_data_from_other_devices": True,
+            "controllable_from_network": True,
+        },
+        "requires_devices": [],
+        "safety_role": {
+            "is_protective_device": False,
+            "has_manual_override": False,
+            "has_emergency_procedure": False,
+        },
+        "protected_by": [],
+        "protects": [],
+        "supply_requirements": [],
+        "evidence": [
+            {
+                "supports_field": "data_roles.displays_data_from_other_devices",
+                "manual_section": "CONNECTED DEVICES",
+                "note": "Shows status from connected sensors",
+            },
+            {
+                "supports_field": "data_roles.controllable_from_network",
+                "manual_section": "CZone Digital switching Controller",
+                "note": "Control devices via the CZone network",
+            },
+        ],
+        "confidence": {"overall": 0.8, "notes": ""},
+    }
+    zeus_pol_ann = validate_interaction_profile(zeus_polarity, excerpts=[])
+    check(
+        (zeus_pol_ann.get("data_roles") or {}).get("controllable_from_network")
+        is False,
+        "Zeus founding: controllable_from_network must clear to false",
+    )
+    check(
+        (zeus_pol_ann.get("data_roles") or {}).get("displays_data_from_other_devices")
+        is True,
+        "Zeus founding: displays_data_from_other_devices must remain true",
+    )
+    check(
+        "data_role_polarity" in validation_flag_names(zeus_pol_ann),
+        "Zeus founding must flag data_role_polarity warning",
+    )
+    check(
+        zeus_pol_ann.get("needs_rextraction") is False,
+        "data_role_polarity repair must not set needs_rextraction",
+    )
+    check(
+        stage15_gate_passes(zeus_pol_ann) is True,
+        "cleared polarity must still pass stage15_gate_passes",
+    )
+    pol_paths = {
+        str(e.get("supports_field") or "")
+        for e in (zeus_pol_ann.get("evidence") or [])
+        if isinstance(e, dict)
+    }
+    check(
+        "data_roles.controllable_from_network" not in pol_paths,
+        "inverted controllable evidence must be dropped",
+    )
+
+    victron_ok = {
+        "device": {
+            "manufacturer": "Victron",
+            "model": "SmartSolar",
+            "category_freeform": "MPPT solar charger",
+        },
+        "control_surfaces": [
+            {
+                "surface": "mobile_app_bluetooth",
+                "location_class": "wireless",
+                "optional_accessory": False,
+                "label_verbatim": "VictronConnect",
+                "path": "control_surfaces[0]",
+            }
+        ],
+        "operator_actions": [],
+        "networks": {
+            "speaks": [
+                {"name_verbatim": "Bluetooth", "physical_or_wireless": "wireless"},
+            ],
+            "bridges": [],
+        },
+        "data_roles": {
+            "exposes_data_to_network": True,
+            "displays_data_from_other_devices": False,
+            "controllable_from_network": True,
+        },
+        "requires_devices": [],
+        "safety_role": {
+            "is_protective_device": False,
+            "has_manual_override": False,
+            "has_emergency_procedure": False,
+        },
+        "protected_by": [],
+        "protects": [],
+        "supply_requirements": [],
+        "evidence": [
+            {
+                "supports_field": "data_roles.exposes_data_to_network",
+                "manual_section": "Bluetooth",
+                "note": "Charger publishes status over Bluetooth",
+            },
+            {
+                "supports_field": "data_roles.controllable_from_network",
+                "manual_section": "VictronConnect",
+                "note": "configure charger via VictronConnect app",
+            },
+        ],
+        "confidence": {"overall": 0.8, "notes": ""},
+    }
+    victron_ann = validate_interaction_profile(victron_ok, excerpts=[])
+    check(
+        (victron_ann.get("data_roles") or {}).get("controllable_from_network") is True,
+        "Victron this-unit app control must keep controllable_from_network",
+    )
+    check(
+        "data_role_polarity" not in validation_flag_names(victron_ann),
+        "Victron this-unit note must not flag data_role_polarity",
+    )
+
+    # --- v4.27: evidence note better-matches a different action ---
+    from interaction_profile_validate import evidence_action_support_mismatch
+
+    mismatch_profile = {
+        "operator_actions": [
+            {
+                "action": "turn off the device",
+                "audience": "operator",
+                "context": "situational",
+            },
+            {
+                "action": (
+                    "complete initial setup for Language, Country selection, "
+                    "Time zone, and Boat network"
+                ),
+                "audience": "operator",
+                "context": "commissioning",
+            },
+            {
+                "action": "view alert messages",
+                "audience": "operator",
+                "context": "daily",
+            },
+        ],
+    }
+    check(
+        evidence_action_support_mismatch(
+            mismatch_profile,
+            note="Initial setup steps for first use",
+            section="FIRST STARTUP",
+            linked_action="turn off the device",
+        )
+        is not None
+        and "initial setup"
+        in (
+            evidence_action_support_mismatch(
+                mismatch_profile,
+                note="Initial setup steps for first use",
+                section="FIRST STARTUP",
+                linked_action="turn off the device",
+            )
+            or ""
+        ),
+        "scrambled setup note must better-match initial-setup action",
+    )
+    check(
+        evidence_action_support_mismatch(
+            mismatch_profile,
+            note="Initial setup steps for first use",
+            section="FIRST STARTUP",
+            linked_action=(
+                "complete initial setup for Language, Country selection, "
+                "Time zone, and Boat network"
+            ),
+        )
+        is None,
+        "correctly paired setup evidence must not flag mismatch",
+    )
+    scrambled = {
+        "device": {
+            "manufacturer": "B&G",
+            "model": "Zeus SR",
+            "category_freeform": "display",
+        },
+        "control_surfaces": [],
+        "operator_actions": mismatch_profile["operator_actions"],
+        "networks": {"speaks": [], "bridges": []},
+        "data_roles": {
+            "exposes_data_to_network": False,
+            "displays_data_from_other_devices": False,
+            "controllable_from_network": False,
+        },
+        "requires_devices": [],
+        "safety_role": {
+            "is_protective_device": False,
+            "has_manual_override": False,
+            "has_emergency_procedure": False,
+        },
+        "protected_by": [],
+        "protects": [],
+        "supply_requirements": [],
+        "evidence": [
+            {
+                "supports_field": "operator_actions[action=turn off the device]",
+                "manual_section": "FIRST STARTUP",
+                "note": "Initial setup steps for first use",
+            }
+        ],
+        "confidence": {"overall": 0.7, "notes": ""},
+    }
+    scrambled_ann = validate_interaction_profile(scrambled, excerpts=[])
+    check(
+        "evidence_support_mismatch" in validation_flag_names(scrambled_ann),
+        "scrambled supports_field/note must flag evidence_support_mismatch",
+    )
+    check(
+        scrambled_ann.get("needs_rextraction") is False,
+        "evidence_support_mismatch must be warning only",
     )
 
     if failures:

@@ -31,6 +31,8 @@ _PAGE_HEADER = re.compile(
     r"User and Installation Manual\s+\d+\s*$",
     re.I,
 )
+# UI-diagram callout captions often start with a lone letter then a label.
+# Detected in is_diagram_callout_line via leading single-letter tokens.
 
 # Excerpt body cap — prefer cutting at a line boundary so headings are not
 # truncated mid-word (e.g. "6.2 HOW TO SE" from a 1200-char hard clip).
@@ -133,9 +135,39 @@ def load_manual_chunk_inventory(manual_ids: list[str]) -> list[dict[str, Any]]:
                 "page_end": int(page_end) if page_end not in (None, "") else None,
                 "text": english,
                 "headings": extract_headings_from_text(english),
+                "source_heading_guess": guess_source_heading(english),
             }
         )
+    carry_forward_source_headings(inventory)
     return inventory
+
+
+def is_diagram_callout_line(line: str) -> bool:
+    """True for UI-figure callout labels (letter keys), not section titles.
+
+    Founding shape (MFD manuals): page opens with ``D E`` / ``D E H I J…`` or
+    ``I Alerts Select to…`` while the real heading sits on the prior page.
+    """
+    s = (line or "").strip()
+    if not s:
+        return False
+    toks = s.split()
+    if not toks:
+        return False
+    # Pure letter run: "D E", "A B C D".
+    if 1 <= len(toks) <= 16 and all(len(t) == 1 and t.isalpha() for t in toks):
+        return True
+    # Leading callout letters (2+) then caption body.
+    i = 0
+    while i < len(toks) and len(toks[i]) == 1 and toks[i].isalpha():
+        i += 1
+    if i >= 2:
+        return True
+    # Single leading callout letter + caption ("A Power off", "B Sleep mode",
+    # "I Alerts Select…"). Lone-letter prefixes are figure keys, not titles.
+    if i == 1 and len(toks) >= 2:
+        return True
+    return False
 
 
 def _is_junk_heading_line(line: str) -> bool:
@@ -150,7 +182,26 @@ def _is_junk_heading_line(line: str) -> bool:
         return True
     if re.match(r"^\d+\s+Mass Combi", cleaned, re.I):
         return True
+    if is_diagram_callout_line(cleaned):
+        return True
     return False
+
+
+def heading_guess_is_usable(heading: str | None) -> bool:
+    """True when a heading guess is safe to keep / carry forward."""
+    s = (heading or "").strip()
+    if not s:
+        return False
+    if _is_junk_heading_line(s):
+        return False
+    toks = s.split()
+    if len(toks) > 12:
+        return False
+    if re.search(r"[.!?]\s*$", s) and len(toks) > 6:
+        return False
+    if re.search(r"(?i)\b(select to|including|your display has)\b", s):
+        return False
+    return True
 
 
 def extract_headings_from_text(text: str) -> list[str]:
@@ -186,7 +237,7 @@ def extract_headings_from_text(text: str) -> list[str]:
 
 
 def guess_source_heading(text: str) -> str | None:
-    """Heading guess that skips TOC crumbs and joins truncated first lines."""
+    """Heading guess that skips TOC crumbs, callouts, and joins truncated lines."""
     lines = [
         ln.strip().lstrip("#").strip()
         for ln in text.splitlines()
@@ -199,6 +250,18 @@ def guess_source_heading(text: str) -> str | None:
         if _is_junk_heading_line(line):
             continue
         if _NUMBERED_HEADING.match(line):
+            return line[:200]
+    # Prefer short ALL-CAPS section titles (common in MFD manuals).
+    for line in lines:
+        if _is_junk_heading_line(line):
+            continue
+        words = line.split()
+        if (
+            line.isupper()
+            and 2 <= len(words) <= 8
+            and not line.startswith("AC ")
+            and heading_guess_is_usable(line)
+        ):
             return line[:200]
     for i, line in enumerate(lines):
         if _is_junk_heading_line(line):
@@ -213,9 +276,65 @@ def guess_source_heading(text: str) -> str | None:
             nxt = lines[i + 1]
             if not _is_junk_heading_line(nxt):
                 joined = f"{line} {nxt}".strip()
-                return joined[:200]
-        return line[:200]
+                if heading_guess_is_usable(joined):
+                    return joined[:200]
+        if heading_guess_is_usable(line):
+            return line[:200]
     return None
+
+
+def carry_forward_source_headings(
+    items: list[dict[str, Any]],
+    *,
+    text_key: str = "text",
+    heading_key: str = "source_heading_guess",
+) -> list[dict[str, Any]]:
+    """Fill missing/junk heading guesses from the prior page's good title.
+
+    Walks per-manual in page order so a figure page that opens with callout
+    letters inherits the section title from the preceding page/chunk.
+    """
+    if not items:
+        return items
+
+    def _page_key(item: dict[str, Any]) -> tuple[Any, ...]:
+        ps = item.get("page_start")
+        pe = item.get("page_end")
+        try:
+            ps_n = int(ps) if ps not in (None, "") else 10**9
+        except (TypeError, ValueError):
+            ps_n = 10**9
+        try:
+            pe_n = int(pe) if pe not in (None, "") else ps_n
+        except (TypeError, ValueError):
+            pe_n = ps_n
+        return (ps_n, pe_n)
+
+    by_manual: dict[str, list[tuple[int, dict[str, Any]]]] = {}
+    for idx, item in enumerate(items):
+        if not isinstance(item, dict):
+            continue
+        mid = str(item.get("manual_id") or "")
+        by_manual.setdefault(mid, []).append((idx, item))
+
+    for group in by_manual.values():
+        ordered = sorted(group, key=lambda pair: (_page_key(pair[1]), pair[0]))
+        last_good: str | None = None
+        for _idx, item in ordered:
+            text = str(item.get(text_key) or "")
+            guess = guess_source_heading(text)
+            existing = str(item.get(heading_key) or "").strip() or None
+            candidate = guess if heading_guess_is_usable(guess) else None
+            if candidate is None and heading_guess_is_usable(existing):
+                candidate = existing
+            if candidate is not None:
+                item[heading_key] = candidate
+                last_good = candidate
+            elif last_good:
+                item[heading_key] = last_good
+            else:
+                item[heading_key] = guess or existing or None
+    return items
 
 
 def inventory_heading_list(inventory: list[dict[str, Any]]) -> list[str]:
@@ -452,4 +571,5 @@ def retrieve_manual_excerpts_with_diagnostics(
             },
         }
     )
+    carry_forward_source_headings(excerpts)
     return excerpts, query_diagnostics, coverage

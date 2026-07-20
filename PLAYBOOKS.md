@@ -59,8 +59,10 @@ routing miss as an extraction-model defect.
 ### D. Adjudicate and repair narrowly
 
 - [ ] Classify each inventory item as genuine operator content,
-      installer/reference-only, structural noise, alternative, or true
-      extraction omission.
+      installer/reference-only, structural noise, alternative, true
+      extraction omission, or **other-variant out of scope**
+      (`not_applicable:other_variant` — shared manual content scoped only to
+      sibling models).
 - [ ] Record the rule and rationale in the accounting trail.
 - [ ] Enable targeted repair only for reviewed defect ids/classes.
 - [ ] Group retries by source excerpt; name the missing fact and excerpt in the
@@ -373,7 +375,7 @@ From `backend/`:
 
 | Role | Path |
 |------|------|
-| Spec tip | `backend/equipment-classification-spec-v4.8.md` |
+| Spec tip | `backend/equipment-classification-spec-v4.34.md` (tip chain; Electrical v4.35 ACR) |
 | Pipeline plan | `backend/guide-pipeline-plan.md` |
 | Fixture policy | `backend/tests/fixtures/POLICY.md` |
 | Extract → scratch | `backend/scripts/extract_interaction_profile.py` |
@@ -381,6 +383,9 @@ From `backend/`:
 | Instability triage | `backend/scripts/report_instability_triage.py` |
 | Evidence attachment | `backend/vessel_evidence.py`, `scripts/verify_evidence_unattached.py` |
 | Solar compose / criteria | `backend/guide_section_solar.py`, `scripts/draft_solar_section.py` |
+| Controls compose / criteria | `backend/guide_section_controls.py`, `scripts/draft_controls_section.py` |
+| Batteries compose / criteria | `backend/guide_section_batteries.py`, `scripts/draft_batteries_section.py` |
+| Electrical compose / criteria | `backend/guide_section_electrical.py`, `scripts/draft_electrical_section.py` |
 | Vessel reconcile | `backend/scripts/generate_outremer_reconciliation_report.py`, `fixtures/pipeline/outremer/` |
 | Defect ↔ golden pair | `tests/fixtures/stage15_defective_extraction.json` ↔ `smartsolar_corrected_extraction.json` |
 | Owners | `.github/CODEOWNERS` |

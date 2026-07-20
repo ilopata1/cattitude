@@ -1,0 +1,30 @@
+#Standard framing for review round feedback
+Review feedback on [SECTION] v[N].
+
+For each item below, first CLASSIFY it: rule change (composition/
+rendering layer), fact query (missing or unverified source data), or
+one-off content fix. Then act per class:
+- Rule change: fix the rule, not the draft file. Name the rule or
+  template changed, and add/extend a fixture or evaluation criterion
+  so it can't regress.
+- Fact query: check the sources; if the fact exists, use it with
+  citation; if not, queue the query and render without it — never
+  invent.
+- One-off fix: only with stated justification for why no rule is
+  warranted.
+
+Before implementing anything, check each item against existing spec
+policy; report collisions rather than silently resolving them.
+
+Return a DISPOSITION TABLE — one row per item: classification,
+action taken (rule changed / fact found / queued / rejected-why).
+A response without the disposition table is incomplete and will be
+rejected without review.
+
+Any global-rule change re-runs all frozen sections as regressions;
+report each frozen section's result explicitly (pass / what broke).
+
+Re-render; show the new version, the provenance map, and the
+rule-change list.
+
+[items]

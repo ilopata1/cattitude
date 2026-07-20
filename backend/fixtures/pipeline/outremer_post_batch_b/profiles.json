@@ -286,71 +286,6 @@
     },
     "source": "stub"
   },
-  "ml_switch": {
-    "device": {
-      "manufacturer": "Blue Sea",
-      "model": "ML-Series",
-      "category_freeform": "ML-Series battery switch isolation"
-    },
-    "control_surfaces": [
-      {
-        "surface": "physical_controls",
-        "location_class": "on_device",
-        "optional_accessory": false,
-        "label_verbatim": "manual override",
-        "path": "control_surfaces[0]"
-      },
-      {
-        "surface": "other",
-        "location_class": "remote_wired",
-        "optional_accessory": false,
-        "label_verbatim": "remote coil / MagaSwitch",
-        "path": "control_surfaces[1]"
-      }
-    ],
-    "operator_actions": [
-      {
-        "action": "manually override ML switch",
-        "audience": "operator",
-        "context": "emergency"
-      }
-    ],
-    "networks": {
-      "speaks": [],
-      "bridges": []
-    },
-    "data_roles": {
-      "exposes_data_to_network": false,
-      "displays_data_from_other_devices": false,
-      "controllable_from_network": false
-    },
-    "requires_devices": [],
-    "safety_role": {
-      "is_protective_device": true,
-      "has_manual_override": true,
-      "has_emergency_procedure": true
-    },
-    "protected_by": [],
-    "protects": [],
-    "supply_requirements": [],
-    "evidence": [
-      {
-        "supports_field": "device.model",
-        "manual_section": "operator",
-        "note": "manual override for isolation"
-      },
-      {
-        "supports_field": "control_surfaces[1]",
-        "manual_section": "operator",
-        "note": "remote coil commanded via BMS chain"
-      }
-    ],
-    "confidence": {
-      "overall": 0.9,
-      "notes": ""
-    },
-    "source": "stub"
-  },
   "plain_battery_switch": {
     "device": {
       "manufacturer": "generic",
@@ -2211,19 +2146,31 @@
         "context": "daily"
       },
       {
-        "action": "press desired circuit to open controls",
+        "action": "press desired circuit",
         "audience": "operator",
-        "context": "daily"
+        "context": "daily",
+        "options": [
+          "open controls",
+          "open up controls on control pane"
+        ]
       },
       {
-        "action": "press desired alarm to open details",
+        "action": "press desired alarm",
         "audience": "operator",
-        "context": "daily"
+        "context": "daily",
+        "options": [
+          "open details",
+          "open up alarm details on alarm pane"
+        ]
       },
       {
-        "action": "press desired meter to open data",
+        "action": "press desired meter",
         "audience": "operator",
-        "context": "daily"
+        "context": "daily",
+        "options": [
+          "open data",
+          "open up associated data on monitoring pane"
+        ]
       },
       {
         "action": "press filter button to select category",
@@ -2267,10 +2214,14 @@
         "source": "extracted"
       },
       {
-        "action": "Ambient temperature is shown in white, and changes to blue when",
+        "action": "Ambient temperature is shown in white, and changes",
         "audience": "operator",
         "context": "daily",
-        "source": "extracted"
+        "source": "extracted",
+        "options": [
+          "blue when",
+          "blue when adjusting setpoint"
+        ]
       },
       {
         "action": "Press Fan Down button to adjust fan speed down",
@@ -2291,13 +2242,155 @@
         "source": "extracted"
       },
       {
-        "action": "Ambient temperature is shown in white, and changes to blue when adjusting setpoint",
+        "action": "Current fan speed is shown",
         "audience": "operator",
         "context": "daily",
         "source": "extracted"
       },
       {
-        "action": "Current fan speed is shown",
+        "action": "activate Mode by holding the desired Mode for half a second",
+        "audience": "operator",
+        "context": "situational",
+        "source": "extracted"
+      },
+      {
+        "action": "switch individual circuits by pressing the button once",
+        "audience": "operator",
+        "context": "daily",
+        "source": "extracted"
+      },
+      {
+        "action": "press the button",
+        "audience": "operator",
+        "context": "daily",
+        "source": "extracted",
+        "options": [
+          "turn the circuit ON and OFF",
+          "adjust the meter or mimic"
+        ]
+      },
+      {
+        "action": "open alarm details",
+        "audience": "operator",
+        "context": "daily",
+        "source": "extracted"
+      },
+      {
+        "action": "filter by History",
+        "audience": "operator",
+        "context": "daily",
+        "source": "extracted"
+      },
+      {
+        "action": "acknowledge popup",
+        "audience": "operator",
+        "context": "emergency",
+        "source": "extracted"
+      },
+      {
+        "action": "open controls on control pane",
+        "audience": "operator",
+        "context": "situational",
+        "source": "extracted"
+      },
+      {
+        "action": "filter down circuit list",
+        "audience": "operator",
+        "context": "situational",
+        "source": "extracted"
+      },
+      {
+        "action": "open associated data on monitoring pane",
+        "audience": "operator",
+        "context": "situational",
+        "source": "extracted"
+      },
+      {
+        "action": "filter monitoring category",
+        "audience": "operator",
+        "context": "situational",
+        "source": "extracted"
+      },
+      {
+        "action": "To activate a Mode hold the desired Mode for half a second, while the button is illuminating white",
+        "audience": "operator",
+        "context": "situational",
+        "source": "extracted"
+      },
+      {
+        "action": "Press a single-throw switch once to turn the circuit ON and again to turn it OFF",
+        "audience": "operator",
+        "context": "daily",
+        "source": "extracted"
+      },
+      {
+        "action": "Press a Favourites meter to open a slide-out with additional monitored fields",
+        "audience": "operator",
+        "context": "daily",
+        "source": "extracted"
+      },
+      {
+        "action": "Press a mimic indicator to open a slide-out panel for circuit control and associated monitoring data",
+        "audience": "operator",
+        "context": "daily",
+        "source": "extracted"
+      },
+      {
+        "action": "Press desired Mode to open up controls on the control pane",
+        "audience": "operator",
+        "context": "situational",
+        "source": "extracted"
+      },
+      {
+        "action": "Press the switch to activate Mode",
+        "audience": "operator",
+        "context": "situational",
+        "source": "extracted"
+      },
+      {
+        "action": "Select a circuit category to filter down circuit list",
+        "audience": "operator",
+        "context": "daily",
+        "source": "extracted"
+      },
+      {
+        "action": "Select a monitoring category to filter down list",
+        "audience": "operator",
+        "context": "daily",
+        "source": "extracted"
+      },
+      {
+        "action": "Filter by History to see alarm history",
+        "audience": "operator",
+        "context": "situational",
+        "source": "extracted"
+      },
+      {
+        "action": "Press acknowledge to close the Critical, Important or Standard alarm popup",
+        "audience": "operator",
+        "context": "situational",
+        "source": "extracted"
+      },
+      {
+        "action": "Press desired circuit to open up controls on control pane",
+        "audience": "operator",
+        "context": "daily",
+        "source": "extracted"
+      },
+      {
+        "action": "Press desired meter to open up associated data on monitoring pane",
+        "audience": "operator",
+        "context": "daily",
+        "source": "extracted"
+      },
+      {
+        "action": "Press desired alarm to open up alarm details on alarm pane",
+        "audience": "operator",
+        "context": "daily",
+        "source": "extracted"
+      },
+      {
+        "action": "Ambient temperature is shown in white, and changes to blue when adjusting setpoint",
         "audience": "operator",
         "context": "daily",
         "source": "extracted"
@@ -2364,44 +2457,29 @@
     "supply_requirements": [],
     "evidence": [
       {
-        "supports_field": "ui_pages[0].purpose",
-        "manual_section": "CZONE 2.0 INTRODUCTION",
-        "note": "common items are pre-configured for easy access"
-      },
-      {
-        "supports_field": "ui_pages[1].purpose",
-        "manual_section": "MODES PAGE",
-        "note": "control multiple circuits with a single touch"
-      },
-      {
-        "supports_field": "ui_pages[2].purpose",
-        "manual_section": "CONTROL PAGE",
-        "note": "list of configured circuits"
-      },
-      {
-        "supports_field": "operator_actions[0].action",
+        "supports_field": "operator_actions[action=tap the menu to access pages].action",
         "manual_section": "THE MENU",
         "note": "tap the menu to access pages"
       },
       {
-        "supports_field": "operator_actions[1].action",
+        "supports_field": "operator_actions[action=press desired circuit].action",
         "manual_section": "CONTROL PAGE",
         "note": "press desired circuit to open controls"
       },
       {
-        "supports_field": "operator_actions[2].action",
-        "manual_section": "ALARMS PAGE",
-        "note": "press desired alarm to open details"
+        "supports_field": "requires_devices[0]",
+        "manual_section": "AC Mains",
+        "note": "Page appears when AC Mains Interface (ACMI) is configured"
       },
       {
-        "supports_field": "operator_actions[3].action",
-        "manual_section": "MONITORING PAGE",
-        "note": "press desired meter to open data"
+        "supports_field": "requires_devices[1]",
+        "manual_section": "Inverter Charger",
+        "note": "Page appears when Mastervolt Chargers is configured"
       },
       {
-        "supports_field": "operator_actions[4].action",
-        "manual_section": "FAVOURITES PAGES",
-        "note": "press filter button to select category"
+        "supports_field": "requires_devices[4]",
+        "manual_section": "Climate",
+        "note": "Page appears when supported air conditioner (HVAC) is configured"
       }
     ],
     "confidence": {
@@ -2416,15 +2494,41 @@
     "ui_pages": [
       {
         "name": "Favourites",
-        "purpose": "common items are pre-configured for easy access",
-        "actions": []
+        "purpose": "Navigation of important information and controls",
+        "actions": [
+          {
+            "action": "To activate a Mode hold the desired Mode for half a second, while the button is illuminating white",
+            "audience": "operator",
+            "context": "situational"
+          },
+          {
+            "action": "Press a single-throw switch once to turn the circuit ON and again to turn it OFF",
+            "audience": "operator",
+            "context": "daily"
+          },
+          {
+            "action": "Press a Favourites meter to open a slide-out with additional monitored fields",
+            "audience": "operator",
+            "context": "daily"
+          },
+          {
+            "action": "Press a mimic indicator to open a slide-out panel for circuit control and associated monitoring data",
+            "audience": "operator",
+            "context": "daily"
+          }
+        ]
       },
       {
         "name": "Modes",
         "purpose": "control multiple circuits with a single touch",
         "actions": [
           {
-            "action": "activate Mode",
+            "action": "Press desired Mode to open up controls on the control pane",
+            "audience": "operator",
+            "context": "situational"
+          },
+          {
+            "action": "Press the switch to activate Mode",
             "audience": "operator",
             "context": "situational"
           }
@@ -2432,18 +2536,56 @@
       },
       {
         "name": "Control",
-        "purpose": "list of configured circuits",
-        "actions": []
+        "purpose": "manage configured circuits",
+        "actions": [
+          {
+            "action": "Press desired circuit to open up controls on control pane",
+            "audience": "operator",
+            "context": "daily"
+          },
+          {
+            "action": "Select a circuit category to filter down circuit list",
+            "audience": "operator",
+            "context": "daily"
+          }
+        ]
       },
       {
         "name": "Monitoring",
-        "purpose": "list of configured meters",
-        "actions": []
+        "purpose": "view and manage configured meters",
+        "actions": [
+          {
+            "action": "Press desired meter to open up associated data on monitoring pane",
+            "audience": "operator",
+            "context": "daily"
+          },
+          {
+            "action": "Select a monitoring category to filter down list",
+            "audience": "operator",
+            "context": "daily"
+          }
+        ]
       },
       {
         "name": "Alarms",
-        "purpose": "list of active and historic alarms",
-        "actions": []
+        "purpose": "monitor and manage alarms",
+        "actions": [
+          {
+            "action": "Press desired alarm to open up alarm details on alarm pane",
+            "audience": "operator",
+            "context": "daily"
+          },
+          {
+            "action": "Filter by History to see alarm history",
+            "audience": "operator",
+            "context": "situational"
+          },
+          {
+            "action": "Press acknowledge to close the Critical, Important or Standard alarm popup",
+            "audience": "operator",
+            "context": "situational"
+          }
+        ]
       },
       {
         "name": "AC Mains",
@@ -2541,39 +2683,1567 @@
       }
     ],
     "source": "live_extraction",
-    "validation_flags": [
-      {
-        "flag": "evidence_incomplete",
-        "severity": "blocking",
-        "detail": "no evidence entry supports requires_devices[0]",
-        "field_path": "requires_devices[0]"
-      },
-      {
-        "flag": "evidence_incomplete",
-        "severity": "blocking",
-        "detail": "no evidence entry supports requires_devices[1]",
-        "field_path": "requires_devices[1]"
-      },
-      {
-        "flag": "evidence_incomplete",
-        "severity": "blocking",
-        "detail": "no evidence entry supports requires_devices[2]",
-        "field_path": "requires_devices[2]"
-      },
-      {
-        "flag": "evidence_incomplete",
-        "severity": "blocking",
-        "detail": "no evidence entry supports requires_devices[3]",
-        "field_path": "requires_devices[3]"
-      },
-      {
-        "flag": "evidence_incomplete",
-        "severity": "blocking",
-        "detail": "no evidence entry supports requires_devices[4]",
-        "field_path": "requires_devices[4]"
-      }
-    ],
+    "validation_flags": [],
     "repairs": [],
     "needs_rextraction": false
+  },
+  "bg_zeus_sr": {
+    "device": {
+      "manufacturer": "B&G",
+      "model": "Zeus SR",
+      "category_freeform": "display"
+    },
+    "control_surfaces": [
+      {
+        "surface": "touchscreen",
+        "location_class": "on_device",
+        "optional_accessory": false,
+        "label_verbatim": "Touchscreen",
+        "path": "control_surfaces[0]"
+      }
+    ],
+    "operator_actions": [
+      {
+        "action": "turn off the device",
+        "audience": "operator",
+        "context": "situational",
+        "source": "extracted",
+        "vote_margin": "3/3"
+      },
+      {
+        "action": "set all radars to standby",
+        "audience": "operator",
+        "context": "situational",
+        "occasion": "to place connected radars into standby",
+        "source": "extracted",
+        "vote_margin": "3/3"
+      },
+      {
+        "action": "create a MOB waypoint",
+        "audience": "operator",
+        "context": "emergency",
+        "occasion": "to mark the vessel's location in an emergency",
+        "source": "extracted",
+        "vote_margin": "3/3"
+      },
+      {
+        "action": "connect to mobile app",
+        "audience": "operator",
+        "context": "situational",
+        "source": "extracted",
+        "vote_margin": "3/3",
+        "occasion": "to connect your mobile device to the unit"
+      },
+      {
+        "action": "complete initial setup for Language, Country selection, Time zone, and Boat network",
+        "audience": "operator",
+        "context": "commissioning",
+        "occasion": "When starting the unit for the first time",
+        "source": "extracted",
+        "vote_margin": "1/3"
+      },
+      {
+        "action": "view alert messages",
+        "audience": "operator",
+        "context": "daily",
+        "source": "extracted",
+        "vote_margin": "2/3"
+      },
+      {
+        "action": "manage alert rules",
+        "audience": "operator",
+        "context": "situational",
+        "source": "extracted"
+      },
+      {
+        "action": "fit the sun cover to shield the display",
+        "audience": "operator",
+        "context": "maintenance",
+        "occasion": "to extend the service life of the display",
+        "source": "extracted"
+      },
+      {
+        "action": "clean the screen with a soft microfiber or cotton cloth",
+        "audience": "operator",
+        "context": "maintenance",
+        "occasion": "to maintain its clarity and durability",
+        "source": "extracted"
+      },
+      {
+        "action": "update the unit software via the mobile app",
+        "audience": "operator",
+        "context": "maintenance",
+        "occasion": "when connected to the internet",
+        "source": "extracted"
+      },
+      {
+        "action": "create a service report",
+        "audience": "operator",
+        "context": "maintenance",
+        "occasion": "to support technical troubleshooting",
+        "source": "extracted",
+        "vote_margin": "2/3"
+      },
+      {
+        "action": "show the control bar",
+        "audience": "operator",
+        "context": "daily",
+        "source": "extracted"
+      },
+      {
+        "action": "hide the control bar",
+        "audience": "operator",
+        "context": "daily",
+        "source": "extracted"
+      },
+      {
+        "action": "turn the unit on",
+        "audience": "operator",
+        "context": "situational",
+        "source": "extracted"
+      },
+      {
+        "action": "open quick access menu",
+        "audience": "operator",
+        "context": "daily",
+        "source": "extracted"
+      },
+      {
+        "action": "close quick access menu",
+        "audience": "operator",
+        "context": "daily",
+        "source": "extracted",
+        "vote_margin": "3/3"
+      },
+      {
+        "action": "open app drawer",
+        "audience": "operator",
+        "context": "daily",
+        "source": "extracted",
+        "vote_margin": "3/3"
+      },
+      {
+        "action": "close app drawer",
+        "audience": "operator",
+        "context": "daily",
+        "source": "extracted",
+        "vote_margin": "3/3"
+      }
+    ],
+    "networks": {
+      "speaks": [
+        {
+          "name_verbatim": "NMEA 2000",
+          "physical_or_wireless": "wired"
+        },
+        {
+          "name_verbatim": "CZone",
+          "physical_or_wireless": "wired"
+        },
+        {
+          "name_verbatim": "Bluetooth",
+          "physical_or_wireless": "wireless"
+        }
+      ],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": false,
+      "displays_data_from_other_devices": true,
+      "controllable_from_network": false
+    },
+    "requires_devices": [],
+    "safety_role": {
+      "is_protective_device": false,
+      "has_manual_override": false,
+      "has_emergency_procedure": false
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [],
+    "evidence": [
+      {
+        "supports_field": "operator_actions",
+        "manual_section": "Quick access menu",
+        "note": "Actions for accessing and closing the quick access menu"
+      },
+      {
+        "supports_field": "operator_actions[action=complete initial setup for Language, Country selection, Time zone, and Boat network]",
+        "manual_section": "FIRST STARTUP",
+        "note": "Initial setup steps for first use"
+      },
+      {
+        "supports_field": "operator_actions[action=view alert messages]",
+        "manual_section": "ALERTS",
+        "note": "Viewing alert messages on the display"
+      },
+      {
+        "supports_field": "operator_actions[action=manage alert rules]",
+        "manual_section": "Manage alert rules",
+        "note": "Editing and creating alert rules"
+      },
+      {
+        "supports_field": "operator_actions[action=fit the sun cover to shield the display]",
+        "manual_section": "MAINTENANCE",
+        "note": "To extend the service life of the display"
+      },
+      {
+        "supports_field": "operator_actions[action=clean the screen with a soft microfiber or cotton cloth]",
+        "manual_section": "MAINTENANCE",
+        "note": "To maintain its clarity and durability"
+      },
+      {
+        "supports_field": "data_roles.displays_data_from_other_devices",
+        "manual_section": "SCREEN LAYOUT",
+        "note": "Status bar shows data from connected devices."
+      },
+      {
+        "supports_field": "ui_pages[5]",
+        "manual_section": "CZone Digital switching Controller",
+        "note": "Control bar switches CZone devices on the network"
+      }
+    ],
+    "confidence": {
+      "overall": 0.9,
+      "notes": "[batch_0] Manual excerpts provide clear operator actions and UI details. | [batch_1] Manual excerpts provide clear operator actions and UI pages. | [batch_2] Manual excerpts provide clear operator actions and maintenance guidelines. | [batch_3] Manual excerpts primarily address operator actions."
+    },
+    "coverage": {
+      "chunk_count": 46,
+      "heading_count": 78,
+      "headings_covered_count": 66,
+      "heading_coverage_fraction": 0.8462,
+      "coverage_low_threshold": 0.25,
+      "top_k_used": 6
+    },
+    "group_utilization": [
+      {
+        "group_id": "batch_0",
+        "is_introduction": true,
+        "excerpt_count": 8,
+        "predicted_fields": [
+          "control_surfaces",
+          "evidence",
+          "operator_actions",
+          "requires_devices",
+          "supply_requirements"
+        ],
+        "contributions": {
+          "operator_actions": 4,
+          "control_surfaces": 1,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 2,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 7,
+        "unutilized": false
+      },
+      {
+        "group_id": "batch_1",
+        "is_introduction": false,
+        "excerpt_count": 8,
+        "predicted_fields": [
+          "control_surfaces",
+          "data_roles",
+          "evidence",
+          "networks",
+          "operator_actions",
+          "requires_devices",
+          "safety_role",
+          "supply_requirements"
+        ],
+        "contributions": {
+          "operator_actions": 3,
+          "control_surfaces": 1,
+          "networks": 1,
+          "requires_devices": 0,
+          "evidence": 6,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 11,
+        "unutilized": false
+      },
+      {
+        "group_id": "batch_2",
+        "is_introduction": false,
+        "excerpt_count": 8,
+        "predicted_fields": [
+          "control_surfaces",
+          "data_roles",
+          "evidence",
+          "networks",
+          "operator_actions",
+          "requires_devices"
+        ],
+        "contributions": {
+          "operator_actions": 6,
+          "control_surfaces": 1,
+          "networks": 5,
+          "requires_devices": 0,
+          "evidence": 6,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 18,
+        "unutilized": false
+      },
+      {
+        "group_id": "batch_3",
+        "is_introduction": false,
+        "excerpt_count": 8,
+        "predicted_fields": [
+          "control_surfaces",
+          "data_roles",
+          "evidence",
+          "operator_actions",
+          "protected_by",
+          "requires_devices",
+          "supply_requirements"
+        ],
+        "contributions": {
+          "operator_actions": 2,
+          "control_surfaces": 1,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 2,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 5,
+        "unutilized": false
+      }
+    ],
+    "merge_conflicts": [],
+    "genres": [
+      "commissioning",
+      "installation",
+      "operation"
+    ],
+    "entity_kind": "device",
+    "ui_pages": [
+      {
+        "name": "Quick access menu",
+        "purpose": "fast access to common system settings and features",
+        "actions": [
+          {
+            "action": "open quick access menu",
+            "audience": "operator",
+            "context": "daily"
+          },
+          {
+            "action": "close quick access menu",
+            "audience": "operator",
+            "context": "daily"
+          }
+        ]
+      },
+      {
+        "name": "App drawer",
+        "purpose": "access all apps and settings",
+        "actions": [
+          {
+            "action": "open app drawer",
+            "audience": "operator",
+            "context": "daily"
+          },
+          {
+            "action": "close app drawer",
+            "audience": "operator",
+            "context": "daily"
+          }
+        ]
+      },
+      {
+        "name": "CONNECTED DEVICES",
+        "purpose": "Configure connected devices",
+        "actions": []
+      },
+      {
+        "name": "ALERTS",
+        "purpose": "Manage alerts and notifications",
+        "actions": []
+      },
+      {
+        "name": "FIRST STARTUP",
+        "purpose": "Initial setup for the device",
+        "actions": []
+      },
+      {
+        "name": "CZone Digital switching",
+        "purpose": "Control CZone loads from the control bar and CZone app when a CZone device is on the network",
+        "appears_if_gate": {
+          "verbatim": "The control bar switches appear automatically when a CZone device is commissioned on the NMEA 2000® network.",
+          "description_verbatim": "CZone device",
+          "functional_class": ""
+        },
+        "actions": [
+          {
+            "action": "turn a CZone device on or off",
+            "audience": "operator",
+            "context": "situational",
+            "occasion": "from the control bar switches when CZone is commissioned"
+          }
+        ]
+      }
+    ],
+    "extraction_votes": [
+      {
+        "field_path": "networks.speaks",
+        "kind": "networks.speaks",
+        "attribute": "presence",
+        "chosen": null,
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 3,
+          "agree_with_chosen": 0,
+          "margin": "3/3"
+        },
+        "blocked": "ungrounded",
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "name_verbatim": "MasterBus",
+              "physical_or_wireless": "wired"
+            }
+          },
+          {
+            "run": 2,
+            "value": {
+              "name_verbatim": "MasterBus",
+              "physical_or_wireless": "wired"
+            }
+          },
+          {
+            "run": 3,
+            "value": {
+              "name_verbatim": "MasterBus",
+              "physical_or_wireless": "wired"
+            }
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "networks.speaks",
+        "kind": "networks.speaks",
+        "attribute": "presence",
+        "chosen": null,
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 3,
+          "agree_with_chosen": 0,
+          "margin": "3/3"
+        },
+        "blocked": "ungrounded",
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "name_verbatim": "VE.Direct",
+              "physical_or_wireless": "wired"
+            }
+          },
+          {
+            "run": 2,
+            "value": {
+              "name_verbatim": "VE.Direct",
+              "physical_or_wireless": "wired"
+            }
+          },
+          {
+            "run": 3,
+            "value": {
+              "name_verbatim": "VE.Direct",
+              "physical_or_wireless": "wired"
+            }
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "adjust settings for connected devices",
+          "audience": "operator",
+          "context": "daily",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 2,
+          "agree_with_chosen": 2,
+          "margin": "2/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "action": "adjust settings for connected devices",
+              "audience": "operator",
+              "context": "daily"
+            }
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "adjust settings for connected devices",
+              "audience": "operator",
+              "context": "daily"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "view details from the devices list",
+          "audience": "operator",
+          "context": "situational",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 2,
+          "agree_with_chosen": 2,
+          "margin": "2/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "action": "view details from the devices list",
+              "audience": "operator",
+              "context": "situational"
+            }
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "view details from the devices list",
+              "audience": "operator",
+              "context": "situational"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "apply damping to stabilize data",
+          "audience": "operator",
+          "context": "situational",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 2,
+          "agree_with_chosen": 2,
+          "margin": "2/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "action": "apply damping to stabilize data",
+              "audience": "operator",
+              "context": "situational"
+            }
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "apply damping to stabilize data",
+              "audience": "operator",
+              "context": "situational"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "create separate groups for devices",
+          "audience": "operator",
+          "context": "situational",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 2,
+          "agree_with_chosen": 2,
+          "margin": "2/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "action": "create separate groups for devices",
+              "audience": "operator",
+              "context": "situational"
+            }
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "create separate groups for devices",
+              "audience": "operator",
+              "context": "situational"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "view alert messages",
+          "audience": "operator",
+          "context": "daily",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 2,
+          "agree_with_chosen": 2,
+          "margin": "2/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "action": "view alert messages",
+              "audience": "operator",
+              "context": "daily"
+            }
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "view alert messages",
+              "audience": "operator",
+              "context": "daily"
+            }
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "edit and delete alert rules",
+          "audience": "operator",
+          "context": "situational",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 2,
+          "agree_with_chosen": 2,
+          "margin": "2/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "action": "edit and delete alert rules",
+              "audience": "operator",
+              "context": "situational"
+            }
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "edit and delete alert rules",
+              "audience": "operator",
+              "context": "situational"
+            }
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "set a 4-digit PIN",
+          "audience": "operator",
+          "context": "situational",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 2,
+          "agree_with_chosen": 2,
+          "margin": "2/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "action": "set a 4-digit PIN",
+              "audience": "operator",
+              "context": "situational"
+            }
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "set a 4-digit PIN",
+              "audience": "operator",
+              "context": "situational"
+            }
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "clean the display",
+          "audience": "operator",
+          "context": "maintenance",
+          "occasion": "to maintain clarity and durability",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 1,
+          "agree_with_chosen": 1,
+          "margin": "1/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "action": "clean the display",
+              "audience": "operator",
+              "context": "maintenance",
+              "occasion": "to maintain clarity and durability"
+            }
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "turn unit off",
+          "audience": "operator",
+          "context": "situational",
+          "occasion": "to shut down the unit",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 2,
+          "agree_with_chosen": 2,
+          "margin": "2/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "action": "turn unit off",
+              "audience": "operator",
+              "context": "situational",
+              "occasion": "to shut down the unit"
+            }
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "turn unit off",
+              "audience": "operator",
+              "context": "situational",
+              "occasion": "to shut down the unit"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "complete initial setup for Language, Country selection, Time zone, and Boat network",
+          "audience": "operator",
+          "context": "commissioning",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 1,
+          "agree_with_chosen": 1,
+          "margin": "1/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "complete initial setup for Language, Country selection, Time zone, and Boat network",
+              "audience": "operator",
+              "context": "commissioning"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "select Use your device now to start using the device immediately",
+          "audience": "operator",
+          "context": "commissioning",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 1,
+          "agree_with_chosen": 1,
+          "margin": "1/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "select Use your device now to start using the device immediately",
+              "audience": "operator",
+              "context": "commissioning"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "select Continue device setup to complete the device setup",
+          "audience": "operator",
+          "context": "commissioning",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 1,
+          "agree_with_chosen": 1,
+          "margin": "1/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "select Continue device setup to complete the device setup",
+              "audience": "operator",
+              "context": "commissioning"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "clean the screen",
+          "audience": "operator",
+          "context": "maintenance",
+          "occasion": "to maintain clarity and durability",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 2,
+          "agree_with_chosen": 2,
+          "margin": "2/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "clean the screen",
+              "audience": "operator",
+              "context": "maintenance",
+              "occasion": "to maintain clarity and durability"
+            }
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "clean the screen",
+              "audience": "operator",
+              "context": "maintenance",
+              "occasion": "to maintain clarity and durability"
+            }
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "create a service report",
+          "audience": "operator",
+          "context": "maintenance",
+          "occasion": "to support technical troubleshooting",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 2,
+          "agree_with_chosen": 2,
+          "margin": "2/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "create a service report",
+              "audience": "operator",
+              "context": "maintenance",
+              "occasion": "to support technical troubleshooting"
+            }
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "create service report",
+              "audience": "operator",
+              "context": "maintenance",
+              "occasion": "to support technical troubleshooting"
+            }
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "control_surfaces",
+        "kind": "control_surfaces",
+        "attribute": "presence",
+        "chosen": {
+          "surface": "touchscreen",
+          "location_class": "on_device",
+          "optional_accessory": false,
+          "label_verbatim": "General",
+          "path": "control_surfaces[2]",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 2,
+          "agree_with_chosen": 2,
+          "margin": "2/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "surface": "touchscreen",
+              "location_class": "on_device",
+              "optional_accessory": false,
+              "label_verbatim": "General",
+              "path": "control_surfaces[2]"
+            }
+          },
+          {
+            "run": 2,
+            "value": {
+              "surface": "touchscreen",
+              "location_class": "on_device",
+              "optional_accessory": false,
+              "label_verbatim": "General",
+              "path": "control_surfaces[2]"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "control_surfaces",
+        "kind": "control_surfaces",
+        "attribute": "presence",
+        "chosen": {
+          "surface": "touchscreen",
+          "location_class": "on_device",
+          "optional_accessory": false,
+          "label_verbatim": "Simulation",
+          "path": "control_surfaces[3]",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 2,
+          "agree_with_chosen": 2,
+          "margin": "2/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "surface": "touchscreen",
+              "location_class": "on_device",
+              "optional_accessory": false,
+              "label_verbatim": "Simulation",
+              "path": "control_surfaces[3]"
+            }
+          },
+          {
+            "run": 2,
+            "value": {
+              "surface": "touchscreen",
+              "location_class": "on_device",
+              "optional_accessory": false,
+              "label_verbatim": "Simulation",
+              "path": "control_surfaces[3]"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "control_surfaces",
+        "kind": "control_surfaces",
+        "attribute": "presence",
+        "chosen": {
+          "surface": "touchscreen",
+          "location_class": "on_device",
+          "optional_accessory": false,
+          "label_verbatim": "Screen Layout",
+          "path": "control_surfaces[4]",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 2,
+          "agree_with_chosen": 2,
+          "margin": "2/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "surface": "touchscreen",
+              "location_class": "on_device",
+              "optional_accessory": false,
+              "label_verbatim": "Screen Layout",
+              "path": "control_surfaces[4]"
+            }
+          },
+          {
+            "run": 2,
+            "value": {
+              "surface": "touchscreen",
+              "location_class": "on_device",
+              "optional_accessory": false,
+              "label_verbatim": "Screen Layout",
+              "path": "control_surfaces[4]"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "control_surfaces",
+        "kind": "control_surfaces",
+        "attribute": "presence",
+        "chosen": {
+          "surface": "touchscreen",
+          "location_class": "on_device",
+          "optional_accessory": false,
+          "label_verbatim": "Show Activity Bar",
+          "path": "control_surfaces[5]",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 1,
+          "agree_with_chosen": 1,
+          "margin": "1/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "surface": "touchscreen",
+              "location_class": "on_device",
+              "optional_accessory": false,
+              "label_verbatim": "Show Activity Bar",
+              "path": "control_surfaces[5]"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "requires_devices",
+        "kind": "requires_devices",
+        "attribute": "presence",
+        "chosen": {
+          "description_verbatim": "unit with physical control keys",
+          "needed_for": "control_surfaces[0]",
+          "requirement_kind": "device",
+          "source": "extracted",
+          "functional_class": "empty",
+          "gate_verbatim": "If the activity bar is visible, open the quick access menu by selecting the icon or pressing the power key once.",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 1,
+          "agree_with_chosen": 1,
+          "margin": "1/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": {
+              "description_verbatim": "unit with physical control keys",
+              "needed_for": "control_surfaces[0]",
+              "requirement_kind": "device",
+              "source": "extracted",
+              "functional_class": "empty",
+              "gate_verbatim": "If the activity bar is visible, open the quick access menu by selecting the icon or pressing the power key once."
+            }
+          }
+        ],
+        "instability_class": "cosmetic"
+      }
+    ],
+    "instability_triage": {
+      "material_count": 0,
+      "cosmetic_count": 21
+    },
+    "source": "live_extraction",
+    "repairs": [
+      {
+        "repair": "cleared_circular_occasion",
+        "flag": "occasion_circular",
+        "field_path": "operator_actions[0].occasion",
+        "original_value": "to power down the unit"
+      },
+      {
+        "repair": "cleared_circular_occasion",
+        "flag": "occasion_circular",
+        "field_path": "operator_actions[13].occasion",
+        "original_value": "to start the unit"
+      }
+    ],
+    "validation_flags": [],
+    "needs_rextraction": false
+  },
+  "blue_sea_acr": {
+    "device": {
+      "manufacturer": "Blue Sea Systems",
+      "model": "Automatic Charging Relays (ACR)",
+      "category_freeform": "Automatic Charging Relays"
+    },
+    "control_surfaces": [
+      {
+        "surface": "physical_controls",
+        "location_class": "on_device",
+        "optional_accessory": false,
+        "label_verbatim": "Manual Control Override Knob",
+        "path": "control_surfaces[0]",
+        "vote_margin": "3/3"
+      }
+    ],
+    "operator_actions": [
+      {
+        "action": "combine battery banks via Manual Control Override Knob",
+        "audience": "operator",
+        "context": "situational",
+        "occasion": "to combine battery banks when needed",
+        "vote_margin": "3/3",
+        "source": "extracted"
+      },
+      {
+        "action": "prevent remote operation via Manual Control Override Knob",
+        "audience": "operator",
+        "context": "situational",
+        "occasion": "to prevent remote operation",
+        "vote_margin": "2/3",
+        "source": "extracted"
+      },
+      {
+        "action": "secure for servicing via Manual Control Override Knob",
+        "audience": "operator",
+        "context": "maintenance",
+        "occasion": "to secure the device for servicing",
+        "vote_margin": "3/3",
+        "source": "extracted"
+      }
+    ],
+    "networks": {
+      "speaks": [],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": false,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": false
+    },
+    "requires_devices": [],
+    "safety_role": {
+      "is_protective_device": false,
+      "has_manual_override": true,
+      "has_emergency_procedure": false
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [
+      {
+        "description_verbatim": "Install a fuse in the positive DC supply cable",
+        "vote_margin": "1/3"
+      },
+      {
+        "description_verbatim": "install fuses to prevent hazards",
+        "vote_margin": "2/3"
+      }
+    ],
+    "evidence": [
+      {
+        "supports_field": "control_surfaces[0]",
+        "manual_section": "990180180 Rev.005",
+        "note": "Manual Control Override Knob operations described"
+      },
+      {
+        "supports_field": "operator_actions[action=combine battery banks via Manual Control Override Knob]",
+        "manual_section": "990180180 Rev.005",
+        "note": "Combining battery banks via the knob"
+      },
+      {
+        "supports_field": "operator_actions[action=isolate battery banks via Manual Control Override Knob]",
+        "manual_section": "990180180 Rev.005",
+        "note": "Isolating battery banks via the knob"
+      },
+      {
+        "supports_field": "operator_actions[action=prevent remote operation via Manual Control Override Knob]",
+        "manual_section": "990180180 Rev.005",
+        "note": "Preventing remote operation via the knob"
+      },
+      {
+        "supports_field": "operator_actions[action=secure for servicing via Manual Control Override Knob]",
+        "manual_section": "990180180 Rev.005",
+        "note": "Securing for servicing via the knob"
+      },
+      {
+        "supports_field": "supply_requirements[0]",
+        "manual_section": "990180180 Rev.005",
+        "note": "Fuse installation requirement stated"
+      },
+      {
+        "supports_field": "supply_requirements",
+        "manual_section": "If the ACR is not used for cross connect,",
+        "note": "Install fuses to prevent hazards"
+      },
+      {
+        "supports_field": "safety_role.has_manual_override",
+        "manual_section": "990180180 Rev.005",
+        "note": "Manual Control Override Knob allows manual operation"
+      }
+    ],
+    "confidence": {
+      "overall": 0.9,
+      "notes": "[batch_0] Manual excerpts provide clear operator actions and control surface details. | [batch_0] Manual provides clear operator actions and control surface details. | [batch_0] Manual excerpts provide clear operator actions and control surface details."
+    },
+    "repairs": [
+      {
+        "repair": "dropped_entry",
+        "flag": "contradiction_builtin_requires_accessory",
+        "field_path": "requires_devices[0].needed_for",
+        "original_entry": {
+          "description_verbatim": "momentary push button switch",
+          "needed_for": "control_surfaces[0]"
+        }
+      }
+    ],
+    "coverage": {
+      "chunk_count": 15,
+      "heading_count": 27,
+      "headings_covered_count": 27,
+      "heading_coverage_fraction": 1.0,
+      "coverage_low_threshold": 0.25,
+      "top_k_used": 4
+    },
+    "group_utilization": [
+      {
+        "group_id": "batch_0",
+        "is_introduction": true,
+        "excerpt_count": 15,
+        "predicted_fields": [
+          "control_surfaces",
+          "data_roles",
+          "evidence",
+          "networks",
+          "operator_actions",
+          "requires_devices",
+          "safety_role",
+          "supply_requirements"
+        ],
+        "contributions": {
+          "operator_actions": 4,
+          "control_surfaces": 1,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 6,
+          "supply_requirements": 1,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 1
+        },
+        "contribution_total": 13,
+        "unutilized": false
+      }
+    ],
+    "merge_conflicts": [],
+    "genres": [
+      "installation",
+      "operation"
+    ],
+    "entity_kind": "device",
+    "ui_pages": [],
+    "validation_flags": [
+      {
+        "flag": "contradiction_builtin_requires_accessory",
+        "severity": "warning",
+        "detail": "repaired: dropped_entry — needed_for pointed at a control surface with optional_accessory:false (dropped 'momentary push button switch')",
+        "field_path": "requires_devices[0].needed_for"
+      },
+      {
+        "flag": "procedure_adjudicated_installer",
+        "severity": "info",
+        "detail": "Fixture-Auth: chat ACR promote — residual unaccounted procedures classified installer (Start Isolation wiring, Contura switch, remote LED, high-current studs)"
+      }
+    ],
+    "extraction_votes": [
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "prevent remote operation via Manual Control Override Knob",
+          "audience": "operator",
+          "context": "situational",
+          "occasion": "to prevent remote operation",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 2,
+          "agree_with_chosen": 2,
+          "margin": "2/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "action": "prevent remote operation via Manual Control Override Knob",
+              "audience": "operator",
+              "context": "situational",
+              "occasion": "to prevent remote operation"
+            }
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "prevent remote operation via Manual Control Override Knob",
+              "audience": "operator",
+              "context": "situational",
+              "occasion": "to prevent remote operation",
+              "options": []
+            }
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "requires_devices",
+        "kind": "requires_devices",
+        "attribute": "presence",
+        "chosen": {
+          "description_verbatim": "momentary push button switch",
+          "needed_for": "control_surfaces[0]",
+          "requirement_kind": "device",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 1,
+          "agree_with_chosen": 1,
+          "margin": "1/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "description_verbatim": "momentary push button switch",
+              "needed_for": "control_surfaces[0]",
+              "requirement_kind": "device"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ],
+        "instability_class": "cosmetic"
+      }
+    ],
+    "instability_triage": {
+      "material_count": 0,
+      "cosmetic_count": 2
+    },
+    "source": "live_extraction"
   }
 }
