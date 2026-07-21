@@ -73,15 +73,25 @@ a { color: var(--accent); }
 .nav-submenu {
   display: none;
   position: absolute;
-  top: calc(100% + 0.35rem);
+  top: 100%;
   left: 0;
   min-width: 11rem;
+  margin-top: 0.35rem;
   padding: 0.35rem 0;
   background: #243b53;
   border: 1px solid #486581;
   border-radius: 8px;
   box-shadow: 0 10px 28px rgba(16, 42, 67, 0.35);
   z-index: 30;
+}
+
+.nav-submenu::before {
+  content: "";
+  position: absolute;
+  top: -0.35rem;
+  left: 0;
+  right: 0;
+  height: 0.35rem;
 }
 
 .nav-group:hover .nav-submenu,
