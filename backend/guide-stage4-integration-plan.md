@@ -200,58 +200,80 @@ from the DB* reproduce the composed drafts **byte-for-byte** (same
   `protects`, `taught_via`, `feeds`, …), and vessel artifact facts (channel
   map, owner confirmations, evidence, honest-gap flags).
 
+### Grounding facts (from the Outremer fixture)
+Confirmed against `fixtures/pipeline/outremer/{equipment,profiles}.json`:
+- `equipment_doc.relations` is **empty**; cross-device wiring is **inlined
+  inside each profile** as `runs_platform`, `protects`, `protected_by`,
+  `requires_devices`.
+- Profiles are keyed by **base model handle** (`coi`, `mli_ultra`, `bg_zeus_sr`,
+  …); `quantity` / `instance_handling` expand to per-unit (`coi_1..3`) at
+  graph-build time.
+- Per-vessel facts are a **surface**, not one field: `vessel_artifact_facts`
+  (list of `{device_key, assertions[]}`), plus `hub_operation_sources`,
+  `platform_version_confirmations`, `vessel_facts`, `installation_notes`,
+  `notes`, `fixture_auth`, `vessel_display_name`.
+- Platforms are already `equipment` rows with `entity_kind='platform'` + their
+  own profile, reached via `runs_platform` edges.
+
+### Locked decisions (2026-07-21)
+1. **Profile identity** → FK to `equipment.id` (registry already dedups models).
+2. **Edge separation** → **clean split now.** *All* cross-device edges
+   (`runs_platform`, `protects`, `protected_by`, `requires_devices`) are
+   extracted out of the stored profile into `vessel_equipment_relation`; the
+   stored `interaction_profile` is **capability-only**. One rule: "every
+   cross-device edge is boat-level." The adapter re-inlines edges to reproduce
+   the fixture profile exactly (accepting minor duplication of model-inherent
+   edge attrs like `host_kind`/`note` across sister ships).
+3. **Per-vessel facts** → single `vessel_stage4_facts` JSONB doc holding all the
+   named blobs above; split into tables later only if something needs querying.
+4. **Fidelity bar** → strict byte-for-byte match to the fixtures.
+5. **Platform modeling** → reuse `equipment(entity_kind='platform')` +
+   `interaction_profile` + edges; revisit a first-class `platform` table in
+   Phase 4 only if the registry UI/exports must treat platforms differently.
+
 ### Schema (new)
 - **`interaction_profile`** — one row per equipment model (FK `equipment.id`),
-  `profile JSONB`, `documented_version`, `entity_kind` (`device`|`platform`),
-  `source_manual_refs`, provenance/status, `content_hash`. Platforms
-  (CZone 2.0, Zeus SR Software) are rows here too, linked to a synthetic
-  platform equipment row (as today's fixtures model them).
+  `profile JSONB` (**capability-only; cross-device edges stripped**),
+  `documented_version`, `entity_kind` (`device`|`platform`),
+  `source_manual_refs`, provenance/status, `content_hash`. Platform models are
+  rows here too (decision 5).
 - **`vessel_equipment_relation`** — per-vessel edges:
-  `(vessel_id, src_device_key, edge_type, dst_device_key, attrs JSONB)`.
-  Carries `runs_platform`, `protects`, `taught_via`, etc.
-- **`device_key` on `vessel_equipment`** — stable per-unit key
-  (`bg_zeus_sr_1`, `class_t_2`, …) so relations and provenance resolve to a
-  specific installed unit. Unique `(vessel_id, device_key)`.
-- **`vessel_artifact_facts`** — per-vessel facts blob (channel map, owner
-  confirmations, evidence pointers), keyed `(vessel_id, fact_key)` or a single
-  JSONB doc; whichever the adapter needs to reproduce the fixture field.
+  `(vessel_id, src_device_key, edge_type, dst_device_key NULL, attrs JSONB)`.
+  `edge_type ∈ {runs_platform, protects, protected_by, requires_devices}`
+  (extensible). `attrs` carries the rest of the inlined edge object
+  (`host_kind`, `optional`, `note`, …). `dst` nullable for edges whose target
+  is a platform_key or unresolved.
+- **`device_key` on `vessel_equipment`** — stable per-unit/base key
+  (`bg_zeus_sr`, `class_t`, …) so relations and provenance resolve. Unique
+  `(vessel_id, device_key)`.
+- **`vessel_stage4_facts`** — one JSONB doc per vessel (decision 3) holding
+  `vessel_artifact_facts`, `hub_operation_sources`,
+  `platform_version_confirmations`, `vessel_facts`, `installation_notes`,
+  `notes`, `fixture_auth`, `vessel_display_name`.
 
 ### DB → composer adapter
 `build_equipment_doc_from_db(conn, vessel_id)` and
 `build_profiles_from_db(conn, vessel_id)` reconstruct the exact shapes
 `build_vessel_graph` / `assemble_section_inputs` consume today:
 - `equipment_doc.equipment[]` from `vessel_equipment` ⨝ `equipment` ⨝
-  `interaction_profile` (+ platform rows), including `entity_kind` and
-  `device_key`.
-- `equipment_doc.relations[]` from `vessel_equipment_relation`.
-- `equipment_doc.vessel_artifact_facts` from `vessel_artifact_facts`.
-- `profiles{device_key: profile}` from `interaction_profile.profile`, with
-  per-unit edges merged from relations (mirrors how fixtures inline
-  `runs_platform` on each unit).
-Canonical ordering + key normalization so JSON matches the fixture exactly.
+  `interaction_profile` (+ platform rows), including `entity_kind`,
+  `device_key`, `quantity`, `instance_handling`, `provenance`.
+- `equipment_doc.{relations:[], notes, installation_notes, fixture_auth,
+  hub_operation_sources, platform_version_confirmations, vessel_facts,
+  vessel_artifact_facts, vessel_display_name}` from `vessel_stage4_facts`
+  (relations stays `[]` to match the fixture).
+- `profiles{device_key: profile}` from `interaction_profile.profile` with the
+  boat's `vessel_equipment_relation` rows **re-inlined** (`runs_platform`,
+  `protects`, `protected_by`, `requires_devices`) so each profile matches the
+  fixture byte-for-byte.
+- Canonical key ordering + normalization so JSON is identical to the fixture.
 
 ### Seeding
 A one-shot `scripts/seed_stage4_substrate.py --fixture outremer --slug supernova`
 migrates the current fixtures into the new tables: upsert `interaction_profile`
-per model, set `device_key`s on `vessel_equipment`, insert relations, write
-`vessel_artifact_facts`. Idempotent; safe to re-run.
-
-### Phase 2 decisions to lock before building
-1. **Profile identity:** key `interaction_profile` by `equipment.id` (registry
-   model) vs. a separate `(manufacturer, model)` natural key. *Lean:*
-   `equipment.id` FK — the registry already dedups models.
-2. **Relations home:** dedicated `vessel_equipment_relation` table (chosen
-   sketch) vs. a JSONB column on `vessel_equipment`. *Lean:* table — edges are
-   queried both directions and by type.
-3. **`vessel_artifact_facts` shape:** single JSONB doc per vessel vs.
-   key/value rows. *Lean:* start single JSONB (mirrors the fixture field);
-   split later if it needs querying.
-4. **Adapter fidelity bar:** exact byte-match to fixtures (strict, chosen) vs.
-   semantic-equivalent (looser). Strict keeps the oracle meaningful.
-5. **Platform modeling in DB:** synthetic equipment row + `interaction_profile`
-   row + `runs_platform` edges (as fixtures do) vs. a first-class `platform`
-   table. *Lean:* reuse the equipment+profile pattern to avoid a parallel
-   taxonomy; revisit in Phase 4.
+per model with edges **stripped**, set `device_key`s on `vessel_equipment`,
+insert the stripped edges as `vessel_equipment_relation` rows, write the
+`vessel_stage4_facts` doc. Idempotent; safe to re-run.
 
 ### Risk to Phase 1
 None expected — Phase 2 sits entirely on the *input* side of the seam. The
