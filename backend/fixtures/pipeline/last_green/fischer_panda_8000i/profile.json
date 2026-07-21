@@ -1,0 +1,656 @@
+{
+  "device": {
+    "manufacturer": "Fischer Panda",
+    "model": "Panda 8000i",
+    "category_freeform": "marine generator"
+  },
+  "control_surfaces": [
+    {
+      "surface": "physical_controls",
+      "location_class": "on_device",
+      "optional_accessory": false,
+      "label_verbatim": "Panda iControl2 panel",
+      "path": "control_surfaces[0]"
+    }
+  ],
+  "operator_actions": [
+    {
+      "action": "disconnect battery before service work",
+      "audience": "operator",
+      "context": "maintenance",
+      "occasion": "to prevent unintentional start-up",
+      "vote_margin": "3/3",
+      "source": "extracted"
+    },
+    {
+      "action": "check battery charge status and recharge regularly",
+      "audience": "operator",
+      "context": "maintenance",
+      "occasion": "for extended downtimes",
+      "vote_margin": "3/3",
+      "source": "extracted"
+    },
+    {
+      "action": "check cooling water anti-freeze level and refill as necessary",
+      "audience": "operator",
+      "context": "maintenance",
+      "occasion": "for extended downtimes",
+      "vote_margin": "3/3",
+      "source": "extracted"
+    },
+    {
+      "action": "drain engine oil and replace as specified",
+      "audience": "operator",
+      "context": "maintenance",
+      "occasion": "for extended downtimes",
+      "vote_margin": "3/3",
+      "source": "extracted"
+    },
+    {
+      "action": "perform visual check of the generator",
+      "audience": "operator",
+      "context": "maintenance",
+      "occasion": "before starting",
+      "vote_margin": "3/3",
+      "source": "extracted"
+    },
+    {
+      "action": "shutdown the generator",
+      "audience": "operator",
+      "context": "situational",
+      "vote_margin": "2/3",
+      "source": "extracted"
+    },
+    {
+      "action": "switch on the controller",
+      "audience": "operator",
+      "context": "situational",
+      "vote_margin": "3/3",
+      "source": "extracted"
+    },
+    {
+      "action": "switch off the controller",
+      "audience": "operator",
+      "context": "situational",
+      "occasion": "to stop the generator",
+      "vote_margin": "3/3",
+      "source": "extracted"
+    },
+    {
+      "action": "start the generator",
+      "audience": "operator",
+      "context": "situational",
+      "occasion": "to begin generator operation",
+      "vote_margin": "3/3",
+      "source": "extracted"
+    },
+    {
+      "action": "stop the generator",
+      "audience": "operator",
+      "context": "situational",
+      "occasion": "to cease generator operation",
+      "vote_margin": "3/3",
+      "source": "extracted"
+    },
+    {
+      "action": "navigate through the set-up menu",
+      "audience": "operator",
+      "context": "situational",
+      "vote_margin": "3/3",
+      "source": "extracted"
+    },
+    {
+      "action": "confirm selection in the set-up menu",
+      "audience": "operator",
+      "context": "situational",
+      "vote_margin": "3/3",
+      "source": "extracted"
+    },
+    {
+      "action": "activate the autostart function",
+      "audience": "operator",
+      "context": "situational",
+      "vote_margin": "3/3",
+      "source": "extracted"
+    },
+    {
+      "action": "reset the service interval",
+      "audience": "operator",
+      "context": "situational",
+      "vote_margin": "3/3",
+      "source": "extracted"
+    },
+    {
+      "action": "prime the fuel system",
+      "audience": "operator",
+      "context": "situational",
+      "vote_margin": "3/3",
+      "source": "extracted"
+    },
+    {
+      "action": "emergency stop",
+      "audience": "operator",
+      "context": "emergency",
+      "occasion": "if engine temperature is out of range",
+      "vote_margin": "1/3",
+      "source": "extracted"
+    },
+    {
+      "action": "consult error codes and alarms",
+      "audience": "operator",
+      "context": "emergency",
+      "source": "derived",
+      "derived_from": "evidence[6]"
+    }
+  ],
+  "networks": {
+    "speaks": [
+      {
+        "name_verbatim": "Fischer Panda standard bus",
+        "physical_or_wireless": "wired",
+        "vote_margin": "3/3"
+      },
+      {
+        "name_verbatim": "Fischer Panda CAN bus",
+        "physical_or_wireless": "wired",
+        "vote_margin": "3/3"
+      }
+    ],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": true,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": true
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [
+    {
+      "description_verbatim": "install an appropriate fuse in the positive DC supply cable",
+      "vote_margin": "3/3"
+    },
+    {
+      "description_verbatim": "A fuse must be put in series with the live wire.",
+      "vote_margin": "2/3"
+    },
+    {
+      "description_verbatim": "Recommend protection Fuse",
+      "vote_margin": "1/3"
+    },
+    {
+      "description_verbatim": "Recommend cable cross section",
+      "vote_margin": "1/3"
+    }
+  ],
+  "evidence": [
+    {
+      "supports_field": "operator_actions[action=disconnect battery before service work]",
+      "manual_section": "3.4.10 Implementation of safety inspections and maintenance",
+      "note": "to prevent unintentional start-up"
+    },
+    {
+      "supports_field": "operator_actions[action=check battery charge status and recharge regularly]",
+      "manual_section": "5.7.4 Measures for extended downtimes / decommissioning",
+      "note": "for extended downtimes"
+    },
+    {
+      "supports_field": "operator_actions[action=check cooling water anti-freeze level and refill as necessary]",
+      "manual_section": "5.7.4 Measures for extended downtimes / decommissioning",
+      "note": "for extended downtimes"
+    },
+    {
+      "supports_field": "operator_actions[action=drain engine oil and replace as specified]",
+      "manual_section": "5.7.4 Measures for extended downtimes / decommissioning",
+      "note": "for extended downtimes"
+    },
+    {
+      "supports_field": "operator_actions[action=perform visual check of the generator]",
+      "manual_section": "10.3 Maintenance requirements",
+      "note": "before starting"
+    },
+    {
+      "supports_field": "operator_actions[action=shutdown the generator]",
+      "manual_section": "22 Emergency stop EMERGENCY STOP! NOT-HALT!",
+      "note": "Emergency shutdown procedure for the generator"
+    },
+    {
+      "supports_field": "safety_role.has_emergency_procedure",
+      "manual_section": "29.4.25 Kapitel/Chapter 18: Warnings and error messages",
+      "note": "Emergency procedures for fault thresholds are defined"
+    },
+    {
+      "supports_field": "control_surfaces[0]",
+      "manual_section": "29.4.25 Kapitel/Chapter 15: General operation   -   Seite/Page 117",
+      "note": "Panda iControl2 panel is the control interface"
+    },
+    {
+      "supports_field": "data_roles.exposes_data_to_network",
+      "manual_section": "General operation / iControl2 panel (ch. 15-17)",
+      "note": "adjudicated: genset reports status to iControl2 over standard bus"
+    }
+  ],
+  "confidence": {
+    "overall": 0.9,
+    "notes": "[chapter_3+chapter_8+chapter_10+chapter_14] Manual excerpts provide clear operator actions and supply requirements. | [batch_0] Limited excerpts; some sections may not be fully covered. | [batch_1] Limited excerpts provided; only emergency procedures noted. | [batch_2] Limited information available from the excerpts. | [batch_3] Limited excerpts provide basic operator actions. | [batch_4] Limited excerpts; some actions and requirements inferred. | [batch_5] Limited information available in the p"
+  },
+  "repairs": [
+    {
+      "repair": "dropped_entry",
+      "flag": "fewshot_leakage",
+      "field_path": "control_surfaces[0].label_verbatim",
+      "original_entry": {
+        "surface": "remote_panel_accessory",
+        "location_class": "remote_wired",
+        "optional_accessory": true,
+        "label_verbatim": "MasterView remote panel",
+        "path": "control_surfaces[0]",
+        "vote_margin": "3/3"
+      },
+      "attractor": "masterview remote panel"
+    },
+    {
+      "repair": "cleared_circular_occasion",
+      "flag": "occasion_circular",
+      "field_path": "operator_actions[9].occasion",
+      "original_value": "to start the generator"
+    }
+  ],
+  "coverage": {
+    "chunk_count": 307,
+    "heading_count": 666,
+    "headings_covered_count": 387,
+    "heading_coverage_fraction": 0.5811,
+    "coverage_low_threshold": 0.25,
+    "top_k_used": 16
+  },
+  "group_utilization": [
+    {
+      "group_id": "chapter_3+chapter_8+chapter_10+chapter_14",
+      "is_introduction": true,
+      "excerpt_count": 35,
+      "predicted_fields": [
+        "control_surfaces",
+        "evidence",
+        "operator_actions",
+        "protected_by",
+        "protects",
+        "requires_devices",
+        "safety_role",
+        "supply_requirements",
+        "ui_pages"
+      ],
+      "contributions": {
+        "operator_actions": 5,
+        "control_surfaces": 0,
+        "networks": 0,
+        "requires_devices": 0,
+        "evidence": 6,
+        "supply_requirements": 1,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "contribution_total": 12,
+      "unutilized": false
+    },
+    {
+      "group_id": "batch_0",
+      "is_introduction": false,
+      "excerpt_count": 7,
+      "predicted_fields": [
+        "control_surfaces",
+        "evidence",
+        "operator_actions",
+        "requires_devices",
+        "safety_role",
+        "supply_requirements"
+      ],
+      "contributions": {
+        "operator_actions": 1,
+        "control_surfaces": 0,
+        "networks": 0,
+        "requires_devices": 0,
+        "evidence": 1,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 1
+      },
+      "contribution_total": 3,
+      "unutilized": false
+    },
+    {
+      "group_id": "batch_1",
+      "is_introduction": false,
+      "excerpt_count": 7,
+      "predicted_fields": [
+        "control_surfaces",
+        "data_roles",
+        "evidence",
+        "networks",
+        "operator_actions",
+        "requires_devices",
+        "safety_role"
+      ],
+      "contributions": {
+        "operator_actions": 0,
+        "control_surfaces": 0,
+        "networks": 0,
+        "requires_devices": 0,
+        "evidence": 1,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 1
+      },
+      "contribution_total": 2,
+      "unutilized": false
+    },
+    {
+      "group_id": "batch_2",
+      "is_introduction": false,
+      "excerpt_count": 7,
+      "predicted_fields": [
+        "control_surfaces",
+        "evidence",
+        "operator_actions",
+        "requires_devices"
+      ],
+      "contributions": {
+        "operator_actions": 0,
+        "control_surfaces": 1,
+        "networks": 0,
+        "requires_devices": 0,
+        "evidence": 1,
+        "supply_requirements": 1,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "contribution_total": 3,
+      "unutilized": false
+    },
+    {
+      "group_id": "batch_3",
+      "is_introduction": false,
+      "excerpt_count": 7,
+      "predicted_fields": [
+        "control_surfaces",
+        "evidence",
+        "operator_actions"
+      ],
+      "contributions": {
+        "operator_actions": 2,
+        "control_surfaces": 0,
+        "networks": 0,
+        "requires_devices": 0,
+        "evidence": 2,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "contribution_total": 4,
+      "unutilized": false
+    },
+    {
+      "group_id": "batch_4",
+      "is_introduction": false,
+      "excerpt_count": 7,
+      "predicted_fields": [
+        "evidence",
+        "protected_by",
+        "supply_requirements"
+      ],
+      "contributions": {
+        "operator_actions": 1,
+        "control_surfaces": 0,
+        "networks": 0,
+        "requires_devices": 0,
+        "evidence": 2,
+        "supply_requirements": 1,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "contribution_total": 4,
+      "unutilized": false
+    },
+    {
+      "group_id": "batch_5",
+      "is_introduction": false,
+      "excerpt_count": 5,
+      "predicted_fields": [
+        "data_roles",
+        "evidence",
+        "operator_actions",
+        "requires_devices",
+        "ui_pages"
+      ],
+      "contributions": {
+        "operator_actions": 0,
+        "control_surfaces": 0,
+        "networks": 0,
+        "requires_devices": 0,
+        "evidence": 0,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "contribution_total": 0,
+      "unutilized": true
+    },
+    {
+      "group_id": "chapter_15+chapter_16+chapter_17",
+      "is_introduction": false,
+      "excerpt_count": 61,
+      "predicted_fields": [
+        "control_surfaces",
+        "data_roles",
+        "evidence",
+        "networks",
+        "operator_actions",
+        "protected_by",
+        "protects",
+        "requires_devices",
+        "safety_role",
+        "supply_requirements",
+        "ui_pages"
+      ],
+      "contributions": {
+        "operator_actions": 10,
+        "control_surfaces": 1,
+        "networks": 2,
+        "requires_devices": 0,
+        "evidence": 11,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 1
+      },
+      "contribution_total": 25,
+      "unutilized": false
+    }
+  ],
+  "merge_conflicts": [],
+  "genres": [
+    "installation",
+    "maintenance",
+    "operation"
+  ],
+  "entity_kind": "device",
+  "ui_pages": [],
+  "validation_flags": [
+    {
+      "flag": "group_unutilized",
+      "severity": "warning",
+      "detail": "group 'batch_5' had 5 routed excerpts but contributed zero fields; routing predicted ['data_roles', 'evidence', 'operator_actions', 'requires_devices', 'ui_pages']",
+      "field_path": "group_utilization.batch_5"
+    },
+    {
+      "flag": "evidence_support_mismatch",
+      "severity": "warning",
+      "detail": "evidence note better matches action 'start the generator' than linked 'disconnect battery before service work'",
+      "field_path": "evidence[0].supports_field"
+    },
+    {
+      "flag": "evidence_support_mismatch",
+      "severity": "warning",
+      "detail": "evidence note better matches action 'disconnect battery before service work' than linked 'perform visual check of the generator'",
+      "field_path": "evidence[4].supports_field"
+    },
+    {
+      "flag": "extraction_omission_adjudicated",
+      "severity": "info",
+      "detail": "Set exposes_data_to_network (grounded standard bus to iControl2), normalized genres to install/operate/maintain, dropped 3 installer-only cable steps. Fixture-Auth: chat Fischer Panda 8000i Stage 1 extract — live extraction promoted; missed data_role (exposes status to iControl2 over grounded standard bus) set, genres normalized to combined install/operate/maintain, installer-only cable steps dropped as source-grounded §1.D adjudication"
+    }
+  ],
+  "extraction_votes": [
+    {
+      "field_path": "operator_actions",
+      "kind": "operator_actions",
+      "attribute": "presence",
+      "chosen": {
+        "action": "shutdown the generator",
+        "audience": "operator",
+        "context": "situational",
+        "occasion": "",
+        "vote_margin": "2/3"
+      },
+      "vote_margin": {
+        "n_runs": 3,
+        "present_in": 2,
+        "agree_with_chosen": 2,
+        "margin": "2/3"
+      },
+      "variants": [
+        {
+          "run": 1,
+          "value": {
+            "action": "shutdown the generator",
+            "audience": "operator",
+            "context": "situational",
+            "occasion": ""
+          }
+        },
+        {
+          "run": 2,
+          "value": null
+        },
+        {
+          "run": 3,
+          "value": {
+            "action": "shutdown the generator",
+            "audience": "operator",
+            "context": "situational",
+            "occasion": "to prepare for service or storage"
+          }
+        }
+      ],
+      "instability_class": "cosmetic"
+    },
+    {
+      "field_path": "operator_actions",
+      "kind": "operator_actions",
+      "attribute": "presence",
+      "chosen": {
+        "action": "check cable laying and electrical connections",
+        "audience": "operator",
+        "context": "maintenance",
+        "occasion": "to ensure proper installation",
+        "vote_margin": "2/3"
+      },
+      "vote_margin": {
+        "n_runs": 3,
+        "present_in": 2,
+        "agree_with_chosen": 2,
+        "margin": "2/3"
+      },
+      "variants": [
+        {
+          "run": 1,
+          "value": {
+            "action": "check cable laying and electrical connections",
+            "audience": "operator",
+            "context": "maintenance",
+            "occasion": "to ensure proper installation"
+          }
+        },
+        {
+          "run": 2,
+          "value": {
+            "action": "check cable laying and electrical connections",
+            "audience": "operator",
+            "context": "maintenance",
+            "occasion": "to ensure proper installation"
+          }
+        },
+        {
+          "run": 3,
+          "value": null
+        }
+      ],
+      "instability_class": "cosmetic"
+    },
+    {
+      "field_path": "operator_actions",
+      "kind": "operator_actions",
+      "attribute": "presence",
+      "chosen": {
+        "action": "emergency stop",
+        "audience": "operator",
+        "context": "emergency",
+        "occasion": "if engine temperature is out of range",
+        "vote_margin": "1/3"
+      },
+      "vote_margin": {
+        "n_runs": 3,
+        "present_in": 1,
+        "agree_with_chosen": 1,
+        "margin": "1/3"
+      },
+      "variants": [
+        {
+          "run": 1,
+          "value": null
+        },
+        {
+          "run": 2,
+          "value": {
+            "action": "emergency stop",
+            "audience": "operator",
+            "context": "emergency",
+            "occasion": "if engine temperature is out of range"
+          }
+        },
+        {
+          "run": 3,
+          "value": null
+        }
+      ],
+      "instability_class": "cosmetic"
+    }
+  ],
+  "instability_triage": {
+    "material_count": 0,
+    "cosmetic_count": 3
+  },
+  "source": "live_extraction",
+  "needs_rextraction": false
+}

@@ -59,6 +59,7 @@ DISPLAY_NAMES: dict[str, str] = {
     "alpha_pro_iii": "the alternator regulators",
     "alpha_pro_iii_port": "the port alternator regulator",
     "alpha_pro_iii_stbd": "the starboard alternator regulator",
+    "fischer_panda_8000i": "the generator",
 }
 
 MANUFACTURER_MODEL: dict[str, tuple[str, str]] = {
@@ -75,6 +76,7 @@ MANUFACTURER_MODEL: dict[str, tuple[str, str]] = {
     "alpha_pro_iii": ("Mastervolt", "Alpha Pro III"),
     "alpha_pro_iii_port": ("Mastervolt", "Alpha Pro III"),
     "alpha_pro_iii_stbd": ("Mastervolt", "Alpha Pro III"),
+    "fischer_panda_8000i": ("Fischer Panda", "Panda 8000i"),
 }
 
 _FORBIDDEN_EXTRA = (
@@ -124,6 +126,7 @@ def compose_batteries_section(
     combi_keys = [k for k in full_keys if "combi" in k]
     mppt_keys = [k for k in full_keys if "mppt" in k or k.startswith("victron_mppt")]
     alpha_keys = [k for k in full_keys if "alpha" in k]
+    genset_keys = [k for k in full_keys if "fischer_panda" in k]
     has_silentwind = "silentwind" in full_keys
 
     first_use: set[str] = set()
@@ -315,6 +318,16 @@ def compose_batteries_section(
         first_use.add("mass_combi_pro")
         for k in combi_keys:
             first_use.add(k)
+
+    if genset_keys:
+        charge_sentences.append(
+            "the generator (Fischer Panda 8000i) supplies on-board AC when "
+            "shore power is unavailable"
+        )
+        charge_sources.extend(f"graph.device:{k}" for k in genset_keys)
+        charge_sources.append("profile.fischer_panda_8000i.device")
+        charge_sources.append("profile.fischer_panda_8000i.operator_actions")
+        first_use.add("fischer_panda_8000i")
 
     alpha_rating_ok = False
     for e in equipment_doc.get("equipment") or []:
@@ -618,6 +631,56 @@ def compose_batteries_section(
                     "missing_facts": (
                         "profile.mass_combi_pro.control_surfaces entry tied to "
                         "that action (and/or confirmed MasterView / CZone path)."
+                    ),
+                }
+            )
+
+    if genset_keys:
+        _emit(
+            "Start and stop the generator from its Panda iControl2 panel, and "
+            "give it a visual check before starting.",
+            *[f"graph.device:{k}" for k in genset_keys],
+            "profile.fischer_panda_8000i.control_surfaces[0]",
+            "profile.fischer_panda_8000i.operator_actions",
+            block="adjusting",
+        )
+
+        # Occasion-gate (xxxix): "when to run the genset" needs a sourced
+        # occasion — a vessel energy policy or programmed autostart setpoint.
+        # Manual occasions are tautological (begin/cease operation); do not
+        # invent run policy. Queue the gap instead of silently omitting it.
+        genset_profile = profiles.get("fischer_panda_8000i") or {}
+        run_policy_grounded = any(
+            isinstance(act, dict)
+            and ("autostart" in str(act.get("action") or "").lower()
+                 or "run" in str(act.get("action") or "").lower())
+            and str(act.get("occasion") or "").strip()
+            for act in genset_profile.get("operator_actions") or []
+        )
+        run_policy_fact = any(
+            isinstance(f, dict)
+            and "genset" in str(f.get("id") or "").lower()
+            and "run" in str(f.get("id") or "").lower()
+            for f in (equipment_doc.get("vessel_facts") or [])
+        )
+        if not (run_policy_grounded or run_policy_fact):
+            fact_queries.append(
+                {
+                    "id": "genset_run_policy_occasion",
+                    "device": "fischer_panda_8000i",
+                    "action": "run / autostart the generator",
+                    "missing": (
+                        "Sourced when/why to run the genset for this vessel — "
+                        "house-bank SOC threshold, large-AC-load policy, shore "
+                        "fallback, or programmed iControl2 autostart setpoints. "
+                        "Manual grounds only tautological start/stop occasions "
+                        "('to begin/cease generator operation'); no vessel "
+                        "energy-management fact exists."
+                    ),
+                    "checked": (
+                        "scratch/fischer_panda_8000i.json operator_actions "
+                        "occasions; outremer vessel_facts (no genset run "
+                        "policy / autostart setpoints)"
                     ),
                 }
             )

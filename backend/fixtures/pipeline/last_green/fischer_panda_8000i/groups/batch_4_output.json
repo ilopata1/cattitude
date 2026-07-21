@@ -1,0 +1,49 @@
+{
+  "device": {
+    "manufacturer": "Fischer Panda",
+    "model": "Panda 8000i",
+    "category_freeform": "marine generator"
+  },
+  "entity_kind": "device",
+  "documented_version": "",
+  "ui_pages": [],
+  "alarm_severity": [],
+  "control_surfaces": [],
+  "operator_actions": [],
+  "networks": {
+    "speaks": [],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": false
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [
+    {
+      "description_verbatim": "Recommend protection Fuse"
+    },
+    {
+      "description_verbatim": "Recommend cable cross section"
+    }
+  ],
+  "evidence": [
+    {
+      "supports_field": "supply_requirements",
+      "manual_section": "60 kVA",
+      "note": "Fuse and cable cross section recommendations"
+    }
+  ],
+  "confidence": {
+    "overall": 0.8,
+    "notes": "Limited excerpts provided; no operator actions or control surfaces found."
+  }
+}

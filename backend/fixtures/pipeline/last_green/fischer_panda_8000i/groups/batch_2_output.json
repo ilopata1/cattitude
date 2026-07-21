@@ -1,0 +1,50 @@
+{
+  "device": {
+    "manufacturer": "Fischer Panda",
+    "model": "Panda 8000i",
+    "category_freeform": "marine generator"
+  },
+  "entity_kind": "device",
+  "documented_version": "",
+  "ui_pages": [],
+  "alarm_severity": [],
+  "control_surfaces": [
+    {
+      "surface": "remote_panel_accessory",
+      "location_class": "remote_wired",
+      "optional_accessory": true,
+      "label_verbatim": "MasterView remote panel",
+      "path": "control_surfaces[0]"
+    }
+  ],
+  "operator_actions": [],
+  "networks": {
+    "speaks": [],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": false
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [],
+  "evidence": [
+    {
+      "supports_field": "control_surfaces[0]",
+      "manual_section": "8 ND 12 12 30 8 8",
+      "note": "MasterView remote panel is an optional accessory"
+    }
+  ],
+  "confidence": {
+    "overall": 0.5,
+    "notes": "Limited excerpts provided; some fields may be incomplete."
+  }
+}

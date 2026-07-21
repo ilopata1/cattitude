@@ -1,0 +1,49 @@
+{
+  "device": {
+    "manufacturer": "Fischer Panda",
+    "model": "Panda 8000i",
+    "category_freeform": "marine generator"
+  },
+  "entity_kind": "device",
+  "documented_version": "",
+  "ui_pages": [],
+  "alarm_severity": [],
+  "control_surfaces": [],
+  "operator_actions": [
+    {
+      "action": "shutdown the generator",
+      "audience": "operator",
+      "context": "situational",
+      "occasion": "to prepare for service or storage"
+    }
+  ],
+  "networks": {
+    "speaks": [],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": true
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [],
+  "evidence": [
+    {
+      "supports_field": "operator_actions[0]",
+      "manual_section": "22 Emergency stop EMERGENCY STOP! NOT-HALT!",
+      "note": "Shutdown procedure for service or storage"
+    }
+  ],
+  "confidence": {
+    "overall": 0.8,
+    "notes": "Limited excerpts; some sections may not be fully covered."
+  }
+}

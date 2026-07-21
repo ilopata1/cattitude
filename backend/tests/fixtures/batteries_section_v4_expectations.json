@@ -1,8 +1,8 @@
 {
 
-  "fixture_auth": "Fixture-Auth: chat 2026-07-20 — COI live extract → summary on Batteries monitor path",
+  "fixture_auth": "Fixture-Auth: chat Fischer Panda 8000i Stage 1 extract — genset added as full member of Batteries (power) section; on-board AC source thread + iControl2 start/monitor authored; review round: 'when to run' queued as fact_query genset_run_policy_occasion (occasion-gate xxxix); human-reviewed and re-frozen 2026-07-21",
 
-  "version": "v4.22",
+  "version": "v4.24",
 
   "description": "Batteries & Energy Stage 4 expectations for Outremer / Supernova.",
 
@@ -15,6 +15,8 @@
       {"device_key": "alpha_pro_iii_port", "depth": "full"},
 
       {"device_key": "alpha_pro_iii_stbd", "depth": "full"},
+
+      {"device_key": "fischer_panda_8000i", "depth": "full"},
 
       {"device_key": "mass_combi_pro_1", "depth": "full"},
 
@@ -104,7 +106,7 @@
 
   "style_deictics_soft": ["this vessel", "this boat", "this yacht"],
 
-  "expected_fact_query_ids": [],
+  "expected_fact_query_ids": ["genset_run_policy_occasion"],
 
   "forbidden_fact_query_ids": [
 
@@ -124,7 +126,11 @@
 
     "external AC circuit breaker",
 
-    "when the engines are running, those alternators"
+    "when the engines are running, those alternators",
+
+    "generator (Fischer Panda 8000i) supplies on-board AC",
+
+    "Start and stop the generator from its Panda iControl2 panel"
 
   ],
 

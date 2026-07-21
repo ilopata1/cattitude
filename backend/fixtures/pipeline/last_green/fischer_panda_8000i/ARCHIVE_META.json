@@ -1,0 +1,14 @@
+{
+  "device_key": "fischer_panda_8000i",
+  "equipment_id": "17c202cc-e006-4cf2-b5d1-47592eadebab",
+  "manual_work_id": "eb6dc5c9-7977-4eee-8b33-0578a70d7086",
+  "manual": "Manual marine generator Panda 8000i 8 kVA / Panda 10000i PMS 10 kVA (operators, EN rev R10 29.4.25, 178 pp)",
+  "fixture_auth": "Fixture-Auth: chat Fischer Panda 8000i Stage 1 extract — live extraction promoted; missed data_role (exposes status to iControl2 over grounded standard bus) set, genres normalized to combined install/operate/maintain, installer-only cable steps dropped as source-grounded §1.D adjudication",
+  "review": {
+    "status": "reviewed_and_approved",
+    "verdict": "pass",
+    "reviewed_by": "owner/human (chat)",
+    "date": "2026-07-21",
+    "note": "Live Stage 1 profile + three source-grounded §1.D adjudications reviewed and approved; genset promoted to Batteries (power) section with authored on-board-AC + iControl2 start/monitor prose (Batteries fixture v4.24). 'When to run' left as open owner query (genset_run_policy_occasion)."
+  }
+}

@@ -24,6 +24,22 @@ from profile_field_packs import (
 _EXPECTED_REMAINING = {
     ("vessel", "plain_battery_switch", "isolate battery with rotary switch"),
     ("vessel", "czone_touch_7", "calibrate touch screen"),
+    # Fischer Panda 8000i: situational iControl2 menu/config actions the
+    # operators manual documents without a grounded when/why occasion.
+    ("vessel", "fischer_panda_8000i", "activate the autostart function"),
+    ("vessel", "fischer_panda_8000i", "confirm selection in the set-up menu"),
+    ("vessel", "fischer_panda_8000i", "navigate through the set-up menu"),
+    ("vessel", "fischer_panda_8000i", "prime the fuel system"),
+    ("vessel", "fischer_panda_8000i", "reset the service interval"),
+    ("vessel", "fischer_panda_8000i", "shutdown the generator"),
+    ("vessel", "fischer_panda_8000i", "switch on the controller"),
+    ("last_green", "fischer_panda_8000i", "activate the autostart function"),
+    ("last_green", "fischer_panda_8000i", "confirm selection in the set-up menu"),
+    ("last_green", "fischer_panda_8000i", "navigate through the set-up menu"),
+    ("last_green", "fischer_panda_8000i", "prime the fuel system"),
+    ("last_green", "fischer_panda_8000i", "reset the service interval"),
+    ("last_green", "fischer_panda_8000i", "shutdown the generator"),
+    ("last_green", "fischer_panda_8000i", "switch on the controller"),
 }
 
 

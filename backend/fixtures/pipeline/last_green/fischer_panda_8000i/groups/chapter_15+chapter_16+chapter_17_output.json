@@ -1,0 +1,159 @@
+{
+  "device": {
+    "manufacturer": "Fischer Panda",
+    "model": "Panda 8000i",
+    "category_freeform": "marine generator"
+  },
+  "entity_kind": "device",
+  "documented_version": "",
+  "ui_pages": [],
+  "alarm_severity": [],
+  "control_surfaces": [
+    {
+      "surface": "physical_controls",
+      "location_class": "on_device",
+      "optional_accessory": false,
+      "label_verbatim": "Panda iControl2 panel",
+      "path": "control_surfaces[0]"
+    }
+  ],
+  "operator_actions": [
+    {
+      "action": "switch on the controller",
+      "audience": "operator",
+      "context": "situational",
+      "occasion": "to start the generator"
+    },
+    {
+      "action": "switch off the controller",
+      "audience": "operator",
+      "context": "situational",
+      "occasion": "to stop the generator"
+    },
+    {
+      "action": "start the generator",
+      "audience": "operator",
+      "context": "situational",
+      "occasion": "to begin operation"
+    },
+    {
+      "action": "stop the generator",
+      "audience": "operator",
+      "context": "situational",
+      "occasion": "to cease operation"
+    },
+    {
+      "action": "navigate through the set-up menu",
+      "audience": "operator",
+      "context": "situational"
+    },
+    {
+      "action": "confirm selection in the set-up menu",
+      "audience": "operator",
+      "context": "situational"
+    },
+    {
+      "action": "activate the autostart function",
+      "audience": "operator",
+      "context": "situational"
+    },
+    {
+      "action": "deactivate the autostart function",
+      "audience": "operator",
+      "context": "situational"
+    },
+    {
+      "action": "reset the service interval",
+      "audience": "operator",
+      "context": "situational"
+    },
+    {
+      "action": "prime the fuel system",
+      "audience": "operator",
+      "context": "situational"
+    }
+  ],
+  "networks": {
+    "speaks": [
+      {
+        "name_verbatim": "Fischer Panda standard bus",
+        "physical_or_wireless": "wired"
+      },
+      {
+        "name_verbatim": "Fischer Panda CAN bus",
+        "physical_or_wireless": "wired"
+      }
+    ],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": true
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [],
+  "evidence": [
+    {
+      "supports_field": "operator_actions[action=switch on the controller]",
+      "manual_section": "15.3 Operation",
+      "note": "To start the generator"
+    },
+    {
+      "supports_field": "operator_actions[action=switch off the controller]",
+      "manual_section": "15.3 Operation",
+      "note": "To stop the generator"
+    },
+    {
+      "supports_field": "operator_actions[action=start the generator]",
+      "manual_section": "15.3 Operation",
+      "note": "To begin operation"
+    },
+    {
+      "supports_field": "operator_actions[action=stop the generator]",
+      "manual_section": "15.3 Operation",
+      "note": "To cease operation"
+    },
+    {
+      "supports_field": "operator_actions[action=navigate through the set-up menu]",
+      "manual_section": "15.4 Other operating functions",
+      "note": "To modify parameters"
+    },
+    {
+      "supports_field": "operator_actions[action=confirm selection in the set-up menu]",
+      "manual_section": "15.4 Other operating functions",
+      "note": "To confirm menu selections"
+    },
+    {
+      "supports_field": "operator_actions[action=activate the autostart function]",
+      "manual_section": "15.4 Other operating functions",
+      "note": "To enable automatic start"
+    },
+    {
+      "supports_field": "operator_actions[action=deactivate the autostart function]",
+      "manual_section": "15.4 Other operating functions",
+      "note": "To disable automatic start"
+    },
+    {
+      "supports_field": "operator_actions[action=reset the service interval]",
+      "manual_section": "15.4 Other operating functions",
+      "note": "To reset service reminders"
+    },
+    {
+      "supports_field": "operator_actions[action=prime the fuel system]",
+      "manual_section": "15.4 Other operating functions",
+      "note": "To prepare the fuel system for operation"
+    }
+  ],
+  "confidence": {
+    "overall": 0.9,
+    "notes": "Extracted actions and functions are well-supported by the manual excerpts."
+  }
+}

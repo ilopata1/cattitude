@@ -366,6 +366,17 @@
       "quantity": 1,
       "instance_handling": "interchangeable",
       "provenance": "owner confirmation (fitted); channel_map Ind C DCD2-04 [OPT] DESSALINISATEUR / WATER MAKER (35A); operators start-up guide v4.9 (manual_work ffe1b474) Stage 1 extracted"
+    },
+    {
+      "device_key": "fischer_panda_8000i",
+      "catalog_key": "fischer_panda_8000i",
+      "manufacturer": "Fischer Panda",
+      "model": "Panda 8000i",
+      "description": "Marine diesel generator (genset), 8 kVA super-silent, AC power source with Panda iControl2 control panel",
+      "system_category": "electrical_ac_shore_power",
+      "quantity": 1,
+      "instance_handling": "interchangeable",
+      "provenance": "owner request (Playbook 1 new equipment); DB registry equipment 17c202cc + Supernova vessel; operators manual marine generator Panda 8000i (manual_work eb6dc5c9, R10 29.4.25, 178pp) Stage 1 extracted"
     }
   ],
   "vessel_artifact_facts": [

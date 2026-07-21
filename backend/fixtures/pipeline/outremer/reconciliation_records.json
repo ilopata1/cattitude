@@ -186,6 +186,48 @@
       },
       "fixture_auth": "Fixture-Auth: chat Dessalator Duo — add optional Mini Remote Control to open owner questions",
       "inventory_action": "none"
+    },
+    {
+      "id": "rec_fischer_panda_8000i_extracted",
+      "action": "audit_only",
+      "disposition": "profile_extracted",
+      "device_keys_now": [
+        "fischer_panda_8000i"
+      ],
+      "summary": "Playbook 1 Stage 1 extraction run against the cleared operators manual (manual_work eb6dc5c9, EN rev R10 29.4.25, 178 pp, 307 chunks) for the genset already in the DB registry and attached to the vessel. Stable (0 material instability), heading coverage 0.58. Review (§1.C) diagnosed a blocking speaks_but_inert flag, installer-only cable actions, and a genre gap. Three source-grounded §1.D adjudications applied in scripts/promote_fischer_panda_8000i.py: set exposes_data_to_network (genset reports status to iControl2 over grounded Fischer Panda standard bus), normalized genres to install/operate/maintain, and dropped 3 installer-only cable steps. Graph result: role ISLAND, section batteries (power). Genset then promoted into the Batteries Stage-4 section (fixture v4.24): named as on-board AC source + iControl2 start/monitor thread.",
+      "evidence": [
+        "Manual marine generator Panda 8000i 8 kVA / Panda 10000i PMS 10 kVA (operators, EN rev R10 29.4.25, 178 pp)",
+        "manual_work eb6dc5c9-7977-4eee-8b33-0578a70d7086; equipment 17c202cc-e006-4cf2-b5d1-47592eadebab (Supernova vessel)"
+      ],
+      "fixture_auth": "Fixture-Auth: chat Fischer Panda 8000i Stage 1 extract — live extraction promoted; exposes_data grounded fix, genres install/operate/maintain, 3 installer cable steps dropped; genset authored into Batteries section v4.24",
+      "review": {
+        "status": "reviewed_and_approved",
+        "verdict": "pass",
+        "reviewed_by": "owner/human (chat)",
+        "date": "2026-07-21",
+        "note": "Live Stage 1 profile + three source-grounded §1.D adjudications and the Batteries §2 genset prose (fixture v4.24) reviewed and approved for promotion to golden."
+      },
+      "inventory_action": "none"
+    },
+    {
+      "id": "rec_fischer_panda_8000i_run_policy_question",
+      "action": "audit_only",
+      "disposition": "owner_question_open",
+      "device_keys_now": [
+        "fischer_panda_8000i"
+      ],
+      "summary": "Open owner question: when should the Fischer Panda 8000i generator be run on this vessel? The Batteries section names the genset as an on-board AC source and gives its iControl2 start/monitor thread, but cannot state when to run it — occasion-gate xxxix forbids inventing an unsourced occasion. The manual grounds only tautological start/stop occasions ('to begin/cease generator operation'), the autostart action carries no setpoint, and no vessel energy-management fact exists. Tracked in the Batteries composer as fact_query genset_run_policy_occasion. Confirm with owner to resolve.",
+      "owner_question": "When should the Fischer Panda 8000i generator be run — is there a house-bank state-of-charge threshold, a large-AC-load policy (e.g. watermaker / aircon), a shore-power fallback rule, or programmed iControl2 autostart setpoints?",
+      "evidence": [
+        "Batteries composer fact_query genset_run_policy_occasion",
+        "scratch/fischer_panda_8000i.json operator_actions — tautological start/stop occasions; autostart action has no occasion/setpoint",
+        "outremer vessel_facts — no genset run policy / autostart setpoints attested"
+      ],
+      "provenance_split": {
+        "unconfirmed": "When/why to run the genset on this vessel — SOC threshold, large-AC-load policy, shore fallback, or iControl2 autostart setpoints; not attested by owner or vessel documents"
+      },
+      "fixture_auth": "Fixture-Auth: chat Fischer Panda 8000i — add genset run-policy / autostart 'when to run' to open owner questions",
+      "inventory_action": "none"
     }
   ]
 }
