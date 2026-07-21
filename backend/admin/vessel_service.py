@@ -350,7 +350,7 @@ def list_vessel_equipment(conn: Connection, vessel_id: str) -> list[dict[str, An
             FROM vessel_equipment ve
             JOIN equipment e ON e.id = ve.equipment_id
             WHERE ve.vessel_id = :vessel_id
-            ORDER BY e.system_category, e.manufacturer, e.model
+            ORDER BY lower(e.manufacturer), lower(e.model)
             """
         ),
         {"vessel_id": vessel_id},

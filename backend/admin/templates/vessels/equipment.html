@@ -28,7 +28,7 @@
 </section>
 {% endif %}
 
-<div class="panel-grid">
+<div class="panel-grid" id="installed">
   <section class="panel">
     <h2>Installed ({{ installed|length }})</h2>
     {% if installed %}
@@ -52,6 +52,9 @@
           <td>
             <form method="post" action="/admin/vessels/{{ vessel.id }}/equipment/remove">
               <input type="hidden" name="equipment_id" value="{{ item.equipment_id }}">
+              <input type="hidden" name="manufacturer" value="{{ manufacturer }}">
+              <input type="hidden" name="q" value="{{ query }}">
+              <input type="hidden" name="system_category" value="{{ system_category }}">
               <button type="submit" class="btn-danger">Remove</button>
             </form>
           </td>
@@ -87,7 +90,7 @@
   </section>
 </div>
 
-<section class="panel">
+<section class="panel" id="registry">
   <h2>Add from equipment registry</h2>
   <form method="get" class="search-row">
     <div class="combobox" data-combobox>
@@ -142,6 +145,9 @@
           {% else %}
           <form method="post" action="/admin/vessels/{{ vessel.id }}/equipment/add">
             <input type="hidden" name="equipment_id" value="{{ item.id }}">
+            <input type="hidden" name="manufacturer" value="{{ manufacturer }}">
+            <input type="hidden" name="q" value="{{ query }}">
+            <input type="hidden" name="system_category" value="{{ system_category }}">
             <button type="submit">Add</button>
           </form>
           {% endif %}

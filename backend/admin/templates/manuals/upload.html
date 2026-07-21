@@ -17,7 +17,7 @@
 <form method="post" enctype="multipart/form-data" class="form-grid" id="upload-form">
   <fieldset class="full-width">
     <legend>Equipment</legend>
-    <div data-equipment-autocomplete data-autocomplete-url="/admin/equipment/autocomplete">
+    <div class="combobox" data-equipment-autocomplete data-autocomplete-url="/admin/equipment/autocomplete">
       <label>Registry equipment
         <input type="text" placeholder="Search manufacturer or model" autocomplete="off" value="{{ form.equipment_label or '' }}">
         <input type="hidden" name="equipment_id" value="{{ form.equipment_id or '' }}">

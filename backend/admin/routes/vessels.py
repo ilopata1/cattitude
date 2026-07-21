@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from urllib.parse import urlencode
 
 from fastapi import APIRouter, Depends, Form, Query, Request
 from fastapi.responses import RedirectResponse
@@ -429,22 +430,56 @@ async def vessel_equipment_page(
 async def add_equipment_action(
     vessel_id: str,
     equipment_id: str = Form(...),
+    manufacturer: str = Form(""),
+    q: str = Form(""),
+    system_category: str = Form(""),
     admin_user: str = Depends(require_admin_user),
 ):
     with get_engine().begin() as conn:
         add_vessel_equipment(conn, vessel_id, equipment_id)
-    return RedirectResponse(f"/admin/vessels/{vessel_id}/equipment", status_code=303)
+    # Preserve the registry search and return to it (not the page top) so the
+    # user can keep adding from the same result set.
+    params = {
+        k: v
+        for k, v in (
+            ("manufacturer", manufacturer),
+            ("q", q),
+            ("system_category", system_category),
+        )
+        if v
+    }
+    query = f"?{urlencode(params)}" if params else ""
+    return RedirectResponse(
+        f"/admin/vessels/{vessel_id}/equipment{query}#registry",
+        status_code=303,
+    )
 
 
 @router.post("/{vessel_id}/equipment/remove")
 async def remove_equipment_action(
     vessel_id: str,
     equipment_id: str = Form(...),
+    manufacturer: str = Form(""),
+    q: str = Form(""),
+    system_category: str = Form(""),
     admin_user: str = Depends(require_admin_user),
 ):
     with get_engine().begin() as conn:
         remove_vessel_equipment(conn, vessel_id, equipment_id)
-    return RedirectResponse(f"/admin/vessels/{vessel_id}/equipment", status_code=303)
+    params = {
+        k: v
+        for k, v in (
+            ("manufacturer", manufacturer),
+            ("q", q),
+            ("system_category", system_category),
+        )
+        if v
+    }
+    query = f"?{urlencode(params)}" if params else ""
+    return RedirectResponse(
+        f"/admin/vessels/{vessel_id}/equipment{query}#installed",
+        status_code=303,
+    )
 
 
 @router.post("/{vessel_id}/equipment/apply-pack")
@@ -459,11 +494,11 @@ async def apply_pack_action(
             apply_option_pack(conn, vessel_id, option_pack_id)
         except VesselServiceError as exc:
             return RedirectResponse(
-                f"/admin/vessels/{vessel_id}/equipment?error={exc}",
+                f"/admin/vessels/{vessel_id}/equipment?error={exc}#installed",
                 status_code=303,
             )
     return RedirectResponse(
-        f"/admin/vessels/{vessel_id}/equipment?pack_applied=1",
+        f"/admin/vessels/{vessel_id}/equipment?pack_applied=1#installed",
         status_code=303,
     )
 
