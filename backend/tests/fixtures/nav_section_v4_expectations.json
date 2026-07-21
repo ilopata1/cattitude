@@ -1,0 +1,45 @@
+{
+  "fixture_auth": "Fixture-Auth: chat Nav v4.37 founding — Zeus SR×2 + Zeus SR Software platform + Halo 20+; ship-with-honest-gaps",
+  "version": "v4.37",
+  "description": "Navigation & helm Stage 4 expectations for Outremer / Supernova.",
+  "recorded_vessel_display_name": "Supernova",
+  "expected_guide_link_targets": ["controls"],
+  "must_exclude_from_body_depth": [],
+  "expected_inputs": {
+    "contributors": [
+      {"device_key": "bg_halo_20_plus", "depth": "full"},
+      {"device_key": "bg_zeus_sr_1", "depth": "full"},
+      {"device_key": "bg_zeus_sr_2", "depth": "full"},
+      {"device_key": "bg_zeus_sr_software", "depth": "full"},
+      {"device_key": "masterbus_bridge_interface", "depth": "provenance"}
+    ]
+  },
+  "required_present_pages": [
+    "Home screen",
+    "Apps",
+    "Alerts",
+    "Chart",
+    "Radar",
+    "MOB",
+    "Waypoints & Routes",
+    "Tracks",
+    "Tides",
+    "CZone Digital switching"
+  ],
+  "expected_fact_query_ids": ["zeus_czone_controller_visible"],
+  "forbidden_prose_substrings": [
+    "control surface",
+    "masterbus_bridge",
+    "masterbus bridge",
+    "bearing alignment",
+    "antenna height",
+    "sector blanking",
+    "not fitted",
+    "does not appear",
+    "czone touch",
+    "day-to-day",
+    "when CZone is commissioned",
+    "When CZone is commissioned"
+  ],
+  "style_deictics_soft": ["this vessel", "this boat", "this yacht"]
+}

@@ -9,9 +9,78 @@
       "surface": "touchscreen",
       "location_class": "on_device",
       "optional_accessory": false,
-      "label_verbatim": "Touchscreen",
-      "path": "control_surfaces[0]",
-      "vote_margin": "2/2"
+      "label_verbatim": "Home screen",
+      "path": "control_surfaces[0]"
+    },
+    {
+      "surface": "touchscreen",
+      "location_class": "on_device",
+      "optional_accessory": false,
+      "label_verbatim": "Apps",
+      "path": "control_surfaces[1]"
+    },
+    {
+      "surface": "touchscreen",
+      "location_class": "on_device",
+      "optional_accessory": false,
+      "label_verbatim": "Alerts",
+      "path": "control_surfaces[2]"
+    },
+    {
+      "surface": "touchscreen",
+      "location_class": "on_device",
+      "optional_accessory": false,
+      "label_verbatim": "Connected devices",
+      "path": "control_surfaces[3]"
+    },
+    {
+      "surface": "touchscreen",
+      "location_class": "on_device",
+      "optional_accessory": false,
+      "label_verbatim": "Chart",
+      "path": "control_surfaces[4]"
+    },
+    {
+      "surface": "touchscreen",
+      "location_class": "on_device",
+      "optional_accessory": true,
+      "label_verbatim": "Radar",
+      "path": "control_surfaces[5]"
+    },
+    {
+      "surface": "touchscreen",
+      "location_class": "on_device",
+      "optional_accessory": false,
+      "label_verbatim": "MOB",
+      "path": "control_surfaces[6]"
+    },
+    {
+      "surface": "touchscreen",
+      "location_class": "on_device",
+      "optional_accessory": false,
+      "label_verbatim": "Waypoints & Routes",
+      "path": "control_surfaces[7]"
+    },
+    {
+      "surface": "touchscreen",
+      "location_class": "on_device",
+      "optional_accessory": false,
+      "label_verbatim": "Tracks",
+      "path": "control_surfaces[8]"
+    },
+    {
+      "surface": "touchscreen",
+      "location_class": "on_device",
+      "optional_accessory": false,
+      "label_verbatim": "Tides",
+      "path": "control_surfaces[9]"
+    },
+    {
+      "surface": "touchscreen",
+      "location_class": "on_device",
+      "optional_accessory": true,
+      "label_verbatim": "CZone Digital switching",
+      "path": "control_surfaces[10]"
     }
   ],
   "operator_actions": [
@@ -36,6 +105,114 @@
       "occasion": "to respond to a man overboard situation",
       "vote_margin": "2/2",
       "source": "extracted"
+    },
+    {
+      "action": "Open the home screen to access apps, settings, and alerts",
+      "audience": "operator",
+      "context": "daily",
+      "source": "extracted"
+    },
+    {
+      "action": "Select Exit on the home screen to return to the last-used app",
+      "audience": "operator",
+      "context": "daily",
+      "source": "extracted"
+    },
+    {
+      "action": "Open an app by selecting its icon on the home screen",
+      "audience": "operator",
+      "context": "daily",
+      "source": "extracted"
+    },
+    {
+      "action": "Open a pinned or recent app from the activity bar",
+      "audience": "operator",
+      "context": "daily",
+      "source": "extracted"
+    },
+    {
+      "action": "Close an app by selecting and holding it in the recent apps panel and selecting Close",
+      "audience": "operator",
+      "context": "situational",
+      "source": "extracted"
+    },
+    {
+      "action": "Pin an app to the activity bar by selecting and holding it and selecting Pin",
+      "audience": "operator",
+      "context": "situational",
+      "source": "extracted"
+    },
+    {
+      "action": "Create a custom app group with New split on the home screen to view two or more apps at once",
+      "audience": "operator",
+      "context": "situational",
+      "source": "extracted"
+    },
+    {
+      "action": "Open the Alerts list to view recent and historic system alerts",
+      "audience": "operator",
+      "context": "daily",
+      "source": "extracted"
+    },
+    {
+      "action": "View alert messages when the home badge shows attention needed",
+      "audience": "operator",
+      "context": "situational",
+      "source": "extracted"
+    },
+    {
+      "action": "Manage alert rules when you want to change what the unit warns about",
+      "audience": "operator",
+      "context": "situational",
+      "source": "extracted"
+    },
+    {
+      "action": "Open Connected devices to view equipment linked to the display",
+      "audience": "operator",
+      "context": "situational",
+      "source": "extracted"
+    },
+    {
+      "action": "Open the Chart app from the home screen for navigation charts",
+      "audience": "operator",
+      "context": "daily",
+      "source": "extracted"
+    },
+    {
+      "action": "Open the Radar app from the home screen when radar is connected",
+      "audience": "operator",
+      "context": "daily",
+      "source": "extracted"
+    },
+    {
+      "action": "Activate MOB to create a MOB waypoint at the vessel location and open the MOB app",
+      "audience": "operator",
+      "context": "emergency",
+      "source": "extracted"
+    },
+    {
+      "action": "Open Waypoints & Routes from the home screen to manage waypoints and routes",
+      "audience": "operator",
+      "context": "daily",
+      "source": "extracted"
+    },
+    {
+      "action": "Open the Tracks app from the home screen to review tracks",
+      "audience": "operator",
+      "context": "situational",
+      "source": "extracted"
+    },
+    {
+      "action": "Open the Tides app from the home screen for tide information",
+      "audience": "operator",
+      "context": "situational",
+      "source": "extracted"
+    },
+    {
+      "action": "Turn a CZone device on or off from the control bar switches when CZone is commissioned",
+      "audience": "operator",
+      "context": "situational",
+      "source": "extracted"
     }
   ],
   "networks": {
@@ -47,7 +224,24 @@
     "displays_data_from_other_devices": false,
     "controllable_from_network": false
   },
-  "requires_devices": [],
+  "requires_devices": [
+    {
+      "description_verbatim": "connected radar scanner such as Halo",
+      "needed_for": "control_surfaces[5]",
+      "requirement_kind": "device",
+      "source": "extracted",
+      "functional_class": "radar",
+      "gate_verbatim": "radar"
+    },
+    {
+      "description_verbatim": "CZone digital switching system",
+      "needed_for": "control_surfaces[10]",
+      "requirement_kind": "device",
+      "source": "extracted",
+      "functional_class": "digital_switching",
+      "gate_verbatim": "CZone"
+    }
+  ],
   "safety_role": {
     "is_protective_device": false,
     "has_manual_override": false,
@@ -86,6 +280,16 @@
       "supports_field": "operator_actions[action=\"activate a MOB\"]",
       "manual_section": "CONNECT TO MOBILE APP",
       "note": "Procedure to respond to a man overboard situation"
+    },
+    {
+      "supports_field": "requires_devices[0]",
+      "manual_section": "Radar",
+      "note": "Page appears when connected radar scanner such as Halo is configured"
+    },
+    {
+      "supports_field": "requires_devices[1]",
+      "manual_section": "CZone Digital switching",
+      "note": "Page appears when CZone digital switching system is configured"
     }
   ],
   "confidence": {
@@ -146,9 +350,193 @@
     "operation"
   ],
   "entity_kind": "platform",
-  "ui_pages": [],
+  "ui_pages": [
+    {
+      "name": "Home screen",
+      "purpose": "access all apps, settings, and alert messages",
+      "actions": [
+        {
+          "action": "Open the home screen to access apps, settings, and alerts",
+          "audience": "operator",
+          "context": "daily",
+          "source": "extracted"
+        },
+        {
+          "action": "Select Exit on the home screen to return to the last-used app",
+          "audience": "operator",
+          "context": "daily",
+          "source": "extracted"
+        }
+      ]
+    },
+    {
+      "name": "Apps",
+      "purpose": "grid of system and custom apps (availability depends on unit and connected hardware)",
+      "actions": [
+        {
+          "action": "Open an app by selecting its icon on the home screen",
+          "audience": "operator",
+          "context": "daily",
+          "source": "extracted"
+        },
+        {
+          "action": "Open a pinned or recent app from the activity bar",
+          "audience": "operator",
+          "context": "daily",
+          "source": "extracted"
+        },
+        {
+          "action": "Close an app by selecting and holding it in the recent apps panel and selecting Close",
+          "audience": "operator",
+          "context": "situational",
+          "source": "extracted"
+        },
+        {
+          "action": "Pin an app to the activity bar by selecting and holding it and selecting Pin",
+          "audience": "operator",
+          "context": "situational",
+          "source": "extracted"
+        },
+        {
+          "action": "Create a custom app group with New split on the home screen to view two or more apps at once",
+          "audience": "operator",
+          "context": "situational",
+          "source": "extracted"
+        }
+      ]
+    },
+    {
+      "name": "Alerts",
+      "purpose": "recent and historic system alerts",
+      "actions": [
+        {
+          "action": "Open the Alerts list to view recent and historic system alerts",
+          "audience": "operator",
+          "context": "daily",
+          "source": "extracted"
+        },
+        {
+          "action": "View alert messages when the home badge shows attention needed",
+          "audience": "operator",
+          "context": "situational",
+          "source": "extracted"
+        },
+        {
+          "action": "Manage alert rules when you want to change what the unit warns about",
+          "audience": "operator",
+          "context": "situational",
+          "source": "extracted"
+        }
+      ]
+    },
+    {
+      "name": "Connected devices",
+      "purpose": "list and configure devices connected to the display",
+      "actions": [
+        {
+          "action": "Open Connected devices to view equipment linked to the display",
+          "audience": "operator",
+          "context": "situational",
+          "source": "extracted"
+        }
+      ]
+    },
+    {
+      "name": "Chart",
+      "purpose": "chartplotter navigation display",
+      "actions": [
+        {
+          "action": "Open the Chart app from the home screen for navigation charts",
+          "audience": "operator",
+          "context": "daily",
+          "source": "extracted"
+        }
+      ]
+    },
+    {
+      "name": "Radar",
+      "purpose": "radar display and transmit control",
+      "actions": [
+        {
+          "action": "Open the Radar app from the home screen when radar is connected",
+          "audience": "operator",
+          "context": "daily",
+          "source": "extracted"
+        }
+      ],
+      "appears_if_gate": {
+        "verbatim": "radar",
+        "description_verbatim": "connected radar scanner such as Halo",
+        "functional_class": "radar"
+      }
+    },
+    {
+      "name": "MOB",
+      "purpose": "man overboard mark and recovery display",
+      "actions": [
+        {
+          "action": "Activate MOB to create a MOB waypoint at the vessel location and open the MOB app",
+          "audience": "operator",
+          "context": "emergency",
+          "source": "extracted"
+        }
+      ]
+    },
+    {
+      "name": "Waypoints & Routes",
+      "purpose": "waypoints and routes library",
+      "actions": [
+        {
+          "action": "Open Waypoints & Routes from the home screen to manage waypoints and routes",
+          "audience": "operator",
+          "context": "daily",
+          "source": "extracted"
+        }
+      ]
+    },
+    {
+      "name": "Tracks",
+      "purpose": "vessel track history",
+      "actions": [
+        {
+          "action": "Open the Tracks app from the home screen to review tracks",
+          "audience": "operator",
+          "context": "situational",
+          "source": "extracted"
+        }
+      ]
+    },
+    {
+      "name": "Tides",
+      "purpose": "tide information",
+      "actions": [
+        {
+          "action": "Open the Tides app from the home screen for tide information",
+          "audience": "operator",
+          "context": "situational",
+          "source": "extracted"
+        }
+      ]
+    },
+    {
+      "name": "CZone Digital switching",
+      "purpose": "CZone digital switching controller on the control bar",
+      "actions": [
+        {
+          "action": "Turn a CZone device on or off from the control bar switches when CZone is commissioned",
+          "audience": "operator",
+          "context": "situational",
+          "source": "extracted"
+        }
+      ],
+      "appears_if_gate": {
+        "verbatim": "CZone",
+        "description_verbatim": "CZone digital switching system",
+        "functional_class": "digital_switching"
+      }
+    }
+  ],
   "validation_flags": [],
   "source": "live_extraction",
-  "documented_version": "Zeus SR Software v2.5",
-  "needs_rextraction": false
+  "documented_version": "Zeus SR Software v2.5"
 }

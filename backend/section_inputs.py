@@ -446,6 +446,10 @@ def _inventory_keyword_hit(desc: str, graph: VesselGraphResult) -> str | None:
         ("air conditioner", "air"),
         ("hvac", "air"),
         ("acmi", "acmi"),
+        ("radar", "radar"),
+        ("halo", "radar"),
+        ("czone", "czone"),
+        ("digital switching", "czone"),
     )
     for needle, family in keywords:
         if needle not in blob:
@@ -457,10 +461,22 @@ def _inventory_keyword_hit(desc: str, graph: VesselGraphResult) -> str | None:
                     str(device.line_item.get("model") or "").lower(),
                     str(device.line_item.get("description") or "").lower(),
                     str(device.line_item.get("manufacturer") or "").lower(),
+                    str(device.line_item.get("system_category") or "").lower(),
                 ]
             )
             if family == "air":
                 if any(t in text for t in ("aircon", "air con", "hvac", "climate")):
+                    return key
+                continue
+            if family == "radar":
+                if any(t in text for t in ("radar", "halo")):
+                    return key
+                continue
+            if family == "czone":
+                if any(
+                    t in text
+                    for t in ("czone", "touch 7", "digital switching", "coi")
+                ):
                     return key
                 continue
             if family in text or needle in text:

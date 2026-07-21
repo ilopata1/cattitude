@@ -17,9 +17,13 @@ _OCCASION_CONTEXTS = frozenset(
 )
 
 # Canonical spine (slots may be omitted when empty).
+# v4.37.5: "startup" (power-on / session start) sorts before "monitoring" —
+# a device must be turned on before it can be watched or adjusted. Powered
+# devices emit it; always-on systems (batteries, solar) omit it.
 SECTION_SPINE: tuple[str, ...] = (
     "capability_summary",
     "how_it_works",
+    "startup",
     "monitoring",
     "adjusting",
     "troubleshooting",

@@ -375,7 +375,7 @@ From `backend/`:
 
 | Role | Path |
 |------|------|
-| Spec tip | `backend/equipment-classification-spec-v4.36.md` (Electrical Stage 4 freeze; xlii multi-occasion) |
+| Spec tip | `backend/equipment-classification-spec-v4.37.md` (Nav Stage 4 frozen nav-i–nav-xiii; `startup` global spine slot; frozen set = Solar + Batteries + Controls + Electrical + Nav) |
 | Pipeline plan | `backend/guide-pipeline-plan.md` |
 | Fixture policy | `backend/tests/fixtures/POLICY.md` |
 | Extract → scratch | `backend/scripts/extract_interaction_profile.py` |
@@ -386,6 +386,7 @@ From `backend/`:
 | Controls compose / criteria | `backend/guide_section_controls.py`, `scripts/draft_controls_section.py` |
 | Batteries compose / criteria | `backend/guide_section_batteries.py`, `scripts/draft_batteries_section.py` |
 | Electrical compose / criteria | `backend/guide_section_electrical.py`, `scripts/draft_electrical_section.py` |
+| Nav compose / criteria | `backend/guide_section_nav.py`, `scripts/draft_nav_section.py` |
 | Vessel reconcile | `backend/scripts/generate_outremer_reconciliation_report.py`, `fixtures/pipeline/outremer/` |
 | Defect ↔ golden pair | `tests/fixtures/stage15_defective_extraction.json` ↔ `smartsolar_corrected_extraction.json` |
 | Owners | `.github/CODEOWNERS` |

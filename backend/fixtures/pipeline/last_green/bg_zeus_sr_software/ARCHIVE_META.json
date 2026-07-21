@@ -3,5 +3,6 @@
   "equipment_id": "48dbc6c2-7267-4c49-8cea-5af1656ac394",
   "manual_work_id": "c552792a-bd10-485f-a1f0-d7820ea7f9cb",
   "manual": "Zeus SR Quick Start Guide V2.5 (988-13244-002, EN, 1 pp)",
-  "fixture_auth": "Fixture-Auth: chat Zeus SR Software platform — QSG as shared MFD platform; hubs run via runs_platform"
+  "fixture_auth": "Fixture-Auth: chat Zeus SR Software platform — QSG as shared MFD platform; hubs run via runs_platform",
+  "ui_pages_reextract": "Fixture-Auth: chat Zeus SR Software ui_pages — System Guide Home/Apps/Alerts/Connected devices + Chart/Radar/MOB/Waypoints/Tracks/Tides/CZone Digital switching"
 }
