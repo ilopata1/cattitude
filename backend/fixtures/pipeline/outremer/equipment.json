@@ -355,6 +355,17 @@
       "quantity": 1,
       "instance_handling": "interchangeable",
       "provenance": "owner confirmation; channel_map Ind C [OPT] Radar"
+    },
+    {
+      "device_key": "dessalator_duo",
+      "catalog_key": "dessalator_duo",
+      "manufacturer": "Dessalator",
+      "model": "Duo AC & DC Navigator",
+      "description": "Watermaker / reverse-osmosis desalinator (runs on AC or DC) with local Navigator control panel",
+      "system_category": "fresh_water",
+      "quantity": 1,
+      "instance_handling": "interchangeable",
+      "provenance": "owner confirmation (fitted); channel_map Ind C DCD2-04 [OPT] DESSALINISATEUR / WATER MAKER (35A); operators start-up guide v4.9 (manual_work ffe1b474) Stage 1 extracted"
     }
   ],
   "vessel_artifact_facts": [

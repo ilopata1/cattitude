@@ -1,0 +1,13 @@
+{
+  "device_key": "dessalator_duo",
+  "equipment_id": "6f36568d-3093-4f2c-b1f6-001840ee26d8",
+  "manual_work_id": "ffe1b474-3015-46e5-8a22-0f3f00b40a9e",
+  "manual": "Start-Up Guide Dessalator(R) Duo 60 & Duo 100 Navigator Automatic (operators, EN v4.9 06/24, 9 pp)",
+  "fixture_auth": "Fixture-Auth: chat Dessalator Duo Stage 1 extract — live extraction promoted; on-device NAVIGATOR panel + DC>5min supply caveat added as source-grounded §1.D adjudication (extraction omissions)",
+  "review": {
+    "status": "reviewed_and_approved",
+    "verdict": "pass",
+    "reviewed_by": "owner/human (chat)",
+    "date": "2026-07-21"
+  }
+}

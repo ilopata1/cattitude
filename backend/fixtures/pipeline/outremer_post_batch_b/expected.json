@@ -24,7 +24,8 @@
     "bg_zeus_sr_1": "HUB",
     "bg_zeus_sr_2": "HUB",
     "blue_sea_acr": "ISLAND",
-    "bg_zeus_sr_software": "PLATFORM"
+    "bg_zeus_sr_software": "PLATFORM",
+    "dessalator_duo": "ISLAND"
   },
   "sections": {
     "czone_touch_7": {
@@ -110,6 +111,10 @@
     "bg_zeus_sr_software": {
       "value": "nav",
       "source": "lookup"
+    },
+    "dessalator_duo": {
+      "value": "water",
+      "source": "lookup"
     }
   },
   "control_paths": [
@@ -190,6 +195,7 @@
     "multiple_hubs": "first occurrence — Touch 7 + Zeus SR both HUB; see hub_domain_split judgment (Fixture-Auth: chat Zeus post-adjudication round 2)",
     "bg_zeus_sr": "live extraction promoted (Fixture-Auth: chat Zeus SR promote); displays_data true; CZone Digital switching ui_page; exposes_data false",
     "bg_halo_20_plus": "live extraction promoted (Fixture-Auth: chat Halo 20+ promote); installation manual only; hub_operation_unsourced for MFD radar UI",
-    "bg_zeus_sr_software": "live QSG platform (Fixture-Auth: chat Zeus SR Software platform); Zeus SR hubs runs_platform; thin ops (power/MOB); version unconfirmed on vessel → platform_version_unconfirmed + config_unsourced per hub instance"
+    "bg_zeus_sr_software": "live QSG platform (Fixture-Auth: chat Zeus SR Software platform); Zeus SR hubs runs_platform; thin ops (power/MOB); version unconfirmed on vessel → platform_version_unconfirmed + config_unsourced per hub instance",
+    "dessalator_duo": "live Stage 1 extraction promoted (Fixture-Auth: chat Dessalator Duo Stage 1 extract — live extraction promoted; on-device NAVIGATOR panel + DC>5min supply caveat added as source-grounded §1.D adjudication (extraction omissions)); operators start-up guide; standalone ISLAND in water section; on-device NAVIGATOR panel + optional Mini Remote Control; supersedes the earlier inventory-add stub; reviewed & approved 2026-07-21 (owner/human)"
   }
 }

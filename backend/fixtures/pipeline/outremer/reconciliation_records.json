@@ -119,6 +119,73 @@
         "bg_halo_20_plus"
       ],
       "inventory_action": "added"
+    },
+    {
+      "id": "rec_dessalator_duo_added",
+      "action": "audit_only",
+      "disposition": "owner_confirmed_fitted",
+      "device_keys_now": [
+        "dessalator_duo"
+      ],
+      "summary": "Owner confirmed the watermaker as fitted and identified it as Dessalator Duo AC & DC Navigator. Promotes the previously-unpromoted channel_map OPT circuit (DCD2-04 [OPT] DESSALINISATEUR / WATER MAKER, 35A) to a fitted device. Supersedes the earlier disposition in rec_channel_map_opt_nav_owner, which left the watermaker OPT circuit unchanged.",
+      "supersedes": [
+        "rec_channel_map_opt_nav_owner (watermaker OPT circuit left unchanged)"
+      ],
+      "evidence": [
+        "owner confirmation (chat)",
+        "channel_map Ind C DCD2-04 [OPT] DESSALINISATEUR / WATER MAKER (35A)"
+      ],
+      "provenance_split": {
+        "attested": "Watermaker fitted; manufacturer Dessalator, model 'Duo AC & DC Navigator' (owner)",
+        "inferred": "Standalone appliance on DC distribution with local Navigator control panel; not on CZone/MasterBus data network (channel_map shows a DC power circuit only)",
+        "unconfirmed": "Documented operation (start/stop production, freshwater flush, membrane rinse) — no manufacturer manual ingested; hub_operation_unsourced"
+      },
+      "fixture_auth": "Fixture-Auth: chat Dessalator Duo add — owner-attested watermaker promoted from channel_map OPT circuit to fitted device (outremer + post_batch_b)",
+      "inventory_action": "added"
+    },
+    {
+      "id": "rec_dessalator_duo_extracted",
+      "action": "audit_only",
+      "disposition": "profile_extracted",
+      "device_keys_now": [
+        "dessalator_duo"
+      ],
+      "summary": "Playbook 1 Stage 1 extraction run against the cleared operators start-up guide (manual_work ffe1b474, EN v4.9 06/24). Live profile replaces the earlier inventory-add stub. Resolves the 'documented operation unsourced' item from rec_dessalator_duo_added: start / stop / restart / flush / rinse actions and the optional Mini Remote Control are now sourced. Two extraction omissions (primary on-device NAVIGATOR control panel; mandatory DC>5min powered source) were added as source-grounded §1.D adjudications in scripts/promote_dessalator_duo.py.",
+      "supersedes": [
+        "rec_dessalator_duo_added provenance_split.unconfirmed (documented operation)"
+      ],
+      "evidence": [
+        "Start-Up Guide Dessalator Duo 60 & Duo 100 Navigator Automatic (operators, EN v4.9 06/24, 9 pp)",
+        "manual_work ffe1b474-3015-46e5-8a22-0f3f00b40a9e; equipment 6f36568d-3093-4f2c-b1f6-001840ee26d8"
+      ],
+      "fixture_auth": "Fixture-Auth: chat Dessalator Duo Stage 1 extract — live extraction promoted; on-device NAVIGATOR panel + DC>5min supply caveat added as source-grounded adjudication",
+      "review": {
+        "status": "reviewed_and_approved",
+        "verdict": "pass",
+        "reviewed_by": "owner/human (chat)",
+        "date": "2026-07-21",
+        "note": "Live Stage 1 profile + two source-grounded §1.D adjudications reviewed and approved for promotion to golden."
+      },
+      "inventory_action": "none"
+    },
+    {
+      "id": "rec_dessalator_duo_mini_remote_question",
+      "action": "audit_only",
+      "disposition": "owner_question_open",
+      "device_keys_now": [
+        "dessalator_duo"
+      ],
+      "summary": "Open owner question: is the Dessalator Duo optional 'Mini Remote Control' accessory fitted on this vessel? Stage 1 extraction surfaced it as an optional on-device control surface (control_surfaces[0]); it is currently treated as not fitted, leaving an honest unresolved_dependency flag (needed_for control_surfaces[0]). Confirm with owner to resolve.",
+      "owner_question": "Does the Dessalator Duo watermaker have the optional Mini Remote Control accessory fitted?",
+      "evidence": [
+        "operators start-up guide v4.9 (manual_work ffe1b474) — control_surfaces[0] 'Mini Remote Control' (optional_accessory)",
+        "vessel graph flag: unresolved_dependency dessalator_duo needed_for=control_surfaces[0]"
+      ],
+      "provenance_split": {
+        "unconfirmed": "Presence of the optional Mini Remote Control accessory on this vessel — optional per manual; not attested by owner or vessel documents"
+      },
+      "fixture_auth": "Fixture-Auth: chat Dessalator Duo — add optional Mini Remote Control to open owner questions",
+      "inventory_action": "none"
     }
   ]
 }

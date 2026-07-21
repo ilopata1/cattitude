@@ -5251,5 +5251,215 @@
     "validation_flags": [],
     "source": "live_extraction",
     "documented_version": "Zeus SR Software v2.5"
+  },
+  "dessalator_duo": {
+    "device": {
+      "manufacturer": "Dessalator",
+      "model": "Duo AC & DC Navigator",
+      "category_freeform": "watermaker"
+    },
+    "control_surfaces": [
+      {
+        "surface": "physical_controls",
+        "location_class": "on_device",
+        "optional_accessory": true,
+        "label_verbatim": "Mini Remote Control",
+        "path": "control_surfaces[0]"
+      },
+      {
+        "surface": "physical_controls",
+        "location_class": "on_device",
+        "optional_accessory": false,
+        "label_verbatim": "NAVIGATOR control panel (voltage switch 12/24V or 230V/120V, OFF; motorized pressure-regulator knob)",
+        "path": "control_surfaces[1]"
+      }
+    ],
+    "operator_actions": [
+      {
+        "action": "stop watermaker",
+        "audience": "operator",
+        "context": "situational",
+        "occasion": "to put the watermaker in stand-by mode",
+        "source": "extracted"
+      },
+      {
+        "action": "restart watermaker",
+        "audience": "operator",
+        "context": "situational",
+        "occasion": "to start the watermaker after stopping",
+        "source": "extracted"
+      },
+      {
+        "action": "flush system",
+        "audience": "operator",
+        "context": "commissioning",
+        "occasion": "to prepare the system for first use or after maintenance",
+        "source": "extracted"
+      },
+      {
+        "action": "start watermaker",
+        "audience": "operator",
+        "context": "situational",
+        "occasion": "to begin fresh water production",
+        "source": "extracted"
+      },
+      {
+        "action": "rinse membranes",
+        "audience": "operator",
+        "context": "maintenance",
+        "occasion": "to maintain membrane quality after prolonged inactivity",
+        "source": "extracted"
+      }
+    ],
+    "networks": {
+      "speaks": [],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": false,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": false
+    },
+    "requires_devices": [
+      {
+        "description_verbatim": "Mini Remote Control",
+        "needed_for": "control_surfaces[0]",
+        "requirement_kind": "device",
+        "source": "derived",
+        "derived_from": "control_surfaces[0]"
+      }
+    ],
+    "safety_role": {
+      "is_protective_device": false,
+      "has_manual_override": false,
+      "has_emergency_procedure": false
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [
+      {
+        "description_verbatim": "When using the system in 12 or 24V for more than 5 minutes, it is mandatory to turn on either the boat engine, or the battery charger through the shore power supply, or a generator",
+        "source": "adjudicated_extraction_omission"
+      }
+    ],
+    "evidence": [
+      {
+        "supports_field": "operator_actions[action=stop watermaker]",
+        "manual_section": "STARTING YOUR WATERMAKER :",
+        "note": "Stopping the watermaker puts it in stand-by mode"
+      },
+      {
+        "supports_field": "operator_actions[action=restart watermaker]",
+        "manual_section": "STARTING YOUR WATERMAKER :",
+        "note": "Restarting the watermaker after stopping"
+      },
+      {
+        "supports_field": "operator_actions[action=flush system]",
+        "manual_section": "Start-up guide DC AC DUO NAVIGATOR D60/100 v4.9 EN (06/24)",
+        "note": "Flushing system is mandatory before first use"
+      },
+      {
+        "supports_field": "operator_actions[action=start watermaker]",
+        "manual_section": "STARTING YOUR WATERMAKER :",
+        "note": "Starting the watermaker begins fresh water production"
+      },
+      {
+        "supports_field": "operator_actions[action=rinse membranes]",
+        "manual_section": "Start-up guide DC AC DUO NAVIGATOR D60/100 v4.9 EN (06/24)",
+        "note": "Rinsing membranes is necessary after 10 days of inactivity"
+      },
+      {
+        "supports_field": "requires_devices[0]",
+        "manual_section": "Start-up guide DC AC DUO NAVIGATOR D60/100 v4.9 EN (06/24)",
+        "note": "Mini Remote Control is needed for various operations"
+      },
+      {
+        "supports_field": "control_surfaces[1]",
+        "manual_section": "First start-up of the watermaker / Starting the watermaker",
+        "note": "adjudicated: primary on-device control panel omitted by extraction"
+      },
+      {
+        "supports_field": "supply_requirements[0]",
+        "manual_section": "Procedure for commissioning the Dessalator / Mandatory steps",
+        "note": "adjudicated: mandatory powered source when running on DC"
+      }
+    ],
+    "confidence": {
+      "overall": 0.9,
+      "notes": "[batch_0] Manual excerpts provide clear operator actions and context."
+    },
+    "repairs": [
+      {
+        "repair": "added_requires_for_optional_surface",
+        "flag": "optional_surface_without_requires",
+        "field_path": "control_surfaces[0]",
+        "added_entry": {
+          "description_verbatim": "Mini Remote Control",
+          "needed_for": "control_surfaces[0]",
+          "source": "derived",
+          "derived_from": "control_surfaces[0]",
+          "requirement_kind": "device"
+        }
+      }
+    ],
+    "coverage": {
+      "chunk_count": 9,
+      "heading_count": 1,
+      "headings_covered_count": 1,
+      "heading_coverage_fraction": 1.0,
+      "coverage_low_threshold": 0.25,
+      "top_k_used": 4
+    },
+    "group_utilization": [
+      {
+        "group_id": "batch_0",
+        "is_introduction": true,
+        "excerpt_count": 9,
+        "predicted_fields": [
+          "control_surfaces",
+          "evidence",
+          "operator_actions",
+          "requires_devices",
+          "safety_role",
+          "supply_requirements"
+        ],
+        "contributions": {
+          "operator_actions": 5,
+          "control_surfaces": 1,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 5,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 11,
+        "unutilized": false
+      }
+    ],
+    "merge_conflicts": [],
+    "genres": [
+      "commissioning",
+      "operation"
+    ],
+    "entity_kind": "device",
+    "ui_pages": [],
+    "validation_flags": [
+      {
+        "flag": "optional_surface_without_requires",
+        "severity": "warning",
+        "detail": "repaired: added requires_devices for optional surface 'Mini Remote Control'",
+        "field_path": "control_surfaces[0]"
+      },
+      {
+        "flag": "extraction_omission_adjudicated",
+        "severity": "info",
+        "detail": "Added on-device NAVIGATOR control panel + DC>5min supply caveat from the start-up guide (grounded; see evidence). Fixture-Auth: chat Dessalator Duo Stage 1 extract — live extraction promoted; on-device NAVIGATOR panel + DC>5min supply caveat added as source-grounded §1.D adjudication (extraction omissions)"
+      }
+    ],
+    "source": "live_extraction",
+    "needs_rextraction": false
   }
 }

@@ -1,0 +1,38 @@
+{
+  "inventory": {
+    "procedures": [],
+    "alternatives": [],
+    "filtered": [],
+    "groups_scanned": [
+      "batch_0"
+    ],
+    "procedure_count": 0,
+    "alternative_count": 0,
+    "filtered_count": 0
+  },
+  "reconciliation": {
+    "accounted": [],
+    "classified": [],
+    "unaccounted": [],
+    "unaccounted_procedures": [],
+    "unaccounted_alternatives": [],
+    "accounting_trail": [],
+    "counts": {
+      "accounted": 0,
+      "classified": 0,
+      "unaccounted": 0,
+      "filtered": 0,
+      "trail": 0
+    },
+    "corpus_sizes": {
+      "actions": 5,
+      "surfaces": 2,
+      "requires": 1
+    }
+  },
+  "repair": {
+    "attempted": false,
+    "enabled": false
+  },
+  "repair_enabled": true
+}
