@@ -64,12 +64,13 @@ wholesale; redirect only the *system* slot to Stage 4.
 | Phase | What | Acceptance | Rough effort |
 |-------|------|-----------|--------------|
 | **1 ✅ DONE** | Output spine: Stage 4 dict → `SystemModule` → `guide_content` → publish → client, **fixtures as input** | Ingest → approve → publish → `bundle.json` renders the systems in the app | shipped |
-| **2** | Input substrate in DB: persist profiles + relations + vessel facts (per-model library + per-boat wiring); DB→`equipment_doc`/`profiles` adapter | Composer output from DB-built inputs == frozen fixture drafts, exactly | ~1.5–2.5 wk |
+| **2 ✅ DONE** | Input substrate in DB: persist profiles + relations + vessel facts (per-model library + per-boat wiring); DB→`equipment_doc`/`profiles` adapter | Composer output from DB-built inputs == frozen fixture drafts, exactly | shipped |
 | **3** | Orchestrator + admin: `run_stage4_generation(vessel)`; wire into admin generate; persist provenance/fact_queries; owner-questions surfaced | One-click DB-native generate → publish | ~1 wk |
 | **4** | De-hardcode composers for arbitrary vessels (remove Outremer constants, `DISPLAY_NAMES`/`MANUFACTURER_MODEL`, pinned device keys); add a 2nd vessel | A different vessel generates coherent system chapters | ~1–2 wk |
 | **5** | Consolidate: retire the old fragment/LLM path for system modules; delete dead code + frozen-bundle path | Single generation path for systems | ~few days |
 
-Value lands after Phase 1 (done); Phase 2 carries a rigorous byte-match gate.
+Value lands after Phase 1 (done); Phase 2 (done) is gated by a rigorous
+byte-match check. Next: Phase 3 (orchestrator + admin wiring).
 
 ---
 
@@ -215,8 +216,26 @@ Confirmed against `fixtures/pipeline/outremer/{equipment,profiles}.json`:
 - Platforms are already `equipment` rows with `entity_kind='platform'` + their
   own profile, reached via `runs_platform` edges.
 
-### Locked decisions (2026-07-21)
-1. **Profile identity** → FK to `equipment.id` (registry already dedups models).
+### Discovery (2026-07-21) — fixture inventory ≠ admin registry
+Inspecting `supernova`'s live registry against the Outremer fixture: only **6 of
+19** fixture models match the registry by `(manufacturer, model)`. The rest are
+the *same physical gear under different strings* (fixture `B&G Zeus SR 12` vs
+registry `B&G Zeus SR`; `Alpha Pro III` vs `AlphaPro III`; `Mass Combi Pro` vs
+`Mass Combi Pro 24/3500-100`; …), the registry carries ~24 models the fixture
+lacks, and the fixture's hand-curated `device_key`s / `quantity` /
+`instance_handling` don't map 1:1 to `vessel_equipment` rows. **Consequence:**
+FK'ing profiles to `equipment.id` or hanging `device_key` on `vessel_equipment`
+would require fuzzy reconciliation or *mutating admin data*, and still risk
+byte-match drift. Phase 2 therefore stores a **self-contained, fixture-faithful
+Stage-4 substrate decoupled from the admin registry**; linking Stage-4 models ↔
+registry `equipment.id` is deferred to Phase 4 (de-hardcode for real vessels).
+
+### Locked decisions (2026-07-21; decisions 1 & schema revised post-discovery)
+1. **Profile identity** → keyed by a **natural model handle** (`profile_key`,
+   e.g. `coi`, `alpha_pro_iii`), *not* a `equipment.id` FK. The
+   `interaction_profile` row also carries the equipment_doc model fields
+   (manufacturer/model/description/system_category) so the adapter reproduces
+   the fixture without touching the admin registry. *(revised — see Discovery)*
 2. **Edge separation** → **clean split now.** *All* cross-device edges
    (`runs_platform`, `protects`, `protected_by`, `requires_devices`) are
    extracted out of the stored profile into `vessel_equipment_relation`; the
@@ -232,20 +251,23 @@ Confirmed against `fixtures/pipeline/outremer/{equipment,profiles}.json`:
    Phase 4 only if the registry UI/exports must treat platforms differently.
 
 ### Schema (new)
-- **`interaction_profile`** — one row per equipment model (FK `equipment.id`),
-  `profile JSONB` (**capability-only; cross-device edges stripped**),
-  `documented_version`, `entity_kind` (`device`|`platform`),
-  `source_manual_refs`, provenance/status, `content_hash`. Platform models are
-  rows here too (decision 5).
+- **`interaction_profile`** — model-level library, one row per `profile_key`
+  (natural model handle; UNIQUE). Columns: `profile_key`, `entity_kind`
+  (`device`|`platform`), `manufacturer`, `model`, `description`,
+  `system_category`, `profile JSONB` (**capability-only; cross-device edges
+  stripped**), `documented_version`, `source_manual_refs`, provenance/status,
+  `content_hash`. Optional nullable `equipment_id` FK left for Phase 4 linkage.
+  Platform models are rows here too (decision 5).
+- **`vessel_stage4_equipment`** — per-vessel inventory (replaces "`device_key`
+  on `vessel_equipment`"): `(vessel_id, device_key, profile_key, quantity,
+  instance_handling, provenance)`. Seeded verbatim from the fixture equipment
+  rows. Unique `(vessel_id, device_key)`.
 - **`vessel_equipment_relation`** — per-vessel edges:
   `(vessel_id, src_device_key, edge_type, dst_device_key NULL, attrs JSONB)`.
   `edge_type ∈ {runs_platform, protects, protected_by, requires_devices}`
   (extensible). `attrs` carries the rest of the inlined edge object
   (`host_kind`, `optional`, `note`, …). `dst` nullable for edges whose target
   is a platform_key or unresolved.
-- **`device_key` on `vessel_equipment`** — stable per-unit/base key
-  (`bg_zeus_sr`, `class_t`, …) so relations and provenance resolve. Unique
-  `(vessel_id, device_key)`.
 - **`vessel_stage4_facts`** — one JSONB doc per vessel (decision 3) holding
   `vessel_artifact_facts`, `hub_operation_sources`,
   `platform_version_confirmations`, `vessel_facts`, `installation_notes`,
@@ -255,14 +277,15 @@ Confirmed against `fixtures/pipeline/outremer/{equipment,profiles}.json`:
 `build_equipment_doc_from_db(conn, vessel_id)` and
 `build_profiles_from_db(conn, vessel_id)` reconstruct the exact shapes
 `build_vessel_graph` / `assemble_section_inputs` consume today:
-- `equipment_doc.equipment[]` from `vessel_equipment` ⨝ `equipment` ⨝
-  `interaction_profile` (+ platform rows), including `entity_kind`,
-  `device_key`, `quantity`, `instance_handling`, `provenance`.
+- `equipment_doc.equipment[]` from `vessel_stage4_equipment` ⨝
+  `interaction_profile` (by `profile_key`), including `entity_kind`,
+  `device_key`, `manufacturer`, `model`, `description`, `system_category`,
+  `quantity`, `instance_handling`, `provenance`.
 - `equipment_doc.{relations:[], notes, installation_notes, fixture_auth,
   hub_operation_sources, platform_version_confirmations, vessel_facts,
   vessel_artifact_facts, vessel_display_name}` from `vessel_stage4_facts`
   (relations stays `[]` to match the fixture).
-- `profiles{device_key: profile}` from `interaction_profile.profile` with the
+- `profiles{profile_key: profile}` from `interaction_profile.profile` with the
   boat's `vessel_equipment_relation` rows **re-inlined** (`runs_platform`,
   `protects`, `protected_by`, `requires_devices`) so each profile matches the
   fixture byte-for-byte.
@@ -271,9 +294,10 @@ Confirmed against `fixtures/pipeline/outremer/{equipment,profiles}.json`:
 ### Seeding
 A one-shot `scripts/seed_stage4_substrate.py --fixture outremer --slug supernova`
 migrates the current fixtures into the new tables: upsert `interaction_profile`
-per model with edges **stripped**, set `device_key`s on `vessel_equipment`,
-insert the stripped edges as `vessel_equipment_relation` rows, write the
-`vessel_stage4_facts` doc. Idempotent; safe to re-run.
+per model (`profile_key`) with edges **stripped**, insert per-vessel
+`vessel_stage4_equipment` rows (device_key/quantity/instance_handling/
+provenance), insert the stripped edges as `vessel_equipment_relation` rows,
+write the `vessel_stage4_facts` doc. Idempotent; safe to re-run.
 
 ### Risk to Phase 1
 None expected — Phase 2 sits entirely on the *input* side of the seam. The
@@ -283,10 +307,33 @@ oracle pins.
 
 ### Acceptance
 - `seed_stage4_substrate` populates the new tables from the Outremer fixtures.
-- Adapter-built `equipment_doc` + `profiles` are byte-identical to the fixtures
-  (dedicated diff check).
-- `verify_stage4_modules.py --source db` produces modules byte-identical to
-  `--source fixture` for all four sections + folded solar.
+- Adapter-built `equipment_doc` + `profiles` reproduce the composed drafts
+  (composed output is the oracle; raw-JSON key order is not pinned since JSONB
+  does not preserve it and the composers read fields by name).
+- `verify_stage4_modules.py --byte-match` produces modules **and composer
+  metadata** byte-identical to fixture-built for all four sections + folded
+  solar.
+
+### Phase 2 — status (2026-07-21): DONE
+Delivered:
+- **Migration `023`** — `interaction_profile` (model library, `profile_key`),
+  `vessel_stage4_equipment` (per-vessel inventory, equipment row in JSONB),
+  `vessel_equipment_relation` (extracted edges), `vessel_stage4_facts` (JSONB).
+- **`stage4_substrate.py`** — edge `split`/`reinline` (decision 2) +
+  `build_equipment_doc_from_db` / `build_profiles_from_db` adapter.
+- **`scripts/seed_stage4_substrate.py`** — fixture → substrate; idempotent.
+  Seeded `supernova`: 19 profiles, 20 equipment rows, 19 relations.
+- **`stage4_sections.build_context` / `load_vessel_context_from_db` /
+  `build_modules_from_context`** — one composition path for both sources.
+- **`verify_stage4_modules.py --byte-match`** — Phase 2 gate. **Green:** all 4
+  DB-built modules + metadata match fixture-built byte-for-byte.
+
+Deviations from the pre-discovery locked design (see Discovery above): decision 1
+profile identity is a natural `profile_key`, not an `equipment.id` FK
+(`equipment_id` kept nullable for Phase 4); "`device_key` on `vessel_equipment`"
+became the dedicated `vessel_stage4_equipment` table; the boat-level equipment
+row is stored as JSONB (variable shape: `instances`, per-unit network addresses,
+inline `relations`).
 
 ## Owner-questions (durable store)
 

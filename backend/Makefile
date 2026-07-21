@@ -4,7 +4,7 @@
 # Live extract gate (after extract_interaction_profile.py writes scratch):
 #   make pipeline-compare-scratch
 
-.PHONY: pipeline-verify pipeline-compare-scratch pipeline-regression
+.PHONY: pipeline-verify pipeline-compare-scratch pipeline-regression stage4-bytematch
 
 pipeline-verify:
 	python scripts/verify_interaction_profile_validate.py
@@ -19,6 +19,12 @@ pipeline-verify:
 	python scripts/verify_controls_section_v4.py
 	python scripts/verify_electrical_section_v4.py
 	python scripts/verify_nav_section_v4.py
+	python scripts/verify_stage4_modules.py
+
+# Phase 2 gate (needs DB seeded: seed_stage4_substrate.py --slug supernova):
+# DB-substrate-built modules must match fixture-built byte-for-byte.
+stage4-bytematch:
+	python scripts/verify_stage4_modules.py --byte-match --slug supernova
 
 pipeline-compare-scratch:
 	python scripts/compare_smartsolar_scratch.py

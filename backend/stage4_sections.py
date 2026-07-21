@@ -48,9 +48,12 @@ def _load(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def load_vessel_context(vessel_dir: Path) -> dict[str, Any]:
-    equipment_doc = _load(vessel_dir / "equipment.json")
-    profiles = _load(vessel_dir / "profiles.json")
+def build_context(equipment_doc: dict[str, Any], profiles: dict[str, Any]) -> dict[str, Any]:
+    """Build a composer context from an ``equipment_doc`` + ``profiles`` pair.
+
+    Shared by the fixture and DB sources so both feed ``build_vessel_graph``
+    identically (Phase 2 byte-match seam).
+    """
     graph = build_vessel_graph(
         list(equipment_doc["equipment"]),
         profiles,
@@ -59,6 +62,26 @@ def load_vessel_context(vessel_dir: Path) -> dict[str, Any]:
         vessel_artifact_facts=equipment_doc.get("vessel_artifact_facts"),
     )
     return {"equipment_doc": equipment_doc, "profiles": profiles, "graph": graph}
+
+
+def load_vessel_context(vessel_dir: Path) -> dict[str, Any]:
+    return build_context(
+        _load(vessel_dir / "equipment.json"),
+        _load(vessel_dir / "profiles.json"),
+    )
+
+
+def load_vessel_context_from_db(conn: Any, vessel_id: str) -> dict[str, Any]:
+    """Build a composer context from the Phase 2 DB substrate (migration 023)."""
+    from stage4_substrate import (
+        build_equipment_doc_from_db,
+        build_profiles_from_db,
+    )
+
+    return build_context(
+        build_equipment_doc_from_db(conn, vessel_id),
+        build_profiles_from_db(conn, vessel_id),
+    )
 
 
 def compose_section(section_id: str, ctx: dict[str, Any]) -> dict[str, Any]:
@@ -75,12 +98,10 @@ def compose_section(section_id: str, ctx: dict[str, Any]) -> dict[str, Any]:
     return compose_fn(**kwargs)
 
 
-def build_vessel_modules(
-    vessel_dir: Path,
+def build_modules_from_context(
+    ctx: dict[str, Any],
 ) -> tuple[dict[str, dict[str, Any]], dict[str, dict[str, Any]]]:
-    """Return ({section_id: SystemModule}, {section_id: metadata})."""
-    ctx = load_vessel_context(vessel_dir)
-
+    """Compose + transform all published sections from a prepared context."""
     composed_by_section = {
         sid: compose_section(sid, ctx) for sid in ("solar", *PUBLISHED_SECTIONS)
     }
@@ -99,3 +120,10 @@ def build_vessel_modules(
         "solar", composed_by_section["solar"]
     )
     return modules, metadata
+
+
+def build_vessel_modules(
+    vessel_dir: Path,
+) -> tuple[dict[str, dict[str, Any]], dict[str, dict[str, Any]]]:
+    """Return ({section_id: SystemModule}, {section_id: metadata}) from a fixture."""
+    return build_modules_from_context(load_vessel_context(vessel_dir))
