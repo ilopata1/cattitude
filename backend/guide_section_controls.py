@@ -229,7 +229,7 @@ def compose_controls_section(
         first_use.add(platform_key)
         first_use.add(re.sub(r"_\d+$", "", platform_key))
     _emit(
-        f"On {boat}, day-to-day switching and monitoring run through {touch}, "
+        f"On {boat}, switching and monitoring run through {touch}, "
         f"which hosts {plat_role}.",
         f"equipment.{hub_key}",
         f"profile.{hub_key}.runs_platform",
@@ -263,7 +263,7 @@ def compose_controls_section(
     circuit_names = control_page_circuit_names(circuits)
     if circuits.get("sourced"):
         _emit(
-            "Day-to-day, open Monitoring to read the boat's configured meters "
+            "Open Monitoring when you want to read the boat's configured meters "
             "and status channels from the CZone switching map.",
             f"profile.{platform_key}.ui_pages[Monitoring]",
             f"vessel_fact.channel_map:{circuits.get('artifact_id')}",
@@ -272,7 +272,7 @@ def compose_controls_section(
         )
     else:
         _emit(
-            "Day-to-day, open Monitoring to read configured meters, including "
+            "Open Monitoring when you want to read configured meters, including "
             "the house battery bank state that the station can display.",
             f"profile.{platform_key}.ui_pages[Monitoring]",
             "section_inputs.summary:mli",
@@ -395,9 +395,8 @@ def compose_controls_section(
     if gated_off_pages and allow_planted_expectation:
         names = " and ".join(gated_off_pages)
         _emit(
-            f"CZone literature also describes {names} pages; they are not part "
-            f"of the day-to-day menus until the matching interfaces are "
-            f"configured.",
+            f"CZone literature also describes {names} pages; they do not appear "
+            f"in the menus until the matching interfaces are configured.",
             f"profile.{platform_key}.ui_pages",
             "section_inputs.gated_off",
             "vessel.display_name",

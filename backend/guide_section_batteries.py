@@ -263,7 +263,8 @@ def compose_batteries_section(
         )
     else:
         _emit(
-            f"On {boat}, the house bank is the energy store for day-to-day loads.",
+            f"On {boat}, the house bank is the energy store for the vessel's "
+            f"electrical loads.",
             "vessel.display_name",
             block="capability_summary",
         )
@@ -383,7 +384,7 @@ def compose_batteries_section(
     if mli_keys:
         _emit(
             "Watch house-bank state of charge and any alarms as part of daily "
-            "energy checks; day-to-day bank and meter readings on the CZone "
+            "energy checks; bank and meter readings on the CZone "
             "touchscreen, including the Inverter Charger page for the "
             f"inverter-chargers, can be found in {controls_xref['phrase']}.",
             *[f"graph.device:{k}" for k in mli_keys],

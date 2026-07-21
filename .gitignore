@@ -15,3 +15,6 @@ manuals/**/*.PDF
 # Processed / local vector data (keep directory via .gitkeep)
 /data/*
 !/data/.gitkeep
+
+# Local pipeline scratch artifacts (channel-map crops/strips/renders)
+backend/fixtures/pipeline/**/artifacts/channel_map_*

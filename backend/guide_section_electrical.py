@@ -284,7 +284,7 @@ def compose_electrical_section(
             kind="composed_inference",
             block="how_it_works",
             contributing_facts=[
-                "isolation switches are not day-to-day controls",
+                "isolation switches are not routine controls",
             ],
         )
 
@@ -294,7 +294,7 @@ def compose_electrical_section(
         _emit(
             f"{_qty_word(n).capitalize()} CZone output interfaces ({mm[0]} {mm[1]}) "
             "feed the switched DC circuits from the protected distribution. "
-            "Use the CZone touchscreen for day-to-day switching of those circuits; "
+            "Use the CZone touchscreen when you need to switch those circuits; "
             f"details can be found in {controls_xref['phrase']}.",
             *[f"graph.device:{k}" for k in coi_keys],
             "equipment.coi.model",

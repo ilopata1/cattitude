@@ -635,8 +635,8 @@ def compose_solar_section(
         *gx_absence_sources,
     ]
     sid = _emit(
-        "Day-to-day, check her solar charge in the VictronConnect app on each "
-        "controller.",
+        "Check her solar charge in the VictronConnect app on each "
+        "controller when you want to see how much the panels are producing.",
         *monitor_sources,
         block="monitoring",
         force_sources=True,
@@ -804,7 +804,7 @@ def evaluate_solar_draft(composed: dict[str, Any]) -> dict[str, Any]:
     boat = str(composed.get("vessel_display_name") or "")
 
     vc_once = lower.count("victronconnect") >= 1 and (
-        lower.count("day-to-day, check") <= 1
+        lower.count("check her solar charge") <= 1
     )
     section_only = any(tok in lower for tok in ("davit", "coachroof", "semi-flex"))
     unsourced = [p for p in prov if not (p.get("sources") or [])]

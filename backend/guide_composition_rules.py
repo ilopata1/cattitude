@@ -471,6 +471,33 @@ def lint_sentence_initial_numerals(text: str) -> list[dict[str, str]]:
     return warnings
 
 
+_ROUTINE_TIMING_LABEL_RE = re.compile(r"\bday[\s-]to[\s-]day\b", re.I)
+
+
+def lint_routine_timing_label(text: str) -> list[dict[str, str]]:
+    """xliii (was Nav nav-x) — do not label normal-ops actions "day-to-day".
+
+    Guests already assume non-emergency actions are ordinary; the phrase reads
+    as a daily chore. State an explicit occasion only for non-default cases
+    (emergency, leaving the helm, "when you want X"). Use "routine"/"everyday"
+    as an adjective only when a real routine-vs-exceptional contrast is drawn.
+    """
+    warnings: list[dict[str, str]] = []
+    for m in _ROUTINE_TIMING_LABEL_RE.finditer(text or ""):
+        warnings.append(
+            {
+                "code": "routine_timing_label",
+                "match": m.group(0),
+                "guidance": (
+                    "Drop 'day-to-day' when the occasion is just normal "
+                    "operations; keep explicit timing only for non-default "
+                    "occasions."
+                ),
+            }
+        )
+    return warnings
+
+
 def lint_same_breath_capability(
     provenance_map: list[dict[str, Any]],
 ) -> list[dict[str, str]]:
@@ -835,6 +862,7 @@ def assess_global_composition(
         composed, peer_capability_texts=peer_capability_texts
     )
     charge_path_hits = lint_charge_path_enabling_conditions(draft)
+    routine_label_hits = lint_routine_timing_label(draft)
 
     wisdom_ok = (
         (
@@ -860,6 +888,7 @@ def assess_global_composition(
         "multi_occasion_action_first_ok": len(multi_occasion_hits) == 0,
         "pointer_paragraph_final_ok": len(pointer_hits) == 0,
         "charge_path_enabling_ok": len(charge_path_hits) == 0,
+        "no_routine_timing_label": len(routine_label_hits) == 0,
     }
     return {
         "checks": checks,
@@ -878,8 +907,9 @@ def assess_global_composition(
             "pointer_paragraph_final": pointer_hits,
             "wisdom_restatement": wisdom_restatement_hits,
             "charge_path_enabling": charge_path_hits,
+            "routine_timing_label": routine_label_hits,
         },
-        "version": "v4.22",
+        "version": "v4.38",
         "criteria": [
             "xxxii",
             "xxxiii",
@@ -892,5 +922,6 @@ def assess_global_composition(
             "xl",
             "xli",
             "xlii",
+            "xliii",
         ],
     }
