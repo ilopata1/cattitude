@@ -94,8 +94,6 @@ def main() -> int:
                     "manufacturer": "CZone",
                     "model": "CZone 2.0",
                     "vessel_types": ["sailing_catamaran", "power_catamaran"],
-                    "zone": "helm_station",
-                    "zone_cardinality": "fixed",
                     "system_category": "electrical_dc",
                     "equipment_class": "branded_major",
                     "configuration_tier": "aftermarket",

@@ -13,11 +13,11 @@ groups:
     s: Confirm both shut down
     when:
       has_category:
-      - electrical_ac_shore_power
+      - electrical_ac
   - c: Air conditioning off
     when:
       has_category:
-      - hvac_climate
+      - hvac
   - c: Watermaker off
     when:
       has_watermaker: true
@@ -27,7 +27,7 @@ groups:
     s: Prevents pumping the tanks dry if a hose fails while you're ashore
     when:
       has_category:
-      - freshwater_system
+      - fresh_water_and_plumbing
 - t: Security
   items:
   - c: All hatches closed and secured
@@ -35,7 +35,7 @@ groups:
   - c: Dinghy secured — davits/platform raised fully, straps buckled
     when:
       has_category:
-      - tenders_davits
+      - tenders_and_watersports
   - c: Loose items stowed below or in lockers
     s: Cushions, fishing rods, gear — all away
   - c: VHF off
@@ -44,4 +44,4 @@ groups:
     s: The anchor alarm serves no purpose with no one aboard
     when:
       has_category:
-      - navigation_electronics
+      - navigation_and_electronics

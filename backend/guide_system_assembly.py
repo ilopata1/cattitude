@@ -20,7 +20,7 @@ from typing import Any
 from guide_module_catalog import SYSTEM_CATALOG
 
 # Systems that share equipment categories and therefore need home routing.
-_OVERLAP_CATEGORIES = frozenset({"electrical_dc", "electrical_ac_shore_power"})
+_OVERLAP_CATEGORIES = frozenset({"electrical_dc", "electrical_ac"})
 
 # Keywords scored against "manufacturer model" (lowercased).
 # Higher-specificity phrases should be listed; first matching table wins via scores.
@@ -215,7 +215,7 @@ def primary_system_for_equipment(row: dict[str, Any]) -> str | None:
     category = row.get("system_category") or ""
     if category not in _OVERLAP_CATEGORIES:
         return None
-    if category == "electrical_ac_shore_power":
+    if category == "electrical_ac":
         return "electrical"
 
     text = _label_text(row)

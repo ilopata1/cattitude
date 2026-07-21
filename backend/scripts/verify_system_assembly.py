@@ -68,7 +68,7 @@ def main() -> int:
         ("Blue Sea", "Class T fuse holder", "electrical_dc", "electrical"),
         ("ProInstaller", "busbar", "electrical_dc", "electrical"),
         ("MasterBus", "COI CZone interface", "electrical_dc", "electrical"),
-        ("Generic", "shore inlet", "electrical_ac_shore_power", "electrical"),
+        ("Generic", "shore inlet", "electrical_ac", "electrical"),
     ]
     for manufacturer, model, category, expected in cases:
         row = {
@@ -208,8 +208,8 @@ def main() -> int:
     engines = assemble_system_from_fragments(
         "engines",
         [
-            _row("Yanmar", "4JH45", "propulsion", systems={"engines": ["Start"]}),
-            _row("Yanmar", "SailDrive", "propulsion", systems={"engines": ["Saildrive notes"]}),
+            _row("Yanmar", "4JH45", "propulsion_and_machinery", systems={"engines": ["Start"]}),
+            _row("Yanmar", "SailDrive", "propulsion_and_machinery", systems={"engines": ["Saildrive notes"]}),
         ],
     )
     assert engines is not None

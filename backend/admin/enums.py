@@ -1,5 +1,7 @@
 """Postgres enum values for admin forms."""
 
+from equipment_category import EQUIPMENT_CATEGORY_SLUGS
+
 VESSEL_TYPES = [
     "sailing_catamaran",
     "cruising_monohull",
@@ -9,28 +11,8 @@ VESSEL_TYPES = [
     "sport_fishing",
 ]
 
-SYSTEM_CATEGORIES = [
-    "propulsion",
-    "fuel_system",
-    "electrical_dc",
-    "electrical_ac_shore_power",
-    "freshwater_system",
-    "sanitation",
-    "bilge_and_drainage",
-    "steering",
-    "anchoring_ground_tackle",
-    "rigging_sail_handling",
-    "sails",
-    "navigation_electronics",
-    "communications",
-    "refrigeration_galley",
-    "hvac_climate",
-    "safety_equipment",
-    "tenders_davits",
-    "stabilisation",
-    "entertainment_connectivity",
-    "hull_and_structure",
-]
+# Canonical equipment-type taxonomy lives in equipment_category.py.
+SYSTEM_CATEGORIES = list(EQUIPMENT_CATEGORY_SLUGS)
 
 EQUIPMENT_CLASSES = [
     "branded_major",
@@ -52,33 +34,6 @@ IDENTIFICATION_METHODS = [
     "nameplate",
     "visual_description",
     "builder_spec",
-]
-
-ZONE_CARDINALITIES = [
-    "fixed",
-    "configurable",
-]
-
-ZONES = [
-    "bow_foredeck",
-    "helm_station",
-    "cockpit_aft_deck",
-    "saloon_main_cabin",
-    "galley",
-    "engine_room",
-    "lazarette_aft_storage",
-    "swim_platform_transom",
-    "below_decks_bilge",
-    "port_hull",
-    "starboard_hull",
-    "bridgedeck_coachroof",
-    "trampoline_foredeck_netting",
-    "mast_base_deck_step",
-    "keel_centreboard_trunk",
-    "quarter_berth_aft_cabin",
-    "flybridge",
-    "engine_room_walkin",
-    "bait_tackle_station",
 ]
 
 PACK_SOURCES = [

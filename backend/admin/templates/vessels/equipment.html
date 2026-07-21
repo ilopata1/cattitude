@@ -1,5 +1,32 @@
 {% extends "base.html" %}
 {% block title %}{{ vessel.name }} equipment — Clever Sailor Admin{% endblock %}
+
+{% macro location_editor(zone='', sub_zone='', hull_side='', detail='') %}
+<div class="location-editor" data-location-form
+     data-zone="{{ zone or '' }}"
+     data-sub-zone="{{ sub_zone or '' }}"
+     data-hull-side="{{ hull_side or '' }}"
+     data-detail="{{ detail or '' }}">
+  <label>Zone
+    <select name="zone" data-loc-zone required></select>
+  </label>
+  <label>Sub-zone
+    <select name="sub_zone" data-loc-subzone required></select>
+  </label>
+  <label data-loc-hullside-field hidden>Hull side
+    <select name="hull_side" data-loc-hullside>
+      <option value="">—</option>
+    </select>
+  </label>
+  <label>Detail (optional)
+    <input type="text" name="detail" data-loc-detail maxlength="120"
+           value="{{ detail or '' }}" placeholder="e.g. under berth, aft bulkhead">
+  </label>
+  <p class="muted location-preview">Label preview:
+    <strong data-label-preview>—</strong></p>
+</div>
+{% endmacro %}
+
 {% block content %}
 <p class="breadcrumb">
   <a href="/admin/vessels">Vessels</a> /
@@ -31,6 +58,7 @@
 <div class="panel-grid" id="installed">
   <section class="panel">
     <h2>Installed ({{ installed|length }})</h2>
+    <p class="muted">Location options are filtered for vessel type <strong>{{ vessel.vessel_type | format_label }}</strong>.</p>
     {% if installed %}
     <table class="data-table compact">
       <thead>
@@ -38,6 +66,7 @@
           <th>Manufacturer</th>
           <th>Model</th>
           <th>System</th>
+          <th>Location</th>
           <th>Confirmed by</th>
           <th></th>
         </tr>
@@ -47,11 +76,22 @@
         <tr>
           <td>{{ item.manufacturer or '—' }}</td>
           <td>{{ item.model or '—' }}</td>
-          <td>{{ item.system_category | format_label }}</td>
+          <td>{{ item.system_category | category_label }}</td>
+          <td>{{ item.location_label or '—' }}</td>
           <td>{{ item.confirmed_by | format_label }}</td>
-          <td>
-            <form method="post" action="/admin/vessels/{{ vessel.id }}/equipment/remove">
-              <input type="hidden" name="equipment_id" value="{{ item.equipment_id }}">
+          <td class="row-actions">
+            <details class="inline-edit">
+              <summary>Edit location</summary>
+              <form method="post" action="/admin/vessels/{{ vessel.id }}/equipment/edit-location" class="location-form">
+                <input type="hidden" name="row_id" value="{{ item.id }}">
+                {{ location_editor(item.zone, item.sub_zone, item.hull_side, item.detail) }}
+                <div class="form-actions">
+                  <button type="submit">Save location</button>
+                </div>
+              </form>
+            </details>
+            <form method="post" action="/admin/vessels/{{ vessel.id }}/equipment/remove" onsubmit="return confirm('Remove this installed equipment?');">
+              <input type="hidden" name="row_id" value="{{ item.id }}">
               <input type="hidden" name="manufacturer" value="{{ manufacturer }}">
               <input type="hidden" name="q" value="{{ query }}">
               <input type="hidden" name="system_category" value="{{ system_category }}">
@@ -74,6 +114,7 @@
     {% else %}
     <p class="muted">Set a hull model on the vessel to filter packs for this hull.</p>
     {% endif %}
+    <p class="muted">Pack items are placed at the default location for each system; adjust individual items above afterwards.</p>
     {% if option_packs %}
     <form method="post" action="/admin/vessels/{{ vessel.id }}/equipment/apply-pack" class="inline-form">
       <select name="option_pack_id" required>
@@ -114,7 +155,7 @@
     <select name="system_category">
       <option value="">All systems</option>
       {% for cat in system_categories %}
-      <option value="{{ cat }}" {% if system_category == cat %}selected{% endif %}>{{ cat | format_label }}</option>
+      <option value="{{ cat }}" {% if system_category == cat %}selected{% endif %}>{{ cat | category_label }}</option>
       {% endfor %}
     </select>
     <button type="submit">Search</button>
@@ -128,29 +169,35 @@
         <th>Manufacturer</th>
         <th>Model</th>
         <th>System</th>
-        <th>Zone</th>
         <th></th>
       </tr>
     </thead>
     <tbody>
       {% for item in results %}
+      {% set default_loc = location_catalog.systemDefaults.get(item.system_category) %}
       <tr>
         <td>{{ item.manufacturer or '—' }}</td>
         <td>{{ item.model or '—' }}</td>
-        <td>{{ item.system_category | format_label }}</td>
-        <td>{{ item.zone | format_label }}</td>
+        <td>{{ item.system_category | category_label }}</td>
         <td>
           {% if item.id in installed_ids %}
           <span class="muted">Installed</span>
-          {% else %}
-          <form method="post" action="/admin/vessels/{{ vessel.id }}/equipment/add">
-            <input type="hidden" name="equipment_id" value="{{ item.id }}">
-            <input type="hidden" name="manufacturer" value="{{ manufacturer }}">
-            <input type="hidden" name="q" value="{{ query }}">
-            <input type="hidden" name="system_category" value="{{ system_category }}">
-            <button type="submit">Add</button>
-          </form>
           {% endif %}
+          <details class="inline-edit">
+            <summary>Add{% if item.id in installed_ids %} (another location){% endif %}</summary>
+            <form method="post" action="/admin/vessels/{{ vessel.id }}/equipment/add" class="location-form">
+              <input type="hidden" name="equipment_id" value="{{ item.id }}">
+              <input type="hidden" name="manufacturer" value="{{ manufacturer }}">
+              <input type="hidden" name="q" value="{{ query }}">
+              <input type="hidden" name="system_category" value="{{ system_category }}">
+              {{ location_editor(
+                  default_loc.zone if default_loc else '',
+                  default_loc.sub_zone if default_loc else '') }}
+              <div class="form-actions">
+                <button type="submit">Add to vessel</button>
+              </div>
+            </form>
+          </details>
         </td>
       </tr>
       {% endfor %}
@@ -162,5 +209,7 @@
 </section>
 {% endblock %}
 {% block scripts %}
+<script>window.LOCATION_CATALOG = {{ location_catalog_json | safe }};</script>
 <script src="/admin/static/combobox.js"></script>
+<script src="/admin/static/location-form.js"></script>
 {% endblock %}

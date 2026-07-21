@@ -18,7 +18,7 @@ groups:
   - c: Windlass DC breaker ON
     when:
       has_category:
-      - anchoring_ground_tackle
+      - ground_tackle_and_mooring
   - c: Anchor lowered under control to the seabed
     s: Lower slowly as the boat moves upwind over the spot — do not drop
   - c: Chain paid out to near final scope length
@@ -28,7 +28,7 @@ groups:
     s: This sets the anchor. Watch fixed references — no dragging.
     when:
       has_category:
-      - propulsion
+      - propulsion_and_machinery
 - t: Confirmed at Anchor
   items:
   - c: Position checked against 2+ fixed references on shore
@@ -36,10 +36,10 @@ groups:
     s: Radius = scope length + boat length
     when:
       has_category:
-      - navigation_electronics
+      - navigation_and_electronics
   - c: Engines off
     when:
       has_category:
-      - propulsion
+      - propulsion_and_machinery
   - c: Anchor light on if staying after sunset
     s: All-round white light — required by law

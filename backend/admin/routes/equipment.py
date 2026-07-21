@@ -14,10 +14,12 @@ from admin.enums import (
     EQUIPMENT_CLASSES,
     IDENTIFICATION_METHODS,
     PACK_SOURCES,
-    SYSTEM_CATEGORIES,
     VESSEL_TYPES,
-    ZONE_CARDINALITIES,
-    ZONES,
+)
+from equipment_category import (
+    EQUIPMENT_CATEGORIES,
+    SAIL_ONLY_CATEGORIES,
+    SAIL_VESSEL_TYPES,
 )
 from admin.equipment_service import (
     PER_PAGE,
@@ -50,14 +52,18 @@ router = APIRouter(prefix="/equipment", tags=["admin-equipment"])
 def _form_context() -> dict:
     return {
         "vessel_types": VESSEL_TYPES,
-        "system_categories": SYSTEM_CATEGORIES,
+        "equipment_categories": EQUIPMENT_CATEGORIES,
         "equipment_classes": EQUIPMENT_CLASSES,
         "configuration_tiers": CONFIGURATION_TIERS,
         "identification_methods": IDENTIFICATION_METHODS,
-        "zone_cardinalities": ZONE_CARDINALITIES,
-        "zones": ZONES,
         "pack_sources": PACK_SOURCES,
         "constraint_types": CONSTRAINT_TYPES,
+        "category_filter_json": json.dumps(
+            {
+                "sailOnly": sorted(SAIL_ONLY_CATEGORIES),
+                "sailVesselTypes": sorted(SAIL_VESSEL_TYPES),
+            }
+        ),
     }
 
 
@@ -66,8 +72,6 @@ def _parse_equipment_form(
   manufacturer: str,
   model: str,
   vessel_types: list[str],
-  zone: str,
-  zone_cardinality: str,
   system_category: str,
   equipment_class: str,
   configuration_tier: str,
@@ -78,8 +82,6 @@ def _parse_equipment_form(
         "manufacturer": manufacturer,
         "model": model,
         "vessel_types": vessel_types,
-        "zone": zone,
-        "zone_cardinality": zone_cardinality or "fixed",
         "system_category": system_category,
         "equipment_class": equipment_class,
         "configuration_tier": configuration_tier,
@@ -181,8 +183,6 @@ async def create_equipment_action(
     manufacturer: str = Form(""),
     model: str = Form(""),
     vessel_types: list[str] = Form(default=[]),
-    zone: str = Form(...),
-    zone_cardinality: str = Form("fixed"),
     system_category: str = Form(...),
     equipment_class: str = Form(...),
     configuration_tier: str = Form(...),
@@ -194,8 +194,6 @@ async def create_equipment_action(
         manufacturer=manufacturer,
         model=model,
         vessel_types=vessel_types,
-        zone=zone,
-        zone_cardinality=zone_cardinality,
         system_category=system_category,
         equipment_class=equipment_class,
         configuration_tier=configuration_tier,
@@ -293,8 +291,6 @@ async def update_equipment_action(
     manufacturer: str = Form(""),
     model: str = Form(""),
     vessel_types: list[str] = Form(default=[]),
-    zone: str = Form(...),
-    zone_cardinality: str = Form("fixed"),
     system_category: str = Form(...),
     equipment_class: str = Form(...),
     configuration_tier: str = Form(...),
@@ -305,8 +301,6 @@ async def update_equipment_action(
         manufacturer=manufacturer,
         model=model,
         vessel_types=vessel_types,
-        zone=zone,
-        zone_cardinality=zone_cardinality,
         system_category=system_category,
         equipment_class=equipment_class,
         configuration_tier=configuration_tier,

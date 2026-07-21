@@ -22,6 +22,7 @@ from guide_equipment_coverage import (
     system_requires_equipment,
 )
 from guide_content_library import LIBRARY_MODULE_BUILDERS
+from location_model import generate_label
 from guide_fix_icons import normalize_fix_card_icons, normalize_fix_icon
 from guide_equipment_fragments import (
     apply_fix_card_fragments,
@@ -124,8 +125,11 @@ def load_vessel_generation_context(conn: Connection, vessel_id: str) -> dict[str
                 e.manufacturer,
                 e.model,
                 e.system_category,
-                e.zone,
                 e.equipment_class,
+                ve.zone,
+                ve.sub_zone,
+                ve.hull_side,
+                ve.detail,
                 ve.zone_instance,
                 ve.confirmed_by
             FROM vessel_equipment ve
@@ -171,10 +175,14 @@ def load_vessel_generation_context(conn: Connection, vessel_id: str) -> dict[str
                 "manufacturer": eq[0],
                 "model": eq[1],
                 "system_category": eq[2],
-                "zone": eq[3],
-                "equipment_class": eq[4],
-                "zone_instance": eq[5],
-                "confirmed_by": eq[6],
+                "equipment_class": eq[3],
+                "zone": eq[4],
+                "sub_zone": eq[5],
+                "hull_side": eq[6],
+                "detail": eq[7],
+                "location_label": generate_label(eq[4], eq[5], eq[6], eq[7]),
+                "zone_instance": eq[8],
+                "confirmed_by": eq[9],
             }
             for eq in equipment_rows
         ],

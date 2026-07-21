@@ -18,34 +18,34 @@ groups:
 - t: '{engine_group_title}'
   when:
     has_category:
-    - propulsion
+    - propulsion_and_machinery
   items:
   - c: 'Engine circuit breakers connected — {engine_compartments}'
     when:
       has_category:
-      - propulsion
+      - propulsion_and_machinery
   - c: Windlass circuit breaker confirmed ON
     when:
       all:
       - has_category:
-        - propulsion
+        - propulsion_and_machinery
       - has_category:
-        - anchoring_ground_tackle
+        - ground_tackle_and_mooring
   - c: 'Raw water seacocks OPEN on {both_engines}'
     s: Handle parallel to pipe = open
     when:
       has_category:
-      - propulsion
+      - propulsion_and_machinery
   - c: 'Oil levels checked — {both_engines}'
     s: Dipstick between MIN and MAX
     when:
       has_category:
-      - propulsion
+      - propulsion_and_machinery
   - c: 'No fuel smell or gas vapour in {engine_compartments}'
     s: Sniff-test before closing hatches
     when:
       has_category:
-      - propulsion
+      - propulsion_and_machinery
 - t: Electrical Panel
   items:
   - c: Navigation electronics switched on
@@ -55,7 +55,7 @@ groups:
       - has_category:
         - electrical_dc
       - has_category:
-        - navigation_electronics
+        - navigation_and_electronics
   - c: Bilge pump switches in AUTO position
     s: Must always be on AUTO — never manual or off
     when:
@@ -71,12 +71,12 @@ groups:
     s: Never depart below 1/4 tank
     when:
       has_category:
-      - propulsion
+      - propulsion_and_machinery
   - c: Fresh water level checked
     s: Fill if below 1/2 tank for longer passages
     when:
       has_category:
-      - freshwater_system
+      - fresh_water_and_plumbing
 - t: Helm & Cast Off
   items:
   - c: Navigation lights tested
@@ -98,4 +98,4 @@ groups:
     s: Confirm within 30 seconds of starting
     when:
       has_category:
-      - propulsion
+      - propulsion_and_machinery

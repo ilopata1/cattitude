@@ -21,7 +21,7 @@ def has_category(snapshot: dict[str, Any], *categories: str) -> bool:
 
 def has_watermaker(snapshot: dict[str, Any]) -> bool:
     for row in equipment(snapshot):
-        if row.get("system_category") != "freshwater_system":
+        if row.get("system_category") != "fresh_water_and_plumbing":
             continue
         text = f"{row.get('manufacturer') or ''} {row.get('model') or ''}".lower()
         if any(hint in text for hint in _WATERMAKER_HINTS):
@@ -32,13 +32,15 @@ def has_watermaker(snapshot: dict[str, Any]) -> bool:
 def is_sailing(snapshot: dict[str, Any]) -> bool:
     vessel_type = (snapshot.get("vessel") or {}).get("vessel_type") or ""
     return "sailing" in vessel_type or has_category(
-        snapshot, "rigging_sail_handling", "sails"
+        snapshot, "rigging_and_sail_handling"
     )
 
 
 def is_twin_engine(snapshot: dict[str, Any]) -> bool:
     propulsion = [
-        row for row in equipment(snapshot) if row.get("system_category") == "propulsion"
+        row
+        for row in equipment(snapshot)
+        if row.get("system_category") == "propulsion_and_machinery"
     ]
     if len(propulsion) >= 2:
         return True

@@ -395,7 +395,7 @@
     "model": "Dessalator DUO AC & DC Navigator",
     "category_freeform_hint": "Use the manual's own product category words only (never registry enums like electrical_dc)."
   },
-  "registry_system_category": "freshwater_system",
+  "registry_system_category": "fresh_water_and_plumbing",
   "manual_selection_policy": "operators",
   "source_manuals": [
     {

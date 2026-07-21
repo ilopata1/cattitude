@@ -202,7 +202,7 @@
     "model": "Zeus SR Software",
     "category_freeform_hint": "Use the manual's own product category words only (never registry enums like electrical_dc)."
   },
-  "registry_system_category": "navigation_electronics",
+  "registry_system_category": "navigation_and_electronics",
   "manual_selection_policy": "operators",
   "source_manuals": [
     {

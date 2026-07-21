@@ -9,6 +9,9 @@ from __future__ import annotations
 import re
 from typing import Any
 
+from equipment_category import EQUIPMENT_CATEGORY_SLUGS as _CURRENT_CATEGORIES
+from equipment_category import OLD_TO_NEW as _RETIRED_CATEGORY_MAP
+
 # ---------------------------------------------------------------------------
 # Allowed keys (additionalProperties: false at every object level)
 # ---------------------------------------------------------------------------
@@ -218,30 +221,11 @@ EXTRACTED_PROFILE_KEYS = PROFILE_KEYS - {
     "demoted_ui_pages",
 }
 
-# Internal taxonomy tokens — never valid as category_freeform.
+# Internal taxonomy tokens — never valid as category_freeform. Includes both
+# the current taxonomy and the retired values so stale model output is still
+# rejected.
 SYSTEM_CATEGORY_TOKENS = frozenset(
-    {
-        "propulsion",
-        "fuel_system",
-        "electrical_dc",
-        "electrical_ac_shore_power",
-        "freshwater_system",
-        "sanitation",
-        "bilge_and_drainage",
-        "steering",
-        "anchoring_ground_tackle",
-        "rigging_sail_handling",
-        "sails",
-        "navigation_electronics",
-        "communications",
-        "refrigeration_galley",
-        "hvac_climate",
-        "safety_equipment",
-        "tenders_davits",
-        "stabilisation",
-        "entertainment_connectivity",
-        "hull_and_structure",
-    }
+    set(_CURRENT_CATEGORIES) | set(_RETIRED_CATEGORY_MAP)
 )
 
 # Legacy safety keys seen in early spike output — reject as unknown_field.

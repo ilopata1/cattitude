@@ -124,7 +124,7 @@
       {% for row in equipment %}
       <tr>
         <td>{{ row.manufacturer }} — {{ row.model }}</td>
-        <td>{{ row.system_category | format_label }}</td>
+        <td>{{ row.system_category | category_label }}</td>
         <td><input form="eq-{{ row.equipment_id }}" name="sort_order" value="{{ row.sort_order }}" class="input-narrow" type="number"></td>
         <td><input form="eq-{{ row.equipment_id }}" name="quantity" value="{{ row.quantity }}" class="input-narrow" type="number" min="1"></td>
         <td>

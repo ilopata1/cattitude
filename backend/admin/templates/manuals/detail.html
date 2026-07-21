@@ -3,7 +3,7 @@
 {% block content %}
 <p class="breadcrumb"><a href="/admin/manuals">Manual library</a> / {{ work.title }}</p>
 <h1>{{ work.title }}</h1>
-<p class="muted">{{ work.manufacturer }} — {{ work.model }} · {{ work.system_category | format_label }}</p>
+<p class="muted">{{ work.manufacturer }} — {{ work.model }} · {{ work.system_category | category_label }}</p>
 <p class="muted">Manual ID (Ask / <code>manualTitles</code> key): <code>{{ work.id }}</code></p>
 
 {% if request.query_params.get('saved') %}

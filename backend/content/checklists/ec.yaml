@@ -22,11 +22,11 @@ groups:
     s: Roll the cable out fully before plugging in
     when:
       has_category:
-      - electrical_ac_shore_power
+      - electrical_ac
   - c: Engines shut down after idling 3-5 minutes
     when:
       has_category:
-      - propulsion
+      - propulsion_and_machinery
 - t: Shut Down & Hand Back
   items:
   - c: All DC breakers off except bilge pumps (AUTO)

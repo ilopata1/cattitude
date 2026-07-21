@@ -18,3 +18,6 @@ manuals/**/*.PDF
 
 # Local pipeline scratch artifacts (channel-map crops/strips/renders)
 backend/fixtures/pipeline/**/artifacts/channel_map_*
+
+# Migration-generated location reports (byproduct of 020)
+backend/reports/

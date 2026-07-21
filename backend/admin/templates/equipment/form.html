@@ -76,11 +76,12 @@
   <fieldset class="full-width">
     <legend>Classification</legend>
     <label>System category
-      <select name="system_category" required>
-        {% for cat in system_categories %}
-        <option value="{{ cat }}" {% if equipment and equipment.system_category == cat %}selected{% endif %}>{{ cat | format_label }}</option>
+      <select name="system_category" id="system-category-select" required>
+        {% for cat in equipment_categories %}
+        <option value="{{ cat.slug }}" {% if equipment and equipment.system_category == cat.slug %}selected{% endif %}>{{ cat.label }}</option>
         {% endfor %}
       </select>
+      <span class="field-hint" id="system-category-hint" hidden></span>
     </label>
     <label>Equipment class
       <select name="equipment_class" required>
@@ -100,20 +101,6 @@
       <select name="identification_method" required>
         {% for method in identification_methods %}
         <option value="{{ method }}" {% if equipment and equipment.identification_method == method %}selected{% endif %}>{{ method | format_label }}</option>
-        {% endfor %}
-      </select>
-    </label>
-    <label>Zone
-      <select name="zone" required>
-        {% for z in zones %}
-        <option value="{{ z }}" {% if equipment and equipment.zone == z %}selected{% endif %}>{{ z | format_label }}</option>
-        {% endfor %}
-      </select>
-    </label>
-    <label>Zone cardinality
-      <select name="zone_cardinality">
-        {% for zc in zone_cardinalities %}
-        <option value="{{ zc }}" {% if equipment and equipment.zone_cardinality == zc %}selected{% elif not equipment and zc == 'fixed' %}selected{% endif %}>{{ zc | format_label }}</option>
         {% endfor %}
       </select>
     </label>
@@ -297,6 +284,8 @@
 {% endif %}
 {% endblock %}
 {% block scripts %}
+<script>window.CATEGORY_FILTER = {{ category_filter_json | safe }};</script>
 <script src="/admin/static/equipment-autocomplete.js"></script>
 <script src="/admin/static/constraint-form.js"></script>
+<script src="/admin/static/equipment-category-filter.js"></script>
 {% endblock %}

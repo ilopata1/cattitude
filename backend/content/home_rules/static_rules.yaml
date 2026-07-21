@@ -14,7 +14,7 @@ rules:
   text: Never put ANYTHING in the toilet except human waste — no toilet paper, no wipes, no paper towels. Paper goes in the bin.
 - when:
     has_category:
-    - navigation_electronics
+    - navigation_and_electronics
     local_rules_exclude:
     - autopilot
   section: danger
@@ -32,13 +32,13 @@ rules:
   text: Check house battery state of charge morning and evening — charge before it gets low, not after
 - when:
     has_category:
-    - refrigeration_galley
+    - galley_appliances
   section: good
   icon: 🧊
   text: Minimise fridge/freezer door openings — refrigeration is your biggest continuous power draw
 - when:
     has_category:
-    - freshwater_system
+    - fresh_water_and_plumbing
   section: good
   icon: 💧
   text: Treat fresh water as precious — short showers, taps off while soaping

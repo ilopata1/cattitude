@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from urllib.parse import urlencode
+from urllib.parse import quote, urlencode
 
 from fastapi import APIRouter, Depends, Form, Query, Request
 from fastapi.responses import RedirectResponse
@@ -27,9 +27,11 @@ from admin.vessel_service import (
     search_equipment,
     slugify,
     update_vessel,
+    update_vessel_equipment_location,
 )
 from guide_context_utils import build_guide_context_from_form
 from guide_equipment_coverage import list_system_equipment_gaps
+from location_model import build_catalog
 
 router = APIRouter(prefix="/vessels", tags=["admin-vessels"])
 
@@ -406,6 +408,7 @@ async def vessel_equipment_page(
     guide_equipment_gaps = list_system_equipment_gaps(
         [{"system_category": item["system_category"]} for item in installed]
     )
+    catalog = build_catalog(vessel["vessel_type"])
     return templates.TemplateResponse(
         request,
         "vessels/equipment.html",
@@ -422,23 +425,15 @@ async def vessel_equipment_page(
             "query": q,
             "system_category": system_category,
             "guide_equipment_gaps": guide_equipment_gaps,
+            "location_catalog": catalog,
+            "location_catalog_json": json.dumps(catalog),
         },
     )
 
 
-@router.post("/{vessel_id}/equipment/add")
-async def add_equipment_action(
-    vessel_id: str,
-    equipment_id: str = Form(...),
-    manufacturer: str = Form(""),
-    q: str = Form(""),
-    system_category: str = Form(""),
-    admin_user: str = Depends(require_admin_user),
-):
-    with get_engine().begin() as conn:
-        add_vessel_equipment(conn, vessel_id, equipment_id)
-    # Preserve the registry search and return to it (not the page top) so the
-    # user can keep adding from the same result set.
+def _equipment_search_query(
+    manufacturer: str, q: str, system_category: str
+) -> str:
     params = {
         k: v
         for k, v in (
@@ -448,9 +443,75 @@ async def add_equipment_action(
         )
         if v
     }
-    query = f"?{urlencode(params)}" if params else ""
+    return f"?{urlencode(params)}" if params else ""
+
+
+@router.post("/{vessel_id}/equipment/add")
+async def add_equipment_action(
+    vessel_id: str,
+    equipment_id: str = Form(...),
+    zone: str = Form(""),
+    sub_zone: str = Form(""),
+    hull_side: str = Form(""),
+    detail: str = Form(""),
+    manufacturer: str = Form(""),
+    q: str = Form(""),
+    system_category: str = Form(""),
+    admin_user: str = Depends(require_admin_user),
+):
+    error: str | None = None
+    with get_engine().begin() as conn:
+        try:
+            add_vessel_equipment(
+                conn,
+                vessel_id,
+                equipment_id,
+                zone=zone or None,
+                sub_zone=sub_zone or None,
+                hull_side=hull_side or None,
+                detail=detail or None,
+            )
+        except VesselServiceError as exc:
+            error = str(exc)
+    # Preserve the registry search and return to it (not the page top) so the
+    # user can keep adding from the same result set.
+    query = _equipment_search_query(manufacturer, q, system_category)
+    if error:
+        sep = "&" if query else "?"
+        query = f"{query}{sep}error={quote(error)}"
     return RedirectResponse(
         f"/admin/vessels/{vessel_id}/equipment{query}#registry",
+        status_code=303,
+    )
+
+
+@router.post("/{vessel_id}/equipment/edit-location")
+async def edit_equipment_location_action(
+    vessel_id: str,
+    row_id: str = Form(...),
+    zone: str = Form(""),
+    sub_zone: str = Form(""),
+    hull_side: str = Form(""),
+    detail: str = Form(""),
+    admin_user: str = Depends(require_admin_user),
+):
+    error: str | None = None
+    with get_engine().begin() as conn:
+        try:
+            update_vessel_equipment_location(
+                conn,
+                vessel_id,
+                row_id,
+                zone=zone or None,
+                sub_zone=sub_zone or None,
+                hull_side=hull_side or None,
+                detail=detail or None,
+            )
+        except VesselServiceError as exc:
+            error = str(exc)
+    query = f"?error={quote(error)}" if error else ""
+    return RedirectResponse(
+        f"/admin/vessels/{vessel_id}/equipment{query}#installed",
         status_code=303,
     )
 
@@ -458,24 +519,15 @@ async def add_equipment_action(
 @router.post("/{vessel_id}/equipment/remove")
 async def remove_equipment_action(
     vessel_id: str,
-    equipment_id: str = Form(...),
+    row_id: str = Form(...),
     manufacturer: str = Form(""),
     q: str = Form(""),
     system_category: str = Form(""),
     admin_user: str = Depends(require_admin_user),
 ):
     with get_engine().begin() as conn:
-        remove_vessel_equipment(conn, vessel_id, equipment_id)
-    params = {
-        k: v
-        for k, v in (
-            ("manufacturer", manufacturer),
-            ("q", q),
-            ("system_category", system_category),
-        )
-        if v
-    }
-    query = f"?{urlencode(params)}" if params else ""
+        remove_vessel_equipment(conn, vessel_id, row_id)
+    query = _equipment_search_query(manufacturer, q, system_category)
     return RedirectResponse(
         f"/admin/vessels/{vessel_id}/equipment{query}#installed",
         status_code=303,

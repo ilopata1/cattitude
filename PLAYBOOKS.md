@@ -377,6 +377,7 @@ From `backend/`:
 |------|------|
 | Spec tip | `backend/equipment-classification-spec-v4.38.md` (retire "day-to-day" globally, xliii; Nav frozen nav-i–nav-xiii + `startup` spine slot per v4.37; frozen set = Solar + Batteries + Controls + Electrical + Nav) |
 | Pipeline plan | `backend/guide-pipeline-plan.md` |
+| Stage 4 → live integration plan | `backend/guide-stage4-integration-plan.md` (end-state wiring; phases; locked decisions) |
 | Fixture policy | `backend/tests/fixtures/POLICY.md` |
 | Extract → scratch | `backend/scripts/extract_interaction_profile.py` |
 | Procedure inventory / repair | `backend/scripts/run_procedure_inventory.py`, `repair_adjudicated_procedures.py` |

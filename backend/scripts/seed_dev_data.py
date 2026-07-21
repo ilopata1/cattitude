@@ -76,9 +76,8 @@ EQUIPMENT_ROWS = [
     {
         "manufacturer": "Yanmar",
         "model": "4JH45",
-        "system_category": "propulsion",
+        "system_category": "propulsion_and_machinery",
         "equipment_class": "branded_major",
-        "zone": "engine_room",
         "configuration_tier": "structural",
         "identification_method": "nameplate",
         "has_formal_manual": True,
@@ -87,9 +86,8 @@ EQUIPMENT_ROWS = [
     {
         "manufacturer": "Spectra",
         "model": "Catalina 340",
-        "system_category": "freshwater_system",
+        "system_category": "fresh_water_and_plumbing",
         "equipment_class": "branded_major",
-        "zone": "engine_room",
         "configuration_tier": "aftermarket",
         "identification_method": "nameplate",
         "has_formal_manual": False,
@@ -98,9 +96,8 @@ EQUIPMENT_ROWS = [
     {
         "manufacturer": "Generic",
         "model": "Self-tailing winch",
-        "system_category": "rigging_sail_handling",
+        "system_category": "rigging_and_sail_handling",
         "equipment_class": "generic_hardware",
-        "zone": "cockpit_aft_deck",
         "configuration_tier": "structural",
         "identification_method": "visual_description",
         "has_formal_manual": False,
@@ -270,14 +267,13 @@ def _get_or_create_equipment(conn, spec: dict) -> str:
         text(
             """
             INSERT INTO equipment (
-                manufacturer, model, vessel_types, zone, system_category,
+                manufacturer, model, vessel_types, system_category,
                 equipment_class, configuration_tier, identification_method,
                 has_formal_manual
             )
             VALUES (
                 :manufacturer, :model,
                 CAST(:vessel_types AS vessel_type[]),
-                CAST(:zone AS zone),
                 CAST(:system_category AS system_category),
                 CAST(:equipment_class AS equipment_class),
                 CAST(:configuration_tier AS configuration_tier),

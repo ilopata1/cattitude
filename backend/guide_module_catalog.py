@@ -62,7 +62,7 @@ SYSTEM_CATALOG: dict[str, dict[str, Any]] = {
     "sails": {
         "icon": "⛵",
         "locs": ["cockpit", "helm", "bow"],
-        "equipment_categories": ["rigging_sail_handling", "sails"],
+        "equipment_categories": ["rigging_and_sail_handling"],
         "focus": "Main, jib, gennaker, Karver/KMS hardware, reefing and sail handling",
         "review_title": "Sails & rigging",
         "guest_label": "Learn + Know — sails",
@@ -70,7 +70,7 @@ SYSTEM_CATALOG: dict[str, dict[str, Any]] = {
     "engines": {
         "icon": "⚙️",
         "locs": ["port-hull", "stbd-hull", "cockpit"],
-        "equipment_categories": ["propulsion"],
+        "equipment_categories": ["propulsion_and_machinery"],
         "focus": "Twin diesel engines, compartments, start/stop, raw water seacocks",
         "review_title": "Engines & compartments",
         "guest_label": "Learn + Know — propulsion",
@@ -86,7 +86,7 @@ SYSTEM_CATALOG: dict[str, dict[str, Any]] = {
     "electrical": {
         "icon": "⚡",
         "locs": ["saloon"],
-        "equipment_categories": ["electrical_dc", "electrical_ac_shore_power"],
+        "equipment_categories": ["electrical_dc", "electrical_ac"],
         "focus": "DC panel, bilge pump switches, shore power, Victron Multi Control",
         "review_title": "Electrical panel",
         "guest_section_title": "Electrical Panel",
@@ -104,7 +104,7 @@ SYSTEM_CATALOG: dict[str, dict[str, Any]] = {
     "water": {
         "icon": "💧",
         "locs": ["port-hull", "stbd-hull", "galley"],
-        "equipment_categories": ["freshwater_system"],
+        "equipment_categories": ["fresh_water_and_plumbing"],
         "focus": "Fresh water tanks, pumps, watermaker (Spectra/Aqua-Base), fills",
         "review_title": "Water systems",
         "guest_label": "Learn + Know — water",
@@ -120,7 +120,7 @@ SYSTEM_CATALOG: dict[str, dict[str, Any]] = {
     "galley": {
         "icon": "🍳",
         "locs": ["galley", "saloon"],
-        "equipment_categories": ["refrigeration_galley"],
+        "equipment_categories": ["galley_appliances"],
         "focus": "Induction cooktop (240V), fridges, propane if any, galley breakers",
         "review_title": "Galley",
         "guest_label": "Learn + Know — galley",
@@ -128,7 +128,7 @@ SYSTEM_CATALOG: dict[str, dict[str, Any]] = {
     "nav": {
         "icon": "🧭",
         "locs": ["helm", "saloon"],
-        "equipment_categories": ["navigation_electronics", "communications"],
+        "equipment_categories": ["navigation_and_electronics", "communications"],
         "focus": "Garmin MFD/VHF/autopilot, chartplotter, AIS, helm instruments",
         "review_title": "Navigation & helm",
         "guest_label": "Learn + Know — nav",
@@ -136,7 +136,7 @@ SYSTEM_CATALOG: dict[str, dict[str, Any]] = {
     "anchoring": {
         "icon": "⚓",
         "locs": ["bow", "cockpit"],
-        "equipment_categories": ["anchoring_ground_tackle"],
+        "equipment_categories": ["ground_tackle_and_mooring"],
         "focus": "Quick windlass, chain counter, anchor, coral/sand rules for Abacos",
         "review_title": "Anchoring & windlass",
         "guest_label": "Learn + Know — anchoring",
@@ -144,7 +144,7 @@ SYSTEM_CATALOG: dict[str, dict[str, Any]] = {
     "dinghy": {
         "icon": "🚤",
         "locs": ["swim", "cockpit"],
-        "equipment_categories": ["tenders_davits"],
+        "equipment_categories": ["tenders_and_watersports"],
         "focus": "RIB tender, swim platform lift, outboard if known",
         "review_title": "Tender & swim platform",
         "guest_label": "Learn + Know — dinghy",
@@ -152,7 +152,7 @@ SYSTEM_CATALOG: dict[str, dict[str, Any]] = {
     "ac": {
         "icon": "❄️",
         "locs": ["saloon", "port-hull", "stbd-hull"],
-        "equipment_categories": ["hvac_climate"],
+        "equipment_categories": ["hvac"],
         "focus": "Dometic CapTouch panels, CruiseAir units, inverter/generator requirements",
         "review_title": "Air conditioning",
         "guest_label": "Learn + Know — AC",

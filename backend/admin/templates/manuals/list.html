@@ -28,7 +28,7 @@
   <select name="system_category">
     <option value="">All systems</option>
     {% for cat in system_categories %}
-    <option value="{{ cat }}" {% if system_category == cat %}selected{% endif %}>{{ cat | format_label }}</option>
+    <option value="{{ cat }}" {% if system_category == cat %}selected{% endif %}>{{ cat | category_label }}</option>
     {% endfor %}
   </select>
   <button type="submit">Filter</button>

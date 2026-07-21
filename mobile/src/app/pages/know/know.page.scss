@@ -119,6 +119,10 @@
   font-size: 14px;
   line-height: 1.6;
   margin: 0;
+  // Stage 4 modules join block paragraphs with newlines and may embed simple
+  // "- " bullet lines; preserve those breaks. Legacy single-paragraph prose
+  // has no newlines, so it is unaffected.
+  white-space: pre-line;
 }
 
 .detail-section--warnings {

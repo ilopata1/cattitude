@@ -45,7 +45,7 @@ EQUIPMENT_ROW = {
     "manufacturer": "B&G",
     "model": "Zeus SR Software",
     "description": "B&G Zeus SR shared MFD software platform (v2.5)",
-    "system_category": "navigation_electronics",
+    "system_category": "navigation_and_electronics",
     "entity_kind": "platform",
     "quantity": 1,
     "instance_handling": "interchangeable",

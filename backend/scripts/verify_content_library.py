@@ -14,19 +14,18 @@ import guide_content_library_legacy as legacy
 from content.assembler import LIBRARY_MODULE_BUILDERS
 
 ALL_CATEGORIES = [
-    "propulsion",
+    "propulsion_and_machinery",
     "sanitation",
-    "freshwater_system",
+    "fresh_water_and_plumbing",
     "electrical_dc",
-    "electrical_ac_shore_power",
-    "refrigeration_galley",
-    "navigation_electronics",
+    "electrical_ac",
+    "galley_appliances",
+    "navigation_and_electronics",
     "communications",
-    "anchoring_ground_tackle",
-    "rigging_sail_handling",
-    "sails",
-    "hvac_climate",
-    "tenders_davits",
+    "ground_tackle_and_mooring",
+    "rigging_and_sail_handling",
+    "hvac",
+    "tenders_and_watersports",
 ]
 
 BASE_CONTEXT = {
@@ -50,20 +49,20 @@ def make_snapshot(
 ) -> dict[str, Any]:
     equipment: list[dict[str, Any]] = []
     for category in categories or []:
-        if category == "propulsion" and twin_propulsion:
+        if category == "propulsion_and_machinery" and twin_propulsion:
             equipment.extend(
                 [
                     {
                         "manufacturer": "Yanmar",
                         "model": "4JH45",
-                        "system_category": "propulsion",
+                        "system_category": "propulsion_and_machinery",
                         "zone": "port-hull",
                         "zone_instance": "port",
                     },
                     {
                         "manufacturer": "Yanmar",
                         "model": "4JH45",
-                        "system_category": "propulsion",
+                        "system_category": "propulsion_and_machinery",
                         "zone": "stbd-hull",
                         "zone_instance": "starboard",
                     },
@@ -76,7 +75,7 @@ def make_snapshot(
             "system_category": category,
             "zone": "cockpit",
         }
-        if category == "freshwater_system" and watermaker_model:
+        if category == "fresh_water_and_plumbing" and watermaker_model:
             row["model"] = "Spectra watermaker"
         equipment.append(row)
 
@@ -92,8 +91,8 @@ def make_snapshot(
 FIXTURES = [
     ("minimal", make_snapshot([])),
     ("full", make_snapshot(ALL_CATEGORIES, twin_propulsion=True, watermaker_model=True)),
-    ("twin-engines", make_snapshot(["propulsion"], twin_propulsion=True)),
-    ("monohull", make_snapshot(["propulsion"], vessel_type="sailing_monohull")),
+    ("twin-engines", make_snapshot(["propulsion_and_machinery"], twin_propulsion=True)),
+    ("monohull", make_snapshot(["propulsion_and_machinery"], vessel_type="sailing_monohull")),
 ]
 
 

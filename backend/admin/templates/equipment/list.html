@@ -29,8 +29,8 @@
   <input name="q" value="{{ query }}" placeholder="Search manufacturer or model">
   <select name="system_category">
     <option value="">All systems</option>
-    {% for cat in system_categories %}
-    <option value="{{ cat }}" {% if system_category == cat %}selected{% endif %}>{{ cat | format_label }}</option>
+    {% for cat in equipment_categories %}
+    <option value="{{ cat.slug }}" {% if system_category == cat.slug %}selected{% endif %}>{{ cat.label }}</option>
     {% endfor %}
   </select>
   <select name="equipment_class">
@@ -70,7 +70,7 @@
     <tr>
       <td>{{ item.manufacturer or '—' }}</td>
       <td>{{ item.model or '—' }}</td>
-      <td>{{ item.system_category | format_label }}</td>
+      <td>{{ item.system_category | category_label }}</td>
       <td>{{ item.equipment_class | format_label }}</td>
       <td>{{ item.configuration_tier | format_label }}</td>
       <td>

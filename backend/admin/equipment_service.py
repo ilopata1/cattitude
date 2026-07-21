@@ -14,11 +14,9 @@ from admin.enums import (
     EQUIPMENT_CLASSES,
     IDENTIFICATION_METHODS,
     PACK_SOURCES,
-    SYSTEM_CATEGORIES,
     VESSEL_TYPES,
-    ZONE_CARDINALITIES,
-    ZONES,
 )
+from equipment_category import EquipmentCategoryError, validate_category
 
 PER_PAGE = 50
 
@@ -220,14 +218,12 @@ def _row_to_equipment(row: Any) -> dict[str, Any]:
         "manufacturer": row[1],
         "model": row[2],
         "vessel_types": list(row[3] or []),
-        "zone": row[4],
-        "zone_cardinality": row[5],
-        "system_category": row[6],
-        "equipment_class": row[7],
-        "configuration_tier": row[8],
-        "has_formal_manual": row[9],
-        "identification_method": row[10],
-        "created_at": row[11],
+        "system_category": row[4],
+        "equipment_class": row[5],
+        "configuration_tier": row[6],
+        "has_formal_manual": row[7],
+        "identification_method": row[8],
+        "created_at": row[9],
     }
 
 
@@ -236,7 +232,7 @@ def get_equipment(conn: Connection, equipment_id: str) -> dict[str, Any] | None:
         text(
             """
             SELECT
-                id, manufacturer, model, vessel_types, zone, zone_cardinality,
+                id, manufacturer, model, vessel_types,
                 system_category, equipment_class, configuration_tier,
                 has_formal_manual, identification_method, created_at
             FROM equipment
@@ -273,7 +269,7 @@ def find_equipment_by_manufacturer_model(
         text(
             f"""
             SELECT
-                id, manufacturer, model, vessel_types, zone, zone_cardinality,
+                id, manufacturer, model, vessel_types,
                 system_category, equipment_class, configuration_tier,
                 has_formal_manual, identification_method, created_at
             FROM equipment
@@ -325,17 +321,16 @@ def _equipment_params(data: dict[str, Any]) -> dict[str, Any]:
     if not manufacturer or not model:
         raise EquipmentServiceError("Manufacturer and model are required.")
 
+    try:
+        system_category = validate_category(data["system_category"], vessel_types)
+    except EquipmentCategoryError as exc:
+        raise EquipmentServiceError(str(exc)) from exc
+
     return {
         "manufacturer": manufacturer,
         "model": model,
         "vessel_types": vessel_types,
-        "zone": _validate_choice(data["zone"], ZONES, "zone"),
-        "zone_cardinality": _validate_choice(
-            data.get("zone_cardinality") or "fixed", ZONE_CARDINALITIES, "zone_cardinality"
-        ),
-        "system_category": _validate_choice(
-            data["system_category"], SYSTEM_CATEGORIES, "system_category"
-        ),
+        "system_category": system_category,
         "equipment_class": _validate_choice(
             data["equipment_class"], EQUIPMENT_CLASSES, "equipment_class"
         ),
@@ -355,15 +350,13 @@ def create_equipment(conn: Connection, data: dict[str, Any]) -> str:
         text(
             """
             INSERT INTO equipment (
-                manufacturer, model, vessel_types, zone, zone_cardinality,
+                manufacturer, model, vessel_types,
                 system_category, equipment_class, configuration_tier,
                 has_formal_manual, identification_method
             )
             VALUES (
                 :manufacturer, :model,
                 CAST(:vessel_types AS vessel_type[]),
-                CAST(:zone AS zone),
-                CAST(:zone_cardinality AS zone_cardinality),
                 CAST(:system_category AS system_category),
                 CAST(:equipment_class AS equipment_class),
                 CAST(:configuration_tier AS configuration_tier),
@@ -388,8 +381,6 @@ def update_equipment(conn: Connection, equipment_id: str, data: dict[str, Any]) 
                 manufacturer = :manufacturer,
                 model = :model,
                 vessel_types = CAST(:vessel_types AS vessel_type[]),
-                zone = CAST(:zone AS zone),
-                zone_cardinality = CAST(:zone_cardinality AS zone_cardinality),
                 system_category = CAST(:system_category AS system_category),
                 equipment_class = CAST(:equipment_class AS equipment_class),
                 configuration_tier = CAST(:configuration_tier AS configuration_tier),

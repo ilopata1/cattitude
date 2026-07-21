@@ -17,19 +17,18 @@ import guide_content_library_legacy as legacy  # noqa: E402
 CONTENT_DIR = _BACKEND / "content"
 
 ALL_CATEGORIES = [
-    "propulsion",
+    "propulsion_and_machinery",
     "sanitation",
-    "freshwater_system",
+    "fresh_water_and_plumbing",
     "electrical_dc",
-    "electrical_ac_shore_power",
-    "refrigeration_galley",
-    "navigation_electronics",
+    "electrical_ac",
+    "galley_appliances",
+    "navigation_and_electronics",
     "communications",
-    "anchoring_ground_tackle",
-    "rigging_sail_handling",
-    "sails",
-    "hvac_climate",
-    "tenders_davits",
+    "ground_tackle_and_mooring",
+    "rigging_and_sail_handling",
+    "hvac",
+    "tenders_and_watersports",
 ]
 
 BASE_CONTEXT = {
@@ -51,12 +50,12 @@ def make_snapshot(
 ) -> dict[str, Any]:
     equipment: list[dict[str, Any]] = []
     for category in categories or []:
-        if category == "propulsion" and twin_propulsion:
+        if category == "propulsion_and_machinery" and twin_propulsion:
             equipment.append(
                 {
                     "manufacturer": "Yanmar",
                     "model": "4JH45",
-                    "system_category": "propulsion",
+                    "system_category": "propulsion_and_machinery",
                     "zone": "port-hull",
                     "zone_instance": "port",
                 }
@@ -65,7 +64,7 @@ def make_snapshot(
                 {
                     "manufacturer": "Yanmar",
                     "model": "4JH45",
-                    "system_category": "propulsion",
+                    "system_category": "propulsion_and_machinery",
                     "zone": "stbd-hull",
                     "zone_instance": "starboard",
                 }
@@ -77,7 +76,7 @@ def make_snapshot(
             "system_category": category,
             "zone": "cockpit",
         }
-        if category == "freshwater_system" and watermaker_model:
+        if category == "fresh_water_and_plumbing" and watermaker_model:
             row["model"] = "Spectra watermaker"
         equipment.append(row)
 
@@ -97,10 +96,10 @@ def snapshot_variants() -> list[tuple[str, dict[str, Any]]]:
     variants: list[tuple[str, dict[str, Any]]] = [
         ("none", make_snapshot([])),
         ("full", make_snapshot(ALL_CATEGORIES)),
-        ("twin", make_snapshot(["propulsion"], twin_propulsion=True)),
-        ("sailing", make_snapshot(["sails", "rigging_sail_handling"], vessel_type="sailing_catamaran")),
-        ("watermaker", make_snapshot(["freshwater_system"], watermaker_model=True)),
-        ("monohull", make_snapshot(["propulsion"], vessel_type="sailing_monohull")),
+        ("twin", make_snapshot(["propulsion_and_machinery"], twin_propulsion=True)),
+        ("sailing", make_snapshot(["rigging_and_sail_handling"], vessel_type="sailing_catamaran")),
+        ("watermaker", make_snapshot(["fresh_water_and_plumbing"], watermaker_model=True)),
+        ("monohull", make_snapshot(["propulsion_and_machinery"], vessel_type="sailing_monohull")),
     ]
     for category in ALL_CATEGORIES:
         variants.append((category, make_snapshot([category])))
@@ -137,15 +136,15 @@ def infer_when(predicate) -> dict[str, Any]:
         else:
             when_parts.append(category_when)
 
-    twin_only = predicate(make_snapshot(["propulsion"], twin_propulsion=True)) and not (
-        predicate(make_snapshot(["propulsion"]))
+    twin_only = predicate(make_snapshot(["propulsion_and_machinery"], twin_propulsion=True)) and not (
+        predicate(make_snapshot(["propulsion_and_machinery"]))
     )
     if twin_only:
         when_parts.append({"twin_engine": True})
 
     watermaker_only = predicate(
-        make_snapshot(["freshwater_system"], watermaker_model=True)
-    ) and not predicate(make_snapshot(["freshwater_system"]))
+        make_snapshot(["fresh_water_and_plumbing"], watermaker_model=True)
+    ) and not predicate(make_snapshot(["fresh_water_and_plumbing"]))
     if watermaker_only:
         when_parts.append({"has_watermaker": True})
 
@@ -206,7 +205,7 @@ def export_home_rules() -> None:
         },
         {
             "when": {
-                "has_category": ["navigation_electronics"],
+                "has_category": ["navigation_and_electronics"],
                 "local_rules_exclude": ["autopilot"],
             },
             "section": "danger",
@@ -232,7 +231,7 @@ def export_home_rules() -> None:
             ),
         },
         {
-            "when": {"has_category": ["refrigeration_galley"]},
+            "when": {"has_category": ["galley_appliances"]},
             "section": "good",
             "icon": "🧊",
             "text": (
@@ -241,7 +240,7 @@ def export_home_rules() -> None:
             ),
         },
         {
-            "when": {"has_category": ["freshwater_system"]},
+            "when": {"has_category": ["fresh_water_and_plumbing"]},
             "section": "good",
             "icon": "💧",
             "text": "Treat fresh water as precious — short showers, taps off while soaping",

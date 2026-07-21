@@ -38,7 +38,7 @@ groups:
   - c: Show the SOS/MOB button on the chartplotter — press immediately to mark position
     when:
       has_category:
-      - navigation_electronics
+      - navigation_and_electronics
   - c: 'Explain recovery manoeuvre: slow down, circle back, approach from downwind'
     s: Engine on immediately. Approach slowly from the downwind side.
   - c: Show the boarding ladder location and how to deploy it
@@ -51,7 +51,7 @@ groups:
     s: Opening the hatch feeds oxygen to the fire.
     when:
       has_category:
-      - propulsion
+      - propulsion_and_machinery
   - c: 'If fire cannot be controlled: MAYDAY, prepare to abandon ship'
     s: Life raft, EPIRB, flares, water, VHF.
 - t: VHF & Communications

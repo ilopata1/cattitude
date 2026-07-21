@@ -30,31 +30,6 @@ CONFIGURATION_TIERS = frozenset(
 IDENTIFICATION_METHODS = frozenset(
     {"nameplate", "visual_description", "builder_spec"}
 )
-ZONE_CARDINALITIES = frozenset({"fixed", "configurable"})
-ZONES = frozenset(
-    {
-        "bow_foredeck",
-        "helm_station",
-        "cockpit_aft_deck",
-        "saloon_main_cabin",
-        "galley",
-        "engine_room",
-        "lazarette_aft_storage",
-        "swim_platform_transom",
-        "below_decks_bilge",
-        "port_hull",
-        "starboard_hull",
-        "bridgedeck_coachroof",
-        "trampoline_foredeck_netting",
-        "mast_base_deck_step",
-        "keel_centreboard_trunk",
-        "quarter_berth_aft_cabin",
-        "flybridge",
-        "engine_room_walkin",
-        "bait_tackle_station",
-    }
-)
-
 CSV_FILES = {
     "hull_models": "hull_models.csv",
     "equipment": "equipment_registry.csv",
@@ -197,7 +172,7 @@ def validate_csv_bundle(
 
     for key, cols in (
         ("hull_models", ("manufacturer", "model_code")),
-        ("equipment", ("manufacturer", "model", "system_category", "zone")),
+        ("equipment", ("manufacturer", "model", "system_category")),
         ("option_packs", ("manufacturer", "pack_name", "source")),
         (
             "pack_hull",
@@ -278,7 +253,6 @@ def validate_csv_bundle(
 
     for row in bundle["equipment"]:
         _check_enum(row["system_category"], SYSTEM_CATEGORIES, "system_category")
-        _check_enum(row["zone"], ZONES, "zone")
         _check_enum(row["equipment_class"], EQUIPMENT_CLASSES, "equipment_class")
         _check_enum(row["configuration_tier"], CONFIGURATION_TIERS, "configuration_tier")
         _check_enum(
@@ -434,7 +408,6 @@ def _upsert_equipment(conn: Connection, row: dict[str, str], report: ImportRepor
         "manufacturer",
         "model",
         "system_category",
-        "zone",
         "equipment_class",
         "configuration_tier",
         "identification_method",
@@ -452,7 +425,6 @@ def _upsert_equipment(conn: Connection, row: dict[str, str], report: ImportRepor
         "manufacturer": manufacturer,
         "model": model,
         "vessel_types": vessel_types,
-        "zone": _check_enum(row["zone"], ZONES, "zone"),
         "system_category": _check_enum(
             row["system_category"], SYSTEM_CATEGORIES, "system_category"
         ),
@@ -485,7 +457,6 @@ def _upsert_equipment(conn: Connection, row: dict[str, str], report: ImportRepor
                 UPDATE equipment
                 SET
                     vessel_types = CAST(:vessel_types AS vessel_type[]),
-                    zone = CAST(:zone AS zone),
                     system_category = CAST(:system_category AS system_category),
                     equipment_class = CAST(:equipment_class AS equipment_class),
                     configuration_tier = CAST(:configuration_tier AS configuration_tier),
@@ -503,14 +474,13 @@ def _upsert_equipment(conn: Connection, row: dict[str, str], report: ImportRepor
         text(
             """
             INSERT INTO equipment (
-                manufacturer, model, vessel_types, zone, system_category,
+                manufacturer, model, vessel_types, system_category,
                 equipment_class, configuration_tier, identification_method,
                 has_formal_manual
             )
             VALUES (
                 :manufacturer, :model,
                 CAST(:vessel_types AS vessel_type[]),
-                CAST(:zone AS zone),
                 CAST(:system_category AS system_category),
                 CAST(:equipment_class AS equipment_class),
                 CAST(:configuration_tier AS configuration_tier),

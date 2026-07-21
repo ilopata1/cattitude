@@ -12,7 +12,7 @@ Rules:
    brand. Unmentioned = empty array / false / "unclear". Never guess.
    device.category_freeform must be the manual's own product category words
    (e.g. "charger/inverter", "MPPT solar charger") — never registry/taxonomy
-   tokens such as electrical_dc, propulsion, freshwater_system.
+   tokens such as electrical_dc, propulsion_and_machinery, fresh_water_and_plumbing.
 
 2. Empty is meaningful. A busbar has no control surfaces and no operator actions;
    emit empty arrays.

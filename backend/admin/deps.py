@@ -8,11 +8,13 @@ from sqlalchemy.engine import Engine
 
 from config import settings
 from db import postgres_connection_strings
+from equipment_category import label as equipment_category_label
 from .formatting import format_label
 
 ADMIN_DIR = Path(__file__).resolve().parent
 templates = Jinja2Templates(directory=str(ADMIN_DIR / "templates"))
 templates.env.filters["format_label"] = format_label
+templates.env.filters["category_label"] = equipment_category_label
 
 _engine: Engine | None = None
 

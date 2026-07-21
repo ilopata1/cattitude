@@ -9,26 +9,24 @@ export type VesselType =
   | 'sport_fishing';
 
 export type SystemCategory =
-  | 'propulsion'
-  | 'fuel_system'
+  | 'hull_and_structure'
+  | 'propulsion_and_machinery'
+  | 'steering_and_controls'
   | 'electrical_dc'
-  | 'electrical_ac_shore_power'
-  | 'freshwater_system'
+  | 'electrical_ac'
+  | 'fuel_system'
+  | 'fresh_water_and_plumbing'
   | 'sanitation'
   | 'bilge_and_drainage'
-  | 'steering'
-  | 'anchoring_ground_tackle'
-  | 'rigging_sail_handling'
-  | 'sails'
-  | 'navigation_electronics'
+  | 'hvac'
+  | 'navigation_and_electronics'
   | 'communications'
-  | 'refrigeration_galley'
-  | 'hvac_climate'
-  | 'safety_equipment'
-  | 'tenders_davits'
-  | 'stabilisation'
-  | 'entertainment_connectivity'
-  | 'hull_and_structure';
+  | 'safety_and_emergency_equipment'
+  | 'ground_tackle_and_mooring'
+  | 'rigging_and_sail_handling'
+  | 'deck_hardware_and_equipment'
+  | 'galley_appliances'
+  | 'tenders_and_watersports';
 
 export type EquipmentClass =
   | 'branded_major'

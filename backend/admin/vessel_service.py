@@ -10,9 +10,26 @@ from sqlalchemy import text
 from sqlalchemy.engine import Connection
 from sqlalchemy.exc import IntegrityError
 
+from location_model import (
+    LocationError,
+    default_location_for,
+    generate_label,
+    validate_location,
+)
+
 
 class VesselServiceError(Exception):
     pass
+
+
+def _vessel_type(conn: Connection, vessel_id: str) -> str:
+    row = conn.execute(
+        text("SELECT vessel_type FROM vessels WHERE id = :id"),
+        {"id": vessel_id},
+    ).fetchone()
+    if row is None:
+        raise VesselServiceError("Vessel not found.")
+    return str(row[0])
 
 
 def slugify(name: str) -> str:
@@ -286,9 +303,12 @@ def clone_vessel(
             text(
                 """
                 INSERT INTO vessel_equipment (
-                    vessel_id, equipment_id, zone_instance, confirmed_by
+                    vessel_id, equipment_id, zone, sub_zone, hull_side, detail,
+                    zone_instance, confirmed_by
                 )
-                SELECT :new_id, equipment_id, zone_instance, confirmed_by
+                SELECT
+                    :new_id, equipment_id, zone, sub_zone, hull_side, detail,
+                    zone_instance, confirmed_by
                 FROM vessel_equipment
                 WHERE vessel_id = :source_id
                 ON CONFLICT (vessel_id, equipment_id, zone_instance) DO NOTHING
@@ -345,25 +365,30 @@ def list_vessel_equipment(conn: Connection, vessel_id: str) -> list[dict[str, An
         text(
             """
             SELECT
-                ve.equipment_id, ve.zone_instance, ve.confirmed_by,
-                e.manufacturer, e.model, e.system_category, e.zone
+                ve.id, ve.equipment_id, ve.confirmed_by,
+                ve.zone, ve.sub_zone, ve.hull_side, ve.detail,
+                e.manufacturer, e.model, e.system_category
             FROM vessel_equipment ve
             JOIN equipment e ON e.id = ve.equipment_id
             WHERE ve.vessel_id = :vessel_id
-            ORDER BY lower(e.manufacturer), lower(e.model)
+            ORDER BY lower(e.manufacturer), lower(e.model), ve.zone_instance
             """
         ),
         {"vessel_id": vessel_id},
     ).fetchall()
     return [
         {
-            "equipment_id": str(row[0]),
-            "zone_instance": row[1],
+            "id": str(row[0]),
+            "equipment_id": str(row[1]),
             "confirmed_by": row[2],
-            "manufacturer": row[3],
-            "model": row[4],
-            "system_category": row[5],
-            "zone": row[6],
+            "zone": row[3],
+            "sub_zone": row[4],
+            "hull_side": row[5],
+            "detail": row[6],
+            "location_label": generate_label(row[3], row[4], row[5], row[6]),
+            "manufacturer": row[7],
+            "model": row[8],
+            "system_category": row[9],
         }
         for row in rows
     ]
@@ -422,7 +447,7 @@ def search_equipment(
         params["vessel_type"] = vessel_type
 
     sql = f"""
-        SELECT id, manufacturer, model, system_category, zone, equipment_class
+        SELECT id, manufacturer, model, system_category, equipment_class
         FROM equipment
         WHERE {' AND '.join(clauses)}
         ORDER BY manufacturer, model
@@ -435,8 +460,7 @@ def search_equipment(
             "manufacturer": row[1],
             "model": row[2],
             "system_category": row[3],
-            "zone": row[4],
-            "equipment_class": row[5],
+            "equipment_class": row[4],
         }
         for row in rows
     ]
@@ -447,35 +471,119 @@ def add_vessel_equipment(
     vessel_id: str,
     equipment_id: str,
     *,
+    zone: str | None,
+    sub_zone: str | None,
+    hull_side: str | None = None,
+    detail: str | None = None,
     confirmed_by: str = "team_verified",
 ) -> None:
+    """Install a piece of registry equipment on a vessel at a location.
+
+    The location is validated against the vessel's boat type server-side so
+    that combinations hidden in the UI cannot be persisted via the API.
+    """
+    vessel_type = _vessel_type(conn, vessel_id)
+    try:
+        loc = validate_location(vessel_type, zone, sub_zone, hull_side, detail)
+    except LocationError as exc:
+        raise VesselServiceError(str(exc)) from exc
+
+    label = generate_label(
+        loc["zone"], loc["sub_zone"], loc["hull_side"], loc["detail"]
+    ) or "default"
+
     conn.execute(
         text(
             """
-            INSERT INTO vessel_equipment (vessel_id, equipment_id, confirmed_by)
-            VALUES (:vessel_id, :equipment_id, CAST(:confirmed_by AS confirmed_by_method))
+            INSERT INTO vessel_equipment (
+                vessel_id, equipment_id, zone, sub_zone, hull_side, detail,
+                zone_instance, confirmed_by
+            )
+            VALUES (
+                :vessel_id, :equipment_id,
+                CAST(:zone AS location_zone), :sub_zone, :hull_side, :detail,
+                :zone_instance, CAST(:confirmed_by AS confirmed_by_method)
+            )
             ON CONFLICT (vessel_id, equipment_id, zone_instance) DO NOTHING
             """
         ),
         {
             "vessel_id": vessel_id,
             "equipment_id": equipment_id,
+            "zone": loc["zone"],
+            "sub_zone": loc["sub_zone"],
+            "hull_side": loc["hull_side"],
+            "detail": loc["detail"],
+            "zone_instance": label,
             "confirmed_by": confirmed_by,
         },
     )
 
 
+def update_vessel_equipment_location(
+    conn: Connection,
+    vessel_id: str,
+    row_id: str,
+    *,
+    zone: str | None,
+    sub_zone: str | None,
+    hull_side: str | None = None,
+    detail: str | None = None,
+) -> None:
+    """Edit the structured location of an installed equipment row."""
+    vessel_type = _vessel_type(conn, vessel_id)
+    try:
+        loc = validate_location(vessel_type, zone, sub_zone, hull_side, detail)
+    except LocationError as exc:
+        raise VesselServiceError(str(exc)) from exc
+
+    label = generate_label(
+        loc["zone"], loc["sub_zone"], loc["hull_side"], loc["detail"]
+    ) or "default"
+
+    try:
+        result = conn.execute(
+            text(
+                """
+                UPDATE vessel_equipment
+                SET
+                    zone = CAST(:zone AS location_zone),
+                    sub_zone = :sub_zone,
+                    hull_side = :hull_side,
+                    detail = :detail,
+                    zone_instance = :zone_instance
+                WHERE id = :row_id AND vessel_id = :vessel_id
+                """
+            ),
+            {
+                "zone": loc["zone"],
+                "sub_zone": loc["sub_zone"],
+                "hull_side": loc["hull_side"],
+                "detail": loc["detail"],
+                "zone_instance": label,
+                "row_id": row_id,
+                "vessel_id": vessel_id,
+            },
+        )
+    except IntegrityError as exc:
+        raise VesselServiceError(
+            "This equipment is already installed at that exact location."
+        ) from exc
+    if result.rowcount == 0:
+        raise VesselServiceError("Installed equipment not found.")
+
+
 def remove_vessel_equipment(
-    conn: Connection, vessel_id: str, equipment_id: str
+    conn: Connection, vessel_id: str, row_id: str
 ) -> None:
     conn.execute(
         text(
             """
             DELETE FROM vessel_equipment
-            WHERE vessel_id = :vessel_id AND equipment_id = :equipment_id
+            WHERE id = :row_id AND vessel_id = :vessel_id
             """
         ),
-        {"vessel_id": vessel_id, "equipment_id": equipment_id},
+        {"row_id": row_id, "vessel_id": vessel_id},
     )
 
 
@@ -631,21 +739,41 @@ def apply_option_pack(
             "Option pack has no equipment items (direct or via child packs)."
         )
 
+    vessel_type = vessel["vessel_type"]
     added = 0
     for equipment_id in equipment_ids:
+        system_category = conn.execute(
+            text("SELECT system_category FROM equipment WHERE id = :id"),
+            {"id": equipment_id},
+        ).scalar()
+        default = default_location_for(system_category, vessel_type)
+        zone = default["zone"] if default else None
+        sub_zone = default["sub_zone"] if default else None
+        label = generate_label(zone, sub_zone) or "default"
+
         result = conn.execute(
             text(
                 """
-                INSERT INTO vessel_equipment (vessel_id, equipment_id, confirmed_by)
+                INSERT INTO vessel_equipment (
+                    vessel_id, equipment_id, zone, sub_zone, zone_instance,
+                    confirmed_by
+                )
                 VALUES (
                     :vessel_id, :equipment_id,
+                    CAST(:zone AS location_zone), :sub_zone, :zone_instance,
                     CAST('config_match' AS confirmed_by_method)
                 )
                 ON CONFLICT (vessel_id, equipment_id, zone_instance) DO NOTHING
                 RETURNING equipment_id
                 """
             ),
-            {"vessel_id": vessel_id, "equipment_id": equipment_id},
+            {
+                "vessel_id": vessel_id,
+                "equipment_id": equipment_id,
+                "zone": zone,
+                "sub_zone": sub_zone,
+                "zone_instance": label,
+            },
         ).fetchone()
         if result:
             added += 1

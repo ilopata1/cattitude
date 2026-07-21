@@ -31,7 +31,7 @@ def _has_category(snapshot: dict[str, Any], *categories: str) -> bool:
 
 def _has_watermaker(snapshot: dict[str, Any]) -> bool:
     for row in _equipment(snapshot):
-        if row.get("system_category") != "freshwater_system":
+        if row.get("system_category") != "fresh_water_and_plumbing":
             continue
         text = f"{row.get('manufacturer') or ''} {row.get('model') or ''}".lower()
         if any(hint in text for hint in _WATERMAKER_HINTS):
@@ -42,7 +42,7 @@ def _has_watermaker(snapshot: dict[str, Any]) -> bool:
 def _is_sailing(snapshot: dict[str, Any]) -> bool:
     vessel_type = (snapshot.get("vessel") or {}).get("vessel_type") or ""
     return "sailing" in vessel_type or _has_category(
-        snapshot, "rigging_sail_handling", "sails"
+        snapshot, "rigging_and_sail_handling"
     )
 
 
@@ -50,7 +50,7 @@ def _is_twin_engine(snapshot: dict[str, Any]) -> bool:
     propulsion = [
         row
         for row in _equipment(snapshot)
-        if row.get("system_category") == "propulsion"
+        if row.get("system_category") == "propulsion_and_machinery"
     ]
     if len(propulsion) >= 2:
         return True
@@ -150,7 +150,7 @@ def build_home_rules_module(
             }
         )
     if (
-        _has_category(snapshot, "navigation_electronics")
+        _has_category(snapshot, "navigation_and_electronics")
         and "autopilot" not in local_lower
     ):
         danger_rules.append(
@@ -192,7 +192,7 @@ def build_home_rules_module(
             }
         )
 
-    if _has_category(snapshot, "refrigeration_galley"):
+    if _has_category(snapshot, "galley_appliances"):
         good_rules.append(
             {
                 "icon": "🧊",
@@ -203,7 +203,7 @@ def build_home_rules_module(
                 ),
             }
         )
-    if _has_category(snapshot, "freshwater_system"):
+    if _has_category(snapshot, "fresh_water_and_plumbing"):
         good_rules.append(
             {
                 "icon": "💧",
@@ -237,8 +237,8 @@ def _groups(*groups: dict[str, Any] | None) -> dict[str, Any]:
 
 def _build_safety_brief(snapshot: dict[str, Any]) -> dict[str, Any]:
     vessel = _vessel_name(snapshot)
-    has_nav = _has_category(snapshot, "navigation_electronics")
-    has_engines = _has_category(snapshot, "propulsion")
+    has_nav = _has_category(snapshot, "navigation_and_electronics")
+    has_engines = _has_category(snapshot, "propulsion_and_machinery")
     vhf = _office_vhf(snapshot)
     company = _company_name(snapshot)
 
@@ -371,12 +371,12 @@ def _build_safety_brief(snapshot: dict[str, Any]) -> dict[str, Any]:
 
 
 def _build_pre_departure(snapshot: dict[str, Any]) -> dict[str, Any]:
-    has_engines = _has_category(snapshot, "propulsion")
+    has_engines = _has_category(snapshot, "propulsion_and_machinery")
     twin = _is_twin_engine(snapshot)
-    has_windlass = _has_category(snapshot, "anchoring_ground_tackle")
+    has_windlass = _has_category(snapshot, "ground_tackle_and_mooring")
     has_dc = _has_category(snapshot, "electrical_dc")
-    has_nav = _has_category(snapshot, "navigation_electronics")
-    has_water = _has_category(snapshot, "freshwater_system")
+    has_nav = _has_category(snapshot, "navigation_and_electronics")
+    has_water = _has_category(snapshot, "fresh_water_and_plumbing")
     has_heads = _has_category(snapshot, "sanitation")
 
     both = "both engines" if twin else "the engine"
@@ -505,9 +505,9 @@ def _build_pre_departure(snapshot: dict[str, Any]) -> dict[str, Any]:
 
 
 def _build_anchoring(snapshot: dict[str, Any]) -> dict[str, Any]:
-    has_windlass = _has_category(snapshot, "anchoring_ground_tackle")
-    has_nav = _has_category(snapshot, "navigation_electronics")
-    has_engines = _has_category(snapshot, "propulsion")
+    has_windlass = _has_category(snapshot, "ground_tackle_and_mooring")
+    has_nav = _has_category(snapshot, "navigation_and_electronics")
+    has_engines = _has_category(snapshot, "propulsion_and_machinery")
 
     setting_items = []
     if has_windlass:
@@ -577,12 +577,12 @@ def _build_anchoring(snapshot: dict[str, Any]) -> dict[str, Any]:
 
 
 def _build_leaving_unattended(snapshot: dict[str, Any]) -> dict[str, Any]:
-    has_ac_power = _has_category(snapshot, "electrical_ac_shore_power")
-    has_hvac = _has_category(snapshot, "hvac_climate")
+    has_ac_power = _has_category(snapshot, "electrical_ac")
+    has_hvac = _has_category(snapshot, "hvac")
     has_watermaker = _has_watermaker(snapshot)
-    has_water = _has_category(snapshot, "freshwater_system")
-    has_dinghy = _has_category(snapshot, "tenders_davits")
-    has_nav = _has_category(snapshot, "navigation_electronics")
+    has_water = _has_category(snapshot, "fresh_water_and_plumbing")
+    has_dinghy = _has_category(snapshot, "tenders_and_watersports")
+    has_nav = _has_category(snapshot, "navigation_and_electronics")
 
     power_items = [
         _item(
@@ -643,8 +643,8 @@ def _build_end_of_charter(snapshot: dict[str, Any]) -> dict[str, Any]:
     vessel = _vessel_name(snapshot)
     company = _company_name(snapshot) or "the charter company"
     has_heads = _has_category(snapshot, "sanitation")
-    has_engines = _has_category(snapshot, "propulsion")
-    has_shore = _has_category(snapshot, "electrical_ac_shore_power")
+    has_engines = _has_category(snapshot, "propulsion_and_machinery")
+    has_shore = _has_category(snapshot, "electrical_ac")
 
     final_day_items = []
     if has_heads:
@@ -719,7 +719,7 @@ def build_fix_cards_module(
     contact = _contact_step(snapshot)
     cards: list[dict[str, Any]] = []
 
-    if _has_category(snapshot, "propulsion"):
+    if _has_category(snapshot, "propulsion_and_machinery"):
         cards.append(
             {
                 "icon": "🔴",
@@ -802,7 +802,7 @@ def build_fix_cards_module(
             }
         )
 
-    if _has_category(snapshot, "freshwater_system"):
+    if _has_category(snapshot, "fresh_water_and_plumbing"):
         cards.append(
             {
                 "icon": "💧",
@@ -878,7 +878,7 @@ def build_fix_cards_module(
             }
         )
 
-    if _has_category(snapshot, "refrigeration_galley"):
+    if _has_category(snapshot, "galley_appliances"):
         cards.append(
             {
                 "icon": "🧊",
@@ -920,7 +920,7 @@ def build_fix_cards_module(
             }
         )
 
-    if _has_category(snapshot, "navigation_electronics"):
+    if _has_category(snapshot, "navigation_and_electronics"):
         cards.append(
             {
                 "icon": "🧭",
@@ -937,7 +937,7 @@ def build_fix_cards_module(
                 ],
             }
         )
-    if _has_category(snapshot, "communications", "navigation_electronics"):
+    if _has_category(snapshot, "communications", "navigation_and_electronics"):
         cards.append(
             {
                 "icon": "📻",
@@ -955,7 +955,7 @@ def build_fix_cards_module(
             }
         )
 
-    if _has_category(snapshot, "anchoring_ground_tackle"):
+    if _has_category(snapshot, "ground_tackle_and_mooring"):
         cards.append(
             {
                 "icon": "⚓",
@@ -975,7 +975,7 @@ def build_fix_cards_module(
             }
         )
 
-    if _has_category(snapshot, "hvac_climate"):
+    if _has_category(snapshot, "hvac"):
         cards.append(
             {
                 "icon": "❄️",

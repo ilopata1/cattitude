@@ -8,7 +8,7 @@ cards:
 - key: engine_wont_start
   when:
     has_category:
-    - propulsion
+    - propulsion_and_machinery
   icon: 🔴
   cat: engine
   catL: Engine
@@ -23,7 +23,7 @@ cards:
 - key: engine_overheating
   when:
     has_category:
-    - propulsion
+    - propulsion_and_machinery
   icon: ⚠️
   cat: engine
   catL: Engine
@@ -71,7 +71,7 @@ cards:
 - key: no_fresh_water
   when:
     has_category:
-    - freshwater_system
+    - fresh_water_and_plumbing
   icon: 💧
   cat: plumbing
   catL: Plumbing
@@ -126,7 +126,7 @@ cards:
 - key: fridge_not_cooling
   when:
     has_category:
-    - refrigeration_galley
+    - galley_appliances
   icon: 🧊
   cat: electrical
   catL: Electrical
@@ -155,7 +155,7 @@ cards:
 - key: autopilot
   when:
     has_category:
-    - navigation_electronics
+    - navigation_and_electronics
   icon: 🧭
   cat: nav
   catL: Navigation
@@ -168,7 +168,7 @@ cards:
 - key: vhf_not_transmitting
   when:
     has_category:
-    - navigation_electronics
+    - navigation_and_electronics
   icon: 📻
   cat: nav
   catL: Navigation
@@ -182,7 +182,7 @@ cards:
 - key: windlass
   when:
     has_category:
-    - anchoring_ground_tackle
+    - ground_tackle_and_mooring
   icon: ⚓
   cat: general
   catL: General
@@ -196,7 +196,7 @@ cards:
 - key: ac_not_working
   when:
     has_category:
-    - hvac_climate
+    - hvac
   icon: ❄️
   cat: electrical
   catL: Electrical

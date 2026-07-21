@@ -5,7 +5,7 @@
 #
 Generate the engines system module (Learn the Boat + Know tab).
 
-Use INPUT SNAPSHOT equipment rows for propulsion (system_category propulsion, or manufacturer Yanmar/volvo/etc.).
+Use INPUT SNAPSHOT equipment rows for propulsion (system_category propulsion_and_machinery, or manufacturer Yanmar/volvo/etc.).
 Use twin-engine catamaran assumptions when two propulsion units with port/starboard zone_instance appear.
 
 Produce id "engines", icon "⚙️", locs including port-hull, stbd-hull, cockpit.

@@ -21,7 +21,7 @@ circuit unchanged (not promoted to a device).
 
 ## Live state changes (`fixtures/pipeline/outremer/`)
 
-- Added `dessalator_duo` to `equipment.json` (`system_category: fresh_water`).
+- Added `dessalator_duo` to `equipment.json` (`system_category: fresh_water_and_plumbing`).
 - Added role (`ISLAND`) + section (`water`) + note to `expected.json`.
 - Added `rec_dessalator_duo_added` to `reconciliation_records.json`.
 - Mirrored profile + expected role/section/note into
