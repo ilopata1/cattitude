@@ -13,6 +13,7 @@ one-off content fix. Then act per class:
 - One-off fix: only with stated justification for why no rule is
   warranted.
 
+
 Before implementing anything, check each item against existing spec
 policy; report collisions rather than silently resolving them.
 
@@ -21,10 +22,12 @@ action taken (rule changed / fact found / queued / rejected-why).
 A response without the disposition table is incomplete and will be
 rejected without review.
 
+Collision reports and disposition tables each return two layers — a plain-language summary per row  with the technical ledger beneath it for audit. 
+
 Any global-rule change re-runs all frozen sections as regressions;
 report each frozen section's result explicitly (pass / what broke).
 
 Re-render; show the new version, the provenance map, and the
 rule-change list.
-
+Unresolved review items carry forward automatically until dispositioned
 [items]
