@@ -32,7 +32,11 @@ from sqlalchemy import create_engine, text  # noqa: E402
 
 from config import settings  # noqa: E402
 from db import postgres_connection_strings  # noqa: E402
-from stage4_substrate import iter_relation_rows, split_profile_edges  # noqa: E402
+from stage4_substrate import (  # noqa: E402
+    iter_relation_rows,
+    link_profiles_to_registry,
+    split_profile_edges,
+)
 
 # equipment_doc top-level keys held per vessel; ``equipment`` lives in its own
 # table, so it is excluded from the facts blob.
@@ -208,11 +212,17 @@ def main() -> int:
         vessel_id, vessel_name = str(row[0]), row[1]
 
         profiles_written = _upsert_profiles(conn, profiles)
+        link_stats = link_profiles_to_registry(conn)
         stats = _seed_vessel(conn, vessel_id, equipment_doc, profiles)
 
     print(f"Seeded Stage 4 substrate for {vessel_name} ({args.slug})")
     print(f"  fixture: {args.fixture}")
     print(f"  interaction_profile rows upserted: {profiles_written}")
+    print(
+        "  registry links: "
+        f"{link_stats['linked']}/{link_stats['total']} "
+        f"(cleared {link_stats['cleared']})"
+    )
     print(f"  vessel_stage4_equipment rows: {stats['equipment']}")
     print(f"  vessel_equipment_relation rows: {stats['relations']}")
     print(f"  distinct profile_keys aboard: {stats['profile_keys']}")

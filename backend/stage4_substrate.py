@@ -25,6 +25,8 @@ from typing import Any
 from sqlalchemy import text
 from sqlalchemy.engine import Connection
 
+from location_model import generate_label
+
 # Decision 2: every cross-device edge is extracted from the stored profile.
 # ``protects``/``protected_by``/``requires_devices`` are present on every fixture
 # profile (empty when unused); ``runs_platform`` only where a device hosts a
@@ -40,6 +42,13 @@ _ALWAYS_PRESENT_EDGES: tuple[str, ...] = (
     "protected_by",
     "requires_devices",
 )
+
+# When profile.device strings still drift from the admin registry catalog,
+# force the registry (manufacturer, model) used for ``equipment_id`` linkage.
+PROFILE_EQUIPMENT_OVERRIDES: dict[str, tuple[str, str]] = {
+    "alpha_pro_iii": ("Mastervolt", "Alpha Pro III"),
+    "bg_zeus_sr": ("B&G", "Zeus SR 12"),
+}
 
 
 def split_profile_edges(
@@ -119,11 +128,124 @@ def iter_relation_rows(
 
 
 # --------------------------------------------------------------------------- #
+# Registry linkage (interaction_profile.equipment_id)
+# --------------------------------------------------------------------------- #
+
+def resolve_registry_equipment(
+    conn: Connection,
+    profile_key: str,
+    *,
+    manufacturer: str | None = None,
+    model: str | None = None,
+) -> dict[str, Any] | None:
+    """Exact-match a registry ``equipment`` row for a Stage 4 profile_key."""
+    override = PROFILE_EQUIPMENT_OVERRIDES.get(profile_key)
+    if override is not None:
+        manufacturer, model = override
+    mfr = (manufacturer or "").strip()
+    mdl = (model or "").strip()
+    if not mfr or not mdl:
+        return None
+    row = conn.execute(
+        text(
+            """
+            SELECT id, manufacturer, model
+            FROM equipment
+            WHERE manufacturer = :mfr AND model = :model
+            LIMIT 1
+            """
+        ),
+        {"mfr": mfr, "model": mdl},
+    ).fetchone()
+    if row is None:
+        return None
+    return {
+        "id": str(row[0]),
+        "manufacturer": row[1],
+        "model": row[2],
+    }
+
+
+def link_profiles_to_registry(conn: Connection) -> dict[str, int]:
+    """Fill ``interaction_profile.equipment_id`` and align manufacturer/model.
+
+    Leaves unmatched profiles (e.g. stub ``plain_battery_switch``) with
+    ``equipment_id`` NULL. Safe to re-run; does not rewrite ``profile`` JSONB
+    (composer byte-match reads the JSONB, not the columns).
+    """
+    rows = conn.execute(
+        text(
+            """
+            SELECT profile_key, manufacturer, model
+            FROM interaction_profile
+            ORDER BY profile_key
+            """
+        )
+    ).fetchall()
+    linked = 0
+    cleared = 0
+    for profile_key, manufacturer, model in rows:
+        match = resolve_registry_equipment(
+            conn, profile_key, manufacturer=manufacturer, model=model
+        )
+        if match is None:
+            result = conn.execute(
+                text(
+                    """
+                    UPDATE interaction_profile
+                    SET equipment_id = NULL, updated_at = now()
+                    WHERE profile_key = :pk AND equipment_id IS NOT NULL
+                    """
+                ),
+                {"pk": profile_key},
+            )
+            cleared += int(result.rowcount or 0)
+            continue
+        conn.execute(
+            text(
+                """
+                UPDATE interaction_profile
+                SET equipment_id = :eid,
+                    manufacturer = :mfr,
+                    model = :model,
+                    updated_at = now()
+                WHERE profile_key = :pk
+                """
+            ),
+            {
+                "pk": profile_key,
+                "eid": match["id"],
+                "mfr": match["manufacturer"],
+                "model": match["model"],
+            },
+        )
+        linked += 1
+    return {"linked": linked, "cleared": cleared, "total": len(rows)}
+
+
+def places_for_device(
+    equipment_doc: dict[str, Any], device_key: str
+) -> list[dict[str, Any]]:
+    """Return registry ``places`` for a Stage 4 device_key, if attached."""
+    for row in equipment_doc.get("equipment") or []:
+        if str(row.get("device_key") or "") == device_key:
+            places = row.get("places")
+            return list(places) if isinstance(places, list) else []
+    return []
+
+
+# --------------------------------------------------------------------------- #
 # DB -> composer adapter
 # --------------------------------------------------------------------------- #
 
 def build_equipment_doc_from_db(conn: Connection, vessel_id: str) -> dict[str, Any]:
-    """Reconstruct ``equipment_doc`` for a vessel from the Stage 4 substrate."""
+    """Reconstruct ``equipment_doc`` for a vessel from the Stage 4 substrate.
+
+    When ``interaction_profile.equipment_id`` is set and the vessel has matching
+    ``vessel_equipment`` installs, each equipment row may gain a ``places`` list
+    (registry locations). Composers that ignore ``places`` stay byte-identical to
+    the fixture path; emission of place prose is a separate, intentional step.
+    """
     facts_row = conn.execute(
         text("SELECT facts FROM vessel_stage4_facts WHERE vessel_id = :v"),
         {"v": vessel_id},
@@ -141,7 +263,57 @@ def build_equipment_doc_from_db(conn: Connection, vessel_id: str) -> dict[str, A
     ).fetchall()
     doc["equipment"] = [_as_json(r[0]) for r in eq_rows]
     doc.setdefault("relations", [])
+    _attach_registry_places(conn, vessel_id, doc)
     return doc
+
+
+def _attach_registry_places(
+    conn: Connection, vessel_id: str, doc: dict[str, Any]
+) -> None:
+    """Attach ``places`` onto equipment rows from admin ``vessel_equipment``."""
+    place_rows = conn.execute(
+        text(
+            """
+            SELECT
+                vse.device_key,
+                ve.zone::text,
+                ve.sub_zone,
+                ve.hull_side,
+                ve.detail,
+                ve.zone_instance
+            FROM vessel_stage4_equipment vse
+            JOIN interaction_profile ip ON ip.profile_key = vse.profile_key
+            JOIN vessel_equipment ve
+              ON ve.equipment_id = ip.equipment_id
+             AND ve.vessel_id = vse.vessel_id
+            WHERE vse.vessel_id = :v
+              AND ip.equipment_id IS NOT NULL
+            ORDER BY vse.ordinal, vse.device_key, ve.zone_instance
+            """
+        ),
+        {"v": vessel_id},
+    ).fetchall()
+
+    by_key: dict[str, list[dict[str, Any]]] = {}
+    for device_key, zone, sub_zone, hull_side, detail, zone_instance in place_rows:
+        label = generate_label(zone, sub_zone, hull_side, detail) or (
+            zone_instance or ""
+        )
+        by_key.setdefault(str(device_key), []).append(
+            {
+                "zone": zone,
+                "sub_zone": sub_zone,
+                "hull_side": hull_side,
+                "detail": detail,
+                "zone_instance": zone_instance,
+                "location_label": label,
+            }
+        )
+
+    for eq in doc.get("equipment") or []:
+        places = by_key.get(str(eq.get("device_key") or ""))
+        if places:
+            eq["places"] = places
 
 
 def build_profiles_from_db(conn: Connection, vessel_id: str) -> dict[str, Any]:

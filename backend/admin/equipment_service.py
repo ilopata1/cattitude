@@ -212,12 +212,40 @@ def list_equipment(
     ]
 
 
+def _parse_vessel_types(value: Any) -> list[str]:
+    """Normalize Postgres ``vessel_type[]`` into a list of slug strings.
+
+    With plain psycopg2, custom enum arrays often arrive as a literal string
+    like ``{sailing_catamaran,cruising_monohull}``. Calling ``list()`` on that
+    iterates characters and breaks the edit-form checkboxes.
+    """
+    if value is None:
+        return []
+    if isinstance(value, (list, tuple, set)):
+        return [str(item) for item in value if str(item)]
+    if isinstance(value, str):
+        text_value = value.strip()
+        if not text_value:
+            return []
+        if text_value.startswith("{") and text_value.endswith("}"):
+            inner = text_value[1:-1].strip()
+            if not inner:
+                return []
+            return [
+                part.strip().strip('"')
+                for part in inner.split(",")
+                if part.strip().strip('"')
+            ]
+        return [text_value]
+    return [str(value)]
+
+
 def _row_to_equipment(row: Any) -> dict[str, Any]:
     return {
         "id": str(row[0]),
         "manufacturer": row[1],
         "model": row[2],
-        "vessel_types": list(row[3] or []),
+        "vessel_types": _parse_vessel_types(row[3]),
         "system_category": row[4],
         "equipment_class": row[5],
         "configuration_tier": row[6],
@@ -232,7 +260,7 @@ def get_equipment(conn: Connection, equipment_id: str) -> dict[str, Any] | None:
         text(
             """
             SELECT
-                id, manufacturer, model, vessel_types,
+                id, manufacturer, model, vessel_types::text[],
                 system_category, equipment_class, configuration_tier,
                 has_formal_manual, identification_method, created_at
             FROM equipment
@@ -269,7 +297,7 @@ def find_equipment_by_manufacturer_model(
         text(
             f"""
             SELECT
-                id, manufacturer, model, vessel_types,
+                id, manufacturer, model, vessel_types::text[],
                 system_category, equipment_class, configuration_tier,
                 has_formal_manual, identification_method, created_at
             FROM equipment
