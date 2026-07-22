@@ -51,6 +51,30 @@ SEED_FRAGMENTS: dict[tuple[str, str], dict] = {
             },
         }
     },
+    ("Nanni", "N4.65"): {
+        "fix_card_overrides": {
+            "engine_wont_start": {
+                "steps": [
+                    "Confirm raw water seacock OPEN (handle parallel to pipe) in the engine compartment",
+                    "Confirm the control lever is in neutral",
+                    "At the Nanni instrument panel: key or ON/STOP on, wait for warning lamps, then Start (preheat halfway if cold)",
+                    "Confirm the panel is powered — fuses and main switch; battery voltage above 12.0V",
+                    "Never crank more than 10 seconds — if reluctant after several attempts, close the seacock before further cranking so the muffler does not fill; reopen before the next successful start",
+                    "Once running: confirm raw water flows from the exhaust outlet",
+                ]
+            },
+            "engine_overheating": {
+                "steps": [
+                    "IMMEDIATELY reduce RPM — switch to the other engine if possible",
+                    "Check raw water flow from the exhaust — must be a continuous stream",
+                    "Go to the engine compartment: check the raw water strainer for blockage — clear if needed",
+                    "Confirm the raw water seacock is fully open",
+                    "No water from the exhaust = impeller failed — do not run the engine",
+                    "Do not restart until water flow is confirmed",
+                ]
+            },
+        }
+    },
     ("Victron Energy", "Victron MultiPlus inverter/charger"): {
         "fix_card_overrides": {
             "low_battery": {
