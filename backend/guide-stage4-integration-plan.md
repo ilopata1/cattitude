@@ -66,11 +66,12 @@ wholesale; redirect only the *system* slot to Stage 4.
 | **1 ✅ DONE** | Output spine: Stage 4 dict → `SystemModule` → `guide_content` → publish → client, **fixtures as input** | Ingest → approve → publish → `bundle.json` renders the systems in the app | shipped |
 | **2 ✅ DONE** | Input substrate in DB: persist profiles + relations + vessel facts (per-model library + per-boat wiring); DB→`equipment_doc`/`profiles` adapter | Composer output from DB-built inputs == frozen fixture drafts, exactly | shipped |
 | **3 ✅ DONE** | Orchestrator + admin: `run_stage4_generation(vessel)`; wire into admin generate; persist provenance/fact_queries (owner-questions store only — no admin UI) | One-click DB-native generate → publish | shipped |
-| **4** | De-hardcode composers for arbitrary vessels (remove Outremer constants, `DISPLAY_NAMES`/`MANUFACTURER_MODEL`, pinned device keys); add a 2nd vessel | A different vessel generates coherent system chapters | ~1–2 wk |
+| **4** | De-hardcode composers for arbitrary vessels (remove Outremer constants, `DISPLAY_NAMES`/`MANUFACTURER_MODEL`, pinned device keys); add a 2nd vessel | A different vessel generates coherent system chapters | see design below |
 | **5** | Consolidate: retire the old fragment/LLM path for system modules; delete dead code + frozen-bundle path | Single generation path for systems | ~few days |
 
 Value lands after Phase 1–3 (done). Next: Phase 4 (de-hardcode composers /
-2nd vessel) or owner onboarding UI for answering `owner_question` rows.
+2nd vessel) — design below. Owner onboarding UI for answering `owner_question`
+rows is a parallel product track, not a Stage 4 phase.
 
 ---
 
@@ -479,3 +480,349 @@ Verified on `supernova`: CLI + `run_guide_generation` write four
 `stage4_composer` drafts that **MATCH** the Phase 2 fixture oracle byte-for-byte;
 run metadata includes provenance; 2 open owner questions upserted;
 `verify_stage4_modules.py --byte-match` green.
+
+---
+
+## Phase 4 — detailed design (de-hardcode + 2nd vessel)
+
+### What Phase 4 is for (plain language)
+
+Phases 1–3 proved the *pipeline*: composers → live modules → DB substrate →
+admin Generate → publish. That pipeline currently works end-to-end for **one
+boat’s knowledge** — the Outremer / Supernova fixture.
+
+Phase 4 asks a different question: **can the same composers write a sensible
+guide for a different boat?**
+
+Today the answer is mostly “no, not honestly.” The graph correctly discovers
+*which equipment belongs in Batteries / Controls / Electrical / Nav*, but the
+*sentences* still assume Outremer’s plant:
+
+- Internal maps say “when you see key `mli_ultra`, call it the house batteries
+  (Mastervolt MLI Ultra 24/6000).”
+- Membership filters look for keys that *start with* `bg_zeus_sr` or `coi`.
+- Prose hardcodes “two inverter-chargers,” “davit array,” “about 18 kWh,”
+  “Fischer Panda 8000i,” etc.
+
+So if vessel B has different keys, a different house bank, or only one Combi,
+the guide either says “the device,” repeats Outremer brand names that aren’t
+aboard, or invents layout that isn’t true. Phase 4 removes that Outremer-shaped
+assumptions layer so vessel B gets chapters that name *its* gear — and so
+Outremer’s already-published quality does not regress (we keep the byte-match
+oracle as a hard check).
+
+**End of Phase 4:** a second vessel with a Stage 4 substrate can Generate →
+approve → publish readable batteries (+ solar fold), controls, electrical, and
+nav chapters that a human would accept as about *that* boat.
+
+**Not in Phase 4:** owner onboarding UI (separate product); killing the old
+fragment/LLM path for engines/water/etc. (Phase 5); a universal “any boat on
+earth” composer that invents chapters for stacks we’ve never modeled; admin UI
+to edit the Stage 4 inventory by hand.
+
+---
+
+### What’s wrong today (concrete picture)
+
+Think of two layers:
+
+1. **Who’s in the chapter** — already mostly vessel-agnostic. The vessel graph
+   and `assemble_section_inputs` put Touch screens in Controls, MPPTs in Solar,
+   chartplotters in Nav, based on roles and sections.
+2. **What the chapter says** — still Outremer-specific. Each composer carries
+   private dictionaries (`DISPLAY_NAMES`, `MANUFACTURER_MODEL`) and code like
+   “find keys starting with `mli_ultra`,” then emits sentences written for that
+   plant.
+
+| Composer | What breaks on a different boat |
+|----------|----------------------------------|
+| **Solar** | Worst. Only looks for two Victron key names; assumes davit vs coachroof arrays and panel counts; says the chargers feed a Mastervolt MLI house bank. |
+| **Batteries** | Assumes MLI Ultra 24/6000 house bank and Outremer charge-path brands (Combi, Alpha, Fischer Panda, Silentwind). Wrong kWh if quantity/model differ. |
+| **Nav** | Assumes B&G Zeus SR (+ Halo) keys and CZone appearing on the MFD. A Garmin/Raymarine helm won’t get coherent MFD prose. |
+| **Controls** | Finds the hub from the graph (good) but still talks like CZone Touch and “the two inverter-chargers.” |
+| **Electrical** | Most reusable structure (isolation, Class-T, COIs) but still keyed to Outremer-ish `device_key` families and CZone/MasterBus wording. |
+
+**Implication:** Phase 4 is mostly a *composer rewrite / generalization*
+project, not a new database phase. The Phase 2 tables and Phase 3 Generate
+button stay; we change how sentences are built from whatever substrate is
+loaded.
+
+Also important: Stage 4 inventory is still **separate** from the admin
+equipment registry (Phase 2 discovery). Vessel B does *not* need registry
+name-matching to get a guide — it needs a Stage 4 substrate seed (fixture or
+curated rows), same as Supernova.
+
+---
+
+### Decision topics — expanded
+
+Each topic below is something you should choose before we implement. For each:
+what it means, why it matters, the recommendation, and the practical
+implication of that choice.
+
+#### 1. Ambition — how different can vessel B be?
+
+**What it means.** How far we push generalization in this phase.
+
+- **Same-family:** Vessel B still looks like the world the composers were
+  written for — digital switching (CZone or close cousin), an MFD helm, a
+  Mastervolt/Victron-style DC plant. It may have *fewer* boxes, different
+  quantities, or slightly different model strings, but the *kinds* of chapters
+  still make sense.
+- **Fully arbitrary:** Vessel B might be all Raymarine, no CZone, lithium from
+  another vendor, no solar — and we still expect polished chapters for every
+  system id.
+
+**Why it matters.** Same-family is weeks of careful refactor with a known
+oracle. Fully arbitrary is a rewrite of the composition approach itself
+(data-driven templates for unknown plants), much larger and easy to break
+Outremer quality while chasing generality.
+
+**Recommendation:** Same-family (or a *thinned* synthetic fixture that is
+still the same OEM family). Radically different stacks get honest “not covered
+yet” gaps — not invented chapters.
+
+**Implication if you accept:** Phase 4 proves “second boat in the same product
+family,” which is the real commercial path (sister ships / same yard). It does
+*not* claim “any yacht.” Claiming any yacht becomes a later phase once naming
+and facts are clean.
+
+**Implication if you reject (go maximal):** Budget and risk jump; Outremer
+byte-match becomes harder to hold; we’d redesign templates, not just maps.
+
+---
+
+#### 2. Second vessel identity — which boat is B?
+
+**What it means.** We need a concrete target to seed and Generate against.
+Options:
+
+- **(a) `cattitude`** — real slug already in the product; inventory in admin
+  today does *not* match Stage 4 shape, so we’d still curate a Stage 4 substrate
+  (not “just flip Generate”).
+- **(b) Synthetic thinned fixture** — e.g. copy Outremer, remove radar / one
+  Combi / solar coachroof, rename the vessel. Fastest proof that composers
+  don’t depend on exact Outremer counts and keys.
+- **(c) Another real boat** — best product proof, highest inventory-authoring
+  cost up front.
+
+**Why it matters.** W3 (seeding) and acceptance tests hang on this choice.
+Without it we can refactor maps in the dark and never know if chapters read
+well.
+
+**Recommendation:** Prefer a real second slug if you’re ready to curate its
+Stage 4 inventory; otherwise start with (b) to unlock composer work, then swap
+in a real B. **You must pick before we implement W3.**
+
+**Implication:** (b) proves the *code* is vessel-parameterized quickly. (a)/(c)
+prove the *product* story. Mixing both (synthetic first, real second) is fine
+and often cheapest.
+
+---
+
+#### 3. Naming source — where do reader-facing names come from?
+
+**What it means.** Today each composer has hand-maintained maps:
+
+```text
+DISPLAY_NAMES["mli_ultra"] = "the house batteries"
+MANUFACTURER_MODEL["mli_ultra"] = ("Mastervolt", "MLI Ultra 24/6000")
+```
+
+Unknown keys fall back to “the device,” which is useless in a guest guide.
+
+**Why it matters.** Maps don’t scale: every new model on every boat needs an
+edit in five Python files. The equipment rows and profiles already carry
+manufacturer, model, description, instance labels — we should read those.
+
+**Recommendation:** Primary path = derive labels from profile / equipment_doc
+fields via one shared helper. Role nicknames (“house bank”, “davit controller”)
+only when explicitly recorded in vessel facts or profile tags — not as a giant
+Outremer key dictionary.
+
+**Implication if you accept:** New gear on vessel B shows up under its real
+model name automatically once it’s in the substrate. Outremer prose must still
+byte-match — so the helper has to produce the *same* wording Outremer already
+uses when fed Outremer data (or we adjust the oracle carefully in the same
+change). That’s the fiddly part of W1.
+
+**Implication if you keep maps:** Phase 4 shrinks to “add vessel B’s keys to
+the maps,” which works once and becomes permanent debt.
+
+---
+
+#### 4. Family detection — how do we find “all the house batteries”?
+
+**What it means.** Composers don’t only name one device; they group families
+(“all COIs,” “all Zeus displays”). Today that grouping is string matching on
+Outremer’s private key scheme (`startswith("coi")`, `bg_zeus_sr_*`).
+
+**Why it matters.** Vessel B might use `combination_output_1` or a different
+catalog_key. Same physical role, different string → family missed → thin or
+empty section.
+
+**Recommendation:** Detect families from graph/profile signals (section
+assignment, role, `entity_kind`, functional class, network claims) so Outremer
+keys still match *and* differently named keys can match. Outremer byte-match
+must stay green — predicates must recognize today’s keys.
+
+**Implication:** Slightly more abstract code; much less “rename your device_keys
+to look like Outremer.” Sister ships with similar profiles work; random key
+schemes still need consistent profiling.
+
+---
+
+#### 5. Numeric / layout facts — where do “18 kWh” and “davit array” live?
+
+**What it means.** Some sentences aren’t discoverable from a manual extract:
+total bank kWh, which MPPT is davit vs coachroof, how many Combis to say aloud,
+panel counts. Those are *boat facts*. Today several are hardcoded as if every
+boat were Outremer.
+
+**Why it matters.** Wrong numbers are worse than omissions in a guest guide.
+Silent defaults (“assume 2 Combis”) will lie on vessel B.
+
+**Recommendation:** Put those values in `vessel_facts` (already on the Stage 4
+facts doc). If missing → omit the number, use a generic phrase, or raise an
+honest gap / owner question — **do not** invent Outremer geometry.
+
+**Implication:** Authoring vessel B includes filling a small facts list (or
+accepting thinner chapters). Composers get simpler and safer. Outremer’s
+current facts stay in its fixture so byte-match still holds.
+
+---
+
+#### 6. Oracle bar — what does “done” mean for each boat?
+
+**What it means.** Two different quality bars:
+
+- **Outremer / Supernova:** keep **byte-for-byte** match to the frozen fixture
+  drafts (Phase 2 gate). Any composer change that alters Outremer wording fails
+  CI until fixed or the oracle is intentionally updated.
+- **Vessel B:** **coherence** only — valid `SystemModule` shape, names its own
+  gear, evaluators pass or are parameterized; we do *not* require B’s prose to
+  equal Outremer’s.
+
+**Why it matters.** Without the Outremer gate, “generalizing” silently rewrites
+the boat you already care about. Without a weaker B bar, you’d never ship B
+because it can never match Outremer text.
+
+**Recommendation:** Keep both bars as stated.
+
+**Implication:** Every composer PR is checked against Outremer first. Vessel B
+gets a thinner smoke test (shape + a few must-include / must-not-include
+strings), not a full prose freeze.
+
+---
+
+#### 7. Registry ↔ substrate — do we merge admin inventory with Stage 4?
+
+**What it means.** Admin `vessel_equipment` (what staff install on the boat in
+the UI) and Stage 4 substrate (what composers read) are still two datasets.
+Only ~6/19 Outremer models matched by name when we looked. Phase 2 chose not to
+force-merge them.
+
+**Why it matters.** Merging is tempting (“one inventory”) but is a data-cleaning
+and product-model problem, not required to prove composers are vessel-agnostic.
+
+**Recommendation:** **Still deferred.** Seed vessel B’s Stage 4 substrate the
+same way we seeded Supernova (fixture or curated script). Link
+`equipment.id` / derive substrate from admin installs later (Phase 4b or Phase 5
+prep) when you want a single source of truth.
+
+**Implication if you accept:** Phase 4 stays focused on composers + a second
+seed. Staff may still maintain parallel inventories for a while.
+**Implication if you insist on merge now:** Phase 4 grows by a reconciliation
+project (fuzzy matching, renaming, or mutating admin data) before B even
+Generates.
+
+---
+
+#### 8. Honest gaps — what if vessel B has no solar / no CZone page?
+
+**What it means.** Not every published section id will have gear on every boat.
+Today Outremer-shaped sentences might still fire from defaults. Better behavior:
+say less, or say “not fitted / not yet documented,” or skip writing a useless
+module.
+
+**Why it matters.** Guests trust the guide; wrong brand mentions destroy trust
+faster than a short gap.
+
+**Recommendation:** Prefer skip-or-honest-gap over thin wrong prose. Prefer a
+short capability line + gap over pasting Outremer brand banks.
+
+**Implication:** Vessel B’s published bundle may have fewer rich chapters than
+Supernova — that’s success if what’s present is true. Product/UX later can
+hide empty system tiles; Phase 4 doesn’t require full catalog coverage on B.
+
+---
+
+### Recommended decision summary (same as the table, for scanning)
+
+| # | Topic | Recommendation |
+|---|--------|----------------|
+| 1 | Ambition | Same-family 2nd vessel (not fully arbitrary plants) |
+| 2 | Vessel B | Pick real slug or thinned synthetic fixture before W3 |
+| 3 | Naming | Derive from profile/equipment fields; retire map-as-primary |
+| 4 | Families | Graph/profile predicates, not Outremer key prefixes |
+| 5 | Numbers/layout | `vessel_facts` or omit/gap — no silent Outremer defaults |
+| 6 | Oracle | Outremer byte-match stays; B = coherence only |
+| 7 | Registry link | Still deferred |
+| 8 | Empty sections | Honest gap / skip, never wrong brand |
+
+---
+
+### Workstreams (what we would actually build)
+
+**W1 — Shared naming & family helpers**  
+One place composers ask “what do we call this?” and “which keys are in this
+family?” so we don’t maintain five Outremer dictionaries.
+
+**W2 — Composer pass (Electrical → Controls → Nav → Batteries → Solar)**  
+Rewrite one section at a time. After each: Outremer verify + byte-match green;
+spot-read vessel B. Order puts the easier/safer sections first; Batteries/Solar
+are the long pole (layout facts).
+
+**W3 — Seed vessel B’s Stage 4 substrate**  
+Fixture or curated rows + `seed_stage4_substrate.py`. Needs a display name and
+whatever facts W2 requires (or accept gaps).
+
+**W4 — Generate path proof**  
+CLI or admin Generate on B → drafts validate → approve → publish → open
+`bundle.json` and read it as a human.
+
+**W5 — Tests**  
+Keep Outremer goldens. Add a thin B smoke test. Do not freeze B prose to match
+Outremer.
+
+---
+
+### Acceptance
+
+- Outremer / `supernova`: `make pipeline-verify` and `make stage4-bytematch`
+  remain green (byte-identical to fixture oracle).
+- Vessel B: Stage 4 substrate seeded; Generate writes `stage4_composer` drafts
+  for sections that have members; modules pass `_validate_module_payload`.
+- Vessel B drafts name **its** gear where members exist; missing plant → honest
+  gap or omitted section, not Outremer brand names.
+- Per-composer `DISPLAY_NAMES` / `MANUFACTURER_MODEL` maps gone or negligible;
+  Outremer-only key literals removed from membership logic.
+- Registry reconciliation **not** required (decision 7).
+
+### Risk to Phases 1–3
+
+Medium on composers (prose churn) — mitigated by the Outremer byte-match gate
+after every change. Orchestrator, substrate schema, and admin dispatch stay
+untouched unless vessel-B seeding needs a trivial CLI flag.
+
+### Rough effort
+
+~1–2 weeks depending on how different vessel B is (decision 2) and how far
+Batteries/Solar layout facts go. Electrical + Controls + Nav same-family is the
+fast path; Batteries/Solar are the long pole.
+
+### Open question before implement
+
+**Which vessel is B?** (a) `cattitude` with curated Stage 4 inventory,
+(b) thinned synthetic fixture, or (c) another real boat. Lock decisions 1–2
+(and confirm 3–8) before W3.
