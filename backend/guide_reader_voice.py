@@ -168,6 +168,54 @@ def section_xref_link(system_id: str) -> dict[str, str]:
     }
 
 
+def format_fix_xref(category: str | None = None) -> dict[str, str]:
+    """Reader phrase + structured link for the Fix It tab.
+
+    ``target_id`` is a Fix category key (``electrical``, ``nav``, …) or empty
+    for the unfiltered Fix tab. Resolve at render — do not bake app routes
+    into Stage 4 prose.
+    """
+    cat = (category or "").strip().lower()
+    cat_labels = {
+        "electrical": "electrical",
+        "nav": "navigation",
+        "engine": "engine",
+        "plumbing": "plumbing",
+        "sails": "sails",
+        "general": "general",
+    }
+    if cat and cat != "all":
+        pretty = cat_labels.get(cat, cat)
+        label = f"Fix It cards for {pretty}"
+        token = f"fix:{cat}"
+        target_id = cat
+    else:
+        label = "Fix It tab"
+        token = "fix"
+        target_id = ""
+    return {
+        "target_kind": "fix",
+        "target_id": target_id,
+        "section_title": "Fix It",
+        "label": label,
+        "phrase": f"the {label}",
+        "data_guide_link": token,
+    }
+
+
+def format_learn_xref() -> dict[str, str]:
+    """Reader phrase + structured link for Learn the Boat (Do tab)."""
+    label = "Learn the Boat checklist"
+    return {
+        "target_kind": "learn",
+        "target_id": "learn",
+        "section_title": "Learn the Boat",
+        "label": label,
+        "phrase": f"the {label}",
+        "data_guide_link": "do:learn",
+    }
+
+
 def lint_vessel_deictics(text: str) -> list[dict[str, str]]:
     """Return style warnings for boat deictics (does not fail evaluation)."""
     warnings: list[dict[str, str]] = []

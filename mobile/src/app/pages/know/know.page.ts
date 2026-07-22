@@ -52,7 +52,7 @@ export class KnowPage implements OnInit {
     this.selected = null;
   }
 
-  /** Phase 1b — tap ``data-guide-link="system:<id>"`` inside enriched prose. */
+  /** Tap ``data-guide-link`` inside enriched prose (system / fix / learn). */
   onGuideHtmlClick(event: Event): void {
     const target = event.target;
     if (!(target instanceof Element)) {
@@ -64,15 +64,31 @@ export class KnowPage implements OnInit {
     }
     event.preventDefault();
     const token = (anchor.getAttribute('data-guide-link') || '').trim();
-    const systemId = token.startsWith('system:')
-      ? token.slice('system:'.length)
-      : '';
-    if (!systemId) {
+    void this.navigateGuideLink(token);
+  }
+
+  private async navigateGuideLink(token: string): Promise<void> {
+    if (!token) {
       return;
     }
-    const system = this.content.getSystem(systemId);
-    if (system) {
-      this.openSystem(system);
+    if (token.startsWith('system:')) {
+      const systemId = token.slice('system:'.length);
+      const system = this.content.getSystem(systemId);
+      if (system) {
+        this.openSystem(system);
+      }
+      return;
+    }
+    if (token === 'fix' || token.startsWith('fix:')) {
+      const cat = token === 'fix' ? undefined : token.slice('fix:'.length);
+      await this.vesselRoutes.navigateTabsWithExtras(
+        ['fix'],
+        cat ? { queryParams: { cat } } : undefined,
+      );
+      return;
+    }
+    if (token === 'do:learn' || token === 'learn') {
+      await this.vesselRoutes.navigateTabs('do', 'learn');
     }
   }
 
@@ -134,6 +150,22 @@ export class KnowPage implements OnInit {
   }
 
   goToFix(): void {
-    void this.vesselRoutes.navigateTabs('fix');
+    const cat = this.selected
+      ? this.fixCategoryForSystem(this.selected.id)
+      : undefined;
+    void this.vesselRoutes.navigateTabsWithExtras(
+      ['fix'],
+      cat ? { queryParams: { cat } } : undefined,
+    );
+  }
+
+  private fixCategoryForSystem(systemId: string): string | undefined {
+    const map: Record<string, string> = {
+      batteries: 'electrical',
+      controls: 'electrical',
+      electrical: 'electrical',
+      nav: 'nav',
+    };
+    return map[systemId];
   }
 }

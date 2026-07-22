@@ -11,7 +11,10 @@ This module maps one to the other, per the locked Phase 1 / 1b decisions:
   * decision 2 — provenance / fact_queries stay on the generation run; Phase 1b
     promotes ``guide_links`` into the published module for tappable xrefs.
   * decision 3 / Phase 1b B — in-prose tappable targets via ``html`` +
-    ``data-guide-link`` (Know resolves ``system:<id>`` → openSystem).
+    ``data-guide-link`` (Know resolves ``system:<id>`` / ``fix:<cat>`` /
+    ``do:learn``).
+  * locs from ``SYSTEM_CATALOG``; ``learnChecks`` synthesized from which O3
+    blocks the module actually contains; Related section links Fix It + Learn.
   * O1 — solar folds into the ``batteries`` module as a "Solar charging" section.
   * O2 — subtitle synthesized from the capability summary.
   * O3 — block heading labels below.
@@ -27,6 +30,7 @@ from typing import Any
 
 from guide_composition_rules import SECTION_SPINE, normalize_block
 from guide_module_catalog import SYSTEM_CATALOG
+from guide_reader_voice import format_fix_xref, format_learn_xref
 
 # O3 — reader-facing headings per spine block. capability_summary is the module
 # ``summary`` (not a section), so it is intentionally absent here.
@@ -41,6 +45,14 @@ BLOCK_HEADINGS: dict[str, str] = {
 
 _DEFAULT_ICON = "⚙️"
 _SUBTITLE_MAX = 90
+
+# Know → Fix It category filter for Stage 4 published systems.
+_SYSTEM_FIX_CATEGORY: dict[str, str] = {
+    "batteries": "electrical",
+    "controls": "electrical",
+    "electrical": "electrical",
+    "nav": "nav",
+}
 
 # Composers store config-pending notes with a marker token in the provenance
 # ``sentence`` but render them as "(Configuration pending) ..." in the draft.
@@ -350,7 +362,61 @@ def _attach_html_links(
             section["html"] = rich
 
 
-def solar_fold_section(solar_composed: dict[str, Any]) -> dict[str, Any] | None:
+def _synthesize_learn_checks(sections: list[dict[str, Any]]) -> list[str]:
+    """Build Learn-the-Boat checks from which O3 blocks the module actually has."""
+    titles = {(s.get("t") or "").strip() for s in sections}
+    checks: list[str] = []
+    if "How it works" in titles:
+        checks.append("Can explain in one sentence what this system does on this boat")
+    if "Turning it on" in titles:
+        checks.append("Know how to turn this system on and shut it down safely")
+    if "Monitoring" in titles:
+        checks.append("Know where to read status, meters, or alerts for this system")
+    if "Operating" in titles:
+        checks.append("Can perform the main operating actions described in this chapter")
+    if "If something's not right" in titles:
+        checks.append("Know the first checks to run when something looks wrong")
+    if "Care & upkeep" in titles:
+        checks.append("Know the care or isolation points called out for this system")
+    if "Solar charging" in titles:
+        checks.append("Know how to check solar charge production on this boat")
+    # Stable, short list for Learn UI.
+    return checks[:6]
+
+
+def _related_guide_links(section_id: str) -> list[dict[str, Any]]:
+    """Fix It + Learn the Boat links for in-prose tappable Related section."""
+    fix = format_fix_xref(_SYSTEM_FIX_CATEGORY.get(section_id))
+    learn = format_learn_xref()
+    return [
+        {
+            "target_kind": fix["target_kind"],
+            "target_id": fix["target_id"],
+            "label": fix["label"],
+            "data_guide_link": fix["data_guide_link"],
+        },
+        {
+            "target_kind": learn["target_kind"],
+            "target_id": learn["target_id"],
+            "label": learn["label"],
+            "data_guide_link": learn["data_guide_link"],
+        },
+    ]
+
+
+def _related_section(section_id: str, links: list[dict[str, Any]]) -> dict[str, Any]:
+    """Prose pointing at Fix It and Learn — labels match ``links`` for HTML wrap."""
+    fix = next((L for L in links if L.get("target_kind") == "fix"), None)
+    learn = next((L for L in links if L.get("target_kind") == "learn"), None)
+    fix_label = (fix or {}).get("label") or "Fix It tab"
+    learn_label = (learn or {}).get("label") or "Learn the Boat checklist"
+    text = (
+        f"If something goes wrong with this system, open the {fix_label} "
+        f"for quick troubleshooting cards.\n\n"
+        f"When you are learning the boat, tick off this chapter on the "
+        f"{learn_label}."
+    )
+    return {"t": "Related", "type": "prose", "c": text}
     """O1 — the whole solar draft as enriched section(s) under Solar charging."""
     _, body = _split_title_and_body(str(solar_composed.get("draft_markdown") or ""))
     body = body.strip()
@@ -406,10 +472,18 @@ def section_to_system_module(
     if extra_sections:
         sections.extend(extra_sections)
 
-    guide_links = _dedupe_guide_links(list(composed.get("guide_links") or []))
+    related_links = _related_guide_links(section_id)
+    sections.append(_related_section(section_id, related_links))
+
+    guide_links = _dedupe_guide_links(
+        list(composed.get("guide_links") or []) + related_links
+    )
     _attach_html_links(sections, guide_links)
 
     meta = SYSTEM_CATALOG.get(section_id, {})
+    locs = list(meta.get("locs") or [])
+    learn_checks = _synthesize_learn_checks(sections)
+
     module: dict[str, Any] = {
         "id": section_id,
         "icon": meta.get("icon") or _DEFAULT_ICON,
@@ -418,6 +492,10 @@ def section_to_system_module(
         "summary": summary,
         "sections": sections,
     }
+    if locs:
+        module["locs"] = locs
+    if learn_checks:
+        module["learnChecks"] = learn_checks
     if guide_links:
         module["guideLinks"] = guide_links
 

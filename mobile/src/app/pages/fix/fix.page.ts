@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { ContentService } from '../../core/services/content.service';
 import { EmergencyService } from '../../core/services/emergency.service';
 import { VesselRouteService } from '../../core/services/vessel-route.service';
@@ -56,7 +57,7 @@ const FIX_ICON_NAME_MAP: Record<string, string> = {
   styleUrls: ['./fix.page.scss'],
   standalone: false,
 })
-export class FixPage {
+export class FixPage implements OnInit {
   query = '';
   categoryFilter = 'all';
   expandedIndex: number | null = null;
@@ -66,7 +67,17 @@ export class FixPage {
     public readonly content: ContentService,
     private readonly emergency: EmergencyService,
     private readonly routes: VesselRouteService,
+    private readonly route: ActivatedRoute,
   ) {}
+
+  ngOnInit(): void {
+    const cat = (this.route.snapshot.queryParamMap.get('cat') || '')
+      .trim()
+      .toLowerCase();
+    if (cat && this.categories.some((c) => c.key === cat)) {
+      this.categoryFilter = cat;
+    }
+  }
 
   get charterCompany(): string {
     return this.content.bootstrap.branding.charterCompany?.trim() ?? '';
