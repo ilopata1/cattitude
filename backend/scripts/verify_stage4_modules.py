@@ -41,13 +41,14 @@ from stage4_sections import (
 
 VESSEL_DIR = _BACKEND / "fixtures" / "pipeline" / "outremer"
 OUT_DIR = _BACKEND / "fixtures" / "pipeline" / "scratch"
+ORACLE_DIR = _BACKEND / "fixtures" / "pipeline" / "oracles"
 OUT_JSON = OUT_DIR / "stage4_modules.json"
 
 
 def _oracle_paths(slug: str) -> tuple[Path, Path]:
     return (
-        OUT_DIR / f"stage4_modules_{slug}_oracle.json",
-        OUT_DIR / f"stage4_modules_{slug}_oracle_meta.json",
+        ORACLE_DIR / f"stage4_modules_{slug}_oracle.json",
+        ORACLE_DIR / f"stage4_modules_{slug}_oracle_meta.json",
     )
 
 
@@ -101,7 +102,7 @@ def _load_db_context(slug: str) -> dict[str, Any]:
 
 def _write_oracle(slug: str) -> int:
     modules, metadata = build_modules_from_context(_load_db_context(slug))
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    ORACLE_DIR.mkdir(parents=True, exist_ok=True)
     modules_path, meta_path = _oracle_paths(slug)
     modules_path.write_text(
         json.dumps(modules, indent=2, ensure_ascii=False) + "\n",

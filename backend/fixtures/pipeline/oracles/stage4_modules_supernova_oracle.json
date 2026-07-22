@@ -1,0 +1,313 @@
+{
+  "batteries": {
+    "id": "batteries",
+    "icon": "🔋",
+    "title": "Batteries & Energy",
+    "subtitle": "The house bank is three house batteries (Mastervolt MLI Ultra 24/6000), about 18 kWh…",
+    "summary": "On Supernova, the house bank is three house batteries (Mastervolt MLI Ultra 24/6000), about 18 kWh together.",
+    "sections": [
+      {
+        "t": "How it works",
+        "type": "prose",
+        "c": "Solar arrays feed the bank through Victron MPPT chargers. Two inverter-chargers (Mastervolt Mass Combi Pro) convert between shore or generator AC and the house bank, and supply AC from the bank when no shore or generator power is available. The generator (Fischer Panda 8000i) supplies on-board AC when shore power is unavailable. Two alternator regulators (Mastervolt Alpha Pro III) manage twin 24 V / 110 A engine-driven alternators when the engines are running. Array layout, VictronConnect checks, and boom-shade cautions are in the Solar notes that accompany this chapter."
+      },
+      {
+        "t": "Monitoring",
+        "type": "prose",
+        "c": "Watch house-bank state of charge and any alarms as part of daily energy checks; bank and meter readings on the CZone touchscreen, including the Inverter Charger page for the inverter-chargers, can be found in the Controls and Monitoring section of this guide.\n\nAt anchor in good sun, treat solar as the main charge path across both arrays; when the engines are running, those alternators add engine-driven charging.",
+        "html": "<p>Watch house-bank state of charge and any alarms as part of daily energy checks; bank and meter readings on the CZone touchscreen, including the Inverter Charger page for the inverter-chargers, can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:controls\">Controls and Monitoring section of this guide</span>.</p><p>At anchor in good sun, treat solar as the main charge path across both arrays; when the engines are running, those alternators add engine-driven charging.</p>"
+      },
+      {
+        "t": "Operating",
+        "type": "prose",
+        "c": "When shore or mains AC input is limited, to avoid tripping the external AC circuit breaker, set the AC input current limit from the Combi front panel on the inverter-charger, or the CZone Inverter Charger page on the touchscreen.\n\nStart and stop the generator from its Panda iControl2 panel, and give it a visual check before starting."
+      },
+      {
+        "t": "If something's not right",
+        "type": "prose",
+        "c": "The house batteries protect themselves through their BMS — a protective disconnect is the system doing its job, uncommon in normal use, and recoverable with a reset. After a protective disconnect, reset the BMS on the affected house battery before restoring loads."
+      },
+      {
+        "t": "Care & upkeep",
+        "type": "prose",
+        "c": "Battery isolation switches and Class-T protection for the bank can be found in the Electrical Panel section of this guide.",
+        "html": "<p>Battery isolation switches and Class-T protection for the bank can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:electrical\">Electrical Panel section of this guide</span>.</p>"
+      },
+      {
+        "t": "Solar charging",
+        "type": "prose",
+        "c": "Supernova carries about 1.6–1.8 kW of solar.\n\nHer davit array is three rigid panels, about 1.0–1.2 kW, on the davit array controller (Victron SmartSolar MPPT 150/60).\n\nHer coachroof array is six semi-flex panels, about 600 W, on 2 interchangeable coachroof array controllers (Victron SmartSolar MPPT 75/15).\n\nThose chargers feed her Mastervolt MLI Ultra house bank.\n\nCheck her solar charge in the VictronConnect app on each controller when you want to see how much the panels are producing.\n\nUnder sail, when yield looks soft, watch the coachroof controllers first because the boom can shade that array, and treat the davit array controller as the steadier production reference."
+      },
+      {
+        "t": "Related",
+        "type": "prose",
+        "c": "If something goes wrong with this system, open the Fix It cards for electrical for quick troubleshooting cards.\n\nWhen you are learning the boat, tick off this chapter on the Learn the Boat checklist.",
+        "html": "<p>If something goes wrong with this system, open the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"fix:electrical\">Fix It cards for electrical</span> for quick troubleshooting cards.</p><p>When you are learning the boat, tick off this chapter on the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"do:learn\">Learn the Boat checklist</span>.</p>"
+      }
+    ],
+    "locs": [
+      "saloon",
+      "stbd-hull"
+    ],
+    "learnChecks": [
+      "Can explain in one sentence what this system does on this boat",
+      "Know where to read status, meters, or alerts for this system",
+      "Can perform the main operating actions described in this chapter",
+      "Know the first checks to run when something looks wrong",
+      "Know the care or isolation points called out for this system",
+      "Know how to check solar charge production on this boat"
+    ],
+    "guideLinks": [
+      {
+        "target_kind": "system",
+        "target_id": "controls",
+        "label": "Controls and Monitoring section of this guide",
+        "data_guide_link": "system:controls"
+      },
+      {
+        "target_kind": "system",
+        "target_id": "electrical",
+        "label": "Electrical Panel section of this guide",
+        "data_guide_link": "system:electrical"
+      },
+      {
+        "target_kind": "fix",
+        "target_id": "electrical",
+        "label": "Fix It cards for electrical",
+        "data_guide_link": "fix:electrical"
+      },
+      {
+        "target_kind": "learn",
+        "target_id": "learn",
+        "label": "Learn the Boat checklist",
+        "data_guide_link": "do:learn"
+      }
+    ]
+  },
+  "controls": {
+    "id": "controls",
+    "icon": "🎛️",
+    "title": "Controls and Monitoring",
+    "subtitle": "Switching and monitoring run through the touchscreen (CZone Touch 7) in the Helm /…",
+    "summary": "On Supernova, switching and monitoring run through the touchscreen (CZone Touch 7) in the Helm / Navigation Station, which hosts CZone.\n\nThe CZone menus include Favourites, Modes, Control, Monitoring, Alarms, Inverter Charger.",
+    "sections": [
+      {
+        "t": "Monitoring",
+        "type": "prose",
+        "c": "Open Monitoring when you want to read the boat's configured meters and status channels from the CZone switching map.\n\nHouse-bank monitoring is available from this screen; full battery detail can be found in the Batteries & Energy section of this guide.\n\nAlarms use severity levels (Critical, Important, Standard, Warning); when an alarm appears, open it on the Alarms page for details and to acknowledge it.",
+        "html": "<p>Open Monitoring when you want to read the boat&#x27;s configured meters and status channels from the CZone switching map.</p><p>House-bank monitoring is available from this screen; full battery detail can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:batteries\">Batteries &amp; Energy section of this guide</span>.</p><p>Alarms use severity levels (Critical, Important, Standard, Warning); when an alarm appears, open it on the Alarms page for details and to acknowledge it.</p>"
+      },
+      {
+        "t": "Operating",
+        "type": "prose",
+        "c": "Modes let you control several circuits with one action — activate a Mode from the Modes page when you want that scene.\n\nOn Control, named circuits include Fridge, Freezer, Zeus x2, Lights - Salon PORT, Lights - Salon STBD, Windlass, Navigation Light, Red lights (and 4 more). When you need one, press it to open its controls.\n\nThe Inverter Charger page shows the two inverter-chargers (Mastervolt Mass Combi Pro) for AC/DC power flow; those procedures can be found in the Batteries & Energy section of this guide.\n\n(Configuration pending) Exact Modes, Favourites shortcuts, and alarm details are not yet recorded for this installation; they will appear here once the CZone configuration or an owner screen walkthrough is available.",
+        "html": "<p>Modes let you control several circuits with one action — activate a Mode from the Modes page when you want that scene.</p><p>On Control, named circuits include Fridge, Freezer, Zeus x2, Lights - Salon PORT, Lights - Salon STBD, Windlass, Navigation Light, Red lights (and 4 more). When you need one, press it to open its controls.</p><p>The Inverter Charger page shows the two inverter-chargers (Mastervolt Mass Combi Pro) for AC/DC power flow; those procedures can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:batteries\">Batteries &amp; Energy section of this guide</span>.</p><p>(Configuration pending) Exact Modes, Favourites shortcuts, and alarm details are not yet recorded for this installation; they will appear here once the CZone configuration or an owner screen walkthrough is available.</p>"
+      },
+      {
+        "t": "If something's not right",
+        "type": "prose",
+        "c": "CZone literature also describes AC Mains and Climate pages; they do not appear in the menus until the matching interfaces are configured."
+      },
+      {
+        "t": "Related",
+        "type": "prose",
+        "c": "If something goes wrong with this system, open the Fix It cards for electrical for quick troubleshooting cards.\n\nWhen you are learning the boat, tick off this chapter on the Learn the Boat checklist.",
+        "html": "<p>If something goes wrong with this system, open the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"fix:electrical\">Fix It cards for electrical</span> for quick troubleshooting cards.</p><p>When you are learning the boat, tick off this chapter on the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"do:learn\">Learn the Boat checklist</span>.</p>"
+      }
+    ],
+    "locs": [
+      "saloon",
+      "helm"
+    ],
+    "learnChecks": [
+      "Know where to read status, meters, or alerts for this system",
+      "Can perform the main operating actions described in this chapter",
+      "Know the first checks to run when something looks wrong"
+    ],
+    "guideLinks": [
+      {
+        "target_kind": "system",
+        "target_id": "batteries",
+        "label": "Batteries & Energy section of this guide",
+        "data_guide_link": "system:batteries"
+      },
+      {
+        "target_kind": "fix",
+        "target_id": "electrical",
+        "label": "Fix It cards for electrical",
+        "data_guide_link": "fix:electrical"
+      },
+      {
+        "target_kind": "learn",
+        "target_id": "learn",
+        "label": "Learn the Boat checklist",
+        "data_guide_link": "do:learn"
+      }
+    ]
+  },
+  "electrical": {
+    "id": "electrical",
+    "icon": "⚡",
+    "title": "Electrical Panel",
+    "subtitle": "Battery banks are combined and isolated automatically, and DC distribution is protected…",
+    "summary": "On Supernova, battery banks are combined and isolated automatically, and DC distribution is protected before power reaches the boat's switched circuits.\n\nThe house battery bank is protected by three high-current Class-T fuses (Blue Sea Class T) in the Engine / Machinery Space – Engine Bay — fuses that protect the cables carrying power from the bank if a major electrical fault occurs.\n\nAn automatic charging relay (Blue Sea Systems Automatic Charging Relays (ACR)) in the Engine / Machinery Space – Engine Bay combines and isolates battery banks based on charging voltage.\n\nA local rotary isolation switch provides a separate disconnect for its battery connection.",
+    "sections": [
+      {
+        "t": "How it works",
+        "type": "prose",
+        "c": "Leave the ACR Manual Control Override Knob in automatic mode during normal operation so the relay can combine and isolate banks on its own.\n\nThree CZone output interfaces (CZone Combination Output Interface) feed the switched DC circuits from the protected distribution. Use the CZone touchscreen when you need to switch those circuits; details can be found in the Controls and Monitoring section of this guide.",
+        "html": "<p>Leave the ACR Manual Control Override Knob in automatic mode during normal operation so the relay can combine and isolate banks on its own.</p><p>Three CZone output interfaces (CZone Combination Output Interface) feed the switched DC circuits from the protected distribution. Use the CZone touchscreen when you need to switch those circuits; details can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:controls\">Controls and Monitoring section of this guide</span>.</p>"
+      },
+      {
+        "t": "Operating",
+        "type": "prose",
+        "c": "The ACR Manual Control Override Knob takes manual control of bank combine and isolate. Use it when:"
+      },
+      {
+        "t": "Operating",
+        "type": "list",
+        "items": [
+          "you need to combine battery banks manually",
+          "remote operation must be blocked",
+          "the ACR must be secured for servicing"
+        ]
+      },
+      {
+        "t": "Operating",
+        "type": "prose",
+        "c": "Use the local rotary isolation switch when that battery connection must be disconnected at the switch."
+      },
+      {
+        "t": "If something's not right",
+        "type": "prose",
+        "c": "If a bank connection drops unexpectedly, confirm ACR combine/isolate state and Class-T fuse integrity before restoring loads. BMS reset steps can be found in the Batteries & Energy section of this guide.",
+        "html": "<p>If a bank connection drops unexpectedly, confirm ACR combine/isolate state and Class-T fuse integrity before restoring loads. BMS reset steps can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:batteries\">Batteries &amp; Energy section of this guide</span>.</p>"
+      },
+      {
+        "t": "Care & upkeep",
+        "type": "prose",
+        "c": "The DC distribution busbar (ProInstaller) in the Engine / Machinery Space – Engine Bay — a heavy-duty conductor that distributes power — is the main power distribution point behind those protected connections.\n\nThe MasterBus–CZone bridge (Mastervolt MasterBus Bridge Interface) allows MasterBus equipment and the CZone network to exchange status and control across that boundary.\n\nHouse-bank capacity, charging, and inverter-charger procedures can be found in the Batteries & Energy section of this guide.",
+        "html": "<p>The DC distribution busbar (ProInstaller) in the Engine / Machinery Space – Engine Bay — a heavy-duty conductor that distributes power — is the main power distribution point behind those protected connections.</p><p>The MasterBus–CZone bridge (Mastervolt MasterBus Bridge Interface) allows MasterBus equipment and the CZone network to exchange status and control across that boundary.</p><p>House-bank capacity, charging, and inverter-charger procedures can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:batteries\">Batteries &amp; Energy section of this guide</span>.</p>"
+      },
+      {
+        "t": "Related",
+        "type": "prose",
+        "c": "If something goes wrong with this system, open the Fix It cards for electrical for quick troubleshooting cards.\n\nWhen you are learning the boat, tick off this chapter on the Learn the Boat checklist.",
+        "html": "<p>If something goes wrong with this system, open the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"fix:electrical\">Fix It cards for electrical</span> for quick troubleshooting cards.</p><p>When you are learning the boat, tick off this chapter on the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"do:learn\">Learn the Boat checklist</span>.</p>"
+      }
+    ],
+    "locs": [
+      "saloon"
+    ],
+    "learnChecks": [
+      "Can explain in one sentence what this system does on this boat",
+      "Can perform the main operating actions described in this chapter",
+      "Know the first checks to run when something looks wrong",
+      "Know the care or isolation points called out for this system"
+    ],
+    "guideLinks": [
+      {
+        "target_kind": "system",
+        "target_id": "controls",
+        "label": "Controls and Monitoring section of this guide",
+        "data_guide_link": "system:controls"
+      },
+      {
+        "target_kind": "system",
+        "target_id": "batteries",
+        "label": "Batteries & Energy section of this guide",
+        "data_guide_link": "system:batteries"
+      },
+      {
+        "target_kind": "fix",
+        "target_id": "electrical",
+        "label": "Fix It cards for electrical",
+        "data_guide_link": "fix:electrical"
+      },
+      {
+        "target_kind": "learn",
+        "target_id": "learn",
+        "label": "Learn the Boat checklist",
+        "data_guide_link": "do:learn"
+      }
+    ]
+  },
+  "nav": {
+    "id": "nav",
+    "icon": "🧭",
+    "title": "Navigation & Helm",
+    "subtitle": "Helm navigation runs through two chartplotters (B&G Zeus SR 12) in the Cockpit, which…",
+    "summary": "On Supernova, helm navigation runs through two chartplotters (B&G Zeus SR 12) in the Cockpit, which host Zeus SR Software. A radar (B&G Halo 20+) is fitted on the boat network and is controlled from those displays. The home-screen apps include Chart, Radar, MOB, Waypoints & Routes, Tracks, Tides.",
+    "sections": [
+      {
+        "t": "How it works",
+        "type": "prose",
+        "c": "The chartplotters display data from other devices on the boat network.\n\nA CZone Digital switching controller is available on the chartplotters; circuit control can be found in the Controls and Monitoring section of this guide.",
+        "html": "<p>The chartplotters display data from other devices on the boat network.</p><p>A CZone Digital switching controller is available on the chartplotters; circuit control can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:controls\">Controls and Monitoring section of this guide</span>.</p>"
+      },
+      {
+        "t": "Turning it on",
+        "type": "prose",
+        "c": "Turn a chartplotter on or off from its power control when leaving or returning to the helm."
+      },
+      {
+        "t": "Monitoring",
+        "type": "prose",
+        "c": "Open Alerts when you want recent or historic system alerts on the chartplotters."
+      },
+      {
+        "t": "Operating",
+        "type": "prose",
+        "c": "Open the home screen when you need apps, settings, or alerts.\n\nOpen the Chart app from the home screen when you want navigation charts.\n\nOpen the Radar app from the home screen when you want the radar display, and set all radars to standby from a chartplotter when you want connected radars to stop transmitting.\n\nPin apps you use most often to the activity bar when you want faster access, and create a custom app group with New split when you want two or more apps on screen at once.\n\nActivate MOB in an emergency to create a MOB waypoint at the current position and open the MOB app."
+      },
+      {
+        "t": "If something's not right",
+        "type": "prose",
+        "c": "(Configuration pending) Exact chart layouts, radar overlays, pinned favourites, and alert rules are not yet recorded for this installation; they will appear here once an owner screen walkthrough or settings confirmation is available."
+      },
+      {
+        "t": "Care & upkeep",
+        "type": "prose",
+        "c": "Fit the sun cover to shield a chartplotter display when leaving the helm for an extended period.\n\nClean the screen with a soft microfiber or cotton cloth to maintain clarity."
+      },
+      {
+        "t": "Related",
+        "type": "prose",
+        "c": "If something goes wrong with this system, open the Fix It cards for navigation for quick troubleshooting cards.\n\nWhen you are learning the boat, tick off this chapter on the Learn the Boat checklist.",
+        "html": "<p>If something goes wrong with this system, open the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"fix:nav\">Fix It cards for navigation</span> for quick troubleshooting cards.</p><p>When you are learning the boat, tick off this chapter on the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"do:learn\">Learn the Boat checklist</span>.</p>"
+      }
+    ],
+    "locs": [
+      "helm",
+      "saloon"
+    ],
+    "learnChecks": [
+      "Can explain in one sentence what this system does on this boat",
+      "Know how to turn this system on and shut it down safely",
+      "Know where to read status, meters, or alerts for this system",
+      "Can perform the main operating actions described in this chapter",
+      "Know the first checks to run when something looks wrong",
+      "Know the care or isolation points called out for this system"
+    ],
+    "guideLinks": [
+      {
+        "target_kind": "system",
+        "target_id": "controls",
+        "label": "Controls and Monitoring section of this guide",
+        "data_guide_link": "system:controls"
+      },
+      {
+        "target_kind": "fix",
+        "target_id": "nav",
+        "label": "Fix It cards for navigation",
+        "data_guide_link": "fix:nav"
+      },
+      {
+        "target_kind": "learn",
+        "target_id": "learn",
+        "label": "Learn the Boat checklist",
+        "data_guide_link": "do:learn"
+      }
+    ]
+  }
+}

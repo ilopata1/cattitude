@@ -21,7 +21,7 @@ pipeline-verify:
 	python scripts/verify_nav_section_v4.py
 	python scripts/verify_stage4_modules.py
 
-# Phase 2+ gate (needs DB seeded + frozen oracle under fixtures/pipeline/scratch/):
+# Phase 2+ gate (needs DB seeded + frozen oracle under fixtures/pipeline/oracles/):
 #   python scripts/verify_stage4_modules.py --write-oracle --slug supernova
 # DB-substrate-built modules (with registry places) must match the frozen oracle.
 stage4-bytematch:

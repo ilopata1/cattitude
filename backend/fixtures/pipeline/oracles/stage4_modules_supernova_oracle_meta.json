@@ -1,0 +1,1011 @@
+{
+  "batteries": {
+    "section_id": "batteries",
+    "version": "v4.21",
+    "provenance_map": [
+      {
+        "id": "S1",
+        "sentence": "On Supernova, the house bank is three house batteries (Mastervolt MLI Ultra 24/6000), about 18 kWh together.",
+        "sources": [
+          "graph.device:mli_ultra_1",
+          "graph.device:mli_ultra_2",
+          "graph.device:mli_ultra_3",
+          "vessel.display_name",
+          "profile.mli_ultra.device.model",
+          "equipment.mli_ultra.quantity",
+          "equipment.mli_ultra.model"
+        ],
+        "kind": "composed_inference",
+        "block": "capability_summary",
+        "composed_inference": true,
+        "contributing_facts": [
+          "equipment.mli_ultra.model=MLI Ultra 24/6000",
+          "equipment.mli_ultra.quantity=3",
+          "profile.mli_ultra.device.model",
+          "derived:6000_Wh_token_per_unit_from_model",
+          "derived:bank_kWh≈3×6",
+          "vessel.display_name"
+        ]
+      },
+      {
+        "id": "S2",
+        "sentence": "Solar arrays feed the bank through Victron MPPT chargers. Two inverter-chargers (Mastervolt Mass Combi Pro) convert between shore or generator AC and the house bank, and supply AC from the bank when no shore or generator power is available. The generator (Fischer Panda 8000i) supplies on-board AC when shore power is unavailable. Two alternator regulators (Mastervolt Alpha Pro III) manage twin 24 V / 110 A engine-driven alternators when the engines are running. Array layout, VictronConnect checks, and boom-shade cautions are in the Solar notes that accompany this chapter.",
+        "sources": [
+          "graph.device:victron_mppt",
+          "graph.device:victron_mppt_150_60",
+          "leaf:solar",
+          "graph.device:mass_combi_pro_1",
+          "graph.device:mass_combi_pro_2",
+          "profile.mass_combi_pro.operator_actions",
+          "graph.device:fischer_panda_8000i",
+          "profile.fischer_panda_8000i.device",
+          "profile.fischer_panda_8000i.operator_actions",
+          "equipment.alpha_pro.provenance_split.attested",
+          "graph.device:alpha_pro_iii_port",
+          "graph.device:alpha_pro_iii_stbd",
+          "profile.alpha_pro_iii.operator_actions"
+        ],
+        "kind": "sourced",
+        "block": "how_it_works",
+        "provenance_metadata": [
+          "path_device:masterbus_bridge_interface"
+        ]
+      },
+      {
+        "id": "S3",
+        "sentence": "Watch house-bank state of charge and any alarms as part of daily energy checks; bank and meter readings on the CZone touchscreen, including the Inverter Charger page for the inverter-chargers, can be found in the Controls and Monitoring section of this guide.",
+        "sources": [
+          "graph.device:mli_ultra_1",
+          "graph.device:mli_ultra_2",
+          "graph.device:mli_ultra_3",
+          "profile.mli_ultra.safety_role",
+          "section_inputs.excluded:czone_touch_7",
+          "xref.controls",
+          "profile.czone_2_0.ui_pages[Inverter Charger]"
+        ],
+        "kind": "sourced",
+        "block": "monitoring",
+        "links": [
+          {
+            "target_kind": "system",
+            "target_id": "controls",
+            "label": "Controls and Monitoring section of this guide",
+            "data_guide_link": "system:controls"
+          }
+        ],
+        "provenance_metadata": [
+          "path_device:masterbus_bridge_interface"
+        ]
+      },
+      {
+        "id": "S4",
+        "sentence": "At anchor in good sun, treat solar as the main charge path across both arrays; when the engines are running, those alternators add engine-driven charging.",
+        "sources": [
+          "vessel_fact:solar_davit_array_observation",
+          "vessel_fact:solar_coachroof_array_observation",
+          "graph.device:victron_mppt",
+          "graph.device:victron_mppt_150_60",
+          "graph.device:alpha_pro_iii_port",
+          "graph.device:alpha_pro_iii_stbd",
+          "equipment.alpha_pro.provenance_split.attested"
+        ],
+        "kind": "composed_inference",
+        "block": "monitoring",
+        "composed_inference": true,
+        "contributing_facts": [
+          "solar_davit_array_observation",
+          "solar_coachroof_array_observation",
+          "derived:at_anchor_solar_primary_vs_engines_running_alternators",
+          "equipment.alpha_pro_iii_port.provenance_split.attested",
+          "equipment.alpha_pro_iii_stbd.provenance_split.attested",
+          "equipment.alpha quantity=2"
+        ],
+        "provenance_metadata": [
+          "path_device:masterbus_bridge_interface"
+        ]
+      },
+      {
+        "id": "S5",
+        "sentence": "When shore or mains AC input is limited, to avoid tripping the external AC circuit breaker, set the AC input current limit from the Combi front panel on the inverter-charger, or the CZone Inverter Charger page on the touchscreen.",
+        "sources": [
+          "profile.mass_combi_pro.operator_actions",
+          "profile.mass_combi_pro.operator_actions.occasion",
+          "profile.mass_combi_pro.control_surfaces[0]",
+          "profile.mass_combi_pro.data_roles.controllable_from_network",
+          "profile.czone_2_0.ui_pages[Inverter Charger]",
+          "graph.device:mass_combi_pro_1",
+          "graph.device:mass_combi_pro_2"
+        ],
+        "kind": "sourced",
+        "block": "adjusting",
+        "provenance_metadata": [
+          "path_device:masterbus_bridge_interface"
+        ]
+      },
+      {
+        "id": "S6",
+        "sentence": "Start and stop the generator from its Panda iControl2 panel, and give it a visual check before starting.",
+        "sources": [
+          "graph.device:fischer_panda_8000i",
+          "profile.fischer_panda_8000i.control_surfaces[0]",
+          "profile.fischer_panda_8000i.operator_actions"
+        ],
+        "kind": "sourced",
+        "block": "adjusting",
+        "provenance_metadata": [
+          "path_device:masterbus_bridge_interface"
+        ]
+      },
+      {
+        "id": "S7",
+        "sentence": "The house batteries protect themselves through their BMS — a protective disconnect is the system doing its job, uncommon in normal use, and recoverable with a reset. After a protective disconnect, reset the BMS on the affected house battery before restoring loads.",
+        "sources": [
+          "graph.device:mli_ultra_1",
+          "graph.device:mli_ultra_2",
+          "graph.device:mli_ultra_3",
+          "profile.mli_ultra.safety_role.is_protective_device",
+          "profile.mli_ultra.safety_role.has_emergency_procedure",
+          "profile.mli_ultra.operator_actions",
+          "profile.mli_ultra.evidence:BMS_disconnect_reset"
+        ],
+        "kind": "composed_inference",
+        "block": "troubleshooting",
+        "composed_inference": true,
+        "contributing_facts": [
+          "profile.mli_ultra.safety_role.is_protective_device=true",
+          "profile.mli_ultra.safety_role.has_emergency_procedure=true",
+          "profile.mli_ultra.safety_role.has_manual_override=true",
+          "profile.mli_ultra.operator_actions:reset_BMS_after_protective_disconnect",
+          "profile.mli_ultra.evidence:BMS_disconnect_reset"
+        ],
+        "provenance_metadata": [
+          "path_device:masterbus_bridge_interface"
+        ]
+      },
+      {
+        "id": "S8",
+        "sentence": "Battery isolation switches and Class-T protection for the bank can be found in the Electrical Panel section of this guide.",
+        "sources": [
+          "xref.electrical",
+          "graph.section:ml_switch=electrical",
+          "graph.section:class_t=electrical"
+        ],
+        "kind": "sourced",
+        "block": "reference",
+        "links": [
+          {
+            "target_kind": "system",
+            "target_id": "electrical",
+            "label": "Electrical Panel section of this guide",
+            "data_guide_link": "system:electrical"
+          }
+        ],
+        "provenance_metadata": [
+          "path_device:masterbus_bridge_interface"
+        ]
+      }
+    ],
+    "guide_links": [
+      {
+        "sentence_id": "S3",
+        "block": "monitoring",
+        "target_kind": "system",
+        "target_id": "controls",
+        "label": "Controls and Monitoring section of this guide",
+        "data_guide_link": "system:controls"
+      },
+      {
+        "sentence_id": "S8",
+        "block": "reference",
+        "target_kind": "system",
+        "target_id": "electrical",
+        "label": "Electrical Panel section of this guide",
+        "data_guide_link": "system:electrical"
+      }
+    ],
+    "wisdom_slot": {
+      "status": "filled",
+      "sentence_id": "S4",
+      "block": "monitoring",
+      "inference_ids": [
+        "S1",
+        "S4",
+        "S7"
+      ],
+      "note": "B&E wisdom: at-anchor solar vs engines-running alternators (not Solar capability kW restatement; see v4.20 xxxv / v4.21 xli)."
+    },
+    "fact_queries": [
+      {
+        "id": "genset_run_policy_occasion",
+        "device": "fischer_panda_8000i",
+        "action": "run / autostart the generator",
+        "missing": "Sourced when/why to run the genset for this vessel — house-bank SOC threshold, large-AC-load policy, shore fallback, or programmed iControl2 autostart setpoints. Manual grounds only tautological start/stop occasions ('to begin/cease generator operation'); no vessel energy-management fact exists.",
+        "checked": "scratch/fischer_panda_8000i.json operator_actions occasions; outremer vessel_facts (no genset run policy / autostart setpoints)"
+      }
+    ],
+    "evaluation": null,
+    "folded_solar": {
+      "section_id": "solar",
+      "version": "v4",
+      "provenance_map": [
+        {
+          "id": "S1",
+          "sentence": "Supernova carries about 1.6–1.8 kW of solar.",
+          "sources": [
+            "graph.role:victron_mppt=ISLAND",
+            "equipment.victron_mppt_150_60.model",
+            "equipment.victron_mppt.model",
+            "equipment.victron_mppt.quantity",
+            "graph.section:victron_mppt=batteries",
+            "equipment.mli_ultra",
+            "vessel.display_name",
+            "vessel_fact:solar_array_wattage_inventory",
+            "vessel.installation_notes[owner survey / array inventory]",
+            "vessel_fact:solar_davit_array_observation",
+            "artifact:photo_davit_array",
+            "vessel_fact:solar_coachroof_array_observation",
+            "artifact:photo_coachroof_boom"
+          ],
+          "kind": "sourced",
+          "block": "capability_summary",
+          "provenance_metadata": [
+            "graph.role:victron_mppt_150_60=ISLAND"
+          ]
+        },
+        {
+          "id": "S2",
+          "sentence": "Her davit array is three rigid panels, about 1.0–1.2 kW, on the davit array controller (Victron SmartSolar MPPT 150/60).",
+          "sources": [
+            "graph.role:victron_mppt=ISLAND",
+            "graph.role:victron_mppt_150_60=ISLAND",
+            "equipment.victron_mppt_150_60.model",
+            "equipment.victron_mppt.model",
+            "equipment.victron_mppt.quantity",
+            "graph.section:victron_mppt=batteries",
+            "equipment.mli_ultra",
+            "vessel.display_name",
+            "vessel_fact:solar_array_wattage_inventory",
+            "vessel.installation_notes[owner survey / array inventory]",
+            "vessel_fact:solar_davit_array_observation",
+            "artifact:photo_davit_array",
+            "vessel_fact:solar_coachroof_array_observation",
+            "artifact:photo_coachroof_boom"
+          ],
+          "kind": "sourced",
+          "block": "capability_summary",
+          "provenance_metadata": [
+            "graph.role:victron_mppt=ISLAND",
+            "graph.role:victron_mppt_150_60=ISLAND",
+            "equipment.victron_mppt_150_60.model",
+            "equipment.victron_mppt.model",
+            "equipment.victron_mppt.quantity",
+            "graph.section:victron_mppt=batteries",
+            "equipment.mli_ultra",
+            "vessel.display_name",
+            "vessel_fact:solar_array_wattage_inventory",
+            "vessel.installation_notes[owner survey / array inventory]",
+            "vessel_fact:solar_davit_array_observation",
+            "artifact:photo_davit_array",
+            "vessel_fact:solar_coachroof_array_observation",
+            "artifact:photo_coachroof_boom"
+          ]
+        },
+        {
+          "id": "S3",
+          "sentence": "Her coachroof array is six semi-flex panels, about 600 W, on 2 interchangeable coachroof array controllers (Victron SmartSolar MPPT 75/15).",
+          "sources": [
+            "graph.role:victron_mppt=ISLAND",
+            "graph.role:victron_mppt_150_60=ISLAND",
+            "equipment.victron_mppt_150_60.model",
+            "equipment.victron_mppt.model",
+            "equipment.victron_mppt.quantity",
+            "graph.section:victron_mppt=batteries",
+            "equipment.mli_ultra",
+            "vessel.display_name",
+            "vessel_fact:solar_array_wattage_inventory",
+            "vessel.installation_notes[owner survey / array inventory]",
+            "vessel_fact:solar_davit_array_observation",
+            "artifact:photo_davit_array",
+            "vessel_fact:solar_coachroof_array_observation",
+            "artifact:photo_coachroof_boom"
+          ],
+          "kind": "sourced",
+          "block": "capability_summary",
+          "provenance_metadata": [
+            "graph.role:victron_mppt=ISLAND",
+            "graph.role:victron_mppt_150_60=ISLAND",
+            "equipment.victron_mppt_150_60.model",
+            "equipment.victron_mppt.model",
+            "equipment.victron_mppt.quantity",
+            "graph.section:victron_mppt=batteries",
+            "equipment.mli_ultra",
+            "vessel.display_name",
+            "vessel_fact:solar_array_wattage_inventory",
+            "vessel.installation_notes[owner survey / array inventory]",
+            "vessel_fact:solar_davit_array_observation",
+            "artifact:photo_davit_array",
+            "vessel_fact:solar_coachroof_array_observation",
+            "artifact:photo_coachroof_boom"
+          ]
+        },
+        {
+          "id": "S4",
+          "sentence": "Those chargers feed her Mastervolt MLI Ultra house bank.",
+          "sources": [
+            "graph.section:victron_mppt=batteries",
+            "equipment.mli_ultra"
+          ],
+          "kind": "sourced",
+          "block": "capability_summary",
+          "provenance_metadata": [
+            "graph.section:victron_mppt=batteries",
+            "equipment.mli_ultra"
+          ]
+        },
+        {
+          "id": "S5",
+          "sentence": "Check her solar charge in the VictronConnect app on each controller when you want to see how much the panels are producing.",
+          "sources": [
+            "victron_mppt.control_surfaces[VictronConnect] [extracted]",
+            "vessel.consequence:no_czone_surface"
+          ],
+          "kind": "sourced",
+          "block": "monitoring"
+        },
+        {
+          "id": "S6",
+          "sentence": "Under sail, when yield looks soft, watch the coachroof controllers first because the boom can shade that array, and treat the davit array controller as the steadier production reference.",
+          "sources": [
+            "vessel_fact:solar_coachroof_array_observation",
+            "vessel_fact:solar_coachroof_yield_inference",
+            "artifact:photo_coachroof_boom",
+            "vessel_fact:solar_davit_array_observation"
+          ],
+          "kind": "composed_inference",
+          "block": "monitoring",
+          "composed_inference": true,
+          "contributing_facts": [
+            "solar_coachroof_array_observation",
+            "solar_coachroof_yield_inference",
+            "solar_davit_array_observation",
+            "fact:where_to_look"
+          ]
+        }
+      ],
+      "guide_links": [],
+      "wisdom_slot": null,
+      "fact_queries": [],
+      "evaluation": null
+    }
+  },
+  "controls": {
+    "section_id": "controls",
+    "version": "v4.13",
+    "provenance_map": [
+      {
+        "id": "S1",
+        "sentence": "On Supernova, switching and monitoring run through the touchscreen (CZone Touch 7) in the Helm / Navigation Station, which hosts CZone.",
+        "sources": [
+          "equipment.czone_touch_7",
+          "profile.czone_touch_7.runs_platform",
+          "profile.czone_2_0.entity_kind",
+          "vessel.display_name",
+          "equipment.czone_touch_7.places"
+        ],
+        "kind": "sourced",
+        "block": "capability_summary"
+      },
+      {
+        "id": "S2",
+        "sentence": "The CZone menus include Favourites, Modes, Control, Monitoring, Alarms, Inverter Charger.",
+        "sources": [
+          "profile.czone_2_0.ui_pages",
+          "section_inputs.present_platform_pages"
+        ],
+        "kind": "sourced",
+        "block": "capability_summary"
+      },
+      {
+        "id": "S3",
+        "sentence": "Open Monitoring when you want to read the boat's configured meters and status channels from the CZone switching map.",
+        "sources": [
+          "profile.czone_2_0.ui_pages[Monitoring]",
+          "vessel_fact.channel_map:channel_map_czone_chanels_ind_c",
+          "section_inputs.summary:mli"
+        ],
+        "kind": "sourced",
+        "block": "monitoring",
+        "provenance_metadata": [
+          "path_device:masterbus_bridge_interface"
+        ]
+      },
+      {
+        "id": "S4",
+        "sentence": "House-bank monitoring is available from this screen; full battery detail can be found in the Batteries & Energy section of this guide.",
+        "sources": [
+          "graph.control_path->mli_ultra_1",
+          "graph.control_path->mli_ultra_2",
+          "graph.control_path->mli_ultra_3",
+          "xref.batteries"
+        ],
+        "kind": "sourced",
+        "block": "monitoring",
+        "links": [
+          {
+            "target_kind": "system",
+            "target_id": "batteries",
+            "label": "Batteries & Energy section of this guide",
+            "data_guide_link": "system:batteries"
+          }
+        ],
+        "provenance_metadata": [
+          "path_device:masterbus_bridge_interface"
+        ]
+      },
+      {
+        "id": "S5",
+        "sentence": "Alarms use severity levels (Critical, Important, Standard, Warning); when an alarm appears, open it on the Alarms page for details and to acknowledge it.",
+        "sources": [
+          "profile.czone_2_0.alarm_severity",
+          "profile.czone_2_0.operator_actions"
+        ],
+        "kind": "sourced",
+        "block": "monitoring",
+        "provenance_metadata": [
+          "path_device:masterbus_bridge_interface"
+        ]
+      },
+      {
+        "id": "S6",
+        "sentence": "Modes let you control several circuits with one action — activate a Mode from the Modes page when you want that scene.",
+        "sources": [
+          "profile.czone_2_0.ui_pages[Modes]",
+          "profile.czone_2_0.operator_actions"
+        ],
+        "kind": "sourced",
+        "block": "adjusting",
+        "provenance_metadata": [
+          "path_device:masterbus_bridge_interface"
+        ]
+      },
+      {
+        "id": "S7",
+        "sentence": "On Control, named circuits include Fridge, Freezer, Zeus x2, Lights - Salon PORT, Lights - Salon STBD, Windlass, Navigation Light, Red lights (and 4 more). When you need one, press it to open its controls.",
+        "sources": [
+          "profile.czone_2_0.ui_pages[Control]",
+          "profile.czone_2_0.operator_actions",
+          "vessel_fact.channel_map:channel_map_czone_chanels_ind_c"
+        ],
+        "kind": "sourced",
+        "block": "adjusting",
+        "provenance_metadata": [
+          "path_device:masterbus_bridge_interface"
+        ]
+      },
+      {
+        "id": "S8",
+        "sentence": "The Inverter Charger page shows the two inverter-chargers (Mastervolt Mass Combi Pro) for AC/DC power flow; those procedures can be found in the Batteries & Energy section of this guide.",
+        "sources": [
+          "profile.czone_2_0.ui_pages[Inverter Charger]",
+          "graph.control_path->mass_combi_pro_1",
+          "graph.control_path->mass_combi_pro_2",
+          "xref.batteries"
+        ],
+        "kind": "sourced",
+        "block": "adjusting",
+        "links": [
+          {
+            "target_kind": "system",
+            "target_id": "batteries",
+            "label": "Batteries & Energy section of this guide",
+            "data_guide_link": "system:batteries"
+          }
+        ],
+        "provenance_metadata": [
+          "path_device:masterbus_bridge_interface"
+        ]
+      },
+      {
+        "id": "S9",
+        "sentence": "[[CONFIG_PENDING]] Exact Modes, Favourites shortcuts, and alarm details are not yet recorded for this installation; they will appear here once the CZone configuration or an owner screen walkthrough is available.",
+        "sources": [
+          "graph.flag:config_unsourced",
+          "profile.czone_touch_7.validation_flags",
+          "policy:ship_with_honest_gaps"
+        ],
+        "kind": "config_placeholder",
+        "block": "adjusting",
+        "config_placeholder": true,
+        "provenance_metadata": [
+          "path_device:masterbus_bridge_interface"
+        ]
+      },
+      {
+        "id": "S10",
+        "sentence": "CZone literature also describes AC Mains and Climate pages; they do not appear in the menus until the matching interfaces are configured.",
+        "sources": [
+          "profile.czone_2_0.ui_pages",
+          "section_inputs.gated_off",
+          "vessel.display_name"
+        ],
+        "kind": "planted_expectation",
+        "block": "troubleshooting",
+        "planted_expectation": true,
+        "provenance_metadata": [
+          "path_device:masterbus_bridge_interface"
+        ]
+      }
+    ],
+    "guide_links": [
+      {
+        "sentence_id": "S4",
+        "block": "monitoring",
+        "target_kind": "system",
+        "target_id": "batteries",
+        "label": "Batteries & Energy section of this guide",
+        "data_guide_link": "system:batteries"
+      },
+      {
+        "sentence_id": "S8",
+        "block": "adjusting",
+        "target_kind": "system",
+        "target_id": "batteries",
+        "label": "Batteries & Energy section of this guide",
+        "data_guide_link": "system:batteries"
+      }
+    ],
+    "wisdom_slot": null,
+    "fact_queries": [],
+    "evaluation": null
+  },
+  "electrical": {
+    "section_id": "electrical",
+    "version": "v4.36",
+    "provenance_map": [
+      {
+        "id": "S1",
+        "sentence": "On Supernova, battery banks are combined and isolated automatically, and DC distribution is protected before power reaches the boat's switched circuits.",
+        "sources": [
+          "vessel.display_name",
+          "graph.section:electrical"
+        ],
+        "kind": "composed_inference",
+        "block": "capability_summary",
+        "composed_inference": true,
+        "contributing_facts": [
+          "vessel.display_name",
+          "section.electrical owns ACR/Class-T/distribution"
+        ]
+      },
+      {
+        "id": "S2",
+        "sentence": "The house battery bank is protected by three high-current Class-T fuses (Blue Sea Class T) in the Engine / Machinery Space – Engine Bay — fuses that protect the cables carrying power from the bank if a major electrical fault occurs.",
+        "sources": [
+          "graph.device:class_t_1",
+          "graph.device:class_t_2",
+          "graph.device:class_t_3",
+          "profile.class_t.device.model",
+          "profile.class_t.safety_role.is_protective_device",
+          "equipment.class_t_1.places"
+        ],
+        "kind": "composed_inference",
+        "block": "capability_summary",
+        "composed_inference": true,
+        "contributing_facts": [
+          "equipment.class_t.quantity=3",
+          "profile.class_t.safety_role.is_protective_device=true",
+          "profile.class_t.device.model",
+          "equipment.class_t_1.places"
+        ]
+      },
+      {
+        "id": "S3",
+        "sentence": "An automatic charging relay (Blue Sea Systems Automatic Charging Relays (ACR)) in the Engine / Machinery Space – Engine Bay combines and isolates battery banks based on charging voltage.",
+        "sources": [
+          "graph.device:blue_sea_acr",
+          "profile.blue_sea_acr.device.model",
+          "profile.blue_sea_acr.control_surfaces",
+          "profile.blue_sea_acr.operator_actions",
+          "equipment.blue_sea_acr.places"
+        ],
+        "kind": "sourced",
+        "block": "capability_summary"
+      },
+      {
+        "id": "S4",
+        "sentence": "A local rotary isolation switch provides a separate disconnect for its battery connection.",
+        "sources": [
+          "graph.device:plain_battery_switch",
+          "equipment.plain_battery_switch",
+          "profile.plain_battery_switch.control_surfaces.location_class",
+          "profile.plain_battery_switch.operator_actions"
+        ],
+        "kind": "sourced",
+        "block": "capability_summary"
+      },
+      {
+        "id": "S5",
+        "sentence": "Leave the ACR Manual Control Override Knob in automatic mode during normal operation so the relay can combine and isolate banks on its own.",
+        "sources": [
+          "graph.device:blue_sea_acr",
+          "profile.blue_sea_acr.control_surfaces",
+          "profile.blue_sea_acr.operator_actions"
+        ],
+        "kind": "composed_inference",
+        "block": "how_it_works",
+        "composed_inference": true,
+        "contributing_facts": [
+          "profile.blue_sea_acr.control_surfaces.label=Manual Control Override Knob",
+          "ACR automatic combine/isolate is the normal mode"
+        ]
+      },
+      {
+        "id": "S6",
+        "sentence": "Three CZone output interfaces (CZone Combination Output Interface) feed the switched DC circuits from the protected distribution. Use the CZone touchscreen when you need to switch those circuits; details can be found in the Controls and Monitoring section of this guide.",
+        "sources": [
+          "graph.device:coi_1",
+          "graph.device:coi_2",
+          "graph.device:coi_3",
+          "equipment.coi.model",
+          "xref.controls",
+          "graph.section:czone_touch_7=controls"
+        ],
+        "kind": "sourced",
+        "block": "how_it_works",
+        "links": [
+          {
+            "target_kind": "system",
+            "target_id": "controls",
+            "label": "Controls and Monitoring section of this guide",
+            "data_guide_link": "system:controls"
+          }
+        ]
+      },
+      {
+        "id": "S7",
+        "sentence": "The ACR Manual Control Override Knob takes manual control of bank combine and isolate. Use it when:\n\n- you need to combine battery banks manually\n- remote operation must be blocked\n- the ACR must be secured for servicing",
+        "sources": [
+          "graph.device:blue_sea_acr",
+          "profile.blue_sea_acr.operator_actions",
+          "profile.blue_sea_acr.control_surfaces"
+        ],
+        "kind": "sourced",
+        "block": "adjusting"
+      },
+      {
+        "id": "S8",
+        "sentence": "Use the local rotary isolation switch when that battery connection must be disconnected at the switch.",
+        "sources": [
+          "graph.device:plain_battery_switch",
+          "profile.plain_battery_switch.operator_actions"
+        ],
+        "kind": "sourced",
+        "block": "adjusting"
+      },
+      {
+        "id": "S9",
+        "sentence": "If a bank connection drops unexpectedly, confirm ACR combine/isolate state and Class-T fuse integrity before restoring loads. BMS reset steps can be found in the Batteries & Energy section of this guide.",
+        "sources": [
+          "graph.device:blue_sea_acr",
+          "graph.device:class_t_1",
+          "graph.device:class_t_2",
+          "graph.device:class_t_3",
+          "profile.class_t.safety_role.is_protective_device",
+          "xref.batteries"
+        ],
+        "kind": "sourced",
+        "block": "troubleshooting",
+        "links": [
+          {
+            "target_kind": "system",
+            "target_id": "batteries",
+            "label": "Batteries & Energy section of this guide",
+            "data_guide_link": "system:batteries"
+          }
+        ]
+      },
+      {
+        "id": "S10",
+        "sentence": "The DC distribution busbar (ProInstaller) in the Engine / Machinery Space – Engine Bay — a heavy-duty conductor that distributes power — is the main power distribution point behind those protected connections.",
+        "sources": [
+          "graph.device:busbar",
+          "equipment.busbar",
+          "equipment.busbar.places"
+        ],
+        "kind": "sourced",
+        "block": "reference"
+      },
+      {
+        "id": "S11",
+        "sentence": "The MasterBus–CZone bridge (Mastervolt MasterBus Bridge Interface) allows MasterBus equipment and the CZone network to exchange status and control across that boundary.",
+        "sources": [
+          "graph.device:masterbus_bridge_interface",
+          "equipment.masterbus_bridge_interface.description"
+        ],
+        "kind": "sourced",
+        "block": "reference"
+      },
+      {
+        "id": "S12",
+        "sentence": "House-bank capacity, charging, and inverter-charger procedures can be found in the Batteries & Energy section of this guide.",
+        "sources": [
+          "xref.batteries",
+          "graph.section:mli_ultra=batteries"
+        ],
+        "kind": "sourced",
+        "block": "reference",
+        "links": [
+          {
+            "target_kind": "system",
+            "target_id": "batteries",
+            "label": "Batteries & Energy section of this guide",
+            "data_guide_link": "system:batteries"
+          }
+        ]
+      }
+    ],
+    "guide_links": [
+      {
+        "sentence_id": "S6",
+        "block": "how_it_works",
+        "target_kind": "system",
+        "target_id": "controls",
+        "label": "Controls and Monitoring section of this guide",
+        "data_guide_link": "system:controls"
+      },
+      {
+        "sentence_id": "S9",
+        "block": "troubleshooting",
+        "target_kind": "system",
+        "target_id": "batteries",
+        "label": "Batteries & Energy section of this guide",
+        "data_guide_link": "system:batteries"
+      },
+      {
+        "sentence_id": "S12",
+        "block": "reference",
+        "target_kind": "system",
+        "target_id": "batteries",
+        "label": "Batteries & Energy section of this guide",
+        "data_guide_link": "system:batteries"
+      }
+    ],
+    "wisdom_slot": {
+      "status": "pending",
+      "sentence_id": null,
+      "block": "how_it_works",
+      "inference_ids": [
+        "S1",
+        "S2",
+        "S5"
+      ],
+      "note": "Electrical: ACR leave-in-automatic guidance is composed_inference; filled wisdom comparative claim still pending."
+    },
+    "fact_queries": [
+      {
+        "id": "electrical_component_locations",
+        "query": "Physical locations for: plain_battery_switch (panel / locker / hull side / deck).",
+        "status": "queued",
+        "note": "No registry places yet for these devices. Profile location_class on_device means local-to-equipment, not a deck/locker place."
+      }
+    ],
+    "evaluation": null
+  },
+  "nav": {
+    "section_id": "nav",
+    "version": "v4.37.6",
+    "provenance_map": [
+      {
+        "id": "S1",
+        "sentence": "On Supernova, helm navigation runs through two chartplotters (B&G Zeus SR 12) in the Cockpit, which host Zeus SR Software.",
+        "sources": [
+          "equipment.bg_zeus_sr_1",
+          "equipment.bg_zeus_sr_2",
+          "profile.bg_zeus_sr_1.runs_platform",
+          "profile.bg_zeus_sr_software.entity_kind",
+          "vessel.display_name",
+          "equipment.bg_zeus_sr_1.places"
+        ],
+        "kind": "sourced",
+        "block": "capability_summary",
+        "topic": "station"
+      },
+      {
+        "id": "S2",
+        "sentence": "A radar (B&G Halo 20+) is fitted on the boat network and is controlled from those displays.",
+        "sources": [
+          "equipment.bg_halo_20_plus",
+          "profile.bg_halo_20_plus.data_roles",
+          "profile.bg_zeus_sr_1.operator_actions"
+        ],
+        "kind": "sourced",
+        "block": "capability_summary",
+        "topic": "sensors"
+      },
+      {
+        "id": "S3",
+        "sentence": "The home-screen apps include Chart, Radar, MOB, Waypoints & Routes, Tracks, Tides.",
+        "sources": [
+          "profile.bg_zeus_sr_software.ui_pages",
+          "section_inputs.present_platform_pages"
+        ],
+        "kind": "sourced",
+        "block": "capability_summary",
+        "topic": "app_inventory"
+      },
+      {
+        "id": "S4",
+        "sentence": "The chartplotters display data from other devices on the boat network.",
+        "sources": [
+          "profile.bg_zeus_sr_1.data_roles.displays_data_from_other_devices"
+        ],
+        "kind": "sourced",
+        "block": "how_it_works",
+        "topic": "network",
+        "provenance_metadata": [
+          "path_device:masterbus_bridge_interface"
+        ]
+      },
+      {
+        "id": "S5",
+        "sentence": "A CZone Digital switching controller is available on the chartplotters; circuit control can be found in the Controls and Monitoring section of this guide.",
+        "sources": [
+          "profile.bg_zeus_sr_software.ui_pages[CZone Digital switching]",
+          "profile.bg_zeus_sr_1.ui_pages[CZone Digital switching]",
+          "xref.controls",
+          "oem:system_guide:czone_controller_nmea_commissioned"
+        ],
+        "kind": "sourced",
+        "block": "how_it_works",
+        "links": [
+          {
+            "target_kind": "system",
+            "target_id": "controls",
+            "label": "Controls and Monitoring section of this guide",
+            "data_guide_link": "system:controls"
+          }
+        ],
+        "topic": "czone_xref",
+        "provenance_metadata": [
+          "path_device:masterbus_bridge_interface"
+        ]
+      },
+      {
+        "id": "S6",
+        "sentence": "Open Alerts when you want recent or historic system alerts on the chartplotters.",
+        "sources": [
+          "profile.bg_zeus_sr_software.ui_pages[Alerts]"
+        ],
+        "kind": "sourced",
+        "block": "monitoring",
+        "topic": "alerts"
+      },
+      {
+        "id": "S7",
+        "sentence": "Turn a chartplotter on or off from its power control when leaving or returning to the helm.",
+        "sources": [
+          "profile.bg_zeus_sr_software.operator_actions",
+          "profile.bg_zeus_sr_1.operator_actions"
+        ],
+        "kind": "sourced",
+        "block": "startup",
+        "topic": "power"
+      },
+      {
+        "id": "S8",
+        "sentence": "Open the home screen when you need apps, settings, or alerts.",
+        "sources": [
+          "profile.bg_zeus_sr_software.ui_pages[Home screen]"
+        ],
+        "kind": "sourced",
+        "block": "adjusting",
+        "topic": "home"
+      },
+      {
+        "id": "S9",
+        "sentence": "Open the Chart app from the home screen when you want navigation charts.",
+        "sources": [
+          "profile.bg_zeus_sr_software.ui_pages[Chart]"
+        ],
+        "kind": "sourced",
+        "block": "adjusting",
+        "topic": "chart"
+      },
+      {
+        "id": "S10",
+        "sentence": "Open the Radar app from the home screen when you want the radar display, and set all radars to standby from a chartplotter when you want connected radars to stop transmitting.",
+        "sources": [
+          "profile.bg_zeus_sr_software.ui_pages[Radar]",
+          "profile.bg_zeus_sr_1.operator_actions",
+          "equipment.bg_halo_20_plus"
+        ],
+        "kind": "sourced",
+        "block": "adjusting",
+        "topic": "radar"
+      },
+      {
+        "id": "S11",
+        "sentence": "Pin apps you use most often to the activity bar when you want faster access, and create a custom app group with New split when you want two or more apps on screen at once.",
+        "sources": [
+          "profile.bg_zeus_sr_software.ui_pages[Apps]"
+        ],
+        "kind": "sourced",
+        "block": "adjusting",
+        "topic": "customize"
+      },
+      {
+        "id": "S12",
+        "sentence": "Activate MOB in an emergency to create a MOB waypoint at the current position and open the MOB app.",
+        "sources": [
+          "profile.bg_zeus_sr_software.ui_pages[MOB]",
+          "profile.bg_zeus_sr_software.operator_actions"
+        ],
+        "kind": "sourced",
+        "block": "adjusting",
+        "topic": "mob"
+      },
+      {
+        "id": "S13",
+        "sentence": "[[CONFIG_PENDING]] Exact chart layouts, radar overlays, pinned favourites, and alert rules are not yet recorded for this installation; they will appear here once an owner screen walkthrough or settings confirmation is available.",
+        "sources": [
+          "graph.flag:config_unsourced",
+          "graph.flag:platform_version_unconfirmed",
+          "policy:ship_with_honest_gaps"
+        ],
+        "kind": "config_placeholder",
+        "block": "troubleshooting",
+        "config_placeholder": true,
+        "topic": "config_gap",
+        "provenance_metadata": [
+          "path_device:masterbus_bridge_interface"
+        ]
+      },
+      {
+        "id": "S14",
+        "sentence": "Fit the sun cover to shield a chartplotter display when leaving the helm for an extended period.",
+        "sources": [
+          "profile.bg_zeus_sr_1.operator_actions"
+        ],
+        "kind": "sourced",
+        "block": "reference",
+        "topic": "care_cover"
+      },
+      {
+        "id": "S15",
+        "sentence": "Clean the screen with a soft microfiber or cotton cloth to maintain clarity.",
+        "sources": [
+          "profile.bg_zeus_sr_1.operator_actions"
+        ],
+        "kind": "sourced",
+        "block": "reference",
+        "topic": "care_clean"
+      }
+    ],
+    "guide_links": [
+      {
+        "sentence_id": "S5",
+        "block": "how_it_works",
+        "target_kind": "system",
+        "target_id": "controls",
+        "label": "Controls and Monitoring section of this guide",
+        "data_guide_link": "system:controls"
+      }
+    ],
+    "wisdom_slot": {
+      "status": "pending",
+      "sentence_id": null,
+      "block": "how_it_works",
+      "inference_ids": [],
+      "note": "Nav wisdom pending — comparative helm/radar claim not yet sourced."
+    },
+    "fact_queries": [
+      {
+        "id": "zeus_czone_controller_visible",
+        "device": "bg_zeus_sr_1",
+        "platform_key": "bg_zeus_sr_software",
+        "missing": "Owner confirm: do the Zeus SR chartplotters show the CZone Digital switching controller / control-bar switches and control house circuits from there, or is CZone used only from the Touch 7? OEM: switches appear when a CZone device is commissioned on NMEA 2000 — fitted ≠ confirmed visible on Zeus."
+      }
+    ],
+    "evaluation": null
+  }
+}
