@@ -21,6 +21,7 @@ from guide_composition_rules import (
 )
 from guide_reader_voice import (
     assess_reader_voice_style,
+    format_places_phrase,
     format_section_xref,
     resolve_vessel_display_name,
     section_xref_link,
@@ -38,6 +39,7 @@ from section_inputs import (
     assemble_section_inputs,
     keys_at_depth,
 )
+from stage4_substrate import places_for_device
 from system_graph import VesselGraphResult
 
 SECTION_ORDER = (
@@ -284,13 +286,22 @@ def compose_nav_section(
         mm = MANUFACTURER_MODEL.get("bg_zeus_sr") or ("B&G", "Zeus SR 12")
         chartplotters = f"two chartplotters ({mm[0]} {mm[1]})"
 
+    zeus_place = format_places_phrase(
+        places_for_device(equipment_doc, zeus_label_key)
+    )
+    zeus_place_clause = f" {zeus_place}" if zeus_place else ""
+    zeus_place_src = (
+        [f"equipment.{zeus_label_key}.places"] if zeus_place else []
+    )
+
     _emit_topic(
-        f"On {boat}, helm navigation runs through {chartplotters}, which host "
-        f"{plat_role}.",
+        f"On {boat}, helm navigation runs through {chartplotters}"
+        f"{zeus_place_clause}, which host {plat_role}.",
         *[f"equipment.{k}" for k in zeus_hub_keys] or ["equipment.bg_zeus_sr"],
         f"profile.{zeus_label_key}.runs_platform",
         f"profile.{platform_key}.entity_kind" if platform_key else "profile.platform",
         "vessel.display_name",
+        *zeus_place_src,
         block="capability_summary",
         topic="station",
     )

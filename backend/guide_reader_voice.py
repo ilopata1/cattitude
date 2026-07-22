@@ -273,8 +273,9 @@ def lint_vessel_place_from_surface(text: str) -> list[dict[str, str]]:
     ``location_class: on_device`` (control on the device ≠ place on the boat).
 
     Vessel places belong only when a vessel location fact is cited
-    (``device_locations``, installation note, owner confirmation). Until then,
-    say ``local`` / omit place.
+    (registry ``places`` / ``location_label``, ``device_locations``,
+    installation note, owner confirmation). Until then, say ``local`` /
+    omit place.
     """
     warnings: list[dict[str, str]] = []
     seen: set[str] = set()
@@ -293,11 +294,57 @@ def lint_vessel_place_from_surface(text: str) -> list[dict[str, str]]:
                     "guidance": (
                         "Do not render control_surfaces.location_class "
                         "'on_device' as a vessel place (on-deck, locker, panel). "
-                        "Use 'local' until a vessel location fact is sourced."
+                        "Use 'local' until a vessel location fact is sourced "
+                        "(registry places / location_label, device_locations, "
+                        "installation note, or owner confirmation)."
                     ),
                 }
             )
     return warnings
+
+
+def place_labels(places: list[dict[str, Any]] | None) -> list[str]:
+    """Deduped non-empty ``location_label`` strings from registry places."""
+    labels: list[str] = []
+    seen: set[str] = set()
+    for place in places or []:
+        if not isinstance(place, dict):
+            continue
+        label = str(place.get("location_label") or "").strip()
+        if not label:
+            continue
+        key = label.lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        labels.append(label)
+    return labels
+
+
+def format_places_phrase(
+    places: list[dict[str, Any]] | None,
+    *,
+    preposition: str = "in",
+) -> str | None:
+    """Guest-facing place clause from registry places, or ``None`` if unknown.
+
+    Examples:
+      ``in the Cockpit``
+      ``in the Port hull and the Starboard hull``
+    """
+    labels = place_labels(places)
+    if not labels:
+        return None
+    if len(labels) == 1:
+        return f"{preposition} the {labels[0]}"
+    if len(labels) == 2:
+        return f"{preposition} the {labels[0]} and the {labels[1]}"
+    *head, last = labels
+    return (
+        f"{preposition} the "
+        + ", the ".join(head)
+        + f", and the {last}"
+    )
 
 
 def count_vessel_name_mentions(text: str, vessel_display_name: str) -> int:

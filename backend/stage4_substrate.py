@@ -20,6 +20,7 @@ Pure w.r.t. the DB read; see ``guide-stage4-integration-plan.md``.
 from __future__ import annotations
 
 import json
+import re
 from typing import Any
 
 from sqlalchemy import text
@@ -226,11 +227,40 @@ def link_profiles_to_registry(conn: Connection) -> dict[str, int]:
 def places_for_device(
     equipment_doc: dict[str, Any], device_key: str
 ) -> list[dict[str, Any]]:
-    """Return registry ``places`` for a Stage 4 device_key, if attached."""
-    for row in equipment_doc.get("equipment") or []:
-        if str(row.get("device_key") or "") == device_key:
-            places = row.get("places")
-            return list(places) if isinstance(places, list) else []
+    """Return registry ``places`` for a Stage 4 device_key, if attached.
+
+    Resolves instance keys (``class_t_1``, ``bg_zeus_sr_2``) to the inventory
+    row's ``device_key`` / ``catalog_key`` when needed.
+    """
+    key = str(device_key or "")
+    if not key:
+        return []
+    rows = list(equipment_doc.get("equipment") or [])
+
+    def _places(row: dict[str, Any]) -> list[dict[str, Any]]:
+        places = row.get("places")
+        return list(places) if isinstance(places, list) else []
+
+    for row in rows:
+        if str(row.get("device_key") or "") == key:
+            return _places(row)
+
+    # Instance keys: class_t_1 → class_t, bg_zeus_sr_2 → bg_zeus_sr
+    base = key
+    while True:
+        stripped = re.sub(r"_\d+$", "", base)
+        if stripped == base:
+            break
+        base = stripped
+        for row in rows:
+            if str(row.get("device_key") or "") == base:
+                return _places(row)
+            if str(row.get("catalog_key") or "") == base:
+                return _places(row)
+
+    for row in rows:
+        if str(row.get("catalog_key") or "") == key:
+            return _places(row)
     return []
 
 

@@ -25,6 +25,7 @@ from guide_composition_rules import (
 from guide_reader_voice import (
     VesselNameMissing,
     assess_reader_voice_style,
+    format_places_phrase,
     format_section_xref,
     resolve_vessel_display_name,
     section_xref_link,
@@ -41,6 +42,7 @@ from section_inputs import (
     assemble_section_inputs,
     keys_at_depth,
 )
+from stage4_substrate import places_for_device
 from system_graph import VesselGraphResult
 
 SECTION_ORDER = (
@@ -168,6 +170,13 @@ def compose_electrical_section(
         }
         return words.get(n, str(n))
 
+    def _place_for(device_key: str) -> tuple[str, list[str]]:
+        """Return (' in the Label', provenance sources) or ('', [])."""
+        phrase = format_places_phrase(places_for_device(equipment_doc, device_key))
+        if not phrase:
+            return "", []
+        return f" {phrase}", [f"equipment.{device_key}.places"]
+
     for flag in inputs.get("flags") or []:
         fname = str(flag.get("flag") or "")
         if fname in {
@@ -186,21 +195,37 @@ def compose_electrical_section(
             }
         )
 
-    queued_fact_queries.append(
-        {
-            "id": "electrical_component_locations",
-            "query": (
-                "Physical locations for ACR, plain rotary battery switch, "
-                "Class-T holders, and DC distribution busbar "
-                "(panel / locker / hull side / deck)."
-            ),
-            "status": "queued",
-            "note": (
-                "No vessel place facts yet. Profile location_class on_device "
-                "means local-to-equipment, not a deck/locker place."
-            ),
-        }
-    )
+    location_targets: list[str] = []
+    if has_acr:
+        location_targets.extend(acr_keys)
+    if has_plain:
+        location_targets.append("plain_battery_switch")
+    if class_t_keys:
+        location_targets.extend(class_t_keys)
+    if has_busbar:
+        location_targets.append("busbar")
+    missing_places = [
+        key
+        for key in location_targets
+        if not places_for_device(equipment_doc, key)
+    ]
+    if missing_places:
+        queued_fact_queries.append(
+            {
+                "id": "electrical_component_locations",
+                "query": (
+                    "Physical locations for: "
+                    + ", ".join(missing_places)
+                    + " (panel / locker / hull side / deck)."
+                ),
+                "status": "queued",
+                "note": (
+                    "No registry places yet for these devices. "
+                    "Profile location_class on_device means local-to-equipment, "
+                    "not a deck/locker place."
+                ),
+            }
+        )
 
     # ========== CAPABILITY (function first) ==========
     _emit(
@@ -220,42 +245,62 @@ def compose_electrical_section(
     if class_t_keys:
         n = len(class_t_keys)
         mm = MANUFACTURER_MODEL["class_t"]
+        place_clause, place_src = _place_for(class_t_keys[0])
         _emit(
             f"The house battery bank is protected by {_qty_word(n)} high-current "
-            f"Class-T fuses ({mm[0]} {mm[1]}) — fuses that protect the cables "
-            "carrying power from the bank if a major electrical fault occurs.",
+            f"Class-T fuses ({mm[0]} {mm[1]}){place_clause} — fuses that protect "
+            "the cables carrying power from the bank if a major electrical fault "
+            "occurs.",
             *[f"graph.device:{k}" for k in class_t_keys],
             "profile.class_t.device.model",
             "profile.class_t.safety_role.is_protective_device",
+            *place_src,
             kind="composed_inference",
             block="capability_summary",
             contributing_facts=[
                 f"equipment.class_t.quantity={n}",
                 "profile.class_t.safety_role.is_protective_device=true",
                 "profile.class_t.device.model",
+                *place_src,
             ],
         )
 
     if has_acr:
         mm = MANUFACTURER_MODEL["blue_sea_acr"]
+        place_clause, place_src = _place_for(acr_keys[0])
         _emit(
-            f"An automatic charging relay ({mm[0]} {mm[1]}) combines and "
-            "isolates battery banks based on charging voltage.",
+            f"An automatic charging relay ({mm[0]} {mm[1]}){place_clause} "
+            "combines and isolates battery banks based on charging voltage.",
             *[f"graph.device:{k}" for k in acr_keys],
             "profile.blue_sea_acr.device.model",
             "profile.blue_sea_acr.control_surfaces",
             "profile.blue_sea_acr.operator_actions",
+            *place_src,
             block="capability_summary",
         )
 
     if has_plain:
+        place_clause, place_src = _place_for("plain_battery_switch")
+        if place_clause:
+            rotary_lead = f"A rotary isolation switch{place_clause}"
+            rotary_sources = (
+                "graph.device:plain_battery_switch",
+                "equipment.plain_battery_switch",
+                *place_src,
+                "profile.plain_battery_switch.operator_actions",
+            )
+        else:
+            rotary_lead = "A local rotary isolation switch"
+            rotary_sources = (
+                "graph.device:plain_battery_switch",
+                "equipment.plain_battery_switch",
+                "profile.plain_battery_switch.control_surfaces.location_class",
+                "profile.plain_battery_switch.operator_actions",
+            )
         _emit(
-            "A local rotary isolation switch provides a separate disconnect "
+            f"{rotary_lead} provides a separate disconnect "
             "for its battery connection.",
-            "graph.device:plain_battery_switch",
-            "equipment.plain_battery_switch",
-            "profile.plain_battery_switch.control_surfaces.location_class",
-            "profile.plain_battery_switch.operator_actions",
+            *rotary_sources,
             block="capability_summary",
         )
 
@@ -276,15 +321,28 @@ def compose_electrical_section(
             ],
         )
     elif has_plain:
+        place_clause, place_src = _place_for("plain_battery_switch")
+        if place_clause:
+            leave_text = (
+                f"Leave the rotary isolation switch{place_clause} connected "
+                "during normal operation unless that battery connection must "
+                "be isolated."
+            )
+        else:
+            leave_text = (
+                "Leave the local rotary isolation switch connected during normal "
+                "operation unless that battery connection must be isolated."
+            )
         _emit(
-            "Leave the local rotary isolation switch connected during normal "
-            "operation unless that battery connection must be isolated.",
+            leave_text,
             "graph.device:plain_battery_switch",
             "profile.plain_battery_switch.operator_actions",
+            *place_src,
             kind="composed_inference",
             block="how_it_works",
             contributing_facts=[
                 "isolation switches are not routine controls",
+                *place_src,
             ],
         )
 
@@ -324,11 +382,22 @@ def compose_electrical_section(
             block="adjusting",
         )
     if has_plain:
+        place_clause, place_src = _place_for("plain_battery_switch")
+        if place_clause:
+            use_text = (
+                f"Use the rotary isolation switch{place_clause} when that "
+                "battery connection must be disconnected at the switch."
+            )
+        else:
+            use_text = (
+                "Use the local rotary isolation switch when that battery connection "
+                "must be disconnected at the switch."
+            )
         _emit(
-            "Use the local rotary isolation switch when that battery connection "
-            "must be disconnected at the switch.",
+            use_text,
             "graph.device:plain_battery_switch",
             "profile.plain_battery_switch.operator_actions",
+            *place_src,
             block="adjusting",
         )
 
@@ -357,12 +426,14 @@ def compose_electrical_section(
     # ========== REFERENCE (path devices + remaining xrefs) ==========
     if has_busbar:
         mm = MANUFACTURER_MODEL["busbar"]
+        place_clause, place_src = _place_for("busbar")
         _emit(
-            f"The DC distribution busbar ({mm[0]}) — a heavy-duty conductor that "
-            "distributes power — is the main power distribution point behind "
-            "those protected connections.",
+            f"The DC distribution busbar ({mm[0]}){place_clause} — a heavy-duty "
+            "conductor that distributes power — is the main power distribution "
+            "point behind those protected connections.",
             "graph.device:busbar",
             "equipment.busbar",
+            *place_src,
             block="reference",
         )
 
@@ -442,6 +513,7 @@ def compose_electrical_section(
         "excluded_candidates": list(inputs.get("candidates_excluded") or []),
         "context_shaping_consumed": context_shaping_consumed,
         "queued_fact_queries": queued_fact_queries,
+        "fact_queries": queued_fact_queries,
         "vocabulary_lint": vocab,
         "absence_lint": absence,
         "prose_economy_lint": economy,
@@ -554,6 +626,7 @@ def evaluate_electrical_draft(
     leave_alone_ok = (
         "leave the acr manual control override knob in automatic" in lower
         or "leave the local rotary isolation switch connected" in lower
+        or "leave the rotary isolation switch" in lower
     )
     normal_before_fault = block_order.index("how_it_works") < block_order.index(
         "troubleshooting"
@@ -565,10 +638,19 @@ def evaluate_electrical_draft(
         for w in (voice.get("style_warnings") or [])
         if w.get("code") == "vessel_place_from_surface"
     ]
+    has_places_provenance = any(
+        ".places" in str(src)
+        for p in prov
+        for src in (p.get("sources") or [])
+    )
     no_invented_place_ok = (
         not place_warns
         and not re.search(r"\bon[- ]deck\b", lower)
-        and "local rotary" in lower
+        and (
+            "local rotary" in lower
+            or has_places_provenance
+            or "rotary isolation switch" not in lower
+        )
     )
 
     # lxix / xlii — ACR multi-occasion adjusting is action-first + list
