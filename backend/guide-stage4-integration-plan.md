@@ -64,16 +64,15 @@ wholesale; redirect only the *system* slot to Stage 4.
 | Phase | What | Acceptance | Rough effort |
 |-------|------|-----------|--------------|
 | **1 ✅ DONE** | Output spine: Stage 4 dict → `SystemModule` → `guide_content` → publish → client, **fixtures as input** | Ingest → approve → publish → `bundle.json` renders the systems in the app | shipped |
-| **1b** | Reader polish: enrich text structure (lists/steps/…) + tappable cross-section links | Stage 4 modules render with full Know styling; xrefs navigate to the target system | see design below |
+| **1b ✅ DONE** | Reader polish: enrich text structure (lists/steps/…) + tappable cross-section links | Stage 4 modules render with full Know styling; xrefs navigate to the target system | shipped |
 | **2 ✅ DONE** | Input substrate in DB: persist profiles + relations + vessel facts (per-model library + per-boat wiring); DB→`equipment_doc`/`profiles` adapter | Composer output from DB-built inputs == frozen fixture drafts, exactly | shipped |
 | **3 ✅ DONE** | Orchestrator + admin: `run_stage4_generation(vessel)`; wire into admin generate; persist provenance/fact_queries (owner-questions store only — no admin UI) | One-click DB-native generate → publish | shipped |
 | **4** | De-hardcode composers for arbitrary vessels (remove Outremer constants, `DISPLAY_NAMES`/`MANUFACTURER_MODEL`, pinned device keys); add a 2nd vessel | A different vessel generates coherent system chapters | see design below |
 | **5** | Consolidate: retire the old fragment/LLM path for system modules; delete dead code + frozen-bundle path | Single generation path for systems | ~few days |
 
-Value lands after Phase 1–3 (done). **Immediate priority (ahead of 4 and 5):**
-reader polish — full guide text styling + tappable section linkages (Phase 1
-decisions 1 and 3, deferred until now). See **Phase 1b** below. Phase 4
-(de-hardcode + 2nd vessel) and Phase 5 (path consolidation) follow after.
+Value lands after Phase 1–3 and **1b** (reader polish) are done. Next: Phase 4
+(de-hardcode + 2nd vessel) or Phase 5 (path consolidation), when you call them
+up. Owner onboarding UI remains a parallel product track.
 
 ---
 
@@ -343,6 +342,22 @@ must emit typed blocks before anything ships.
   heuristics mis-classify.
 - **B — In-prose tappable targets** (not a detached chip list); promote
   `guide_links` into the published module and wire Know to `openSystem`.
+
+### Phase 1b — status (2026-07-21): DONE
+
+Delivered:
+- **`guide_section_to_module`** — enrich block paragraphs to `list` / `steps` /
+  `warnings` when bullet/numbered patterns are clear; split intro+bullets;
+  promote deduped `guideLinks` onto the module; wrap xref labels in
+  `section.html` with `data-guide-link="system:<id>"`.
+- **`stage4_sections`** — solar fold uses enriched multi-section helper.
+- **Know client** — prefer `html` over plain `c`; tap guide links →
+  `openSystem`; hide consecutive duplicate O3 headings; link styling.
+
+Verified: `verify_stage4_modules` + `--byte-match` green; electrical Operating
+emits a real `list`; modules carry `guideLinks` + html anchors. Supernova
+drafts regenerated via Stage 4 CLI (approve/publish still needed for the live
+bundle).
 
 ---
 

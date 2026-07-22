@@ -52,6 +52,30 @@ export class KnowPage implements OnInit {
     this.selected = null;
   }
 
+  /** Phase 1b — tap ``data-guide-link="system:<id>"`` inside enriched prose. */
+  onGuideHtmlClick(event: Event): void {
+    const target = event.target;
+    if (!(target instanceof Element)) {
+      return;
+    }
+    const anchor = target.closest('a[data-guide-link]') as HTMLElement | null;
+    if (!anchor) {
+      return;
+    }
+    event.preventDefault();
+    const token = (anchor.getAttribute('data-guide-link') || '').trim();
+    const systemId = token.startsWith('system:')
+      ? token.slice('system:'.length)
+      : '';
+    if (!systemId) {
+      return;
+    }
+    const system = this.content.getSystem(systemId);
+    if (system) {
+      this.openSystem(system);
+    }
+  }
+
   selectZone(zoneId: string): void {
     this.selectedZone = this.selectedZone === zoneId ? null : zoneId;
   }
@@ -79,6 +103,18 @@ export class KnowPage implements OnInit {
     return items
       .map((item) => this.itemLabel(item))
       .filter((label): label is string => !!label);
+  }
+
+  /** Hide consecutive duplicate O3 headings when one block splits into prose+list. */
+  showSectionHeading(sections: SystemSection[], index: number): boolean {
+    const title = (sections[index]?.t || '').trim();
+    if (!title) {
+      return false;
+    }
+    if (index === 0) {
+      return true;
+    }
+    return (sections[index - 1]?.t || '').trim() !== title;
   }
 
   itemLabel(item: unknown): string {

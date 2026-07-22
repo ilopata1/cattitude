@@ -75,14 +75,22 @@
     <div class="detail-body">
       <p *ngIf="system.summary" class="summary">{{ system.summary }}</p>
       <section
-        *ngFor="let section of system.sections"
+        *ngFor="let section of system.sections; let i = index"
         class="detail-section"
         [class.detail-section--warnings]="section.type === 'warnings'"
         [class.detail-section--notes]="section.type === 'notes'"
       >
-        <h3>{{ section.t }}</h3>
-        <p *ngIf="section.c" class="prose">{{ section.c }}</p>
-        <div *ngIf="section.html" [innerHTML]="section.html" appRichHtml></div>
+        <h3 *ngIf="section.t && showSectionHeading(system.sections, i)">{{ section.t }}</h3>
+        <ng-container *ngIf="section.html; else plainProse">
+          <div
+            class="prose prose--rich"
+            [innerHTML]="section.html"
+            (click)="onGuideHtmlClick($event)"
+          ></div>
+        </ng-container>
+        <ng-template #plainProse>
+          <p *ngIf="section.c" class="prose">{{ section.c }}</p>
+        </ng-template>
         <ng-container *ngIf="sectionItems(section) as items">
           <ol
             *ngIf="section.type === 'steps' && items.length"

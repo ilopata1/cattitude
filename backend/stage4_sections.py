@@ -25,7 +25,7 @@ from guide_section_solar import compose_solar_section
 from guide_section_to_module import (
     extract_module_metadata,
     section_to_system_module,
-    solar_fold_section,
+    solar_fold_sections,
 )
 from section_inputs import assemble_section_inputs
 from system_graph import build_vessel_graph
@@ -105,13 +105,13 @@ def build_modules_from_context(
     composed_by_section = {
         sid: compose_section(sid, ctx) for sid in ("solar", *PUBLISHED_SECTIONS)
     }
-    solar_section = solar_fold_section(composed_by_section["solar"])
+    solar_sections = solar_fold_sections(composed_by_section["solar"])
 
     modules: dict[str, dict[str, Any]] = {}
     metadata: dict[str, dict[str, Any]] = {}
     for sid in PUBLISHED_SECTIONS:
         composed = composed_by_section[sid]
-        extra = [solar_section] if (sid == "batteries" and solar_section) else None
+        extra = solar_sections if (sid == "batteries" and solar_sections) else None
         modules[sid] = section_to_system_module(sid, composed, extra_sections=extra)
         metadata[sid] = extract_module_metadata(sid, composed)
 

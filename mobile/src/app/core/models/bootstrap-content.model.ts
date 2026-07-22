@@ -48,6 +48,13 @@ export interface SystemModule {
   locs?: string[];
   summary?: string;
   learnChecks?: string[];
+  /** Phase 1b — structured cross-section links (also embedded in section.html). */
+  guideLinks?: Array<{
+    target_kind?: string;
+    target_id?: string;
+    label?: string;
+    data_guide_link?: string;
+  }>;
   sections: SystemSection[];
 }
 
