@@ -122,7 +122,8 @@ cards:
   - Start the engine(s) and run at fast idle until the house bank recovers
   - If fitted, run the generator or connect shore power to charge
   - Do not run high-draw loads again until the bank has recovered
-  - 'If the bank will not hold charge: possible battery fault — {contact_step}'
+  - 'If the bank will not hold charge: possible battery fault'
+  - '{contact_step}'
 - key: fridge_not_cooling
   when:
     has_category:

@@ -24,7 +24,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from config import settings  # noqa: E402
 from db import postgres_connection_strings  # noqa: E402
-from guide_equipment_fragments import upsert_equipment_fragment  # noqa: E402
+from guide_equipment_fragments import (  # noqa: E402
+    get_equipment_fragment,
+    replace_equipment_fragment,
+    upsert_equipment_fragment,
+)
 
 # (manufacturer, model) -> fragment patch
 SEED_FRAGMENTS: dict[tuple[str, str], dict] = {
@@ -86,6 +90,38 @@ SEED_FRAGMENTS: dict[tuple[str, str], dict] = {
                     "Do not run high-draw AC loads again until the bank has recovered",
                     "If the bank will not recover despite charging: possible battery fault",
                 ]
+            }
+        }
+    },
+    # Outremer / Supernova electrical plant — CZone owns circuit recovery;
+    # Mass Combi owns low-bank recovery (not Victron MultiPlus / MPPT / COI).
+    ("CZone", "Touch 7"): {
+        "fix_card_overrides": {
+            "something_stopped": {
+                "title": "Something stopped working",
+                "steps": [
+                    "On the CZone Touch 7, open Control (or Favourites if that circuit is pinned)",
+                    "Find the named circuit for what stopped and press it to turn it back on",
+                    "Check Alarms — acknowledge any Critical or Important alarm and note the circuit name",
+                    "If the circuit will not stay on: leave it off — do not open COI covers or change DIP switches",
+                    "If many circuits are dark at once: the house bank may be low — see Low battery",
+                ],
+            }
+        }
+    },
+    ("Mastervolt", "Mass Combi Pro"): {
+        "fix_card_overrides": {
+            "low_battery": {
+                "title": "Low battery",
+                "steps": [
+                    "Turn off high-draw loads: AC units, induction cooking, watermaker, microwave",
+                    "On the CZone touchscreen, check house-bank SOC / voltage and any Alarms",
+                    "Restore charge: connect shore power, or start the Fischer Panda from its iControl2 panel (visual check first), or run the engines so the alternators contribute — solar helps in good sun but is not the only path",
+                    "On CZone Inverter Charger (or the Combi front panel): confirm the Combis are charging; if shore or generator input is limited, set the AC input current limit so the pedestal or genset breaker does not trip",
+                    "Leave the ACR Manual Control Override Knob in automatic unless you have a specific combine or service reason",
+                    "If loads died after a protective disconnect: reset the BMS on the affected Mastervolt MLI house battery before restoring loads",
+                    "If the bank will not recover with charge available: possible battery or BMS fault",
+                ],
             }
         }
     },
@@ -179,6 +215,80 @@ SEED_FRAGMENTS: dict[tuple[str, str], dict] = {
 }
 
 
+# Competing admin/LLM overrides on the Outremer plant that must not last-write
+# over the curated CZone / Mass Combi cards above.
+CLEAR_FIX_CARD_KEYS: dict[tuple[str, str], tuple[str, ...]] = {
+    ("Blue Sea Systems", "Automatic Charging Relays (ACR)"): (
+        "low_battery",
+        "something_stopped",
+    ),
+    ("CZone / Mastervolt", "Combination Output Interface (COI)"): (
+        "low_battery",
+        "something_stopped",
+    ),
+    ("Mastervolt", "MLI Ultra 24/6000"): (
+        "low_battery",
+        "something_stopped",
+    ),
+    ("Mastervolt", "Mass Combi Pro"): ("something_stopped",),
+    ("ProInstaller", "busbar"): ("low_battery", "something_stopped"),
+    ("Victron Energy", "SmartSolar MPPT 75/15"): (
+        "low_battery",
+        "something_stopped",
+    ),
+    ("Victron Energy", "SmartSolar MPPT 150/60-Tr"): (
+        "low_battery",
+        "something_stopped",
+    ),
+}
+
+
+def _clear_competing_overrides(conn) -> int:
+    cleared = 0
+    for (manufacturer, model), keys in CLEAR_FIX_CARD_KEYS.items():
+        rows = conn.execute(
+            text(
+                """
+                SELECT id FROM equipment
+                WHERE manufacturer = :manufacturer AND model = :model
+                """
+            ),
+            {"manufacturer": manufacturer, "model": model},
+        ).fetchall()
+        if not rows:
+            print(f"  clear skip {manufacturer} {model}: not in registry")
+            continue
+        for row in rows:
+            equipment_id = str(row[0])
+            current = get_equipment_fragment(conn, equipment_id)
+            if not current:
+                continue
+            fragment = dict(current.get("fragment") or {})
+            overrides = dict(fragment.get("fix_card_overrides") or {})
+            removed = [k for k in keys if k in overrides]
+            if not removed:
+                continue
+            for key in removed:
+                overrides.pop(key, None)
+            if overrides:
+                fragment["fix_card_overrides"] = overrides
+            else:
+                fragment.pop("fix_card_overrides", None)
+            replace_equipment_fragment(
+                conn,
+                equipment_id,
+                fragment,
+                created_by="seed_fix_card_fragments.py",
+                status="approved",
+                source_citations=current.get("source_citations"),
+            )
+            cleared += 1
+            print(
+                f"  cleared {manufacturer} {model}: {', '.join(removed)}"
+            )
+    return cleared
+
+
 def main() -> None:
     sync_url, _ = postgres_connection_strings(settings.database_url)
     engine = create_engine(sync_url)
@@ -186,7 +296,7 @@ def main() -> None:
     seeded = 0
     with engine.begin() as conn:
         for (manufacturer, model), patch in SEED_FRAGMENTS.items():
-            row = conn.execute(
+            rows = conn.execute(
                 text(
                     """
                     SELECT id FROM equipment
@@ -194,17 +304,24 @@ def main() -> None:
                     """
                 ),
                 {"manufacturer": manufacturer, "model": model},
-            ).fetchone()
-            if row is None:
+            ).fetchall()
+            if not rows:
                 print(f"  skip {manufacturer} {model}: not in registry")
                 continue
-            upsert_equipment_fragment(
-                conn, str(row[0]), patch, created_by="seed_fix_card_fragments.py"
-            )
-            seeded += 1
-            print(f"  seeded {manufacturer} {model}")
+            for row in rows:
+                upsert_equipment_fragment(
+                    conn,
+                    str(row[0]),
+                    patch,
+                    created_by="seed_fix_card_fragments.py",
+                )
+                seeded += 1
+                print(f"  seeded {manufacturer} {model}")
 
-    print(f"\nSeed OK: {seeded} equipment fragment(s)")
+        print("\nClearing competing electrical Fix overrides…")
+        cleared = _clear_competing_overrides(conn)
+
+    print(f"\nSeed OK: {seeded} equipment fragment(s); cleared {cleared}")
 
 
 if __name__ == "__main__":
