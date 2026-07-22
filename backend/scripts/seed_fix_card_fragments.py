@@ -80,6 +80,20 @@ SEED_FRAGMENTS: dict[tuple[str, str], dict] = {
             }
         }
     },
+    ("Dessalator", "Duo AC & DC Navigator"): {
+        "fix_card_overrides": {
+            "watermaker": {
+                "title": "Watermaker not producing",
+                "steps": [
+                    "Check the watermaker breaker at the panel is ON",
+                    "On the NAVIGATOR panel, confirm AC or DC voltage selection",
+                    "If running on 12 V or 24 V DC for more than five minutes: start an engine, shore charger, or the generator — then retry start from the panel",
+                    "Confirm you are in clean, deep, open water — not shallow, sandy, or near a marina",
+                    "If it still will not produce: stop from the NAVIGATOR panel and leave it in stand-by",
+                ],
+            }
+        }
+    },
     ("Tecma", "Compass Eco electric head"): {
         "fix_card_overrides": {
             "toilet_wont_flush": {

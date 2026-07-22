@@ -231,6 +231,7 @@ export class KnowPage implements OnInit {
       controls: 'electrical',
       electrical: 'electrical',
       nav: 'nav',
+      water: 'plumbing',
     };
     return map[systemId];
   }

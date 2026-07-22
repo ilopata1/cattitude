@@ -393,5 +393,100 @@
         "data_guide_link": "do:learn"
       }
     ]
+  },
+  "water": {
+    "id": "water",
+    "icon": "💧",
+    "title": "Water systems",
+    "subtitle": "Fresh water can be made on board with the watermaker (Dessalator Duo AC & DC Navigator)",
+    "summary": "On Supernova, fresh water can be made on board with the watermaker (Dessalator Duo AC & DC Navigator). It is a standalone unit — not switched from the boat's digital switching system — and is operated from its NAVIGATOR control panel.",
+    "sections": [
+      {
+        "t": "Equipment Locations",
+        "type": "equipment_locations",
+        "rows": [
+          {
+            "name": "Dessalator Duo AC & DC Navigator",
+            "location": "Engine / Machinery Space – Engine Bay"
+          }
+        ]
+      },
+      {
+        "t": "How it works",
+        "type": "prose",
+        "c": "The NAVIGATOR control panel selects AC or DC supply and sets working pressure with its motorized pressure-regulator knob. When running on 12 V or 24 V DC for more than five minutes, an engine, shore charger, or generator must be on to support the load.\n\nBattery bank and charging context can be found in the Batteries & Energy section of this guide; DC protection and distribution can be found in the Electrical Panel section of this guide.",
+        "html": "<p>The NAVIGATOR control panel selects AC or DC supply and sets working pressure with its motorized pressure-regulator knob. When running on 12 V or 24 V DC for more than five minutes, an engine, shore charger, or generator must be on to support the load.</p><p>Battery bank and charging context can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:batteries\">Batteries &amp; Energy section of this guide</span>; DC protection and distribution can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:electrical\">Electrical Panel section of this guide</span>.</p>"
+      },
+      {
+        "t": "Turning it on",
+        "type": "prose",
+        "c": "Start the watermaker from the NAVIGATOR control panel when you need to begin fresh water production."
+      },
+      {
+        "t": "Monitoring",
+        "type": "prose",
+        "c": "While producing, use the NAVIGATOR control panel to confirm the unit is running and to adjust voltage selection or working pressure."
+      },
+      {
+        "t": "Operating",
+        "type": "prose",
+        "c": "Stop the watermaker from the NAVIGATOR control panel to put it in stand-by when you no longer need to make water.\n\nRestart from the same panel after a stop when you are ready to produce again."
+      },
+      {
+        "t": "If something's not right",
+        "type": "prose",
+        "c": "If the watermaker will not produce, confirm the panel voltage selection and that an engine, shore charger, or generator is on when running on 12 V or 24 V DC — then retry start from the panel."
+      },
+      {
+        "t": "Care & upkeep",
+        "type": "prose",
+        "c": "Rinse the membranes from the panel after prolonged inactivity to protect membrane quality."
+      },
+      {
+        "t": "Related",
+        "type": "prose",
+        "c": "If something goes wrong with this system, open the Fix It cards for plumbing for quick troubleshooting cards.\n\nWhen you are learning the boat, tick off this chapter on the Learn the Boat checklist.",
+        "html": "<p>If something goes wrong with this system, open the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"fix:plumbing\">Fix It cards for plumbing</span> for quick troubleshooting cards.</p><p>When you are learning the boat, tick off this chapter on the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"do:learn\">Learn the Boat checklist</span>.</p>"
+      }
+    ],
+    "locs": [
+      "port-hull",
+      "stbd-hull",
+      "galley"
+    ],
+    "learnChecks": [
+      "Can explain in one sentence what this system does on this boat",
+      "Know how to turn this system on and shut it down safely",
+      "Know where to read status, meters, or alerts for this system",
+      "Can perform the main operating actions described in this chapter",
+      "Know the first checks to run when something looks wrong",
+      "Know the care or isolation points called out for this system"
+    ],
+    "guideLinks": [
+      {
+        "target_kind": "system",
+        "target_id": "batteries",
+        "label": "Batteries & Energy section of this guide",
+        "data_guide_link": "system:batteries"
+      },
+      {
+        "target_kind": "system",
+        "target_id": "electrical",
+        "label": "Electrical Panel section of this guide",
+        "data_guide_link": "system:electrical"
+      },
+      {
+        "target_kind": "fix",
+        "target_id": "plumbing",
+        "label": "Fix It cards for plumbing",
+        "data_guide_link": "fix:plumbing"
+      },
+      {
+        "target_kind": "learn",
+        "target_id": "learn",
+        "label": "Learn the Boat checklist",
+        "data_guide_link": "do:learn"
+      }
+    ]
   }
 }

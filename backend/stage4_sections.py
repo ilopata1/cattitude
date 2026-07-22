@@ -22,6 +22,7 @@ from guide_section_controls import compose_controls_section
 from guide_section_electrical import compose_electrical_section
 from guide_section_nav import compose_nav_section
 from guide_section_solar import compose_solar_section
+from guide_section_water import compose_water_section
 from guide_section_to_module import (
     extract_module_metadata,
     section_to_system_module,
@@ -32,7 +33,13 @@ from system_graph import build_vessel_graph
 
 # Published system modules produced by Stage 4 composers today. Solar is not a
 # standalone module — it folds into ``batteries`` (O1).
-PUBLISHED_SECTIONS: tuple[str, ...] = ("batteries", "controls", "electrical", "nav")
+PUBLISHED_SECTIONS: tuple[str, ...] = (
+    "batteries",
+    "controls",
+    "electrical",
+    "nav",
+    "water",
+)
 
 # section_id -> (compose_fn, uses_section_inputs)
 _COMPOSERS: dict[str, tuple[Callable[..., dict[str, Any]], bool]] = {
@@ -41,6 +48,7 @@ _COMPOSERS: dict[str, tuple[Callable[..., dict[str, Any]], bool]] = {
     "electrical": (compose_electrical_section, True),
     "nav": (compose_nav_section, True),
     "solar": (compose_solar_section, False),
+    "water": (compose_water_section, True),
 }
 
 

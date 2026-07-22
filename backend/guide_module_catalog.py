@@ -105,7 +105,7 @@ SYSTEM_CATALOG: dict[str, dict[str, Any]] = {
         "icon": "💧",
         "locs": ["port-hull", "stbd-hull", "galley"],
         "equipment_categories": ["fresh_water_and_plumbing"],
-        "focus": "Fresh water tanks, pumps, watermaker (Spectra/Aqua-Base), fills",
+        "focus": "Fresh water tanks, pumps, watermaker (Dessalator Duo), fills",
         "review_title": "Water systems",
         "guest_label": "Learn + Know — water",
     },

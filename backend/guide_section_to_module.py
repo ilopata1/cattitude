@@ -53,6 +53,7 @@ _SYSTEM_FIX_CATEGORY: dict[str, str] = {
     "controls": "electrical",
     "electrical": "electrical",
     "nav": "nav",
+    "water": "plumbing",
 }
 
 # Composers store config-pending notes with a marker token in the provenance

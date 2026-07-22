@@ -1,0 +1,28 @@
+{
+  "fixture_auth": "Fixture-Auth: chat Water Stage 4 freeze v4.1 — Dessalator Duo; NAVIGATOR panel; Mini Remote + flush omitted; human-reviewed (spec v4.39)",
+  "version": "v4.1",
+  "description": "Water systems Stage 4 expectations for Outremer / Supernova (frozen).",
+  "recorded_vessel_display_name": "Supernova",
+  "expected_guide_link_targets": ["batteries", "electrical"],
+  "must_exclude_from_body_depth": [],
+  "expected_inputs": {
+    "contributors": [
+      {"device_key": "dessalator_duo", "depth": "full"}
+    ]
+  },
+  "expected_fact_query_ids": ["watermaker_intake_and_tank_path"],
+  "forbidden_prose_substrings": [
+    "control surface",
+    "mini remote",
+    "Mini Remote",
+    "flush",
+    "first use",
+    "masterbus",
+    "czone touch",
+    "dessalator_duo",
+    "day-to-day",
+    "Spectra",
+    "Aqua-Base"
+  ],
+  "style_deictics_soft": ["this vessel", "this boat", "this yacht"]
+}

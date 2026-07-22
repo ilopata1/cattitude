@@ -7,7 +7,16 @@ from typing import Any
 
 _SLOT_RE = re.compile(r"\{([a-z_]+)\}")
 
-_WATERMAKER_HINTS = ("watermaker", "spectra", "aqua-base", "aquabase", "osmosis")
+_WATERMAKER_HINTS = (
+    "watermaker",
+    "spectra",
+    "aqua-base",
+    "aquabase",
+    "osmosis",
+    "dessalator",
+    "desalinator",
+    "desalinat",
+)
 
 
 def equipment(snapshot: dict[str, Any]) -> list[dict[str, Any]]:
@@ -23,7 +32,10 @@ def has_watermaker(snapshot: dict[str, Any]) -> bool:
     for row in equipment(snapshot):
         if row.get("system_category") != "fresh_water_and_plumbing":
             continue
-        text = f"{row.get('manufacturer') or ''} {row.get('model') or ''}".lower()
+        text = (
+            f"{row.get('manufacturer') or ''} {row.get('model') or ''} "
+            f"{row.get('description') or ''}"
+        ).lower()
         if any(hint in text for hint in _WATERMAKER_HINTS):
             return True
     return False

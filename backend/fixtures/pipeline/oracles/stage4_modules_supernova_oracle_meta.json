@@ -1001,5 +1001,179 @@
       }
     ],
     "evaluation": null
+  },
+  "water": {
+    "section_id": "water",
+    "version": "v4.1",
+    "provenance_map": [
+      {
+        "id": "S1",
+        "sentence": "On Supernova, fresh water can be made on board with the watermaker (Dessalator Duo AC & DC Navigator).",
+        "sources": [
+          "graph.device:dessalator_duo",
+          "equipment.dessalator_duo",
+          "vessel.display_name",
+          "profile.dessalator_duo.device"
+        ],
+        "kind": "sourced",
+        "block": "capability_summary",
+        "topic": "plant"
+      },
+      {
+        "id": "S2",
+        "sentence": "It is a standalone unit — not switched from the boat's digital switching system — and is operated from its NAVIGATOR control panel.",
+        "sources": [
+          "graph.device:dessalator_duo",
+          "profile.dessalator_duo.control_surfaces",
+          "profile.dessalator_duo.networks",
+          "profile.dessalator_duo.data_roles"
+        ],
+        "kind": "sourced",
+        "block": "capability_summary",
+        "topic": "station"
+      },
+      {
+        "id": "S3",
+        "sentence": "The NAVIGATOR control panel selects AC or DC supply and sets working pressure with its motorized pressure-regulator knob.",
+        "sources": [
+          "profile.dessalator_duo.control_surfaces"
+        ],
+        "kind": "sourced",
+        "block": "how_it_works",
+        "topic": "panel"
+      },
+      {
+        "id": "S4",
+        "sentence": "When running on 12 V or 24 V DC for more than five minutes, an engine, shore charger, or generator must be on to support the load.",
+        "sources": [
+          "profile.dessalator_duo.supply_requirements"
+        ],
+        "kind": "sourced",
+        "block": "how_it_works",
+        "topic": "dc_supply"
+      },
+      {
+        "id": "S5",
+        "sentence": "Battery bank and charging context can be found in the Batteries & Energy section of this guide; DC protection and distribution can be found in the Electrical Panel section of this guide.",
+        "sources": [
+          "xref.batteries",
+          "xref.electrical"
+        ],
+        "kind": "sourced",
+        "block": "how_it_works",
+        "links": [
+          {
+            "target_kind": "system",
+            "target_id": "batteries",
+            "label": "Batteries & Energy section of this guide",
+            "data_guide_link": "system:batteries"
+          },
+          {
+            "target_kind": "system",
+            "target_id": "electrical",
+            "label": "Electrical Panel section of this guide",
+            "data_guide_link": "system:electrical"
+          }
+        ],
+        "topic": "xref_power"
+      },
+      {
+        "id": "S6",
+        "sentence": "Start the watermaker from the NAVIGATOR control panel when you need to begin fresh water production.",
+        "sources": [
+          "profile.dessalator_duo.operator_actions",
+          "graph.device:dessalator_duo"
+        ],
+        "kind": "sourced",
+        "block": "startup",
+        "topic": "start"
+      },
+      {
+        "id": "S7",
+        "sentence": "While producing, use the NAVIGATOR control panel to confirm the unit is running and to adjust voltage selection or working pressure.",
+        "sources": [
+          "profile.dessalator_duo.control_surfaces"
+        ],
+        "kind": "sourced",
+        "block": "monitoring",
+        "topic": "panel_status"
+      },
+      {
+        "id": "S8",
+        "sentence": "Stop the watermaker from the NAVIGATOR control panel to put it in stand-by when you no longer need to make water.",
+        "sources": [
+          "profile.dessalator_duo.operator_actions"
+        ],
+        "kind": "sourced",
+        "block": "adjusting",
+        "topic": "stop"
+      },
+      {
+        "id": "S9",
+        "sentence": "Restart from the same panel after a stop when you are ready to produce again.",
+        "sources": [
+          "profile.dessalator_duo.operator_actions"
+        ],
+        "kind": "sourced",
+        "block": "adjusting",
+        "topic": "restart"
+      },
+      {
+        "id": "S10",
+        "sentence": "If the watermaker will not produce, confirm the panel voltage selection and that an engine, shore charger, or generator is on when running on 12 V or 24 V DC — then retry start from the panel.",
+        "sources": [
+          "profile.dessalator_duo.supply_requirements",
+          "profile.dessalator_duo.operator_actions",
+          "profile.dessalator_duo.control_surfaces"
+        ],
+        "kind": "composed_inference",
+        "block": "troubleshooting",
+        "topic": "no_produce"
+      },
+      {
+        "id": "S11",
+        "sentence": "Rinse the membranes from the panel after prolonged inactivity to protect membrane quality.",
+        "sources": [
+          "profile.dessalator_duo.operator_actions"
+        ],
+        "kind": "sourced",
+        "block": "reference",
+        "topic": "rinse"
+      }
+    ],
+    "guide_links": [
+      {
+        "sentence_id": "S5",
+        "block": "how_it_works",
+        "target_kind": "system",
+        "target_id": "batteries",
+        "label": "Batteries & Energy section of this guide",
+        "data_guide_link": "system:batteries"
+      },
+      {
+        "sentence_id": "S5",
+        "block": "how_it_works",
+        "target_kind": "system",
+        "target_id": "electrical",
+        "label": "Electrical Panel section of this guide",
+        "data_guide_link": "system:electrical"
+      }
+    ],
+    "wisdom_slot": {
+      "status": "pending",
+      "sentence_id": null,
+      "block": "how_it_works",
+      "inference_ids": [],
+      "note": "Water wisdom pending — comparative production/care claim not yet sourced beyond supply caveat."
+    },
+    "fact_queries": [
+      {
+        "id": "watermaker_intake_and_tank_path",
+        "query": "Confirm seacock / strainer location and which tank the Duo fills on this vessel.",
+        "status": "queued",
+        "note": "Intake/tank path not in Stage 1 profile — omitted from guest troubleshooting until sourced."
+      }
+    ],
+    "evaluation": null
   }
 }
