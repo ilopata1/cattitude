@@ -65,12 +65,12 @@ wholesale; redirect only the *system* slot to Stage 4.
 |-------|------|-----------|--------------|
 | **1 ✅ DONE** | Output spine: Stage 4 dict → `SystemModule` → `guide_content` → publish → client, **fixtures as input** | Ingest → approve → publish → `bundle.json` renders the systems in the app | shipped |
 | **2 ✅ DONE** | Input substrate in DB: persist profiles + relations + vessel facts (per-model library + per-boat wiring); DB→`equipment_doc`/`profiles` adapter | Composer output from DB-built inputs == frozen fixture drafts, exactly | shipped |
-| **3** | Orchestrator + admin: `run_stage4_generation(vessel)`; wire into admin generate; persist provenance/fact_queries; owner-questions surfaced | One-click DB-native generate → publish | ~1 wk |
+| **3** | Orchestrator + admin: `run_stage4_generation(vessel)`; wire into admin generate; persist provenance/fact_queries (owner-questions store only — no admin UI) | One-click DB-native generate → publish | see design below |
 | **4** | De-hardcode composers for arbitrary vessels (remove Outremer constants, `DISPLAY_NAMES`/`MANUFACTURER_MODEL`, pinned device keys); add a 2nd vessel | A different vessel generates coherent system chapters | ~1–2 wk |
 | **5** | Consolidate: retire the old fragment/LLM path for system modules; delete dead code + frozen-bundle path | Single generation path for systems | ~few days |
 
 Value lands after Phase 1 (done); Phase 2 (done) is gated by a rigorous
-byte-match check. Next: Phase 3 (orchestrator + admin wiring).
+byte-match check. Next: Phase 3 (orchestrator + admin wiring) — design below.
 
 ---
 
@@ -342,3 +342,121 @@ JSON, `(Configuration pending)` prose, `config_unsourced` flags in
 `expected.json`, and spec/inventory prose. Phase 1 introduces a durable store
 (decision 2) so `fact_queries` from generation persist and carry forward until
 dispositioned. Current open example: `zeus_czone_controller_visible`.
+
+**UI stance (locked 2026-07-21):** the admin UI is for staff only. Owner
+questions belong in a **separate vessel-onboarding UI** for the boat owner —
+not in admin. Phase 3 continues to **upsert** into `owner_question` on
+generate; answering / dismissing / feeding answers back into composers or
+`vessel_stage4_facts` waits for that onboarding surface (and Phase 4+).
+
+---
+
+## Phase 3 — detailed design (orchestrator + admin)
+
+**Objective.** Make Stage 4 the live generate path for the four published
+system chapters: one admin click (or one library call) rebuilds
+`equipment_doc` + `profiles` from the Phase 2 substrate, composes, transforms,
+writes `guide_content` drafts + run metadata + owner questions — then the
+existing approve→publish spine takes over.
+
+**Non-goals (Phase 3).** No composer de-hardcoding / 2nd vessel (Phase 4); no
+retirement of the fragment/LLM path for *other* systems (Phase 5); **no owner-
+questions UI in admin** (owner-facing onboarding UI is a separate product
+surface); no answering / dismissing / feeding answers back into composers or
+`vessel_stage4_facts`; no admin UI for editing the Stage 4 substrate itself
+(seed script remains the write path until a later phase).
+
+### Grounding facts (current code)
+
+- Admin **Generate** posts to `/admin/vessels/{id}/guide/generate` →
+  `run_guide_generation` → per-module `generate_module`. For `system/*`,
+  today's order is: equipment-gap placeholder → assemble from
+  `equipment_guide_fragment` → LLM / pending placeholder. Stage 4 is **not**
+  on that path; Phase 1 used a separate CLI (`ingest_stage4_sections.py`) that
+  still reads **fixtures**, not the DB substrate.
+- Generation sets: `shell` / `systems` / `checklists` / `fixes`. Checking
+  **Equipment** expands to all `SYSTEM_IDS` (~13), of which only four
+  (`batteries`, `controls`, `electrical`, `nav`) have Stage 4 composers.
+  Solar folds into `batteries` (O1).
+- Owner-questions table + `upsert_owner_questions` exist; **no admin route or
+  template** references them yet.
+- Phase 2 adapter + byte-match gate are green for `supernova`.
+
+### Recommended locked decisions (confirm or override before implement)
+
+| # | Decision | Recommendation |
+|---|----------|----------------|
+| 1 | **When to use Stage 4 for the four keys** | If the vessel has a Stage 4 substrate (`vessel_stage4_equipment` non-empty), generate those four via Stage 4. If not, fall back to the existing fragment/placeholder path (so vessels without a seed still Generate). Loud failure only when substrate exists but composition fails. |
+| 2 | **Non–Stage-4 systems on Generate** | Leave on the existing fragment / pending / LLM path until Phase 5. Do not block or blank them. |
+| 3 | **Orchestrator shape** | New `run_stage4_generation(conn, vessel_id, …)` that: loads substrate → `build_modules_from_context` → validates → one `guide_generation_run` + draft per section → attach metadata → upsert owner questions. Shared by admin and a thin CLI. |
+| 4 | **Admin wiring** | Inside `generate_module` / `run_guide_generation`: when `content_key ∈ PUBLISHED_SECTIONS` and substrate present, call Stage 4 for that key (or batch the four once per Generate request). Prefer **batch-once** for the four so solar is composed once and folded, not four times. No separate button. |
+| 5 | **Owner-questions UI** | **None in admin.** Keep upserting into `owner_question` on generate so the future owner onboarding UI has data. Answer / dismiss / re-compose from answers is out of Phase 3 (and out of admin entirely). *(locked)* |
+| 6 | **CLI** | Retarget `ingest_stage4_sections.py` (or replace with `scripts/run_stage4_generation.py`) to use the DB substrate by default (`--slug`); keep `--fixture` only as a debug escape hatch. |
+| 7 | **Fidelity** | After Generate from admin for `supernova`, drafts must match Phase 2 byte-match oracle (same modules as fixture-built), modulo `created_by` / run ids. |
+
+### Orchestrator design
+
+```
+run_stage4_generation(conn, vessel_id, *, created_by, trigger, sections=None)
+  1. Guard: vessel has substrate (else raise / return skipped).
+  2. ctx = load_vessel_context_from_db(conn, vessel_id)
+  3. modules, metadata = build_modules_from_context(ctx)
+  4. snapshot_id = create_input_snapshot(...)   # reuse existing helper
+  5. for sid in (sections or PUBLISHED_SECTIONS):
+       validate → insert run (model_id=stage4_composer) → attach metadata
+       → save draft → complete run → upsert_owner_questions
+  6. return GenerationResult-compatible summary
+```
+
+Integration into `run_guide_generation`:
+- Before the per-module loop (or at the start), if any requested module is a
+  Stage 4 section **and** substrate exists: call `run_stage4_generation` for
+  those keys once; remove them from the fragment/LLM loop.
+- Remaining modules (other systems, shell, checklists, fixes) unchanged.
+
+### Admin UI
+
+- **Generate form:** unchanged checkboxes. Help text update: Equipment systems
+  that have Stage 4 substrate use composers (deterministic); others still use
+  fragments / placeholders. Drop or qualify the old “not AI” chip wording so it
+  doesn't claim fragments for Stage 4 keys.
+- **No owner-questions panel** in admin (decision 5). Staff may still see
+  fact_queries inside generation-run `metadata` if they inspect a run; the
+  product surface for answering is owner onboarding, later.
+- **Optional light signal:** if substrate missing, a muted note “Stage 4
+  substrate not seeded — system drafts use the legacy path.” Link to docs /
+  seed command; no full substrate editor.
+
+### New / changed files
+
+- **New:** `backend/stage4_generation.py` (`run_stage4_generation`, substrate
+  presence helper); optionally `scripts/run_stage4_generation.py`.
+- **Touched:** `guide_generation.run_guide_generation` (dispatch); admin
+  `overview.html` (help text only); `ingest_stage4_sections.py` (DB default);
+  plan + Makefile if a smoke target is useful.
+- **Unchanged:** composers, Phase 1 transform, Phase 2 tables/adapter,
+  publish/serve/sync; no new owner-question admin routes.
+
+### Acceptance
+
+- Admin Generate with **Equipment** (or Full guide) on `supernova` writes the
+  four Stage 4 drafts via `model_id=stage4_composer`, with run `metadata` and
+  `owner_question` rows upserted — no fixture path involved.
+- Those drafts pass the same shape validation as Phase 1; content matches the
+  Phase 2 byte-match oracle for the vessel.
+- Re-generate does not clobber already-answered owner questions (existing
+  upsert rule); admin has no UI to answer them.
+- Vessel **without** Stage 4 substrate: Generate still works via legacy path
+  for all systems (decision 1 fallback).
+- `make pipeline-verify` / `stage4-bytematch` remain green.
+
+### Risk to Phases 1–2
+
+Low. Phase 3 only changes *who calls* the already-proven compose→transform→
+save path. Composers and substrate stay byte-stable; admin is additive.
+
+### Rough effort
+
+~2–3 days given Phase 1 ingest already proved the write path and Phase 2 proved
+the DB input path — Phase 3 is mostly orchestrator wiring + admin dispatch /
+help-text tweaks (no owner-questions UI).
