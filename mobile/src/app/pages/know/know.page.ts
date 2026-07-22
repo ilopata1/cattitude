@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { ContentService } from '../../core/services/content.service';
 import { VesselRouteService } from '../../core/services/vessel-route.service';
@@ -23,6 +24,7 @@ export class KnowPage implements OnInit {
     public readonly content: ContentService,
     private readonly route: ActivatedRoute,
     private readonly vesselRoutes: VesselRouteService,
+    private readonly sanitizer: DomSanitizer,
   ) {}
 
   get locationLayout() {
@@ -52,19 +54,58 @@ export class KnowPage implements OnInit {
     this.selected = null;
   }
 
-  /** Tap ``data-guide-link`` inside enriched prose (system / fix / learn). */
+  /**
+   * Trusted Stage 4 HTML. Rewrites legacy ``<a href="#">`` guide links to
+   * ``<span>`` so ``<base href="/cattitude/">`` cannot send taps to Cattitude home.
+   */
+  trustedGuideHtml(html: string | undefined): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(
+      this.normalizeGuideHtml(html || ''),
+    );
+  }
+
+  private normalizeGuideHtml(html: string): string {
+    return html.replace(
+      /<a\b([^>]*\bdata-guide-link="[^"]*"[^>]*)>([\s\S]*?)<\/a>/gi,
+      (_full, attrs: string, body: string) => {
+        const cleaned = attrs
+          .replace(/\s*href\s*=\s*(["'])[\s\S]*?\1/gi, '')
+          .replace(/\s*href\s*=\s*[^\s>]+/gi, '')
+          .trim();
+        return `<span role="link" tabindex="0" ${cleaned}>${body}</span>`;
+      },
+    );
+  }
+
+  /** Tap / keyboard activate ``data-guide-link`` inside enriched prose. */
   onGuideHtmlClick(event: Event): void {
     const target = event.target;
     if (!(target instanceof Element)) {
       return;
     }
-    const anchor = target.closest('a[data-guide-link]') as HTMLElement | null;
-    if (!anchor) {
+    const el = target.closest('[data-guide-link]') as HTMLElement | null;
+    if (!el) {
       return;
     }
     event.preventDefault();
-    const token = (anchor.getAttribute('data-guide-link') || '').trim();
+    event.stopPropagation();
+    const token = (el.getAttribute('data-guide-link') || '').trim();
     void this.navigateGuideLink(token);
+  }
+
+  onGuideHtmlKeydown(event: KeyboardEvent): void {
+    if (event.key !== 'Enter' && event.key !== ' ') {
+      return;
+    }
+    const target = event.target;
+    if (!(target instanceof Element)) {
+      return;
+    }
+    if (!target.closest('[data-guide-link]')) {
+      return;
+    }
+    event.preventDefault();
+    this.onGuideHtmlClick(event);
   }
 
   private async navigateGuideLink(token: string): Promise<void> {

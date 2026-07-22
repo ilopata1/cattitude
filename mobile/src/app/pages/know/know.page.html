@@ -84,8 +84,9 @@
         <ng-container *ngIf="section.html; else plainProse">
           <div
             class="prose prose--rich"
-            [innerHTML]="section.html"
+            [innerHTML]="trustedGuideHtml(section.html)"
             (click)="onGuideHtmlClick($event)"
+            (keydown)="onGuideHtmlKeydown($event)"
           ></div>
         </ng-container>
         <ng-template #plainProse>

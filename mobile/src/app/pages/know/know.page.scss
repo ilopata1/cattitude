@@ -126,7 +126,7 @@
 }
 
 .prose--rich {
-  // Linked prose is real HTML (<p>/<br>/<a>); don't double-preserve newlines.
+  // Linked prose is real HTML (<p>/<br>/guide-link spans); don't double-preserve newlines.
   white-space: normal;
 
   p {
@@ -137,7 +137,10 @@
     }
   }
 
-  a.guide-link {
+  // Prefer <span role="link"> — <a href="#"> resolves to <base href="/cattitude/">.
+  a.guide-link,
+  span.guide-link,
+  [data-guide-link].guide-link {
     color: var(--cattitude-teal, #0d7377);
     text-decoration: underline;
     text-underline-offset: 2px;

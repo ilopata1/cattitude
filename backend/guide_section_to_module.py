@@ -335,8 +335,8 @@ def _apply_guide_links_to_prose(
             str(link.get("data_guide_link") or f"system:{link.get('target_id')}")
         )
         parts.append(
-            f'<a href="#" class="guide-link" data-guide-link="{token}">'
-            f"{html.escape(text[start:end])}</a>"
+            f'<span role="link" tabindex="0" class="guide-link" '
+            f'data-guide-link="{token}">{html.escape(text[start:end])}</span>'
         )
         cursor = end
     parts.append(html.escape(text[cursor:]))
