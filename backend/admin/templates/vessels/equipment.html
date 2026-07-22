@@ -38,6 +38,12 @@
 {% if request.query_params.get('pack_applied') %}
 <div class="flash flash-ok">Option pack applied.</div>
 {% endif %}
+{% if request.query_params.get('removed') %}
+<div class="flash flash-ok">Equipment removed from this vessel.</div>
+{% endif %}
+{% if request.query_params.get('location_saved') %}
+<div class="flash flash-ok">Location updated.</div>
+{% endif %}
 {% if request.query_params.get('error') %}
 <div class="flash flash-error">{{ request.query_params.get('error') }}</div>
 {% endif %}
@@ -55,12 +61,12 @@
 </section>
 {% endif %}
 
-<div class="panel-grid" id="installed">
-  <section class="panel">
-    <h2>Installed ({{ installed|length }})</h2>
-    <p class="muted">Location options are filtered for vessel type <strong>{{ vessel.vessel_type | format_label }}</strong>.</p>
-    {% if installed %}
-    <table class="data-table compact">
+<section class="panel" id="installed">
+  <h2>Installed ({{ installed|length }})</h2>
+  <p class="muted">Location options are filtered for vessel type <strong>{{ vessel.vessel_type | format_label }}</strong>.</p>
+  {% if installed %}
+  <div class="table-scroll">
+    <table class="data-table compact installed-equipment-table">
       <thead>
         <tr>
           <th>Manufacturer</th>
@@ -68,7 +74,7 @@
           <th>System</th>
           <th>Location</th>
           <th>Confirmed by</th>
-          <th></th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -77,11 +83,14 @@
           <td>{{ item.manufacturer or '—' }}</td>
           <td>{{ item.model or '—' }}</td>
           <td>{{ item.system_category | category_label }}</td>
-          <td>{{ item.location_label or '—' }}</td>
-          <td>{{ item.confirmed_by | format_label }}</td>
-          <td class="row-actions">
-            <details class="inline-edit">
-              <summary>Edit location</summary>
+          <td class="location-cell">
+            {% if item.location_label %}
+            <div class="location-label">{{ item.location_label }}</div>
+            {% else %}
+            <div class="location-label location-missing">No location set</div>
+            {% endif %}
+            <details class="inline-edit"{% if not item.zone %} open{% endif %}>
+              <summary>{% if item.zone %}Edit location{% else %}Set location{% endif %}</summary>
               <form method="post" action="/admin/vessels/{{ vessel.id }}/equipment/edit-location" class="location-form">
                 <input type="hidden" name="row_id" value="{{ item.id }}">
                 {{ location_editor(item.zone, item.sub_zone, item.hull_side, item.detail) }}
@@ -90,6 +99,9 @@
                 </div>
               </form>
             </details>
+          </td>
+          <td>{{ item.confirmed_by | format_label }}</td>
+          <td class="row-actions">
             <form method="post" action="/admin/vessels/{{ vessel.id }}/equipment/remove" onsubmit="return confirm('Remove this installed equipment?');">
               <input type="hidden" name="row_id" value="{{ item.id }}">
               <input type="hidden" name="manufacturer" value="{{ manufacturer }}">
@@ -102,34 +114,34 @@
         {% endfor %}
       </tbody>
     </table>
-    {% else %}
-    <p class="muted">No equipment linked yet.</p>
-    {% endif %}
-  </section>
+  </div>
+  {% else %}
+  <p class="muted">No equipment linked yet.</p>
+  {% endif %}
+</section>
 
-  <section class="panel">
-    <h2>Apply option pack</h2>
-    {% if vessel.hull_model_id %}
-    <p class="muted">Filtered for <strong>{{ vessel.hull_manufacturer }} {{ vessel.hull_display_name or vessel.hull_model_code }}</strong>.</p>
-    {% else %}
-    <p class="muted">Set a hull model on the vessel to filter packs for this hull.</p>
-    {% endif %}
-    <p class="muted">Pack items are placed at the default location for each system; adjust individual items above afterwards.</p>
-    {% if option_packs %}
-    <form method="post" action="/admin/vessels/{{ vessel.id }}/equipment/apply-pack" class="inline-form">
-      <select name="option_pack_id" required>
-        <option value="">Select pack…</option>
-        {% for pack in option_packs %}
-        <option value="{{ pack.id }}">{{ pack.manufacturer }} — {{ pack.pack_name }} ({{ pack.bill_count }} items{% if pack.child_pack_count %}, {{ pack.child_pack_count }} child packs{% endif %})</option>
-        {% endfor %}
-      </select>
-      <button type="submit">Apply pack</button>
-    </form>
-    {% else %}
-    <p class="muted">No option packs in registry yet.</p>
-    {% endif %}
-  </section>
-</div>
+<section class="panel">
+  <h2>Apply option pack</h2>
+  {% if vessel.hull_model_id %}
+  <p class="muted">Filtered for <strong>{{ vessel.hull_manufacturer }} {{ vessel.hull_display_name or vessel.hull_model_code }}</strong>.</p>
+  {% else %}
+  <p class="muted">Set a hull model on the vessel to filter packs for this hull.</p>
+  {% endif %}
+  <p class="muted">Pack items are placed at the default location for each system; adjust individual items above afterwards.</p>
+  {% if option_packs %}
+  <form method="post" action="/admin/vessels/{{ vessel.id }}/equipment/apply-pack" class="inline-form">
+    <select name="option_pack_id" required>
+      <option value="">Select pack…</option>
+      {% for pack in option_packs %}
+      <option value="{{ pack.id }}">{{ pack.manufacturer }} — {{ pack.pack_name }} ({{ pack.bill_count }} items{% if pack.child_pack_count %}, {{ pack.child_pack_count }} child packs{% endif %})</option>
+      {% endfor %}
+    </select>
+    <button type="submit">Apply pack</button>
+  </form>
+  {% else %}
+  <p class="muted">No option packs in registry yet.</p>
+  {% endif %}
+</section>
 
 <section class="panel" id="registry">
   <h2>Add from equipment registry</h2>

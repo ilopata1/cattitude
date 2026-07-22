@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { ContentService } from '../../../core/services/content.service';
 import { EmergencyService } from '../../../core/services/emergency.service';
-import { Subscription } from 'rxjs';
+import { VesselRouteService } from '../../../core/services/vessel-route.service';
 
 @Component({
   selector: 'app-header',
@@ -16,6 +17,7 @@ export class AppHeaderComponent implements OnInit, OnDestroy {
   constructor(
     public readonly content: ContentService,
     private readonly emergency: EmergencyService,
+    private readonly vesselRoutes: VesselRouteService,
   ) {}
 
   ngOnInit(): void {
@@ -26,6 +28,10 @@ export class AppHeaderComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.emergencySub?.unsubscribe();
+  }
+
+  goHome(): void {
+    void this.vesselRoutes.navigateTabs('home');
   }
 
   openEmergency(): void {

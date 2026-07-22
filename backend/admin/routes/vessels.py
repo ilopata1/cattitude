@@ -509,7 +509,10 @@ async def edit_equipment_location_action(
             )
         except VesselServiceError as exc:
             error = str(exc)
-    query = f"?error={quote(error)}" if error else ""
+    if error:
+        query = f"?error={quote(error)}"
+    else:
+        query = "?location_saved=1"
     return RedirectResponse(
         f"/admin/vessels/{vessel_id}/equipment{query}#installed",
         status_code=303,
@@ -528,6 +531,8 @@ async def remove_equipment_action(
     with get_engine().begin() as conn:
         remove_vessel_equipment(conn, vessel_id, row_id)
     query = _equipment_search_query(manufacturer, q, system_category)
+    sep = "&" if query else "?"
+    query = f"{query}{sep}removed=1"
     return RedirectResponse(
         f"/admin/vessels/{vessel_id}/equipment{query}#installed",
         status_code=303,

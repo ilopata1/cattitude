@@ -1,12 +1,15 @@
 <ion-header class="app-header ion-no-border">
   <ion-toolbar>
     <div class="header-brand" slot="start">
-      <img
+      <button
         *ngIf="content.bootstrap.branding.headerLogo as logo"
-        [src]="logo"
-        alt=""
-        class="header-logo"
-      />
+        type="button"
+        class="header-logo-btn"
+        (click)="goHome()"
+        aria-label="Home"
+      >
+        <img [src]="logo" alt="" class="header-logo" />
+      </button>
       <div>
         <div class="header-title">{{ content.bootstrap.branding.charterCompany }}</div>
         <div class="header-sub">

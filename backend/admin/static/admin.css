@@ -1265,6 +1265,21 @@ code {
 }
 
 /* Equipment location editor (vessel equipment page) */
+.table-scroll {
+  overflow-x: auto;
+}
+.installed-equipment-table .location-cell {
+  min-width: 16rem;
+  white-space: normal;
+}
+.location-label {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+.location-label.location-missing {
+  font-weight: 500;
+  color: var(--error, #b42318);
+}
 .inline-edit {
   margin-bottom: 0.4rem;
 }
@@ -1275,9 +1290,11 @@ code {
 }
 .row-actions {
   white-space: nowrap;
+  vertical-align: top;
 }
 .row-actions form {
   display: inline-block;
+  margin: 0;
 }
 .location-form {
   margin: 0.5rem 0 0.75rem;
