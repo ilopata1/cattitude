@@ -139,16 +139,31 @@ def _load_vessel(conn, vessel_id: str) -> dict | None:
 
 
 def _load_modules(conn, vessel_id: str) -> list[dict]:
+    """One row per (content_type, content_key) for the guide overview.
+
+    After generate, both a new ``draft`` and the prior ``published`` row are
+    active; the list would otherwise show duplicates. Prefer draft, then
+    approved, then published — matching what staff need to act on.
+    """
     rows = conn.execute(
         text(
             """
-            SELECT
+            SELECT DISTINCT ON (content_type, content_key)
                 id, content_type, content_key, source, status,
                 created_at, approved_at, approved_by
             FROM guide_content
             WHERE vessel_id = :vessel_id
               AND status NOT IN ('superseded', 'archived')
-            ORDER BY content_type, content_key, created_at DESC
+            ORDER BY
+                content_type,
+                content_key,
+                CASE status
+                    WHEN 'draft' THEN 0
+                    WHEN 'approved' THEN 1
+                    WHEN 'published' THEN 2
+                    ELSE 3
+                END,
+                created_at DESC
             """
         ),
         {"vessel_id": vessel_id},
