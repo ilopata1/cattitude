@@ -7,23 +7,48 @@ from uuid import UUID
 from sqlalchemy import text
 from sqlalchemy.engine import Connection
 
+# Same gate as fragment drafting / Ask scope (Postgres legal_status enum).
+CLEARED_MANUAL_LEGAL_STATUS = "cleared"
+
+_VESSEL_CLEARED_MANUALS_SQL = """
+SELECT DISTINCT mw.id, mw.title
+FROM vessel_equipment ve
+JOIN equipment e ON e.id = ve.equipment_id
+JOIN manual_work mw ON mw.equipment_id = e.id
+JOIN manual_edition me
+  ON me.manual_work_id = mw.id AND me.is_current = true
+WHERE ve.vessel_id = :vessel_id
+  AND mw.legal_status = CAST(:legal_status AS legal_status)
+ORDER BY mw.title
+"""
+
+
+def list_manual_ids_for_vessel(conn: Connection, vessel_id: str) -> list[str]:
+    """Cleared manuals (current edition) for equipment installed on this vessel.
+
+    Ask retrieval allow-list. Stage-4-only substrate rows without a
+    ``vessel_equipment`` install are intentionally excluded.
+    """
+    rows = conn.execute(
+        text(_VESSEL_CLEARED_MANUALS_SQL),
+        {
+            "vessel_id": vessel_id,
+            "legal_status": CLEARED_MANUAL_LEGAL_STATUS,
+        },
+    ).fetchall()
+    return [str(row[0]) for row in rows if row[0]]
+
 
 def build_manual_titles_for_vessel(conn: Connection, vessel_id: str) -> dict[str, str]:
-    """Map manual_work.id → title for manuals on equipment linked to this vessel."""
+    """Map manual_work.id → title for cleared manuals on vessel inventory."""
     rows = conn.execute(
-        text(
-            """
-            SELECT DISTINCT mw.id, mw.title
-            FROM vessel_equipment ve
-            JOIN equipment e ON e.id = ve.equipment_id
-            JOIN manual_work mw ON mw.equipment_id = e.id
-            WHERE ve.vessel_id = :vessel_id
-            ORDER BY mw.title
-            """
-        ),
-        {"vessel_id": vessel_id},
+        text(_VESSEL_CLEARED_MANUALS_SQL),
+        {
+            "vessel_id": vessel_id,
+            "legal_status": CLEARED_MANUAL_LEGAL_STATUS,
+        },
     ).fetchall()
-    return {str(row[0]): row[1] for row in rows if row[1]}
+    return {str(row[0]): row[1] for row in rows if row[0] and row[1]}
 
 
 def _as_uuid(value: str) -> UUID | None:

@@ -40,22 +40,32 @@ export class ChatService {
       return;
     }
 
+    const vesselId = this.vesselContext.vesselId;
+    if (!vesselId) {
+      this.history.push({
+        role: 'user',
+        content: trimmed,
+      });
+      this.history.push({
+        role: 'assistant',
+        content:
+          'Ask needs an active vessel. Open this app from a vessel link so questions stay limited to that boat’s manuals.',
+      });
+      return;
+    }
+
     this.history.push({ role: 'user', content: trimmed });
     this.busy = true;
 
     try {
       const body: Record<string, unknown> = {
         question: trimmed,
+        vessel_id: vesselId,
         conversation_history: this.history.slice(-20).map((m) => ({
           role: m.role,
           content: m.content,
         })),
       };
-
-      const vesselId = this.vesselContext.vesselId;
-      if (vesselId) {
-        body['vessel_id'] = vesselId;
-      }
 
       const charterId = this.vesselContext.snapshot.charterId;
       if (charterId) {
@@ -106,10 +116,14 @@ export class ChatService {
     }
 
     if (error && typeof error === 'object' && 'status' in error) {
-      const err = error as { error?: { detail?: string }; status?: number };
+      const err = error as {
+        error?: { detail?: string | Array<{ msg?: string }> };
+        status?: number;
+      };
+      const detail = this.detailMessage(err.error?.detail);
       if (err.status === 422) {
         return (
-          err.error?.detail ||
+          detail ||
           'Your question could not be processed. Try rephrasing it.'
         );
       }
@@ -118,18 +132,35 @@ export class ChatService {
       }
       if (err.status === 500) {
         return (
-          err.error?.detail ||
+          detail ||
           'The manual service returned an error. Check Railway logs for the backend.'
         );
       }
       if (err.status === 0) {
         return 'Sorry — something went wrong reaching the manual service. Try again in a moment.';
       }
-      if (err.error?.detail) {
-        return err.error.detail;
+      if (detail) {
+        return detail;
       }
     }
 
     return 'Sorry — something went wrong reaching the manual service. Try again in a moment.';
+  }
+
+  private detailMessage(
+    detail: string | Array<{ msg?: string }> | undefined,
+  ): string | undefined {
+    if (typeof detail === 'string' && detail.trim()) {
+      return detail.trim();
+    }
+    if (Array.isArray(detail) && detail.length) {
+      const parts = detail
+        .map((item) => (typeof item?.msg === 'string' ? item.msg.trim() : ''))
+        .filter(Boolean);
+      if (parts.length) {
+        return parts.join(' ');
+      }
+    }
+    return undefined;
   }
 }

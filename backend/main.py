@@ -7,16 +7,16 @@ from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
+from sqlalchemy import create_engine
 
 from admin.routes import router as admin_router
 from config import settings
 from db import postgres_connection_strings
 from english_text import extract_english
 from guide_api import router as guide_router
-from manual_titles import lookup_manual_title
+from manual_titles import list_manual_ids_for_vessel, lookup_manual_title
 from query import ContentFilterError, run_query
-from sqlalchemy import create_engine
 
 logger = logging.getLogger(__name__)
 
@@ -35,13 +35,26 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+NO_VESSEL_MANUALS_DETAIL = (
+    "No cleared manuals linked to this vessel's equipment."
+)
+
 
 class QueryRequest(BaseModel):
     question: str
+    vessel_id: str = Field(..., min_length=1, description="Vessel UUID for inventory-scoped Ask")
     conversation_history: list[dict] = Field(
         default_factory=list,
         description="[{role, content}] reserved for future multi-turn",
     )
+
+    @field_validator("vessel_id")
+    @classmethod
+    def _strip_vessel_id(cls, value: str) -> str:
+        stripped = (value or "").strip()
+        if not stripped:
+            raise ValueError("vessel_id is required")
+        return stripped
 
 
 class SourceItem(BaseModel):
@@ -93,11 +106,37 @@ class QueryResponse(BaseModel):
     sources: list[SourceItem]
 
 
+def _resolve_manual_ids(vessel_id: str) -> list[str]:
+    sync_url, _ = postgres_connection_strings(settings.database_url)
+    engine = create_engine(sync_url, pool_pre_ping=True)
+    with engine.connect() as conn:
+        return list_manual_ids_for_vessel(conn, vessel_id)
+
+
 @app.post("/query", response_model=QueryResponse)
 async def query_manuals(req: QueryRequest) -> QueryResponse:
+    vessel_id = req.vessel_id
+
+    try:
+        manual_ids = await asyncio.get_event_loop().run_in_executor(
+            None, _resolve_manual_ids, vessel_id
+        )
+    except Exception as exc:
+        logger.exception("Ask vessel manual allow-list failed")
+        raise HTTPException(
+            status_code=500,
+            detail="Manual query failed. Check Railway logs for details.",
+        ) from exc
+
+    if not manual_ids:
+        raise HTTPException(status_code=422, detail=NO_VESSEL_MANUALS_DETAIL)
+
     loop = asyncio.get_event_loop()
     try:
-        response = await loop.run_in_executor(None, run_query, req.question)
+        response = await loop.run_in_executor(
+            None,
+            lambda: run_query(req.question, manual_ids=manual_ids),
+        )
     except ContentFilterError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except Exception as exc:
@@ -109,10 +148,19 @@ async def query_manuals(req: QueryRequest) -> QueryResponse:
 
     sources: list[SourceItem] = []
     if hasattr(response, "source_nodes"):
+        allowed = set(manual_ids)
         for node in response.source_nodes:
             item = _source_from_node(node)
-            if item is not None:
-                sources.append(item)
+            if item is None:
+                continue
+            # Defense in depth: never return a source outside the vessel allow-list.
+            if item.manual_id not in allowed:
+                logger.warning(
+                    "Ask source manual_id %s not in vessel allow-list; dropping",
+                    item.manual_id,
+                )
+                continue
+            sources.append(item)
 
     if sources:
         try:
