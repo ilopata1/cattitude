@@ -109,11 +109,13 @@
 </div>
 {% endmacro %}
 
-{% macro preview_system_section(section) %}
+{% macro preview_system_section(section, show_title=True) %}
 {% set section_items = section['items'] if section['items'] is defined else [] %}
 {% set location_rows = section['rows'] if section['rows'] is defined else [] %}
 <div class="guide-preview-sys-section">
+  {% if show_title and section.t %}
   <div class="guide-preview-sys-section-title">{{ section.t }}</div>
+  {% endif %}
   {% if section.type == 'equipment_locations' and location_rows %}
   <div class="guide-preview-equip-locations">
     <table class="guide-preview-equip-table">
@@ -136,6 +138,8 @@
     <p class="guide-preview-sys-more">… {{ location_rows|length - 6 }} more</p>
     {% endif %}
   </div>
+  {% elif section.html %}
+  <div class="guide-preview-sys-prose guide-preview-sys-prose--rich">{{ section.html | safe }}</div>
   {% elif section.c %}
   <p class="guide-preview-sys-prose">{{ section.c }}</p>
   {% elif section.type == 'photo' %}
@@ -186,12 +190,11 @@
   {% endif %}
   <div class="guide-preview-sys-block">
     <div class="guide-preview-sys-block-title">Full system guide</div>
-    {% for section in payload.sections[:4] %}
-      {{ preview_system_section(section) }}
+    {% for section in payload.sections %}
+      {% set prev_title = payload.sections[loop.index0 - 1].t if not loop.first else '' %}
+      {% set show_title = section.t and section.t != prev_title %}
+      {{ preview_system_section(section, show_title=show_title) }}
     {% endfor %}
-    {% if payload.sections|length > 4 %}
-    <p class="guide-preview-sys-more">… {{ payload.sections|length - 4 }} more sections</p>
-    {% endif %}
   </div>
 </div>
 {% endmacro %}

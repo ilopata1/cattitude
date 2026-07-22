@@ -231,7 +231,9 @@ def _enrich_block_paragraphs(
             title = heading
             used_heading = True
         else:
-            # Same O3 heading as the block; Know hides consecutive duplicate h3s.
+            # Continuation of the same O3 block — keep the heading for
+            # learnChecks / validators, but Know + admin hide consecutive
+            # duplicate titles.
             title = heading
         sections.append(
             {"t": title, "type": section_type, "items": list(pending_items)}
@@ -534,6 +536,12 @@ def section_to_system_module(
 
     sections: list[dict[str, Any]] = []
     rendered_blocks: set[str] = {"capability_summary"}
+
+    # Locations chip first — guest-facing place table before narrative blocks.
+    locations = _equipment_locations_section(composed, equipment_doc)
+    if locations:
+        sections.append(locations)
+
     # Spine order first, then any non-spine blocks in first-seen order.
     for block in list(SECTION_SPINE) + [
         b for b in seen_order if b not in SECTION_SPINE
@@ -550,10 +558,6 @@ def section_to_system_module(
 
     if extra_sections:
         sections.extend(extra_sections)
-
-    locations = _equipment_locations_section(composed, equipment_doc)
-    if locations:
-        sections.append(locations)
 
     related_links = _related_guide_links(section_id)
     sections.append(_related_section(section_id, related_links))
