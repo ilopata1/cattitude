@@ -64,14 +64,16 @@ wholesale; redirect only the *system* slot to Stage 4.
 | Phase | What | Acceptance | Rough effort |
 |-------|------|-----------|--------------|
 | **1 ✅ DONE** | Output spine: Stage 4 dict → `SystemModule` → `guide_content` → publish → client, **fixtures as input** | Ingest → approve → publish → `bundle.json` renders the systems in the app | shipped |
+| **1b** | Reader polish: enrich text structure (lists/steps/…) + tappable cross-section links | Stage 4 modules render with full Know styling; xrefs navigate to the target system | see design below |
 | **2 ✅ DONE** | Input substrate in DB: persist profiles + relations + vessel facts (per-model library + per-boat wiring); DB→`equipment_doc`/`profiles` adapter | Composer output from DB-built inputs == frozen fixture drafts, exactly | shipped |
 | **3 ✅ DONE** | Orchestrator + admin: `run_stage4_generation(vessel)`; wire into admin generate; persist provenance/fact_queries (owner-questions store only — no admin UI) | One-click DB-native generate → publish | shipped |
 | **4** | De-hardcode composers for arbitrary vessels (remove Outremer constants, `DISPLAY_NAMES`/`MANUFACTURER_MODEL`, pinned device keys); add a 2nd vessel | A different vessel generates coherent system chapters | see design below |
 | **5** | Consolidate: retire the old fragment/LLM path for system modules; delete dead code + frozen-bundle path | Single generation path for systems | ~few days |
 
-Value lands after Phase 1–3 (done). Next: Phase 4 (de-hardcode composers /
-2nd vessel) — design below. Owner onboarding UI for answering `owner_question`
-rows is a parallel product track, not a Stage 4 phase.
+Value lands after Phase 1–3 (done). **Immediate priority (ahead of 4 and 5):**
+reader polish — full guide text styling + tappable section linkages (Phase 1
+decisions 1 and 3, deferred until now). See **Phase 1b** below. Phase 4
+(de-hardcode + 2nd vessel) and Phase 5 (path consolidation) follow after.
 
 ---
 
@@ -172,6 +174,175 @@ Delivered and verified against the live deployed API.
 - **Deferred to their own phases (unchanged by Phase 1):** titled paragraphs
   only — no lists/steps enrichment (decision 1); plain-word xrefs — no tappable
   links (decision 3); fixtures remain the composer input (Phase 2).
+  **Update:** decisions 1 and 3 are now **Phase 1b** (immediate priority,
+  ahead of Phases 4–5).
+
+---
+
+## Phase 1b — reader polish (text styling + section linkages)
+
+**Status:** planned — **immediate priority ahead of Phases 4 and 5.**
+
+### What this is for (plain language)
+
+Phase 1 shipped Stage 4 chapters into the live app as **blocks of plain
+paragraphs** under O3 headings. That was enough to prove the pipeline. It is
+not the full Know reading experience:
+
+1. **Text structure (decision 1 “later”).** The client already knows how to
+   render `list`, `steps`, `warnings`, and `notes` (bullets, numbered steps,
+   warning styling). Stage 4 transform currently emits **only** `type: "prose"`
+   with newlines inside `c` — so “Use it when:” bullets and procedure-like lines
+   look like flat paragraphs (`white-space: pre-line`), not real lists/steps.
+2. **Section linkages (decision 3 “later”).** Composers already emit structured
+   `guide_links` (`target_id`, `label`, `data_guide_link: system:<id>`, …) and
+   reader phrases like “the Batteries & Energy section of this guide.” Those
+   links live on the **generation-run metadata**, not in the published module
+   the phone reads — so guests see plain words, not tappable navigation.
+   Know already opens a system via `?system=<id>`; the missing piece is wiring
+   published content to that navigation.
+
+This phase closes those two gaps for the boats you already Generate (Supernova
+first). It does **not** de-hardcode composers (Phase 4) or retire fragments
+(Phase 5).
+
+### What already exists (do not rebuild)
+
+| Piece | Where | Ready? |
+|-------|--------|--------|
+| Section types `prose` / `list` / `steps` / `warnings` / `notes` / `photo` | `_validate_system_module`, Know template | Yes — client renders them |
+| O3 titled blocks | `guide_section_to_module.BLOCK_HEADINGS` | Yes |
+| Multi-paragraph prose | Know `.prose { white-space: pre-line }` | Yes |
+| Xref phrase + structured link object | `format_section_xref` / `guide_links` (spec v4.13) | Yes — on run metadata only |
+| In-app jump to a system | Know `?system=<id>` / `openSystem` | Yes — unused by Stage 4 body text |
+
+### Decision topics — expanded
+
+#### A. How aggressive is “enrich to lists/steps”?
+
+**What it means.** How we decide a paragraph becomes a structured section vs
+staying prose.
+
+- **Transform-only heuristics:** In `guide_section_to_module`, split a spine
+  block’s paragraphs: lines starting with `- ` → `list` items; numbered lines →
+  `steps`; keep surrounding sentences as `prose` (possibly several sections
+  under the same O3 heading, or one heading with mixed sibling sections).
+- **Composer-aware:** Teach composers to emit typed blocks (or markers in
+  provenance) so enrichment is intentional, not guessed.
+- **Hybrid (recommended):** Heuristics first for today’s drafts (fast reader
+  win); tighten composers where heuristics are wrong (e.g. troubleshooting →
+  `warnings`).
+
+**Why it matters.** Heuristics are quick and keep Outremer drafts readable
+without rewriting every composer. They can mis-classify edge cases. Composer
+markers are more accurate but touch more frozen code and the byte-match oracle.
+
+**Recommendation:** Hybrid — transform heuristics for clear bullet/step
+patterns; leave ambiguous paragraphs as prose; optionally map the
+troubleshooting block to `warnings` when items are clearly bullet-like.
+
+**Implication:** Phase 2 **composed markdown** byte-match can stay green
+(composers unchanged at first); the **module payload** shape will change, so
+golden `stage4_modules.json` / published drafts need a regenerate + visual
+check. If we later change composers, Outremer section verify scripts still
+gate prose.
+
+#### B. Where do tappable links live in the published payload?
+
+**What it means.** Guests need something in `SystemModule` (or derived at
+publish) that the client can turn into a tap target. Spec v4.13: do **not**
+bake app routes into Stage 4; resolve with `system:<id>` → Know `?system=<id>`.
+
+Options:
+
+1. **Inline markers in `c` / `items`** — e.g. keep the phrase and add a parallel
+   `links: [{…}]` on the section (or module) keyed by sentence / offset.
+2. **`html` field** — Know already supports `section.html` + `appRichHtml`;
+   emit `<a data-guide-link="system:batteries">…</a>` (or similar) and handle
+   clicks in the client.
+3. **Separate “See also” chip row** — ignore in-prose taps; list `guide_links`
+   as buttons under the module. Weaker UX; easiest.
+
+**Recommendation:** Prefer **(1) or (2)** so the existing “Batteries & Energy
+section of this guide” phrase becomes the tap target — not a detached chip
+list. Concrete choice at implement time: if `appRichHtml` already sanitizes
+safely for `data-guide-link`, use html; otherwise keep plain `c` + structured
+`links` and render tappable spans in the Know template.
+
+**Implication:** Transform must **promote** `guide_links` (or provenance
+`links`) into the published module (reversing Phase 1’s “metadata only”
+stance for this one field). Audit trail can still keep a copy on the run.
+Regenerate + republish Supernova after the change.
+
+#### C. Client behavior on tap
+
+**What it means.** Tap “Batteries & Energy section of this guide” → open that
+system’s detail (same as picking it from the Know list).
+
+**Recommendation:** Reuse existing `openSystem` / query-param path. If the
+target module is missing from the published bundle, fail soft (no navigation,
+phrase stays readable text).
+
+**Implication:** Small Know-page change; no new routes. Works for Stage 4
+system↔system xrefs first; checklist/fix targets (`target_kind` other than
+`system`) can stay non-tappable until later.
+
+#### D. Oracle / regression bar
+
+**What it means.** Enrichment changes module JSON; it should not silently
+rewrite Outremer *composer* prose unless we intend to.
+
+**Recommendation:**
+
+- Keep `verify_*_section_v4` + composed-draft byte expectations as today.
+- Update Phase 1 module golden / republish after transform changes.
+- Add a small smoke: enriched modules still pass `_validate_system_module`;
+  at least one `list` or `steps` appears where Outremer drafts have `- `
+  bullets; at least one published link resolves to a known `system:` id.
+
+#### E. Scope vs Phases 4–5
+
+**In Phase 1b:** styling + linkages for Stage 4 modules on vessels you already
+Generate (Supernova).  
+**Not in Phase 1b:** second vessel, registry merge, killing fragment path,
+owner onboarding UI, xrefs to Fix/Do unless trivial.
+
+### Workstreams
+
+1. **Enrich transform** (`guide_section_to_module`) — split prose blocks into
+   `prose` / `list` / `steps` / optionally `warnings` per heuristics (A).
+2. **Publish links** — fold `guide_links` into module/section payload; stop
+   treating them as metadata-only for the client (B).
+3. **Know client** — render tappable xrefs; navigate via existing system open
+   (C). Confirm list/steps styling looks right for Stage 4 content.
+4. **Regenerate Supernova** — Generate → approve → publish; visual pass in
+   app/API bundle.
+5. **Tests** — validator + smoke for enriched shapes and link tokens; keep
+   composer oracles green.
+
+### Acceptance
+
+- Published Stage 4 modules use `list` / `steps` (and warnings where
+  appropriate) where drafts clearly have bullets/procedures — not only flat
+  `prose`.
+- Cross-section phrases that composers already mark as xrefs are tappable in
+  Know and open the target system when that module is in the bundle.
+- `_validate_system_module` still passes; Outremer composer verify scripts
+  remain green.
+- Phases 4 and 5 remain deferred until you call them up.
+
+### Rough effort
+
+~2–4 days if heuristics + Know tap wiring stay thin; longer if every composer
+must emit typed blocks before anything ships.
+
+### Open choices before implement
+
+**Locked (2026-07-21):**
+- **A — Hybrid heuristics** in the transform first; composers unchanged unless
+  heuristics mis-classify.
+- **B — In-prose tappable targets** (not a detached chip list); promote
+  `guide_links` into the published module and wire Know to `openSystem`.
 
 ---
 
