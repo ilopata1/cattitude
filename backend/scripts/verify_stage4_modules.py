@@ -10,7 +10,7 @@ oracle for the vessel. Fixture-compose and DB-compose intentionally diverge once
 composers emit registry locations — the oracle pins the DB path.
 
 Optional ``--substrate-match`` still asserts fixture-compose == DB-compose with
-``places`` stripped (substrate fidelity without location prose).
+``places`` stripped (substrate fidelity without location tables).
 
 Usage (from backend/):
   python scripts/verify_stage4_modules.py

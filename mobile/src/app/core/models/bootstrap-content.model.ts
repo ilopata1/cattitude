@@ -37,6 +37,8 @@ export interface SystemSection {
   c?: string;
   html?: string;
   items?: unknown[];
+  /** Registry places for devices referenced in this system chapter. */
+  rows?: Array<{ name: string; location: string }>;
   [key: string]: unknown;
 }
 

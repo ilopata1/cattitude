@@ -156,6 +156,55 @@
   border-left: 3px solid var(--cattitude-teal);
 }
 
+.equipment-locations {
+  background: #fff;
+  border: 1px solid var(--cattitude-sand-mid);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.equipment-locations-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  line-height: 1.4;
+
+  th,
+  td {
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  thead th {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--cattitude-text-light);
+    background: rgba(237, 230, 214, 0.45);
+    border-bottom: 1px solid var(--cattitude-sand-mid);
+  }
+
+  tbody td {
+    color: var(--cattitude-navy);
+    border-bottom: 1px solid rgba(237, 230, 214, 0.55);
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  td:first-child {
+    font-weight: 600;
+    width: 48%;
+  }
+
+  td:last-child {
+    color: var(--cattitude-text-light);
+  }
+}
+
 .section-items {
   list-style: none;
   margin: 0;

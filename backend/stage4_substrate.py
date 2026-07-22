@@ -274,7 +274,8 @@ def build_equipment_doc_from_db(conn: Connection, vessel_id: str) -> dict[str, A
     When ``interaction_profile.equipment_id`` is set and the vessel has matching
     ``vessel_equipment`` installs, each equipment row may gain a ``places`` list
     (registry locations). Composers that ignore ``places`` stay byte-identical to
-    the fixture path; emission of place prose is a separate, intentional step.
+    the fixture path; the transform emits an Equipment Locations table when
+    places are present.
     """
     facts_row = conn.execute(
         text("SELECT facts FROM vessel_stage4_facts WHERE vessel_id = :v"),

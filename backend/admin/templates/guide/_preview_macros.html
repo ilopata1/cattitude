@@ -111,9 +111,32 @@
 
 {% macro preview_system_section(section) %}
 {% set section_items = section['items'] if section['items'] is defined else [] %}
+{% set location_rows = section['rows'] if section['rows'] is defined else [] %}
 <div class="guide-preview-sys-section">
   <div class="guide-preview-sys-section-title">{{ section.t }}</div>
-  {% if section.c %}
+  {% if section.type == 'equipment_locations' and location_rows %}
+  <div class="guide-preview-equip-locations">
+    <table class="guide-preview-equip-table">
+      <thead>
+        <tr>
+          <th>Equipment</th>
+          <th>Location</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in location_rows[:6] %}
+        <tr>
+          <td>{{ row.name }}</td>
+          <td>{{ row.location }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% if location_rows|length > 6 %}
+    <p class="guide-preview-sys-more">… {{ location_rows|length - 6 }} more</p>
+    {% endif %}
+  </div>
+  {% elif section.c %}
   <p class="guide-preview-sys-prose">{{ section.c }}</p>
   {% elif section.type == 'photo' %}
   <p class="guide-preview-sys-photo">📷 Photo section preserved from approved guide</p>

@@ -112,7 +112,12 @@ def build_modules_from_context(
     for sid in PUBLISHED_SECTIONS:
         composed = composed_by_section[sid]
         extra = solar_sections if (sid == "batteries" and solar_sections) else None
-        modules[sid] = section_to_system_module(sid, composed, extra_sections=extra)
+        modules[sid] = section_to_system_module(
+            sid,
+            composed,
+            extra_sections=extra,
+            equipment_doc=ctx["equipment_doc"],
+        )
         metadata[sid] = extract_module_metadata(sid, composed)
 
     # Solar's audit trail travels with the batteries module metadata.

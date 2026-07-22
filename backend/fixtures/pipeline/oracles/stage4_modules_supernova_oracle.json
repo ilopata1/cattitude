@@ -39,6 +39,36 @@
         "c": "Supernova carries about 1.6–1.8 kW of solar.\n\nHer davit array is three rigid panels, about 1.0–1.2 kW, on the davit array controller (Victron SmartSolar MPPT 150/60).\n\nHer coachroof array is six semi-flex panels, about 600 W, on 2 interchangeable coachroof array controllers (Victron SmartSolar MPPT 75/15).\n\nThose chargers feed her Mastervolt MLI Ultra house bank.\n\nCheck her solar charge in the VictronConnect app on each controller when you want to see how much the panels are producing.\n\nUnder sail, when yield looks soft, watch the coachroof controllers first because the boom can shade that array, and treat the davit array controller as the steadier production reference."
       },
       {
+        "t": "Equipment Locations",
+        "type": "equipment_locations",
+        "rows": [
+          {
+            "name": "Mastervolt MLI Ultra 24/6000",
+            "location": "Engine / Machinery Space – Engine Bay"
+          },
+          {
+            "name": "Victron Energy SmartSolar MPPT 75/15",
+            "location": "Engine / Machinery Space – Engine Bay · Saloon / Living Area (Under sofa near chart table)"
+          },
+          {
+            "name": "Victron Energy SmartSolar MPPT 150/60-Tr",
+            "location": "Saloon / Living Area (Under sofa near chart table)"
+          },
+          {
+            "name": "Mastervolt Mass Combi Pro",
+            "location": "Engine / Machinery Space – Engine Bay"
+          },
+          {
+            "name": "Fischer Panda Panda 8000i",
+            "location": "Port – Engine / Machinery Space – Generator Compartment (Wing locker)"
+          },
+          {
+            "name": "Mastervolt Alpha Pro III",
+            "location": "Port (was: port hull)"
+          }
+        ]
+      },
+      {
         "t": "Related",
         "type": "prose",
         "c": "If something goes wrong with this system, open the Fix It cards for electrical for quick troubleshooting cards.\n\nWhen you are learning the boat, tick off this chapter on the Learn the Boat checklist.",
@@ -88,8 +118,8 @@
     "id": "controls",
     "icon": "🎛️",
     "title": "Controls and Monitoring",
-    "subtitle": "Switching and monitoring run through the touchscreen (CZone Touch 7) in the Helm /…",
-    "summary": "On Supernova, switching and monitoring run through the touchscreen (CZone Touch 7) in the Helm / Navigation Station, which hosts CZone.\n\nThe CZone menus include Favourites, Modes, Control, Monitoring, Alarms, Inverter Charger.",
+    "subtitle": "Switching and monitoring run through the touchscreen (CZone Touch 7), which hosts CZone",
+    "summary": "On Supernova, switching and monitoring run through the touchscreen (CZone Touch 7), which hosts CZone.\n\nThe CZone menus include Favourites, Modes, Control, Monitoring, Alarms, Inverter Charger.",
     "sections": [
       {
         "t": "Monitoring",
@@ -107,6 +137,20 @@
         "t": "If something's not right",
         "type": "prose",
         "c": "CZone literature also describes AC Mains and Climate pages; they do not appear in the menus until the matching interfaces are configured."
+      },
+      {
+        "t": "Equipment Locations",
+        "type": "equipment_locations",
+        "rows": [
+          {
+            "name": "CZone CZone 2.0",
+            "location": "Helm / Navigation Station – Interior Helm"
+          },
+          {
+            "name": "CZone Touch 7",
+            "location": "Helm / Navigation Station"
+          }
+        ]
       },
       {
         "t": "Related",
@@ -150,7 +194,7 @@
     "icon": "⚡",
     "title": "Electrical Panel",
     "subtitle": "Battery banks are combined and isolated automatically, and DC distribution is protected…",
-    "summary": "On Supernova, battery banks are combined and isolated automatically, and DC distribution is protected before power reaches the boat's switched circuits.\n\nThe house battery bank is protected by three high-current Class-T fuses (Blue Sea Class T) in the Engine / Machinery Space – Engine Bay — fuses that protect the cables carrying power from the bank if a major electrical fault occurs.\n\nAn automatic charging relay (Blue Sea Systems Automatic Charging Relays (ACR)) in the Engine / Machinery Space – Engine Bay combines and isolates battery banks based on charging voltage.\n\nA local rotary isolation switch provides a separate disconnect for its battery connection.",
+    "summary": "On Supernova, battery banks are combined and isolated automatically, and DC distribution is protected before power reaches the boat's switched circuits.\n\nThe house battery bank is protected by three high-current Class-T fuses (Blue Sea Class T) — fuses that protect the cables carrying power from the bank if a major electrical fault occurs.\n\nAn automatic charging relay (Blue Sea Systems Automatic Charging Relays (ACR)) combines and isolates battery banks based on charging voltage.\n\nA local rotary isolation switch provides a separate disconnect for its battery connection.",
     "sections": [
       {
         "t": "How it works",
@@ -186,8 +230,30 @@
       {
         "t": "Care & upkeep",
         "type": "prose",
-        "c": "The DC distribution busbar (ProInstaller) in the Engine / Machinery Space – Engine Bay — a heavy-duty conductor that distributes power — is the main power distribution point behind those protected connections.\n\nThe MasterBus–CZone bridge (Mastervolt MasterBus Bridge Interface) allows MasterBus equipment and the CZone network to exchange status and control across that boundary.\n\nHouse-bank capacity, charging, and inverter-charger procedures can be found in the Batteries & Energy section of this guide.",
-        "html": "<p>The DC distribution busbar (ProInstaller) in the Engine / Machinery Space – Engine Bay — a heavy-duty conductor that distributes power — is the main power distribution point behind those protected connections.</p><p>The MasterBus–CZone bridge (Mastervolt MasterBus Bridge Interface) allows MasterBus equipment and the CZone network to exchange status and control across that boundary.</p><p>House-bank capacity, charging, and inverter-charger procedures can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:batteries\">Batteries &amp; Energy section of this guide</span>.</p>"
+        "c": "The DC distribution busbar (ProInstaller) — a heavy-duty conductor that distributes power — is the main power distribution point behind those protected connections.\n\nThe MasterBus–CZone bridge (Mastervolt MasterBus Bridge Interface) allows MasterBus equipment and the CZone network to exchange status and control across that boundary.\n\nHouse-bank capacity, charging, and inverter-charger procedures can be found in the Batteries & Energy section of this guide.",
+        "html": "<p>The DC distribution busbar (ProInstaller) — a heavy-duty conductor that distributes power — is the main power distribution point behind those protected connections.</p><p>The MasterBus–CZone bridge (Mastervolt MasterBus Bridge Interface) allows MasterBus equipment and the CZone network to exchange status and control across that boundary.</p><p>House-bank capacity, charging, and inverter-charger procedures can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:batteries\">Batteries &amp; Energy section of this guide</span>.</p>"
+      },
+      {
+        "t": "Equipment Locations",
+        "type": "equipment_locations",
+        "rows": [
+          {
+            "name": "Blue Sea Class T fuse holder",
+            "location": "Engine / Machinery Space – Engine Bay"
+          },
+          {
+            "name": "Blue Sea Systems Automatic Charging Relays (ACR)",
+            "location": "Engine / Machinery Space – Engine Bay"
+          },
+          {
+            "name": "CZone / Mastervolt Combination Output Interface (COI)",
+            "location": "Engine / Machinery Space – Engine Bay"
+          },
+          {
+            "name": "ProInstaller busbar",
+            "location": "Engine / Machinery Space – Engine Bay"
+          }
+        ]
       },
       {
         "t": "Related",
@@ -236,8 +302,8 @@
     "id": "nav",
     "icon": "🧭",
     "title": "Navigation & Helm",
-    "subtitle": "Helm navigation runs through two chartplotters (B&G Zeus SR 12) in the Cockpit, which…",
-    "summary": "On Supernova, helm navigation runs through two chartplotters (B&G Zeus SR 12) in the Cockpit, which host Zeus SR Software. A radar (B&G Halo 20+) is fitted on the boat network and is controlled from those displays. The home-screen apps include Chart, Radar, MOB, Waypoints & Routes, Tracks, Tides.",
+    "subtitle": "Helm navigation runs through two chartplotters (B&G Zeus SR 12), which host Zeus SR…",
+    "summary": "On Supernova, helm navigation runs through two chartplotters (B&G Zeus SR 12), which host Zeus SR Software. A radar (B&G Halo 20+) is fitted on the boat network and is controlled from those displays. The home-screen apps include Chart, Radar, MOB, Waypoints & Routes, Tracks, Tides.",
     "sections": [
       {
         "t": "How it works",
@@ -269,6 +335,24 @@
         "t": "Care & upkeep",
         "type": "prose",
         "c": "Fit the sun cover to shield a chartplotter display when leaving the helm for an extended period.\n\nClean the screen with a soft microfiber or cotton cloth to maintain clarity."
+      },
+      {
+        "t": "Equipment Locations",
+        "type": "equipment_locations",
+        "rows": [
+          {
+            "name": "B&G Halo 20+",
+            "location": "Rigging & Sail Handling – Mast Base/Step"
+          },
+          {
+            "name": "B&G Zeus SR 12",
+            "location": "Cockpit"
+          },
+          {
+            "name": "B&G Zeus SR Software",
+            "location": "Helm / Navigation Station"
+          }
+        ]
       },
       {
         "t": "Related",

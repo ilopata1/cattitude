@@ -17,7 +17,6 @@ from typing import Any
 from guide_reader_voice import (
     VesselNameMissing,
     assess_reader_voice_style,
-    format_places_phrase,
     format_section_xref,
     resolve_vessel_display_name,
     section_xref_link,
@@ -36,7 +35,6 @@ from section_inputs import (
     keys_at_depth,
 )
 from channel_map_circuits import control_page_circuit_names
-from stage4_substrate import places_for_device
 from system_graph import VesselGraphResult
 
 SECTION_ORDER = (
@@ -230,23 +228,13 @@ def compose_controls_section(
     if platform_key:
         first_use.add(platform_key)
         first_use.add(re.sub(r"_\d+$", "", platform_key))
-    touch_place = (
-        format_places_phrase(places_for_device(equipment_doc, hub_key))
-        if hub_key
-        else None
-    )
-    touch_place_clause = f" {touch_place}" if touch_place else ""
-    touch_place_src = (
-        [f"equipment.{hub_key}.places"] if touch_place and hub_key else []
-    )
     _emit(
-        f"On {boat}, switching and monitoring run through {touch}"
-        f"{touch_place_clause}, which hosts {plat_role}.",
+        f"On {boat}, switching and monitoring run through {touch}, "
+        f"which hosts {plat_role}.",
         f"equipment.{hub_key}",
         f"profile.{hub_key}.runs_platform",
         f"profile.{platform_key}.entity_kind",
         "vessel.display_name",
-        *touch_place_src,
         block="capability_summary",
     )
 

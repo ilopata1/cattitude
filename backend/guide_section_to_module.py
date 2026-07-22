@@ -30,7 +30,8 @@ from typing import Any
 
 from guide_composition_rules import SECTION_SPINE, normalize_block
 from guide_module_catalog import SYSTEM_CATALOG
-from guide_reader_voice import format_fix_xref, format_learn_xref
+from guide_reader_voice import format_fix_xref, format_learn_xref, place_labels
+from stage4_substrate import places_for_device
 
 # O3 — reader-facing headings per spine block. capability_summary is the module
 # ``summary`` (not a section), so it is intentionally absent here.
@@ -417,17 +418,94 @@ def _related_section(section_id: str, links: list[dict[str, Any]]) -> dict[str, 
         f"{learn_label}."
     )
     return {"t": "Related", "type": "prose", "c": text}
-    """O1 — the whole solar draft as enriched section(s) under Solar charging."""
-    _, body = _split_title_and_body(str(solar_composed.get("draft_markdown") or ""))
-    body = body.strip()
-    if not body:
+
+
+def _equipment_row_for_key(
+    equipment_doc: dict[str, Any] | None, device_key: str
+) -> dict[str, Any] | None:
+    """Resolve an inventory row for a device or instance key."""
+    key = str(device_key or "")
+    if not key or not equipment_doc:
         return None
-    parts = _enrich_block_paragraphs(
-        _paragraphs(body), block="reference", heading="Solar charging"
-    )
-    # solar_fold historically returned one section; callers that expect a single
-    # dict still get the first, but build path uses solar_fold_sections.
-    return parts[0] if parts else None
+    rows = list(equipment_doc.get("equipment") or [])
+    for row in rows:
+        if str(row.get("device_key") or "") == key:
+            return row
+    base = key
+    while True:
+        stripped = re.sub(r"_\d+$", "", base)
+        if stripped == base:
+            break
+        base = stripped
+        for row in rows:
+            if str(row.get("device_key") or "") == base:
+                return row
+            if str(row.get("catalog_key") or "") == base:
+                return row
+    for row in rows:
+        if str(row.get("catalog_key") or "") == key:
+            return row
+    return None
+
+
+def _device_display_name(
+    equipment_doc: dict[str, Any] | None, device_key: str
+) -> str:
+    row = _equipment_row_for_key(equipment_doc, device_key)
+    if row:
+        mfr = str(row.get("manufacturer") or "").strip()
+        model = str(row.get("model") or "").strip()
+        if mfr and model:
+            return f"{mfr} {model}"
+        if model or mfr:
+            return model or mfr
+    return str(device_key or "").replace("_", " ").strip() or "Equipment"
+
+
+def _equipment_locations_section(
+    composed: dict[str, Any],
+    equipment_doc: dict[str, Any] | None,
+) -> dict[str, Any] | None:
+    """Table of section devices that have registry location labels.
+
+    Prefer devices cited in provenance (named/used in guest body). Fall back to
+    ``full_keys`` when provenance has no ``graph.device:`` sources.
+    """
+    if not equipment_doc:
+        return None
+    cited: list[str] = []
+    seen_keys: set[str] = set()
+    for entry in composed.get("provenance_map") or []:
+        for src in entry.get("sources") or []:
+            text = str(src or "")
+            if not text.startswith("graph.device:"):
+                continue
+            key = text.split(":", 1)[1].strip()
+            if not key or key in seen_keys:
+                continue
+            seen_keys.add(key)
+            cited.append(key)
+    keys = cited or [str(k) for k in (composed.get("full_keys") or [])]
+    rows: list[dict[str, str]] = []
+    seen: set[tuple[str, str]] = set()
+    for key in keys:
+        labels = place_labels(places_for_device(equipment_doc, key))
+        if not labels:
+            continue
+        name = _device_display_name(equipment_doc, key)
+        location = " · ".join(labels)
+        dedupe = (name.lower(), location.lower())
+        if dedupe in seen:
+            continue
+        seen.add(dedupe)
+        rows.append({"name": name, "location": location})
+    if not rows:
+        return None
+    return {
+        "t": "Equipment Locations",
+        "type": "equipment_locations",
+        "rows": rows,
+    }
 
 
 def solar_fold_sections(solar_composed: dict[str, Any]) -> list[dict[str, Any]]:
@@ -446,6 +524,7 @@ def section_to_system_module(
     composed: dict[str, Any],
     *,
     extra_sections: list[dict[str, Any]] | None = None,
+    equipment_doc: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Map a composed Stage 4 section to a validated-shape ``SystemModule``."""
     title, grouped, seen_order = _grouped_blocks(composed)
@@ -471,6 +550,10 @@ def section_to_system_module(
 
     if extra_sections:
         sections.extend(extra_sections)
+
+    locations = _equipment_locations_section(composed, equipment_doc)
+    if locations:
+        sections.append(locations)
 
     related_links = _related_guide_links(section_id)
     sections.append(_related_section(section_id, related_links))

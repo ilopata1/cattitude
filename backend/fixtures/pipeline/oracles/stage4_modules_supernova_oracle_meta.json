@@ -384,13 +384,12 @@
     "provenance_map": [
       {
         "id": "S1",
-        "sentence": "On Supernova, switching and monitoring run through the touchscreen (CZone Touch 7) in the Helm / Navigation Station, which hosts CZone.",
+        "sentence": "On Supernova, switching and monitoring run through the touchscreen (CZone Touch 7), which hosts CZone.",
         "sources": [
           "equipment.czone_touch_7",
           "profile.czone_touch_7.runs_platform",
           "profile.czone_2_0.entity_kind",
-          "vessel.display_name",
-          "equipment.czone_touch_7.places"
+          "vessel.display_name"
         ],
         "kind": "sourced",
         "block": "capability_summary"
@@ -579,14 +578,13 @@
       },
       {
         "id": "S2",
-        "sentence": "The house battery bank is protected by three high-current Class-T fuses (Blue Sea Class T) in the Engine / Machinery Space – Engine Bay — fuses that protect the cables carrying power from the bank if a major electrical fault occurs.",
+        "sentence": "The house battery bank is protected by three high-current Class-T fuses (Blue Sea Class T) — fuses that protect the cables carrying power from the bank if a major electrical fault occurs.",
         "sources": [
           "graph.device:class_t_1",
           "graph.device:class_t_2",
           "graph.device:class_t_3",
           "profile.class_t.device.model",
-          "profile.class_t.safety_role.is_protective_device",
-          "equipment.class_t_1.places"
+          "profile.class_t.safety_role.is_protective_device"
         ],
         "kind": "composed_inference",
         "block": "capability_summary",
@@ -594,19 +592,17 @@
         "contributing_facts": [
           "equipment.class_t.quantity=3",
           "profile.class_t.safety_role.is_protective_device=true",
-          "profile.class_t.device.model",
-          "equipment.class_t_1.places"
+          "profile.class_t.device.model"
         ]
       },
       {
         "id": "S3",
-        "sentence": "An automatic charging relay (Blue Sea Systems Automatic Charging Relays (ACR)) in the Engine / Machinery Space – Engine Bay combines and isolates battery banks based on charging voltage.",
+        "sentence": "An automatic charging relay (Blue Sea Systems Automatic Charging Relays (ACR)) combines and isolates battery banks based on charging voltage.",
         "sources": [
           "graph.device:blue_sea_acr",
           "profile.blue_sea_acr.device.model",
           "profile.blue_sea_acr.control_surfaces",
-          "profile.blue_sea_acr.operator_actions",
-          "equipment.blue_sea_acr.places"
+          "profile.blue_sea_acr.operator_actions"
         ],
         "kind": "sourced",
         "block": "capability_summary"
@@ -706,11 +702,10 @@
       },
       {
         "id": "S10",
-        "sentence": "The DC distribution busbar (ProInstaller) in the Engine / Machinery Space – Engine Bay — a heavy-duty conductor that distributes power — is the main power distribution point behind those protected connections.",
+        "sentence": "The DC distribution busbar (ProInstaller) — a heavy-duty conductor that distributes power — is the main power distribution point behind those protected connections.",
         "sources": [
           "graph.device:busbar",
-          "equipment.busbar",
-          "equipment.busbar.places"
+          "equipment.busbar"
         ],
         "kind": "sourced",
         "block": "reference"
@@ -786,7 +781,7 @@
         "id": "electrical_component_locations",
         "query": "Physical locations for: plain_battery_switch (panel / locker / hull side / deck).",
         "status": "queued",
-        "note": "No registry places yet for these devices. Profile location_class on_device means local-to-equipment, not a deck/locker place."
+        "note": "No registry places yet for these devices. Profile location_class on_device means local-to-equipment, not a deck/locker place. Guest prose uses an Equipment Locations table when places are present."
       }
     ],
     "evaluation": null
@@ -797,14 +792,13 @@
     "provenance_map": [
       {
         "id": "S1",
-        "sentence": "On Supernova, helm navigation runs through two chartplotters (B&G Zeus SR 12) in the Cockpit, which host Zeus SR Software.",
+        "sentence": "On Supernova, helm navigation runs through two chartplotters (B&G Zeus SR 12), which host Zeus SR Software.",
         "sources": [
           "equipment.bg_zeus_sr_1",
           "equipment.bg_zeus_sr_2",
           "profile.bg_zeus_sr_1.runs_platform",
           "profile.bg_zeus_sr_software.entity_kind",
-          "vessel.display_name",
-          "equipment.bg_zeus_sr_1.places"
+          "vessel.display_name"
         ],
         "kind": "sourced",
         "block": "capability_summary",

@@ -162,6 +162,31 @@ export class KnowPage implements OnInit {
       .filter((label): label is string => !!label);
   }
 
+  /** Registry place rows for ``equipment_locations`` sections. */
+  sectionLocationRows(
+    section: SystemSection,
+  ): Array<{ name: string; location: string }> {
+    const rows = section.rows;
+    if (!Array.isArray(rows)) {
+      return [];
+    }
+    return rows
+      .map((row) => {
+        if (!row || typeof row !== 'object') {
+          return null;
+        }
+        const name = String((row as { name?: unknown }).name || '').trim();
+        const location = String(
+          (row as { location?: unknown }).location || '',
+        ).trim();
+        if (!name || !location) {
+          return null;
+        }
+        return { name, location };
+      })
+      .filter((row): row is { name: string; location: string } => !!row);
+  }
+
   /** Hide consecutive duplicate O3 headings when one block splits into prose+list. */
   showSectionHeading(sections: SystemSection[], index: number): boolean {
     const title = (sections[index]?.t || '').trim();

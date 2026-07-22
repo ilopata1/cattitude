@@ -49,7 +49,15 @@ SYSTEM_DEFAULTS: dict[str, dict[str, Any]] = {
 }
 
 SYSTEM_SECTION_TYPES = frozenset(
-    {"prose", "photo", "list", "steps", "warnings", "notes"}
+    {
+        "prose",
+        "photo",
+        "list",
+        "steps",
+        "warnings",
+        "notes",
+        "equipment_locations",
+    }
 )
 
 
@@ -694,6 +702,28 @@ def _validate_system_module(content_key: str, payload: Any) -> None:
             raise GuideGenerationError(f"prose section {index} missing c")
         if section_type in {"list", "steps", "warnings", "notes"} and not section.get("items"):
             raise GuideGenerationError(f"{section_type} section {index} missing items")
+        if section_type == "equipment_locations":
+            rows = section.get("rows")
+            if not isinstance(rows, list) or not rows:
+                raise GuideGenerationError(
+                    f"equipment_locations section {index} missing rows"
+                )
+            for row_index, row in enumerate(rows):
+                if not isinstance(row, dict):
+                    raise GuideGenerationError(
+                        f"equipment_locations section {index} row {row_index} "
+                        "must be an object"
+                    )
+                if not str(row.get("name") or "").strip():
+                    raise GuideGenerationError(
+                        f"equipment_locations section {index} row {row_index} "
+                        "missing name"
+                    )
+                if not str(row.get("location") or "").strip():
+                    raise GuideGenerationError(
+                        f"equipment_locations section {index} row {row_index} "
+                        "missing location"
+                    )
     learn_checks = payload.get("learnChecks")
     if learn_checks is not None and (
         not isinstance(learn_checks, list) or not learn_checks
@@ -802,6 +832,16 @@ def _normalize_system_section(section: dict[str, Any]) -> dict[str, Any]:
                 }
             ]
         normalized["items"] = fixed_items
+    if section_type == "equipment_locations":
+        fixed_rows: list[dict[str, str]] = []
+        for row in normalized.get("rows") or []:
+            if not isinstance(row, dict):
+                continue
+            name = str(row.get("name") or "").strip()
+            location = str(row.get("location") or "").strip()
+            if name and location:
+                fixed_rows.append({"name": name, "location": location})
+        normalized["rows"] = fixed_rows
     return normalized
 
 

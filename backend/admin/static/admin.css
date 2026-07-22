@@ -1082,6 +1082,56 @@ code {
 .guide-preview-sys-photo {
   font-size: 12px;
   color: #007a8c;
+}
+
+.guide-preview-equip-locations {
+  background: #fff;
+  border: 1px solid #ede6d6;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.guide-preview-equip-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.guide-preview-equip-table th,
+.guide-preview-equip-table td {
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.guide-preview-equip-table thead th {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7c8f;
+  background: rgba(237, 230, 214, 0.45);
+  border-bottom: 1px solid #ede6d6;
+}
+
+.guide-preview-equip-table tbody td {
+  color: #0d2137;
+  border-bottom: 1px solid rgba(237, 230, 214, 0.55);
+}
+
+.guide-preview-equip-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.guide-preview-equip-table td:first-child {
+  font-weight: 600;
+  width: 48%;
+}
+
+.guide-preview-equip-table td:last-child {
+  color: #6b7c8f;
+}
   margin: 0;
   font-style: italic;
 }
