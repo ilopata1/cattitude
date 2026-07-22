@@ -1,0 +1,13 @@
+{
+  "device_key": "nanni_n4_65",
+  "equipment_id": "f7cb721c-a607-45a3-a0e6-c0a01ccf1da4",
+  "manual_work_id": "9e95df10-7eec-4b4f-a49c-f3a734d037fb",
+  "manual": "NANNI MARINE ENGINE USER MANUAL DGBXXT09007C (operators, DGBXXT09007C-N4.65-80.pdf)",
+  "fixture_auth": "Fixture-Auth: chat Nanni N4.65 Stage 1 extract — live extraction promoted; Nanni instrument panel (main panel key/ON-STOP + Start) added as source-grounded §1.D adjudication (extraction omission after MasterView few-shot drop)",
+  "review": {
+    "status": "pending_human_review",
+    "verdict": null,
+    "reviewed_by": null,
+    "date": null
+  }
+}

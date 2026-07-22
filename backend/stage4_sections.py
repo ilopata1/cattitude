@@ -23,6 +23,7 @@ from guide_section_electrical import compose_electrical_section
 from guide_section_nav import compose_nav_section
 from guide_section_solar import compose_solar_section
 from guide_section_water import compose_water_section
+from guide_section_engines import compose_engines_section
 from guide_section_to_module import (
     extract_module_metadata,
     section_to_system_module,
@@ -37,6 +38,7 @@ PUBLISHED_SECTIONS: tuple[str, ...] = (
     "batteries",
     "controls",
     "electrical",
+    "engines",
     "nav",
     "water",
 )
@@ -46,6 +48,7 @@ _COMPOSERS: dict[str, tuple[Callable[..., dict[str, Any]], bool]] = {
     "batteries": (compose_batteries_section, True),
     "controls": (compose_controls_section, True),
     "electrical": (compose_electrical_section, True),
+    "engines": (compose_engines_section, True),
     "nav": (compose_nav_section, True),
     "solar": (compose_solar_section, False),
     "water": (compose_water_section, True),

@@ -1,0 +1,29 @@
+{
+  "fixture_auth": "Fixture-Auth: chat Engines Stage 4 founding v4.1 — Nanni N4.65 twin plant; instrument panel; maintenance/commissioning shaped out; pending human review",
+  "version": "v4.1",
+  "description": "Engines Stage 4 expectations for Outremer / Supernova (founding).",
+  "recorded_vessel_display_name": "Supernova",
+  "expected_guide_link_targets": ["batteries", "electrical"],
+  "must_exclude_from_body_depth": [],
+  "expected_inputs": {
+    "contributors": [
+      {"device_key": "nanni_n4_65", "depth": "full"}
+    ]
+  },
+  "expected_fact_query_ids": [
+    "engines_panel_variant",
+    "engines_seacock_and_bay_places"
+  ],
+  "forbidden_prose_substrings": [
+    "control surface",
+    "MasterView",
+    "masterview",
+    "masterbus",
+    "czone touch",
+    "nanni_n4_65",
+    "day-to-day",
+    "Yanmar",
+    "4JH45"
+  ],
+  "style_deictics_soft": ["this vessel", "this boat", "this yacht"]
+}

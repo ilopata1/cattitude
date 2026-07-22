@@ -1,0 +1,69 @@
+{
+  "device": {
+    "manufacturer": "Nanni",
+    "model": "N4.65",
+    "category_freeform": "marine engine"
+  },
+  "entity_kind": "device",
+  "documented_version": "",
+  "ui_pages": [],
+  "alarm_severity": [],
+  "control_surfaces": [],
+  "operator_actions": [
+    {
+      "action": "stop the engine",
+      "audience": "operator",
+      "context": "situational",
+      "occasion": "to allow the coolant to cool down"
+    },
+    {
+      "action": "check the engine and transmission oil level",
+      "audience": "operator",
+      "context": "maintenance"
+    },
+    {
+      "action": "top up coolant if necessary",
+      "audience": "operator",
+      "context": "maintenance"
+    }
+  ],
+  "networks": {
+    "speaks": [],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": false
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [],
+  "evidence": [
+    {
+      "supports_field": "operator_actions[action=stop the engine]",
+      "manual_section": "S07  START & RUNNING",
+      "note": "To allow the coolant to cool down"
+    },
+    {
+      "supports_field": "operator_actions[action=check the engine and transmission oil level]",
+      "manual_section": "S08  MAINTENANCE",
+      "note": "Check oil level before starting the engine"
+    },
+    {
+      "supports_field": "operator_actions[action=top up coolant if necessary]",
+      "manual_section": "S08  MAINTENANCE",
+      "note": "Top up coolant level if necessary"
+    }
+  ],
+  "confidence": {
+    "overall": 0.8,
+    "notes": "Extracted actions are supported by the manual excerpts."
+  }
+}

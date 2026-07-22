@@ -377,6 +377,17 @@
       "quantity": 1,
       "instance_handling": "interchangeable",
       "provenance": "owner request (Playbook 1 new equipment); DB registry equipment 17c202cc + Supernova vessel; operators manual marine generator Panda 8000i (manual_work eb6dc5c9, R10 29.4.25, 178pp) Stage 1 extracted"
+    },
+    {
+      "device_key": "nanni_n4_65",
+      "catalog_key": "nanni_n4_65",
+      "manufacturer": "Nanni",
+      "model": "N4.65",
+      "description": "Marine diesel propulsion engine (twin plant)",
+      "system_category": "propulsion_and_machinery",
+      "quantity": 2,
+      "instance_handling": "interchangeable",
+      "provenance": "DB registry equipment f7cb721c + Supernova vessel; twin diesel plant (Outremer catamaran); operators manual DGBXXT09007C (manual_work 9e95df10) Stage 1 extracted"
     }
   ],
   "vessel_artifact_facts": [

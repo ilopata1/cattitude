@@ -786,6 +786,189 @@
     ],
     "evaluation": null
   },
+  "engines": {
+    "section_id": "engines",
+    "version": "v4.1",
+    "provenance_map": [
+      {
+        "id": "S1",
+        "sentence": "On Supernova, propulsion is handled by the engines (Nanni N4.65).",
+        "sources": [
+          "graph.device:nanni_n4_65",
+          "equipment.nanni_n4_65",
+          "vessel.display_name",
+          "profile.nanni_n4_65.device"
+        ],
+        "kind": "sourced",
+        "block": "capability_summary",
+        "topic": "plant"
+      },
+      {
+        "id": "S2",
+        "sentence": "They are started and stopped from the Nanni instrument panel at the helm — not from the boat's digital switching system.",
+        "sources": [
+          "graph.device:nanni_n4_65",
+          "profile.nanni_n4_65.control_surfaces",
+          "profile.nanni_n4_65.networks",
+          "profile.nanni_n4_65.data_roles"
+        ],
+        "kind": "sourced",
+        "block": "capability_summary",
+        "topic": "station"
+      },
+      {
+        "id": "S3",
+        "sentence": "The Nanni instrument panel uses a key or ON/STOP switch with a Start button and warning lamps; put the control lever in neutral before starting.",
+        "sources": [
+          "profile.nanni_n4_65.control_surfaces",
+          "profile.nanni_n4_65.operator_actions"
+        ],
+        "kind": "sourced",
+        "block": "how_it_works",
+        "topic": "panel"
+      },
+      {
+        "id": "S4",
+        "sentence": "Starting power and charging context can be found in the Batteries & Energy section of this guide; DC protection and distribution can be found in the Electrical Panel section of this guide.",
+        "sources": [
+          "xref.batteries",
+          "xref.electrical"
+        ],
+        "kind": "sourced",
+        "block": "how_it_works",
+        "links": [
+          {
+            "target_kind": "system",
+            "target_id": "batteries",
+            "label": "Batteries & Energy section of this guide",
+            "data_guide_link": "system:batteries"
+          },
+          {
+            "target_kind": "system",
+            "target_id": "electrical",
+            "label": "Electrical Panel section of this guide",
+            "data_guide_link": "system:electrical"
+          }
+        ],
+        "topic": "xref_power"
+      },
+      {
+        "id": "S5",
+        "sentence": "Start each engine from the Nanni instrument panel with the control lever in neutral, then confirm raw water flows from the exhaust outlet once the engine is running.",
+        "sources": [
+          "profile.nanni_n4_65.operator_actions",
+          "profile.nanni_n4_65.control_surfaces",
+          "graph.device:nanni_n4_65"
+        ],
+        "kind": "sourced",
+        "block": "startup",
+        "topic": "start"
+      },
+      {
+        "id": "S6",
+        "sentence": "While under way, watch coolant temperature and oil pressure on the Nanni instrument panel; stop promptly if either goes abnormal.",
+        "sources": [
+          "profile.nanni_n4_65.operator_actions",
+          "profile.nanni_n4_65.control_surfaces"
+        ],
+        "kind": "sourced",
+        "block": "monitoring",
+        "topic": "gauges"
+      },
+      {
+        "id": "S7",
+        "sentence": "Stop each engine from the Nanni instrument panel (key counter-clockwise or ON/STOP) after a short idle in neutral — never by opening the main battery switch while running.",
+        "sources": [
+          "profile.nanni_n4_65.operator_actions",
+          "profile.nanni_n4_65.control_surfaces"
+        ],
+        "kind": "sourced",
+        "block": "adjusting",
+        "topic": "stop"
+      },
+      {
+        "id": "S8",
+        "sentence": "If an engine will not start, confirm the control lever is in neutral, the panel is powered, and fuses or the main switch have not opened — then retry from the panel.",
+        "sources": [
+          "profile.nanni_n4_65.operator_actions",
+          "profile.nanni_n4_65.control_surfaces"
+        ],
+        "kind": "composed_inference",
+        "block": "troubleshooting",
+        "topic": "no_start"
+      },
+      {
+        "id": "S9",
+        "sentence": "If the engine is reluctant to start after several attempts, close the raw-water seacock before further cranking so the muffler does not fill with water; reopen the seacock before the next successful start.",
+        "sources": [
+          "profile.nanni_n4_65.operator_actions"
+        ],
+        "kind": "sourced",
+        "block": "troubleshooting",
+        "topic": "reluctant_start"
+      },
+      {
+        "id": "S10",
+        "sentence": "Stop immediately if oil pressure drops suddenly, coolant temperature climbs, or there are other signs of part failure.",
+        "sources": [
+          "profile.nanni_n4_65.operator_actions",
+          "profile.nanni_n4_65.safety_role"
+        ],
+        "kind": "sourced",
+        "block": "troubleshooting",
+        "topic": "emergency_stop"
+      },
+      {
+        "id": "S11",
+        "sentence": "Daily care includes oil and coolant level checks and keeping the raw-water filter clear — deeper service intervals belong with the operators manual and yard schedule.",
+        "sources": [
+          "profile.nanni_n4_65.operator_actions"
+        ],
+        "kind": "composed_inference",
+        "block": "reference",
+        "topic": "care"
+      }
+    ],
+    "guide_links": [
+      {
+        "sentence_id": "S4",
+        "block": "how_it_works",
+        "target_kind": "system",
+        "target_id": "batteries",
+        "label": "Batteries & Energy section of this guide",
+        "data_guide_link": "system:batteries"
+      },
+      {
+        "sentence_id": "S4",
+        "block": "how_it_works",
+        "target_kind": "system",
+        "target_id": "electrical",
+        "label": "Electrical Panel section of this guide",
+        "data_guide_link": "system:electrical"
+      }
+    ],
+    "wisdom_slot": {
+      "status": "pending",
+      "sentence_id": null,
+      "block": "how_it_works",
+      "inference_ids": [],
+      "note": "Engines wisdom pending — comparative handling or twin-sync claim not yet sourced beyond panel start/stop."
+    },
+    "fact_queries": [
+      {
+        "id": "engines_panel_variant",
+        "query": "Confirm which Nanni instrument panel variant is fitted (Analog Type3/Type4, Electronic C5/C4 PRO, or Digital SI4) and whether it is key or keyless.",
+        "status": "queued"
+      },
+      {
+        "id": "engines_seacock_and_bay_places",
+        "query": "Confirm port and starboard engine-bay places and raw-water seacock locations for this vessel.",
+        "status": "queued",
+        "note": "Places not in Stage 1 profile — Equipment Locations table and guest troubleshooting stay lean until sourced."
+      }
+    ],
+    "evaluation": null
+  },
   "nav": {
     "section_id": "nav",
     "version": "v4.37.6",

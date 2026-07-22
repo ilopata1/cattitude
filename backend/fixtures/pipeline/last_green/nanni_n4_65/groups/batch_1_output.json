@@ -1,0 +1,115 @@
+{
+  "device": {
+    "manufacturer": "Nanni",
+    "model": "N4.65",
+    "category_freeform": "ENGINE"
+  },
+  "entity_kind": "device",
+  "documented_version": "",
+  "ui_pages": [],
+  "alarm_severity": [],
+  "control_surfaces": [],
+  "operator_actions": [
+    {
+      "action": "run engine to operating temperature",
+      "audience": "operator",
+      "context": "maintenance",
+      "occasion": "to prevent corrosion in the engine"
+    },
+    {
+      "action": "inspect and clean the boat and raw water system",
+      "audience": "operator",
+      "context": "maintenance",
+      "occasion": "to avoid damage to the engine by overheating"
+    },
+    {
+      "action": "drain and change engine and transmission oil",
+      "audience": "operator",
+      "context": "maintenance",
+      "occasion": "when preparing the engine for long-term storage"
+    },
+    {
+      "action": "check coolant level and condition",
+      "audience": "operator",
+      "context": "maintenance",
+      "occasion": "to ensure proper engine operation"
+    },
+    {
+      "action": "check operation of control cables",
+      "audience": "operator",
+      "context": "maintenance",
+      "occasion": "to ensure proper engine operation"
+    },
+    {
+      "action": "start the engine",
+      "audience": "operator",
+      "context": "situational",
+      "occasion": "to check for leaks and correct operation"
+    },
+    {
+      "action": "stop the engine",
+      "audience": "operator",
+      "context": "situational",
+      "occasion": "to perform maintenance tasks"
+    }
+  ],
+  "networks": {
+    "speaks": [],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": false
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [],
+  "evidence": [
+    {
+      "supports_field": "operator_actions[0]",
+      "manual_section": "S07  START & RUNNING",
+      "note": "to prevent corrosion in the engine"
+    },
+    {
+      "supports_field": "operator_actions[1]",
+      "manual_section": "S07  START & RUNNING",
+      "note": "to avoid damage to the engine by overheating"
+    },
+    {
+      "supports_field": "operator_actions[2]",
+      "manual_section": "S08  MAINTENANCE",
+      "note": "when preparing the engine for long-term storage"
+    },
+    {
+      "supports_field": "operator_actions[3]",
+      "manual_section": "S08  MAINTENANCE",
+      "note": "to ensure proper engine operation"
+    },
+    {
+      "supports_field": "operator_actions[4]",
+      "manual_section": "S08  MAINTENANCE",
+      "note": "to ensure proper engine operation"
+    },
+    {
+      "supports_field": "operator_actions[5]",
+      "manual_section": "S07  START & RUNNING",
+      "note": "to check for leaks and correct operation"
+    },
+    {
+      "supports_field": "operator_actions[6]",
+      "manual_section": "S07  START & RUNNING",
+      "note": "to perform maintenance tasks"
+    }
+  ],
+  "confidence": {
+    "overall": 0.8,
+    "notes": "Extracted actions are based on the provided manual excerpts."
+  }
+}

@@ -298,6 +298,101 @@
       }
     ]
   },
+  "engines": {
+    "id": "engines",
+    "icon": "⚙️",
+    "title": "Engines",
+    "subtitle": "Propulsion is handled by the engines (Nanni N4.65)",
+    "summary": "On Supernova, propulsion is handled by the engines (Nanni N4.65). They are started and stopped from the Nanni instrument panel at the helm — not from the boat's digital switching system.",
+    "sections": [
+      {
+        "t": "Equipment Locations",
+        "type": "equipment_locations",
+        "rows": [
+          {
+            "name": "Nanni N4.65",
+            "location": "Engine / Machinery Space – Engine Bay"
+          }
+        ]
+      },
+      {
+        "t": "How it works",
+        "type": "prose",
+        "c": "The Nanni instrument panel uses a key or ON/STOP switch with a Start button and warning lamps; put the control lever in neutral before starting.\n\nStarting power and charging context can be found in the Batteries & Energy section of this guide; DC protection and distribution can be found in the Electrical Panel section of this guide.",
+        "html": "<p>The Nanni instrument panel uses a key or ON/STOP switch with a Start button and warning lamps; put the control lever in neutral before starting.</p><p>Starting power and charging context can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:batteries\">Batteries &amp; Energy section of this guide</span>; DC protection and distribution can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:electrical\">Electrical Panel section of this guide</span>.</p>"
+      },
+      {
+        "t": "Turning it on",
+        "type": "prose",
+        "c": "Start each engine from the Nanni instrument panel with the control lever in neutral, then confirm raw water flows from the exhaust outlet once the engine is running."
+      },
+      {
+        "t": "Monitoring",
+        "type": "prose",
+        "c": "While under way, watch coolant temperature and oil pressure on the Nanni instrument panel; stop promptly if either goes abnormal."
+      },
+      {
+        "t": "Operating",
+        "type": "prose",
+        "c": "Stop each engine from the Nanni instrument panel (key counter-clockwise or ON/STOP) after a short idle in neutral — never by opening the main battery switch while running."
+      },
+      {
+        "t": "If something's not right",
+        "type": "prose",
+        "c": "If an engine will not start, confirm the control lever is in neutral, the panel is powered, and fuses or the main switch have not opened — then retry from the panel.\n\nIf the engine is reluctant to start after several attempts, close the raw-water seacock before further cranking so the muffler does not fill with water; reopen the seacock before the next successful start.\n\nStop immediately if oil pressure drops suddenly, coolant temperature climbs, or there are other signs of part failure."
+      },
+      {
+        "t": "Care & upkeep",
+        "type": "prose",
+        "c": "Daily care includes oil and coolant level checks and keeping the raw-water filter clear — deeper service intervals belong with the operators manual and yard schedule."
+      },
+      {
+        "t": "Related",
+        "type": "prose",
+        "c": "If something goes wrong with this system, open the Fix It cards for engine for quick troubleshooting cards.\n\nWhen you are learning the boat, tick off this chapter on the Learn the Boat checklist.",
+        "html": "<p>If something goes wrong with this system, open the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"fix:engine\">Fix It cards for engine</span> for quick troubleshooting cards.</p><p>When you are learning the boat, tick off this chapter on the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"do:learn\">Learn the Boat checklist</span>.</p>"
+      }
+    ],
+    "locs": [
+      "port-hull",
+      "stbd-hull",
+      "cockpit"
+    ],
+    "learnChecks": [
+      "Can explain in one sentence what this system does on this boat",
+      "Know how to turn this system on and shut it down safely",
+      "Know where to read status, meters, or alerts for this system",
+      "Can perform the main operating actions described in this chapter",
+      "Know the first checks to run when something looks wrong",
+      "Know the care or isolation points called out for this system"
+    ],
+    "guideLinks": [
+      {
+        "target_kind": "system",
+        "target_id": "batteries",
+        "label": "Batteries & Energy section of this guide",
+        "data_guide_link": "system:batteries"
+      },
+      {
+        "target_kind": "system",
+        "target_id": "electrical",
+        "label": "Electrical Panel section of this guide",
+        "data_guide_link": "system:electrical"
+      },
+      {
+        "target_kind": "fix",
+        "target_id": "engine",
+        "label": "Fix It cards for engine",
+        "data_guide_link": "fix:engine"
+      },
+      {
+        "target_kind": "learn",
+        "target_id": "learn",
+        "label": "Learn the Boat checklist",
+        "data_guide_link": "do:learn"
+      }
+    ]
+  },
   "nav": {
     "id": "nav",
     "icon": "🧭",

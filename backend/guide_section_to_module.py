@@ -52,6 +52,7 @@ _SYSTEM_FIX_CATEGORY: dict[str, str] = {
     "batteries": "electrical",
     "controls": "electrical",
     "electrical": "electrical",
+    "engines": "engine",
     "nav": "nav",
     "water": "plumbing",
 }

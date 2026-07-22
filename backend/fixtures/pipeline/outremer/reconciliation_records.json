@@ -228,6 +228,67 @@
       },
       "fixture_auth": "Fixture-Auth: chat Fischer Panda 8000i — add genset run-policy / autostart 'when to run' to open owner questions",
       "inventory_action": "none"
+    },
+    {
+      "id": "rec_nanni_n4_65_added",
+      "action": "audit_only",
+      "disposition": "owner_confirmed_fitted",
+      "device_keys_now": [
+        "nanni_n4_65"
+      ],
+      "summary": "Nanni N4.65 propulsion engines added to the Outremer Stage 4 plant from the Supernova registry (equipment f7cb721c). Twin quantity (interchangeable) matches the Outremer catamaran diesel plant; registry currently has one attachment row without port/stbd split.",
+      "evidence": [
+        "DB registry equipment f7cb721c-a607-45a3-a0e6-c0a01ccf1da4 + Supernova vessel_equipment",
+        "SYSTEM_CATALOG engines focus (twin diesel)"
+      ],
+      "provenance_split": {
+        "attested": "Nanni N4.65 fitted (registry + Supernova attachment)",
+        "inferred": "Twin interchangeable instances on Outremer catamaran propulsion plant",
+        "unconfirmed": "Exact instrument panel variant (Analog Type3/4, C4/C5 PRO, SI4); port/stbd bay and seacock places"
+      },
+      "fixture_auth": "Fixture-Auth: chat Nanni N4.65 add — registry propulsion engines seeded into Outremer Stage 4 plant",
+      "inventory_action": "added"
+    },
+    {
+      "id": "rec_nanni_n4_65_extracted",
+      "action": "audit_only",
+      "disposition": "profile_extracted",
+      "device_keys_now": [
+        "nanni_n4_65"
+      ],
+      "summary": "Playbook 1 Stage 1 extraction run against the cleared operators manual (manual_work 9e95df10, DGBXXT09007C-N4.65-80.pdf). Live profile promoted with one source-grounded §1.D adjudication in scripts/promote_nanni_n4_65.py: add the Nanni instrument panel control surface (omitted after MasterView few-shot drop). Graph result: role ISLAND, section engines.",
+      "evidence": [
+        "NANNI MARINE ENGINE USER MANUAL DGBXXT09007C (operators)",
+        "manual_work 9e95df10-7eec-4b4f-a49c-f3a734d037fb; equipment f7cb721c-a607-45a3-a0e6-c0a01ccf1da4"
+      ],
+      "fixture_auth": "Fixture-Auth: chat Nanni N4.65 Stage 1 extract — live extraction promoted; Nanni instrument panel added as source-grounded adjudication",
+      "review": {
+        "status": "pending_human_review",
+        "verdict": null,
+        "reviewed_by": null,
+        "date": null,
+        "note": "Awaiting Engines Stage 4 draft review before golden freeze."
+      },
+      "inventory_action": "none"
+    },
+    {
+      "id": "rec_nanni_n4_65_panel_variant_question",
+      "action": "audit_only",
+      "disposition": "owner_question_open",
+      "device_keys_now": [
+        "nanni_n4_65"
+      ],
+      "summary": "Open owner question: which Nanni instrument panel variant is fitted (Analog Type3/Type4, Electronic C5/C4 PRO, or Digital SI4)? Guest prose uses the shared start/stop panel pattern without naming a variant.",
+      "owner_question": "Which Nanni instrument panel is fitted on Supernova — Analog Type3/Type4, Electronic C5/C4 PRO, or Digital SI4 (and is it key or keyless)?",
+      "evidence": [
+        "operators manual S05 INSTRUMENTS — panel manuals DGBXXT09031 / 09032 / 09050",
+        "composer fact_query engines_panel_variant"
+      ],
+      "provenance_split": {
+        "unconfirmed": "Instrument panel variant and key vs keyless — not attested by owner or vessel documents"
+      },
+      "fixture_auth": "Fixture-Auth: chat Nanni N4.65 — add instrument panel variant to open owner questions",
+      "inventory_action": "none"
     }
   ]
 }
