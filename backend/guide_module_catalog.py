@@ -244,7 +244,7 @@ GENERATION_SET_OPTIONS: list[dict[str, str]] = [
     {
         "value": "systems",
         "label": "Equipment",
-        "description": "All system guides — Learn the Boat & Know (13 topics)",
+        "description": "System guides — Stage 4 composers when substrate is seeded (batteries, controls, electrical, nav); other topics use fragments / placeholders",
     },
     {
         "value": "checklists",

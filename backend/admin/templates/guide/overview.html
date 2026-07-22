@@ -97,7 +97,12 @@
         </span>
       </div>
       <p class="muted generate-form-note">Existing drafts for selected sections are overwritten.</p>
-      <label class="generate-chip" title="Home rules, checklists, and Fix cards are assembled from the standard content library by default (fast, free, deterministic). Check to write them with GPT-4o instead. Equipment system guides use approved equipment fragments — not AI.">
+      {% if stage4_substrate %}
+      <p class="muted generate-form-note">Stage 4 substrate seeded — batteries, controls, electrical, and nav will use composers (deterministic).</p>
+      {% else %}
+      <p class="muted generate-form-note">Stage 4 substrate not seeded — system drafts use the legacy fragment / placeholder path. Seed with <code>scripts/seed_stage4_substrate.py</code>.</p>
+      {% endif %}
+      <label class="generate-chip" title="Home rules, checklists, and Fix cards are assembled from the standard content library by default (fast, free, deterministic). Check to write them with GPT-4o instead. Stage 4 system chapters (when substrate is seeded) always use composers — not AI. Other equipment systems use approved fragments or placeholders.">
         <input type="checkbox" name="personalize" value="yes">
         <span>Personalize with AI (checklists, rules &amp; fixes only — slower, uses GPT-4o)</span>
       </label>

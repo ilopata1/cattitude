@@ -1172,7 +1172,48 @@ def run_guide_generation(
     llm: AzureOpenAI | None = None
     results: list[dict[str, Any]] = []
     module_list = modules or list(STARTER_MODULES)
+
+    # Phase 3: batch Stage 4 published systems once when substrate is present.
+    from stage4_generation import (
+        run_stage4_generation,
+        vessel_has_stage4_substrate,
+    )
+    from stage4_sections import PUBLISHED_SECTIONS
+
+    stage4_keys = [
+        key
+        for content_type, key in module_list
+        if content_type == "system" and key in PUBLISHED_SECTIONS
+    ]
+    stage4_handled: set[str] = set()
+    if stage4_keys and vessel_has_stage4_substrate(conn, vessel_id):
+        unique_stage4 = tuple(dict.fromkeys(stage4_keys))
+        try:
+            stage4_results = run_stage4_generation(
+                conn,
+                vessel_id,
+                created_by=created_by,
+                trigger=trigger,
+                sections=unique_stage4,
+                snapshot_id=snapshot_id,
+            )
+            results.extend(stage4_results)
+        except GuideGenerationError as exc:
+            for key in unique_stage4:
+                results.append(
+                    {
+                        "content_type": "system",
+                        "content_key": key,
+                        "status": "failed",
+                        "error": str(exc),
+                    }
+                )
+        # Never fall back to fragments for these keys when substrate exists.
+        stage4_handled = set(unique_stage4)
+
     for content_type, content_key in module_list:
+        if content_type == "system" and content_key in stage4_handled:
+            continue
         module_key = (content_type, content_key)
         needs_llm = (
             module_key not in TEMPLATE_MODULE_BUILDERS

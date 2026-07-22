@@ -22,6 +22,7 @@ from guide_generation import GuideGenerationError, load_vessel_generation_contex
 from guide_equipment_coverage import gaps_for_modules, list_system_equipment_gaps
 from guide_module_catalog import GENERATION_SET_OPTIONS, SYSTEM_IDS, modules_for_sets
 from guide_context_utils import emergency_contacts_count, merge_guide_context
+from stage4_generation import vessel_has_stage4_substrate
 from guide_publish import (
     NO_PUBLISHABLE_MODULES_MSG,
     PublishValidationError,
@@ -291,8 +292,10 @@ async def vessel_guide_overview(
     preview_info = None
     preview = None
     equipment_gaps: list[dict] = []
+    stage4_substrate = False
     try:
         with get_engine().connect() as conn:
+            stage4_substrate = vessel_has_stage4_substrate(conn, vessel_id)
             preview = assemble_publication(conn, vessel_id, vessel["slug"])
             generation_context = load_vessel_generation_context(conn, vessel_id)
             equipment_gaps = list_system_equipment_gaps(
@@ -321,6 +324,7 @@ async def vessel_guide_overview(
             "equipment_gaps": equipment_gaps,
             "guide_images": guide_images,
             "system_ids": SYSTEM_IDS,
+            "stage4_substrate": stage4_substrate,
         },
     )
 
