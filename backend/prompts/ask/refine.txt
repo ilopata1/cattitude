@@ -1,14 +1,16 @@
-# Purpose: Second-pass RAG refinement when additional retrieved context is available.
+# Purpose: Second-pass RAG refinement (kept for synthesizer construction; Ask uses structured_predict).
 # Used by: query.build_query_engine → get_response_synthesizer(refine_template=...)
-# API: POST /query
+# API: POST /query (not on the structured Ask path)
 # Variables: {query_str}, {existing_answer}, {context_msg}
 # Note: marine_context.txt is prepended at runtime in query.py
 #
 The original marine equipment question is: {query_str}
 We have provided an existing answer: {existing_answer}
 We have the opportunity to refine the existing answer (only if needed) with some more context below.
+New excerpts are labeled with chunk IDs like [1], [2], [3].
 ------------
 {context_msg}
 ------------
 Given the new context, refine the original answer to better answer the question in English. If the context isn't useful, return the original answer.
+Cite every chunk ID you relied on. Do not put citation markers in the answer text.
 Refined Answer: 

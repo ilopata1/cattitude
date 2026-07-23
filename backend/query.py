@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import logging
+from typing import Sequence
+
 from llama_index.core import StorageContext, VectorStoreIndex
 from llama_index.core.base.response.schema import Response
-from llama_index.core.schema import QueryBundle
+from llama_index.core.schema import NodeWithScore, QueryBundle
 from llama_index.core.prompts import PromptTemplate
 from llama_index.core.query_engine import RetrieverQueryEngine
 from llama_index.core.response_synthesizers import get_response_synthesizer
@@ -12,11 +15,14 @@ from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
 from llama_index.llms.azure_openai import AzureOpenAI
 from llama_index.vector_stores.postgres import PGVectorStore
 from openai import BadRequestError
+from pydantic import BaseModel, Field, field_validator
 
 from config import settings
 from db import postgres_connection_strings
 from english_text import extract_english
 from prompts.ask.registry import get_ask_text
+
+logger = logging.getLogger(__name__)
 
 _MARINE_CONTEXT = get_ask_text("marine_context")
 
@@ -37,6 +43,31 @@ NO_EXCERPTS_MESSAGE = (
 # Keep Ask synthesis under Railway/proxy gateway timeouts (~60s).
 _SIMILARITY_TOP_K = 3
 _MAX_NODE_CHARS = 1200
+
+
+class AskSynthesis(BaseModel):
+    """Structured Ask answer with 1-based cited chunk IDs from labeled context."""
+
+    answer: str = Field(..., description="Guest-facing English answer; no citation markers")
+    cited: list[int] = Field(
+        default_factory=list,
+        description="1-based chunk IDs from context that were used for the answer",
+    )
+
+    @field_validator("cited", mode="before")
+    @classmethod
+    def _coerce_cited(cls, value: object) -> list[int]:
+        if value is None:
+            return []
+        if not isinstance(value, (list, tuple)):
+            return []
+        out: list[int] = []
+        for item in value:
+            try:
+                out.append(int(item))
+            except (TypeError, ValueError):
+                continue
+        return out
 
 
 def prepare_manual_query(question: str) -> str:
@@ -97,8 +128,10 @@ def _build_index(embed_model: AzureOpenAIEmbedding) -> VectorStoreIndex:
 def build_query_engine() -> RetrieverQueryEngine:
     """Build and return a LlamaIndex query engine backed by pgvector.
 
-    Unfiltered engine kept for synthesizer reuse; Ask retrieve always uses
+    Unfiltered engine kept for synthesizer/LLM reuse; Ask retrieve always uses
     a per-request filtered retriever via ``run_query(..., manual_ids=...)``.
+    Synthesis for Ask uses ``structured_predict(AskSynthesis, ...)`` in
+    ``run_query`` rather than free-form ``engine.synthesize``.
     """
     embed_model = _build_embed_model()
     llm = _build_llm()
@@ -122,6 +155,16 @@ def get_query_engine() -> RetrieverQueryEngine:
     if _query_engine is None:
         _query_engine = build_query_engine()
     return _query_engine
+
+
+def get_ask_llm() -> AzureOpenAI:
+    """LLM used for Ask structured synthesis (from the cached query engine)."""
+    engine = get_query_engine()
+    synthesizer = getattr(engine, "_response_synthesizer", None)
+    llm = getattr(synthesizer, "_llm", None) if synthesizer is not None else None
+    if isinstance(llm, AzureOpenAI):
+        return llm
+    return _build_llm()
 
 
 def get_vector_index() -> VectorStoreIndex:
@@ -175,6 +218,61 @@ def _english_nodes(nodes: list) -> list:
     return kept
 
 
+def _node_text(node: object) -> str:
+    if hasattr(node, "get_content"):
+        return str(node.get_content() or "")
+    return str(getattr(node, "text", None) or "")
+
+
+def format_labeled_context(nodes: Sequence[object]) -> str:
+    """Build prompt context with stable 1-based chunk labels [1]..[N]."""
+    parts: list[str] = []
+    for index, node in enumerate(nodes, start=1):
+        parts.append(f"[{index}]\n{_node_text(node).strip()}")
+    return "\n\n".join(parts)
+
+
+def normalize_cited_ids(cited: Sequence[int], node_count: int) -> list[int]:
+    """Keep unique in-range 1-based cite IDs in first-seen order."""
+    if node_count <= 0:
+        return []
+    seen: set[int] = set()
+    ordered: list[int] = []
+    for raw in cited:
+        try:
+            cite_id = int(raw)
+        except (TypeError, ValueError):
+            continue
+        if cite_id < 1 or cite_id > node_count or cite_id in seen:
+            continue
+        seen.add(cite_id)
+        ordered.append(cite_id)
+    return ordered
+
+
+def filter_nodes_by_cited(
+    nodes: Sequence[NodeWithScore] | Sequence[object],
+    cited: Sequence[int],
+) -> list:
+    """Return nodes cited by 1-based IDs; fail soft to all nodes if none valid."""
+    node_list = list(nodes)
+    ids = normalize_cited_ids(cited, len(node_list))
+    if not ids:
+        if cited:
+            logger.warning(
+                "Ask cited IDs %s out of range for %s chunks; keeping all retrieved",
+                list(cited),
+                len(node_list),
+            )
+        else:
+            logger.info(
+                "Ask returned empty cited list; keeping all %s retrieved chunks",
+                len(node_list),
+            )
+        return node_list
+    return [node_list[i - 1] for i in ids]
+
+
 def _manual_id_filters(manual_ids: list[str]) -> MetadataFilters:
     return MetadataFilters(
         filters=[
@@ -192,11 +290,16 @@ def run_query(question: str, *, manual_ids: list[str]):
 
     ``manual_ids`` must be non-empty (caller fail-closes empty allow-lists).
     Never searches the global corpus.
+
+    Synthesis returns structured ``AskSynthesis`` (answer + cited chunk IDs).
+    Returned ``source_nodes`` are filtered to cited chunks when the model
+    provides valid IDs; otherwise all retrieved nodes are kept (fail soft).
     """
     if not manual_ids:
         raise ValueError("manual_ids must be non-empty for Ask retrieve")
 
-    engine = get_query_engine()
+    # Ensure engine (and LLM) are warmed; retrieve uses shared index.
+    get_query_engine()
     index = get_vector_index()
     question = question.strip()
     retriever = VectorIndexRetriever(
@@ -210,9 +313,32 @@ def run_query(question: str, *, manual_ids: list[str]):
         return Response(response=NO_EXCERPTS_MESSAGE, source_nodes=[])
 
     prepared = prepare_manual_query(question)
+    context_str = format_labeled_context(nodes)
+    llm = get_ask_llm()
     try:
-        return engine.synthesize(QueryBundle(query_str=prepared), nodes)
+        synthesis = llm.structured_predict(
+            AskSynthesis,
+            TEXT_QA_PROMPT,
+            context_str=context_str,
+            query_str=prepared,
+        )
     except BadRequestError as exc:
         if _is_content_filter_error(exc):
             raise ContentFilterError(CONTENT_FILTER_MESSAGE) from exc
         raise
+
+    if not isinstance(synthesis, AskSynthesis):
+        # Defensive: some program paths may return dict-like payloads.
+        synthesis = AskSynthesis.model_validate(synthesis)
+
+    answer = (synthesis.answer or "").strip() or "Empty Response"
+    filtered = filter_nodes_by_cited(nodes, synthesis.cited)
+    return Response(
+        response=answer,
+        source_nodes=filtered,
+        metadata={
+            "cited": normalize_cited_ids(synthesis.cited, len(nodes)),
+            "retrieved_count": len(nodes),
+            "source_count": len(filtered),
+        },
+    )

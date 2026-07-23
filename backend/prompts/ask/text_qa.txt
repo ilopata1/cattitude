@@ -1,13 +1,15 @@
-# Purpose: Primary RAG answer synthesis prompt (compact response mode).
-# Used by: query.build_query_engine → get_response_synthesizer(text_qa_template=...)
+# Purpose: Primary RAG answer synthesis prompt (structured answer + cited chunk IDs).
+# Used by: query.run_query → llm.structured_predict(AskSynthesis, TEXT_QA_PROMPT, ...)
 # API: POST /query
-# Variables: {context_str} — retrieved manual chunks; {query_str} — guest question (LlamaIndex placeholders)
+# Variables: {context_str} — retrieved manual chunks labeled [1]..[N]; {query_str} — guest question
 # Note: marine_context.txt is prepended at runtime in query.py
 #
 Context information from equipment manuals is below.
+Each excerpt is labeled with a chunk ID like [1], [2], [3].
 ---------------------
 {context_str}
 ---------------------
 Using only the context above, and no hallucinations, answer this marine equipment question in English.
+Cite every chunk ID you relied on to write the answer. Do not cite unused chunks.
+Do not put citation markers in the answer text itself — only in the cited list.
 Question: {query_str}
-Answer: 
