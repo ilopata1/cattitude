@@ -154,11 +154,29 @@ async def equipment_works_json(
     return JSONResponse(works)
 
 
+def _safe_return_to(return_to: str) -> str | None:
+    """Allow only relative /admin/ paths (no scheme, no path traversal)."""
+    value = (return_to or "").strip()
+    if not value.startswith("/admin/"):
+        return None
+    if "://" in value or ".." in value:
+        return None
+    return value
+
+
 @router.get("/new")
 async def upload_manual_form(
     request: Request,
     admin_user: str = Depends(require_admin_user),
+    equipment_id: str = Query(""),
+    equipment_label: str = Query(""),
+    return_to: str = Query(""),
 ):
+    form: dict = {}
+    if equipment_id:
+        form["equipment_id"] = equipment_id
+        form["equipment_label"] = equipment_label
+    safe_return = _safe_return_to(return_to)
     return templates.TemplateResponse(
         request,
         "manuals/upload.html",
@@ -166,7 +184,8 @@ async def upload_manual_form(
             "admin_user": admin_user,
             "error": None,
             "same_content_warning": False,
-            "form": {},
+            "form": form,
+            "return_to": safe_return or "",
             **_form_context(),
         },
     )
@@ -189,6 +208,7 @@ async def upload_manual_action(
     language: str = Form("en"),
     source_url: str = Form(""),
     confirm_same_content: str = Form(""),
+    return_to: str = Form(""),
     file: UploadFile = File(...),
 ):
     form = {
@@ -205,6 +225,7 @@ async def upload_manual_action(
         "language": language,
         "source_url": source_url,
     }
+    safe_return = _safe_return_to(return_to)
 
     if not equipment_id:
         return templates.TemplateResponse(
@@ -215,6 +236,7 @@ async def upload_manual_action(
                 "error": "Select equipment from the registry.",
                 "same_content_warning": False,
                 "form": form,
+                "return_to": safe_return or "",
                 **_form_context(),
             },
             status_code=400,
@@ -252,6 +274,7 @@ async def upload_manual_action(
                         "error": None,
                         "same_content_warning": True,
                         "form": form,
+                        "return_to": safe_return or "",
                         **_form_context(),
                     },
                     status_code=400,
@@ -264,6 +287,7 @@ async def upload_manual_action(
                     "error": str(exc),
                     "same_content_warning": False,
                     "form": form,
+                    "return_to": safe_return or "",
                     **_form_context(),
                 },
                 status_code=400,
@@ -272,11 +296,23 @@ async def upload_manual_action(
     try:
         _maybe_ingest(work_id, ingest_path)
     except ManualServiceError as exc:
+        if safe_return:
+            sep = "&" if "?" in safe_return else "?"
+            return RedirectResponse(
+                f"{safe_return}{sep}error={quote(str(exc))}",
+                status_code=303,
+            )
         return RedirectResponse(
             f"/admin/manuals/{work_id}?error={quote(str(exc))}",
             status_code=303,
         )
 
+    if safe_return:
+        sep = "&" if "?" in safe_return else "?"
+        return RedirectResponse(
+            f"{safe_return}{sep}manual_uploaded=1",
+            status_code=303,
+        )
     return RedirectResponse(f"/admin/manuals/{work_id}?uploaded=1", status_code=303)
 
 

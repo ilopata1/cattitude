@@ -367,7 +367,17 @@ def list_vessel_equipment(conn: Connection, vessel_id: str) -> list[dict[str, An
             SELECT
                 ve.id, ve.equipment_id, ve.confirmed_by,
                 ve.zone, ve.sub_zone, ve.hull_side, ve.detail,
-                e.manufacturer, e.model, e.system_category
+                e.manufacturer, e.model, e.system_category,
+                e.has_formal_manual,
+                EXISTS (
+                    SELECT 1 FROM manual_work mw
+                    WHERE mw.equipment_id = e.id
+                      AND mw.legal_status = CAST('cleared' AS legal_status)
+                ) AS has_cleared_manual,
+                EXISTS (
+                    SELECT 1 FROM manual_work mw
+                    WHERE mw.equipment_id = e.id
+                ) AS has_any_manual
             FROM vessel_equipment ve
             JOIN equipment e ON e.id = ve.equipment_id
             WHERE ve.vessel_id = :vessel_id
@@ -389,9 +399,58 @@ def list_vessel_equipment(conn: Connection, vessel_id: str) -> list[dict[str, An
             "manufacturer": row[7],
             "model": row[8],
             "system_category": row[9],
+            "has_formal_manual": bool(row[10]),
+            "manual_status": _manual_status(
+                has_formal_manual=bool(row[10]),
+                has_cleared_manual=bool(row[11]),
+                has_any_manual=bool(row[12]),
+            ),
         }
         for row in rows
     ]
+
+
+def _manual_status(
+    *,
+    has_formal_manual: bool,
+    has_cleared_manual: bool,
+    has_any_manual: bool,
+) -> str:
+    """Guest/admin status for the vessel equipment Manual Status column."""
+    if has_cleared_manual:
+        return "Available"
+    if has_any_manual:
+        return "Pending"
+    if has_formal_manual:
+        return "Still Needed"
+    return ""
+
+
+def group_vessel_equipment(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Collapse install rows to one group per registry equipment_id."""
+    groups: dict[str, dict[str, Any]] = {}
+    order: list[str] = []
+    for item in items:
+        eid = item["equipment_id"]
+        if eid not in groups:
+            order.append(eid)
+            groups[eid] = {
+                "equipment_id": eid,
+                "manufacturer": item["manufacturer"],
+                "model": item["model"],
+                "system_category": item["system_category"],
+                "manual_status": item.get("manual_status") or "",
+                "instances": [],
+            }
+        groups[eid]["instances"].append(item)
+    result: list[dict[str, Any]] = []
+    for eid in order:
+        group = groups[eid]
+        instances = group["instances"]
+        group["count"] = len(instances)
+        group["is_multiple"] = len(instances) > 1
+        result.append(group)
+    return result
 
 
 def list_equipment_manufacturers(
@@ -476,12 +535,34 @@ def add_vessel_equipment(
     hull_side: str | None = None,
     detail: str | None = None,
     confirmed_by: str = "team_verified",
-) -> None:
+    allow_duplicate_equipment: bool = False,
+) -> str:
     """Install a piece of registry equipment on a vessel at a location.
 
     The location is validated against the vessel's boat type server-side so
     that combinations hidden in the UI cannot be persisted via the API.
+
+    Returns the new ``vessel_equipment.id``. Raises ``VesselServiceError`` when
+    the exact location is already occupied, or when ``allow_duplicate_equipment``
+    is false and this equipment is already installed anywhere on the vessel.
     """
+    if not allow_duplicate_equipment:
+        existing = conn.execute(
+            text(
+                """
+                SELECT 1 FROM vessel_equipment
+                WHERE vessel_id = :vessel_id AND equipment_id = :equipment_id
+                LIMIT 1
+                """
+            ),
+            {"vessel_id": vessel_id, "equipment_id": equipment_id},
+        ).fetchone()
+        if existing:
+            raise VesselServiceError(
+                "This equipment is already installed on the vessel. "
+                "Use Add another on the installed list to add another location."
+            )
+
     vessel_type = _vessel_type(conn, vessel_id)
     try:
         loc = validate_location(vessel_type, zone, sub_zone, hull_side, detail)
@@ -492,7 +573,28 @@ def add_vessel_equipment(
         loc["zone"], loc["sub_zone"], loc["hull_side"], loc["detail"]
     ) or "default"
 
-    conn.execute(
+    conflict = conn.execute(
+        text(
+            """
+            SELECT 1 FROM vessel_equipment
+            WHERE vessel_id = :vessel_id
+              AND equipment_id = :equipment_id
+              AND zone_instance = :zone_instance
+            LIMIT 1
+            """
+        ),
+        {
+            "vessel_id": vessel_id,
+            "equipment_id": equipment_id,
+            "zone_instance": label,
+        },
+    ).fetchone()
+    if conflict:
+        raise VesselServiceError(
+            "That equipment is already installed at that exact location."
+        )
+
+    row = conn.execute(
         text(
             """
             INSERT INTO vessel_equipment (
@@ -504,7 +606,7 @@ def add_vessel_equipment(
                 CAST(:zone AS location_zone), :sub_zone, :hull_side, :detail,
                 :zone_instance, CAST(:confirmed_by AS confirmed_by_method)
             )
-            ON CONFLICT (vessel_id, equipment_id, zone_instance) DO NOTHING
+            RETURNING id
             """
         ),
         {
@@ -517,7 +619,8 @@ def add_vessel_equipment(
             "zone_instance": label,
             "confirmed_by": confirmed_by,
         },
-    )
+    ).fetchone()
+    return str(row[0])
 
 
 def update_vessel_equipment_location(

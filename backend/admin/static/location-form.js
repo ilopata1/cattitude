@@ -69,15 +69,18 @@
     var initialSub = form.getAttribute("data-sub-zone") || "";
     var initialHull = form.getAttribute("data-hull-side") || "";
 
-    // Populate zones.
+    // Populate zones (fresh each time — modal clones a clean template).
+    zoneSel.innerHTML = "";
     zoneSel.appendChild(option("", "Select zone…"));
     catalog.zones.forEach(function (z) {
       zoneSel.appendChild(option(z.slug, z.label));
     });
     zoneSel.value = initialZone;
 
-    // Populate hull-side options once.
+    // Populate hull-side options once per init.
     if (hullSel) {
+      hullSel.innerHTML = "";
+      hullSel.appendChild(option("", "—"));
       catalog.hullSides.forEach(function (side) {
         hullSel.appendChild(option(side, side));
       });
@@ -131,6 +134,8 @@
     if (hullSel && initialHull) hullSel.value = initialHull;
     updatePreview();
   }
+
+  window.initLocationForm = initForm;
 
   document.addEventListener("DOMContentLoaded", function () {
     var forms = document.querySelectorAll("[data-location-form]");

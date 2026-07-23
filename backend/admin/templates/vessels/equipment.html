@@ -38,11 +38,17 @@
 {% if request.query_params.get('pack_applied') %}
 <div class="flash flash-ok">Option pack applied.</div>
 {% endif %}
+{% if request.query_params.get('added') %}
+<div class="flash flash-ok">Equipment added to this vessel.</div>
+{% endif %}
 {% if request.query_params.get('removed') %}
 <div class="flash flash-ok">Equipment removed from this vessel.</div>
 {% endif %}
 {% if request.query_params.get('location_saved') %}
 <div class="flash flash-ok">Location updated.</div>
+{% endif %}
+{% if request.query_params.get('manual_uploaded') %}
+<div class="flash flash-ok">Manual uploaded.</div>
 {% endif %}
 {% if request.query_params.get('error') %}
 <div class="flash flash-error">{{ request.query_params.get('error') }}</div>
@@ -54,7 +60,7 @@
   <p class="muted">These Learn/Know guide sections have no linked equipment yet. Guide generation will produce a “not yet available” placeholder until equipment is added.</p>
   <ul class="note-list">
     {% for gap in guide_equipment_gaps %}
-    <li><strong>{{ gap.title }}</strong> — expected categories: {% for cat in gap.categories %}{{ cat | format_label }}{% if not loop.last %}, {% endif %}{% endfor %}</li>
+    <li><strong>{{ gap.title }}</strong> — expected categories: {% for cat in gap.categories %}{{ cat | category_label }}{% if not loop.last %}, {% endif %}{% endfor %}</li>
     {% endfor %}
   </ul>
   <p><a href="/admin/vessels/{{ vessel.id }}/guide">Open vessel guide</a></p>
@@ -73,44 +79,133 @@
           <th>Model</th>
           <th>System</th>
           <th>Location</th>
-          <th>Confirmed by</th>
+          <th>Manual Status</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        {% for item in installed %}
-        <tr>
-          <td>{{ item.manufacturer or '—' }}</td>
-          <td>{{ item.model or '—' }}</td>
-          <td>{{ item.system_category | category_label }}</td>
+        {% for group in installed %}
+        {% set default_loc = location_catalog.systemDefaults.get(group.system_category) %}
+        {% set first = group.instances[0] %}
+        {% set return_path = '/admin/vessels/' ~ vessel.id ~ '/equipment' %}
+        <tr class="equipment-group-row" data-equipment-id="{{ group.equipment_id }}">
+          <td>{{ group.manufacturer or '—' }}</td>
+          <td>{{ group.model or '—' }}</td>
+          <td>{{ group.system_category | category_label }}</td>
           <td class="location-cell">
-            {% if item.location_label %}
-            <div class="location-label">{{ item.location_label }}</div>
+            {% if group.is_multiple %}
+            <div class="location-label">Multiple ({{ group.count }})</div>
+            <button type="button" class="link-button" data-toggle-locations
+                    aria-expanded="false"
+                    aria-controls="locations-{{ group.equipment_id }}">
+              Edit locations
+            </button>
+            {% else %}
+            {% if first.location_label %}
+            <div class="location-label">{{ first.location_label }}</div>
             {% else %}
             <div class="location-label location-missing">No location set</div>
             {% endif %}
-            <details class="inline-edit"{% if not item.zone %} open{% endif %}>
-              <summary>{% if item.zone %}Edit location{% else %}Set location{% endif %}</summary>
-              <form method="post" action="/admin/vessels/{{ vessel.id }}/equipment/edit-location" class="location-form">
-                <input type="hidden" name="row_id" value="{{ item.id }}">
-                {{ location_editor(item.zone, item.sub_zone, item.hull_side, item.detail) }}
-                <div class="form-actions">
-                  <button type="submit">Save location</button>
-                </div>
-              </form>
-            </details>
+            <button type="button" class="link-button"
+                    data-open-location
+                    data-mode="edit"
+                    data-row-id="{{ first.id }}"
+                    data-zone="{{ first.zone or '' }}"
+                    data-sub-zone="{{ first.sub_zone or '' }}"
+                    data-hull-side="{{ first.hull_side or '' }}"
+                    data-detail="{{ first.detail or '' }}"
+                    data-title="Edit location — {{ group.manufacturer }} {{ group.model }}">
+              {% if first.zone %}Edit location{% else %}Set location{% endif %}
+            </button>
+            {% endif %}
           </td>
-          <td>{{ item.confirmed_by | format_label }}</td>
+          <td>{{ group.manual_status or '—' }}</td>
           <td class="row-actions">
-            <form method="post" action="/admin/vessels/{{ vessel.id }}/equipment/remove" onsubmit="return confirm('Remove this installed equipment?');">
-              <input type="hidden" name="row_id" value="{{ item.id }}">
-              <input type="hidden" name="manufacturer" value="{{ manufacturer }}">
-              <input type="hidden" name="q" value="{{ query }}">
-              <input type="hidden" name="system_category" value="{{ system_category }}">
-              <button type="submit" class="btn-danger">Remove</button>
-            </form>
+            <span class="action-links">
+              {% if group.is_multiple %}
+              <button type="button" class="link-button" data-toggle-locations
+                      aria-expanded="false"
+                      aria-controls="locations-{{ group.equipment_id }}">
+                Edit locations
+              </button>
+              {% else %}
+              <button type="button" class="link-button"
+                      data-open-location
+                      data-mode="edit"
+                      data-row-id="{{ first.id }}"
+                      data-zone="{{ first.zone or '' }}"
+                      data-sub-zone="{{ first.sub_zone or '' }}"
+                      data-hull-side="{{ first.hull_side or '' }}"
+                      data-detail="{{ first.detail or '' }}"
+                      data-title="Edit location — {{ group.manufacturer }} {{ group.model }}">
+                Edit location
+              </button>
+              {% endif %}
+              <button type="button" class="link-button"
+                      data-open-location
+                      data-mode="add"
+                      data-equipment-id="{{ group.equipment_id }}"
+                      data-zone="{{ default_loc.zone if default_loc else '' }}"
+                      data-sub-zone="{{ default_loc.sub_zone if default_loc else '' }}"
+                      data-hull-side=""
+                      data-detail=""
+                      data-title="Add another — {{ group.manufacturer }} {{ group.model }}">
+                Add another
+              </button>
+              {% if group.manual_status == 'Still Needed' %}
+              <a href="/admin/manuals/new?equipment_id={{ group.equipment_id }}&amp;equipment_label={{ (group.manufacturer ~ ' ' ~ group.model)|urlencode }}&amp;return_to={{ return_path|urlencode }}">Add Manual</a>
+              {% endif %}
+              {% if not group.is_multiple %}
+              <form method="post" action="/admin/vessels/{{ vessel.id }}/equipment/remove"
+                    class="inline-action-form"
+                    onsubmit="return confirm('Remove this installed equipment?');">
+                <input type="hidden" name="row_id" value="{{ first.id }}">
+                <input type="hidden" name="manufacturer" value="{{ manufacturer }}">
+                <input type="hidden" name="q" value="{{ query }}">
+                <input type="hidden" name="system_category" value="{{ system_category }}">
+                <button type="submit" class="link-button link-danger">Remove</button>
+              </form>
+              {% endif %}
+            </span>
           </td>
         </tr>
+        {% if group.is_multiple %}
+        <tr class="location-instances-row" id="locations-{{ group.equipment_id }}" hidden>
+          <td colspan="6">
+            <ul class="location-instance-list">
+              {% for item in group.instances %}
+              <li>
+                <span class="{% if item.location_label %}location-label{% else %}location-label location-missing{% endif %}">
+                  {{ item.location_label or 'No location set' }}
+                </span>
+                <span class="action-links">
+                  <button type="button" class="link-button"
+                          data-open-location
+                          data-mode="edit"
+                          data-row-id="{{ item.id }}"
+                          data-zone="{{ item.zone or '' }}"
+                          data-sub-zone="{{ item.sub_zone or '' }}"
+                          data-hull-side="{{ item.hull_side or '' }}"
+                          data-detail="{{ item.detail or '' }}"
+                          data-title="Edit location — {{ group.manufacturer }} {{ group.model }}">
+                    Edit
+                  </button>
+                  <form method="post" action="/admin/vessels/{{ vessel.id }}/equipment/remove"
+                        class="inline-action-form"
+                        onsubmit="return confirm('Remove this installed location?');">
+                    <input type="hidden" name="row_id" value="{{ item.id }}">
+                    <input type="hidden" name="manufacturer" value="{{ manufacturer }}">
+                    <input type="hidden" name="q" value="{{ query }}">
+                    <input type="hidden" name="system_category" value="{{ system_category }}">
+                    <button type="submit" class="link-button link-danger">Remove</button>
+                  </form>
+                </span>
+              </li>
+              {% endfor %}
+            </ul>
+          </td>
+        </tr>
+        {% endif %}
         {% endfor %}
       </tbody>
     </table>
@@ -172,7 +267,7 @@
     </select>
     <button type="submit">Search</button>
   </form>
-  <p class="muted">Filtered for vessel type <strong>{{ vessel.vessel_type | format_label }}</strong>.</p>
+  <p class="muted">Filtered for vessel type <strong>{{ vessel.vessel_type | format_label }}</strong>. Already-installed registry items cannot be added again here — use <strong>Add another</strong> on the installed list.</p>
 
   {% if results %}
   <table class="data-table compact">
@@ -194,22 +289,20 @@
         <td>
           {% if item.id in installed_ids %}
           <span class="muted">Installed</span>
+          {% else %}
+          <button type="button" class="link-button"
+                  data-open-location
+                  data-mode="add"
+                  data-equipment-id="{{ item.id }}"
+                  data-allow-duplicate="0"
+                  data-zone="{{ default_loc.zone if default_loc else '' }}"
+                  data-sub-zone="{{ default_loc.sub_zone if default_loc else '' }}"
+                  data-hull-side=""
+                  data-detail=""
+                  data-title="Add — {{ item.manufacturer }} {{ item.model }}">
+            Add
+          </button>
           {% endif %}
-          <details class="inline-edit">
-            <summary>Add{% if item.id in installed_ids %} (another location){% endif %}</summary>
-            <form method="post" action="/admin/vessels/{{ vessel.id }}/equipment/add" class="location-form">
-              <input type="hidden" name="equipment_id" value="{{ item.id }}">
-              <input type="hidden" name="manufacturer" value="{{ manufacturer }}">
-              <input type="hidden" name="q" value="{{ query }}">
-              <input type="hidden" name="system_category" value="{{ system_category }}">
-              {{ location_editor(
-                  default_loc.zone if default_loc else '',
-                  default_loc.sub_zone if default_loc else '') }}
-              <div class="form-actions">
-                <button type="submit">Add to vessel</button>
-              </div>
-            </form>
-          </details>
         </td>
       </tr>
       {% endfor %}
@@ -219,9 +312,32 @@
   <p class="muted">No matching equipment. Try a broader search.</p>
   {% endif %}
 </section>
+
+<dialog id="location-modal" class="location-modal">
+  <form method="post" id="location-modal-form" class="location-modal-form">
+    <h3 id="location-modal-title">Edit location</h3>
+    <input type="hidden" name="row_id" id="modal-row-id" value="">
+    <input type="hidden" name="equipment_id" id="modal-equipment-id" value="">
+    <input type="hidden" name="allow_duplicate" id="modal-allow-duplicate" value="">
+    <input type="hidden" name="from_installed" id="modal-from-installed" value="">
+    <input type="hidden" name="manufacturer" value="{{ manufacturer }}">
+    <input type="hidden" name="q" value="{{ query }}">
+    <input type="hidden" name="system_category" value="{{ system_category }}">
+    <div id="location-modal-host"></div>
+    <div class="form-actions">
+      <button type="submit">Save</button>
+      <button type="button" class="btn-secondary" data-close-location>Cancel</button>
+    </div>
+  </form>
+</dialog>
+
+<template id="location-editor-template">
+  {{ location_editor() }}
+</template>
 {% endblock %}
 {% block scripts %}
 <script>window.LOCATION_CATALOG = {{ location_catalog_json | safe }};</script>
 <script src="/admin/static/combobox.js"></script>
 <script src="/admin/static/location-form.js"></script>
+<script src="/admin/static/vessel-equipment.js"></script>
 {% endblock %}

@@ -17,6 +17,7 @@ from admin.vessel_service import (
     clone_vessel,
     create_vessel,
     get_vessel,
+    group_vessel_equipment,
     list_charter_companies,
     list_hull_models,
     list_operating_bases,
@@ -404,10 +405,11 @@ async def vessel_equipment_page(
             conn, hull_model_id=vessel.get("hull_model_id") or None
         )
 
+    installed_groups = group_vessel_equipment(installed)
     installed_ids = {item["equipment_id"] for item in installed}
-    guide_equipment_gaps = list_system_equipment_gaps(
-        [{"system_category": item["system_category"]} for item in installed]
-    )
+    # Pass manufacturer/model so Controls keyword routing can clear the gap
+    # (category alone is never enough for controls — see equipment_belongs_on_system).
+    guide_equipment_gaps = list_system_equipment_gaps(installed)
     catalog = build_catalog(vessel["vessel_type"])
     return templates.TemplateResponse(
         request,
@@ -415,7 +417,7 @@ async def vessel_equipment_page(
         {
             "admin_user": admin_user,
             "vessel": vessel,
-            "installed": installed,
+            "installed": installed_groups,
             "installed_ids": installed_ids,
             "results": results,
             "option_packs": packs,
@@ -457,9 +459,12 @@ async def add_equipment_action(
     manufacturer: str = Form(""),
     q: str = Form(""),
     system_category: str = Form(""),
+    allow_duplicate: str = Form(""),
+    from_installed: str = Form(""),
     admin_user: str = Depends(require_admin_user),
 ):
     error: str | None = None
+    allow_dup = allow_duplicate in ("1", "true", "yes")
     with get_engine().begin() as conn:
         try:
             add_vessel_equipment(
@@ -470,15 +475,27 @@ async def add_equipment_action(
                 sub_zone=sub_zone or None,
                 hull_side=hull_side or None,
                 detail=detail or None,
+                allow_duplicate_equipment=allow_dup,
             )
         except VesselServiceError as exc:
             error = str(exc)
-    # Preserve the registry search and return to it (not the page top) so the
-    # user can keep adding from the same result set.
+    # Registry adds return to search; "Add another" returns to installed list.
+    if from_installed or allow_dup:
+        if error:
+            query = f"?error={quote(error)}"
+        else:
+            query = "?added=1"
+        return RedirectResponse(
+            f"/admin/vessels/{vessel_id}/equipment{query}#installed",
+            status_code=303,
+        )
     query = _equipment_search_query(manufacturer, q, system_category)
     if error:
         sep = "&" if query else "?"
         query = f"{query}{sep}error={quote(error)}"
+    else:
+        sep = "&" if query else "?"
+        query = f"{query}{sep}added=1"
     return RedirectResponse(
         f"/admin/vessels/{vessel_id}/equipment{query}#registry",
         status_code=303,

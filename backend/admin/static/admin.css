@@ -1339,11 +1339,55 @@ code {
   font-size: 0.85rem;
 }
 .row-actions {
-  white-space: nowrap;
+  white-space: normal;
   vertical-align: top;
+  min-width: 12rem;
 }
-.row-actions form {
-  display: inline-block;
+.row-actions form,
+.inline-action-form {
+  display: inline;
+  margin: 0;
+}
+.action-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.75rem;
+  align-items: center;
+}
+.link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: var(--link, #1d6fa5);
+  cursor: pointer;
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.link-button.link-danger {
+  color: var(--error, #b42318);
+}
+.location-instances-row td {
+  background: #f6f9fb;
+  padding: 0.75rem 1rem;
+}
+.location-instance-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+.location-instance-list li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  align-items: center;
+  justify-content: space-between;
+}
+.location-instance-list .location-label {
   margin: 0;
 }
 .location-form {
@@ -1372,4 +1416,33 @@ code {
 .location-preview {
   grid-column: 1 / -1;
   margin: 0.2rem 0 0;
+}
+.location-modal {
+  border: 1px solid #c5d5e0;
+  border-radius: 8px;
+  padding: 0;
+  max-width: min(36rem, calc(100vw - 2rem));
+  width: 100%;
+  box-shadow: 0 12px 40px rgba(16, 42, 67, 0.18);
+}
+.location-modal::backdrop {
+  background: rgba(16, 42, 67, 0.35);
+}
+.location-modal-form {
+  padding: 1.1rem 1.25rem 1.25rem;
+}
+.location-modal-form h3 {
+  margin: 0 0 0.85rem;
+  font-size: 1.05rem;
+}
+.location-modal-form .form-actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+.btn-secondary {
+  background: #eef3f7;
+  color: #1a3a52;
+  border: 1px solid #c5d5e0;
 }

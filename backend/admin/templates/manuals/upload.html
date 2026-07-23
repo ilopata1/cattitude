@@ -15,6 +15,9 @@
 {% endif %}
 
 <form method="post" enctype="multipart/form-data" class="form-grid" id="upload-form">
+  {% if return_to %}
+  <input type="hidden" name="return_to" value="{{ return_to }}">
+  {% endif %}
   <fieldset class="full-width">
     <legend>Equipment</legend>
     <div class="combobox" data-equipment-autocomplete data-autocomplete-url="/admin/equipment/autocomplete">
@@ -102,7 +105,7 @@
 
   <div class="form-actions full-width">
     <button type="submit">Upload</button>
-    <a href="/admin/manuals">Cancel</a>
+    <a href="{{ return_to|default('') or '/admin/manuals' }}">Cancel</a>
   </div>
 </form>
 {% endblock %}
