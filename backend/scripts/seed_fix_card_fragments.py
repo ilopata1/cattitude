@@ -154,6 +154,42 @@ SEED_FRAGMENTS: dict[tuple[str, str], dict] = {
             }
         }
     },
+    # Outremer / Supernova genset — no generic genset key; append extra cards.
+    # Grounded in Panda iControl2 operators manual (R10) + interaction profile.
+    ("Fischer Panda", "Panda 8000i"): {
+        "extra_fix_cards": [
+            {
+                "icon": "⚡",
+                "cat": "electrical",
+                "catL": "Electrical",
+                "title": "Generator won't start",
+                "steps": [
+                    "Give the generator a visual check before starting (oil, coolant, leaks, obvious damage)",
+                    "Confirm the sea cock for cooling-water intake is OPEN and the raw-water filter is clear",
+                    "On the Panda iControl2 panel: press On/Off to wake the controller — status should show STANDBY",
+                    "Press Start/Stop once to start — the controller makes only one starting attempt",
+                    "If the panel shows STARTING FAILS: acknowledge with Start/Stop (or a cursor button) to return to stand-by",
+                    "If further cranking is needed: close the sea cock first so the impeller does not flood the muffler — reopen the sea cock before the next successful start",
+                    "If fuel may be air-locked: open the iControl2 set-up menu and use Prime fuel, then retry start",
+                    "If the panel warns LOW starter-battery voltage: restore charge before trying again",
+                ],
+            },
+            {
+                "icon": "⚠️",
+                "cat": "electrical",
+                "catL": "Electrical",
+                "title": "Generator alarm or stopped",
+                "steps": [
+                    "Read the warning or fault text on the Panda iControl2 panel (HIGH temperature, STARTING FAILS, winding fault, and similar)",
+                    "If temperature is HIGH or out of range: stop the generator if it is still running — do not restart until it has cooled and the fault is cleared",
+                    "Confirm the cooling-water sea cock is open and the raw-water filter is clear",
+                    "Acknowledge the error with Start/Stop to return to stand-by, then retry only if the cause is fixed",
+                    "Use Emergency stop if engine temperature is out of range and the unit will not shut down normally",
+                    "Do not open the sound capsule or reset service items to clear a fault — leave deeper service to a technician",
+                ],
+            },
+        ]
+    },
     ("Tecma", "Compass Eco electric head"): {
         "fix_card_overrides": {
             "toilet_wont_flush": {
