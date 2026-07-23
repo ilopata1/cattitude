@@ -83,7 +83,8 @@ def main() -> int:
                     SELECT 1
                     FROM vessel_equipment ve
                     JOIN equipment e ON e.id = ve.equipment_id
-                    JOIN manual_work mw ON mw.equipment_id = e.id
+                    JOIN manual_work_equipment mwe ON mwe.equipment_id = e.id
+                    JOIN manual_work mw ON mw.id = mwe.manual_work_id
                     WHERE ve.vessel_id = :v AND mw.id = :mid
                     """
                 ),

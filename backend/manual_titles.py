@@ -14,7 +14,8 @@ _VESSEL_CLEARED_MANUALS_SQL = """
 SELECT DISTINCT mw.id, mw.title
 FROM vessel_equipment ve
 JOIN equipment e ON e.id = ve.equipment_id
-JOIN manual_work mw ON mw.equipment_id = e.id
+JOIN manual_work_equipment mwe ON mwe.equipment_id = e.id
+JOIN manual_work mw ON mw.id = mwe.manual_work_id
 JOIN manual_edition me
   ON me.manual_work_id = mw.id AND me.is_current = true
 WHERE ve.vessel_id = :vessel_id

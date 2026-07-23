@@ -106,8 +106,9 @@ def _list_filters(
         clauses.append(
             """
             EXISTS (
-                SELECT 1 FROM manual_work mw
-                WHERE mw.equipment_id = equipment.id
+                SELECT 1
+                FROM manual_work_equipment mwe
+                WHERE mwe.equipment_id = equipment.id
             )
             """
         )
@@ -115,8 +116,9 @@ def _list_filters(
         clauses.append(
             """
             NOT EXISTS (
-                SELECT 1 FROM manual_work mw
-                WHERE mw.equipment_id = equipment.id
+                SELECT 1
+                FROM manual_work_equipment mwe
+                WHERE mwe.equipment_id = equipment.id
             )
             """
         )
@@ -179,8 +181,9 @@ def list_equipment(
                 equipment.configuration_tier,
                 equipment.has_formal_manual,
                 EXISTS (
-                    SELECT 1 FROM manual_work mw
-                    WHERE mw.equipment_id = equipment.id
+                    SELECT 1
+                    FROM manual_work_equipment mwe
+                    WHERE mwe.equipment_id = equipment.id
                 ) AS has_manual_library,
                 (
                     SELECT f.status

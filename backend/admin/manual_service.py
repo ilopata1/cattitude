@@ -105,7 +105,8 @@ def count_manual_works(
                 f"""
                 SELECT COUNT(DISTINCT mw.id)
                 FROM manual_work mw
-                JOIN equipment e ON e.id = mw.equipment_id
+                JOIN manual_work_equipment mwe ON mwe.manual_work_id = mw.id
+                JOIN equipment e ON e.id = mwe.equipment_id
                 WHERE {' AND '.join(clauses)}
                 """
             ),
@@ -164,9 +165,6 @@ def list_manual_works(
             f"""
             SELECT
                 mw.id,
-                e.manufacturer,
-                e.model,
-                e.system_category,
                 mw.manual_type,
                 mw.title,
                 mw.legal_status,
@@ -176,18 +174,35 @@ def list_manual_works(
                 COALESCE(
                     array_agg(DISTINCT mf.language) FILTER (WHERE mf.language IS NOT NULL),
                     '{{}}'
-                ) AS languages
+                ) AS languages,
+                COALESCE(
+                    string_agg(
+                        DISTINCT e.manufacturer || ' — ' || e.model,
+                        ', '
+                        ORDER BY e.manufacturer || ' — ' || e.model
+                    ),
+                    ''
+                ) AS equipment_labels,
+                (array_agg(e.manufacturer ORDER BY e.manufacturer, e.model))[1]
+                    AS manufacturer,
+                (array_agg(e.model ORDER BY e.manufacturer, e.model))[1]
+                    AS model,
+                (array_agg(e.system_category ORDER BY e.manufacturer, e.model))[1]
+                    AS system_category
             FROM manual_work mw
-            JOIN equipment e ON e.id = mw.equipment_id
+            JOIN manual_work_equipment mwe ON mwe.manual_work_id = mw.id
+            JOIN equipment e ON e.id = mwe.equipment_id
             LEFT JOIN manual_edition me
                 ON me.manual_work_id = mw.id AND me.is_current = true
             LEFT JOIN manual_file mf ON mf.manual_edition_id = me.id
             WHERE {' AND '.join(clauses)}
             GROUP BY
-                mw.id, e.manufacturer, e.model, e.system_category,
-                mw.manual_type, mw.title, mw.legal_status, mw.source_tier,
+                mw.id, mw.manual_type, mw.title, mw.legal_status, mw.source_tier,
                 me.edition_label, me.id
-            ORDER BY e.manufacturer, e.model, mw.title
+            ORDER BY
+                (array_agg(e.manufacturer ORDER BY e.manufacturer, e.model))[1],
+                (array_agg(e.model ORDER BY e.manufacturer, e.model))[1],
+                mw.title
             LIMIT :limit OFFSET :offset
             """
         ),
@@ -196,16 +211,17 @@ def list_manual_works(
     return [
         {
             "id": str(row[0]),
-            "manufacturer": row[1],
-            "model": row[2],
-            "system_category": row[3],
-            "manual_type": row[4],
-            "title": row[5],
-            "legal_status": row[6],
-            "source_tier": row[7],
-            "edition_label": row[8],
-            "current_edition_id": str(row[9]) if row[9] else None,
-            "languages": list(row[10] or []),
+            "manual_type": row[1],
+            "title": row[2],
+            "legal_status": row[3],
+            "source_tier": row[4],
+            "edition_label": row[5],
+            "current_edition_id": str(row[6]) if row[6] else None,
+            "languages": list(row[7] or []),
+            "equipment_labels": row[8] or "",
+            "manufacturer": row[9],
+            "model": row[10],
+            "system_category": row[11],
         }
         for row in rows
     ]
@@ -215,16 +231,40 @@ def list_pending_manual_works(conn: Connection) -> list[dict[str, Any]]:
     return list_manual_works(conn, legal_status="pending", per_page=500)
 
 
+def list_equipment_for_manual_work(
+    conn: Connection, work_id: str
+) -> list[dict[str, Any]]:
+    rows = conn.execute(
+        text(
+            """
+            SELECT e.id, e.manufacturer, e.model, e.system_category
+            FROM manual_work_equipment mwe
+            JOIN equipment e ON e.id = mwe.equipment_id
+            WHERE mwe.manual_work_id = CAST(:work_id AS uuid)
+            ORDER BY lower(e.manufacturer), lower(e.model)
+            """
+        ),
+        {"work_id": work_id},
+    ).fetchall()
+    return [
+        {
+            "id": str(row[0]),
+            "manufacturer": row[1],
+            "model": row[2],
+            "system_category": row[3],
+        }
+        for row in rows
+    ]
+
+
 def get_manual_work(conn: Connection, work_id: str) -> dict[str, Any] | None:
     row = conn.execute(
         text(
             """
             SELECT
-                mw.id, mw.equipment_id, mw.manual_type, mw.title,
-                mw.source_tier, mw.legal_status, mw.created_at,
-                e.manufacturer, e.model, e.system_category
+                mw.id, mw.manual_type, mw.title,
+                mw.source_tier, mw.legal_status, mw.created_at
             FROM manual_work mw
-            JOIN equipment e ON e.id = mw.equipment_id
             WHERE mw.id = :id
             """
         ),
@@ -232,17 +272,22 @@ def get_manual_work(conn: Connection, work_id: str) -> dict[str, Any] | None:
     ).fetchone()
     if row is None:
         return None
+    equipment = list_equipment_for_manual_work(conn, work_id)
+    primary = equipment[0] if equipment else None
     return {
         "id": str(row[0]),
-        "equipment_id": str(row[1]),
-        "manual_type": row[2],
-        "title": row[3],
-        "source_tier": row[4],
-        "legal_status": row[5],
-        "created_at": row[6],
-        "manufacturer": row[7],
-        "model": row[8],
-        "system_category": row[9],
+        "manual_type": row[1],
+        "title": row[2],
+        "source_tier": row[3],
+        "legal_status": row[4],
+        "created_at": row[5],
+        "equipment": equipment,
+        "equipment_ids": [e["id"] for e in equipment],
+        # Primary / first link — kept for callers that expect a single FK.
+        "equipment_id": primary["id"] if primary else None,
+        "manufacturer": primary["manufacturer"] if primary else None,
+        "model": primary["model"] if primary else None,
+        "system_category": primary["system_category"] if primary else None,
     }
 
 
@@ -250,10 +295,11 @@ def list_works_for_equipment(conn: Connection, equipment_id: str) -> list[dict[s
     rows = conn.execute(
         text(
             """
-            SELECT id, manual_type, title, legal_status, source_tier
-            FROM manual_work
-            WHERE equipment_id = :equipment_id
-            ORDER BY manual_type, title
+            SELECT mw.id, mw.manual_type, mw.title, mw.legal_status, mw.source_tier
+            FROM manual_work mw
+            JOIN manual_work_equipment mwe ON mwe.manual_work_id = mw.id
+            WHERE mwe.equipment_id = CAST(:equipment_id AS uuid)
+            ORDER BY mw.manual_type, mw.title
             """
         ),
         {"equipment_id": equipment_id},
@@ -334,11 +380,25 @@ def find_file_by_hash(conn: Connection, file_hash: str) -> dict[str, Any] | None
                 mf.id, mf.language, mf.storage_path,
                 me.edition_label, me.id AS edition_id,
                 mw.id AS work_id, mw.title,
-                e.manufacturer, e.model
+                (
+                    SELECT e.manufacturer
+                    FROM manual_work_equipment mwe
+                    JOIN equipment e ON e.id = mwe.equipment_id
+                    WHERE mwe.manual_work_id = mw.id
+                    ORDER BY lower(e.manufacturer), lower(e.model)
+                    LIMIT 1
+                ) AS manufacturer,
+                (
+                    SELECT e.model
+                    FROM manual_work_equipment mwe
+                    JOIN equipment e ON e.id = mwe.equipment_id
+                    WHERE mwe.manual_work_id = mw.id
+                    ORDER BY lower(e.manufacturer), lower(e.model)
+                    LIMIT 1
+                ) AS model
             FROM manual_file mf
             JOIN manual_edition me ON me.id = mf.manual_edition_id
             JOIN manual_work mw ON mw.id = me.manual_work_id
-            JOIN equipment e ON e.id = mw.equipment_id
             WHERE mf.file_hash = :file_hash
             """
         ),
@@ -441,40 +501,85 @@ def list_storage_paths_for_work(conn: Connection, work_id: str) -> list[str]:
     return [str(r[0]) for r in rows if r[0]]
 
 
-def reassign_manual_work(
+def link_manual_work_equipment(
     conn: Connection,
     work_id: str,
-    new_equipment_id: str,
+    equipment_id: str,
 ) -> None:
-    """Move an existing manual work (and its editions/files) to another equipment.
-
-    Vector chunks stay keyed by ``work_id``; Stage 1 resolves manuals via
-    ``equipment_id``, so reassignment is enough without re-ingest.
-    """
-    new_equipment_id = (new_equipment_id or "").strip()
-    if not new_equipment_id:
+    """Attach an additional registry equipment row to an existing manual work."""
+    equipment_id = (equipment_id or "").strip()
+    if not equipment_id:
         raise ManualServiceError("Select equipment from the registry.")
-    if not _equipment_exists(conn, new_equipment_id):
+    if not _equipment_exists(conn, equipment_id):
         raise ManualServiceError("Target equipment not found.")
 
     work = get_manual_work(conn, work_id)
     if work is None:
         raise ManualServiceError("Manual work not found.")
-    if work["equipment_id"] == new_equipment_id:
+    if equipment_id in work["equipment_ids"]:
         raise ManualServiceError("Manual is already linked to that equipment.")
 
-    result = conn.execute(
+    conn.execute(
         text(
             """
-            UPDATE manual_work
-            SET equipment_id = CAST(:equipment_id AS uuid)
-            WHERE id = CAST(:id AS uuid)
+            INSERT INTO manual_work_equipment (manual_work_id, equipment_id)
+            VALUES (CAST(:work_id AS uuid), CAST(:equipment_id AS uuid))
             """
         ),
-        {"id": work_id, "equipment_id": new_equipment_id},
+        {"work_id": work_id, "equipment_id": equipment_id},
     )
-    if result.rowcount == 0:
+
+
+def unlink_manual_work_equipment(
+    conn: Connection,
+    work_id: str,
+    equipment_id: str,
+) -> None:
+    """Remove one equipment link. Refuses to remove the last link."""
+    equipment_id = (equipment_id or "").strip()
+    if not equipment_id:
+        raise ManualServiceError("Equipment id is required.")
+
+    work = get_manual_work(conn, work_id)
+    if work is None:
         raise ManualServiceError("Manual work not found.")
+    if equipment_id not in work["equipment_ids"]:
+        raise ManualServiceError("That equipment is not linked to this manual.")
+    if len(work["equipment_ids"]) <= 1:
+        raise ManualServiceError(
+            "Cannot remove the last equipment link. Reassign by adding another "
+            "equipment first, or delete the manual."
+        )
+
+    conn.execute(
+        text(
+            """
+            DELETE FROM manual_work_equipment
+            WHERE manual_work_id = CAST(:work_id AS uuid)
+              AND equipment_id = CAST(:equipment_id AS uuid)
+            """
+        ),
+        {"work_id": work_id, "equipment_id": equipment_id},
+    )
+
+
+def reassign_manual_work(
+    conn: Connection,
+    work_id: str,
+    new_equipment_id: str,
+) -> None:
+    """Compatibility helper: add ``new_equipment_id`` then drop the prior sole link.
+
+    Prefer ``link_manual_work_equipment`` when keeping multiple links.
+    """
+    work = get_manual_work(conn, work_id)
+    if work is None:
+        raise ManualServiceError("Manual work not found.")
+    prior_ids = list(work["equipment_ids"])
+    link_manual_work_equipment(conn, work_id, new_equipment_id)
+    for old_id in prior_ids:
+        if old_id != new_equipment_id.strip():
+            unlink_manual_work_equipment(conn, work_id, old_id)
 
 
 def _delete_vector_chunks_for_work(conn: Connection, work_id: str) -> int:
@@ -593,14 +698,16 @@ def create_manual_work(
     if not title:
         raise ManualServiceError("Title is required.")
 
+    if not _equipment_exists(conn, equipment_id):
+        raise ManualServiceError("Target equipment not found.")
+
     row = conn.execute(
         text(
             """
             INSERT INTO manual_work (
-                equipment_id, manual_type, title, source_tier, legal_status
+                manual_type, title, source_tier, legal_status
             )
             VALUES (
-                :equipment_id,
                 CAST(:manual_type AS manual_type),
                 :title,
                 CAST(:source_tier AS source_tier),
@@ -610,7 +717,6 @@ def create_manual_work(
             """
         ),
         {
-            "equipment_id": equipment_id,
             "manual_type": _validate_choice(manual_type, MANUAL_TYPES, "manual_type"),
             "title": title,
             "source_tier": _validate_choice(source_tier, SOURCE_TIERS, "source_tier"),
@@ -619,7 +725,17 @@ def create_manual_work(
             ),
         },
     ).fetchone()
-    return str(row[0])
+    work_id = str(row[0])
+    conn.execute(
+        text(
+            """
+            INSERT INTO manual_work_equipment (manual_work_id, equipment_id)
+            VALUES (CAST(:work_id AS uuid), CAST(:equipment_id AS uuid))
+            """
+        ),
+        {"work_id": work_id, "equipment_id": equipment_id},
+    )
+    return work_id
 
 
 def create_edition(
@@ -745,11 +861,17 @@ def ingest_current_edition_file(
 
     from ingest import ingest_manual
 
-    tags = [
-        t
-        for t in (work["manufacturer"], work["model"], work["system_category"])
-        if t
-    ]
+    tags = []
+    for eq in work.get("equipment") or []:
+        for t in (eq.get("manufacturer"), eq.get("model"), eq.get("system_category")):
+            if t and t not in tags:
+                tags.append(t)
+    if not tags:
+        tags = [
+            t
+            for t in (work["manufacturer"], work["model"], work["system_category"])
+            if t
+        ]
     ingest_manual(path, work_id, tags, parser="pypdf")
 
 
@@ -818,7 +940,7 @@ def upload_manual(
         if not manual_work_id:
             raise ManualServiceError("Select an existing manual work.")
         work = get_manual_work(conn, manual_work_id)
-        if work is None or work["equipment_id"] != equipment_id:
+        if work is None or equipment_id not in (work.get("equipment_ids") or []):
             raise ManualServiceError("Manual work does not match selected equipment.")
         work_id = manual_work_id
 

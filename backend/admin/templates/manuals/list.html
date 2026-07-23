@@ -57,7 +57,7 @@
   <tbody>
     {% for item in items %}
     <tr {% if item.legal_status == 'pending' %}class="row-pending"{% endif %}>
-      <td>{{ item.manufacturer or '—' }}<br><span class="muted">{{ item.model or '—' }}</span></td>
+      <td>{% if item.equipment_labels %}{{ item.equipment_labels }}{% else %}{{ item.manufacturer or '—' }} — {{ item.model or '—' }}{% endif %}</td>
       <td>{{ item.manual_type | format_label }}</td>
       <td>{{ item.title }}</td>
       <td>

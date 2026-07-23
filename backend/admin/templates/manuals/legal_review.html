@@ -23,7 +23,7 @@
   <tbody>
     {% for item in items %}
     <tr>
-      <td>{{ item.manufacturer }}<br><span class="muted">{{ item.model }}</span></td>
+      <td>{% if item.equipment_labels %}{{ item.equipment_labels }}{% else %}{{ item.manufacturer }} — {{ item.model }}{% endif %}</td>
       <td><a href="/admin/manuals/{{ item.id }}">{{ item.title }}</a></td>
       <td>{{ item.manual_type | format_label }}</td>
       <td>{{ item.source_tier | format_label }}</td>

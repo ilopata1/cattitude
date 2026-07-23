@@ -370,13 +370,16 @@ def list_vessel_equipment(conn: Connection, vessel_id: str) -> list[dict[str, An
                 e.manufacturer, e.model, e.system_category,
                 e.has_formal_manual,
                 EXISTS (
-                    SELECT 1 FROM manual_work mw
-                    WHERE mw.equipment_id = e.id
+                    SELECT 1
+                    FROM manual_work_equipment mwe
+                    JOIN manual_work mw ON mw.id = mwe.manual_work_id
+                    WHERE mwe.equipment_id = e.id
                       AND mw.legal_status = CAST('cleared' AS legal_status)
                 ) AS has_cleared_manual,
                 EXISTS (
-                    SELECT 1 FROM manual_work mw
-                    WHERE mw.equipment_id = e.id
+                    SELECT 1
+                    FROM manual_work_equipment mwe
+                    WHERE mwe.equipment_id = e.id
                 ) AS has_any_manual
             FROM vessel_equipment ve
             JOIN equipment e ON e.id = ve.equipment_id

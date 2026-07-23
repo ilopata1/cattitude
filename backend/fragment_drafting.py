@@ -133,9 +133,10 @@ def list_ingested_manuals(conn: Connection, equipment_id: str) -> list[dict[str,
             """
             SELECT mw.id, mw.title, mw.manual_type, mw.legal_status
             FROM manual_work mw
+            JOIN manual_work_equipment mwe ON mwe.manual_work_id = mw.id
             JOIN manual_edition me
                 ON me.manual_work_id = mw.id AND me.is_current = true
-            WHERE mw.equipment_id = :equipment_id
+            WHERE mwe.equipment_id = :equipment_id
               AND mw.legal_status = CAST(:legal_status AS legal_status)
             ORDER BY mw.manual_type, mw.title
             """

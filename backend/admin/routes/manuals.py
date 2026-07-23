@@ -23,14 +23,15 @@ from admin.manual_service import (
     delete_manual_work,
     get_manual_work,
     ingest_current_edition_file,
+    link_manual_work_equipment,
     list_edition_files,
     list_editions,
     list_manual_works,
     list_pending_manual_works,
     list_works_for_equipment,
-    reassign_manual_work,
     set_current_edition,
     set_legal_status,
+    unlink_manual_work_equipment,
     update_manual_work,
     upload_manual,
 )
@@ -373,15 +374,15 @@ async def update_manual_work_action(
     return RedirectResponse(f"/admin/manuals/{work_id}?saved=1", status_code=303)
 
 
-@router.post("/{work_id}/reassign")
-async def reassign_manual_work_action(
+@router.post("/{work_id}/equipment")
+async def link_manual_equipment_action(
     work_id: str,
     admin_user: str = Depends(require_admin_user),
     equipment_id: str = Form(""),
 ):
     with get_engine().begin() as conn:
         try:
-            reassign_manual_work(conn, work_id, equipment_id)
+            link_manual_work_equipment(conn, work_id, equipment_id)
         except ManualServiceError as exc:
             return RedirectResponse(
                 f"/admin/manuals/{work_id}?error={quote(str(exc))}",
@@ -389,7 +390,28 @@ async def reassign_manual_work_action(
             )
 
     return RedirectResponse(
-        f"/admin/manuals/{work_id}?reassigned=1",
+        f"/admin/manuals/{work_id}?equipment_added=1",
+        status_code=303,
+    )
+
+
+@router.post("/{work_id}/equipment/{equipment_id}/delete")
+async def unlink_manual_equipment_action(
+    work_id: str,
+    equipment_id: str,
+    admin_user: str = Depends(require_admin_user),
+):
+    with get_engine().begin() as conn:
+        try:
+            unlink_manual_work_equipment(conn, work_id, equipment_id)
+        except ManualServiceError as exc:
+            return RedirectResponse(
+                f"/admin/manuals/{work_id}?error={quote(str(exc))}",
+                status_code=303,
+            )
+
+    return RedirectResponse(
+        f"/admin/manuals/{work_id}?equipment_removed=1",
         status_code=303,
     )
 

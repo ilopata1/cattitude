@@ -72,7 +72,8 @@ def _equipment_with_manuals(conn) -> list[tuple[str, str, str]]:
             """
             SELECT DISTINCT e.id, e.manufacturer, e.model
             FROM equipment e
-            JOIN manual_work mw ON mw.equipment_id = e.id
+            JOIN manual_work_equipment mwe ON mwe.equipment_id = e.id
+            JOIN manual_work mw ON mw.id = mwe.manual_work_id
             JOIN manual_edition me
                 ON me.manual_work_id = mw.id AND me.is_current = true
             WHERE mw.legal_status = CAST(:legal_status AS legal_status)
