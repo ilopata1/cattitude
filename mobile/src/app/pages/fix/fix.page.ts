@@ -113,7 +113,7 @@ export class FixPage implements OnInit {
 
     // When viewing all categories, group cards in chip order.
     if (this.categoryFilter === 'all') {
-      const order = new Map(
+      const order = new Map<string, number>(
         FIX_CATEGORIES.filter((c) => c.key !== 'all').map((c, i) => [c.key, i]),
       );
       fixes = [...fixes].sort((a, b) => {
