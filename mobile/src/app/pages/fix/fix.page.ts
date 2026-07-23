@@ -102,16 +102,32 @@ export class FixPage implements OnInit {
       fixes = fixes.filter((fix) => fix.cat === this.categoryFilter);
     }
 
-    if (!q) {
-      return fixes;
+    if (q) {
+      fixes = fixes.filter(
+        (fix) =>
+          fix.title.toLowerCase().includes(q) ||
+          fix.catL.toLowerCase().includes(q) ||
+          fix.steps.some((step) => step.toLowerCase().includes(q)),
+      );
     }
 
-    return fixes.filter(
-      (fix) =>
-        fix.title.toLowerCase().includes(q) ||
-        fix.catL.toLowerCase().includes(q) ||
-        fix.steps.some((step) => step.toLowerCase().includes(q)),
-    );
+    // When viewing all categories, group cards in chip order.
+    if (this.categoryFilter === 'all') {
+      const order = new Map(
+        FIX_CATEGORIES.filter((c) => c.key !== 'all').map((c, i) => [c.key, i]),
+      );
+      fixes = [...fixes].sort((a, b) => {
+        const byCat =
+          (order.get(a.cat) ?? Number.MAX_SAFE_INTEGER) -
+          (order.get(b.cat) ?? Number.MAX_SAFE_INTEGER);
+        if (byCat !== 0) {
+          return byCat;
+        }
+        return a.title.localeCompare(b.title);
+      });
+    }
+
+    return fixes;
   }
 
   /** Display emoji even when guide payload stored a Material-style icon name. */
