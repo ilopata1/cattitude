@@ -91,6 +91,9 @@
 
 .chat-source-chip {
   display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 2px;
   width: 100%;
   text-align: left;
   background: #fff;
@@ -99,6 +102,60 @@
   padding: 8px 10px;
   font-size: 12px;
   margin-top: 6px;
+  box-sizing: border-box;
+}
+
+.chat-source-chip-hit {
+  display: flex;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+
+  &.active .chat-source-chip-title {
+    color: var(--cattitude-teal-dark);
+  }
+}
+
+.chat-source-chip-title {
+  font-weight: 600;
+  color: var(--cattitude-text-dark);
+}
+
+.chat-source-pages {
+  display: inline;
+  color: var(--cattitude-text-mid);
+}
+
+.chat-source-pages-sep {
+  margin: 0 4px 0 2px;
+  color: var(--cattitude-text-light);
+}
+
+.chat-source-page-link {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font: inherit;
+  font-weight: 600;
+  color: var(--cattitude-teal-dark);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+
+  &.active {
+    color: var(--cattitude-navy);
+  }
+}
+
+.chat-source-page-comma {
+  color: var(--cattitude-text-mid);
 }
 
 .chat-source-snippet {
@@ -109,6 +166,7 @@
   font-size: 12px;
   line-height: 1.55;
   margin-top: 6px;
+  white-space: pre-wrap;
 }
 
 .chat-typing {

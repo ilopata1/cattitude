@@ -20,7 +20,7 @@
     </div>
 
     <div
-      *ngFor="let message of chat.messages"
+      *ngFor="let message of chat.messages; let messageIndex = index"
       class="chat-bubble-wrap"
       [class.user]="message.role === 'user'"
       [class.assistant]="message.role === 'assistant'"
@@ -30,22 +30,52 @@
       </div>
       <div *ngIf="message.sources?.length" class="chat-sources">
         <div class="chat-sources-label">Sources</div>
-        <button
-          type="button"
-          class="chat-source-chip"
-          *ngFor="let source of message.sources; let i = index"
-          (click)="toggleSource(message, i)"
-        >
-          <span class="chat-source-chip-label">{{
-            chat.formatSourceLabel(source)
-          }}</span>
-        </button>
         <div
-          *ngFor="let source of message.sources; let i = index"
-          class="chat-source-snippet"
-          [hidden]="expandedSourceKey !== sourceKey(message, i)"
+          class="chat-source-chip"
+          *ngFor="let group of sourceGroups(message)"
         >
-          {{ source.snippet }}
+          <ng-container *ngIf="group.pages.length; else untitledChip">
+            <span class="chat-source-chip-title">{{ group.title }}</span>
+            <span class="chat-source-pages" aria-label="Pages">
+              <span class="chat-source-pages-sep">·</span>
+              <ng-container
+                *ngFor="let page of group.pages; let last = last"
+              >
+                <button
+                  type="button"
+                  class="chat-source-page-link"
+                  [class.active]="
+                    expandedSourceKey ===
+                    sourceKey(messageIndex, page.sourceIndex)
+                  "
+                  (click)="toggleSource(messageIndex, page.sourceIndex)"
+                >
+                  {{ page.pageLabel }}
+                </button>
+                <span *ngIf="!last" class="chat-source-page-comma">, </span>
+              </ng-container>
+            </span>
+          </ng-container>
+          <ng-template #untitledChip>
+            <button
+              type="button"
+              class="chat-source-chip-hit"
+              [class.active]="
+                group.untitledSources[0] &&
+                expandedSourceKey ===
+                  sourceKey(messageIndex, group.untitledSources[0].sourceIndex)
+              "
+              (click)="toggleUntitledGroup(messageIndex, group)"
+            >
+              <span class="chat-source-chip-title">{{ group.title }}</span>
+            </button>
+          </ng-template>
+        </div>
+        <div
+          *ngIf="expandedSnippet(message, messageIndex) as snippetSource"
+          class="chat-source-snippet"
+        >
+          {{ snippetSource.snippet }}
         </div>
       </div>
     </div>

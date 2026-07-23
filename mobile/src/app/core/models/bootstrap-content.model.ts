@@ -177,3 +177,18 @@ export interface ChatSource {
   snippet: string;
   score?: number | null;
 }
+
+/** One page (or page-range) link inside a grouped document chip. */
+export interface ChatSourcePageRef {
+  source: ChatSource;
+  sourceIndex: number;
+  pageLabel: string | null;
+}
+
+/** Same-document sources collapsed for Ask citation chips. */
+export interface ChatSourceGroup {
+  key: string;
+  title: string;
+  pages: ChatSourcePageRef[];
+  untitledSources: ChatSourcePageRef[];
+}

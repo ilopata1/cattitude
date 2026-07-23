@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { ChatMessage, ChatSource } from '../models/bootstrap-content.model';
+import { ChatMessage, ChatSource, ChatSourceGroup } from '../models/bootstrap-content.model';
 import { environment } from '../../../environments/environment';
 import { ContentService } from './content.service';
 import { VesselContextService } from './vessel-context.service';
@@ -90,14 +90,72 @@ export class ChatService {
   }
 
   formatSourceLabel(source: ChatSource): string {
-    const title =
-      source.title?.trim() ||
-      this.content.formatManualTitle(source.manual_id);
+    const title = this.formatSourceTitle(source);
     const page = this.formatPageLabel(source.page_start, source.page_end);
     return page ? `${title} · ${page}` : title;
   }
 
-  private formatPageLabel(
+  formatSourceTitle(source: ChatSource): string {
+    return (
+      source.title?.trim() ||
+      this.content.formatManualTitle(source.manual_id)
+    );
+  }
+
+  /** Collapse same-document excerpts into one chip with page links. */
+  groupSources(sources: ChatSource[] | undefined | null): ChatSourceGroup[] {
+    if (!sources?.length) {
+      return [];
+    }
+
+    const groups: ChatSourceGroup[] = [];
+    const byManual = new Map<string, ChatSourceGroup>();
+
+    sources.forEach((source, sourceIndex) => {
+      const manualId = source.manual_id || 'unknown';
+      let group = byManual.get(manualId);
+      if (!group) {
+        group = {
+          key: manualId,
+          title: this.formatSourceTitle(source),
+          pages: [],
+          untitledSources: [],
+        };
+        byManual.set(manualId, group);
+        groups.push(group);
+      } else if (
+        !group.title &&
+        (source.title?.trim() || source.manual_id)
+      ) {
+        group.title = this.formatSourceTitle(source);
+      }
+
+      const pageLabel = this.formatPageLabel(
+        source.page_start,
+        source.page_end,
+      );
+      if (pageLabel) {
+        group.pages.push({ source, sourceIndex, pageLabel });
+      } else {
+        group.untitledSources.push({ source, sourceIndex, pageLabel: null });
+      }
+    });
+
+    for (const group of groups) {
+      group.pages.sort((a, b) => {
+        const aStart = a.source.page_start ?? Number.POSITIVE_INFINITY;
+        const bStart = b.source.page_start ?? Number.POSITIVE_INFINITY;
+        if (aStart !== bStart) {
+          return aStart - bStart;
+        }
+        return a.sourceIndex - b.sourceIndex;
+      });
+    }
+
+    return groups;
+  }
+
+  formatPageLabel(
     pageStart?: number | null,
     pageEnd?: number | null,
   ): string | null {
