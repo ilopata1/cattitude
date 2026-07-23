@@ -27,7 +27,8 @@
     "bg_zeus_sr_software": "PLATFORM",
     "dessalator_duo": "ISLAND",
     "fischer_panda_8000i": "ISLAND",
-    "nanni_n4_65": "ISLAND"
+    "nanni_n4_65": "ISLAND",
+    "sea_ai_watchkeeper": "ISLAND"
   },
   "sections": {
     "czone_touch_7": {
@@ -125,6 +126,10 @@
     "nanni_n4_65": {
       "value": "engines",
       "source": "lookup"
+    },
+    "sea_ai_watchkeeper": {
+      "value": "nav",
+      "source": "lookup"
     }
   },
   "control_paths": [
@@ -209,6 +214,7 @@
     "dessalator_duo": "live Stage 1 extraction promoted (Fixture-Auth: chat Dessalator Duo Stage 1 extract — live extraction promoted; on-device NAVIGATOR panel + DC>5min supply caveat added as source-grounded §1.D adjudication (extraction omissions)); operators start-up guide; standalone ISLAND in water section; on-device NAVIGATOR panel + optional Mini Remote Control; supersedes the earlier inventory-add stub; reviewed & approved 2026-07-21 (owner/human)",
     "fischer_panda_8000i": "live Stage 1 extraction promoted (Fixture-Auth: chat Fischer Panda 8000i Stage 1 extract — live extraction promoted; missed data_role (exposes status to iControl2 over grounded standard bus) set, genres normalized to combined install/operate/maintain, installer-only cable steps dropped as source-grounded §1.D adjudication); operators manual marine generator Panda 8000i (combined install/operate/maintain, R10); standalone ISLAND in batteries section; Panda iControl2 control panel; exposes status over Fischer Panda standard bus; sibling Panda 10000i / L3 three-phase content out of scope; pending human review",
     "nanni_n4_65": "live Stage 1 extraction promoted (Fixture-Auth: chat Nanni N4.65 Stage 1 extract — live extraction promoted; Nanni instrument panel (main panel key/ON-STOP + Start) added as source-grounded §1.D adjudication (extraction omission after MasterView few-shot drop)); operators manual DGBXXT09007C; standalone ISLAND in engines section; Nanni instrument panel (key/ON-STOP + Start); pending human review",
-    "masterbus_usb_interface": "live Stage 1 extraction promoted (Fixture-Auth: chat MasterBus USB Interface Stage 1 extract — live extraction promoted; MasterAdjust PC surface added + hub-commanding data_roles evidence removed (exposes kept for MasterBus participant) as source-grounded §1.D adjudication (extraction omissions / direction)); operators manual EN v2.1; ENDPOINT in electrical; MasterAdjust PC surface; data_roles exposes only (software owns display/control); supersedes inventory stub; reviewed & approved 2026-07-23 (owner/human)"
+    "masterbus_usb_interface": "live Stage 1 extraction promoted (Fixture-Auth: chat MasterBus USB Interface Stage 1 extract — live extraction promoted; MasterAdjust PC surface added + hub-commanding data_roles evidence removed (exposes kept for MasterBus participant) as source-grounded §1.D adjudication (extraction omissions / direction)); operators manual EN v2.1; ENDPOINT in electrical; MasterAdjust PC surface; data_roles exposes only (software owns display/control); supersedes inventory stub; reviewed & approved 2026-07-23 (owner/human)",
+    "sea_ai_watchkeeper": "live Stage 1 extraction promoted (Fixture-Auth: chat Sea.AI Watchkeeper Stage 1 extract — live extraction promoted; genres normalized to install/operate/maintain, NMEA Gateway commissioning action + duplicate remote-access action dropped as source-grounded §1.D adjudication); User Guide Watchkeeper Series (combined install/operate/maintain); standalone ISLAND in nav section; on-device User Interface; threat-level alarms (Object/Warning/Danger); Nav Stage 4 frozen — inventory/graph only until Nav re-compose; pending human review"
   }
 }

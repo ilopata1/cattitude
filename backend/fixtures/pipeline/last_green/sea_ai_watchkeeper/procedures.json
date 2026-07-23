@@ -1,0 +1,223 @@
+{
+  "inventory": {
+    "procedures": [
+      {
+        "title": "Installation",
+        "kind": "numbered_heading",
+        "group_id": "chapter_3",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "3. Installation Note: Installation must be completed by a certified SEA.AI installer. Please check the installation guide in the SEA.AI document library. Accessible under www.sea.ai/document-library/ in the section Watchkeeper. Positioning ",
+        "source": "heuristic",
+        "excerpt_text": "User Guide \nWatchkeeper series \nDoc SEAAI-442870296-11 \nRevision:  \n26 November 2025 \nPage 6 of 18\n\nThe information contained in this document is proprietary to SEA.AI GmbH and is to be used only for the purpose for which it is supplied.\n\n3. Installation \nNote: Installation must be completed by a certified SEA.AI installer. Please check the installation guide in \nthe SEA.AI document library. Accessible under www.sea.ai/document-library/ in the section Watchkeeper. \nPositioning Tips: \n\uf0b7 Mount the camera in a high location with a clear, unobstructed field of view. \n\uf0b7 Adjust the tilt angle by rotating the camera to compensate for boat trim at cruising speed. \n\uf0b7 Use the thermal camera as the primary reference during positioning.\n\nWatchkeeper looking too high\n\nWatchkeeper looking straight ahead. Horizon must be visible at cruising speed. \n(It is recommended to have 20% to 30% of the thermal image above the horizon)",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:installer"
+      },
+      {
+        "title": "Update your Watchkeeper",
+        "kind": "numbered_heading",
+        "group_id": "batch_2",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "5. Update your Watchkeeper Update with your computer: \uf0b7 Use your computer to download the latest Sea.AI package for your Watchkeeper on connect.sea.ai https://connect.sea.ai/account/login \uf0b7 Once the package is downloaded on your computer, a",
+        "source": "heuristic",
+        "excerpt_text": "User Guide \nWatchkeeper series \nDoc SEAAI-442870296-11 \nRevision:  \n26 November 2025 \nPage 13 of 18\n\nThe information contained in this document is proprietary to SEA.AI GmbH and is to be used only for the purpose for which it is supplied.\n\n5. Update your Watchkeeper \nUpdate with your computer: \n\uf0b7 Use your computer to download the latest Sea.AI package for your Watchkeeper on connect.sea.ai \nhttps://connect.sea.ai/account/login \n\uf0b7 Once the package is downloaded on your computer, access your Watchkeeper app and upload it \ninto the settings/system update section. \n\uf0b7 If you have any problem with this procedure, please contact your local dealer/installer.\n\nUpdate with your smartphone: \n\uf0b7 You can also update from your smartphone. Make sure your SEA.AI application on your smartphone \n(Apple App Store or Google Play Store) is up to date. \nAt your first connection, make sure you enable notifications for new software releases:"
+      }
+    ],
+    "alternatives": [],
+    "filtered": [
+      {
+        "title": "November 2025",
+        "kind": "headed_procedure",
+        "group_id": "chapter_2",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "User Guide Watchkeeper series Doc SEAAI-442870296-11 Revision: 26 November 2025 Page 1 of 18 The information contained in this document is proprietary to SEA.AI GmbH and is to be used only for the purpose for which it is supplied. 1",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Maintenance and Troubleshooting",
+        "kind": "numbered_heading",
+        "group_id": "chapter_7",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "7. Maintenance and Troubleshooting Regular Maintenance: \uf0b7 Clean camera lenses weekly using approved solutions. \uf0b7 Check cables integrity monthly. \uf0b7 Update firmware via USB or network connection quarterly. Troubleshooting Tips: \uf0b7 No Video Fee",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Warranty and Support",
+        "kind": "numbered_heading",
+        "group_id": "chapter_8",
+        "excerpt_ref": "excerpt[0]",
+        "disposition": "filtered",
+        "filter": "filter:classified_without_verb"
+      },
+      {
+        "title": "Alarms",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "6. Alarms \uf0b7 AI Detec\u019fon: The object classification includes 6 different classes: Ship Motorboat Sailing boat Buoy Person in the water Unknown Hazard How the AI decides what to show Our AI looks at every object it detects and calculates how ",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "Operating Instructions",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "4. Operating Instructions Product registration and activation: To ensure your new SEA.AI Watchkeeper delivers optimal performance and stays up to date with the latest advancements in Artificial Intelligence, periodic updates are essential. ",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Update with your computer",
+        "kind": "imperative_heading",
+        "group_id": "batch_2",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "Update with your computer: \uf0b7 Use your computer to download the latest Sea.AI package for your Watchkeeper on connect.sea.ai https://connect.sea.ai/account/login \uf0b7 Once the package is downloaded on your computer, access your Watchkeeper app ",
+        "disposition": "filtered",
+        "filter": "filter:no_steps_or_procedure_heading"
+      }
+    ],
+    "groups_scanned": [
+      "chapter_2",
+      "chapter_3",
+      "chapter_7",
+      "chapter_8",
+      "batch_0",
+      "batch_1",
+      "batch_2"
+    ],
+    "procedure_count": 2,
+    "alternative_count": 0,
+    "filtered_count": 6
+  },
+  "reconciliation": {
+    "accounted": [
+      {
+        "title": "Update your Watchkeeper",
+        "kind": "numbered_heading",
+        "group_id": "batch_2",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "5. Update your Watchkeeper Update with your computer: \uf0b7 Use your computer to download the latest Sea.AI package for your Watchkeeper on connect.sea.ai https://connect.sea.ai/account/login \uf0b7 Once the package is downloaded on your computer, a",
+        "source": "heuristic",
+        "excerpt_text": "User Guide \nWatchkeeper series \nDoc SEAAI-442870296-11 \nRevision:  \n26 November 2025 \nPage 13 of 18\n\nThe information contained in this document is proprietary to SEA.AI GmbH and is to be used only for the purpose for which it is supplied.\n\n5. Update your Watchkeeper \nUpdate with your computer: \n\uf0b7 Use your computer to download the latest Sea.AI package for your Watchkeeper on connect.sea.ai \nhttps://connect.sea.ai/account/login \n\uf0b7 Once the package is downloaded on your computer, access your Watchkeeper app and upload it \ninto the settings/system update section. \n\uf0b7 If you have any problem with this procedure, please contact your local dealer/installer.\n\nUpdate with your smartphone: \n\uf0b7 You can also update from your smartphone. Make sure your SEA.AI application on your smartphone \n(Apple App Store or Google Play Store) is up to date. \nAt your first connection, make sure you enable notifications for new software releases:",
+        "status": "accounted_action",
+        "matched_to": {
+          "field_path": "operator_actions[4]",
+          "text": "update Watchkeeper",
+          "similarity": 1.0
+        }
+      }
+    ],
+    "classified": [
+      {
+        "title": "Installation",
+        "kind": "numbered_heading",
+        "group_id": "chapter_3",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "3. Installation Note: Installation must be completed by a certified SEA.AI installer. Please check the installation guide in the SEA.AI document library. Accessible under www.sea.ai/document-library/ in the section Watchkeeper. Positioning ",
+        "source": "heuristic",
+        "excerpt_text": "User Guide \nWatchkeeper series \nDoc SEAAI-442870296-11 \nRevision:  \n26 November 2025 \nPage 6 of 18\n\nThe information contained in this document is proprietary to SEA.AI GmbH and is to be used only for the purpose for which it is supplied.\n\n3. Installation \nNote: Installation must be completed by a certified SEA.AI installer. Please check the installation guide in \nthe SEA.AI document library. Accessible under www.sea.ai/document-library/ in the section Watchkeeper. \nPositioning Tips: \n\uf0b7 Mount the camera in a high location with a clear, unobstructed field of view. \n\uf0b7 Adjust the tilt angle by rotating the camera to compensate for boat trim at cruising speed. \n\uf0b7 Use the thermal camera as the primary reference during positioning.\n\nWatchkeeper looking too high\n\nWatchkeeper looking straight ahead. Horizon must be visible at cruising speed. \n(It is recommended to have 20% to 30% of the thermal image above the horizon)",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:installer",
+        "status": "classified"
+      }
+    ],
+    "unaccounted": [],
+    "unaccounted_procedures": [],
+    "unaccounted_alternatives": [],
+    "accounting_trail": [
+      {
+        "title": "November 2025",
+        "kind": "headed_procedure",
+        "group_id": "chapter_2",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "User Guide Watchkeeper series Doc SEAAI-442870296-11 Revision: 26 November 2025 Page 1 of 18 The information contained in this document is proprietary to SEA.AI GmbH and is to be used only for the purpose for which it is supplied. 1",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Maintenance and Troubleshooting",
+        "kind": "numbered_heading",
+        "group_id": "chapter_7",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "7. Maintenance and Troubleshooting Regular Maintenance: \uf0b7 Clean camera lenses weekly using approved solutions. \uf0b7 Check cables integrity monthly. \uf0b7 Update firmware via USB or network connection quarterly. Troubleshooting Tips: \uf0b7 No Video Fee",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Warranty and Support",
+        "kind": "numbered_heading",
+        "group_id": "chapter_8",
+        "excerpt_ref": "excerpt[0]",
+        "disposition": "filtered",
+        "filter": "filter:classified_without_verb"
+      },
+      {
+        "title": "Alarms",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "6. Alarms \uf0b7 AI Detec\u019fon: The object classification includes 6 different classes: Ship Motorboat Sailing boat Buoy Person in the water Unknown Hazard How the AI decides what to show Our AI looks at every object it detects and calculates how ",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "Operating Instructions",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "4. Operating Instructions Product registration and activation: To ensure your new SEA.AI Watchkeeper delivers optimal performance and stays up to date with the latest advancements in Artificial Intelligence, periodic updates are essential. ",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Update with your computer",
+        "kind": "imperative_heading",
+        "group_id": "batch_2",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "Update with your computer: \uf0b7 Use your computer to download the latest Sea.AI package for your Watchkeeper on connect.sea.ai https://connect.sea.ai/account/login \uf0b7 Once the package is downloaded on your computer, access your Watchkeeper app ",
+        "disposition": "filtered",
+        "filter": "filter:no_steps_or_procedure_heading"
+      },
+      {
+        "title": "Installation",
+        "kind": "numbered_heading",
+        "group_id": "chapter_3",
+        "excerpt_ref": "excerpt[0]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:installer"
+      },
+      {
+        "title": "Update your Watchkeeper",
+        "kind": "numbered_heading",
+        "group_id": "batch_2",
+        "excerpt_ref": "excerpt[0]",
+        "disposition": "matched",
+        "matched_to": {
+          "field_path": "operator_actions[4]",
+          "text": "update Watchkeeper",
+          "similarity": 1.0
+        }
+      }
+    ],
+    "counts": {
+      "accounted": 1,
+      "classified": 1,
+      "unaccounted": 0,
+      "filtered": 6,
+      "trail": 8
+    },
+    "corpus_sizes": {
+      "actions": 19,
+      "surfaces": 2,
+      "requires": 0
+    }
+  },
+  "repair": {
+    "attempted": false,
+    "enabled": false
+  },
+  "repair_enabled": true
+}

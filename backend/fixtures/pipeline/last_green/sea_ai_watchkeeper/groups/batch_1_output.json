@@ -1,0 +1,77 @@
+{
+  "device": {
+    "manufacturer": "Sea.AI",
+    "model": "Watchkeeper",
+    "category_freeform": "Watchkeeper Series"
+  },
+  "entity_kind": "device",
+  "documented_version": "",
+  "ui_pages": [],
+  "alarm_severity": [
+    {
+      "level_verbatim": "Threat levels: Object",
+      "color_verbatim": "Blue"
+    },
+    {
+      "level_verbatim": "Warning",
+      "color_verbatim": "Yellow"
+    },
+    {
+      "level_verbatim": "Danger",
+      "color_verbatim": "Red"
+    }
+  ],
+  "control_surfaces": [],
+  "operator_actions": [
+    {
+      "action": "update Watchkeeper",
+      "audience": "operator",
+      "context": "maintenance",
+      "occasion": "to ensure optimal performance"
+    }
+  ],
+  "networks": {
+    "speaks": [],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": false
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [],
+  "evidence": [
+    {
+      "supports_field": "operator_actions[0]",
+      "manual_section": "26 November 2025",
+      "note": "Procedure to update the device"
+    },
+    {
+      "supports_field": "alarm_severity[0]",
+      "manual_section": "26 November 2025",
+      "note": "Alarm for object detection"
+    },
+    {
+      "supports_field": "alarm_severity[1]",
+      "manual_section": "26 November 2025",
+      "note": "Warning alarm level"
+    },
+    {
+      "supports_field": "alarm_severity[2]",
+      "manual_section": "26 November 2025",
+      "note": "Danger alarm level"
+    }
+  ],
+  "confidence": {
+    "overall": 0.8,
+    "notes": "Extracted from user manual excerpts"
+  }
+}

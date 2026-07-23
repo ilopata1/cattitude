@@ -1,0 +1,58 @@
+{
+  "device": {
+    "manufacturer": "Sea.AI",
+    "model": "Watchkeeper",
+    "category_freeform": "Watchkeeper series"
+  },
+  "entity_kind": "device",
+  "documented_version": "",
+  "ui_pages": [],
+  "alarm_severity": [],
+  "control_surfaces": [],
+  "operator_actions": [
+    {
+      "action": "adjust tilt angle by rotating the camera",
+      "audience": "operator",
+      "context": "situational",
+      "occasion": "to compensate for boat trim at cruising speed"
+    }
+  ],
+  "networks": {
+    "speaks": [],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": false
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [
+    {
+      "description_verbatim": "Class T fuse must be installed in the positive battery cable"
+    }
+  ],
+  "evidence": [
+    {
+      "supports_field": "operator_actions[0]",
+      "manual_section": "Installation",
+      "note": "Adjust camera tilt for boat trim"
+    },
+    {
+      "supports_field": "supply_requirements[0]",
+      "manual_section": "Installation",
+      "note": "Fuse requirement for battery connection"
+    }
+  ],
+  "confidence": {
+    "overall": 0.8,
+    "notes": "Limited excerpts; some actions and requirements inferred from installation context."
+  }
+}

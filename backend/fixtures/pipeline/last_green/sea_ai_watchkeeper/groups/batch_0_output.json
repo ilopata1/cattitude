@@ -1,0 +1,178 @@
+{
+  "device": {
+    "manufacturer": "Sea.AI",
+    "model": "Watchkeeper",
+    "category_freeform": "Watchkeeper series"
+  },
+  "entity_kind": "device",
+  "documented_version": "",
+  "ui_pages": [
+    {
+      "name": "Modes",
+      "purpose": "explains the differences between the 3 Navigation modes",
+      "appears_if_gate": {
+        "verbatim": "",
+        "description_verbatim": "",
+        "functional_class": "empty"
+      },
+      "actions": []
+    },
+    {
+      "name": "Personalization",
+      "purpose": "allows you to customize display settings",
+      "appears_if_gate": {
+        "verbatim": "",
+        "description_verbatim": "",
+        "functional_class": "empty"
+      },
+      "actions": [
+        {
+          "action": "choose the interface theme on your display",
+          "audience": "operator",
+          "context": "daily",
+          "occasion": ""
+        },
+        {
+          "action": "choose the display scale",
+          "audience": "operator",
+          "context": "daily",
+          "occasion": ""
+        },
+        {
+          "action": "choose the thermal polarity in your thermal view",
+          "audience": "operator",
+          "context": "daily",
+          "occasion": ""
+        },
+        {
+          "action": "enable or disable the voice alarm",
+          "audience": "operator",
+          "context": "daily",
+          "occasion": ""
+        },
+        {
+          "action": "enable or disable the NMEA 2000 buzzer",
+          "audience": "operator",
+          "context": "daily",
+          "occasion": ""
+        },
+        {
+          "action": "choose the distance unit used to display",
+          "audience": "operator",
+          "context": "daily",
+          "occasion": ""
+        }
+      ]
+    },
+    {
+      "name": "Setup",
+      "purpose": "allows you to configure the NMEA Gateway model",
+      "appears_if_gate": {
+        "verbatim": "",
+        "description_verbatim": "",
+        "functional_class": "empty"
+      },
+      "actions": [
+        {
+          "action": "select and configure the NMEA Gateway model",
+          "audience": "operator",
+          "context": "situational",
+          "occasion": ""
+        }
+      ]
+    }
+  ],
+  "alarm_severity": [
+    {
+      "level_verbatim": "Warning",
+      "color_verbatim": "Yellow"
+    },
+    {
+      "level_verbatim": "Danger",
+      "color_verbatim": "Red"
+    }
+  ],
+  "control_surfaces": [
+    {
+      "surface": "touchscreen",
+      "location_class": "on_device",
+      "optional_accessory": false,
+      "label_verbatim": "Watchkeeper display",
+      "path": "control_surfaces[0]"
+    }
+  ],
+  "operator_actions": [
+    {
+      "action": "access the thermal view",
+      "audience": "operator",
+      "context": "situational",
+      "occasion": ""
+    },
+    {
+      "action": "access the color view",
+      "audience": "operator",
+      "context": "situational",
+      "occasion": ""
+    },
+    {
+      "action": "enable or disable temporary remote access",
+      "audience": "operator",
+      "context": "situational",
+      "occasion": ""
+    }
+  ],
+  "networks": {
+    "speaks": [],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": false
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [],
+  "evidence": [
+    {
+      "supports_field": "ui_pages[0].purpose",
+      "manual_section": "Modes",
+      "note": "explains the differences between the 3 Navigation modes"
+    },
+    {
+      "supports_field": "ui_pages[1].purpose",
+      "manual_section": "Personalization",
+      "note": "allows you to customize display settings"
+    },
+    {
+      "supports_field": "ui_pages[2].purpose",
+      "manual_section": "Setup",
+      "note": "allows you to configure the NMEA Gateway model"
+    },
+    {
+      "supports_field": "operator_actions[0].action",
+      "manual_section": "Using the Interface",
+      "note": "access the thermal view"
+    },
+    {
+      "supports_field": "operator_actions[1].action",
+      "manual_section": "Using the Interface",
+      "note": "access the color view"
+    },
+    {
+      "supports_field": "operator_actions[2].action",
+      "manual_section": "Using the Interface",
+      "note": "enable or disable temporary remote access"
+    }
+  ],
+  "confidence": {
+    "overall": 0.8,
+    "notes": "Extracted actions and UI pages are supported by the manual excerpts."
+  }
+}

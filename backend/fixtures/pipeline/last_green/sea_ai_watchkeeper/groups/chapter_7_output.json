@@ -1,0 +1,104 @@
+{
+  "device": {
+    "manufacturer": "Sea.AI",
+    "model": "Watchkeeper",
+    "category_freeform": "Watchkeeper series"
+  },
+  "entity_kind": "device",
+  "documented_version": "",
+  "ui_pages": [],
+  "alarm_severity": [],
+  "control_surfaces": [],
+  "operator_actions": [
+    {
+      "action": "clean camera lenses",
+      "audience": "operator",
+      "context": "daily",
+      "occasion": "to maintain video feed quality"
+    },
+    {
+      "action": "check cables integrity",
+      "audience": "operator",
+      "context": "monthly",
+      "occasion": "to ensure system reliability"
+    },
+    {
+      "action": "update firmware via USB or network connection",
+      "audience": "operator",
+      "context": "quarterly",
+      "occasion": "to keep system up to date"
+    },
+    {
+      "action": "check camera power and cable connections",
+      "audience": "operator",
+      "context": "emergency",
+      "occasion": "if there is no video feed"
+    },
+    {
+      "action": "reboot your system",
+      "audience": "operator",
+      "context": "emergency",
+      "occasion": "if there is no video feed or system lag"
+    },
+    {
+      "action": "adjust detection sensitivity",
+      "audience": "operator",
+      "context": "situational",
+      "occasion": "to reduce false alarms"
+    }
+  ],
+  "networks": {
+    "speaks": [],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": false
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [],
+  "evidence": [
+    {
+      "supports_field": "operator_actions[0]",
+      "manual_section": "Maintenance and Troubleshooting",
+      "note": "Regular maintenance includes cleaning camera lenses"
+    },
+    {
+      "supports_field": "operator_actions[1]",
+      "manual_section": "Maintenance and Troubleshooting",
+      "note": "Check cables integrity monthly"
+    },
+    {
+      "supports_field": "operator_actions[2]",
+      "manual_section": "Maintenance and Troubleshooting",
+      "note": "Update firmware quarterly"
+    },
+    {
+      "supports_field": "operator_actions[3]",
+      "manual_section": "Maintenance and Troubleshooting",
+      "note": "Check connections if no video feed"
+    },
+    {
+      "supports_field": "operator_actions[4]",
+      "manual_section": "Maintenance and Troubleshooting",
+      "note": "Reboot system if lag or no video"
+    },
+    {
+      "supports_field": "operator_actions[5]",
+      "manual_section": "Maintenance and Troubleshooting",
+      "note": "Adjust sensitivity to reduce false alarms"
+    }
+  ],
+  "confidence": {
+    "overall": 0.9,
+    "notes": "Extracted actions and maintenance tasks are directly from the manual."
+  }
+}

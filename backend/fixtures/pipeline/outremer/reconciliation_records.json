@@ -289,6 +289,45 @@
       },
       "fixture_auth": "Fixture-Auth: chat Nanni N4.65 — add instrument panel variant to open owner questions",
       "inventory_action": "none"
+    },
+    {
+      "id": "rec_sea_ai_watchkeeper_added",
+      "action": "audit_only",
+      "disposition": "owner_added",
+      "device_keys_now": [
+        "sea_ai_watchkeeper"
+      ],
+      "summary": "Sea.AI Watchkeeper added to Outremer live inventory. Already in DB registry (equipment 3b14f3a7) and attached to Supernova; User Guide Watchkeeper Series cleared/ingested (manual_work 14570452).",
+      "evidence": [
+        "DB registry Sea.AI / Watchkeeper",
+        "Supernova vessel_equipment",
+        "User Guide Watchkeeper Series Doc SEAAI-442870296-11 Rev 26 Nov 2025"
+      ],
+      "fixture_auth": "Fixture-Auth: chat Sea.AI Watchkeeper add — registry + vessel link attested; Stage 1 extract promoted",
+      "inventory_action": "added"
+    },
+    {
+      "id": "rec_sea_ai_watchkeeper_extracted",
+      "action": "audit_only",
+      "disposition": "profile_extracted",
+      "device_keys_now": [
+        "sea_ai_watchkeeper"
+      ],
+      "summary": "Playbook 1 Stage 1 extraction against cleared User Guide (manual_work 14570452, 18 pp, 21 chunks). Heading coverage 0.9; 0 unaccounted; no blocking flags. Promote §1.D: genres install/operate/maintain; drop NMEA Gateway commissioning + duplicate remote-access actions. Graph: ISLAND / nav. Nav Stage 4 remains frozen — inventory/graph only until superseding tip.",
+      "evidence": [
+        "User Guide Watchkeeper Series (operators/user guide)",
+        "manual_work 14570452-6ad1-4d48-8c02-f688a7d81cd7; equipment 3b14f3a7-c348-461f-b3c7-6f02955b4419",
+        "scripts/promote_sea_ai_watchkeeper.py"
+      ],
+      "fixture_auth": "Fixture-Auth: chat Sea.AI Watchkeeper Stage 1 extract — live extraction promoted; genres normalized; NMEA Gateway commissioning + duplicate remote-access actions dropped as source-grounded §1.D adjudication",
+      "review": {
+        "status": "pending_human_review",
+        "verdict": null,
+        "reviewed_by": null,
+        "date": null,
+        "note": "Nav Stage 4 frozen (v4.37); Watchkeeper not yet in guest Nav prose."
+      },
+      "inventory_action": "none"
     }
   ]
 }

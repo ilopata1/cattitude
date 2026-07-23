@@ -6822,5 +6822,980 @@
     ],
     "source": "live_extraction",
     "needs_rextraction": false
+  },
+  "sea_ai_watchkeeper": {
+    "device": {
+      "manufacturer": "Sea.AI",
+      "model": "Watchkeeper",
+      "category_freeform": "AI camera object detection system"
+    },
+    "control_surfaces": [
+      {
+        "surface": "touchscreen",
+        "location_class": "on_device",
+        "optional_accessory": false,
+        "label_verbatim": "User Interface",
+        "path": "control_surfaces[0]",
+        "vote_margin": "2/3"
+      }
+    ],
+    "operator_actions": [
+      {
+        "action": "select thermal view",
+        "audience": "operator",
+        "context": "situational",
+        "occasion": "to access live images from the thermal camera",
+        "vote_margin": "1/3",
+        "source": "extracted"
+      },
+      {
+        "action": "select color view",
+        "audience": "operator",
+        "context": "situational",
+        "occasion": "to access live images from the low-light camera",
+        "vote_margin": "1/3",
+        "source": "extracted"
+      },
+      {
+        "action": "enable or disable voice alarm",
+        "audience": "operator",
+        "context": "daily",
+        "occasion": "to alert when an object is detected",
+        "vote_margin": "3/3",
+        "source": "extracted"
+      },
+      {
+        "action": "enable or disable NMEA 2000 buzzer",
+        "audience": "operator",
+        "context": "daily",
+        "occasion": "to play sound alarms on external buzzers",
+        "vote_margin": "3/3",
+        "source": "extracted"
+      },
+      {
+        "action": "update Watchkeeper",
+        "audience": "operator",
+        "context": "maintenance",
+        "occasion": "to ensure optimal performance",
+        "vote_margin": "3/3",
+        "source": "extracted"
+      },
+      {
+        "action": "adjust the tilt angle by rotating the camera",
+        "audience": "operator",
+        "context": "situational",
+        "occasion": "to compensate for boat trim at cruising speed",
+        "vote_margin": "3/3",
+        "source": "extracted"
+      },
+      {
+        "action": "clean camera lenses weekly",
+        "audience": "operator",
+        "context": "daily",
+        "vote_margin": "3/3",
+        "source": "extracted"
+      },
+      {
+        "action": "check cables integrity monthly",
+        "audience": "operator",
+        "context": "daily",
+        "vote_margin": "3/3",
+        "source": "extracted"
+      },
+      {
+        "action": "update firmware via USB or network connection quarterly",
+        "audience": "operator",
+        "context": "maintenance",
+        "vote_margin": "3/3",
+        "source": "extracted"
+      },
+      {
+        "action": "check camera power and cable connections and reboot your system",
+        "audience": "operator",
+        "context": "emergency",
+        "vote_margin": "3/3",
+        "source": "extracted"
+      },
+      {
+        "action": "adjust detection sensitivity by changing navigation mode",
+        "audience": "operator",
+        "context": "situational",
+        "vote_margin": "3/3",
+        "source": "extracted"
+      },
+      {
+        "action": "reboot and verify system resources",
+        "audience": "operator",
+        "context": "situational",
+        "vote_margin": "2/3",
+        "source": "extracted"
+      },
+      {
+        "action": "use the AI feedback to report false detections",
+        "audience": "operator",
+        "context": "situational",
+        "vote_margin": "2/3",
+        "source": "extracted"
+      },
+      {
+        "action": "enable or disable temporary remote access to service team",
+        "audience": "operator",
+        "context": "situational",
+        "vote_margin": "1/3",
+        "source": "extracted"
+      },
+      {
+        "action": "choose the distance unit used to display",
+        "audience": "operator",
+        "context": "daily",
+        "source": "extracted",
+        "vote_margin": "2/3"
+      },
+      {
+        "action": "choose the thermal polarity in your thermal view",
+        "audience": "operator",
+        "context": "daily",
+        "source": "extracted",
+        "vote_margin": "2/3"
+      },
+      {
+        "action": "choose the interface theme on your display",
+        "audience": "operator",
+        "context": "daily",
+        "source": "extracted",
+        "vote_margin": "1/3"
+      }
+    ],
+    "networks": {
+      "speaks": [],
+      "bridges": []
+    },
+    "data_roles": {
+      "exposes_data_to_network": false,
+      "displays_data_from_other_devices": false,
+      "controllable_from_network": false
+    },
+    "requires_devices": [],
+    "safety_role": {
+      "is_protective_device": false,
+      "has_manual_override": false,
+      "has_emergency_procedure": false
+    },
+    "protected_by": [],
+    "protects": [],
+    "supply_requirements": [
+      {
+        "description_verbatim": "Class T fuse must be installed in the positive battery cable",
+        "vote_margin": "3/3"
+      }
+    ],
+    "evidence": [
+      {
+        "supports_field": "control_surfaces[0]",
+        "manual_section": "User Interface",
+        "note": "Describes the touchscreen interface for operation"
+      },
+      {
+        "supports_field": "operator_actions[action=select thermal view]",
+        "manual_section": "User Interface",
+        "note": "Access thermal view for live images"
+      },
+      {
+        "supports_field": "operator_actions[action=select color view]",
+        "manual_section": "User Interface",
+        "note": "Access color view for live images"
+      },
+      {
+        "supports_field": "operator_actions[action=enable or disable voice alarm]",
+        "manual_section": "User Interface",
+        "note": "Voice alarm alerts for detected objects"
+      },
+      {
+        "supports_field": "operator_actions[action=enable or disable NMEA 2000 buzzer]",
+        "manual_section": "User Interface",
+        "note": "NMEA 2000 buzzer for sound alarms"
+      },
+      {
+        "supports_field": "operator_actions[action=update Watchkeeper]",
+        "manual_section": "26 November 2025",
+        "note": "Procedure to update the device"
+      },
+      {
+        "supports_field": "operator_actions",
+        "manual_section": "Update your Watchkeeper",
+        "note": "Update procedure for the Watchkeeper"
+      },
+      {
+        "supports_field": "operator_actions[action=adjust the tilt angle by rotating the camera]",
+        "manual_section": "Installation",
+        "note": "Tilt adjustment for camera positioning"
+      }
+    ],
+    "confidence": {
+      "overall": 0.9,
+      "notes": "[chapter_2] Limited information available in the provided excerpts. | [batch_0] Extracted actions and surfaces are supported by the manual excerpts. | [batch_1] Extracted actions and alarms are supported by the manual excerpts. | [batch_2] Limited information available in the provided text. | [chapter_3] Limited excerpts; only installation-related actions and requirements covered. | [chapter_7] Extracted actions and maintenance tasks are directly from the manual. | [chapter_8] No operational det"
+    },
+    "coverage": {
+      "chunk_count": 21,
+      "heading_count": 10,
+      "headings_covered_count": 9,
+      "heading_coverage_fraction": 0.9,
+      "coverage_low_threshold": 0.25,
+      "top_k_used": 4
+    },
+    "group_utilization": [
+      {
+        "group_id": "chapter_2",
+        "is_introduction": true,
+        "excerpt_count": 1,
+        "predicted_fields": [
+          "evidence",
+          "operator_actions",
+          "requires_devices",
+          "supply_requirements"
+        ],
+        "contributions": {
+          "operator_actions": 0,
+          "control_surfaces": 0,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 0,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 0,
+        "unutilized": true
+      },
+      {
+        "group_id": "batch_0",
+        "is_introduction": false,
+        "excerpt_count": 7,
+        "predicted_fields": [
+          "control_surfaces",
+          "evidence",
+          "operator_actions",
+          "requires_devices",
+          "supply_requirements"
+        ],
+        "contributions": {
+          "operator_actions": 4,
+          "control_surfaces": 1,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 5,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 10,
+        "unutilized": false
+      },
+      {
+        "group_id": "batch_1",
+        "is_introduction": false,
+        "excerpt_count": 7,
+        "predicted_fields": [
+          "control_surfaces",
+          "data_roles",
+          "evidence",
+          "networks",
+          "operator_actions",
+          "requires_devices",
+          "safety_role"
+        ],
+        "contributions": {
+          "operator_actions": 1,
+          "control_surfaces": 0,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 4,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 5,
+        "unutilized": false
+      },
+      {
+        "group_id": "batch_2",
+        "is_introduction": false,
+        "excerpt_count": 1,
+        "predicted_fields": [
+          "control_surfaces",
+          "evidence",
+          "operator_actions"
+        ],
+        "contributions": {
+          "operator_actions": 0,
+          "control_surfaces": 0,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 1,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 1,
+        "unutilized": false
+      },
+      {
+        "group_id": "chapter_3",
+        "is_introduction": false,
+        "excerpt_count": 1,
+        "predicted_fields": [
+          "evidence",
+          "protected_by",
+          "supply_requirements"
+        ],
+        "contributions": {
+          "operator_actions": 1,
+          "control_surfaces": 0,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 2,
+          "supply_requirements": 1,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 4,
+        "unutilized": false
+      },
+      {
+        "group_id": "chapter_7",
+        "is_introduction": false,
+        "excerpt_count": 1,
+        "predicted_fields": [
+          "evidence",
+          "operator_actions",
+          "safety_role"
+        ],
+        "contributions": {
+          "operator_actions": 7,
+          "control_surfaces": 0,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 7,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 14,
+        "unutilized": false
+      },
+      {
+        "group_id": "chapter_8",
+        "is_introduction": false,
+        "excerpt_count": 1,
+        "predicted_fields": [
+          "evidence",
+          "operator_actions"
+        ],
+        "contributions": {
+          "operator_actions": 0,
+          "control_surfaces": 0,
+          "networks": 0,
+          "requires_devices": 0,
+          "evidence": 0,
+          "supply_requirements": 0,
+          "protected_by": 0,
+          "protects": 0,
+          "data_roles": 0,
+          "safety_role": 0
+        },
+        "contribution_total": 0,
+        "unutilized": true
+      }
+    ],
+    "merge_conflicts": [],
+    "genres": [
+      "installation",
+      "maintenance",
+      "operation"
+    ],
+    "entity_kind": "device",
+    "alarm_severity": [
+      {
+        "level_verbatim": "Threat levels: Object",
+        "color_verbatim": "Blue"
+      },
+      {
+        "level_verbatim": "Warning",
+        "color_verbatim": "Yellow"
+      },
+      {
+        "level_verbatim": "Danger",
+        "color_verbatim": "Red"
+      }
+    ],
+    "ui_pages": [],
+    "validation_flags": [
+      {
+        "flag": "group_unutilized",
+        "severity": "warning",
+        "detail": "group 'chapter_2' had 1 routed excerpts but contributed zero fields; routing predicted ['evidence', 'operator_actions', 'requires_devices', 'supply_requirements']",
+        "field_path": "group_utilization.chapter_2"
+      },
+      {
+        "flag": "group_unutilized",
+        "severity": "warning",
+        "detail": "group 'chapter_8' had 1 routed excerpts but contributed zero fields; routing predicted ['evidence', 'operator_actions']",
+        "field_path": "group_utilization.chapter_8"
+      },
+      {
+        "flag": "extraction_adjudicated",
+        "severity": "info",
+        "detail": "Normalized genres to installation/operation/maintenance; dropped actions ['select and configure the nmea gateway model', 'enable or disable temporary remote access']. Fixture-Auth: chat Sea.AI Watchkeeper Stage 1 extract — live extraction promoted; genres normalized to install/operate/maintain, NMEA Gateway commissioning action + duplicate remote-access action dropped as source-grounded §1.D adjudication"
+      }
+    ],
+    "repairs": [],
+    "extraction_votes": [
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "context",
+        "chosen": "maintenance",
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 3,
+          "agree_with_chosen": 0,
+          "margin": "3/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "action": "update firmware via USB or network connection quarterly",
+              "audience": "operator",
+              "context": "maintenance"
+            }
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "update firmware via USB or network connection quarterly",
+              "audience": "operator",
+              "context": "daily",
+              "occasion": ""
+            }
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "update firmware via USB or network connection",
+              "audience": "operator",
+              "context": "quarterly",
+              "occasion": "to keep system up to date"
+            }
+          }
+        ],
+        "instability_class": "material"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "select thermal view",
+          "audience": "operator",
+          "context": "situational",
+          "occasion": "to access live images from the thermal camera",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 1,
+          "agree_with_chosen": 1,
+          "margin": "1/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "action": "select thermal view",
+              "audience": "operator",
+              "context": "situational",
+              "occasion": "to access live images from the thermal camera"
+            }
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "select color view",
+          "audience": "operator",
+          "context": "situational",
+          "occasion": "to access live images from the low-light camera",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 1,
+          "agree_with_chosen": 1,
+          "margin": "1/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "action": "select color view",
+              "audience": "operator",
+              "context": "situational",
+              "occasion": "to access live images from the low-light camera"
+            }
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "reboot and verify system resources",
+          "audience": "operator",
+          "context": "situational",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 2,
+          "agree_with_chosen": 2,
+          "margin": "2/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "action": "reboot and verify system resources",
+              "audience": "operator",
+              "context": "situational"
+            }
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "reboot and verify system resources",
+              "audience": "operator",
+              "context": "situational",
+              "occasion": "if system lag occurs"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "use the AI feedback to report false detections",
+          "audience": "operator",
+          "context": "situational",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 2,
+          "agree_with_chosen": 2,
+          "margin": "2/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "action": "use the AI feedback to report false detections",
+              "audience": "operator",
+              "context": "situational"
+            }
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "use the AI feedback",
+              "audience": "operator",
+              "context": "situational",
+              "occasion": "if many false detections occur"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "enable or disable temporary remote access to service team",
+          "audience": "operator",
+          "context": "situational",
+          "occasion": "",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 1,
+          "agree_with_chosen": 1,
+          "margin": "1/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "enable or disable temporary remote access to service team",
+              "audience": "operator",
+              "context": "situational",
+              "occasion": ""
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "choose the distance unit used to display",
+          "audience": "operator",
+          "context": "daily",
+          "source": "extracted",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 2,
+          "agree_with_chosen": 2,
+          "margin": "2/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "choose the distance unit used to display",
+              "audience": "operator",
+              "context": "daily",
+              "source": "extracted"
+            }
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "choose the distance unit used to display",
+              "audience": "operator",
+              "context": "daily",
+              "source": "extracted"
+            }
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "choose the thermal polarity in your thermal view",
+          "audience": "operator",
+          "context": "daily",
+          "source": "extracted",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 2,
+          "agree_with_chosen": 2,
+          "margin": "2/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "choose the thermal polarity in your thermal view",
+              "audience": "operator",
+              "context": "daily",
+              "source": "extracted"
+            }
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "choose the thermal polarity in your thermal view",
+              "audience": "operator",
+              "context": "daily",
+              "source": "extracted"
+            }
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "select and configure the NMEA Gateway model",
+          "audience": "operator",
+          "context": "situational",
+          "source": "extracted",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 2,
+          "agree_with_chosen": 2,
+          "margin": "2/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "select and configure the NMEA Gateway model",
+              "audience": "operator",
+              "context": "situational",
+              "source": "extracted"
+            }
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "select and configure the NMEA Gateway model",
+              "audience": "operator",
+              "context": "situational",
+              "source": "extracted"
+            }
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "enable or disable temporary remote access",
+          "audience": "operator",
+          "context": "situational",
+          "occasion": "",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 1,
+          "agree_with_chosen": 1,
+          "margin": "1/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "enable or disable temporary remote access",
+              "audience": "operator",
+              "context": "situational",
+              "occasion": ""
+            }
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "choose the interface theme on your display",
+          "audience": "operator",
+          "context": "daily",
+          "source": "extracted",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 1,
+          "agree_with_chosen": 1,
+          "margin": "1/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "choose the interface theme on your display",
+              "audience": "operator",
+              "context": "daily",
+              "source": "extracted"
+            }
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "control_surfaces",
+        "kind": "control_surfaces",
+        "attribute": "presence",
+        "chosen": {
+          "surface": "touchscreen",
+          "location_class": "on_device",
+          "optional_accessory": false,
+          "label_verbatim": "User Interface",
+          "path": "control_surfaces[0]",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 2,
+          "agree_with_chosen": 2,
+          "margin": "2/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "surface": "touchscreen",
+              "location_class": "on_device",
+              "optional_accessory": false,
+              "label_verbatim": "User Interface",
+              "path": "control_surfaces[0]"
+            }
+          },
+          {
+            "run": 2,
+            "value": {
+              "surface": "touchscreen",
+              "location_class": "on_device",
+              "optional_accessory": false,
+              "label_verbatim": "User Interface",
+              "path": "control_surfaces[0]"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ],
+        "instability_class": "cosmetic"
+      },
+      {
+        "field_path": "control_surfaces",
+        "kind": "control_surfaces",
+        "attribute": "presence",
+        "chosen": {
+          "surface": "touchscreen",
+          "location_class": "on_device",
+          "optional_accessory": false,
+          "label_verbatim": "Watchkeeper display",
+          "path": "control_surfaces[0]",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": {
+          "n_runs": 3,
+          "present_in": 1,
+          "agree_with_chosen": 1,
+          "margin": "1/3"
+        },
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": {
+              "surface": "touchscreen",
+              "location_class": "on_device",
+              "optional_accessory": false,
+              "label_verbatim": "Watchkeeper display",
+              "path": "control_surfaces[0]"
+            }
+          }
+        ],
+        "instability_class": "cosmetic"
+      }
+    ],
+    "instability_triage": {
+      "material_count": 1,
+      "cosmetic_count": 12
+    },
+    "source": "live_extraction",
+    "needs_rextraction": false
   }
 }

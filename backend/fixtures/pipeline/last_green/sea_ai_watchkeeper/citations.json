@@ -1,0 +1,1121 @@
+{
+  "manuals": [
+    {
+      "id": "14570452-6ad1-4d48-8c02-f688a7d81cd7",
+      "title": "User Guide Watchkeeper Series",
+      "manual_type": "operators",
+      "legal_status": "cleared"
+    }
+  ],
+  "manuals_available": [
+    {
+      "id": "14570452-6ad1-4d48-8c02-f688a7d81cd7",
+      "title": "User Guide Watchkeeper Series",
+      "manual_type": "operators",
+      "legal_status": "cleared"
+    }
+  ],
+  "manual_selection_policy": "operators",
+  "excerpts": [
+    {
+      "manual_id": "14570452-6ad1-4d48-8c02-f688a7d81cd7",
+      "source_file": "c29bd9941fe4c64b_User_Guide_Watchkeeper_Series_1.2.pdf",
+      "page_start": 10,
+      "page_end": 10,
+      "query": "operation daily use display menu controls operator",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.40989818828409175,
+      "text": "User Guide \nWatchkeeper series \nDoc SEAAI-442870296-11 \nRevision:  \n26 November 2025 \nPage 10 of 18\n\nThe information contained in this document is proprietary to SEA.AI GmbH and is to be used only for the purpose for which it is supplied.\n\no  \n\uf0a7 Suitable for coastal passages or navigation through areas of high traffic. This mode \nfocuses on close proximity awareness for nearshore navigation. Acoustic alarms will \nbe triggered only by dangerous targets.\n\no   \n\uf0a7 Suitable for offshore passages. Alarm sensitivity will be higher than for coastal \nmode. \n\uf0b7 Zoom and Pan: \no In both color and thermal view, you are able to pass from the full field of view to a \nnarrow-focused view by selecting  \no You can then pan left, right and come back to the middle by   \n\uf0a7 Clicking on the arrows  \n\uf0a7 Navigating the cursor on the horizon bar\n\no You may come back to the wide vision by selecting  \n\uf0b7 Settings:   \no System tab will show you: \n\uf0a7 The current software version installed on your Watchkeeper \n\uf0a7 The storage space available on your unit. (For AI feedback recording). \n\uf0a7 Will allow you to upload the latest version of software onto your Watchkeeper. See",
+      "source_heading_guess": "26 November 2025"
+    },
+    {
+      "manual_id": "14570452-6ad1-4d48-8c02-f688a7d81cd7",
+      "source_file": "c29bd9941fe4c64b_User_Guide_Watchkeeper_Series_1.2.pdf",
+      "page_start": 9,
+      "page_end": 9,
+      "query": "operation daily use display menu controls operator",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.4033678124513551,
+      "text": "User Guide \nWatchkeeper series \nDoc SEAAI-442870296-11 \nRevision:  \n26 November 2025 \nPage 9 of 18\n\nThe information contained in this document is proprietary to SEA.AI GmbH and is to be used only for the purpose for which it is supplied.\n\nUsing the Interface: \n\uf0b7 Views: Thermal (only for Watchkeeper 320, 640 and 1280) or Color. \no To access the thermal view, select   \no The thermal view shows the live images from the thermal camera with the following field \nof view (Horizontal x Vertical): \n\uf0a7 Watchkeeper 320: 24\u00b0x19\u00b0 \n\uf0a7 Watchkeeper 640: 24\u00b0x19\u00b0 \n\uf0a7 Watchkeeper 1280: 48\u00b0x19\u00b0 \no The thermal view works day and night and is particularly adequate for night or low \nvisibility conditions. \no To access the color view, select  \no The Color view shows the live images from the low-light camera with a field of view of \n130\u00bax65\u00ba.  \no It works in daylight but also in low-light conditions like dawn or dusk.\n\n\uf0b7 Each view will display bounding boxes around the detections.\n\n\uf0b7 Navigation modes: \no  \n\uf0a7 Suitable to use when entering and leaving harbours, marinas or crowded bays. The \ndifferent views will show and highlight the objects detected, but all the alarms are",
+      "source_heading_guess": "26 November 2025"
+    },
+    {
+      "manual_id": "14570452-6ad1-4d48-8c02-f688a7d81cd7",
+      "source_file": "c29bd9941fe4c64b_User_Guide_Watchkeeper_Series_1.2.pdf",
+      "page_start": 12,
+      "page_end": 12,
+      "query": "operation daily use display menu controls operator",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.3950974453240589,
+      "text": "User Guide \nWatchkeeper series \nDoc SEAAI-442870296-11 \nRevision:  \n26 November 2025 \nPage 12 of 18\n\nThe information contained in this document is proprietary to SEA.AI GmbH and is to be used only for the purpose for which it is supplied.\n\nautomatically into the system\u2019s memory. \n- When you can, connect with a computer, download the file and contact us via \nemail at feedback@sea.ai\n\no The help tab will give you access to our service support email address: service@sea.ai.com \n\uf0a7 You can enable or disable temporary remote access to our service team for system \ndiagnostics and repair. SEA.AI cannot access your device or fetch data from your \ndevice without your consent.",
+      "source_heading_guess": "26 November 2025"
+    },
+    {
+      "manual_id": "14570452-6ad1-4d48-8c02-f688a7d81cd7",
+      "source_file": "c29bd9941fe4c64b_User_Guide_Watchkeeper_Series_1.2.pdf",
+      "page_start": 11,
+      "page_end": 11,
+      "query": "operation daily use display menu controls operator",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.3948618020699358,
+      "text": "User Guide \nWatchkeeper series \nDoc SEAAI-442870296-11 \nRevision:  \n26 November 2025 \nPage 11 of 18\n\nThe information contained in this document is proprietary to SEA.AI GmbH and is to be used only for the purpose for which it is supplied.\n\no The Modes tab explains the differences between the 3 Navigation modes.\n\no The Personalization tab will allow you to: \n\uf0a7 Choose the interface theme on your display: Light for daylight, Dark for low-light \nconditions, and Low contrast for night navigation to preserve your night vision. \n\uf0a7 Choose the display scale to have different icon sizes and adapt best to your display \nsize. \n\uf0a7 Choose the thermal polarity in your thermal view (White is Hot: Normal or Black is \nHot: Inverted) \n\uf0a7 Enable or disable the voice alarm that will alert when an object is detected, based \non its threat level and direction. \n\uf0a7 Enable or disable the NMEA 2000 buzzer to play sound alarms on external Buzzers. \n\uf0a7 Choose the distance unit used to display. You can choose between meters and feet. \nOver 1 nautical mile the distance will be shown in Nautical miles.\n\no The Setup tab will allow you to: \n\uf0a7 Select and configure the NMEA Gateway model to be used.",
+      "source_heading_guess": "26 November 2025"
+    },
+    {
+      "manual_id": "14570452-6ad1-4d48-8c02-f688a7d81cd7",
+      "source_file": "c29bd9941fe4c64b_User_Guide_Watchkeeper_Series_1.2.pdf",
+      "page_start": 8,
+      "page_end": 8,
+      "query": "installation wiring commissioning configuration DIP switches",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.26589051295711097,
+      "text": "User Guide \nWatchkeeper series \nDoc SEAAI-442870296-11 \nRevision:  \n26 November 2025 \nPage 8 of 18\n\nThe information contained in this document is proprietary to SEA.AI GmbH and is to be used only for the purpose for which it is supplied.\n\nConnecting Onboard PC: \no  Download the Sea.AI Watchkeeper Windows/Mac application from Sea.AI Document library \no Open the application. Your PC will find automatically the Watchkeeper if it\u2019s connected to \nthe same network.\n\nConnecting Onboard MFD: \no The computing power of your MFD might be limiting our ability to display the best version \nof our application, therefore we adapt to give you the best out of it. Depending on your MFD \nbrand and model, our connection protocol and user interface will differ to ensure the best \nperformance.  \no Please refer to our MFD compatibility page on our website:  \nhttps://www.sea.ai/product-watchkeeper/mfd-compatibility/ \no To start the SEA.AI App on your MFD \u2013 go to 3rd party Apps and tap on the SEA.AI Icon. The \nIcon will appear automatically once SEA.AI is connected and turned on. Start-up of the \nsystem and discovery in the MFD network can take several minutes.",
+      "source_heading_guess": "26 November 2025"
+    },
+    {
+      "manual_id": "14570452-6ad1-4d48-8c02-f688a7d81cd7",
+      "source_file": "c29bd9941fe4c64b_User_Guide_Watchkeeper_Series_1.2.pdf",
+      "page_start": 1,
+      "page_end": 1,
+      "query": "installation wiring commissioning configuration DIP switches",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.25905853725143213,
+      "text": "User Guide \nWatchkeeper series \nDoc SEAAI-442870296-11 \nRevision:  \n26 November 2025 \nPage 1 of 18\n\nThe information contained in this document is proprietary to SEA.AI GmbH and is to be used only for the purpose for which it is supplied.\n\n1. Welcome ......................................................................................................................................................... 2 \n2. Product Overview and Specifications ............................................................................................................. 4 \n3. Installation ..................................................................................................................................................... 6 \n4. Operating Instructions .................................................................................................................................... 7 \n5. Update your Watchkeeper ............................................................................................................................ 13",
+      "source_heading_guess": "26 November 2025"
+    },
+    {
+      "manual_id": "14570452-6ad1-4d48-8c02-f688a7d81cd7",
+      "source_file": "c29bd9941fe4c64b_User_Guide_Watchkeeper_Series_1.2.pdf",
+      "page_start": 8,
+      "page_end": 8,
+      "query": "installation wiring commissioning configuration DIP switches",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.2565949579562725,
+      "text": "Start-up of the \nsystem and discovery in the MFD network can take several minutes.      \no To directly access the RTSP Video with your MFD please check your MFD manual (Use the \nguide to setup RTSP streams on Furuno, B&G or Simrad.) \no RTSP streams:  \nWatchkeeper Lite: \nCamera Link Resolution FoV (H\u00baxV\u00ba) \nColor rtsp://{IP}:8555/rgb1 3600x1080 130\u00bax65\u00ba\n\nWatchkeeper 320: \nCamera Link Resolution FoV (H\u00baxV\u00ba) \nThermal rtsp://{IP}:8555/t1 320x256 24\u00bax19\u00ba \nColor rtsp://{IP}:8555/rgb1 3600x1080 130\u00bax65\u00ba\n\nWatchkeeper 640: \nCamera Link Resolution FoV (H\u00baxV\u00ba) \nThermal rtsp://{IP}:8555/t1 640x512 24\u00bax19\u00ba \nColor rtsp://{IP}:8555/rgb1 3600x1080 130\u00bax65\u00ba\n\nWatchkeeper 1280: \nCamera Link Resolution FoV (H\u00baxV\u00ba) \nThermal rtsp://{IP}:8555/t1 1280x512 48\u00bax19\u00ba \nColor rtsp://{IP}:8555/rgb1 3600x1080 130\u00bax65\u00ba",
+      "source_heading_guess": "Start-up of the"
+    },
+    {
+      "manual_id": "14570452-6ad1-4d48-8c02-f688a7d81cd7",
+      "source_file": "c29bd9941fe4c64b_User_Guide_Watchkeeper_Series_1.2.pdf",
+      "page_start": 16,
+      "page_end": 16,
+      "query": "installation wiring commissioning configuration DIP switches",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.2557458276172053,
+      "text": "User Guide \nWatchkeeper series \nDoc SEAAI-442870296-11 \nRevision:  \n26 November 2025 \nPage 16 of 18\n\nThe information contained in this document is proprietary to SEA.AI GmbH and is to be used only for the purpose for which it is supplied.\n\n\uf0a7 Coastal alarms: \nAlarm Object Warning Danger \nVisual\n\nSound None 2 Bips every 10s 3 Bips every 3s \nVoice None None \u201cDanger (bearing)\u201d\n\n\uf0a7 Offshore alarms: \nAlarm Object Warning Danger \nVisual\n\nSound 1 Bip every 10s 2 Bips every 3s 3 Bips in loop \nVoice None \u201cWarning (bearing)\u201d \u201cDanger (bearing)\u201d\n\no Your alarm can be muted or activated using:",
+      "source_heading_guess": "26 November 2025"
+    },
+    {
+      "manual_id": "14570452-6ad1-4d48-8c02-f688a7d81cd7",
+      "source_file": "c29bd9941fe4c64b_User_Guide_Watchkeeper_Series_1.2.pdf",
+      "page_start": 15,
+      "page_end": 15,
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.4735702160351457,
+      "text": "User Guide \nWatchkeeper series \nDoc SEAAI-442870296-11 \nRevision:  \n26 November 2025 \nPage 15 of 18\n\nThe information contained in this document is proprietary to SEA.AI GmbH and is to be used only for the purpose for which it is supplied.\n\n6. Alarms\n\n\uf0b7 AI Detec\u019fon: The object classification includes 6 different classes: \nShip  \nMotorboat  \nSailing boat  \nBuoy  \nPerson in the water  \nUnknown Hazard\n\nHow the AI decides what to show \nOur AI looks at every object it detects and calculates how con\ufb01dent it is about the object\u2019s type. If \nthe con\ufb01dence is high enough (the required level varies depending on the type of object), the \nsystem will display that class. If the con\ufb01dence doesn\u2019t reach the required level, the object will \nsimply appear as Unknown Hazard, so you\u2019re s\u019fll aware that something is there, even if it can\u2019t be \nclearly iden\u019f\ufb01ed.\n\n\uf0b7 Smart Alarms: Our smart alarm prioritizes risks and provides clear warnings on the potential \nhazards you may face. It is based on the distance and bearing of the detection. A frontal detection \nwill have a higher level of threat than a side one. \no Alarm tags: \n\uf0a7 Threat levels: Object (Blue), Warning (Yellow), Danger (Red)",
+      "source_heading_guess": "26 November 2025"
+    },
+    {
+      "manual_id": "14570452-6ad1-4d48-8c02-f688a7d81cd7",
+      "source_file": "c29bd9941fe4c64b_User_Guide_Watchkeeper_Series_1.2.pdf",
+      "page_start": 17,
+      "page_end": 17,
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.44591246446775556,
+      "text": "User Guide \nWatchkeeper series \nDoc SEAAI-442870296-11 \nRevision:  \n26 November 2025 \nPage 17 of 18\n\nThe information contained in this document is proprietary to SEA.AI GmbH and is to be used only for the purpose for which it is supplied.\n\n7. Maintenance and Troubleshooting \nRegular Maintenance: \n\uf0b7 Clean camera lenses weekly using approved solutions. \n\uf0b7 Check cables integrity monthly. \n\uf0b7 Update firmware via USB or network connection quarterly. \nTroubleshooting Tips: \n\uf0b7 No Video Feed: Check camera power and cable connections and reboot your system. \n\uf0b7 False Alarms: Adjust detection sensitivity by changing navigation mode. \n\uf0b7 System Lag: Reboot and verify system resources. \n\uf0b7 If you encounter many false detections, please use the AI feedback and help us get better.",
+      "source_heading_guess": "26 November 2025"
+    },
+    {
+      "manual_id": "14570452-6ad1-4d48-8c02-f688a7d81cd7",
+      "source_file": "c29bd9941fe4c64b_User_Guide_Watchkeeper_Series_1.2.pdf",
+      "page_start": 11,
+      "page_end": 11,
+      "query": "network communication MasterBus NMEA CZone VE.Direct Bluetooth remote panel app",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.36707889285981055,
+      "text": "\uf0a7 Give access to support from your dealer/installer.\n\no The Feedback tab will give you access to  \n\uf0a7 Our feedback email so you can send us the recording performed using the AI \nfeedback tool  \n\uf0a7 AI Feedback procedure: \n- Record raw images by clicking on the AI feedback tool . \n- Select the type of feedback that you want to share with Sea.AI. \n- The recording is on, you can stop it when you want, and it will be saved",
+      "source_heading_guess": "feedback tool \uf0a7 AI Feedback procedure:"
+    },
+    {
+      "manual_id": "14570452-6ad1-4d48-8c02-f688a7d81cd7",
+      "source_file": "c29bd9941fe4c64b_User_Guide_Watchkeeper_Series_1.2.pdf",
+      "page_start": 18,
+      "page_end": 18,
+      "query": "maintenance service storage winterizing",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.31853172827543874,
+      "text": "User Guide \nWatchkeeper series \nDoc SEAAI-442870296-11 \nRevision:  \n26 November 2025 \nPage 18 of 18\n\nThe information contained in this document is proprietary to SEA.AI GmbH and is to be used only for the purpose for which it is supplied.\n\n8. Warranty and Support\n\nSEA.AI provides a 2-year limited warranty covering manufacturing defects (See our Terms and conditions \nat www.sea.ai/termsconditions). \nActivate your product and warranty by registering at: https://connect.sea.ai/account/register\n\nFor support: \n\uf0b7 You can have access to our Frequently Asked Questions through this address: https://sea.ai/faq \n\uf0b7 Contact your dealer or installer for any support. \n\uf0b7 Email service@sea.ai for direct support from our Professional Services team.",
+      "source_heading_guess": "26 November 2025"
+    },
+    {
+      "manual_id": "14570452-6ad1-4d48-8c02-f688a7d81cd7",
+      "source_file": "c29bd9941fe4c64b_User_Guide_Watchkeeper_Series_1.2.pdf",
+      "page_start": 14,
+      "page_end": 14,
+      "query": "maintenance service storage winterizing",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.3063833946471908,
+      "text": "User Guide \nWatchkeeper series \nDoc SEAAI-442870296-11 \nRevision:  \n26 November 2025 \nPage 14 of 18\n\nThe information contained in this document is proprietary to SEA.AI GmbH and is to be used only for the purpose for which it is supplied.\n\nWhen a new update is available you will receive a notification. Follow these steps to update your \nwatchkeeper:\n\n\uf0a7 Select download update \n\uf0a7 If you have several systems, select the system(s) you want to update. \n\uf0a7 Download the package. \nThen apply the update to Watchkeeper:",
+      "source_heading_guess": "26 November 2025"
+    },
+    {
+      "manual_id": "14570452-6ad1-4d48-8c02-f688a7d81cd7",
+      "source_file": "c29bd9941fe4c64b_User_Guide_Watchkeeper_Series_1.2.pdf",
+      "page_start": 5,
+      "page_end": 5,
+      "query": "optional accessory gateway interface required for",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.311290423294998,
+      "text": "User Guide \nWatchkeeper series \nDoc SEAAI-442870296-11 \nRevision:  \n26 November 2025 \nPage 5 of 18\n\nThe information contained in this document is proprietary to SEA.AI GmbH and is to be used only for the purpose for which it is supplied.\n\nThe SEA.AI Watchkeeper Series includes: \n\uf0b7 Vision Unit with integrated AI edge computing processor \n\uf0b7 4k HDR low-light optical color camera and Long-wave IR Thermal camera(s)  \n(configuration depends on Watchkeeper model- see table above) \n\uf0b7 GPS and LTE connectivity module \n\uf0b7 Power and Ethernet connector\n\nthermal camera(s) \n4k HDR RGB \n GPS and LTE antenna \nstatus LED \nbracket with adjustable tilt",
+      "source_heading_guess": "26 November 2025"
+    },
+    {
+      "manual_id": "14570452-6ad1-4d48-8c02-f688a7d81cd7",
+      "source_file": "c29bd9941fe4c64b_User_Guide_Watchkeeper_Series_1.2.pdf",
+      "page_start": 7,
+      "page_end": 7,
+      "query": "optional accessory gateway interface required for",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.3058232271001685,
+      "text": "User Guide \nWatchkeeper series \nDoc SEAAI-442870296-11 \nRevision:  \n26 November 2025 \nPage 7 of 18\n\nThe information contained in this document is proprietary to SEA.AI GmbH and is to be used only for the purpose for which it is supplied.\n\n4. Operating Instructions \nProduct registration and activation: \nTo ensure your new SEA.AI Watchkeeper delivers optimal performance and stays up to date with the latest \nadvancements in Artificial Intelligence, periodic updates are essential. \nTo receive Software Updates and your product key to activate your SEA.AI Watchkeeper you need to \nregister your product.  \n\uf0b7 Register your product easily by logging into your SEA.AI Connect account at: \nhttps://connect.sea.ai/account/login \n\uf0b7 If you do not have an account yet, you can simply create one at: \nhttps://connect.sea.ai/account/register \nPowering On: \n\uf0b7 Ensure all components are connected (see connection diagram in Installation guide). \n\uf0b7 Power on the system via the main control panel. \nConnecting External Devices: \n\uf0b7 How to connect your mobile devices (phone, tablet)? \no Download the latest version of the SEA.:AI App. \nApp Store:   \nGoogle Play Store:",
+      "source_heading_guess": "26 November 2025"
+    },
+    {
+      "manual_id": "14570452-6ad1-4d48-8c02-f688a7d81cd7",
+      "source_file": "c29bd9941fe4c64b_User_Guide_Watchkeeper_Series_1.2.pdf",
+      "page_start": 4,
+      "page_end": 4,
+      "query": "shore power AC input current limit generator mains",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.22875230092996723,
+      "text": "For Sailing boats  \nAll specifications below refer to thermal vision for sailing yachts.\n\nThermal Resolution IR \nCameras FoV Detection Range \n(Buoy/RIB/Yacht) Weight Power \n320x256 1 34\u00b0 x 25\u00b0  80m/350m/900m 951g 27.1W \n640x512 1 50\u00b0 x 40\u00b0  110m/460m/1.200m 975g 27.7W \n1024x640 2 50\u00b0 x 34\u00b0  170m/750m/2.000m 1023g 29.3W",
+      "source_heading_guess": "For Sailing boats"
+    },
+    {
+      "manual_id": "14570452-6ad1-4d48-8c02-f688a7d81cd7",
+      "source_file": "c29bd9941fe4c64b_User_Guide_Watchkeeper_Series_1.2.pdf",
+      "page_start": 3,
+      "page_end": 3,
+      "query": "shore power AC input current limit generator mains",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.22247347101571702,
+      "text": "User Guide \nWatchkeeper series \nDoc SEAAI-442870296-11 \nRevision:  \n26 November 2025 \nPage 3 of 18\n\nThe information contained in this document is proprietary to SEA.AI GmbH and is to be used only for the purpose for which it is supplied.\n\nThe SEA.AI System is intended to provide additional assistance to the User and does not exempt the User \nfrom strict compliance with the usual rules and practices of navigation safety and international maritime \nregulations. Users must be vigilant at all times and ensure that they have the required knowledge in terms \nof navigation. They must not rely on the use of the SEA.AI System to make navigation choices. Ensure the \nsystem is installed by certified professionals. Do not attempt to open or modify internal components.",
+      "source_heading_guess": "26 November 2025"
+    },
+    {
+      "manual_id": "14570452-6ad1-4d48-8c02-f688a7d81cd7",
+      "source_file": "c29bd9941fe4c64b_User_Guide_Watchkeeper_Series_1.2.pdf",
+      "page_start": 6,
+      "page_end": 6,
+      "query": "Class T fuse T-Fuse fuse holder positive battery cable",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.1785724783879339,
+      "text": "User Guide \nWatchkeeper series \nDoc SEAAI-442870296-11 \nRevision:  \n26 November 2025 \nPage 6 of 18\n\nThe information contained in this document is proprietary to SEA.AI GmbH and is to be used only for the purpose for which it is supplied.\n\n3. Installation \nNote: Installation must be completed by a certified SEA.AI installer. Please check the installation guide in \nthe SEA.AI document library. Accessible under www.sea.ai/document-library/ in the section Watchkeeper. \nPositioning Tips: \n\uf0b7 Mount the camera in a high location with a clear, unobstructed field of view. \n\uf0b7 Adjust the tilt angle by rotating the camera to compensate for boat trim at cruising speed. \n\uf0b7 Use the thermal camera as the primary reference during positioning.\n\nWatchkeeper looking too high\n\nWatchkeeper looking straight ahead. Horizon must be visible at cruising speed. \n(It is recommended to have 20% to 30% of the thermal image above the horizon)",
+      "source_heading_guess": "26 November 2025"
+    },
+    {
+      "manual_id": "14570452-6ad1-4d48-8c02-f688a7d81cd7",
+      "source_file": "c29bd9941fe4c64b_User_Guide_Watchkeeper_Series_1.2.pdf",
+      "page_start": 13,
+      "page_end": 13,
+      "query": "Close relay reset battery safety event recovery after disconnect",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.200961710751284,
+      "text": "User Guide \nWatchkeeper series \nDoc SEAAI-442870296-11 \nRevision:  \n26 November 2025 \nPage 13 of 18\n\nThe information contained in this document is proprietary to SEA.AI GmbH and is to be used only for the purpose for which it is supplied.\n\n5. Update your Watchkeeper \nUpdate with your computer: \n\uf0b7 Use your computer to download the latest Sea.AI package for your Watchkeeper on connect.sea.ai \nhttps://connect.sea.ai/account/login \n\uf0b7 Once the package is downloaded on your computer, access your Watchkeeper app and upload it \ninto the settings/system update section. \n\uf0b7 If you have any problem with this procedure, please contact your local dealer/installer.\n\nUpdate with your smartphone: \n\uf0b7 You can also update from your smartphone. Make sure your SEA.AI application on your smartphone \n(Apple App Store or Google Play Store) is up to date. \nAt your first connection, make sure you enable notifications for new software releases:",
+      "source_heading_guess": "26 November 2025"
+    }
+  ],
+  "query_diagnostics": [
+    {
+      "query": "operation daily use display menu controls operator",
+      "unique_hits_added": 4,
+      "matched": true,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "installation wiring commissioning configuration DIP switches",
+      "unique_hits_added": 4,
+      "matched": true,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "unique_hits_added": 2,
+      "matched": true,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "network communication MasterBus NMEA CZone VE.Direct Bluetooth remote panel app",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "maintenance service storage winterizing",
+      "unique_hits_added": 2,
+      "matched": true,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "optional accessory gateway interface required for",
+      "unique_hits_added": 2,
+      "matched": true,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "MasterView remote panel remote control display panel monitoring panel MasterAdjust",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "optional remote control MasterView Easy remote panel installed",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "shore power AC input current limit generator mains",
+      "unique_hits_added": 2,
+      "matched": true,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "main switch inverter on off charger operation",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "DC fuse battery protection wiring supply requirement",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "BMS battery safety relay protective disconnect undervoltage overvoltage temperature",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "Class T fuse T-Fuse fuse holder positive battery cable",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "Close relay reset battery safety event recovery after disconnect",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "State of charge SOC monitoring MasterBus display",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "Climate page HVAC air conditioner aircon temperature control fan setpoint",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "CLIMATE CONTROLS Power Mode Temp Fan air conditioning",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "supported air conditioner HVAC climate operating modes fan speed",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 4,
+      "phase": "scaled_query"
+    }
+  ],
+  "coverage": {
+    "heading_count": 10,
+    "headings_covered_count": 9,
+    "heading_coverage_fraction": 0.9,
+    "coverage_low_threshold": 0.25,
+    "coverage_low": false,
+    "headings_all": [
+      "26 November 2025",
+      "1. Welcome",
+      "2. Product Overview and Specifications",
+      "IEC 60945",
+      "3. Installation",
+      "4. Operating Instructions",
+      "5. Update your Watchkeeper",
+      "6. Alarms",
+      "7. Maintenance and Troubleshooting",
+      "8. Warranty and Support"
+    ],
+    "headings_covered": [
+      "26 November 2025",
+      "1. Welcome",
+      "2. Product Overview and Specifications",
+      "3. Installation",
+      "4. Operating Instructions",
+      "5. Update your Watchkeeper",
+      "6. Alarms",
+      "7. Maintenance and Troubleshooting",
+      "8. Warranty and Support"
+    ],
+    "headings_missing": [
+      "IEC 60945"
+    ],
+    "chunk_count": 21,
+    "top_k_used": 4,
+    "heading_fill_queries": 0,
+    "heading_fill_hits": 0,
+    "top_k_scaling": {
+      "base": 4,
+      "max": 16,
+      "chunk_coverage_target": 0.6,
+      "scaled": false
+    }
+  },
+  "map_group_count": 7,
+  "legal_status_required": "cleared",
+  "validation_issues": [],
+  "validation_flags": [
+    {
+      "flag": "group_unutilized",
+      "severity": "warning",
+      "detail": "group 'chapter_2' had 1 routed excerpts but contributed zero fields; routing predicted ['evidence', 'operator_actions', 'requires_devices', 'supply_requirements']",
+      "field_path": "group_utilization.chapter_2"
+    },
+    {
+      "flag": "group_unutilized",
+      "severity": "warning",
+      "detail": "group 'chapter_8' had 1 routed excerpts but contributed zero fields; routing predicted ['evidence', 'operator_actions']",
+      "field_path": "group_utilization.chapter_8"
+    },
+    {
+      "flag": "extraction_unstable",
+      "severity": "warning",
+      "detail": "operator_actions.context disagreed across runs ('update firmware via USB or network connection quarterly')",
+      "field_path": "operator_actions"
+    }
+  ],
+  "needs_rextraction": false,
+  "repairs": [],
+  "repair": {
+    "evidence": {
+      "attempted": false
+    },
+    "absence": {
+      "attempted": false
+    }
+  },
+  "rextraction": {
+    "attempted": false,
+    "max_retries": 1,
+    "still_needs_rextraction": false
+  },
+  "stability_voting": {
+    "n_requested": 3,
+    "n_completed": 3,
+    "short_circuit_identical": false,
+    "unstable_flag_count": 1,
+    "votes": [
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "select thermal view",
+          "audience": "operator",
+          "context": "situational",
+          "occasion": "to access live images from the thermal camera",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": "1/3",
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "action": "select thermal view",
+              "audience": "operator",
+              "context": "situational",
+              "occasion": "to access live images from the thermal camera"
+            }
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ]
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "select color view",
+          "audience": "operator",
+          "context": "situational",
+          "occasion": "to access live images from the low-light camera",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": "1/3",
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "action": "select color view",
+              "audience": "operator",
+              "context": "situational",
+              "occasion": "to access live images from the low-light camera"
+            }
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ]
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "context",
+        "chosen": "maintenance",
+        "vote_margin": "3/3",
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "action": "update firmware via USB or network connection quarterly",
+              "audience": "operator",
+              "context": "maintenance"
+            }
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "update firmware via USB or network connection quarterly",
+              "audience": "operator",
+              "context": "daily",
+              "occasion": ""
+            }
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "update firmware via USB or network connection",
+              "audience": "operator",
+              "context": "quarterly",
+              "occasion": "to keep system up to date"
+            }
+          }
+        ]
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "reboot and verify system resources",
+          "audience": "operator",
+          "context": "situational",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": "2/3",
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "action": "reboot and verify system resources",
+              "audience": "operator",
+              "context": "situational"
+            }
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "reboot and verify system resources",
+              "audience": "operator",
+              "context": "situational",
+              "occasion": "if system lag occurs"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ]
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "use the AI feedback to report false detections",
+          "audience": "operator",
+          "context": "situational",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": "2/3",
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "action": "use the AI feedback to report false detections",
+              "audience": "operator",
+              "context": "situational"
+            }
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "use the AI feedback",
+              "audience": "operator",
+              "context": "situational",
+              "occasion": "if many false detections occur"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ]
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "enable or disable temporary remote access to service team",
+          "audience": "operator",
+          "context": "situational",
+          "occasion": "",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": "1/3",
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "enable or disable temporary remote access to service team",
+              "audience": "operator",
+              "context": "situational",
+              "occasion": ""
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ]
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "choose the distance unit used to display",
+          "audience": "operator",
+          "context": "daily",
+          "source": "extracted",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": "2/3",
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "choose the distance unit used to display",
+              "audience": "operator",
+              "context": "daily",
+              "source": "extracted"
+            }
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "choose the distance unit used to display",
+              "audience": "operator",
+              "context": "daily",
+              "source": "extracted"
+            }
+          }
+        ]
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "choose the thermal polarity in your thermal view",
+          "audience": "operator",
+          "context": "daily",
+          "source": "extracted",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": "2/3",
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "choose the thermal polarity in your thermal view",
+              "audience": "operator",
+              "context": "daily",
+              "source": "extracted"
+            }
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "choose the thermal polarity in your thermal view",
+              "audience": "operator",
+              "context": "daily",
+              "source": "extracted"
+            }
+          }
+        ]
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "select and configure the NMEA Gateway model",
+          "audience": "operator",
+          "context": "situational",
+          "source": "extracted",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": "2/3",
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "select and configure the NMEA Gateway model",
+              "audience": "operator",
+              "context": "situational",
+              "source": "extracted"
+            }
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "select and configure the NMEA Gateway model",
+              "audience": "operator",
+              "context": "situational",
+              "source": "extracted"
+            }
+          }
+        ]
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "enable or disable temporary remote access",
+          "audience": "operator",
+          "context": "situational",
+          "occasion": "",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": "1/3",
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "enable or disable temporary remote access",
+              "audience": "operator",
+              "context": "situational",
+              "occasion": ""
+            }
+          }
+        ]
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "choose the interface theme on your display",
+          "audience": "operator",
+          "context": "daily",
+          "source": "extracted",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": "1/3",
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "choose the interface theme on your display",
+              "audience": "operator",
+              "context": "daily",
+              "source": "extracted"
+            }
+          }
+        ]
+      },
+      {
+        "field_path": "control_surfaces",
+        "kind": "control_surfaces",
+        "attribute": "presence",
+        "chosen": {
+          "surface": "touchscreen",
+          "location_class": "on_device",
+          "optional_accessory": false,
+          "label_verbatim": "User Interface",
+          "path": "control_surfaces[0]",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": "2/3",
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "surface": "touchscreen",
+              "location_class": "on_device",
+              "optional_accessory": false,
+              "label_verbatim": "User Interface",
+              "path": "control_surfaces[0]"
+            }
+          },
+          {
+            "run": 2,
+            "value": {
+              "surface": "touchscreen",
+              "location_class": "on_device",
+              "optional_accessory": false,
+              "label_verbatim": "User Interface",
+              "path": "control_surfaces[0]"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ]
+      },
+      {
+        "field_path": "control_surfaces",
+        "kind": "control_surfaces",
+        "attribute": "presence",
+        "chosen": {
+          "surface": "touchscreen",
+          "location_class": "on_device",
+          "optional_accessory": false,
+          "label_verbatim": "Watchkeeper display",
+          "path": "control_surfaces[0]",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": "1/3",
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": {
+              "surface": "touchscreen",
+              "location_class": "on_device",
+              "optional_accessory": false,
+              "label_verbatim": "Watchkeeper display",
+              "path": "control_surfaces[0]"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "procedure_inventory": {
+    "inventory": {
+      "procedures": [
+        {
+          "title": "Installation",
+          "kind": "numbered_heading",
+          "group_id": "chapter_3",
+          "excerpt_ref": "excerpt[0]",
+          "snippet": "3. Installation Note: Installation must be completed by a certified SEA.AI installer. Please check the installation guide in the SEA.AI document library. Accessible under www.sea.ai/document-library/ in the section Watchkeeper. Positioning ",
+          "source": "heuristic",
+          "excerpt_text": "User Guide \nWatchkeeper series \nDoc SEAAI-442870296-11 \nRevision:  \n26 November 2025 \nPage 6 of 18\n\nThe information contained in this document is proprietary to SEA.AI GmbH and is to be used only for the purpose for which it is supplied.\n\n3. Installation \nNote: Installation must be completed by a certified SEA.AI installer. Please check the installation guide in \nthe SEA.AI document library. Accessible under www.sea.ai/document-library/ in the section Watchkeeper. \nPositioning Tips: \n\uf0b7 Mount the camera in a high location with a clear, unobstructed field of view. \n\uf0b7 Adjust the tilt angle by rotating the camera to compensate for boat trim at cruising speed. \n\uf0b7 Use the thermal camera as the primary reference during positioning.\n\nWatchkeeper looking too high\n\nWatchkeeper looking straight ahead. Horizon must be visible at cruising speed. \n(It is recommended to have 20% to 30% of the thermal image above the horizon)",
+          "classification": "not_operator_relevant:installer",
+          "classification_rule": "rule:installer:installer"
+        },
+        {
+          "title": "Update your Watchkeeper",
+          "kind": "numbered_heading",
+          "group_id": "batch_2",
+          "excerpt_ref": "excerpt[0]",
+          "snippet": "5. Update your Watchkeeper Update with your computer: \uf0b7 Use your computer to download the latest Sea.AI package for your Watchkeeper on connect.sea.ai https://connect.sea.ai/account/login \uf0b7 Once the package is downloaded on your computer, a",
+          "source": "heuristic",
+          "excerpt_text": "User Guide \nWatchkeeper series \nDoc SEAAI-442870296-11 \nRevision:  \n26 November 2025 \nPage 13 of 18\n\nThe information contained in this document is proprietary to SEA.AI GmbH and is to be used only for the purpose for which it is supplied.\n\n5. Update your Watchkeeper \nUpdate with your computer: \n\uf0b7 Use your computer to download the latest Sea.AI package for your Watchkeeper on connect.sea.ai \nhttps://connect.sea.ai/account/login \n\uf0b7 Once the package is downloaded on your computer, access your Watchkeeper app and upload it \ninto the settings/system update section. \n\uf0b7 If you have any problem with this procedure, please contact your local dealer/installer.\n\nUpdate with your smartphone: \n\uf0b7 You can also update from your smartphone. Make sure your SEA.AI application on your smartphone \n(Apple App Store or Google Play Store) is up to date. \nAt your first connection, make sure you enable notifications for new software releases:"
+        }
+      ],
+      "alternatives": [],
+      "filtered": [
+        {
+          "title": "November 2025",
+          "kind": "headed_procedure",
+          "group_id": "chapter_2",
+          "excerpt_ref": "excerpt[0]",
+          "snippet": "User Guide Watchkeeper series Doc SEAAI-442870296-11 Revision: 26 November 2025 Page 1 of 18 The information contained in this document is proprietary to SEA.AI GmbH and is to be used only for the purpose for which it is supplied. 1",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "Maintenance and Troubleshooting",
+          "kind": "numbered_heading",
+          "group_id": "chapter_7",
+          "excerpt_ref": "excerpt[0]",
+          "snippet": "7. Maintenance and Troubleshooting Regular Maintenance: \uf0b7 Clean camera lenses weekly using approved solutions. \uf0b7 Check cables integrity monthly. \uf0b7 Update firmware via USB or network connection quarterly. Troubleshooting Tips: \uf0b7 No Video Fee",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "Warranty and Support",
+          "kind": "numbered_heading",
+          "group_id": "chapter_8",
+          "excerpt_ref": "excerpt[0]",
+          "disposition": "filtered",
+          "filter": "filter:classified_without_verb"
+        },
+        {
+          "title": "Alarms",
+          "kind": "numbered_heading",
+          "group_id": "batch_1",
+          "excerpt_ref": "excerpt[0]",
+          "snippet": "6. Alarms \uf0b7 AI Detec\u019fon: The object classification includes 6 different classes: Ship Motorboat Sailing boat Buoy Person in the water Unknown Hazard How the AI decides what to show Our AI looks at every object it detects and calculates how ",
+          "disposition": "filtered",
+          "filter": "filter:too_few_tokens"
+        },
+        {
+          "title": "Operating Instructions",
+          "kind": "numbered_heading",
+          "group_id": "batch_1",
+          "excerpt_ref": "excerpt[4]",
+          "snippet": "4. Operating Instructions Product registration and activation: To ensure your new SEA.AI Watchkeeper delivers optimal performance and stays up to date with the latest advancements in Artificial Intelligence, periodic updates are essential. ",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "Update with your computer",
+          "kind": "imperative_heading",
+          "group_id": "batch_2",
+          "excerpt_ref": "excerpt[0]",
+          "snippet": "Update with your computer: \uf0b7 Use your computer to download the latest Sea.AI package for your Watchkeeper on connect.sea.ai https://connect.sea.ai/account/login \uf0b7 Once the package is downloaded on your computer, access your Watchkeeper app ",
+          "disposition": "filtered",
+          "filter": "filter:no_steps_or_procedure_heading"
+        }
+      ],
+      "groups_scanned": [
+        "chapter_2",
+        "chapter_3",
+        "chapter_7",
+        "chapter_8",
+        "batch_0",
+        "batch_1",
+        "batch_2"
+      ],
+      "procedure_count": 2,
+      "alternative_count": 0,
+      "filtered_count": 6
+    },
+    "reconciliation": {
+      "accounted": [
+        {
+          "title": "Update your Watchkeeper",
+          "kind": "numbered_heading",
+          "group_id": "batch_2",
+          "excerpt_ref": "excerpt[0]",
+          "snippet": "5. Update your Watchkeeper Update with your computer: \uf0b7 Use your computer to download the latest Sea.AI package for your Watchkeeper on connect.sea.ai https://connect.sea.ai/account/login \uf0b7 Once the package is downloaded on your computer, a",
+          "source": "heuristic",
+          "excerpt_text": "User Guide \nWatchkeeper series \nDoc SEAAI-442870296-11 \nRevision:  \n26 November 2025 \nPage 13 of 18\n\nThe information contained in this document is proprietary to SEA.AI GmbH and is to be used only for the purpose for which it is supplied.\n\n5. Update your Watchkeeper \nUpdate with your computer: \n\uf0b7 Use your computer to download the latest Sea.AI package for your Watchkeeper on connect.sea.ai \nhttps://connect.sea.ai/account/login \n\uf0b7 Once the package is downloaded on your computer, access your Watchkeeper app and upload it \ninto the settings/system update section. \n\uf0b7 If you have any problem with this procedure, please contact your local dealer/installer.\n\nUpdate with your smartphone: \n\uf0b7 You can also update from your smartphone. Make sure your SEA.AI application on your smartphone \n(Apple App Store or Google Play Store) is up to date. \nAt your first connection, make sure you enable notifications for new software releases:",
+          "status": "accounted_action",
+          "matched_to": {
+            "field_path": "operator_actions[4]",
+            "text": "update Watchkeeper",
+            "similarity": 1.0
+          }
+        }
+      ],
+      "classified": [
+        {
+          "title": "Installation",
+          "kind": "numbered_heading",
+          "group_id": "chapter_3",
+          "excerpt_ref": "excerpt[0]",
+          "snippet": "3. Installation Note: Installation must be completed by a certified SEA.AI installer. Please check the installation guide in the SEA.AI document library. Accessible under www.sea.ai/document-library/ in the section Watchkeeper. Positioning ",
+          "source": "heuristic",
+          "excerpt_text": "User Guide \nWatchkeeper series \nDoc SEAAI-442870296-11 \nRevision:  \n26 November 2025 \nPage 6 of 18\n\nThe information contained in this document is proprietary to SEA.AI GmbH and is to be used only for the purpose for which it is supplied.\n\n3. Installation \nNote: Installation must be completed by a certified SEA.AI installer. Please check the installation guide in \nthe SEA.AI document library. Accessible under www.sea.ai/document-library/ in the section Watchkeeper. \nPositioning Tips: \n\uf0b7 Mount the camera in a high location with a clear, unobstructed field of view. \n\uf0b7 Adjust the tilt angle by rotating the camera to compensate for boat trim at cruising speed. \n\uf0b7 Use the thermal camera as the primary reference during positioning.\n\nWatchkeeper looking too high\n\nWatchkeeper looking straight ahead. Horizon must be visible at cruising speed. \n(It is recommended to have 20% to 30% of the thermal image above the horizon)",
+          "classification": "not_operator_relevant:installer",
+          "classification_rule": "rule:installer:installer",
+          "status": "classified"
+        }
+      ],
+      "unaccounted": [],
+      "unaccounted_procedures": [],
+      "unaccounted_alternatives": [],
+      "accounting_trail": [
+        {
+          "title": "November 2025",
+          "kind": "headed_procedure",
+          "group_id": "chapter_2",
+          "excerpt_ref": "excerpt[0]",
+          "snippet": "User Guide Watchkeeper series Doc SEAAI-442870296-11 Revision: 26 November 2025 Page 1 of 18 The information contained in this document is proprietary to SEA.AI GmbH and is to be used only for the purpose for which it is supplied. 1",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "Maintenance and Troubleshooting",
+          "kind": "numbered_heading",
+          "group_id": "chapter_7",
+          "excerpt_ref": "excerpt[0]",
+          "snippet": "7. Maintenance and Troubleshooting Regular Maintenance: \uf0b7 Clean camera lenses weekly using approved solutions. \uf0b7 Check cables integrity monthly. \uf0b7 Update firmware via USB or network connection quarterly. Troubleshooting Tips: \uf0b7 No Video Fee",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "Warranty and Support",
+          "kind": "numbered_heading",
+          "group_id": "chapter_8",
+          "excerpt_ref": "excerpt[0]",
+          "disposition": "filtered",
+          "filter": "filter:classified_without_verb"
+        },
+        {
+          "title": "Alarms",
+          "kind": "numbered_heading",
+          "group_id": "batch_1",
+          "excerpt_ref": "excerpt[0]",
+          "snippet": "6. Alarms \uf0b7 AI Detec\u019fon: The object classification includes 6 different classes: Ship Motorboat Sailing boat Buoy Person in the water Unknown Hazard How the AI decides what to show Our AI looks at every object it detects and calculates how ",
+          "disposition": "filtered",
+          "filter": "filter:too_few_tokens"
+        },
+        {
+          "title": "Operating Instructions",
+          "kind": "numbered_heading",
+          "group_id": "batch_1",
+          "excerpt_ref": "excerpt[4]",
+          "snippet": "4. Operating Instructions Product registration and activation: To ensure your new SEA.AI Watchkeeper delivers optimal performance and stays up to date with the latest advancements in Artificial Intelligence, periodic updates are essential. ",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "Update with your computer",
+          "kind": "imperative_heading",
+          "group_id": "batch_2",
+          "excerpt_ref": "excerpt[0]",
+          "snippet": "Update with your computer: \uf0b7 Use your computer to download the latest Sea.AI package for your Watchkeeper on connect.sea.ai https://connect.sea.ai/account/login \uf0b7 Once the package is downloaded on your computer, access your Watchkeeper app ",
+          "disposition": "filtered",
+          "filter": "filter:no_steps_or_procedure_heading"
+        },
+        {
+          "title": "Installation",
+          "kind": "numbered_heading",
+          "group_id": "chapter_3",
+          "excerpt_ref": "excerpt[0]",
+          "disposition": "classified",
+          "auto_classified": "not_operator_relevant:installer",
+          "rule": "rule:installer:installer"
+        },
+        {
+          "title": "Update your Watchkeeper",
+          "kind": "numbered_heading",
+          "group_id": "batch_2",
+          "excerpt_ref": "excerpt[0]",
+          "disposition": "matched",
+          "matched_to": {
+            "field_path": "operator_actions[4]",
+            "text": "update Watchkeeper",
+            "similarity": 1.0
+          }
+        }
+      ],
+      "counts": {
+        "accounted": 1,
+        "classified": 1,
+        "unaccounted": 0,
+        "filtered": 6,
+        "trail": 8
+      },
+      "corpus_sizes": {
+        "actions": 19,
+        "surfaces": 2,
+        "requires": 0
+      }
+    },
+    "repair": {
+      "attempted": false,
+      "enabled": false
+    },
+    "repair_enabled": true
+  },
+  "structured_outputs": true
+}

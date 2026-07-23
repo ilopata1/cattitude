@@ -1,0 +1,14 @@
+{
+  "device_key": "sea_ai_watchkeeper",
+  "equipment_id": "3b14f3a7-c348-461f-b3c7-6f02955b4419",
+  "manual_work_id": "14570452-6ad1-4d48-8c02-f688a7d81cd7",
+  "manual": "User Guide Watchkeeper Series (Doc SEAAI-442870296-11, Revision 26 November 2025, 18 pp; file Watchkeeper Series_1.2)",
+  "fixture_auth": "Fixture-Auth: chat Sea.AI Watchkeeper Stage 1 extract — live extraction promoted; genres normalized to install/operate/maintain, NMEA Gateway commissioning action + duplicate remote-access action dropped as source-grounded §1.D adjudication",
+  "review": {
+    "status": "pending_human_review",
+    "verdict": null,
+    "reviewed_by": null,
+    "date": null,
+    "note": "Awaiting human review. Navigation & Helm Stage 4 is frozen (v4.37); Watchkeeper is inventory + graph only until a superseding tip re-composes Nav."
+  }
+}

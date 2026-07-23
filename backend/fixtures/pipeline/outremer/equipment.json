@@ -388,6 +388,17 @@
       "quantity": 2,
       "instance_handling": "interchangeable",
       "provenance": "DB registry equipment f7cb721c + Supernova vessel; twin diesel plant (Outremer catamaran); operators manual DGBXXT09007C (manual_work 9e95df10) Stage 1 extracted"
+    },
+    {
+      "device_key": "sea_ai_watchkeeper",
+      "catalog_key": "sea_ai_watchkeeper",
+      "manufacturer": "Sea.AI",
+      "model": "Watchkeeper",
+      "description": "SEA.AI Watchkeeper AI camera object-detection / situational-awareness system (thermal + optical)",
+      "system_category": "navigation_and_electronics",
+      "quantity": 1,
+      "instance_handling": "interchangeable",
+      "provenance": "DB registry equipment 3b14f3a7 + Supernova vessel; User Guide Watchkeeper Series Doc SEAAI-442870296-11 Rev 26 Nov 2025 (manual_work 14570452) Stage 1 extracted"
     }
   ],
   "vessel_artifact_facts": [

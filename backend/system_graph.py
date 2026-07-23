@@ -124,6 +124,10 @@ SECTION_LOOKUP: dict[str, tuple[str, ...]] = {
         "wind sensor",
         "nmea display",
         "zeus",
+        "watchkeeper",
+        "sea.ai",
+        "seaai",
+        "object detection",
     ),
     "water": (
         "watermaker",
