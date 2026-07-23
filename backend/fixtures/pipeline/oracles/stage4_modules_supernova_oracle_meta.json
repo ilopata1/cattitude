@@ -805,7 +805,7 @@
       },
       {
         "id": "S2",
-        "sentence": "They are started and stopped from the Nanni instrument panel at the helm — not from the boat's digital switching system.",
+        "sentence": "They are started and stopped from the Nanni instrument panel at the helm.",
         "sources": [
           "graph.device:nanni_n4_65",
           "profile.nanni_n4_65.control_surfaces",
@@ -1204,7 +1204,7 @@
       },
       {
         "id": "S2",
-        "sentence": "It is a standalone unit — not switched from the boat's digital switching system — and is operated from its NAVIGATOR control panel.",
+        "sentence": "It is a standalone unit operated from its NAVIGATOR control panel.",
         "sources": [
           "graph.device:dessalator_duo",
           "profile.dessalator_duo.control_surfaces",

@@ -255,8 +255,7 @@ def compose_water_section(
             topic="plant",
         )
         _emit(
-            "It is a standalone unit — not switched from the boat's digital "
-            f"switching system — and is operated from its {panel_label}.",
+            f"It is a standalone unit operated from its {panel_label}.",
             f"graph.device:{wm_key}",
             f"profile.{wm_key}.control_surfaces",
             f"profile.{wm_key}.networks",

@@ -303,7 +303,7 @@
     "icon": "⚙️",
     "title": "Engines",
     "subtitle": "Propulsion is handled by the engines (Nanni N4.65)",
-    "summary": "On Supernova, propulsion is handled by the engines (Nanni N4.65). They are started and stopped from the Nanni instrument panel at the helm — not from the boat's digital switching system.",
+    "summary": "On Supernova, propulsion is handled by the engines (Nanni N4.65). They are started and stopped from the Nanni instrument panel at the helm.",
     "sections": [
       {
         "t": "Equipment Locations",
@@ -311,7 +311,7 @@
         "rows": [
           {
             "name": "Nanni N4.65",
-            "location": "Engine / Machinery Space – Engine Bay"
+            "location": "Port – Engine / Machinery Space – Engine Bay · Starboard – Engine / Machinery Space – Engine Bay"
           }
         ]
       },
@@ -494,7 +494,7 @@
     "icon": "💧",
     "title": "Water systems",
     "subtitle": "Fresh water can be made on board with the watermaker (Dessalator Duo AC & DC Navigator)",
-    "summary": "On Supernova, fresh water can be made on board with the watermaker (Dessalator Duo AC & DC Navigator). It is a standalone unit — not switched from the boat's digital switching system — and is operated from its NAVIGATOR control panel.",
+    "summary": "On Supernova, fresh water can be made on board with the watermaker (Dessalator Duo AC & DC Navigator). It is a standalone unit operated from its NAVIGATOR control panel.",
     "sections": [
       {
         "t": "Equipment Locations",

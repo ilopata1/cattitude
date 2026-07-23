@@ -828,13 +828,72 @@ def lint_charge_path_enabling_conditions(text: str) -> list[dict[str, str]]:
     return warnings
 
 
+# Contrastive "where NOT" / "action NOT from" phrasing (xliv).
+# Distinct from Solar (iv′) absence prose (not fitted / there is no …).
+_NEGATIVE_STATION_RE = re.compile(
+    r"(?:"
+    r"[—–]\s*not\s+(?:from|switched\s+from|via|through|on|in|at)\b"
+    r"|"
+    r"\bnot\s+(?:located|found|sited|mounted)\s+(?:in|at|on|under|behind|from)\b"
+    r"|"
+    r"\bcannot\s+be\s+(?:found|located|accessed|reached)\s+(?:in|at|on|from)\b"
+    r"|"
+    r"\b(?:is|are)\s+not\s+"
+    r"(?:operated|started|stopped|controlled|switched|run)\s+from\b"
+    r")",
+    re.I,
+)
+
+# Safety caveats that may name a forbidden/hazardous method (keep).
+_SAFETY_NEGATIVE_METHOD_RE = re.compile(
+    r"\b(?:"
+    r"never\s+(?:by|with|via|through)|"
+    r"warning|caution|danger|"
+    r"risk\s+of|"
+    r"(?:may|can|could)\s+(?:cause|result)|"
+    r"to\s+avoid\s+(?:damage|injury|flooding|fire|explosion|water\s+ingress)"
+    r")\b",
+    re.I,
+)
+
+
+def lint_negative_station_contrast(text: str) -> list[dict[str, str]]:
+    """xliv — state where actions/items ARE; do not narrate where they are not.
+
+    Exception: safety-related cautions that warn against a hazardous method
+    or location (e.g. never stop by opening the main battery switch).
+    Distinct from (iv′) absence prose about unfitted gear.
+    """
+    warnings: list[dict[str, str]] = []
+    body = re.sub(r"(?m)^#.+$", "", text or "")
+    for para in re.split(r"\n\s*\n+", body):
+        for sent in _sentence_split(para):
+            if not _NEGATIVE_STATION_RE.search(sent):
+                continue
+            if _SAFETY_NEGATIVE_METHOD_RE.search(sent):
+                continue
+            m = _NEGATIVE_STATION_RE.search(sent)
+            warnings.append(
+                {
+                    "code": "negative_station_contrast",
+                    "match": (m.group(0) if m else sent[:80]),
+                    "guidance": (
+                        "State where the action is taken or the item is "
+                        "located. Do not add where it is not, except as a "
+                        "safety caution against a hazardous method/location."
+                    ),
+                }
+            )
+    return warnings
+
+
 def assess_global_composition(
     composed: dict[str, Any],
     *,
     require_filled_wisdom: bool = False,
     peer_capability_texts: list[str] | None = None,
 ) -> dict[str, Any]:
-    """Aggregate global composition checks (xxxii–xli); xxxv includes v4.20."""
+    """Aggregate global composition checks (xxxii–xliv); xxxv includes v4.20."""
     draft = str(composed.get("draft_markdown") or "")
     block_order = list(composed.get("block_order") or [])
     prov = list(composed.get("provenance_map") or [])
@@ -863,6 +922,7 @@ def assess_global_composition(
     )
     charge_path_hits = lint_charge_path_enabling_conditions(draft)
     routine_label_hits = lint_routine_timing_label(draft)
+    negative_station_hits = lint_negative_station_contrast(draft)
 
     wisdom_ok = (
         (
@@ -889,6 +949,7 @@ def assess_global_composition(
         "pointer_paragraph_final_ok": len(pointer_hits) == 0,
         "charge_path_enabling_ok": len(charge_path_hits) == 0,
         "no_routine_timing_label": len(routine_label_hits) == 0,
+        "affirmative_station_ok": len(negative_station_hits) == 0,
     }
     return {
         "checks": checks,
@@ -908,8 +969,9 @@ def assess_global_composition(
             "wisdom_restatement": wisdom_restatement_hits,
             "charge_path_enabling": charge_path_hits,
             "routine_timing_label": routine_label_hits,
+            "negative_station_contrast": negative_station_hits,
         },
-        "version": "v4.38",
+        "version": "v4.40",
         "criteria": [
             "xxxii",
             "xxxiii",
@@ -923,5 +985,6 @@ def assess_global_composition(
             "xli",
             "xlii",
             "xliii",
+            "xliv",
         ],
     }

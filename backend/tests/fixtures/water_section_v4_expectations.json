@@ -1,7 +1,7 @@
 {
-  "fixture_auth": "Fixture-Auth: chat Water Stage 4 freeze v4.1 — Dessalator Duo; NAVIGATOR panel; Mini Remote + flush omitted; human-reviewed (spec v4.39)",
+  "fixture_auth": "Fixture-Auth: chat Water Stage 4 freeze v4.1 — Dessalator Duo; NAVIGATOR panel; Mini Remote + flush omitted; human-reviewed (spec v4.39); station prose supersession v4.40 xliv",
   "version": "v4.1",
-  "description": "Water systems Stage 4 expectations for Outremer / Supernova (frozen).",
+  "description": "Water systems Stage 4 expectations for Outremer / Supernova (frozen; v4.40 station supersession).",
   "recorded_vessel_display_name": "Supernova",
   "expected_guide_link_targets": ["batteries", "electrical"],
   "must_exclude_from_body_depth": [],
@@ -22,7 +22,9 @@
     "dessalator_duo",
     "day-to-day",
     "Spectra",
-    "Aqua-Base"
+    "Aqua-Base",
+    "not from the boat's digital",
+    "not switched from the boat's digital"
   ],
   "style_deictics_soft": ["this vessel", "this boat", "this yacht"]
 }

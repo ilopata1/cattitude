@@ -1,4 +1,4 @@
-"""Verify Engines section inputs + composition (founding v4.1).
+"""Verify Engines section inputs + composition (frozen v4.1 / spec v4.41).
 
 Usage (from backend/):
   python scripts/verify_engines_section_v4.py
@@ -103,8 +103,8 @@ def main() -> int:
         for f in failures:
             print(" -", f)
         return 1
-    print("OK — engines section v4 founding gate")
-    print(draft)
+    print("OK — engines section v4.1 frozen checks passed")
+    print(f"version={composed.get('version')} blocks={composed.get('block_order')}")
     return 0
 
 

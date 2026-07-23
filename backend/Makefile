@@ -19,6 +19,8 @@ pipeline-verify:
 	python scripts/verify_controls_section_v4.py
 	python scripts/verify_electrical_section_v4.py
 	python scripts/verify_nav_section_v4.py
+	python scripts/verify_water_section_v4.py
+	python scripts/verify_engines_section_v4.py
 	python scripts/verify_stage4_modules.py
 
 # Phase 2+ gate (needs DB seeded + frozen oracle under fixtures/pipeline/oracles/):

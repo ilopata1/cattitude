@@ -1,12 +1,15 @@
 """Stage 4 Engines — Nanni N4.65 twin diesel plant (ISLAND).
 
-Founding composer (v4.1). Uses ``assemble_section_inputs`` depths:
+Frozen for reuse (spec v4.41; founding composer v4.1; xliv station in v4.40).
+
+Uses ``assemble_section_inputs`` depths:
   full — nanni_n4_65 (section member)
   summary / provenance — empty on Outremer today
 
 Standing policy: maintenance / commissioning / storage actions stay out of the
 guest body (shaped as context). Guest spine is start / stop / monitor from the
 Nanni instrument panel, with raw-water exhaust confirmation after start.
+Affirmative station only (xliv).
 """
 
 from __future__ import annotations
@@ -280,8 +283,7 @@ def compose_engines_section(
             topic="plant",
         )
         _emit(
-            f"They are started and stopped from the {panel_label} at the helm "
-            "— not from the boat's digital switching system.",
+            f"They are started and stopped from the {panel_label} at the helm.",
             f"graph.device:{eng_key}",
             f"profile.{eng_key}.control_surfaces",
             f"profile.{eng_key}.networks",

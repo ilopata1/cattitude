@@ -105,6 +105,7 @@ Do **not** replace the fragment + approve path in one rewrite.
 | **Batteries Stage 4 (v4.14)** | Composer introduced — xxvi–xxxi; Controls/Electrical xrefs; Solar leaf pointer |
 | **Batteries & Energy Stage 4 (frozen)** | Done — frozen for reuse (reaffirmed spec v4.30); xxvi–xli; `verify_batteries_section_v4.py`; frozen-section regression with Solar + Controls |
 | **Water systems Stage 4 (frozen)** | Done — frozen for reuse (spec v4.39); Dessalator Duo; NAVIGATOR panel; Mini Remote + flush omitted; `verify_water_section_v4.py` |
+| **Engines Stage 4 (frozen)** | Done — frozen for reuse (spec v4.41); Nanni N4.65; instrument-panel start/stop; xliv affirmative station; `verify_engines_section_v4.py` |
 | **Global composition spine (v4.15)** | Done — `guide_composition_rules.py`; orphan/vocab/wisdom slot; B&E v2; xxxii–xxxv |
 | **Composition clarifications (v4.16)** | Done — same-breath check; sentence-initial spell-out; surface-bound adjusting |
 | **Composition clarifications (v4.17)** | Done — instruction occasion; paragraph-final pointers; ratings/daily/BMS co-location |

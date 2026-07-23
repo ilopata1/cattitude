@@ -1,7 +1,7 @@
 {
-  "fixture_auth": "Fixture-Auth: chat Engines Stage 4 founding v4.1 — Nanni N4.65 twin plant; instrument panel; maintenance/commissioning shaped out; pending human review",
+  "fixture_auth": "Fixture-Auth: chat Engines Stage 4 freeze v4.1 — Nanni N4.65 twin plant; instrument panel; maintenance/commissioning shaped out; affirmative station (xliv); human-reviewed (spec v4.41)",
   "version": "v4.1",
-  "description": "Engines Stage 4 expectations for Outremer / Supernova (founding).",
+  "description": "Engines Stage 4 expectations for Outremer / Supernova (frozen).",
   "recorded_vessel_display_name": "Supernova",
   "expected_guide_link_targets": ["batteries", "electrical"],
   "must_exclude_from_body_depth": [],
@@ -23,7 +23,9 @@
     "nanni_n4_65",
     "day-to-day",
     "Yanmar",
-    "4JH45"
+    "4JH45",
+    "not from the boat's digital",
+    "not switched from the boat's digital"
   ],
   "style_deictics_soft": ["this vessel", "this boat", "this yacht"]
 }
