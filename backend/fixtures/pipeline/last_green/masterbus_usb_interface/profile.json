@@ -1,0 +1,350 @@
+{
+  "device": {
+    "manufacturer": "Mastervolt",
+    "model": "MasterBus USB Interface",
+    "category_freeform": "MasterBus - USB interface"
+  },
+  "control_surfaces": [
+    {
+      "surface": "other",
+      "location_class": "remote_wired",
+      "optional_accessory": false,
+      "label_verbatim": "MasterAdjust",
+      "path": "control_surfaces[0]"
+    }
+  ],
+  "operator_actions": [
+    {
+      "action": "adjust the entire MasterBus network configuration",
+      "audience": "installer_or_technician",
+      "context": "commissioning",
+      "occasion": "to customize device settings",
+      "source": "extracted"
+    },
+    {
+      "action": "program event based commands",
+      "audience": "installer_or_technician",
+      "context": "commissioning",
+      "occasion": "to set actions based on device events",
+      "source": "extracted"
+    },
+    {
+      "action": "install MasterAdjust software on PC or notebook",
+      "audience": "installer_or_technician",
+      "context": "commissioning",
+      "occasion": "to configure the MasterBus network",
+      "source": "extracted"
+    },
+    {
+      "action": "check USB connection cable",
+      "audience": "operator",
+      "context": "emergency",
+      "occasion": "if green LED on interface is not illuminated or blinking",
+      "source": "extracted"
+    },
+    {
+      "action": "check UTP patch cables of the MasterBus Network",
+      "audience": "operator",
+      "context": "emergency",
+      "occasion": "if no devices can be found",
+      "source": "extracted"
+    },
+    {
+      "action": "check if terminating devices are installed",
+      "audience": "operator",
+      "context": "emergency",
+      "occasion": "if no terminating device placed at the ends of the network",
+      "source": "extracted"
+    },
+    {
+      "action": "check if there are no T-connections in the network",
+      "audience": "operator",
+      "context": "emergency",
+      "occasion": "if no devices can be found",
+      "source": "extracted"
+    },
+    {
+      "action": "consult error codes and alarms",
+      "audience": "operator",
+      "context": "emergency",
+      "source": "derived",
+      "derived_from": "evidence[5]"
+    }
+  ],
+  "networks": {
+    "speaks": [
+      {
+        "name_verbatim": "MasterBus",
+        "physical_or_wireless": "wired"
+      }
+    ],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": true,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": true
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [
+    {
+      "description_verbatim": "USB connection cable (included)"
+    }
+  ],
+  "evidence": [
+    {
+      "supports_field": "operator_actions[action=adjust the entire MasterBus network configuration]",
+      "manual_section": "4 USE OF MASTERADJUST SOFTWARE",
+      "note": "Commissioning configuration for MasterBus network"
+    },
+    {
+      "supports_field": "operator_actions[action=program event based commands]",
+      "manual_section": "4.6 PROGRAMMING OF EVENT-BASED COMMANDS",
+      "note": "Programming for interactive operation of devices"
+    },
+    {
+      "supports_field": "operator_actions[action=install MasterAdjust software on PC or notebook]",
+      "manual_section": "3 INSTALLATION",
+      "note": "software installation for network configuration"
+    },
+    {
+      "supports_field": "operator_actions[action=check USB connection cable]",
+      "manual_section": "6 TROUBLE SHOOTING",
+      "note": "Check USB connection if LED is off or not blinking"
+    },
+    {
+      "supports_field": "operator_actions[action=check UTP patch cables of the MasterBus Network]",
+      "manual_section": "6 TROUBLE SHOOTING",
+      "note": "Check UTP patch cables if no devices found"
+    },
+    {
+      "supports_field": "safety_role.has_emergency_procedure",
+      "manual_section": "6 TROUBLE SHOOTING",
+      "note": "Instructions for troubleshooting connection issues"
+    },
+    {
+      "supports_field": "control_surfaces[0]",
+      "manual_section": "4 USE OF MASTERADJUST SOFTWARE",
+      "note": "adjudicated: MasterAdjust is the PC UI for this USB interface"
+    },
+    {
+      "supports_field": "data_roles.exposes_data_to_network",
+      "manual_section": "3 INSTALLATION",
+      "note": "adjudicated: interface detected as USB MasterBus on the network"
+    }
+  ],
+  "confidence": {
+    "overall": 1.0,
+    "notes": "[chapter_1] Manual provides limited operator actions and no control surfaces. | [batch_0] Manual provides clear instructions for programming events. | [chapter_2] Limited information available in the provided excerpts. | [chapter_3] Manual excerpts primarily address installation and software setup. | [chapter_6] Manual provides troubleshooting steps for operator actions. | [chapter_7] Only one model variant covered in the manual."
+  },
+  "coverage": {
+    "chunk_count": 15,
+    "heading_count": 51,
+    "headings_covered_count": 48,
+    "heading_coverage_fraction": 0.9412,
+    "coverage_low_threshold": 0.25,
+    "top_k_used": 4
+  },
+  "group_utilization": [
+    {
+      "group_id": "chapter_1",
+      "is_introduction": true,
+      "excerpt_count": 2,
+      "predicted_fields": [
+        "control_surfaces",
+        "evidence",
+        "operator_actions"
+      ],
+      "contributions": {
+        "operator_actions": 1,
+        "control_surfaces": 0,
+        "networks": 0,
+        "requires_devices": 0,
+        "evidence": 1,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "contribution_total": 2,
+      "unutilized": false
+    },
+    {
+      "group_id": "batch_0",
+      "is_introduction": false,
+      "excerpt_count": 6,
+      "predicted_fields": [
+        "control_surfaces",
+        "data_roles",
+        "evidence",
+        "networks",
+        "operator_actions",
+        "requires_devices",
+        "safety_role"
+      ],
+      "contributions": {
+        "operator_actions": 1,
+        "control_surfaces": 0,
+        "networks": 1,
+        "requires_devices": 0,
+        "evidence": 1,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "contribution_total": 3,
+      "unutilized": false
+    },
+    {
+      "group_id": "chapter_2",
+      "is_introduction": false,
+      "excerpt_count": 2,
+      "predicted_fields": [
+        "control_surfaces",
+        "data_roles",
+        "evidence",
+        "networks",
+        "requires_devices"
+      ],
+      "contributions": {
+        "operator_actions": 0,
+        "control_surfaces": 0,
+        "networks": 1,
+        "requires_devices": 0,
+        "evidence": 2,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "contribution_total": 3,
+      "unutilized": false
+    },
+    {
+      "group_id": "chapter_3",
+      "is_introduction": false,
+      "excerpt_count": 3,
+      "predicted_fields": [
+        "control_surfaces",
+        "evidence",
+        "operator_actions",
+        "requires_devices",
+        "supply_requirements"
+      ],
+      "contributions": {
+        "operator_actions": 1,
+        "control_surfaces": 0,
+        "networks": 1,
+        "requires_devices": 0,
+        "evidence": 2,
+        "supply_requirements": 1,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "contribution_total": 5,
+      "unutilized": false
+    },
+    {
+      "group_id": "chapter_6",
+      "is_introduction": false,
+      "excerpt_count": 1,
+      "predicted_fields": [
+        "evidence",
+        "operator_actions",
+        "safety_role"
+      ],
+      "contributions": {
+        "operator_actions": 5,
+        "control_surfaces": 0,
+        "networks": 0,
+        "requires_devices": 0,
+        "evidence": 5,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 1
+      },
+      "contribution_total": 11,
+      "unutilized": false
+    },
+    {
+      "group_id": "chapter_7",
+      "is_introduction": false,
+      "excerpt_count": 1,
+      "predicted_fields": [
+        "evidence",
+        "operator_actions"
+      ],
+      "contributions": {
+        "operator_actions": 0,
+        "control_surfaces": 0,
+        "networks": 1,
+        "requires_devices": 0,
+        "evidence": 1,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "contribution_total": 2,
+      "unutilized": false
+    }
+  ],
+  "merge_conflicts": [],
+  "genres": [
+    "commissioning",
+    "installation",
+    "operation"
+  ],
+  "entity_kind": "device",
+  "ui_pages": [],
+  "validation_flags": [
+    {
+      "flag": "evidence_verbatim",
+      "severity": "warning",
+      "detail": "note too similar to source excerpt (token_overlap=0.90, lcs_ratio=0.42)",
+      "field_path": "evidence[3].note"
+    },
+    {
+      "flag": "evidence_verbatim",
+      "severity": "warning",
+      "detail": "note too similar to source excerpt (token_overlap=0.70, lcs_ratio=0.25)",
+      "field_path": "evidence[6].note"
+    },
+    {
+      "flag": "evidence_verbatim",
+      "severity": "warning",
+      "detail": "note too similar to source excerpt (token_overlap=0.56, lcs_ratio=0.18)",
+      "field_path": "evidence[7].note"
+    },
+    {
+      "flag": "evidence_support_mismatch",
+      "severity": "warning",
+      "detail": "evidence note better matches action 'adjust the entire MasterBus network configuration' than linked 'install MasterAdjust software on PC or notebook'",
+      "field_path": "evidence[2].supports_field"
+    },
+    {
+      "flag": "extraction_omission_adjudicated",
+      "severity": "info",
+      "detail": "Added MasterAdjust PC surface; cleared hub-commanding data_roles evidence (exposes kept as MasterBus participant). Fixture-Auth: chat MasterBus USB Interface Stage 1 extract — live extraction promoted; MasterAdjust PC surface added + hub-commanding data_roles evidence removed (exposes kept for MasterBus participant) as source-grounded §1.D adjudication (extraction omissions / direction)"
+    }
+  ],
+  "repairs": [],
+  "source": "live_extraction",
+  "needs_rextraction": false
+}

@@ -1,0 +1,47 @@
+{
+  "device": {
+    "manufacturer": "Mastervolt",
+    "model": "MasterBus USB Interface",
+    "category_freeform": "MasterBus \u2013 USB interface"
+  },
+  "entity_kind": "device",
+  "documented_version": "",
+  "ui_pages": [],
+  "alarm_severity": [],
+  "control_surfaces": [],
+  "operator_actions": [],
+  "networks": {
+    "speaks": [
+      {
+        "name_verbatim": "MasterBus",
+        "physical_or_wireless": "wired"
+      }
+    ],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": false
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [],
+  "evidence": [
+    {
+      "supports_field": "networks.speaks",
+      "manual_section": "7 SPECIFICATIONS",
+      "note": "Device communicates over MasterBus network"
+    }
+  ],
+  "confidence": {
+    "overall": 1.0,
+    "notes": "Only one model variant covered in the manual."
+  }
+}

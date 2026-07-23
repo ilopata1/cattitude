@@ -1,0 +1,63 @@
+{
+  "device": {
+    "manufacturer": "Mastervolt",
+    "model": "MasterBus USB Interface",
+    "category_freeform": "MasterBus USB Interface"
+  },
+  "entity_kind": "device",
+  "documented_version": "",
+  "ui_pages": [],
+  "alarm_severity": [],
+  "control_surfaces": [],
+  "operator_actions": [
+    {
+      "action": "install MasterAdjust software on PC or notebook",
+      "audience": "installer_or_technician",
+      "context": "commissioning",
+      "occasion": "to configure the MasterBus network"
+    }
+  ],
+  "networks": {
+    "speaks": [
+      {
+        "name_verbatim": "MasterBus",
+        "physical_or_wireless": "wired"
+      }
+    ],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": false
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [
+    {
+      "description_verbatim": "USB connection cable (included)"
+    }
+  ],
+  "evidence": [
+    {
+      "supports_field": "operator_actions[0]",
+      "manual_section": "3 INSTALLATION",
+      "note": "software installation for network configuration"
+    },
+    {
+      "supports_field": "supply_requirements[0]",
+      "manual_section": "3 INSTALLATION",
+      "note": "USB cable is included for connection"
+    }
+  ],
+  "confidence": {
+    "overall": 0.8,
+    "notes": "Manual excerpts primarily address installation and software setup."
+  }
+}

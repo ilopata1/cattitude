@@ -1,0 +1,799 @@
+{
+  "inventory": {
+    "procedures": [
+      {
+        "title": "USE OF MASTERADJUST SOFTWARE",
+        "kind": "headed_procedure",
+        "group_id": "chapter_1",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "USE OF MASTERADJUST SOFTWARE 4 USE OF MASTERADJUST SOFTWARE MasterAdjust software can be used for monitoring and control of devices that are connected to the MasterBus network. This software is available as free to download software on",
+        "source": "heuristic",
+        "excerpt_text": "USE OF MASTERADJUST SOFTWARE\n\n4 USE OF MASTERADJUST SOFTWARE\n\nMasterAdjust software can be used for monitoring \nand control of devices that are connected to the \nMasterBus network. This software is available as \nfree to download software on the Mastervolt website \n(www.mastervolt.com). Features: \n\u2022 System configuration: to adjust the entire \nMasterBus network and all connected devices in \naccordance with your personal preferences, \nincluding programming of Event-based \ncommands \n\u2022 System Monitor: complete actual overview of \nyour entire electrical installation \n\u2022 System logger: data logging of system data \nduring a longer period for analysis later on. \nIMPORTANT: Invalid adjustment of the MasterAdjust \nsoftware may lead to disturbed operation of your \nelectrical installation. Therefore changes at the \nConfiguration menu may only be carried out by \nqualified installers.\n\nNOTE: As every configuration of the \nMasterBus network differs from the other \nthe displayed data may differ from the \nillustrations below. This user\u2019s manual \ncan not give any specific instructions for \nany particular connected device or \nelectrical installation. Refer to the user\u2019s",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:masteradjust"
+      },
+      {
+        "title": "GENERAL INFORMATION",
+        "kind": "headed_procedure",
+        "group_id": "chapter_1",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "CONTENTS - GENERAL INFORMATION 4 USE OF MASTERADJUST SOFTWARE....................................................................................................... 6 1 GENERAL INFORMATION 1.1 USE OF THIS MANUAL Copyright \u00a9 2008 Master",
+        "source": "heuristic",
+        "excerpt_text": "CONTENTS  - GENERAL INFORMATION\n\n4 USE OF MASTERADJUST SOFTWARE....................................................................................................... 6\n\n1 GENERAL INFORMATION\n\n1.1 USE OF THIS MANUAL \nCopyright \u00a9 2008 Mastervolt. All rights reserved. \nReproduction, transfer, distribution or storage of part \nor all of the contents in this document in any form \nwithout the prior written permission of Mastervolt is \nprohibited.\n\nThis manual serves as a guideline for the safe and \neffective operation, maintenance and possible \ncorrection of minor malfunctions of the MasterBus - \nUSB interface.  \nThis manual is valid for the following model:\n\nDescription Part number \nMasterBus - USB interface 77030100 \nKeep this manual at a secure place! \nThe English version has 12 pages.\n\n1.2 IMPORTANT TO KNOW \nIncorrect installation may lead to damage to the \nMasterBus-USB interface, the connected Mastervolt \ndevices and/or the connected PC. Be sure that all \nequipment is disconnected from any power source \nduring installation. \n1.3 GUARANTEE SPECIFICATIONS  \nMastervolt guarantees that this product was built \naccording to the legally applicable standards and",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:masteradjust"
+      },
+      {
+        "title": "USE OF THIS MANUAL",
+        "kind": "numbered_heading",
+        "group_id": "chapter_1",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "CONTENTS - GENERAL INFORMATION 4 USE OF MASTERADJUST SOFTWARE....................................................................................................... 6 1 GENERAL INFORMATION 1.1 USE OF THIS MANUAL Copyright \u00a9 2008 Mastervolt.",
+        "source": "heuristic",
+        "excerpt_text": "CONTENTS  - GENERAL INFORMATION\n\n4 USE OF MASTERADJUST SOFTWARE....................................................................................................... 6\n\n1 GENERAL INFORMATION\n\n1.1 USE OF THIS MANUAL \nCopyright \u00a9 2008 Mastervolt. All rights reserved. \nReproduction, transfer, distribution or storage of part \nor all of the contents in this document in any form \nwithout the prior written permission of Mastervolt is \nprohibited.\n\nThis manual serves as a guideline for the safe and \neffective operation, maintenance and possible \ncorrection of minor malfunctions of the MasterBus - \nUSB interface.  \nThis manual is valid for the following model:\n\nDescription Part number \nMasterBus - USB interface 77030100 \nKeep this manual at a secure place! \nThe English version has 12 pages.\n\n1.2 IMPORTANT TO KNOW \nIncorrect installation may lead to damage to the \nMasterBus-USB interface, the connected Mastervolt \ndevices and/or the connected PC. Be sure that all \nequipment is disconnected from any power source \nduring installation. \n1.3 GUARANTEE SPECIFICATIONS  \nMastervolt guarantees that this product was built \naccording to the legally applicable standards and",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:masteradjust"
+      },
+      {
+        "title": "HOW TO SET UP A MASTERBUS",
+        "kind": "headed_procedure",
+        "group_id": "chapter_2",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "MASTERBUS 2.2 HOW TO SET UP A MASTERBUS NETWORK Each device that is suitable for the MasterBus network is equipped with two data ports. When two or more devices are connected to each other through these ports, they form a local data ne",
+        "source": "heuristic",
+        "excerpt_text": "MASTERBUS\n\n2.2 HOW TO SET UP A MASTERBUS\nNETWORK\n\nEach device that is suitable for the MasterBus \nnetwork is equipped with two data ports. When two \nor more devices are connected to each other \nthrough these ports, they form a local data network, \ncalled the MasterBus.  \nKeep the following rules in mind:\n\nConnections between the devices are made by \nstandard straight UTP patch cables. Mastervolt \ncan supply these cables. These cables are also \ncommonly available at computer supply stores.  \nOK \nFigure 1 \nDo not make T-connections in the network \nFigure 5 \nDo not make ring networks \nFigure 4 \nThe electric power for the network comes from \nthe connected devices.  \nAt least one device in the network should have \npowering capabilities (see specifications).  \nOne powering device can power up to three non-\npowering devices.  \nAs all powering devices are galvanically isolated, \nmultiple powering devices are allowed  \nOK \nFigure 3 \nAs with all high speed data networks, MasterBus \nneeds a terminating device on both ends of the \nnetwork  \nTerminating\ndevice\nTerminating\ndevice\nOK \nFigure 2",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:how to set up a masterbus"
+      },
+      {
+        "title": "Mastervolt MasterAjust software is available as",
+        "kind": "numbered_heading",
+        "group_id": "chapter_3",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "1 Mastervolt MasterAjust software is available as free to download software on the Mastervolt website (www.mastervolt.com) Install the software on the desktop of your PC or notebook. 2 Start the program by double clicking the MasterAdjust.e",
+        "source": "heuristic",
+        "excerpt_text": "INSTALLATION\n\n3 INSTALLATION\n\n3.1 CONNECTION\n\nWhat you need: \n; MasterBus-USB interface (included) \n; USB connection cable (included)  \n; MasterBus connection cables (UTP patch \ncables) (included, 6m) \n\u0085 A PC or notebook with Internet connection and a \nfree USB 2.0 port\n\nSee figure 6 \n\u2022 Insert the MasterBus connection cables into the \nMasterBus data ports of the MasterBus \u2013 USB \ninterface. \n\u2022 Connect the USB connection cable between the \nMasterBus \u2013 USB interface and the USB-port of \nthe PC or notebook.\n\n1 Mastervolt MasterAjust software is available as \nfree to download software on the Mastervolt \nwebsite (www.mastervolt.com) Install the \nsoftware on the desktop of your PC or notebook. \n2 Start the program by double clicking the \nMasterAdjust.exe icon on your desktop \n3 Immediately the USB-MasterBus interface is \ndetected. This results in a \u201cUSB: MasterBus\u201d-\nentry in the left tree-view of the MasterAdjust \nsoftware \n4 Now the MasterAdjust software scans the \nMasterBus network for connected devices. This \nmight take a few minutes.\n\nSee chapter 4 for details about monitoring and \ncontrol functions of the MasterAdjust software \nIf no devices are displayed, refer to chapter 6 for",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:masteradjust"
+      },
+      {
+        "title": "Start the program by double clicking the MasterAdjust.exe icon on your desktop",
+        "kind": "numbered_heading",
+        "group_id": "chapter_3",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "2 Start the program by double clicking the MasterAdjust.exe icon on your desktop 3 Immediately the USB-MasterBus interface is detected. This results in a \u201cUSB: MasterBus\u201d- entry in the left tree-view of the MasterAdjust software 4 Now the M",
+        "source": "heuristic",
+        "excerpt_text": "INSTALLATION\n\n3 INSTALLATION\n\n3.1 CONNECTION\n\nWhat you need: \n; MasterBus-USB interface (included) \n; USB connection cable (included)  \n; MasterBus connection cables (UTP patch \ncables) (included, 6m) \n\u0085 A PC or notebook with Internet connection and a \nfree USB 2.0 port\n\nSee figure 6 \n\u2022 Insert the MasterBus connection cables into the \nMasterBus data ports of the MasterBus \u2013 USB \ninterface. \n\u2022 Connect the USB connection cable between the \nMasterBus \u2013 USB interface and the USB-port of \nthe PC or notebook.\n\n1 Mastervolt MasterAjust software is available as \nfree to download software on the Mastervolt \nwebsite (www.mastervolt.com) Install the \nsoftware on the desktop of your PC or notebook. \n2 Start the program by double clicking the \nMasterAdjust.exe icon on your desktop \n3 Immediately the USB-MasterBus interface is \ndetected. This results in a \u201cUSB: MasterBus\u201d-\nentry in the left tree-view of the MasterAdjust \nsoftware \n4 Now the MasterAdjust software scans the \nMasterBus network for connected devices. This \nmight take a few minutes.\n\nSee chapter 4 for details about monitoring and \ncontrol functions of the MasterAdjust software \nIf no devices are displayed, refer to chapter 6 for",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:masteradjust"
+      },
+      {
+        "title": "Immediately the USB-MasterBus interface isdetected. This results in a \u201cUSB: MasterBus\u201d",
+        "kind": "numbered_heading",
+        "group_id": "chapter_3",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "3 Immediately the USB-MasterBus interface is detected. This results in a \u201cUSB: MasterBus\u201d- entry in the left tree-view of the MasterAdjust software 4 Now the MasterAdjust software scans the MasterBus network for connected devices. This migh",
+        "source": "heuristic",
+        "excerpt_text": "INSTALLATION\n\n3 INSTALLATION\n\n3.1 CONNECTION\n\nWhat you need: \n; MasterBus-USB interface (included) \n; USB connection cable (included)  \n; MasterBus connection cables (UTP patch \ncables) (included, 6m) \n\u0085 A PC or notebook with Internet connection and a \nfree USB 2.0 port\n\nSee figure 6 \n\u2022 Insert the MasterBus connection cables into the \nMasterBus data ports of the MasterBus \u2013 USB \ninterface. \n\u2022 Connect the USB connection cable between the \nMasterBus \u2013 USB interface and the USB-port of \nthe PC or notebook.\n\n1 Mastervolt MasterAjust software is available as \nfree to download software on the Mastervolt \nwebsite (www.mastervolt.com) Install the \nsoftware on the desktop of your PC or notebook. \n2 Start the program by double clicking the \nMasterAdjust.exe icon on your desktop \n3 Immediately the USB-MasterBus interface is \ndetected. This results in a \u201cUSB: MasterBus\u201d-\nentry in the left tree-view of the MasterAdjust \nsoftware \n4 Now the MasterAdjust software scans the \nMasterBus network for connected devices. This \nmight take a few minutes.\n\nSee chapter 4 for details about monitoring and \ncontrol functions of the MasterAdjust software \nIf no devices are displayed, refer to chapter 6 for",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:masteradjust"
+      },
+      {
+        "title": "Now the MasterAdjust software scans the MasterBus network for connected devices. This",
+        "kind": "numbered_heading",
+        "group_id": "chapter_3",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "4 Now the MasterAdjust software scans the MasterBus network for connected devices. This might take a few minutes. See chapter 4 for details about monitoring and control functions of the MasterAdjust software If no devices are displayed, ref",
+        "source": "heuristic",
+        "excerpt_text": "INSTALLATION\n\n3 INSTALLATION\n\n3.1 CONNECTION\n\nWhat you need: \n; MasterBus-USB interface (included) \n; USB connection cable (included)  \n; MasterBus connection cables (UTP patch \ncables) (included, 6m) \n\u0085 A PC or notebook with Internet connection and a \nfree USB 2.0 port\n\nSee figure 6 \n\u2022 Insert the MasterBus connection cables into the \nMasterBus data ports of the MasterBus \u2013 USB \ninterface. \n\u2022 Connect the USB connection cable between the \nMasterBus \u2013 USB interface and the USB-port of \nthe PC or notebook.\n\n1 Mastervolt MasterAjust software is available as \nfree to download software on the Mastervolt \nwebsite (www.mastervolt.com) Install the \nsoftware on the desktop of your PC or notebook. \n2 Start the program by double clicking the \nMasterAdjust.exe icon on your desktop \n3 Immediately the USB-MasterBus interface is \ndetected. This results in a \u201cUSB: MasterBus\u201d-\nentry in the left tree-view of the MasterAdjust \nsoftware \n4 Now the MasterAdjust software scans the \nMasterBus network for connected devices. This \nmight take a few minutes.\n\nSee chapter 4 for details about monitoring and \ncontrol functions of the MasterAdjust software \nIf no devices are displayed, refer to chapter 6 for",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:masteradjust"
+      },
+      {
+        "title": "MONITORING",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "USE OF MASTERADJUST SOFTWARE 4.2 MONITORING 4.3 ALARMS 4.4 HISTORY Click on the \u201cHistory\u201d tab To know the history of your electrical system can be very useful. It will help you to check if all connected devices have worked properly in the p",
+        "source": "heuristic",
+        "excerpt_text": "USE OF MASTERADJUST SOFTWARE\n\n4.2 MONITORING\n\n4.3 ALARMS\n\n4.4 HISTORY\n\nClick on the \u201cHistory\u201d tab \nTo know the history of your electrical \nsystem can be very useful.  \nIt will help you to check if all connected \ndevices have worked properly in the past. \nMost of the displayed data is read-only. \nFigure 10 \nAt \u201cAlarms\u201d you can monitor the alarm \nfunction of the selected device.  \nAn alarm may occur when one of the \nmeasured parameters is out of range. \nRefer to user\u2019s manual of selected \ndevice for explanation. \nThe displayed data is read-only \nClick on the \u201cAlarms\u201d tab \nFigure 9 \n\u201cMonitoring\u201d shows the actual measured \ndata of the selected device.  \nRefer to user\u2019s manual of selected \ndevice for explanation of the measured \nvalues. \nClick on \u201cMonitoring\u201d \nFigure 8",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:masteradjust"
+      },
+      {
+        "title": "ALARMS",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "USE OF MASTERADJUST SOFTWARE 4.2 MONITORING 4.3 ALARMS 4.4 HISTORY Click on the \u201cHistory\u201d tab To know the history of your electrical system can be very useful. It will help you to check if all connected devices have worked properly in the p",
+        "source": "heuristic",
+        "excerpt_text": "USE OF MASTERADJUST SOFTWARE\n\n4.2 MONITORING\n\n4.3 ALARMS\n\n4.4 HISTORY\n\nClick on the \u201cHistory\u201d tab \nTo know the history of your electrical \nsystem can be very useful.  \nIt will help you to check if all connected \ndevices have worked properly in the past. \nMost of the displayed data is read-only. \nFigure 10 \nAt \u201cAlarms\u201d you can monitor the alarm \nfunction of the selected device.  \nAn alarm may occur when one of the \nmeasured parameters is out of range. \nRefer to user\u2019s manual of selected \ndevice for explanation. \nThe displayed data is read-only \nClick on the \u201cAlarms\u201d tab \nFigure 9 \n\u201cMonitoring\u201d shows the actual measured \ndata of the selected device.  \nRefer to user\u2019s manual of selected \ndevice for explanation of the measured \nvalues. \nClick on \u201cMonitoring\u201d \nFigure 8",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:masteradjust"
+      },
+      {
+        "title": "HISTORY",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "USE OF MASTERADJUST SOFTWARE 4.2 MONITORING 4.3 ALARMS 4.4 HISTORY Click on the \u201cHistory\u201d tab To know the history of your electrical system can be very useful. It will help you to check if all connected devices have worked properly in the p",
+        "source": "heuristic",
+        "excerpt_text": "USE OF MASTERADJUST SOFTWARE\n\n4.2 MONITORING\n\n4.3 ALARMS\n\n4.4 HISTORY\n\nClick on the \u201cHistory\u201d tab \nTo know the history of your electrical \nsystem can be very useful.  \nIt will help you to check if all connected \ndevices have worked properly in the past. \nMost of the displayed data is read-only. \nFigure 10 \nAt \u201cAlarms\u201d you can monitor the alarm \nfunction of the selected device.  \nAn alarm may occur when one of the \nmeasured parameters is out of range. \nRefer to user\u2019s manual of selected \ndevice for explanation. \nThe displayed data is read-only \nClick on the \u201cAlarms\u201d tab \nFigure 9 \n\u201cMonitoring\u201d shows the actual measured \ndata of the selected device.  \nRefer to user\u2019s manual of selected \ndevice for explanation of the measured \nvalues. \nClick on \u201cMonitoring\u201d \nFigure 8",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:masteradjust"
+      },
+      {
+        "title": "After selecting the command source, click on the \u201cConfiguration\u201d tab. One of the displayed drop",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "USE OF MASTERADJUST SOFTWARE EN / MasterBus - USB interface / September 2008 9 2 After selecting the command source, click on the \u201cConfiguration\u201d tab. One of the displayed drop boxes is named \u201cEvent source 1\u201d (figure 13). 3 Click on the dro",
+        "source": "heuristic",
+        "excerpt_text": "USE OF MASTERADJUST SOFTWARE\n\nEN / MasterBus - USB interface / September 2008  9  \n2 After selecting the command source, click on the \n\u201cConfiguration\u201d tab. One of the displayed drop \nboxes is named \u201cEvent source 1\u201d (figure 13).\n\n3 Click on the drop box and select the event at the \ncommand source that should be the trigger for \nan action (Example: Pre low battery) (figure 14).\n\n4 Select the name of the device that should take \naction in case of this event: Event target . \n(Example: DC switch) (figure 15).\n\n5 Next select which parameter must be changed \nat the target: Event command . (Example: The \nstate of switch 3) (figure 16).\n\n6 Finally select the Event action,  which is the \naction that should take place (Example: Go off) \n(figure 17).\n\nIf you want to continue programming event based \ncommands, proceed with Event source 2  and follow \nthe same procedure as described above.\n\nFigure 17\nFigure 16\nFigure 15\nFigure 14\nFigure 13",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:click",
+        "deduped_from": "After selecting the command source, click on the"
+      },
+      {
+        "title": "Click on the drop box and select the event at thecommand source that should be the trigger for",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "3 Click on the drop box and select the event at the command source that should be the trigger for an action (Example: Pre low battery) (figure 14). 4 Select the name of the device that should take action in case of this event: Event target ",
+        "source": "heuristic",
+        "excerpt_text": "USE OF MASTERADJUST SOFTWARE\n\nEN / MasterBus - USB interface / September 2008  9  \n2 After selecting the command source, click on the \n\u201cConfiguration\u201d tab. One of the displayed drop \nboxes is named \u201cEvent source 1\u201d (figure 13).\n\n3 Click on the drop box and select the event at the \ncommand source that should be the trigger for \nan action (Example: Pre low battery) (figure 14).\n\n4 Select the name of the device that should take \naction in case of this event: Event target . \n(Example: DC switch) (figure 15).\n\n5 Next select which parameter must be changed \nat the target: Event command . (Example: The \nstate of switch 3) (figure 16).\n\n6 Finally select the Event action,  which is the \naction that should take place (Example: Go off) \n(figure 17).\n\nIf you want to continue programming event based \ncommands, proceed with Event source 2  and follow \nthe same procedure as described above.\n\nFigure 17\nFigure 16\nFigure 15\nFigure 14\nFigure 13",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:click"
+      },
+      {
+        "title": "PROGRAMMING OF EVENT-BASED",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "USE OF MASTERADJUST SOFTWARE 4.5 CONFIGURATION 4.6 PROGRAMMING OF EVENT-BASED COMMANDS One of the main features of MasterBus is the possibility of programming for interactive operation the connected devices. This is done by means of event b",
+        "source": "heuristic",
+        "excerpt_text": "USE OF MASTERADJUST SOFTWARE\n\n4.5 CONFIGURATION\n\n4.6 PROGRAMMING OF EVENT-BASED \nCOMMANDS  \nOne of the main features of MasterBus is the \npossibility of programming for interactive operation \nthe connected devices. This is done by means of \nevent based commands . See example below where \nprogramming of event based commands  is \nexplained.\n\n4.7 EXAMPLE \nIf the battery voltage is almost too low, the DC-load \nwhich is connected to output 3 of the DC Switch \nmust be switched off.  \n\u2022 As the battery voltage is measured by the \nMasterShunt, this device is considered as the \ncommand source . ( Command source  = \nMasterShunt) \n\u2022 \u201cBattery voltage almost too low\u201d is considered to \nbe the event (Event = Pre low battery) \n\u2022 The DC Switch  is the device that should take \naction (switching of a part of the DC-load), and is \ntherefore considered to be the target. (Target = \nDC Switch) \n\u2022 Event command: at the DC Switch the status of \noutput 3 should change ( Event command  = \nState 3)  \n\u2022 The status of output 3 should change to Off \n(Event action = Off) \nFollow below steps to program this event based \ncommand:\n\n1 See figure 12. In the left tree-view click on the",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:masteradjust"
+      },
+      {
+        "title": "See figure 12. In the left tree-view click on the",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "1 See figure 12. In the left tree-view click on the",
+        "source": "heuristic",
+        "excerpt_text": "USE OF MASTERADJUST SOFTWARE\n\n4.5 CONFIGURATION\n\n4.6 PROGRAMMING OF EVENT-BASED \nCOMMANDS  \nOne of the main features of MasterBus is the \npossibility of programming for interactive operation \nthe connected devices. This is done by means of \nevent based commands . See example below where \nprogramming of event based commands  is \nexplained.\n\n4.7 EXAMPLE \nIf the battery voltage is almost too low, the DC-load \nwhich is connected to output 3 of the DC Switch \nmust be switched off.  \n\u2022 As the battery voltage is measured by the \nMasterShunt, this device is considered as the \ncommand source . ( Command source  = \nMasterShunt) \n\u2022 \u201cBattery voltage almost too low\u201d is considered to \nbe the event (Event = Pre low battery) \n\u2022 The DC Switch  is the device that should take \naction (switching of a part of the DC-load), and is \ntherefore considered to be the target. (Target = \nDC Switch) \n\u2022 Event command: at the DC Switch the status of \noutput 3 should change ( Event command  = \nState 3)  \n\u2022 The status of output 3 should change to Off \n(Event action = Off) \nFollow below steps to program this event based \ncommand:\n\n1 See figure 12. In the left tree-view click on the",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:click"
+      }
+    ],
+    "alternatives": [],
+    "filtered": [
+      {
+        "title": "IMPORTANT TO KNOW Incorrect installation may lead to damage to the",
+        "kind": "numbered_heading",
+        "group_id": "chapter_1",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "1.2 IMPORTANT TO KNOW Incorrect installation may lead to damage to the MasterBus-USB interface, the connected Mastervolt devices and/or the connected PC. Be sure that all equipment is disconnected from any power source during installation. ",
+        "disposition": "filtered",
+        "filter": "filter:truncated_heading"
+      },
+      {
+        "title": "GUARANTEE SPECIFICATIONS",
+        "kind": "numbered_heading",
+        "group_id": "chapter_1",
+        "excerpt_ref": "excerpt[1]",
+        "disposition": "filtered",
+        "filter": "filter:classified_without_verb"
+      },
+      {
+        "title": "WHAT IS MASTERBUS?",
+        "kind": "numbered_heading",
+        "group_id": "chapter_2",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "MASTERBUS 2 MASTERBUS 2.1 WHAT IS MASTERBUS? All devices that are suitable for MasterBus are marked by the MasterBus symbol. MasterBus is a fully decentralized data network for communication between the different Mastervolt system devices. ",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb",
+        "deduped_from": "MASTERBUS"
+      },
+      {
+        "title": "ORDERING INFORMATION",
+        "kind": "headed_procedure",
+        "group_id": "chapter_3",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "ADDITIONAL INFORMATION 5.1 ORDERING INFORMATION Part number Description 77040000* MasterBus terminating device* 77040020 MasterBus connection cable (UTP patch cable), 0,2m / 0.6ft 77040050 MasterBus connection cable (UTP patch cable),",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "MasterBus connection cable (UTP patch cable), 0,2m / 0.6ft",
+        "kind": "numbered_heading",
+        "group_id": "chapter_3",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "ADDITIONAL INFORMATION 5.1 ORDERING INFORMATION Part number Description 77040000* MasterBus terminating device* 77040020 MasterBus connection cable (UTP patch cable), 0,2m / 0.6ft 77040050 MasterBus connection cable (UTP patch cable), 0,5m ",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "MasterBus connection cable (UTP patch cable), 1,0m / 3.3ft",
+        "kind": "numbered_heading",
+        "group_id": "chapter_3",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "77040100 MasterBus connection cable (UTP patch cable), 1,0m / 3.3ft 77040300 MasterBus connection cable (UTP patch cable), 3,0m / 10ft 77040600* MasterBus connection cable (UTP patch cable), 6,0m / 20ft 77041000 MasterBus connection cable (",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "MasterBus connection cable (UTP patch cable), 10m / 33ft",
+        "kind": "numbered_heading",
+        "group_id": "chapter_3",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "77041000 MasterBus connection cable (UTP patch cable), 10m / 33ft 77041500 MasterBus connection cable (UTP patch cable), 15m / 49ft 77042500 MasterBus connection cable (UTP patch cable), 25m / 82ft 77050000 Complete set to assemble UTP patc",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "MasterBus connection cable (UTP patch cable), 15m / 49ft",
+        "kind": "numbered_heading",
+        "group_id": "chapter_3",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "77041500 MasterBus connection cable (UTP patch cable), 15m / 49ft 77042500 MasterBus connection cable (UTP patch cable), 25m / 82ft 77050000 Complete set to assemble UTP patch cables. Delivery includes: 100m / 330ft UTP cable, 50 pcs. modul",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "MasterBus connection cable (UTP patch cable), 25m / 82ft",
+        "kind": "numbered_heading",
+        "group_id": "chapter_3",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "77042500 MasterBus connection cable (UTP patch cable), 25m / 82ft 77050000 Complete set to assemble UTP patch cables. Delivery includes: 100m / 330ft UTP cable, 50 pcs. modular jacks and crimping tool * These parts are standard included wit",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "TROUBLE SHOOTING",
+        "kind": "headed_procedure",
+        "group_id": "chapter_6",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "TROUBLE SHOOTING 6 TROUBLE SHOOTING Contact your local Mastervolt Service Centre if you cannot correct a problem with the aid of the malfunction table below. See www.mastervolt.com for an extended list of Mastervolt Service Centres. Fai",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Select the name of the device that should take",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "4 Select the name of the device that should take action in case of this event: Event target . (Example: DC switch) (figure 15). 5 Next select which parameter must be changed at the target: Event command . (Example: The state of switch 3) (f",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Next select which parameter must be changed",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "5 Next select which parameter must be changed at the target: Event command . (Example: The state of switch 3) (figure 16). 6 Finally select the Event action, which is the action that should take place (Example: Go off) (figure 17). If you w",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Finally select the Event action,",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "6 Finally select the Event action, which is the action that should take place (Example: Go off) (figure 17). If you want to continue programming event based commands, proceed with Event source 2 and follow the same procedure as described ab",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "EXAMPLE",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "4.7 EXAMPLE If the battery voltage is almost too low, the DC-load which is connected to output 3 of the DC Switch must be switched off. \u2022 As the battery voltage is measured by the MasterShunt, this device is considered as the command source",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "AN Amsterdam",
+        "kind": "headed_procedure",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "Communication interface between your PC and the MasterBus network MASTERVOLT Snijdersbergweg 93, 1105 AN Amsterdam The Netherlands Tel.: +31-20-3422100 Fax.: +31-20-6971006 www.mastervolt.com Copyright \u00a9 2008 Mastervolt, v 2.1 September 20",
+        "disposition": "filtered",
+        "filter": "filter:spec_fragment"
+      }
+    ],
+    "groups_scanned": [
+      "chapter_1",
+      "chapter_2",
+      "chapter_3",
+      "chapter_6",
+      "chapter_7",
+      "batch_0"
+    ],
+    "procedure_count": 15,
+    "alternative_count": 0,
+    "filtered_count": 15
+  },
+  "reconciliation": {
+    "accounted": [],
+    "classified": [
+      {
+        "title": "USE OF MASTERADJUST SOFTWARE",
+        "kind": "headed_procedure",
+        "group_id": "chapter_1",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "USE OF MASTERADJUST SOFTWARE 4 USE OF MASTERADJUST SOFTWARE MasterAdjust software can be used for monitoring and control of devices that are connected to the MasterBus network. This software is available as free to download software on",
+        "source": "heuristic",
+        "excerpt_text": "USE OF MASTERADJUST SOFTWARE\n\n4 USE OF MASTERADJUST SOFTWARE\n\nMasterAdjust software can be used for monitoring \nand control of devices that are connected to the \nMasterBus network. This software is available as \nfree to download software on the Mastervolt website \n(www.mastervolt.com). Features: \n\u2022 System configuration: to adjust the entire \nMasterBus network and all connected devices in \naccordance with your personal preferences, \nincluding programming of Event-based \ncommands \n\u2022 System Monitor: complete actual overview of \nyour entire electrical installation \n\u2022 System logger: data logging of system data \nduring a longer period for analysis later on. \nIMPORTANT: Invalid adjustment of the MasterAdjust \nsoftware may lead to disturbed operation of your \nelectrical installation. Therefore changes at the \nConfiguration menu may only be carried out by \nqualified installers.\n\nNOTE: As every configuration of the \nMasterBus network differs from the other \nthe displayed data may differ from the \nillustrations below. This user\u2019s manual \ncan not give any specific instructions for \nany particular connected device or \nelectrical installation. Refer to the user\u2019s",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:masteradjust",
+        "status": "classified"
+      },
+      {
+        "title": "GENERAL INFORMATION",
+        "kind": "headed_procedure",
+        "group_id": "chapter_1",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "CONTENTS - GENERAL INFORMATION 4 USE OF MASTERADJUST SOFTWARE....................................................................................................... 6 1 GENERAL INFORMATION 1.1 USE OF THIS MANUAL Copyright \u00a9 2008 Master",
+        "source": "heuristic",
+        "excerpt_text": "CONTENTS  - GENERAL INFORMATION\n\n4 USE OF MASTERADJUST SOFTWARE....................................................................................................... 6\n\n1 GENERAL INFORMATION\n\n1.1 USE OF THIS MANUAL \nCopyright \u00a9 2008 Mastervolt. All rights reserved. \nReproduction, transfer, distribution or storage of part \nor all of the contents in this document in any form \nwithout the prior written permission of Mastervolt is \nprohibited.\n\nThis manual serves as a guideline for the safe and \neffective operation, maintenance and possible \ncorrection of minor malfunctions of the MasterBus - \nUSB interface.  \nThis manual is valid for the following model:\n\nDescription Part number \nMasterBus - USB interface 77030100 \nKeep this manual at a secure place! \nThe English version has 12 pages.\n\n1.2 IMPORTANT TO KNOW \nIncorrect installation may lead to damage to the \nMasterBus-USB interface, the connected Mastervolt \ndevices and/or the connected PC. Be sure that all \nequipment is disconnected from any power source \nduring installation. \n1.3 GUARANTEE SPECIFICATIONS  \nMastervolt guarantees that this product was built \naccording to the legally applicable standards and",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:masteradjust",
+        "status": "classified"
+      },
+      {
+        "title": "USE OF THIS MANUAL",
+        "kind": "numbered_heading",
+        "group_id": "chapter_1",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "CONTENTS - GENERAL INFORMATION 4 USE OF MASTERADJUST SOFTWARE....................................................................................................... 6 1 GENERAL INFORMATION 1.1 USE OF THIS MANUAL Copyright \u00a9 2008 Mastervolt.",
+        "source": "heuristic",
+        "excerpt_text": "CONTENTS  - GENERAL INFORMATION\n\n4 USE OF MASTERADJUST SOFTWARE....................................................................................................... 6\n\n1 GENERAL INFORMATION\n\n1.1 USE OF THIS MANUAL \nCopyright \u00a9 2008 Mastervolt. All rights reserved. \nReproduction, transfer, distribution or storage of part \nor all of the contents in this document in any form \nwithout the prior written permission of Mastervolt is \nprohibited.\n\nThis manual serves as a guideline for the safe and \neffective operation, maintenance and possible \ncorrection of minor malfunctions of the MasterBus - \nUSB interface.  \nThis manual is valid for the following model:\n\nDescription Part number \nMasterBus - USB interface 77030100 \nKeep this manual at a secure place! \nThe English version has 12 pages.\n\n1.2 IMPORTANT TO KNOW \nIncorrect installation may lead to damage to the \nMasterBus-USB interface, the connected Mastervolt \ndevices and/or the connected PC. Be sure that all \nequipment is disconnected from any power source \nduring installation. \n1.3 GUARANTEE SPECIFICATIONS  \nMastervolt guarantees that this product was built \naccording to the legally applicable standards and",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:masteradjust",
+        "status": "classified"
+      },
+      {
+        "title": "HOW TO SET UP A MASTERBUS",
+        "kind": "headed_procedure",
+        "group_id": "chapter_2",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "MASTERBUS 2.2 HOW TO SET UP A MASTERBUS NETWORK Each device that is suitable for the MasterBus network is equipped with two data ports. When two or more devices are connected to each other through these ports, they form a local data ne",
+        "source": "heuristic",
+        "excerpt_text": "MASTERBUS\n\n2.2 HOW TO SET UP A MASTERBUS\nNETWORK\n\nEach device that is suitable for the MasterBus \nnetwork is equipped with two data ports. When two \nor more devices are connected to each other \nthrough these ports, they form a local data network, \ncalled the MasterBus.  \nKeep the following rules in mind:\n\nConnections between the devices are made by \nstandard straight UTP patch cables. Mastervolt \ncan supply these cables. These cables are also \ncommonly available at computer supply stores.  \nOK \nFigure 1 \nDo not make T-connections in the network \nFigure 5 \nDo not make ring networks \nFigure 4 \nThe electric power for the network comes from \nthe connected devices.  \nAt least one device in the network should have \npowering capabilities (see specifications).  \nOne powering device can power up to three non-\npowering devices.  \nAs all powering devices are galvanically isolated, \nmultiple powering devices are allowed  \nOK \nFigure 3 \nAs with all high speed data networks, MasterBus \nneeds a terminating device on both ends of the \nnetwork  \nTerminating\ndevice\nTerminating\ndevice\nOK \nFigure 2",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:how to set up a masterbus",
+        "status": "classified"
+      },
+      {
+        "title": "Mastervolt MasterAjust software is available as",
+        "kind": "numbered_heading",
+        "group_id": "chapter_3",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "1 Mastervolt MasterAjust software is available as free to download software on the Mastervolt website (www.mastervolt.com) Install the software on the desktop of your PC or notebook. 2 Start the program by double clicking the MasterAdjust.e",
+        "source": "heuristic",
+        "excerpt_text": "INSTALLATION\n\n3 INSTALLATION\n\n3.1 CONNECTION\n\nWhat you need: \n; MasterBus-USB interface (included) \n; USB connection cable (included)  \n; MasterBus connection cables (UTP patch \ncables) (included, 6m) \n\u0085 A PC or notebook with Internet connection and a \nfree USB 2.0 port\n\nSee figure 6 \n\u2022 Insert the MasterBus connection cables into the \nMasterBus data ports of the MasterBus \u2013 USB \ninterface. \n\u2022 Connect the USB connection cable between the \nMasterBus \u2013 USB interface and the USB-port of \nthe PC or notebook.\n\n1 Mastervolt MasterAjust software is available as \nfree to download software on the Mastervolt \nwebsite (www.mastervolt.com) Install the \nsoftware on the desktop of your PC or notebook. \n2 Start the program by double clicking the \nMasterAdjust.exe icon on your desktop \n3 Immediately the USB-MasterBus interface is \ndetected. This results in a \u201cUSB: MasterBus\u201d-\nentry in the left tree-view of the MasterAdjust \nsoftware \n4 Now the MasterAdjust software scans the \nMasterBus network for connected devices. This \nmight take a few minutes.\n\nSee chapter 4 for details about monitoring and \ncontrol functions of the MasterAdjust software \nIf no devices are displayed, refer to chapter 6 for",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:masteradjust",
+        "status": "classified"
+      },
+      {
+        "title": "Start the program by double clicking the MasterAdjust.exe icon on your desktop",
+        "kind": "numbered_heading",
+        "group_id": "chapter_3",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "2 Start the program by double clicking the MasterAdjust.exe icon on your desktop 3 Immediately the USB-MasterBus interface is detected. This results in a \u201cUSB: MasterBus\u201d- entry in the left tree-view of the MasterAdjust software 4 Now the M",
+        "source": "heuristic",
+        "excerpt_text": "INSTALLATION\n\n3 INSTALLATION\n\n3.1 CONNECTION\n\nWhat you need: \n; MasterBus-USB interface (included) \n; USB connection cable (included)  \n; MasterBus connection cables (UTP patch \ncables) (included, 6m) \n\u0085 A PC or notebook with Internet connection and a \nfree USB 2.0 port\n\nSee figure 6 \n\u2022 Insert the MasterBus connection cables into the \nMasterBus data ports of the MasterBus \u2013 USB \ninterface. \n\u2022 Connect the USB connection cable between the \nMasterBus \u2013 USB interface and the USB-port of \nthe PC or notebook.\n\n1 Mastervolt MasterAjust software is available as \nfree to download software on the Mastervolt \nwebsite (www.mastervolt.com) Install the \nsoftware on the desktop of your PC or notebook. \n2 Start the program by double clicking the \nMasterAdjust.exe icon on your desktop \n3 Immediately the USB-MasterBus interface is \ndetected. This results in a \u201cUSB: MasterBus\u201d-\nentry in the left tree-view of the MasterAdjust \nsoftware \n4 Now the MasterAdjust software scans the \nMasterBus network for connected devices. This \nmight take a few minutes.\n\nSee chapter 4 for details about monitoring and \ncontrol functions of the MasterAdjust software \nIf no devices are displayed, refer to chapter 6 for",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:masteradjust",
+        "status": "classified"
+      },
+      {
+        "title": "Immediately the USB-MasterBus interface isdetected. This results in a \u201cUSB: MasterBus\u201d",
+        "kind": "numbered_heading",
+        "group_id": "chapter_3",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "3 Immediately the USB-MasterBus interface is detected. This results in a \u201cUSB: MasterBus\u201d- entry in the left tree-view of the MasterAdjust software 4 Now the MasterAdjust software scans the MasterBus network for connected devices. This migh",
+        "source": "heuristic",
+        "excerpt_text": "INSTALLATION\n\n3 INSTALLATION\n\n3.1 CONNECTION\n\nWhat you need: \n; MasterBus-USB interface (included) \n; USB connection cable (included)  \n; MasterBus connection cables (UTP patch \ncables) (included, 6m) \n\u0085 A PC or notebook with Internet connection and a \nfree USB 2.0 port\n\nSee figure 6 \n\u2022 Insert the MasterBus connection cables into the \nMasterBus data ports of the MasterBus \u2013 USB \ninterface. \n\u2022 Connect the USB connection cable between the \nMasterBus \u2013 USB interface and the USB-port of \nthe PC or notebook.\n\n1 Mastervolt MasterAjust software is available as \nfree to download software on the Mastervolt \nwebsite (www.mastervolt.com) Install the \nsoftware on the desktop of your PC or notebook. \n2 Start the program by double clicking the \nMasterAdjust.exe icon on your desktop \n3 Immediately the USB-MasterBus interface is \ndetected. This results in a \u201cUSB: MasterBus\u201d-\nentry in the left tree-view of the MasterAdjust \nsoftware \n4 Now the MasterAdjust software scans the \nMasterBus network for connected devices. This \nmight take a few minutes.\n\nSee chapter 4 for details about monitoring and \ncontrol functions of the MasterAdjust software \nIf no devices are displayed, refer to chapter 6 for",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:masteradjust",
+        "status": "classified"
+      },
+      {
+        "title": "Now the MasterAdjust software scans the MasterBus network for connected devices. This",
+        "kind": "numbered_heading",
+        "group_id": "chapter_3",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "4 Now the MasterAdjust software scans the MasterBus network for connected devices. This might take a few minutes. See chapter 4 for details about monitoring and control functions of the MasterAdjust software If no devices are displayed, ref",
+        "source": "heuristic",
+        "excerpt_text": "INSTALLATION\n\n3 INSTALLATION\n\n3.1 CONNECTION\n\nWhat you need: \n; MasterBus-USB interface (included) \n; USB connection cable (included)  \n; MasterBus connection cables (UTP patch \ncables) (included, 6m) \n\u0085 A PC or notebook with Internet connection and a \nfree USB 2.0 port\n\nSee figure 6 \n\u2022 Insert the MasterBus connection cables into the \nMasterBus data ports of the MasterBus \u2013 USB \ninterface. \n\u2022 Connect the USB connection cable between the \nMasterBus \u2013 USB interface and the USB-port of \nthe PC or notebook.\n\n1 Mastervolt MasterAjust software is available as \nfree to download software on the Mastervolt \nwebsite (www.mastervolt.com) Install the \nsoftware on the desktop of your PC or notebook. \n2 Start the program by double clicking the \nMasterAdjust.exe icon on your desktop \n3 Immediately the USB-MasterBus interface is \ndetected. This results in a \u201cUSB: MasterBus\u201d-\nentry in the left tree-view of the MasterAdjust \nsoftware \n4 Now the MasterAdjust software scans the \nMasterBus network for connected devices. This \nmight take a few minutes.\n\nSee chapter 4 for details about monitoring and \ncontrol functions of the MasterAdjust software \nIf no devices are displayed, refer to chapter 6 for",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:masteradjust",
+        "status": "classified"
+      },
+      {
+        "title": "MONITORING",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "USE OF MASTERADJUST SOFTWARE 4.2 MONITORING 4.3 ALARMS 4.4 HISTORY Click on the \u201cHistory\u201d tab To know the history of your electrical system can be very useful. It will help you to check if all connected devices have worked properly in the p",
+        "source": "heuristic",
+        "excerpt_text": "USE OF MASTERADJUST SOFTWARE\n\n4.2 MONITORING\n\n4.3 ALARMS\n\n4.4 HISTORY\n\nClick on the \u201cHistory\u201d tab \nTo know the history of your electrical \nsystem can be very useful.  \nIt will help you to check if all connected \ndevices have worked properly in the past. \nMost of the displayed data is read-only. \nFigure 10 \nAt \u201cAlarms\u201d you can monitor the alarm \nfunction of the selected device.  \nAn alarm may occur when one of the \nmeasured parameters is out of range. \nRefer to user\u2019s manual of selected \ndevice for explanation. \nThe displayed data is read-only \nClick on the \u201cAlarms\u201d tab \nFigure 9 \n\u201cMonitoring\u201d shows the actual measured \ndata of the selected device.  \nRefer to user\u2019s manual of selected \ndevice for explanation of the measured \nvalues. \nClick on \u201cMonitoring\u201d \nFigure 8",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:masteradjust",
+        "status": "classified"
+      },
+      {
+        "title": "ALARMS",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "USE OF MASTERADJUST SOFTWARE 4.2 MONITORING 4.3 ALARMS 4.4 HISTORY Click on the \u201cHistory\u201d tab To know the history of your electrical system can be very useful. It will help you to check if all connected devices have worked properly in the p",
+        "source": "heuristic",
+        "excerpt_text": "USE OF MASTERADJUST SOFTWARE\n\n4.2 MONITORING\n\n4.3 ALARMS\n\n4.4 HISTORY\n\nClick on the \u201cHistory\u201d tab \nTo know the history of your electrical \nsystem can be very useful.  \nIt will help you to check if all connected \ndevices have worked properly in the past. \nMost of the displayed data is read-only. \nFigure 10 \nAt \u201cAlarms\u201d you can monitor the alarm \nfunction of the selected device.  \nAn alarm may occur when one of the \nmeasured parameters is out of range. \nRefer to user\u2019s manual of selected \ndevice for explanation. \nThe displayed data is read-only \nClick on the \u201cAlarms\u201d tab \nFigure 9 \n\u201cMonitoring\u201d shows the actual measured \ndata of the selected device.  \nRefer to user\u2019s manual of selected \ndevice for explanation of the measured \nvalues. \nClick on \u201cMonitoring\u201d \nFigure 8",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:masteradjust",
+        "status": "classified"
+      },
+      {
+        "title": "HISTORY",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "USE OF MASTERADJUST SOFTWARE 4.2 MONITORING 4.3 ALARMS 4.4 HISTORY Click on the \u201cHistory\u201d tab To know the history of your electrical system can be very useful. It will help you to check if all connected devices have worked properly in the p",
+        "source": "heuristic",
+        "excerpt_text": "USE OF MASTERADJUST SOFTWARE\n\n4.2 MONITORING\n\n4.3 ALARMS\n\n4.4 HISTORY\n\nClick on the \u201cHistory\u201d tab \nTo know the history of your electrical \nsystem can be very useful.  \nIt will help you to check if all connected \ndevices have worked properly in the past. \nMost of the displayed data is read-only. \nFigure 10 \nAt \u201cAlarms\u201d you can monitor the alarm \nfunction of the selected device.  \nAn alarm may occur when one of the \nmeasured parameters is out of range. \nRefer to user\u2019s manual of selected \ndevice for explanation. \nThe displayed data is read-only \nClick on the \u201cAlarms\u201d tab \nFigure 9 \n\u201cMonitoring\u201d shows the actual measured \ndata of the selected device.  \nRefer to user\u2019s manual of selected \ndevice for explanation of the measured \nvalues. \nClick on \u201cMonitoring\u201d \nFigure 8",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:masteradjust",
+        "status": "classified"
+      },
+      {
+        "title": "After selecting the command source, click on the \u201cConfiguration\u201d tab. One of the displayed drop",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "USE OF MASTERADJUST SOFTWARE EN / MasterBus - USB interface / September 2008 9 2 After selecting the command source, click on the \u201cConfiguration\u201d tab. One of the displayed drop boxes is named \u201cEvent source 1\u201d (figure 13). 3 Click on the dro",
+        "source": "heuristic",
+        "excerpt_text": "USE OF MASTERADJUST SOFTWARE\n\nEN / MasterBus - USB interface / September 2008  9  \n2 After selecting the command source, click on the \n\u201cConfiguration\u201d tab. One of the displayed drop \nboxes is named \u201cEvent source 1\u201d (figure 13).\n\n3 Click on the drop box and select the event at the \ncommand source that should be the trigger for \nan action (Example: Pre low battery) (figure 14).\n\n4 Select the name of the device that should take \naction in case of this event: Event target . \n(Example: DC switch) (figure 15).\n\n5 Next select which parameter must be changed \nat the target: Event command . (Example: The \nstate of switch 3) (figure 16).\n\n6 Finally select the Event action,  which is the \naction that should take place (Example: Go off) \n(figure 17).\n\nIf you want to continue programming event based \ncommands, proceed with Event source 2  and follow \nthe same procedure as described above.\n\nFigure 17\nFigure 16\nFigure 15\nFigure 14\nFigure 13",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:click",
+        "deduped_from": "After selecting the command source, click on the",
+        "status": "classified"
+      },
+      {
+        "title": "Click on the drop box and select the event at thecommand source that should be the trigger for",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "3 Click on the drop box and select the event at the command source that should be the trigger for an action (Example: Pre low battery) (figure 14). 4 Select the name of the device that should take action in case of this event: Event target ",
+        "source": "heuristic",
+        "excerpt_text": "USE OF MASTERADJUST SOFTWARE\n\nEN / MasterBus - USB interface / September 2008  9  \n2 After selecting the command source, click on the \n\u201cConfiguration\u201d tab. One of the displayed drop \nboxes is named \u201cEvent source 1\u201d (figure 13).\n\n3 Click on the drop box and select the event at the \ncommand source that should be the trigger for \nan action (Example: Pre low battery) (figure 14).\n\n4 Select the name of the device that should take \naction in case of this event: Event target . \n(Example: DC switch) (figure 15).\n\n5 Next select which parameter must be changed \nat the target: Event command . (Example: The \nstate of switch 3) (figure 16).\n\n6 Finally select the Event action,  which is the \naction that should take place (Example: Go off) \n(figure 17).\n\nIf you want to continue programming event based \ncommands, proceed with Event source 2  and follow \nthe same procedure as described above.\n\nFigure 17\nFigure 16\nFigure 15\nFigure 14\nFigure 13",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:click",
+        "status": "classified"
+      },
+      {
+        "title": "PROGRAMMING OF EVENT-BASED",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "USE OF MASTERADJUST SOFTWARE 4.5 CONFIGURATION 4.6 PROGRAMMING OF EVENT-BASED COMMANDS One of the main features of MasterBus is the possibility of programming for interactive operation the connected devices. This is done by means of event b",
+        "source": "heuristic",
+        "excerpt_text": "USE OF MASTERADJUST SOFTWARE\n\n4.5 CONFIGURATION\n\n4.6 PROGRAMMING OF EVENT-BASED \nCOMMANDS  \nOne of the main features of MasterBus is the \npossibility of programming for interactive operation \nthe connected devices. This is done by means of \nevent based commands . See example below where \nprogramming of event based commands  is \nexplained.\n\n4.7 EXAMPLE \nIf the battery voltage is almost too low, the DC-load \nwhich is connected to output 3 of the DC Switch \nmust be switched off.  \n\u2022 As the battery voltage is measured by the \nMasterShunt, this device is considered as the \ncommand source . ( Command source  = \nMasterShunt) \n\u2022 \u201cBattery voltage almost too low\u201d is considered to \nbe the event (Event = Pre low battery) \n\u2022 The DC Switch  is the device that should take \naction (switching of a part of the DC-load), and is \ntherefore considered to be the target. (Target = \nDC Switch) \n\u2022 Event command: at the DC Switch the status of \noutput 3 should change ( Event command  = \nState 3)  \n\u2022 The status of output 3 should change to Off \n(Event action = Off) \nFollow below steps to program this event based \ncommand:\n\n1 See figure 12. In the left tree-view click on the",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:masteradjust",
+        "status": "classified"
+      },
+      {
+        "title": "See figure 12. In the left tree-view click on the",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "1 See figure 12. In the left tree-view click on the",
+        "source": "heuristic",
+        "excerpt_text": "USE OF MASTERADJUST SOFTWARE\n\n4.5 CONFIGURATION\n\n4.6 PROGRAMMING OF EVENT-BASED \nCOMMANDS  \nOne of the main features of MasterBus is the \npossibility of programming for interactive operation \nthe connected devices. This is done by means of \nevent based commands . See example below where \nprogramming of event based commands  is \nexplained.\n\n4.7 EXAMPLE \nIf the battery voltage is almost too low, the DC-load \nwhich is connected to output 3 of the DC Switch \nmust be switched off.  \n\u2022 As the battery voltage is measured by the \nMasterShunt, this device is considered as the \ncommand source . ( Command source  = \nMasterShunt) \n\u2022 \u201cBattery voltage almost too low\u201d is considered to \nbe the event (Event = Pre low battery) \n\u2022 The DC Switch  is the device that should take \naction (switching of a part of the DC-load), and is \ntherefore considered to be the target. (Target = \nDC Switch) \n\u2022 Event command: at the DC Switch the status of \noutput 3 should change ( Event command  = \nState 3)  \n\u2022 The status of output 3 should change to Off \n(Event action = Off) \nFollow below steps to program this event based \ncommand:\n\n1 See figure 12. In the left tree-view click on the",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:click",
+        "status": "classified"
+      }
+    ],
+    "unaccounted": [],
+    "unaccounted_procedures": [],
+    "unaccounted_alternatives": [],
+    "accounting_trail": [
+      {
+        "title": "IMPORTANT TO KNOW Incorrect installation may lead to damage to the",
+        "kind": "numbered_heading",
+        "group_id": "chapter_1",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "1.2 IMPORTANT TO KNOW Incorrect installation may lead to damage to the MasterBus-USB interface, the connected Mastervolt devices and/or the connected PC. Be sure that all equipment is disconnected from any power source during installation. ",
+        "disposition": "filtered",
+        "filter": "filter:truncated_heading"
+      },
+      {
+        "title": "GUARANTEE SPECIFICATIONS",
+        "kind": "numbered_heading",
+        "group_id": "chapter_1",
+        "excerpt_ref": "excerpt[1]",
+        "disposition": "filtered",
+        "filter": "filter:classified_without_verb"
+      },
+      {
+        "title": "WHAT IS MASTERBUS?",
+        "kind": "numbered_heading",
+        "group_id": "chapter_2",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "MASTERBUS 2 MASTERBUS 2.1 WHAT IS MASTERBUS? All devices that are suitable for MasterBus are marked by the MasterBus symbol. MasterBus is a fully decentralized data network for communication between the different Mastervolt system devices. ",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb",
+        "deduped_from": "MASTERBUS"
+      },
+      {
+        "title": "ORDERING INFORMATION",
+        "kind": "headed_procedure",
+        "group_id": "chapter_3",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "ADDITIONAL INFORMATION 5.1 ORDERING INFORMATION Part number Description 77040000* MasterBus terminating device* 77040020 MasterBus connection cable (UTP patch cable), 0,2m / 0.6ft 77040050 MasterBus connection cable (UTP patch cable),",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "MasterBus connection cable (UTP patch cable), 0,2m / 0.6ft",
+        "kind": "numbered_heading",
+        "group_id": "chapter_3",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "ADDITIONAL INFORMATION 5.1 ORDERING INFORMATION Part number Description 77040000* MasterBus terminating device* 77040020 MasterBus connection cable (UTP patch cable), 0,2m / 0.6ft 77040050 MasterBus connection cable (UTP patch cable), 0,5m ",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "MasterBus connection cable (UTP patch cable), 1,0m / 3.3ft",
+        "kind": "numbered_heading",
+        "group_id": "chapter_3",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "77040100 MasterBus connection cable (UTP patch cable), 1,0m / 3.3ft 77040300 MasterBus connection cable (UTP patch cable), 3,0m / 10ft 77040600* MasterBus connection cable (UTP patch cable), 6,0m / 20ft 77041000 MasterBus connection cable (",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "MasterBus connection cable (UTP patch cable), 10m / 33ft",
+        "kind": "numbered_heading",
+        "group_id": "chapter_3",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "77041000 MasterBus connection cable (UTP patch cable), 10m / 33ft 77041500 MasterBus connection cable (UTP patch cable), 15m / 49ft 77042500 MasterBus connection cable (UTP patch cable), 25m / 82ft 77050000 Complete set to assemble UTP patc",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "MasterBus connection cable (UTP patch cable), 15m / 49ft",
+        "kind": "numbered_heading",
+        "group_id": "chapter_3",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "77041500 MasterBus connection cable (UTP patch cable), 15m / 49ft 77042500 MasterBus connection cable (UTP patch cable), 25m / 82ft 77050000 Complete set to assemble UTP patch cables. Delivery includes: 100m / 330ft UTP cable, 50 pcs. modul",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "MasterBus connection cable (UTP patch cable), 25m / 82ft",
+        "kind": "numbered_heading",
+        "group_id": "chapter_3",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "77042500 MasterBus connection cable (UTP patch cable), 25m / 82ft 77050000 Complete set to assemble UTP patch cables. Delivery includes: 100m / 330ft UTP cable, 50 pcs. modular jacks and crimping tool * These parts are standard included wit",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "TROUBLE SHOOTING",
+        "kind": "headed_procedure",
+        "group_id": "chapter_6",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "TROUBLE SHOOTING 6 TROUBLE SHOOTING Contact your local Mastervolt Service Centre if you cannot correct a problem with the aid of the malfunction table below. See www.mastervolt.com for an extended list of Mastervolt Service Centres. Fai",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Select the name of the device that should take",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "4 Select the name of the device that should take action in case of this event: Event target . (Example: DC switch) (figure 15). 5 Next select which parameter must be changed at the target: Event command . (Example: The state of switch 3) (f",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Next select which parameter must be changed",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "5 Next select which parameter must be changed at the target: Event command . (Example: The state of switch 3) (figure 16). 6 Finally select the Event action, which is the action that should take place (Example: Go off) (figure 17). If you w",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Finally select the Event action,",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "6 Finally select the Event action, which is the action that should take place (Example: Go off) (figure 17). If you want to continue programming event based commands, proceed with Event source 2 and follow the same procedure as described ab",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "EXAMPLE",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "4.7 EXAMPLE If the battery voltage is almost too low, the DC-load which is connected to output 3 of the DC Switch must be switched off. \u2022 As the battery voltage is measured by the MasterShunt, this device is considered as the command source",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "AN Amsterdam",
+        "kind": "headed_procedure",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "Communication interface between your PC and the MasterBus network MASTERVOLT Snijdersbergweg 93, 1105 AN Amsterdam The Netherlands Tel.: +31-20-3422100 Fax.: +31-20-6971006 www.mastervolt.com Copyright \u00a9 2008 Mastervolt, v 2.1 September 20",
+        "disposition": "filtered",
+        "filter": "filter:spec_fragment"
+      },
+      {
+        "title": "USE OF MASTERADJUST SOFTWARE",
+        "kind": "headed_procedure",
+        "group_id": "chapter_1",
+        "excerpt_ref": "excerpt[0]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:masteradjust"
+      },
+      {
+        "title": "GENERAL INFORMATION",
+        "kind": "headed_procedure",
+        "group_id": "chapter_1",
+        "excerpt_ref": "excerpt[1]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:masteradjust"
+      },
+      {
+        "title": "USE OF THIS MANUAL",
+        "kind": "numbered_heading",
+        "group_id": "chapter_1",
+        "excerpt_ref": "excerpt[1]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:masteradjust"
+      },
+      {
+        "title": "HOW TO SET UP A MASTERBUS",
+        "kind": "headed_procedure",
+        "group_id": "chapter_2",
+        "excerpt_ref": "excerpt[1]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:how to set up a masterbus"
+      },
+      {
+        "title": "Mastervolt MasterAjust software is available as",
+        "kind": "numbered_heading",
+        "group_id": "chapter_3",
+        "excerpt_ref": "excerpt[2]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:masteradjust"
+      },
+      {
+        "title": "Start the program by double clicking the MasterAdjust.exe icon on your desktop",
+        "kind": "numbered_heading",
+        "group_id": "chapter_3",
+        "excerpt_ref": "excerpt[2]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:masteradjust"
+      },
+      {
+        "title": "Immediately the USB-MasterBus interface isdetected. This results in a \u201cUSB: MasterBus\u201d",
+        "kind": "numbered_heading",
+        "group_id": "chapter_3",
+        "excerpt_ref": "excerpt[2]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:masteradjust"
+      },
+      {
+        "title": "Now the MasterAdjust software scans the MasterBus network for connected devices. This",
+        "kind": "numbered_heading",
+        "group_id": "chapter_3",
+        "excerpt_ref": "excerpt[2]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:masteradjust"
+      },
+      {
+        "title": "MONITORING",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[0]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:masteradjust"
+      },
+      {
+        "title": "ALARMS",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[0]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:masteradjust"
+      },
+      {
+        "title": "HISTORY",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[0]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:masteradjust"
+      },
+      {
+        "title": "After selecting the command source, click on the \u201cConfiguration\u201d tab. One of the displayed drop",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[1]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:click"
+      },
+      {
+        "title": "Click on the drop box and select the event at thecommand source that should be the trigger for",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[1]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:click"
+      },
+      {
+        "title": "PROGRAMMING OF EVENT-BASED",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[2]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:masteradjust"
+      },
+      {
+        "title": "See figure 12. In the left tree-view click on the",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[2]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:click"
+      }
+    ],
+    "counts": {
+      "accounted": 0,
+      "classified": 15,
+      "unaccounted": 0,
+      "filtered": 15,
+      "trail": 30
+    },
+    "corpus_sizes": {
+      "actions": 8,
+      "surfaces": 0,
+      "requires": 0
+    }
+  },
+  "repair": {
+    "attempted": false,
+    "enabled": false
+  },
+  "repair_enabled": true
+}

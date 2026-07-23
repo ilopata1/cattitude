@@ -1,0 +1,17 @@
+{
+  "device_key": "masterbus_usb_interface",
+  "equipment_id": "248e1de6-31c4-471c-80e9-9236a7b00d22",
+  "manual_work_id": "34e8580d-91cd-4b0a-bb99-d85f2111b4c7",
+  "manual": "MasterBus USB Interface Users Manual (operators, EN v 2.1 September 2008, 12 pp)",
+  "fixture_auth": "Fixture-Auth: chat MasterBus USB Interface Stage 1 extract — live extraction promoted; MasterAdjust PC surface added + hub-commanding data_roles evidence removed (exposes kept for MasterBus participant) as source-grounded §1.D adjudication (extraction omissions / direction)",
+  "review": {
+    "status": "reviewed_and_approved",
+    "verdict": "pass",
+    "reviewed_by": "owner/human (chat)",
+    "date": "2026-07-23",
+    "adjudications": [
+      "D1 MasterAdjust PC control surface",
+      "D2 drop hub-commanding data_roles; exposes=MasterBus participant"
+    ]
+  }
+}
