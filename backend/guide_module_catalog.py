@@ -181,9 +181,9 @@ CHECKLIST_CATALOG: dict[str, dict[str, str]] = {
         "guest_label": "Do — leaving unattended",
     },
     "ec": {
-        "title": "End of charter",
-        "focus": "Return checklist — tanks, cleaning, marina handover",
-        "guest_label": "Do — end of charter",
+        "title": "End of trip",
+        "focus": "Return / closing-up checklist — tanks, cleaning, handover or secure",
+        "guest_label": "Do — end of trip",
     },
 }
 
@@ -249,7 +249,7 @@ GENERATION_SET_OPTIONS: list[dict[str, str]] = [
     {
         "value": "checklists",
         "label": "Checklists",
-        "description": "Safety brief, pre-departure, anchoring, leaving unattended, end of charter",
+        "description": "Safety brief, pre-departure, anchoring, leaving unattended, end of trip",
     },
     {
         "value": "fixes",

@@ -86,6 +86,8 @@ _CHECKLIST_META_SUBTITLES: dict[str, str] = {
     "ec": "Return checklist — tanks, cleaning, handover",
 }
 
+_EC_SUBTITLE_PRIVATE = "Secure and shut down before leaving"
+
 _DO_MENU_SECTIONS: list[dict[str, Any]] = [
     {
         "label": "Day One",
@@ -131,7 +133,7 @@ _DO_MENU_SECTIONS: list[dict[str, Any]] = [
         ],
     },
     {
-        "label": "End of Week",
+        "label": "End of Trip",
         "items": [
             {
                 "key": "ec",
@@ -155,7 +157,20 @@ def _region_label(branding: dict[str, Any]) -> str:
     return (branding.get("location") or "").strip() or "your cruising area"
 
 
-def _checklist_title(checklist_id: str) -> str:
+def _is_charter_vessel(branding: dict[str, Any]) -> bool:
+    return bool(str(branding.get("charterCompany") or "").strip())
+
+
+def _checklist_title(
+    checklist_id: str, *, branding: dict[str, Any] | None = None
+) -> str:
+    if checklist_id == "ec":
+        if branding is not None and _is_charter_vessel(branding):
+            return "End of Charter"
+        if branding is not None:
+            return "Closing Up"
+        # Catalog / unknown branding — keep the charter-facing default.
+        return "End of Charter"
     return CHECKLIST_CATALOG[checklist_id]["title"].title()
 
 
@@ -172,15 +187,25 @@ def build_system_order(systems: dict[str, Any]) -> list[str]:
     return [system_id for system_id in SYSTEM_IDS if system_id in published]
 
 
-def build_checklist_meta(published_checklists: set[str]) -> dict[str, dict[str, str]]:
+def build_checklist_meta(
+    published_checklists: set[str],
+    *,
+    branding: dict[str, Any] | None = None,
+) -> dict[str, dict[str, str]]:
+    branding = branding or {}
     meta: dict[str, dict[str, str]] = {}
     for checklist_id in CHECKLIST_IDS:
         if checklist_id not in published_checklists:
             continue
         icon, _icon_class = _CHECKLIST_ICONS[checklist_id]
+        subtitle = _CHECKLIST_META_SUBTITLES[checklist_id]
+        if checklist_id == "ec" and not _is_charter_vessel(branding):
+            subtitle = _EC_SUBTITLE_PRIVATE
+        elif checklist_id == "ec" and branding.get("marina"):
+            subtitle = f"Return to {branding['marina']}"
         meta[checklist_id] = {
-            "title": _checklist_title(checklist_id),
-            "subtitle": _CHECKLIST_META_SUBTITLES[checklist_id],
+            "title": _checklist_title(checklist_id, branding=branding),
+            "subtitle": subtitle,
             "icon": icon,
         }
     return meta
@@ -219,13 +244,17 @@ def build_do_menu(
                 subtitle = f"Setting the hook safely in {region}"
             elif key == "lu":
                 subtitle = f"Going ashore — secure {vessel} first"
-            elif key == "ec" and branding.get("marina"):
-                subtitle = f"Return to {branding['marina']}"
+            elif key == "ec":
+                if _is_charter_vessel(branding):
+                    if branding.get("marina"):
+                        subtitle = f"Return to {branding['marina']}"
+                else:
+                    subtitle = _EC_SUBTITLE_PRIVATE
 
             items.append(
                 {
                     **item,
-                    "title": _checklist_title(key),
+                    "title": _checklist_title(key, branding=branding),
                     "subtitle": subtitle,
                     "icon": icon,
                     "iconClass": icon_class,
@@ -282,7 +311,9 @@ def enrich_navigation(bootstrap: dict[str, Any], *, vessel_type: str) -> dict[st
     home_rules = ui.get("homeRuleSections")
 
     ui["systemOrder"] = build_system_order(systems)
-    ui["checklistMeta"] = build_checklist_meta(published_checklists)
+    ui["checklistMeta"] = build_checklist_meta(
+        published_checklists, branding=branding
+    )
     ui["doMenu"] = build_do_menu(
         branding,
         published_checklists=published_checklists,
