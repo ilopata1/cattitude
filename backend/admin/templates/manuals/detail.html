@@ -107,7 +107,7 @@
   <form method="post" action="/admin/manuals/{{ work.id }}/equipment" class="form-grid">
     <fieldset class="full-width">
       <legend>Add equipment</legend>
-      <div data-equipment-autocomplete data-autocomplete-url="/admin/equipment/autocomplete">
+      <div class="combobox" data-equipment-autocomplete data-autocomplete-url="/admin/equipment/autocomplete">
         <label>Registry equipment
           <input type="text" placeholder="Search manufacturer or model" autocomplete="off" value="">
           <input type="hidden" name="equipment_id" value="">

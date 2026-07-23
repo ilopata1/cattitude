@@ -151,7 +151,7 @@
 
   <h3>Add equipment</h3>
   <form method="post" action="/admin/option-packs/{{ pack.id }}/equipment" class="constraint-form">
-    <div data-equipment-autocomplete data-autocomplete-url="/admin/equipment/autocomplete">
+    <div class="combobox" data-equipment-autocomplete data-autocomplete-url="/admin/equipment/autocomplete">
       <label>Equipment
         <input type="text" placeholder="Search manufacturer or model" autocomplete="off">
         <input type="hidden" name="equipment_id">
@@ -211,7 +211,7 @@
 
   <h3>Add child pack</h3>
   <form method="post" action="/admin/option-packs/{{ pack.id }}/child-packs" class="constraint-form">
-    <div data-pack-autocomplete data-autocomplete-url="/admin/option-packs/autocomplete?exclude_id={{ pack.id }}">
+    <div class="combobox" data-pack-autocomplete data-autocomplete-url="/admin/option-packs/autocomplete?exclude_id={{ pack.id }}">
       <label>Child pack
         <input type="text" placeholder="Search manufacturer or pack name" autocomplete="off">
         <input type="hidden" name="child_pack_id">
