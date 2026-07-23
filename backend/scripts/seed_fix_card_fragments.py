@@ -190,6 +190,45 @@ SEED_FRAGMENTS: dict[tuple[str, str], dict] = {
             },
         ]
     },
+    # Sea.AI Watchkeeper — no generic AI-camera Fix key; append extra cards.
+    # Grounded in User Guide Watchkeeper Series ch.7 troubleshooting + Modes tab.
+    ("Sea.AI", "Watchkeeper"): {
+        "extra_fix_cards": [
+            {
+                "icon": "🧭",
+                "cat": "nav",
+                "catL": "Navigation",
+                "title": "Watchkeeper no video feed",
+                "steps": [
+                    "Check camera power and cable connections at the Vision Unit",
+                    "Reboot the Watchkeeper system",
+                    "Confirm a live thermal or color view returns on the User Interface",
+                ],
+            },
+            {
+                "icon": "🧭",
+                "cat": "nav",
+                "catL": "Navigation",
+                "title": "Watchkeeper too many false alarms",
+                "steps": [
+                    "On the Watchkeeper User Interface, open Settings → Modes and check the current navigation mode",
+                    "Nearshore or high-traffic: switch to Coastal — acoustic alarms fire only for dangerous targets",
+                    "Offshore has higher alarm sensitivity — switch away from Offshore if you are getting nuisance alarms inshore",
+                    "If many false detections continue: use the AI feedback tool to record and report them to Sea.AI",
+                ],
+            },
+            {
+                "icon": "🧭",
+                "cat": "nav",
+                "catL": "Navigation",
+                "title": "Watchkeeper system lagging",
+                "steps": [
+                    "Reboot the Watchkeeper system",
+                    "After reboot, open Settings → System and verify system resources look healthy",
+                ],
+            },
+        ]
+    },
     ("Tecma", "Compass Eco electric head"): {
         "fix_card_overrides": {
             "toilet_wont_flush": {
