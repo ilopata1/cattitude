@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ContentService } from '../../core/services/content.service';
 import { VesselRouteService } from '../../core/services/vessel-route.service';
 import {
@@ -20,9 +21,12 @@ export class KnowPage implements OnInit {
   selected: SystemModule | null = null;
   selectedZone: string | null = null;
 
+  private readonly destroyRef = inject(DestroyRef);
+
   constructor(
     public readonly content: ContentService,
     private readonly route: ActivatedRoute,
+    private readonly router: Router,
     private readonly vesselRoutes: VesselRouteService,
     private readonly sanitizer: DomSanitizer,
   ) {}
@@ -32,13 +36,18 @@ export class KnowPage implements OnInit {
   }
 
   ngOnInit(): void {
-    const systemId = this.route.snapshot.queryParamMap.get('system');
-    if (systemId) {
-      const system = this.content.getSystem(systemId);
-      if (system) {
-        this.selected = system;
-      }
-    }
+    // Ionic keeps tab pages alive — subscribe so Learn → Know deep-links
+    // re-apply on every navigation, not only the first construction.
+    this.route.queryParamMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        const systemId = (params.get('system') || '').trim();
+        if (!systemId) {
+          return;
+        }
+        const system = this.content.getSystem(systemId);
+        this.selected = system ?? null;
+      });
   }
 
   setMode(mode: 'topic' | 'location'): void {
@@ -52,6 +61,14 @@ export class KnowPage implements OnInit {
 
   closeDetail(): void {
     this.selected = null;
+    if (this.route.snapshot.queryParamMap.has('system')) {
+      void this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { system: null },
+        queryParamsHandling: 'merge',
+        replaceUrl: true,
+      });
+    }
   }
 
   /**
@@ -230,6 +247,7 @@ export class KnowPage implements OnInit {
       batteries: 'electrical',
       controls: 'electrical',
       electrical: 'electrical',
+      engines: 'engine',
       nav: 'nav',
       water: 'plumbing',
     };

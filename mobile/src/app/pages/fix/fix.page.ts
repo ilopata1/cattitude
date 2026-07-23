@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { ContentService } from '../../core/services/content.service';
 import { EmergencyService } from '../../core/services/emergency.service';
@@ -63,6 +64,8 @@ export class FixPage implements OnInit {
   expandedIndex: number | null = null;
   readonly categories = FIX_CATEGORIES;
 
+  private readonly destroyRef = inject(DestroyRef);
+
   constructor(
     public readonly content: ContentService,
     private readonly emergency: EmergencyService,
@@ -71,12 +74,16 @@ export class FixPage implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const cat = (this.route.snapshot.queryParamMap.get('cat') || '')
-      .trim()
-      .toLowerCase();
-    if (cat && this.categories.some((c) => c.key === cat)) {
-      this.categoryFilter = cat;
-    }
+    // Ionic keeps tab pages alive — re-apply category deep-links from Know.
+    this.route.queryParamMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        const cat = (params.get('cat') || '').trim().toLowerCase();
+        if (cat && this.categories.some((c) => c.key === cat)) {
+          this.categoryFilter = cat;
+          this.expandedIndex = null;
+        }
+      });
   }
 
   get charterCompany(): string {
