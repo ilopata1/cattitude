@@ -101,6 +101,12 @@ check(
     and not hull_side_applicable("engine_machinery_space", "cruising_monohull")
     and not hull_side_applicable("galley", "sailing_catamaran"),
 )
+check(
+    "hull side: bilge eligible on multihull only",
+    hull_side_applicable("bilge_underfloor", "sailing_catamaran")
+    and hull_side_applicable("bilge_underfloor", "power_catamaran")
+    and not hull_side_applicable("bilge_underfloor", "cruising_monohull"),
+)
 
 
 # --- Bridgedeck saloon sub-zone -------------------------------------------
@@ -150,6 +156,16 @@ check(
     "accept: valid multihull engine bay + hull side",
     not rejects("sailing_catamaran", "engine_machinery_space", "engine_bay",
                 "Starboard"),
+)
+check(
+    "accept: starboard bilge on sailing_catamaran",
+    not rejects("sailing_catamaran", "bilge_underfloor", "midships_bilge",
+                "Starboard"),
+)
+check(
+    "reject: starboard bilge on cruising_monohull",
+    rejects("cruising_monohull", "bilge_underfloor", "midships_bilge",
+            "Starboard"),
 )
 
 

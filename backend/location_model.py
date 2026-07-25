@@ -69,7 +69,9 @@ _ZONE_ORDER: list[tuple[str, str, bool]] = [
     ("rigging_sail_handling", "Rigging & Sail Handling", False),
     ("engine_machinery_space", "Engine / Machinery Space", True),
     ("storage_lazarette", "Storage / Lazarette", True),
-    ("bilge_underfloor", "Bilge / Underfloor", False),
+    # Multihulls have distinct port/starboard bilges; hull side is offered
+    # only when vessel_type is multihull (see hull_side_applicable).
+    ("bilge_underfloor", "Bilge / Underfloor", True),
 ]
 
 ZONE_SLUGS: list[str] = [slug for slug, _, _ in _ZONE_ORDER]
