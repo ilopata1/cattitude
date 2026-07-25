@@ -1,7 +1,7 @@
-# Purpose: LLM instruction for generating Home tab house rules (homeRuleSections).
-# Used by: guide_generation.generate_module when Personalize is checked for shell/home rules;
-#          guide_generation.ensure_default_prompt_templates seeds guide_prompt_template;
-#          guide_generation._resolve_prompt_text falls back when no DB row exists.
+# Purpose: Legacy LLM instruction for Home tab house rules (unused in Generate —
+# home rules always use the curated content library). Kept for prompt archive.
+# Used by: guide_generation._resolve_prompt_text / ensure_default_prompt_templates
+#          if the LLM path is invoked for ui/homeRuleSections.
 # Module: ui / homeRuleSections
 # Composed with: guide/compose/* wrappers, guide/schemas/ui__home_rule_sections.txt, INPUT SNAPSHOT, optional REFERENCE MODULE
 #

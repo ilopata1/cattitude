@@ -60,7 +60,22 @@ Each piece of onboard gear (engines, chartplotter, heads, windlass, and so on) i
 
 System guides and fix cards depend heavily on this list. If equipment is missing, the system cannot produce accurate detail for that topic.
 
-### 5. Equipment content library (manual-grounded fragments)
+### 5. Stage 4 substrate & composers (published Know systems)
+
+For vessels with a **Stage 4 substrate** (interaction profiles, per-boat equipment rows, relations, and vessel facts), published system chapters are written by deterministic **Python composers** — not by an LLM and not by concatenating equipment fragments:
+
+| System id | Chapter |
+|-----------|---------|
+| `batteries` | Batteries & Energy (Solar folds in as a subsection) |
+| `controls` | Controls & Monitoring |
+| `electrical` | Electrical Panel |
+| `engines` | Engines |
+| `nav` | Navigation & Helm |
+| `water` | Water systems |
+
+Composers read the vessel graph + profiles + facts, emit sentence templates with provenance, and save drafts with `model_id=stage4_composer`. Seed/verify helpers live under `scripts/` (`seed_stage4_substrate.py`, `ingest_stage4_sections.py`). Plans: [`guide-stage4-integration-plan.md`](guide-stage4-integration-plan.md) (Phases 1–3 shipped; Phase 4 de-hardcode + 2nd vessel open).
+
+### 6. Equipment content library (manual-grounded fragments)
 
 For each equipment model in the registry, curated **equipment fragments** are drafted
 from approved equipment manuals, reviewed by an admin, and approved once. A fragment
@@ -78,13 +93,16 @@ inside the fragment.
 manual** on the equipment registry page → human review → **Approve** → regenerate
 vessel guides. Only **approved** fragments are used at generation time.
 
-### 6. Curated content library (standard marine practice)
+Fragments still feed **non–Stage-4** system topics and fix-card enrichment. When Stage 4
+substrate is present, published Stage 4 system ids skip the fragment path.
+
+### 7. Curated content library (standard marine practice)
 
 A built-in library of standard charter content covers home rules, checklists, and generic fix cards. It is based on human-reviewed reference material, generalized so it works across boats. The source files live under [`content/`](content/README.md) as YAML (with a small assembly engine); developers edit those files rather than the old monolithic Python module.
 
 Vessel-specific slots (VHF channel, company name, boat name) are filled from the snapshot at generation time. Items that only apply when certain equipment exists (for example, a watermaker) are included or skipped automatically.
 
-### 7. Reference modules (this boat’s previous approved content)
+### 8. Reference modules (this boat’s previous approved content)
 
 When you regenerate content, the system can look up the vessel’s last **approved** or **published** version of the same module. This is used to:
 
@@ -95,16 +113,18 @@ Do/Know **navigation** (menus, system order, zone layout) is **not** copied from
 
 It is **not** used to blindly reuse outdated facts. Fresh data always comes from the current snapshot.
 
-### 8. AI (limited roles)
+### 9. AI (limited roles)
 
-AI is **not** used to personalize equipment system guides per vessel. Equipment-specific
-prose comes from approved manual-grounded fragments (see layer 5).
+AI is **not** used for published Stage 4 system chapters when substrate is present
+(those use deterministic composers — see layer 5). AI is also **not** used for
+home rules, checklists, or Fix cards (curated library; Fix cards also get
+equipment fragment enrichment — see layer 6).
 
 AI is still used for:
 
 - **Overview** and **safety** system modules (boat layout and safety gear — no equipment registry categories)
-- **Optional personalization** of home rules, checklists, and fix cards when you check **Personalize with AI**
 - **Offline drafting** of equipment fragments from manual excerpts (admin reviews before approval)
+- **Stage 1** interaction-profile extraction from manuals (offline / tooling), upstream of Stage 4
 
 Nothing goes live without human review.
 
@@ -135,19 +155,21 @@ When you click **Generate** in admin (or run the generation script), each module
 | Priority | Method | Used for | AI? |
 |----------|--------|----------|-----|
 | 1 | **Template assembly** | Branding, emergency (MAYDAY, contacts) | Never |
-| 2 | **Equipment gap placeholder** | System topics that need equipment but none is linked | Never |
-| 3 | **Equipment content library** | System guides when **approved** fragments exist for linked equipment | Never |
-| 4 | **Fragment pending placeholder** | System topics with linked equipment but no approved fragment yet | Never |
-| 5 | **Curated content library** | Home rules, checklists, fix cards (default path) | Only if you check **Personalize** |
-| 6 | **AI generation** | Overview and safety system modules; optional personalization of library modules | Yes |
+| 2 | **Stage 4 composers** | Published systems (`batteries`, `controls`, `electrical`, `engines`, `nav`, `water`) when Stage 4 substrate is present | Never (`stage4_composer`) |
+| 3 | **Equipment gap placeholder** | System topics that need equipment but none is linked | Never |
+| 4 | **Equipment content library** | Remaining system guides when **approved** fragments exist for linked equipment | Never |
+| 5 | **Fragment pending placeholder** | System topics with linked equipment but no approved fragment yet | Never |
+| 6 | **Curated content library** | Home rules, checklists, fix cards | Never |
+| 7 | **AI generation** | Overview and safety system modules | Yes |
 | *(at publish)* | **Navigation assembly** | Do menu, checklist labels, system order, Know-by-location layout | Never |
 
 **Key behaviors:**
 
 - **Branding and emergency** always use template assembly. Emergency text is built from your contacts and callsign — the system does not paraphrase MAYDAY procedures through AI.
+- **Stage 4 published systems** batch-compose once per Generate when substrate exists; solar prose folds into the batteries module. Without substrate, those keys fall through to fragments / pending / AI like other systems.
 - **Do and Know navigation** is built automatically at **publish** from your approved systems, checklists, and `vessel_type` (see `guide_navigation.py`). You do not generate or approve navigation modules separately.
-- **Home rules, checklists, and fix cards** use the curated library **by default**. AI is opt-in via the **Personalize** checkbox.
-- **Equipment system guides** use **approved** equipment fragments when available. If equipment is linked but no approved fragment exists, you get a clear “content pending” placeholder — not AI-invented detail.
+- **Home rules, checklists, and fix cards** always use the curated library. Fix cards also receive equipment fragment enrichment when approved fragments exist.
+- **Other equipment system guides** use **approved** equipment fragments when available. If equipment is linked but no approved fragment exists, you get a clear “content pending” placeholder — not AI-invented detail.
 - **Overview and safety** system guides still use AI (they do not map to equipment categories).
 
 ### How reference content is reused (without copying stale facts)
@@ -170,12 +192,13 @@ Even when a module is not copied verbatim, a previous approved version may still
 |---------|---------|----------|
 | Branding (name, tagline, model) | Template assembly from vessel + guide context | Never |
 | Emergency (MAYDAY, contacts) | Template assembly from guide context | Never |
-| Home rules | Curated library | Only if **Personalize** is checked |
-| System guides (equipment topics) | Approved equipment fragments | Never — pending placeholder if fragment missing |
+| Home rules | Curated library | Never |
+| System guides (Stage 4 published ids + substrate) | Stage 4 composers | Never |
+| System guides (other equipment topics) | Approved equipment fragments | Never — pending placeholder if fragment missing |
 | System guides (overview, safety) | AI | Always |
 | System guides (missing equipment) | Placeholder message | Never |
-| Checklists (5) | Curated library | Only if **Personalize** is checked |
-| Fix cards | Curated library + equipment fragment enrichment | Only if **Personalize** is checked |
+| Checklists (5) | Curated library | Never |
+| Fix cards | Curated library + equipment fragment enrichment | Never |
 | Do tab menu & checklist headers | Assembled at publish from approved checklists + catalog | Never |
 | Know tab order & zones | Assembled at publish from approved systems + `vessel_type` layout profile | Never |
 
@@ -183,42 +206,49 @@ Even when a module is not copied verbatim, a previous approved version may still
 
 1. Enter **guide context** (contacts, VHF, local rules) at base and/or vessel level
 2. Link **equipment** to the vessel
-3. **Draft and approve equipment fragments** for models you use repeatedly — Admin → Equipment → **Draft from manual**, review, **Approve** (“first boat pays, siblings reuse”)
-4. **Review drafts** — compare new output to the prior approved version
-5. **Approve** modules individually
-6. **Publish** the full approved set to make it live in the app (or republish after image-only updates — see below)
+3. For Stage 4 system chapters: seed the **Stage 4 substrate** (profiles + facts) for the vessel — see [`guide-stage4-integration-plan.md`](guide-stage4-integration-plan.md) / `scripts/seed_stage4_substrate.py`
+4. **Draft and approve equipment fragments** for models on non–Stage-4 topics you reuse — Admin → Equipment → **Draft from manual**, review, **Approve**
+5. **Review drafts** — compare new output to the prior approved version
+6. **Approve** modules individually
+7. **Publish** the full approved set to make it live in the app (or republish after image-only updates — see below)
 
 Equipment **manuals** (PDFs) feed both the Ask tab (search) and equipment fragment drafting. Upload, clear in legal review, and ingest before using **Draft from manual**.
 
 **Fragment drafting policy:** drafts prefer manuals tagged `operators`. They never use `installation` or `parts`. If no operators manual exists, drafting may fall back to `service` with a stricter guest-safe prompt. Content is limited to operating use, warnings, and guest-safe fixes — install/service/repair depth stays in Ask. Retag PDFs accurately so the right corpus is used.
 
-### Follow-ups (fragment / Electrical quality)
+### Follow-ups (pipeline / Stage 4)
 
-Engineering plan for the longer pipeline (interaction profiles → vessel graph →
-section views): [`guide-pipeline-plan.md`](guide-pipeline-plan.md).
+**Authoring process** (new device profiles, new/frozen guide sections, inventory
+events, review rounds) is **not** defined in this operator README. Use:
 
-Still open after the drafting tighten and skeleton assembly:
+| Doc | When |
+|-----|------|
+| [`../PLAYBOOKS.md`](../PLAYBOOKS.md) | Checklists for extract, compose, inventory change, defect→fixture |
+| [`../PRINCIPLES.md`](../PRINCIPLES.md) | Standing rules those checklists apply |
+| [`../standard_frame.txt`](../standard_frame.txt) | Human review rounds on section drafts — disposition table required |
+| [`guide-pipeline-plan.md`](guide-pipeline-plan.md) | Stages 0–4 + fixtures (scratch vs golden vs oracle); notes future admin authoring |
+| [`guide-stage4-integration-plan.md`](guide-stage4-integration-plan.md) | Live Generate wire-up; Phase 6 = future admin authoring UI |
+| [`fixtures/pipeline/README.md`](fixtures/pipeline/README.md) | Fixture paths and local verify commands |
+| [`tests/fixtures/POLICY.md`](tests/fixtures/POLICY.md) | `Fixture-Auth` for golden / `outremer/` changes |
 
-1. ~~**Assemble, don’t concat**~~ — **done**: `guide_system_assembly.py` orders Electrical /
-   Batteries by a guest role skeleton and labels multi-equipment contributions.
-2. ~~**Narrow system targeting**~~ — **done**: primary-home keywords route charge/storage
-   gear to Batteries and panel/distribution to Electrical (drafting + coverage + assembly).
-3. **Cap fragment size** — limit sections/learnChecks per equipment contribution before approve.
-4. **Approve-time quality gates** — reject install/commissioning titles, vessel/charter names, oversized dumps.
-5. **Quarantine harvest leftovers** — deactivate or unlink harvested Cattitude-specific fragments (e.g. generic SmartSolar charger) before regenerating sibling boats.
-6. **Audit manual_type tags** — many PDFs must be correctly typed as `operators` for the new filter to help.
-7. ~~**Stage 1–2 offline spike**~~ — **done (Outremer fixture):** `interaction_profile.py` +
-   `system_graph.py`; exact-match via `scripts/verify_system_graph.py`. Still **not** wired
-   into `generate_module`. Optional live extract:
-   `scripts/extract_interaction_profile.py`. **Stage 1.5** validator (every profile):
-   `scripts/verify_interaction_profile_validate.py` (+ Stage 1.6 derive). Spec:
-   [`equipment-classification-spec-v3.8.md`](equipment-classification-spec-v3.8.md).
-   Local gates: `make pipeline-verify` / `.\pipeline_verify.ps1` (fixtures);
-   `make pipeline-compare-scratch` / `.\pipeline_verify.ps1 -CompareScratch`
-   (live scratch vs SmartSolar golden). **No GitHub Actions live-extract job yet.**
-   Fixture edits require human auth — see [`tests/fixtures/POLICY.md`](tests/fixtures/POLICY.md).
-   Details: [`guide-pipeline-plan.md`](guide-pipeline-plan.md),
-   [`fixtures/pipeline/README.md`](fixtures/pipeline/README.md).
+Engineering plans for product wire-up:
+
+- [`guide-stage4-integration-plan.md`](guide-stage4-integration-plan.md) — composers → live Generate (**Phases 1–3 shipped**; Phase 4 de-hardcode + 2nd vessel open; Phase 5 retire fragment path for remaining systems)
+- [`guide-pipeline-plan.md`](guide-pipeline-plan.md) — Stages 0–4 authoring / frozen section verify scripts
+
+Still open / ongoing:
+
+1. **Stage 4 Phase 4** — de-hardcode composers for a second vessel; optional plant-function model analysis noted in the integration plan.
+2. **Stage 4 Phase 5** — retire fragment/LLM path for remaining system modules once Stage 4 coverage is enough.
+3. **Stage 4 Phase 6 (later)** — admin UI for staff extract/review/compose happy path (today: Cursor + playbooks); after multi-vessel learning.
+4. **Cap fragment size** — limit sections/learnChecks per equipment contribution before approve (still relevant for non–Stage-4 topics).
+5. **Approve-time quality gates** — reject install/commissioning titles, vessel/charter names, oversized dumps.
+6. **Quarantine harvest leftovers** — deactivate or unlink harvested Cattitude-specific fragments before regenerating sibling boats.
+7. **Audit manual_type tags** — many PDFs must be correctly typed as `operators` for fragment drafting filters.
+8. ~~**Stage 1–2 offline spike**~~ — **done** (`interaction_profile.py` + `system_graph.py`). Profiles + graph now feed Stage 4 via DB substrate when seeded.
+9. ~~**Stage 4 Phases 1–3**~~ — **done**: module transform, substrate, admin Generate wiring (`run_stage4_generation`).
+
+Local gates: `make pipeline-verify` / `.\pipeline_verify.ps1`; `make stage4-bytematch`. Fixture policy: [`tests/fixtures/POLICY.md`](tests/fixtures/POLICY.md). Fixtures: [`fixtures/pipeline/README.md`](fixtures/pipeline/README.md).
 
 ## Defaults and fallbacks
 
@@ -249,7 +279,8 @@ At publish time, image paths are normalized for the vessel, and missing image fi
 │  SETUP (ongoing, in admin)                                      │
 │  • Create vessel, assign operating base and hull model          │
 │  • Fill guide context (base defaults + vessel overrides)        │
-│  • Link equipment; add equipment fragments for repeated models│
+│  • Link equipment; seed Stage 4 substrate for published systems │
+│  • Add equipment fragments for non–Stage-4 models as needed     │
 └────────────────────────────┬────────────────────────────────────┘
                              ▼
 ┌─────────────────────────────────────────────────────────────────┐
@@ -260,7 +291,7 @@ At publish time, image paths are normalized for the vessel, and missing image fi
                              ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │  GENERATE                                                       │
-│  Admin → Generate drafts (optionally with Personalize)          │
+│  Admin → Generate drafts                                        │
 │  Each module → method chosen by precedence table above          │
 │  Output saved as drafts awaiting review                         │
 └────────────────────────────┬────────────────────────────────────┘
@@ -305,11 +336,11 @@ When you duplicate a vessel, approved or published guide modules can be copied d
 
 1. **Set guide context first.** Contacts, VHF, and local rules flow into branding, emergency, home rules, checklists, and fix cards. Without them, generation is blocked or produces thin content.
 
-2. **Link equipment before generating system guides.** Otherwise you get placeholders or generic AI output instead of accurate procedures.
+2. **Link equipment before generating system guides.** Otherwise you get placeholders or thin output instead of accurate procedures. For Stage 4 chapters, also seed the substrate.
 
-3. **Use the library by default; personalize selectively.** The curated library is faster, more consistent, and cheaper. Use **Personalize** only when you need bespoke prose for a specific boat.
+3. **Prefer the curated library for Do / Home / Fix.** It is deterministic and keeps Fix fragment enrichment. Edit YAML under `content/` when you need better fleet-wide copy.
 
-4. **Invest in equipment fragments for repeated models.** One curated fragment benefits every vessel with that engine, chartplotter, or head type.
+4. **Prefer Stage 4 composers for published systems; fragments for the rest.** Seed substrate once per vessel/family. Invest in equipment fragments for models on topics not yet on the Stage 4 path.
 
 5. **Publish** — Do and Know navigation are included automatically; no separate navigation step. After uploading header/hero logos or system photos, publish again to sync images — no draft approval required when only images changed.
 
@@ -328,9 +359,11 @@ When you duplicate a vessel, approved or published guide modules can be copied d
 | **Guide context** | Local and regional facts: contacts, VHF, marina, callsign, local rules |
 | **Template assembly** | Building content by mapping fields directly — no AI |
 | **Content library** | Built-in curated standard marine content with vessel-specific slots filled in |
-| **Equipment fragment** | Reusable curated content tied to an equipment model |
+| **Stage 4 composer** | Deterministic Python that writes a Know system chapter from profiles + graph + facts |
+| **Stage 4 substrate** | DB rows (profiles, vessel equipment, relations, facts) composers read |
+| **Equipment fragment** | Reusable curated content tied to an equipment model (fallback / non–Stage-4 topics) |
+| **Playbook / standard frame** | Pipeline authoring checklists (`PLAYBOOKS.md`) and review-round protocol (`standard_frame.txt`) — see pipeline plan |
 | **Reference module** | This vessel’s previous approved version of the same module |
-| **Personalize** | Admin option to use AI instead of the curated library |
 | **Bootstrap** | The complete content package the mobile app downloads |
 | **Publication** | A versioned, immutable snapshot of the bootstrap sent to the app |
 | **User overlay** | Per-user personal patches applied on the mobile client on top of publication; planned — see [`cursor-build-user-overlays.md`](../cursor-build-user-overlays.md) |
@@ -342,9 +375,10 @@ When you duplicate a vessel, approved or published guide modules can be copied d
 The pipeline is deliberately layered:
 
 - **Routine charter content** is deterministic and reusable — the same checklists and fix cards work across a fleet with small slot substitutions.
-- **Equipment-specific detail** is curated once per model and shared across sister boats.
-- **AI fills gaps** only where no curated path exists, or when you explicitly ask for personalization.
+- **Published Know systems** (when substrate exists) are written by Stage 4 composers from structured plant knowledge — reproducible, provenance-tagged, no LLM rewrite.
+- **Other equipment-specific detail** is curated once per model (fragments) and shared across sister boats until Stage 4 covers that topic.
+- **AI fills gaps** only where no curated/composer path exists (today: overview and safety system modules).
 - **Safety-critical content** (emergency procedures, contacts) never goes through AI paraphrasing.
 - **Human review is mandatory** — generation produces drafts; publish is a deliberate act.
 
-For database schema, API contracts, developer setup, **curated content YAML**, and **LLM prompt files**, see the root [`README.md`](../README.md), [`clever-sailor-data-model.md`](../clever-sailor-data-model.md), [`content/README.md`](content/README.md), and [`prompts/README.md`](prompts/README.md).
+For database schema, API contracts, developer setup, **curated content YAML**, and **LLM prompt files**, see the root [`README.md`](../README.md), [`clever-sailor-data-model.md`](../clever-sailor-data-model.md), [`content/README.md`](content/README.md), and [`prompts/README.md`](prompts/README.md). Stage 4 wire-up: [`guide-stage4-integration-plan.md`](guide-stage4-integration-plan.md). Extract/compose playbooks: [`../PLAYBOOKS.md`](../PLAYBOOKS.md), [`guide-pipeline-plan.md`](guide-pipeline-plan.md).

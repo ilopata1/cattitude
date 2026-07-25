@@ -435,7 +435,6 @@ async def generate_guide_modules(
     vessel_id: str,
     module_sets: Annotated[list[str], Form()] = [],
     confirm_equipment_gaps: str = Form(""),
-    personalize: str = Form(""),
     admin_user: str = Depends(require_admin_user),
 ):
     if not module_sets:
@@ -480,7 +479,6 @@ async def generate_guide_modules(
                 vessel_id,
                 modules,
                 created_by=admin_user,
-                personalize=personalize == "yes",
             )
     except GuideGenerationError as exc:
         from urllib.parse import quote

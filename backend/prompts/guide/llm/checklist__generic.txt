@@ -1,5 +1,7 @@
-# Purpose: Fallback LLM instruction for checklists when Personalize is checked.
-# Used by: guide_generation._build_generic_checklist_prompt (via _resolve_prompt_text).
+# Purpose: Legacy LLM instruction for checklist modules (unused in Generate —
+# checklists always use the curated content library). Kept for prompt archive /
+# possible future narrow premium experiments.
+# Used by: guide_generation._build_generic_checklist_prompt (via _resolve_prompt_text) if ever invoked.
 # Module: checklist / {checklist_id} — safety-brief, pd, anch, lu, ec
 # Variables: {checklist_id}, {title}, {focus}
 #

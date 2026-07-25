@@ -580,7 +580,7 @@ Created automatically on first ingest. Before ingestion:
 | Updates | Re-download when publication hash changes |
 | One app, many vessels | No per-vessel app builds; no all-vessels-in-install |
 | Delivery | JSON + asset manifest (separate fetches; zip not required) |
-| Generation | **Premium:** personalized LLM modules; **Free:** template assembly + exemplar copy (planned — see `PLATFORM_ROADMAP.md` § Guide generation economics). Today: full LLM per module run (~22 calls/vessel); no cross-vessel reuse yet. |
+| Generation | **Default:** template / content-library / Stage 4 composers / fragments (no LLM for home rules, checklists, or Fix cards). **LLM:** overview + safety systems (and remaining systems without Stage 4 / fragments). Freemium premium path planned — see `PLATFORM_ROADMAP.md` § Guide generation economics (former blanket “Personalize with AI” opt-in removed). |
 | Prompt templates | Versioned in Postgres; charter-editable |
 
 ### Locked product decisions

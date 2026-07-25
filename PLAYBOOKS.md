@@ -3,6 +3,14 @@
 Repeatable checklists for recurring Clever Sailor pipeline work. Apply the
 standing rules in `PRINCIPLES.md` throughout.
 
+Review rounds on guide-section drafts use `standard_frame.txt` (classify each
+item → disposition table → re-run frozen sections on global rule changes).
+
+Fixture roles (scratch vs golden vs oracle) and `Fixture-Auth`:
+[`backend/fixtures/pipeline/README.md`](backend/fixtures/pipeline/README.md),
+[`backend/tests/fixtures/POLICY.md`](backend/tests/fixtures/POLICY.md).
+Engineering context: [`backend/guide-pipeline-plan.md`](backend/guide-pipeline-plan.md).
+
 ## 1. New device extraction
 
 **Goal:** promote a reviewed interaction profile for one equipment model

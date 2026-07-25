@@ -1014,7 +1014,6 @@ def generate_module(
     trigger: str = "onboarding",
     created_by: str = "guide_generation",
     llm: AzureOpenAI | None = None,
-    personalize: bool = False,
 ) -> dict[str, Any]:
     if content_type == "emergency":
         if emergency_contacts_count(snapshot_payload.get("guide_context")) < 1:
@@ -1028,9 +1027,9 @@ def generate_module(
     diff_against_id = _load_diff_against_id(conn, vessel_id, content_type, content_key)
 
     # Pure field mappings are always template-assembled; library-backed hybrid
-    # modules use the curated library unless the caller opts into LLM personalization.
+    # modules (home rules, checklists, fix cards) always use the curated library.
     template_builder = TEMPLATE_MODULE_BUILDERS.get((content_type, content_key))
-    if template_builder is None and not personalize:
+    if template_builder is None:
         template_builder = LIBRARY_MODULE_BUILDERS.get((content_type, content_key))
     use_equipment_placeholder = (
         content_type == "system"
@@ -1204,7 +1203,6 @@ def run_guide_generation(
     *,
     trigger: str = "onboarding",
     created_by: str = "guide_generation",
-    personalize: bool = False,
 ) -> GenerationResult:
     ensure_default_prompt_templates(conn)
     snapshot_payload = load_vessel_generation_context(conn, vessel_id)
@@ -1257,7 +1255,7 @@ def run_guide_generation(
         module_key = (content_type, content_key)
         needs_llm = (
             module_key not in TEMPLATE_MODULE_BUILDERS
-            and (personalize or module_key not in LIBRARY_MODULE_BUILDERS)
+            and module_key not in LIBRARY_MODULE_BUILDERS
         )
         if needs_llm and llm is None:
             llm = _build_llm()
@@ -1273,7 +1271,6 @@ def run_guide_generation(
                     trigger=trigger,
                     created_by=created_by,
                     llm=llm,
-                    personalize=personalize,
                 )
             )
         except GuideGenerationError as exc:

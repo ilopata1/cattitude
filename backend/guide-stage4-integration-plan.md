@@ -4,9 +4,17 @@ How the new Stage 4 guide-section composers become the vessel-agnostic,
 DB-native generator for **system (Know-chapter) modules**, flowing
 `generate → approve → publish → serve → client sync`.
 
-Companion to [`guide-pipeline-plan.md`](guide-pipeline-plan.md) (which covers
-Stages 0–4 authoring) and the frozen section spec tips
+Companion to [`guide-pipeline-plan.md`](guide-pipeline-plan.md) (Stages 0–4
+authoring) and the frozen section spec tips
 (`equipment-classification-spec-v4.3x.md`).
+
+**Authoring / freeze process** (not redefined here): new profiles and sections
+follow [`../PLAYBOOKS.md`](../PLAYBOOKS.md) and [`../PRINCIPLES.md`](../PRINCIPLES.md);
+human review rounds use [`../standard_frame.txt`](../standard_frame.txt);
+scratch vs golden vs oracle fixture roles are in
+[`fixtures/pipeline/README.md`](fixtures/pipeline/README.md) and
+[`tests/fixtures/POLICY.md`](tests/fixtures/POLICY.md). This plan covers
+**product wire-up** of already-frozen composers.
 
 ## Goal and stance
 
@@ -69,10 +77,14 @@ wholesale; redirect only the *system* slot to Stage 4.
 | **3 ✅ DONE** | Orchestrator + admin: `run_stage4_generation(vessel)`; wire into admin generate; persist provenance/fact_queries (owner-questions store only — no admin UI) | One-click DB-native generate → publish | shipped |
 | **4** | De-hardcode composers for arbitrary vessels (remove Outremer constants, `DISPLAY_NAMES`/`MANUFACTURER_MODEL`, pinned device keys); add a 2nd vessel | A different vessel generates coherent system chapters | see design below |
 | **5** | Consolidate: retire the old fragment/LLM path for system modules; delete dead code + frozen-bundle path | Single generation path for systems | ~few days |
+| **6 (later)** | **Admin-driven authoring UI** — productize extract / review / compose / freeze workflows that today run via Cursor + [`PLAYBOOKS.md`](../PLAYBOOKS.md) / [`standard_frame.txt`](../standard_frame.txt) | Staff onboard a same-family vessel and promote a reviewed profile without leaving admin (Cursor remains for novel composers / hard defects) | after Phase 4–5 + multi-vessel learning |
 
 Value lands after Phase 1–3 and **1b** (reader polish) are done. Next: Phase 4
 (de-hardcode + 2nd vessel) or Phase 5 (path consolidation), when you call them
-up. Owner onboarding UI remains a parallel product track.
+up. **Owner** onboarding UI (answer fact queries / vessel facts) remains a
+parallel product track. **Staff** pipeline authoring UI is Phase 6 below —
+explicitly *after* composers generalize and several vessels have been onboarded
+through fixtures + Generate.
 
 ---
 
@@ -856,6 +868,11 @@ must stay green — predicates must recognize today’s keys.
 to look like Outremer.” Sister ships with similar profiles work; random key
 schemes still need consistent profiling.
 
+**Open for analysis (not locked):** see
+[Explicit plant-function model](#open-analysis--explicit-plant-function-model)
+below — a possible deeper framing of families as a small shared function
+vocabulary that profiles bind into, rather than ad hoc predicates only.
+
 ---
 
 #### 5. Numeric / layout facts — where do “18 kWh” and “davit array” live?
@@ -951,6 +968,7 @@ hide empty system tiles; Phase 4 doesn’t require full catalog coverage on B.
 | 2 | Vessel B | Pick real slug or thinned synthetic fixture before W3 |
 | 3 | Naming | Derive from profile/equipment fields; retire map-as-primary |
 | 4 | Families | Graph/profile predicates, not Outremer key prefixes |
+| 4a | Plant-function model | **Open** — evaluate thin function vocabulary + profile bindings (see below); not required to start W1 |
 | 5 | Numbers/layout | `vessel_facts` or omit/gap — no silent Outremer defaults |
 | 6 | Oracle | Outremer byte-match stays; B = coherence only |
 | 7 | Registry link | Still deferred |
@@ -958,11 +976,64 @@ hide empty system tiles; Phase 4 doesn’t require full catalog coverage on B.
 
 ---
 
+### Open analysis — explicit plant-function model
+
+**Status:** possible approach for further analysis and evaluation before or
+during early W1. **Not** a locked Phase 4 decision. Decision 4’s default
+remains “graph/profile predicates in shared helpers.”
+
+**Idea.** The guest-facing plant model today is real but implicit — mostly
+Outremer key checks and sentence templates inside composers, plus computed
+guide sections and topology roles. A thinner, *explicit* layer could make
+Phase 4 family detection honest and reusable:
+
+- A **closed vocabulary of plant functions** (tens of terms, not hundreds):
+  e.g. house battery bank, inverter-charger, MPPT / solar charge controller,
+  alternator regulator, genset, digital-switching hub, helm display, watermaker.
+- **Bindings** on the interaction profile or Stage 4 substrate:
+  `implements: [house_battery_bank]` (curated, or lightly proposed from
+  existing signals and human-reviewed).
+- Composers select members **by function**; profiles supply brand, panel
+  labels, and attested actions. Vessel facts still own layout/numbers/nicknames.
+- Stage 2 topology roles (HUB / ENDPOINT / …) and guide sections stay
+  **computed**. No LLM at Stage 4 runtime; Stage 1 extraction (or a review
+  pass) may *propose* bindings only.
+- Unclassified gear → honest gap, not forced into a role. Same-family
+  ambition still applies; this is not a universal boat ontology.
+
+**Why evaluate it.** Decision 4 predicates may grow into a de facto ontology
+anyway. Naming the vocabulary once could reduce five composer-local heuristics,
+clarify where profiles “find their place,” and make vessel B failures
+(“missing binding” vs “wrong prose”) easier to diagnose. Risk: premature
+schema, Outremer assumptions hiding under nicer names, or blocking W1 on a
+design spike.
+
+**Evaluation questions (when we pick this up):**
+
+1. Can we list the functions already implied by frozen composers (Batteries,
+   Solar, Controls, Electrical, Nav, Water, Engines) in one short table?
+2. Do existing profile/graph signals already distinguish those functions for
+   Outremer without new fields — or do we need an explicit binding column/tag?
+3. Does a binding layer keep Outremer byte-match with less brittle code than
+   pure predicates, or does it just add authoring cost?
+4. Where should bindings live — profile library (model-level), vessel
+   substrate, or vessel facts only for nicknames?
+5. Go / no-go: proceed with Decision 4 predicates only; adopt a thin function
+   vocab + bindings as W1’s backbone; or defer until vessel B proves predicates
+   insufficient.
+
+**Non-goals for this analysis:** registry-level role enums; replacing
+`system_category`; a grand boat-operations theory; LLM Stage 4 classification.
+
+---
+
 ### Workstreams (what we would actually build)
 
 **W1 — Shared naming & family helpers**  
 One place composers ask “what do we call this?” and “which keys are in this
-family?” so we don’t maintain five Outremer dictionaries.
+family?” so we don’t maintain five Outremer dictionaries. Optionally sharpened
+by the [plant-function model analysis](#open-analysis--explicit-plant-function-model)
+if that evaluation lands on an explicit vocabulary + bindings.
 
 **W2 — Composer pass (Electrical → Controls → Nav → Batteries → Solar)**  
 Rewrite one section at a time. After each: Outremer verify + byte-match green;
@@ -1012,3 +1083,70 @@ fast path; Batteries/Solar are the long pole.
 **Which vessel is B?** (a) `cattitude` with curated Stage 4 inventory,
 (b) thinned synthetic fixture, or (c) another real boat. Lock decisions 1–2
 (and confirm 3–8) before W3.
+
+---
+
+## Phase 6 — Admin-driven authoring UI (later)
+
+**Status:** planned — **not** started with Phase 4. Depends on Phase 4–5 and
+onboarding several vessels through today’s mechanisms (fixtures → seed substrate
+→ Generate → review frame in Cursor).
+
+### Why it exists
+
+Today the *authoring* loop (new device extraction, section compose/freeze,
+inventory events, review dispositions) lives in Cursor, driven by
+[`PLAYBOOKS.md`](../PLAYBOOKS.md), [`PRINCIPLES.md`](../PRINCIPLES.md), and
+[`standard_frame.txt`](../standard_frame.txt). Admin only runs
+Generate → approve → publish once substrate exists. That does not scale to
+fleet staff who should not need the monorepo or an agent session.
+
+### Goal
+
+Move the **happy-path staff workflows** into the admin portal so Clever Sailor /
+charter operators can:
+
+1. Kick off / monitor Stage 1 extraction for a registry model (job + scratch artifacts).
+2. Review profile diagnostics (coverage, accounting trail highlights) and promote
+   or queue repair with human gates (`Fixture-Auth` equivalent in UI).
+3. Edit / confirm Stage 4 substrate and vessel facts; answer or surface
+   owner-questions into the right product surface (owner UI may still own answers).
+4. Re-compose published sections and view provenance / disposition history.
+5. Keep goldens/oracles and freeze discipline — UI must not silently overwrite
+   regression fixtures.
+
+### Explicitly out of early Phase 6 (stay in Cursor longer)
+
+- Founding a **new** guide-section composer / freezing new composition rules
+- Novel plant families outside same-family ambition
+- Deep extract repair adjudication and instability vote archaeology
+- Rewriting `PLAYBOOKS` / tip specs themselves
+
+Those remain expert workflows until the UI has proven the happy path on several
+vessels.
+
+### Relationship to other tracks
+
+| Track | Audience | Notes |
+|-------|----------|--------|
+| Phase 6 authoring UI | **Staff** (platform / charter ops) | Productizes playbooks |
+| Owner onboarding UI | **Boat owner** | Fact queries, walkthroughs, vessel facts — separate product (see Phase 3 lock) |
+| Platform Phase 6 intake | Mobile / Signal-K | [`PLATFORM_ROADMAP.md`](../PLATFORM_ROADMAP.md) — related but not the same |
+
+### Prerequisites
+
+- Phase 4: composers work for a second (same-family) vessel without Outremer key maps
+- Phase 5: single system-generation path (or clear remaining fragment exceptions)
+- Operational learning: ≥2–3 vessels onboarded via seed + Generate + review frame
+- Clear list of which playbook steps are form/job-shaped vs still expert-only
+
+### Acceptance (draft)
+
+- Staff can extract → review → promote a **known-family** profile and seed
+  substrate for a sister ship without Cursor
+- Generate / approve / publish unchanged
+- Fixture policy preserved (no silent golden edits)
+- Novel-device / new-section paths still documented as Cursor + playbooks
+
+Detailed UI design deferred until prerequisites are met; do not expand admin
+scope in Phases 4–5 to chase this.

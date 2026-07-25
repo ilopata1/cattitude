@@ -1,5 +1,6 @@
-# Purpose: LLM instruction for Fix It troubleshooting cards when Personalize is checked.
-# Used by: guide_generation._resolve_prompt_text for fix_card_set/all (LLM path only).
+# Purpose: Legacy LLM instruction for Fix It cards (unused in Generate — Fix cards
+# always use the curated library + fragment enrichment). Kept for prompt archive.
+# Used by: guide_generation._resolve_prompt_text for fix_card_set/all if LLM path is invoked.
 # Module: fix_card_set / all
 # Composed with: guide/schemas/fix_card_set__all.txt, INPUT SNAPSHOT, optional REFERENCE MODULE
 #

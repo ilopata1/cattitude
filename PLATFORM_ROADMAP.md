@@ -66,9 +66,9 @@ Referenced in `cursor-build-admin-portal.md`, project briefing §2.10 / §4.
 
 **Status:** planned (design before scale; spans Phases 2–4)
 
-**Problem:** Each full guide run is at most ~13 GPT-4o calls by default (system modules only — branding, emergency, home rules, checklists, and fix cards are template/library-assembled without LLM; ~20 calls with the "Personalize with AI" opt-in). System modules whose linked equipment has curated `equipment_guide_fragment` rows are also assembled without LLM, so a vessel fully covered by the fragment library (e.g. a sibling hull) drops to ~2 calls (overview + safety). There is **no cross-vessel LLM reuse** — shared equipment in the registry does not skip calls. At freemium conversion (~5%), generating a full personalized guide on every signup burns **~$7–9 in LLM per paying customer** before Ask, hosting, or support. With 1,000+ similar hulls worldwide, that cost is unsustainable.
+**Problem:** Each full guide run is at most ~13 GPT-4o calls by default (system modules only — branding, emergency, home rules, checklists, and fix cards are template/library-assembled without LLM). System modules whose linked equipment has curated `equipment_guide_fragment` rows are also assembled without LLM, so a vessel fully covered by the fragment library (e.g. a sibling hull) drops to ~2 calls (overview + safety). There is **no cross-vessel LLM reuse** — shared equipment in the registry does not skip calls. At freemium conversion (~5%), generating a full personalized guide on every signup burns **~$7–9 in LLM per paying customer** before Ask, hosting, or support. With 1,000+ similar hulls worldwide, that cost is unsustainable.
 
-**Principle:** Separate **“has a usable guide”** from **“ran the full LLM pipeline.”** Free users get a good-enough guide from templates and assembly; premium (or paid onboarding) triggers personalized LLM generation.
+**Principle:** Separate **“has a usable guide”** from **“ran a heavy LLM pipeline.”** Free users get a good-enough guide from templates and assembly; any future premium path should be narrowly scoped (not a blanket rewrite of checklists/rules/fixes — the former admin “Personalize with AI” opt-in was removed after it underperformed the curated library on real vessels).
 
 **Caching is complementary, not a substitute:** A Redis or proxy cache in front of Azure OpenAI helps on **cache hits**, but naive full-prompt caching has **low hit rates** across similar vessels (each prompt embeds vessel name, contacts, equipment snapshot, and reference module). Use a **hybrid**: tier gating + template/exemplar assembly first, then **fragment-level** exact-key cache, then LLM. Enable **Azure OpenAI prompt caching** for shared instruction prefixes where supported.
 
@@ -265,8 +265,17 @@ Referenced in project briefing Phase 2/5 Docker strategy.
 - Intake review queue in admin
 - Signal-K equipment scan endpoint
 - Manufacturer research / ambiguous-match workflows
+- **Staff pipeline authoring in admin (later):** productize today’s Cursor +
+  [`PLAYBOOKS.md`](PLAYBOOKS.md) / [`standard_frame.txt`](standard_frame.txt)
+  workflows (extract → review/promote profile → substrate/facts → re-compose)
+  so fleet staff can onboard same-family vessels without the monorepo. Depends
+  on Stage 4 Phases 4–5 and multi-vessel learning via fixtures first — see
+  [`backend/guide-stage4-integration-plan.md`](backend/guide-stage4-integration-plan.md)
+  Phase 6. Distinct from **owner** onboarding (fact-query answers). Novel
+  section composers / hard extract repair remain expert/Cursor longer.
 
-See `cursor-build-intake-flow.md`, `cursor-build-admin-portal.md` Screen 4.
+See `cursor-build-intake-flow.md`, `cursor-build-admin-portal.md` Screen 4;
+pipeline authoring: `PLAYBOOKS.md`, `backend/guide-pipeline-plan.md`.
 
 ---
 

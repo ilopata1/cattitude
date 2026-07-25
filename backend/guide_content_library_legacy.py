@@ -3,8 +3,7 @@
 These modules are mostly standard marine practice plus a handful of
 vessel-specific slots (VHF channels, charter contact, vessel name) and
 equipment-conditional items. They are assembled deterministically from this
-library by default; the LLM path remains available as an explicit
-"personalize" opt-in on generation.
+library (the former admin "Personalize with AI" LLM opt-in was removed).
 
 Content is generalized from the human-reviewed published Cattitude guide —
 vessel-specific locations were removed or made generic, and items that only
@@ -1039,8 +1038,7 @@ def _make_checklist_builder(
     return _builder
 
 
-# Hybrid modules: assembled from this library by default; LLM on explicit
-# "personalize" opt-in.
+# Hybrid modules: assembled from this library (no LLM opt-in).
 LIBRARY_MODULE_BUILDERS: dict[
     tuple[str, str], Callable[[dict[str, Any], Any], dict[str, Any]]
 ] = {

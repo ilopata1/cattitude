@@ -3,6 +3,19 @@
 How vessel guide equipment content should evolve after MVP lessons.
 Operator-facing behavior remains documented in [`README.md`](README.md).
 
+**How we author (start here for extract / compose work):**
+
+| Doc | Role |
+|-----|------|
+| [`../PLAYBOOKS.md`](../PLAYBOOKS.md) | Repeatable checklists — new device extraction, new guide section, inventory change, defect→fixture |
+| [`../PRINCIPLES.md`](../PRINCIPLES.md) | Standing rules the playbooks apply (detector before repairer, honest red, provenance, …) |
+| [`../standard_frame.txt`](../standard_frame.txt) | Review-round protocol — classify each note (rule / fact query / one-off), disposition table, frozen-section regression on global rule changes |
+| [`fixtures/pipeline/README.md`](fixtures/pipeline/README.md) | Fixture layout: `outremer/` goldens, `scratch/` working extracts/drafts, `oracles/` Stage 4 byte-match |
+| [`tests/fixtures/POLICY.md`](tests/fixtures/POLICY.md) | `Fixture-Auth` — agents must not reshape goldens without human authorization |
+
+Live Generate/publish for frozen Stage 4 systems:
+[`guide-stage4-integration-plan.md`](guide-stage4-integration-plan.md).
+
 ## Product constraints (keep)
 
 - **Ask** stays a separate RAG path over cleared manuals.
@@ -42,6 +55,65 @@ Terminology:
 - **Manual sections** — chapters inside a product PDF (Stage 0).
 - **Guide sections** — Know chapters (`SYSTEM_IDS`: `electrical`, `batteries`, …).
 - Keep guide section ids aligned with `SYSTEM_CATALOG`; do not invent a parallel taxonomy.
+
+## Authoring process (extract → compose → freeze)
+
+Platform Generate/publish is documented in the operator [`README.md`](README.md).
+**Building or changing** interaction profiles and Stage 4 section composers follows
+the playbooks — not ad hoc edits to scratch markdown.
+
+### Interaction profile (new device)
+
+Follow [`PLAYBOOKS.md`](../PLAYBOOKS.md) §1:
+
+1. Confirm source/genre (stop on edition mismatch; do not invent operation from setup-only manuals).
+2. Stage 0 route → Stage 1 extract into `fixtures/pipeline/scratch/`.
+3. Review validators, coverage, procedure inventory, accounting trail **before** repair.
+4. Adjudicate narrowly; trail-verified zeroes only; one targeted repair pass.
+5. Promote to golden under `Fixture-Auth`; run `make pipeline-verify` (+ compare/regression as needed).
+
+Standing rules: [`PRINCIPLES.md`](../PRINCIPLES.md). Defects become bidirectional fixtures
+(playbook §4) — never “fix the golden to match the latest extract.”
+
+### Guide section (compose / freeze)
+
+Follow [`PLAYBOOKS.md`](../PLAYBOOKS.md) §2:
+
+1. Assemble section inputs (`assemble_section_inputs`) + vessel facts; persist inputs beside the draft.
+2. Compose via the section’s `guide_section_*.py` composer (spine + criteria).
+3. Evaluate v4 criteria; review sentence-by-sentence against the provenance map.
+4. Freeze template/rules only after human review.
+
+**Review rounds** use [`standard_frame.txt`](../standard_frame.txt): classify each
+item as rule change, fact query, or one-off; return a disposition table; never
+invent facts; any global rule change re-runs **all frozen sections** and reports
+pass / what broke. Tip specs (`equipment-classification-spec-v4.3x.md`) record
+freeze notes; do not treat tip files as the process — the playbook + frame are.
+
+### Fixtures in this workflow
+
+| Location | Role |
+|----------|------|
+| `fixtures/pipeline/scratch/` | Working extracts and section drafts (gitignored) — safe to overwrite |
+| `fixtures/pipeline/outremer/` | Hand-authorized vessel inventory + profiles + expected graph; seeds Stage 4 substrate |
+| `fixtures/pipeline/oracles/` | Frozen Stage 4 module byte-match oracles |
+| `tests/fixtures/` | Extraction / Stage 1.5 / Stage 2 regression goldens and defect fixtures |
+
+Scratch is for iteration; goldens and oracles are the contract. Promoting scratch →
+golden or changing `outremer/` / `tests/fixtures/` requires explicit `Fixture-Auth`
+([`tests/fixtures/POLICY.md`](tests/fixtures/POLICY.md)). After freeze, live
+Generate reads the **DB substrate** seeded from fixtures — not the scratch files.
+
+### Later — admin UI productizes this loop
+
+Cursor + playbooks are the **interim** authoring surface. Once Phase 4–5 ship and
+several vessels have been onboarded through fixtures → seed → Generate →
+`standard_frame` review, staff happy-path authoring should move into the **admin
+portal** (extract jobs, profile review/promote, substrate/facts, re-compose with
+provenance). Novel composers and hard extract adjudication stay expert/Cursor
+longer. Tracked as **Phase 6** in
+[`guide-stage4-integration-plan.md`](guide-stage4-integration-plan.md) and
+noted on [`PLATFORM_ROADMAP.md`](../PLATFORM_ROADMAP.md) Phase 6.
 
 Split of assets:
 
@@ -92,7 +164,7 @@ Do **not** replace the fragment + approve path in one rewrite.
 | Fragment size caps / approve gates | Open |
 | Quarantine bad harvested fragments / manual_type audit | Open (ops) |
 | Stage 1–2 offline spike | Done — Stage 1 map-reduce + voting + cal K/L/M; vessel Outremer live+stub Stage 2+3; see `equipment-classification-spec-v3.9.md` |
-| Stage 3–4 production wire-up | Stage 3 content-tier **preview** (deterministic) shipped for vessel harness; LLM Stage 3 + Stage 4 views still open |
+| Stage 3–4 production wire-up | **Stage 4 Phases 1–3 shipped** (composers → substrate → admin Generate) — see `guide-stage4-integration-plan.md`. Stage 3 LLM tier still open; Phase 4 de-hardcode + 2nd vessel open |
 | **Queued:** CZone platform ui_pages action completeness | **Done** — Favourites/Alarms/Control/Monitoring via `reextract_czone_ui_pages.py` (Climate already); completeness `ok`; `promote_czone_2_0.py` |
 | Solar Stage 4 composition pilot (v2 rendering) | Superseded by v3 |
 | **Solar Stage 4 v3 (frozen)** | Superseded by v4 (spec v4.9) |

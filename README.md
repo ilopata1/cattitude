@@ -85,7 +85,7 @@ Someone on a time-limited charter (e.g. weekly Abacos charter on Cattitude).
 Owns or operates a vessel outside a charter fleet (or as a long-term owner in the same app).
 
 - Same app experience as a guest for guide tabs.
-- Onboarding (planned): intake flow identifies equipment; LLM generates ~100% of the vessel guide from templates + intake data; owner reviews and edits in admin or a simplified editor.
+- Onboarding (planned): intake flow identifies equipment; generation assembles the vessel guide (Stage 4 composers / templates / library / limited AI); owner reviews and edits in admin or a simplified editor.
 - No charter company unless they choose a management company; `charter_operating_base_id` may be null — location context comes from intake or platform region packs.
 - Ask remains available according to subscription / auth rules (not fully implemented).
 
@@ -96,7 +96,7 @@ B2B customer operating multiple vessels across **operating bases** (geographic l
 - Maintains **company-wide** prompt templates (safety policy tone, checklist structure).
 - Maintains **operating base** context: VHF channels, emergency contacts, marina names, local rules (Abacos vs Croatia). New bases can clone context from an existing base.
 - **Onboards vessels via Admin** (create/clone vessel, equipment from registry, generate, review, publish) — not via the mobile intake wizard. See `clever-sailor-data-model.md` § Onboarding channels.
-- Reviews LLM-generated guide drafts per vessel (diff + approve workflow). Publishes immutable guide snapshots for download.
+- Reviews guide drafts per vessel (diff + approve workflow). Publishes immutable guide snapshots for download. System chapters with a Stage 4 substrate use deterministic composers; other modules use templates, the content library, fragments, or optional AI.
 - Manages fleet: which vessels belong to which base, charter dates, guest tokens.
 - Uses the **admin portal** (FastAPI + Jinja2 at `/admin/`) — not the Ionic app.
 
@@ -122,7 +122,7 @@ Internal operators building the equipment registry, manual library, and onboardi
 | **Guide offline always** | Home / Do / Know / Fix never call a live content API during normal use — even when online. |
 | **Ask online when allowed** | RAG `/query` requires network; auth scopes access by owner vs active charter. |
 | **Postgres as source of truth** | Equipment, manuals, guide modules, publications, and operating bases live in the database. |
-| **LLM at onboarding** | Most guide content is generated once, then human-reviewed — not hand-written from scratch. |
+| **Generate once, review always** | Guide modules are assembled (templates, curated library, Stage 4 composers, fragments, or limited AI), then human-reviewed — not hand-written from scratch. |
 | **Publications are immutable** | Published guide = assembled bootstrap JSON + asset manifest; apps sync by content hash. |
 
 ### Repository layout
@@ -135,13 +135,15 @@ Cattitude/
 │   ├── content/            # Curated guide YAML library + assembler
 │   ├── prompts/            # LLM prompt templates for guide generation
 │   ├── scripts/            # Seed, import, verification helpers
-│   └── alembic/            # Postgres migrations (001–018)
+│   └── alembic/            # Postgres migrations (001–024)
 ├── utilities/              # Content validation, ingest helpers, GitHub Pages patch
 ├── manuals/                # Raw PDFs (gitignored)
 ├── data/                   # Local cache (gitignored)
 ├── app/                    # Archived legacy single-file PWA (reference only)
 ├── PLATFORM_ROADMAP.md     # Phase delivery status
 ├── clever-sailor-data-model.md   # Canonical Postgres + vessel guide schema
+├── backend/guide-stage4-integration-plan.md  # Stage 4 composers → live Generate/publish
+├── backend/guide-pipeline-plan.md            # Stages 0–4 authoring pipeline
 ├── cursor-build-admin-portal.md  # Admin spec (mostly shipped; see roadmap for gaps)
 ├── cursor-build-intake-flow.md   # Planned private-owner mobile intake spec
 └── cattitude-rag-implementation-plan.md  # Original RAG staging plan
@@ -229,7 +231,7 @@ Three conceptual layers in one database:
 **1. Equipment registry & manual library**
 
 - `equipment`, `option_pack`, `equipment_constraint`, `manufacturer_config_availability`
-- `equipment_guide_fragment` — reusable per-equipment curated content (systems, fix-card overrides)
+- `equipment_guide_fragment` — reusable per-equipment curated content (fallback system assembly, fix-card overrides)
 - `manual_work`, `manual_edition`, `manual_file` (dedupe by `file_hash`; one current edition per work)
 - `vessel_equipment` links vessels to registry rows
 - Vectors in LlamaIndex-managed tables
@@ -245,9 +247,16 @@ Three conceptual layers in one database:
 **3. Vessel guide**
 
 - `guide_prompt_template` — versioned LLM prompts (scopes: platform, charter_company, charter_operating_base, vessel_type)
-- `guide_generation_input_snapshot`, `guide_generation_run` — audit trail for onboarding/regen
+- `guide_generation_input_snapshot`, `guide_generation_run` — audit trail for onboarding/regen (Stage 4 runs use `model_id=stage4_composer`)
 - `guide_content` — JSONB modules (systems, checklists, fixes, ui, …) with draft → approved → published workflow
 - `vessel_guide_publication` — immutable assembled bootstrap + asset manifest for client download
+
+**4. Stage 4 substrate (system composers)**
+
+- `interaction_profile` — model-level capability library (surfaces, actions, networks)
+- `vessel_stage4_equipment`, `vessel_equipment_relation`, `vessel_stage4_facts` — per-boat wiring + facts
+- Owner questions from composer `fact_queries` persist with generation metadata
+- Details: [`backend/guide-stage4-integration-plan.md`](backend/guide-stage4-integration-plan.md)
 
 **Prompt resolution order:** platform → charter company → operating base (optional override) → vessel type → inject operating base `guide_context` into snapshot → vessel intake.
 
@@ -256,29 +265,32 @@ Three conceptual layers in one database:
 - Regenerate creates a **draft + diff**; never silently overwrites published content.
 - Fleet prompt updates are **manual** (stale-template badge in admin).
 - Checklist body uses the curated content library by default; Do/Know navigation is assembled at **publish** (not a separate LLM job).
+- Published Stage 4 systems (`batteries`, `controls`, `electrical`, `engines`, `nav`, `water`) use deterministic composers when substrate is present — not LLM rewrite.
 - Charter guests **keep** downloaded guide after charter; Ask API denied when charter expired.
 
-**Migrations:** Alembic revisions `001`–`018` in `backend/alembic/versions/`. Apply with `python -m alembic upgrade head` from `backend/`.
+**Migrations:** Alembic revisions `001`–`024` in `backend/alembic/versions/` (includes Stage 4 substrate and owner-questions). Apply with `python -m alembic upgrade head` from `backend/`.
 
 ---
 
 ## Vessel guide content workflow
 
-### Current (Cattitude production)
+### Current (Cattitude / multi-vessel admin)
 
-**Postgres** holds Cattitude’s `guide_content` modules and `vessel_guide_publication` (migrated once from legacy JSON). **Admin** is the path for review and republication.
+**Postgres** holds `guide_content` modules and `vessel_guide_publication`. **Admin Generate → review → approve → publish** is the live path.
 
-**Mobile PWA** still ships a frozen copy of `cattitude.json` + images from the `mobile/` build (`guideSyncEnabled: false`). Do not edit the JSON for content changes — wait for admin/generation tooling.
+**System modules (Know):** when a vessel has a Stage 4 substrate, published sections are composed by Python Stage 4 composers (`stage4_composer`) from interaction profiles + vessel graph + facts. Solar folds into `batteries`. Other system topics still use equipment fragments, pending placeholders, or AI (overview/safety). See [`backend/README.md`](backend/README.md).
 
-### Target (multi-vessel platform)
+**Mobile PWA** still ships a frozen copy of `cattitude.json` + images from the `mobile/` build (`guideSyncEnabled: false` in production). Prefer admin republication for content changes; enable `guideSyncEnabled: true` in `environment.ts` to sync publications during development.
 
-1. **Intake** captures vessel + equipment (+ photos, Signal-K) → frozen input snapshot.
-2. **LLM generation** runs prompt stack (company + operating base context + vessel type) → `guide_content` drafts.
+### Target (broader platform)
+
+1. **Intake** captures vessel + equipment (+ photos, Signal-K) → frozen input snapshot / Stage 4 substrate seed.
+2. **Generation** assembles modules (templates, library, Stage 4 composers, fragments, optional AI) → `guide_content` drafts.
 3. **Admin review** — diff, accept, approve modules.
 4. **Publish** — assembler validates and writes `vessel_guide_publication`.
-5. **Client sync** — app downloads manifest once; uses local copy until hash changes.
+5. **Client sync** — app downloads manifest once; uses local copy until hash changes (production still gated on `guideSyncEnabled`).
 
-`utilities/extract_bootstrap_content.mjs` is **legacy only** (one-time migration from archived `app/index.html`).
+Open Stage 4 work: Phase 4 (de-hardcode composers + second vessel) and Phase 5 (retire fragment/LLM path for remaining systems). `utilities/extract_bootstrap_content.mjs` is **legacy only** (one-time migration from archived `app/index.html`).
 
 ---
 
@@ -375,6 +387,13 @@ Seed is for initial tenancy/equipment setup — not every deploy.
 |----------|----------|----------|
 | **`clever-sailor-data-model.md`** | Backend / DB developers | Full Postgres schema, vessel guide publication contract, Alembic order, acceptance criteria |
 | **`backend/README.md`** | Content authors / operators | End-to-end guide generation, review, and publish workflow |
+| **`PLAYBOOKS.md`** | Pipeline authors | Checklists: new device extraction, new guide section, inventory change, defect→fixture |
+| **`PRINCIPLES.md`** | Pipeline authors | Standing rules (detector before repairer, honest red, provenance, …) |
+| **`standard_frame.txt`** | Pipeline authors | Review-round protocol: classify feedback → disposition table → re-run frozen sections |
+| **`backend/guide-stage4-integration-plan.md`** | Backend / product | Stage 4 composers → DB substrate → admin Generate (Phases 1–3 shipped; 4–5 open) |
+| **`backend/guide-pipeline-plan.md`** | Backend | Stages 0–4 authoring pipeline, fixtures, frozen section verify scripts |
+| **`backend/fixtures/pipeline/README.md`** | Backend | Outremer / scratch / oracle fixture roles vs live Generate |
+| **`backend/tests/fixtures/POLICY.md`** | Backend | `Fixture-Auth` — goldens are human-gated |
 | **`backend/content/README.md`** | Content authors / developers | Curated YAML content library (home rules, checklists, fix cards) |
 | **`backend/prompts/README.md`** | Backend developers | LLM prompt files for guide generation |
 | **`mobile/README.md`** | Frontend developers | Ionic dev commands, PWA notes, guide sync |
@@ -395,13 +414,14 @@ Seed is for initial tenancy/equipment setup — not every deploy.
 | Ionic app (5 tabs, PWA, GitHub Pages) | **Shipped** (Cattitude) |
 | Bootstrap JSON content workflow + validation | **Shipped** |
 | FastAPI `/query` RAG + Railway deploy | **Shipped** |
-| Postgres schema migrations 001–018 | **Shipped** |
+| Postgres schema migrations 001–024 | **Shipped** (includes Stage 4 substrate / owner questions) |
 | Operating bases + `guide_context` | **Shipped** (schema + seed) |
 | Cattitude guide in Postgres (`guide_content` + publication) | **Shipped** (one-time migration complete) |
 | Guide sync API + mobile local store | **Shipped** (API + IndexedDB sync; `guideSyncEnabled` off by default) |
 | Admin portal — operating base + publish + vessels | **Shipped** (vessel CRUD, clone, equipment picker) |
 | Admin portal — equipment registry, manuals, option packs | **Shipped** |
-| LLM generation pipeline + admin review gates | **In progress** (branding, emergency, home rules, checklists & fix cards assembled from templates/content library by default — LLM opt-in via "Personalize with AI"; system modules assembled from `equipment_guide_fragment` when curated content covers the linked equipment, LLM otherwise; no freemium tier yet) |
+| Stage 4 system composers (batteries, controls, electrical, engines, nav, water) | **Shipped** for vessels with Stage 4 substrate (Phases 1–3); Phase 4 de-hardcode + 2nd vessel and Phase 5 fragment-path retirement still open — [`guide-stage4-integration-plan.md`](backend/guide-stage4-integration-plan.md) |
+| Guide generation + admin review gates | **Shipped / evolving** (branding & emergency: templates; home rules, checklists & fix cards: curated library — Fix cards also get fragment enrichment; published systems: Stage 4 composers when substrate present, else fragments / pending / LLM for remaining topics; no freemium tier yet) |
 | Guide generation economics (freemium / template assembly) | **Planned** — [`PLATFORM_ROADMAP.md`](PLATFORM_ROADMAP.md) § Guide generation economics |
 | LLM fragment cache (Postgres-first; Redis for Ask optional) | **Planned** — same workstream |
 | User guide overlays (personal edits, sync, regen conflicts) | **Planned** — [`PLATFORM_ROADMAP.md`](PLATFORM_ROADMAP.md) § User guide personalization; [`cursor-build-user-overlays.md`](cursor-build-user-overlays.md) |
