@@ -1,6 +1,7 @@
 """Global Stage 4 composition rules — all sections, all vessels.
 
-Spec: equipment-classification-spec-v4.15.md (+ tips through v4.21).
+Spec tip: equipment-classification-spec-v4.42.md (criteria xxxii–xlv).
+Prior spine founding: v4.15 (+ tips through v4.41).
 
 No section-specific or vessel-specific logic. Batteries & Energy drafts are
 founding counterexamples only (documented in the spec, not encoded here).
@@ -887,13 +888,63 @@ def lint_negative_station_contrast(text: str) -> list[dict[str, str]]:
     return warnings
 
 
+# Capability must not list inventory vessel places inline — those belong in
+# the Equipment Locations module table (places / location_label). Distinct
+# from naming a control surface ("from the NAVIGATOR panel") and from xliv
+# (affirmative station vs "not on X").
+_INLINE_EQUIPMENT_PLACE_RES = (
+    re.compile(r"\bthey are located in\b", re.I),
+    re.compile(r"\b(?:it|they|these|those)\s+(?:is|are)\s+located\s+(?:in|at)\b", re.I),
+    re.compile(r"\b(?:is|are)\s+located\s+in\s+(?:the\s+)?(?:port|starboard)\b", re.I),
+    re.compile(r"\blocated\s+in\s+(?:port|starboard)\s*[–\-]", re.I),
+)
+
+
+def lint_inline_equipment_places(
+    provenance_map: list[dict[str, Any]],
+) -> list[dict[str, str]]:
+    """xlv — inventory places belong in Equipment Locations, not capability.
+
+    When registry ``places`` / ``location_label`` exist, the module transform
+    emits an Equipment Locations table. Capability (and guest narrative) must
+    not list those places inline ("They are located in Port – …"). Queue a
+    places fact-query when places are missing; do not invent coordinates in
+    prose. Control-surface stations ("from the ECO Rocker") remain allowed.
+    """
+    warnings: list[dict[str, str]] = []
+    for row in provenance_map or []:
+        if normalize_block(str(row.get("block") or "")) != "capability_summary":
+            continue
+        text = str(row.get("sentence") or "")
+        if not text.strip():
+            continue
+        for pat in _INLINE_EQUIPMENT_PLACE_RES:
+            m = pat.search(text)
+            if not m:
+                continue
+            warnings.append(
+                {
+                    "code": "inline_equipment_places",
+                    "sentence_id": str(row.get("id") or ""),
+                    "match": m.group(0),
+                    "guidance": (
+                        "Put vessel inventory places in the Equipment "
+                        "Locations table (registry places / location_label). "
+                        "Do not list them inline in capability prose."
+                    ),
+                }
+            )
+            break
+    return warnings
+
+
 def assess_global_composition(
     composed: dict[str, Any],
     *,
     require_filled_wisdom: bool = False,
     peer_capability_texts: list[str] | None = None,
 ) -> dict[str, Any]:
-    """Aggregate global composition checks (xxxii–xliv); xxxv includes v4.20."""
+    """Aggregate global composition checks (xxxii–xlv); xxxv includes v4.20."""
     draft = str(composed.get("draft_markdown") or "")
     block_order = list(composed.get("block_order") or [])
     prov = list(composed.get("provenance_map") or [])
@@ -923,6 +974,7 @@ def assess_global_composition(
     charge_path_hits = lint_charge_path_enabling_conditions(draft)
     routine_label_hits = lint_routine_timing_label(draft)
     negative_station_hits = lint_negative_station_contrast(draft)
+    inline_place_hits = lint_inline_equipment_places(prov)
 
     wisdom_ok = (
         (
@@ -950,6 +1002,7 @@ def assess_global_composition(
         "charge_path_enabling_ok": len(charge_path_hits) == 0,
         "no_routine_timing_label": len(routine_label_hits) == 0,
         "affirmative_station_ok": len(negative_station_hits) == 0,
+        "no_inline_equipment_places": len(inline_place_hits) == 0,
     }
     return {
         "checks": checks,
@@ -970,8 +1023,9 @@ def assess_global_composition(
             "charge_path_enabling": charge_path_hits,
             "routine_timing_label": routine_label_hits,
             "negative_station_contrast": negative_station_hits,
+            "inline_equipment_places": inline_place_hits,
         },
-        "version": "v4.40",
+        "version": "v4.42",
         "criteria": [
             "xxxii",
             "xxxiii",
@@ -986,5 +1040,6 @@ def assess_global_composition(
             "xlii",
             "xliii",
             "xliv",
+            "xlv",
         ],
     }

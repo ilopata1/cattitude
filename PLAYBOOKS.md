@@ -59,10 +59,18 @@ routing miss as an extraction-model defect.
       produced by filtering or over-broad matching.
 - [ ] Review absence-class warnings, evidence gaps, dangling `needed_for`,
       alternatives, and audience/context classifications.
+- [ ] If the manual has an MFD / chartplotter / RTSP / onboard-PC chapter,
+      confirm `control_surfaces[].hosting` is set (`external_mfd`,
+      `external_pc_app`, or `mobile_app` as appropriate). Clear
+      `display_host_unresolved` before promote — do not treat
+      `location_class: on_device` as “has its own dedicated screen” when the
+      UI is hosted elsewhere.
 - [ ] Diagnose each defect as source, ingest, routing, extraction, merge,
       validation, derivation, or resolver behavior.
 
 **Gate:** defect classes are understood and adjudicated. Repair remains gated.
+`display_host_unresolved` must be cleared or explicitly accepted with
+rationale in the Fixture-Auth / accounting trail.
 
 ### D. Adjudicate and repair narrowly
 
@@ -383,7 +391,7 @@ From `backend/`:
 
 | Role | Path |
 |------|------|
-| Spec tip | `backend/equipment-classification-spec-v4.38.md` (retire "day-to-day" globally, xliii; Nav frozen nav-i–nav-xiii + `startup` spine slot per v4.37; frozen set = Solar + Batteries + Controls + Electrical + Nav) |
+| Spec tip | `backend/equipment-classification-spec-v4.44.md` (Stage 1 `control_surfaces[].hosting` + `display_host_unresolved`; prior v4.43 Nav Watchkeeper absorb; xlv places table; Engines freeze; frozen set = Solar + Batteries + Controls + Electrical + Nav + Water + Engines; Heads founding prepare) |
 | Pipeline plan | `backend/guide-pipeline-plan.md` |
 | Stage 4 → live integration plan | `backend/guide-stage4-integration-plan.md` (end-state wiring; phases; locked decisions) |
 | Fixture policy | `backend/tests/fixtures/POLICY.md` |
@@ -396,6 +404,9 @@ From `backend/`:
 | Batteries compose / criteria | `backend/guide_section_batteries.py`, `scripts/draft_batteries_section.py` |
 | Electrical compose / criteria | `backend/guide_section_electrical.py`, `scripts/draft_electrical_section.py` |
 | Nav compose / criteria | `backend/guide_section_nav.py`, `scripts/draft_nav_section.py` |
+| Water compose / criteria | `backend/guide_section_water.py`, `scripts/draft_water_section.py` |
+| Engines compose / criteria | `backend/guide_section_engines.py`, `scripts/draft_engines_section.py` |
+| Heads compose / criteria (founding) | `backend/guide_section_heads.py`, `scripts/draft_heads_section.py` |
 | Vessel reconcile | `backend/scripts/generate_outremer_reconciliation_report.py`, `fixtures/pipeline/outremer/` |
 | Defect ↔ golden pair | `tests/fixtures/stage15_defective_extraction.json` ↔ `smartsolar_corrected_extraction.json` |
 | Owners | `.github/CODEOWNERS` |

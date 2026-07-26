@@ -1,7 +1,7 @@
-"""Verify Navigation section inputs + composition (founding v4.37).
+"""Verify Heads section inputs + founding composition (Playbook 2A; not frozen).
 
 Usage (from backend/):
-  python scripts/verify_nav_section_v4.py
+  python scripts/verify_heads_section_v4.py
 """
 
 from __future__ import annotations
@@ -14,12 +14,14 @@ _BACKEND = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_BACKEND))
 
 from guide_composition_rules import assess_global_composition
-from guide_section_nav import compose_nav_section, evaluate_nav_draft
-from section_inputs import assemble_section_inputs, keys_at_depth
+from guide_section_heads import compose_heads_section, evaluate_heads_draft
+from guide_section_to_module import _equipment_locations_section
+from section_inputs import assemble_section_inputs
+from stage4_substrate import places_for_device
 from system_graph import build_vessel_graph
 
 OUTREMER = _BACKEND / "fixtures" / "pipeline" / "outremer"
-EXPECT = _BACKEND / "tests" / "fixtures" / "nav_section_v4_expectations.json"
+EXPECT = _BACKEND / "tests" / "fixtures" / "heads_section_v4_expectations.json"
 
 
 def _load(path: Path):
@@ -39,35 +41,24 @@ def main() -> int:
         vessel_artifact_facts=equipment_doc.get("vessel_artifact_facts"),
     )
 
-    inputs = assemble_section_inputs(graph, "nav", equipment_doc=equipment_doc)
+    inputs = assemble_section_inputs(graph, "heads", equipment_doc=equipment_doc)
     got = {c["device_key"]: c["depth"] for c in inputs["contributors"]}
     exp = {
         c["device_key"]: c["depth"]
         for c in expect["expected_inputs"]["contributors"]
     }
     if got != exp:
-        failures.append(f"nav inputs mismatch got={got} expected={exp}")
+        failures.append(f"heads inputs mismatch got={got} expected={exp}")
     else:
-        print("OK — nav input set matches fixture")
+        print("OK — heads input set matches fixture")
 
-    for key in expect.get("must_exclude_from_body_depth") or []:
-        if got.get(key) in {"full", "summary"}:
-            failures.append(f"{key} must not be full/summary depth")
-
-    for name in expect.get("required_present_pages") or []:
-        present_names = {
-            str(p.get("name")) for p in inputs.get("present_platform_pages") or []
-        }
-        if name not in present_names:
-            failures.append(f"missing present page {name!r}")
-
-    composed = compose_nav_section(
+    composed = compose_heads_section(
         graph=graph,
         profiles=profiles,
         equipment_doc=equipment_doc,
         section_inputs=inputs,
     )
-    evaluation = evaluate_nav_draft(
+    evaluation = evaluate_heads_draft(
         composed, expected_inputs=expect["expected_inputs"]
     )
 
@@ -94,8 +85,6 @@ def main() -> int:
 
     if "section of this guide" not in draft.lower():
         failures.append("expected reader-facing section xref phrase")
-    if "lives in" in draft.lower() or "home procedures" in draft.lower():
-        failures.append("authorial xref phrasing leaked into draft")
 
     style = evaluation.get("style_warnings") or []
     authorial = [w for w in style if w.get("code") == "authorial_xref_voice"]
@@ -111,29 +100,36 @@ def main() -> int:
         if qid not in got_ids:
             failures.append(f"missing fact_query id={qid!r}")
 
-    if "day-to-day" in draft.lower():
-        failures.append("routine timing label 'day-to-day' still present")
-    if "when czone is commissioned" in draft.lower():
-        failures.append("CZone commissioned hedge still present")
+    if "tecma" in draft.lower():
+        failures.append("Tecma must not appear while heads model is unknown")
 
-    for s in expect.get("required_prose_substrings") or []:
-        if s.lower() not in draft.lower():
-            failures.append(f"missing required prose: {s!r}")
+    if "located in" in draft.lower() or "they are located" in draft.lower():
+        failures.append(
+            "valve places must not appear inline in capability prose "
+            "(global xlv — Equipment Locations table only)"
+        )
+
+    valve_key = composed.get("valve_key")
+    if valve_key and not places_for_device(equipment_doc, str(valve_key)):
+        failures.append("expected places on blackwater discharge valves")
+    locations = _equipment_locations_section(composed, equipment_doc)
+    if valve_key and places_for_device(equipment_doc, str(valve_key)):
+        if not locations or not locations.get("rows"):
+            failures.append("expected Equipment Locations table rows from places")
+
+    if composed.get("freeze_status") != "preparing":
+        failures.append(
+            f"expected freeze_status=preparing; got {composed.get('freeze_status')!r}"
+        )
 
     if failures:
         print("FAIL:")
-        for f in failures:
-            print(" -", f)
-        print(draft)
-        print(json.dumps(evaluation, indent=2))
+        for line in failures:
+            print(f"  - {line}")
         return 1
 
-    print("OK — nav v4.43 composition + Watchkeeper absorb")
-    print("style_warnings:", json.dumps(style, indent=2))
-    print("guide_links:", json.dumps(composed.get("guide_links") or [], indent=2))
-    print("wisdom_slot:", json.dumps(composed.get("wisdom_slot") or {}, indent=2))
-    print("full:", keys_at_depth(inputs, "full"))
-    print("provenance:", keys_at_depth(inputs, "provenance"))
+    print("OK — heads section founding (v4.0-founding) checks passed")
+    print(f"version={composed.get('version')} blocks={composed.get('block_order')}")
     return 0
 
 

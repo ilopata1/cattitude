@@ -399,6 +399,43 @@
       "quantity": 1,
       "instance_handling": "interchangeable",
       "provenance": "DB registry equipment 3b14f3a7 + Supernova vessel; User Guide Watchkeeper Series Doc SEAAI-442870296-11 Rev 26 Nov 2025 (manual_work 14570452) Stage 1 extracted"
+    },
+    {
+      "device_key": "blackwater_tank_discharge_valve",
+      "catalog_key": "blackwater_tank_discharge_valve",
+      "manufacturer": "Generic",
+      "model": "Blackwater Tank Discharge Valve",
+      "description": "Blackwater / holding-tank discharge (evacuation) valve",
+      "system_category": "sanitation",
+      "quantity": 3,
+      "instance_handling": "interchangeable",
+      "provenance": "DB registry equipment e7a23c5d + Supernova vessel_equipment ×3 team_verified; Heads Stage 4 founding",
+      "places": [
+        {
+          "zone": "accommodation_cabins",
+          "sub_zone": "forward_cabin",
+          "hull_side": "Port",
+          "detail": "Under tank in locker",
+          "location_label": "Port – Accommodation / Cabins – Forward Cabin (Under tank in locker)",
+          "provenance": "Supernova vessel_equipment 2f981271 team_verified"
+        },
+        {
+          "zone": "accommodation_cabins",
+          "sub_zone": "forward_cabin",
+          "hull_side": "Starboard",
+          "detail": "Under tank in locker",
+          "location_label": "Starboard – Accommodation / Cabins – Forward Cabin (Under tank in locker)",
+          "provenance": "Supernova vessel_equipment f3f3cbe7 team_verified"
+        },
+        {
+          "zone": "bilge_underfloor",
+          "sub_zone": "forward_bilge",
+          "hull_side": "Starboard",
+          "detail": null,
+          "location_label": "Starboard – Bilge / Underfloor – Forward Bilge",
+          "provenance": "Supernova vessel_equipment b731a3e0 team_verified"
+        }
+      ]
     }
   ],
   "vessel_artifact_facts": [
@@ -423,6 +460,56 @@
   "hub_operation_sources": [],
   "platform_version_confirmations": [],
   "vessel_facts": [
+    {
+      "id": "watchkeeper_ui_on_zeus",
+      "kind": "observation",
+      "provenance_tier": "owner_survey",
+      "document_citation": "owner review Nav section draft v4.43",
+      "source": "owner review Nav v4.43",
+      "evidence_refs": [],
+      "applies_to": [
+        "sea_ai_watchkeeper",
+        "bg_zeus_sr_1",
+        "bg_zeus_sr_2"
+      ],
+      "text": "Watchkeeper User Interface is displayed on the Zeus SR chartplotters on this vessel (not a dedicated on-camera display)."
+    },
+    {
+      "id": "heads_discharge_valve_pumpout_vs_empty",
+      "kind": "observation",
+      "provenance_tier": "owner_survey",
+      "document_citation": "owner review Heads section draft v4.0-founding",
+      "source": "owner review Heads v4.0",
+      "evidence_refs": [],
+      "applies_to": [
+        "blackwater_tank_discharge_valve"
+      ],
+      "text": "Discharge valves must be opened to empty the tanks overboard; they do not need to be opened to pump out the tanks (deck pump-out fitting)."
+    },
+    {
+      "id": "heads_discharge_valve_nearshore_closed",
+      "kind": "observation",
+      "provenance_tier": "owner_survey",
+      "document_citation": "owner review Heads section draft v4.0-founding",
+      "source": "owner review Heads v4.0",
+      "evidence_refs": [],
+      "applies_to": [
+        "blackwater_tank_discharge_valve"
+      ],
+      "text": "Discharge valves should always be closed in marinas, ports, harbors, and anchorages."
+    },
+    {
+      "id": "heads_discharge_empty_local_rules",
+      "kind": "observation",
+      "provenance_tier": "owner_survey",
+      "document_citation": "owner review Heads section draft v4.0-founding",
+      "source": "owner review Heads v4.0",
+      "evidence_refs": [],
+      "applies_to": [
+        "blackwater_tank_discharge_valve"
+      ],
+      "text": "Emptying tanks at sea must follow local rules; in international waters emptying is typically at least 12 nm from land."
+    },
     {
       "id": "solar_davit_array_observation",
       "kind": "observation",

@@ -214,8 +214,8 @@ def compose_electrical_section(
                 "note": (
                     "No registry places yet for these devices. "
                     "Profile location_class on_device means local-to-equipment, "
-                    "not a deck/locker place. Guest prose uses an Equipment "
-                    "Locations table when places are present."
+                    "not a deck/locker place. Global xlv: Equipment Locations "
+                    "table when places are present — not inline capability."
                 ),
             }
         )

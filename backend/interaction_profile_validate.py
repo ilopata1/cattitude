@@ -27,6 +27,7 @@ from interaction_profile_schema import (
     DATA_ROLE_KEYS,
     DESC_ITEM_KEYS,
     DEVICE_KEYS,
+    DISPLAY_HOSTING_VALUES,
     ENTITY_KINDS,
     EVIDENCE_KEYS,
     EXTRACTED_PROFILE_KEYS,
@@ -49,6 +50,25 @@ ACTION_INTERFACE_RE = re.compile(
     re.I,
 )
 SNAKE_CASE_RE = re.compile(r"^[a-z][a-z0-9]*(?:_[a-z0-9]+)+$")
+
+# Excerpts that imply UI is hosted on a third-party display / PC / app —
+# not solely an integral product screen. Used by display_host_unresolved.
+EXTERNAL_DISPLAY_HOST_RE = re.compile(
+    r"(?:"
+    r"\bonboard\s+mfd\b"
+    r"|\bmfd\s+compatibilit"
+    r"|\bconnecting\s+(?:an?\s+)?(?:onboard\s+)?mfd\b"
+    r"|\b(?:on\s+)?(?:your\s+)?(?:mfd|chartplotter|multifunction\s+display)\b"
+    r"|\brtsp\b"
+    r"|\bwindows\s*/?\s*mac\b"
+    r"|\bpc\s+application\b"
+    r"|\bonboard\s+pc\b"
+    r")",
+    re.I,
+)
+EXTERNAL_HOSTING_RESOLVED = frozenset(
+    {"external_mfd", "external_pc_app", "mobile_app"}
+)
 
 # Flags routed to targeted repair (not re-extraction).
 ABSENCE_REPAIR_FLAGS = frozenset(
@@ -1366,6 +1386,63 @@ def _unknown_fields(
             )
 
 
+def check_display_host_flags(
+    profile: dict[str, Any],
+    excerpts: list[dict[str, Any]] | list[str] | None,
+) -> list[dict[str, str]]:
+    """Warn when MFD/PC hosting evidence lacks control_surfaces[].hosting.
+
+    ``display_host_unresolved`` is warning-only (Playbook 1C gate). Invalid
+    hosting enum values also warn. Omitted hosting remains valid for
+    backward compatibility when excerpts do not imply external hosting.
+    """
+    flags: list[dict[str, str]] = []
+    surfaces = profile.get("control_surfaces") or []
+    for i, surface in enumerate(surfaces):
+        if not isinstance(surface, dict):
+            continue
+        hosting = str(surface.get("hosting") or "").strip()
+        if hosting and hosting not in DISPLAY_HOSTING_VALUES:
+            flags.append(
+                _flag(
+                    "display_host_invalid",
+                    f"control_surfaces[].hosting must be one of "
+                    f"{sorted(DISPLAY_HOSTING_VALUES)}; got {hosting!r}",
+                    f"control_surfaces[{i}].hosting",
+                    severity="warning",
+                )
+            )
+
+    corpus = _excerpt_corpus(excerpts)
+    if not corpus:
+        return flags
+    joined = "\n".join(corpus)
+    if not EXTERNAL_DISPLAY_HOST_RE.search(joined):
+        return flags
+
+    resolved = False
+    for surface in surfaces:
+        if not isinstance(surface, dict):
+            continue
+        hosting = str(surface.get("hosting") or "").strip()
+        if hosting in EXTERNAL_HOSTING_RESOLVED:
+            resolved = True
+            break
+    if not resolved:
+        flags.append(
+            _flag(
+                "display_host_unresolved",
+                "excerpts mention MFD / chartplotter / RTSP / PC app hosting "
+                "but no control_surfaces[].hosting is external_mfd, "
+                "external_pc_app, or mobile_app — adjudicate before promote "
+                "(Playbook 1C)",
+                "control_surfaces",
+                severity="warning",
+            )
+        )
+    return flags
+
+
 def apply_fewshot_leak_auto_repairs(
     profile: dict[str, Any],
     excerpts: list[dict[str, Any]] | list[str] | None,
@@ -1759,6 +1836,8 @@ def validate_interaction_profile(
     for i, surface in enumerate(surfaces):
         if isinstance(surface, dict):
             _unknown_fields(surface, CONTROL_SURFACE_KEYS, f"control_surfaces[{i}]", flags)
+
+    flags.extend(check_display_host_flags(out, excerpts))
 
     for i, action in enumerate(out.get("operator_actions") or []):
         if isinstance(action, dict):

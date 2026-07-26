@@ -539,7 +539,8 @@ def section_to_system_module(
     sections: list[dict[str, Any]] = []
     rendered_blocks: set[str] = {"capability_summary"}
 
-    # Locations chip first — guest-facing place table before narrative blocks.
+    # Locations chip first — guest-facing place table before narrative blocks
+    # (global xlv: capability must not list these places inline).
     locations = _equipment_locations_section(composed, equipment_doc)
     if locations:
         sections.append(locations)

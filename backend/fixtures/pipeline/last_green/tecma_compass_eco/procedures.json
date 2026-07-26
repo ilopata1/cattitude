@@ -1,0 +1,865 @@
+{
+  "inventory": {
+    "procedures": [
+      {
+        "title": "Mounting location",
+        "kind": "numbered_heading",
+        "group_id": "batch_2",
+        "excerpt_ref": "excerpt[5]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 10 Compass ECO | installation manual NA | ENG Rev. 06/23 4.1 Mounting location \u25a0 Ideally, the toilet should be installed in a location that is hig",
+        "source": "heuristic",
+        "excerpt_text": "Tecma S.r.l.\n05030 Otricoli (TR)\nITALY\n\nT +39 0744 709071 \ninfo@tecma.eu \nwww.thetfordmarine.com \n10\n\nCompass ECO | installation manual NA | ENG\n\nRev. 06/23 \n4.1 Mounting location \n\u25a0 Ideally, the toilet should be installed in a location that is higher than the holding tank. A \n(maximum) 6' rise between the toilet and holding tank will not impact performance. \n\u25a0 Using toilet and supplied template, verify that the installation site has: \no Sufficient clearance between toilet and nearby wall so that water supply hose and \ndischarge hose are not kinked \no Room for maintenance and accessibility \n\u25a0 The floor supporting the toilet is level and strong enough to support toilet and weight of any \npotential user. \n\u25a0 The floor structure is strong enough to securely anchor toilet using supplied screws; 3/4\u201d \nminimum. \n\u25a0 The flooring is water-resistant so structure and anchoring integrity are maintained.\n\n4.2 Raw water considerations \n\u25a0 The Raw Water pump must be securely mounted in a dry, well-ventilated area. It should be \nmounted not more than 6' at any time above the heeled waterline.\n\nDANGER: The Raw Water pump must be powered by the toilet relay module. Use of any pump",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:mounting"
+      }
+    ],
+    "alternatives": [],
+    "filtered": [
+      {
+        "title": "Otricoli (TR)",
+        "kind": "headed_procedure",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 50 Rev. 06/23 11. JUEGOS DE SERVICIO",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Rev. 06/23",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 50 Rev. 06/23 11. JUEGOS DE SERVICIO",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "JUEGOS DE SERVICIO",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 50 Rev. 06/23 11. JUEGOS DE SERVICIO",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Compass ECO | installation manual NA | ENG",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 4 Compass ECO | installation manual NA | ENG Rev. 06/23 INSTALLATION AND USE MANUAL 1. GENERAL WARNINGS TO THE USER WARNING: Read and understand t",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "GENERAL WARNINGS TO THE USER",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 4 Compass ECO | installation manual NA | ENG Rev. 06/23 INSTALLATION AND USE MANUAL 1. GENERAL WARNINGS TO THE USER WARNING: Read and understand t",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "ORIENTATION",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[3]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 42 Rev. 06/23 4. ORIENTATION",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "FONCTIONNEMENT",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 32 Rev. 06/23 7. FONCTIONNEMENT 8. ENTRETIEN 8.1 Nettoyage 8.2 Hivernisation syst\u00e8me en entier. 8.3 Papier hygi\u00e9nique 9. TROUBLESHOOTING Refer to ",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "ENTRETIEN",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 32 Rev. 06/23 7. FONCTIONNEMENT 8. ENTRETIEN 8.1 Nettoyage 8.2 Hivernisation syst\u00e8me en entier. 8.3 Papier hygi\u00e9nique 9. TROUBLESHOOTING Refer to ",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "Nettoyage",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 32 Rev. 06/23 7. FONCTIONNEMENT 8. ENTRETIEN 8.1 Nettoyage 8.2 Hivernisation syst\u00e8me en entier. 8.3 Papier hygi\u00e9nique 9. TROUBLESHOOTING Refer to ",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "Hivernisation",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 32 Rev. 06/23 7. FONCTIONNEMENT 8. ENTRETIEN 8.1 Nettoyage 8.2 Hivernisation syst\u00e8me en entier. 8.3 Papier hygi\u00e9nique 9. TROUBLESHOOTING Refer to ",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "Papier hygi\u00e9nique",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 32 Rev. 06/23 7. FONCTIONNEMENT 8. ENTRETIEN 8.1 Nettoyage 8.2 Hivernisation syst\u00e8me en entier. 8.3 Papier hygi\u00e9nique 9. TROUBLESHOOTING Refer to ",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "TROUBLESHOOTING",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "9. TROUBLESHOOTING Refer to the Troubleshooting available on the website: www.thetfordmarine.com",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "Dimensions",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[7]",
+        "disposition": "filtered",
+        "filter": "filter:classified_without_verb"
+      },
+      {
+        "title": "CIRCUIT \u00c9LECTRIQUE",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[7]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 24 Rev. 06/23 2.3 Dimensions 3. CIRCUIT \u00c9LECTRIQUE source*",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "ELECTRICAL SYSTEM",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[8]",
+        "snippet": "3. ELECTRICAL SYSTEM Installation requirements: \u25aa All circuits must follow ABYC/ISO standards. \u25aa Wire gauge sizes must follow Wire Gauge Size Chart. \u25aa Every toilet must have its own circuit breaker or fuse. \u25aa Always use crimp-style connecto",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "VOLTS - Install 10 Gauge 8 Gauge 6 Gauge 30 Amp",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[8]",
+        "snippet": "12 VOLTS - Install 10 Gauge 8 Gauge 6 Gauge 30 Amp 24 VOLTS - Install 16 Gauge 14 Gauge 12 Gauge 30 Amp * Distance measured assumes power and ground wires",
+        "disposition": "filtered",
+        "filter": "filter:no_steps_or_procedure_heading"
+      },
+      {
+        "title": "VOLTS - Install 16 Gauge 14 Gauge 12 Gauge 30 Amp",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[8]",
+        "snippet": "24 VOLTS - Install 16 Gauge 14 Gauge 12 Gauge 30 Amp * Distance measured assumes power and ground wires",
+        "disposition": "filtered",
+        "filter": "filter:no_steps_or_procedure_heading"
+      },
+      {
+        "title": "Request of spare parts under warranty",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[2]",
+        "disposition": "filtered",
+        "filter": "filter:classified_without_verb",
+        "deduped_from": "WARRANTY"
+      },
+      {
+        "title": "INSTALACI\u00d3N",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[3]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 46 Rev. 06/23 6. INSTALACI\u00d3N bruta)",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "Dimensiones",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 40 Rev. 06/23 2.3 Dimensiones 3. SISTEMA EL\u00c9CTRICO fuente* es:",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "SISTEMA EL\u00c9CTRICO",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 40 Rev. 06/23 2.3 Dimensiones 3. SISTEMA EL\u00c9CTRICO fuente* es:",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Tissue",
+        "kind": "headed_procedure",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[5]",
+        "snippet": "Make sure that both the entire supply and discharge systems are thoroughly winterized to ensure complete protection for your system. 8.3 Tissue To facilitate flushing, it is recommended that you only use toilet tissues specifically desig",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "SERVICE KITS",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[6]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 17 Compass ECO | installation manual NA | ENG Rev. 06/23 11. SERVICE KITS",
+        "disposition": "filtered",
+        "filter": "filter:truncated_heading"
+      },
+      {
+        "title": "OPERATION",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[7]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 15 Compass ECO | installation manual NA | ENG Rev. 06/23 7. OPERATION The ECO Rocker switch has two operation modes : \u201cAdd Water\u201d (before use) and",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "MAINTEINANCE",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[7]",
+        "snippet": "8. MAINTEINANCE 8.1 Cleaning Ceramic is particularly suitable for toilets, as it guarantees hygiene and it is resistant against any cleaning product. Do not use acetone - or trichlorethylene-based products, or any product that may irreversi",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "Cleaning",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[7]",
+        "snippet": "8.1 Cleaning Ceramic is particularly suitable for toilets, as it guarantees hygiene and it is resistant against any cleaning product. Do not use acetone - or trichlorethylene-based products, or any product that may irreversibly damage the r",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "APERCU",
+        "kind": "numbered_heading",
+        "group_id": "batch_2",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 26 Rev. 06/23 4. APERCU",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "Required tools",
+        "kind": "headed_procedure",
+        "group_id": "batch_2",
+        "excerpt_ref": "excerpt[3]",
+        "snippet": "If a leak were to occur when wired directly, the pump would run continuously and create risk of sinking of the boat and loss of life. \u25a0 An in-line strainer MUST be installed to protect the system. Failure to use an in-line strainer may",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Raw water considerations",
+        "kind": "numbered_heading",
+        "group_id": "batch_2",
+        "excerpt_ref": "excerpt[5]",
+        "snippet": "4.2 Raw water considerations \u25a0 The Raw Water pump must be securely mounted in a dry, well-ventilated area. It should be mounted not more than 6' at any time above the heeled waterline. DANGER: The Raw Water pump must be powered by the toile",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "SISTEMA SANITARIO TECMA",
+        "kind": "numbered_heading",
+        "group_id": "batch_2",
+        "excerpt_ref": "excerpt[6]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 37 Rev. 06/23 electrocuci\u00f3n. menores de 8 a\u00f1os. 2. SISTEMA SANITARIO TECMA",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Sitio de montaje",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 43 Rev. 06/23 4.1 Sitio de montaje el rendimiento. \ufb02otaci\u00f3n inclinada. \u25a0 Sierra de vaiv\u00e9n",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Harness Kit Parts",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "3.1 Harness Kit Parts Parts shown below are supplied in Tecma's Harness Kits.",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Bezel Installation",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 11 Compass ECO | installation manual NA | ENG Rev. 06/23 4.4 Bezel Installation When planning the installation be sure to consider: \u25a0 Bezel placem",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Bezel Specification",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[2]",
+        "disposition": "filtered",
+        "filter": "filter:classified_without_verb"
+      },
+      {
+        "title": "INSTALLATION OPTIONS",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[3]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 12 Compass ECO | installation manual NA | ENG Rev. 06/23 5. INSTALLATION OPTIONS Choose the method that best fits your installation needs: \u25aa INSTA",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Automatic Fresh Water Pressure Pump",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[3]",
+        "snippet": "1. Automatic Fresh Water Pressure Pump 2. Marine Electric Solenoid Valve electronically controlled by toilet 3. Lower Discharge Check Valve \u25aa INSTALLATION B: RAW WATER PUMP - Toilet ABOVE SEA LEVEL 1. Raw Water Pump 2. Filter or Strainer \u25aa ",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Marine Electric Solenoid Valve electronically",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[3]",
+        "snippet": "2. Marine Electric Solenoid Valve electronically controlled by toilet 3. Lower Discharge Check Valve \u25aa INSTALLATION B: RAW WATER PUMP - Toilet ABOVE SEA LEVEL 1. Raw Water Pump 2. Filter or Strainer \u25aa INSTALLATION C: 1. Raw Water Pump 2. Fi",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Lower Discharge Check Valve",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[3]",
+        "snippet": "3. Lower Discharge Check Valve \u25aa INSTALLATION B: RAW WATER PUMP - Toilet ABOVE SEA LEVEL 1. Raw Water Pump 2. Filter or Strainer \u25aa INSTALLATION C: 1. Raw Water Pump 2. Filter or Strainer",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Raw Water Pump",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[3]",
+        "snippet": "1. Raw Water Pump 2. Filter or Strainer \u25aa INSTALLATION C: 1. Raw Water Pump 2. Filter or Strainer",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Filter or Strainer",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[3]",
+        "snippet": "2. Filter or Strainer \u25aa INSTALLATION C: 1. Raw Water Pump 2. Filter or Strainer",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Discharge hoses",
+        "kind": "headed_procedure",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "Use lever - actuated, full -bore, marine quality seacocks and valves. Screw-down gate valves are not recommended. \u25a0 IF WATER DOES NOT FLOW INTO TOILET DURING THE FIRST TWO OR THREE FLUSH CYCLES, it has been improperly installed or has m",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Materials not provided (NP)",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[5]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 13 Compass ECO | installation manual NA | ENG Rev. 06/23 6. INSTALLATION 6.1 Materials not provided (NP) \u25a0 In-line Strainer (if applicable) \u25a0 3/4\u201d",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Outils requis",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[6]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 27 Rev. 06/23 Compass ECO | manuel d\u2019installation NA | FR suivantes : mat\u00e9rielles! 4.3 Outils requis \u25a0 Perceuse \u00e9lectrique",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Tuyaux d\u2019evacuation",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[7]",
+        "snippet": "2.2 Tuyaux d\u2019evacuation",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      }
+    ],
+    "groups_scanned": [
+      "batch_0",
+      "batch_1",
+      "batch_2",
+      "batch_3"
+    ],
+    "procedure_count": 1,
+    "alternative_count": 0,
+    "filtered_count": 44
+  },
+  "reconciliation": {
+    "accounted": [],
+    "classified": [
+      {
+        "title": "Mounting location",
+        "kind": "numbered_heading",
+        "group_id": "batch_2",
+        "excerpt_ref": "excerpt[5]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 10 Compass ECO | installation manual NA | ENG Rev. 06/23 4.1 Mounting location \u25a0 Ideally, the toilet should be installed in a location that is hig",
+        "source": "heuristic",
+        "excerpt_text": "Tecma S.r.l.\n05030 Otricoli (TR)\nITALY\n\nT +39 0744 709071 \ninfo@tecma.eu \nwww.thetfordmarine.com \n10\n\nCompass ECO | installation manual NA | ENG\n\nRev. 06/23 \n4.1 Mounting location \n\u25a0 Ideally, the toilet should be installed in a location that is higher than the holding tank. A \n(maximum) 6' rise between the toilet and holding tank will not impact performance. \n\u25a0 Using toilet and supplied template, verify that the installation site has: \no Sufficient clearance between toilet and nearby wall so that water supply hose and \ndischarge hose are not kinked \no Room for maintenance and accessibility \n\u25a0 The floor supporting the toilet is level and strong enough to support toilet and weight of any \npotential user. \n\u25a0 The floor structure is strong enough to securely anchor toilet using supplied screws; 3/4\u201d \nminimum. \n\u25a0 The flooring is water-resistant so structure and anchoring integrity are maintained.\n\n4.2 Raw water considerations \n\u25a0 The Raw Water pump must be securely mounted in a dry, well-ventilated area. It should be \nmounted not more than 6' at any time above the heeled waterline.\n\nDANGER: The Raw Water pump must be powered by the toilet relay module. Use of any pump",
+        "classification": "not_operator_relevant:installer",
+        "classification_rule": "rule:installer:mounting",
+        "status": "classified"
+      }
+    ],
+    "unaccounted": [],
+    "unaccounted_procedures": [],
+    "unaccounted_alternatives": [],
+    "accounting_trail": [
+      {
+        "title": "Otricoli (TR)",
+        "kind": "headed_procedure",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 50 Rev. 06/23 11. JUEGOS DE SERVICIO",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Rev. 06/23",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 50 Rev. 06/23 11. JUEGOS DE SERVICIO",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "JUEGOS DE SERVICIO",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 50 Rev. 06/23 11. JUEGOS DE SERVICIO",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Compass ECO | installation manual NA | ENG",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 4 Compass ECO | installation manual NA | ENG Rev. 06/23 INSTALLATION AND USE MANUAL 1. GENERAL WARNINGS TO THE USER WARNING: Read and understand t",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "GENERAL WARNINGS TO THE USER",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 4 Compass ECO | installation manual NA | ENG Rev. 06/23 INSTALLATION AND USE MANUAL 1. GENERAL WARNINGS TO THE USER WARNING: Read and understand t",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "ORIENTATION",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[3]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 42 Rev. 06/23 4. ORIENTATION",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "FONCTIONNEMENT",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 32 Rev. 06/23 7. FONCTIONNEMENT 8. ENTRETIEN 8.1 Nettoyage 8.2 Hivernisation syst\u00e8me en entier. 8.3 Papier hygi\u00e9nique 9. TROUBLESHOOTING Refer to ",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "ENTRETIEN",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 32 Rev. 06/23 7. FONCTIONNEMENT 8. ENTRETIEN 8.1 Nettoyage 8.2 Hivernisation syst\u00e8me en entier. 8.3 Papier hygi\u00e9nique 9. TROUBLESHOOTING Refer to ",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "Nettoyage",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 32 Rev. 06/23 7. FONCTIONNEMENT 8. ENTRETIEN 8.1 Nettoyage 8.2 Hivernisation syst\u00e8me en entier. 8.3 Papier hygi\u00e9nique 9. TROUBLESHOOTING Refer to ",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "Hivernisation",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 32 Rev. 06/23 7. FONCTIONNEMENT 8. ENTRETIEN 8.1 Nettoyage 8.2 Hivernisation syst\u00e8me en entier. 8.3 Papier hygi\u00e9nique 9. TROUBLESHOOTING Refer to ",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "Papier hygi\u00e9nique",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 32 Rev. 06/23 7. FONCTIONNEMENT 8. ENTRETIEN 8.1 Nettoyage 8.2 Hivernisation syst\u00e8me en entier. 8.3 Papier hygi\u00e9nique 9. TROUBLESHOOTING Refer to ",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "TROUBLESHOOTING",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "9. TROUBLESHOOTING Refer to the Troubleshooting available on the website: www.thetfordmarine.com",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "Dimensions",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[7]",
+        "disposition": "filtered",
+        "filter": "filter:classified_without_verb"
+      },
+      {
+        "title": "CIRCUIT \u00c9LECTRIQUE",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[7]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 24 Rev. 06/23 2.3 Dimensions 3. CIRCUIT \u00c9LECTRIQUE source*",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "ELECTRICAL SYSTEM",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[8]",
+        "snippet": "3. ELECTRICAL SYSTEM Installation requirements: \u25aa All circuits must follow ABYC/ISO standards. \u25aa Wire gauge sizes must follow Wire Gauge Size Chart. \u25aa Every toilet must have its own circuit breaker or fuse. \u25aa Always use crimp-style connecto",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "VOLTS - Install 10 Gauge 8 Gauge 6 Gauge 30 Amp",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[8]",
+        "snippet": "12 VOLTS - Install 10 Gauge 8 Gauge 6 Gauge 30 Amp 24 VOLTS - Install 16 Gauge 14 Gauge 12 Gauge 30 Amp * Distance measured assumes power and ground wires",
+        "disposition": "filtered",
+        "filter": "filter:no_steps_or_procedure_heading"
+      },
+      {
+        "title": "VOLTS - Install 16 Gauge 14 Gauge 12 Gauge 30 Amp",
+        "kind": "numbered_heading",
+        "group_id": "batch_0",
+        "excerpt_ref": "excerpt[8]",
+        "snippet": "24 VOLTS - Install 16 Gauge 14 Gauge 12 Gauge 30 Amp * Distance measured assumes power and ground wires",
+        "disposition": "filtered",
+        "filter": "filter:no_steps_or_procedure_heading"
+      },
+      {
+        "title": "Request of spare parts under warranty",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[2]",
+        "disposition": "filtered",
+        "filter": "filter:classified_without_verb",
+        "deduped_from": "WARRANTY"
+      },
+      {
+        "title": "INSTALACI\u00d3N",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[3]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 46 Rev. 06/23 6. INSTALACI\u00d3N bruta)",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "Dimensiones",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 40 Rev. 06/23 2.3 Dimensiones 3. SISTEMA EL\u00c9CTRICO fuente* es:",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "SISTEMA EL\u00c9CTRICO",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 40 Rev. 06/23 2.3 Dimensiones 3. SISTEMA EL\u00c9CTRICO fuente* es:",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Tissue",
+        "kind": "headed_procedure",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[5]",
+        "snippet": "Make sure that both the entire supply and discharge systems are thoroughly winterized to ensure complete protection for your system. 8.3 Tissue To facilitate flushing, it is recommended that you only use toilet tissues specifically desig",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "SERVICE KITS",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[6]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 17 Compass ECO | installation manual NA | ENG Rev. 06/23 11. SERVICE KITS",
+        "disposition": "filtered",
+        "filter": "filter:truncated_heading"
+      },
+      {
+        "title": "OPERATION",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[7]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 15 Compass ECO | installation manual NA | ENG Rev. 06/23 7. OPERATION The ECO Rocker switch has two operation modes : \u201cAdd Water\u201d (before use) and",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "MAINTEINANCE",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[7]",
+        "snippet": "8. MAINTEINANCE 8.1 Cleaning Ceramic is particularly suitable for toilets, as it guarantees hygiene and it is resistant against any cleaning product. Do not use acetone - or trichlorethylene-based products, or any product that may irreversi",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "Cleaning",
+        "kind": "numbered_heading",
+        "group_id": "batch_1",
+        "excerpt_ref": "excerpt[7]",
+        "snippet": "8.1 Cleaning Ceramic is particularly suitable for toilets, as it guarantees hygiene and it is resistant against any cleaning product. Do not use acetone - or trichlorethylene-based products, or any product that may irreversibly damage the r",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "APERCU",
+        "kind": "numbered_heading",
+        "group_id": "batch_2",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 26 Rev. 06/23 4. APERCU",
+        "disposition": "filtered",
+        "filter": "filter:too_few_tokens"
+      },
+      {
+        "title": "Required tools",
+        "kind": "headed_procedure",
+        "group_id": "batch_2",
+        "excerpt_ref": "excerpt[3]",
+        "snippet": "If a leak were to occur when wired directly, the pump would run continuously and create risk of sinking of the boat and loss of life. \u25a0 An in-line strainer MUST be installed to protect the system. Failure to use an in-line strainer may",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Raw water considerations",
+        "kind": "numbered_heading",
+        "group_id": "batch_2",
+        "excerpt_ref": "excerpt[5]",
+        "snippet": "4.2 Raw water considerations \u25a0 The Raw Water pump must be securely mounted in a dry, well-ventilated area. It should be mounted not more than 6' at any time above the heeled waterline. DANGER: The Raw Water pump must be powered by the toile",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "SISTEMA SANITARIO TECMA",
+        "kind": "numbered_heading",
+        "group_id": "batch_2",
+        "excerpt_ref": "excerpt[6]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 37 Rev. 06/23 electrocuci\u00f3n. menores de 8 a\u00f1os. 2. SISTEMA SANITARIO TECMA",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Sitio de montaje",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[0]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 43 Rev. 06/23 4.1 Sitio de montaje el rendimiento. \ufb02otaci\u00f3n inclinada. \u25a0 Sierra de vaiv\u00e9n",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Harness Kit Parts",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[1]",
+        "snippet": "3.1 Harness Kit Parts Parts shown below are supplied in Tecma's Harness Kits.",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Bezel Installation",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[2]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 11 Compass ECO | installation manual NA | ENG Rev. 06/23 4.4 Bezel Installation When planning the installation be sure to consider: \u25a0 Bezel placem",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Bezel Specification",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[2]",
+        "disposition": "filtered",
+        "filter": "filter:classified_without_verb"
+      },
+      {
+        "title": "INSTALLATION OPTIONS",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[3]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 12 Compass ECO | installation manual NA | ENG Rev. 06/23 5. INSTALLATION OPTIONS Choose the method that best fits your installation needs: \u25aa INSTA",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Automatic Fresh Water Pressure Pump",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[3]",
+        "snippet": "1. Automatic Fresh Water Pressure Pump 2. Marine Electric Solenoid Valve electronically controlled by toilet 3. Lower Discharge Check Valve \u25aa INSTALLATION B: RAW WATER PUMP - Toilet ABOVE SEA LEVEL 1. Raw Water Pump 2. Filter or Strainer \u25aa ",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Marine Electric Solenoid Valve electronically",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[3]",
+        "snippet": "2. Marine Electric Solenoid Valve electronically controlled by toilet 3. Lower Discharge Check Valve \u25aa INSTALLATION B: RAW WATER PUMP - Toilet ABOVE SEA LEVEL 1. Raw Water Pump 2. Filter or Strainer \u25aa INSTALLATION C: 1. Raw Water Pump 2. Fi",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Lower Discharge Check Valve",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[3]",
+        "snippet": "3. Lower Discharge Check Valve \u25aa INSTALLATION B: RAW WATER PUMP - Toilet ABOVE SEA LEVEL 1. Raw Water Pump 2. Filter or Strainer \u25aa INSTALLATION C: 1. Raw Water Pump 2. Filter or Strainer",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Raw Water Pump",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[3]",
+        "snippet": "1. Raw Water Pump 2. Filter or Strainer \u25aa INSTALLATION C: 1. Raw Water Pump 2. Filter or Strainer",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Filter or Strainer",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[3]",
+        "snippet": "2. Filter or Strainer \u25aa INSTALLATION C: 1. Raw Water Pump 2. Filter or Strainer",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Discharge hoses",
+        "kind": "headed_procedure",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[4]",
+        "snippet": "Use lever - actuated, full -bore, marine quality seacocks and valves. Screw-down gate valves are not recommended. \u25a0 IF WATER DOES NOT FLOW INTO TOILET DURING THE FIRST TWO OR THREE FLUSH CYCLES, it has been improperly installed or has m",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Materials not provided (NP)",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[5]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 13 Compass ECO | installation manual NA | ENG Rev. 06/23 6. INSTALLATION 6.1 Materials not provided (NP) \u25a0 In-line Strainer (if applicable) \u25a0 3/4\u201d",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Outils requis",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[6]",
+        "snippet": "Tecma S.r.l. 05030 Otricoli (TR) ITALY T +39 0744 709071 info@tecma.eu www.thetfordmarine.com 27 Rev. 06/23 Compass ECO | manuel d\u2019installation NA | FR suivantes : mat\u00e9rielles! 4.3 Outils requis \u25a0 Perceuse \u00e9lectrique",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Tuyaux d\u2019evacuation",
+        "kind": "numbered_heading",
+        "group_id": "batch_3",
+        "excerpt_ref": "excerpt[7]",
+        "snippet": "2.2 Tuyaux d\u2019evacuation",
+        "disposition": "filtered",
+        "filter": "filter:no_imperative_verb"
+      },
+      {
+        "title": "Mounting location",
+        "kind": "numbered_heading",
+        "group_id": "batch_2",
+        "excerpt_ref": "excerpt[5]",
+        "disposition": "classified",
+        "auto_classified": "not_operator_relevant:installer",
+        "rule": "rule:installer:mounting"
+      }
+    ],
+    "counts": {
+      "accounted": 0,
+      "classified": 1,
+      "unaccounted": 0,
+      "filtered": 44,
+      "trail": 45
+    },
+    "corpus_sizes": {
+      "actions": 2,
+      "surfaces": 2,
+      "requires": 0
+    }
+  },
+  "repair": {
+    "attempted": false,
+    "enabled": false
+  },
+  "repair_enabled": true
+}

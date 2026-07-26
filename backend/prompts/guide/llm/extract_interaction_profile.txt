@@ -138,6 +138,20 @@ Rules:
     setup pages with no in-page actions. Ordinary devices with no software UI:
     documented_version "", ui_pages [], alarm_severity [].
 
+13. control_surfaces[].hosting — where the operator sees/uses this surface
+    (distinct from location_class, which is physical-vs-remote on the product):
+    - integral_display: built-in screen on THIS product
+    - external_mfd: third-party chartplotter / MFD app, RTSP into an MFD, or
+      "Connecting Onboard MFD" / MFD-compatibility chapters
+    - external_pc_app: Windows/Mac application on an onboard PC
+    - mobile_app: phone/tablet app
+    - unclear: manual silent or ambiguous
+    Do NOT use location_class on_device to mean "has its own dedicated camera
+    screen" when the manual describes MFD/PC hosting. If both integral and
+    MFD hosts are described, emit separate control_surfaces rows (or one row
+    per host) with the matching hosting value. MFD/compatibility chapters are
+    priority evidence for control_surfaces (same priority band as (d)).
+
 CALIBRATION — these examples concern OTHER devices / situations. Match the
 field decisions (context, audience, optional_accessory, dependency shape).
 Do NOT copy action strings or product-specific wording from the examples into
@@ -269,5 +283,19 @@ P. (platform ui_pages — CZone 2.0 style)
    Intro page tiles must each become a ui_page (Favourites, Modes, Control,
    Monitoring, Alarms, AC Mains, Inverter/Charger, Climate) when present in
    the manual under extraction.
+
+Q. "Connecting Onboard MFD: To start the SEA.AI App on your MFD — go to …
+    Please refer to our MFD compatibility page. RTSP streams: …"
+    → control_surface for that app/UI with hosting: external_mfd
+      (label_verbatim from the manual, e.g. "User Interface" / "SEA.AI App");
+      location_class: remote_wired (or wireless if the manual says so) —
+      NOT on_device-as-"camera has its own screen";
+      PLUS a second surface with hosting: external_pc_app when the manual
+      also describes a Windows/Mac application;
+      PLUS networks.speaks / requires_devices when the manual names the
+      backbone or a gateway needed for that path.
+    Rationale: product UI software hosted on a third-party display is still
+    a control surface of THIS device; hosting records where the operator
+    sees it. Vessel which-MFD-is-fitted is Stage 3/4 inventory, not Stage 1.
 
 Return JSON only — no markdown wrapper — matching the interaction_profile schema.

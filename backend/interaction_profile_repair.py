@@ -280,6 +280,9 @@ def merge_absence_repair(
                     "path": str(item.get("path") or f"control_surfaces[{idx}]").strip(),
                 }
             )
+            hosting = str(item.get("hosting") or "").strip()
+            if hosting:
+                surfaces[-1]["hosting"] = hosting
         if surfaces:
             out["control_surfaces"] = surfaces
 

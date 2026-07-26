@@ -357,8 +357,9 @@ def compose_engines_section(
                 ),
                 "status": "queued",
                 "note": (
-                    "Places not in Stage 1 profile — Equipment Locations table "
-                    "and guest troubleshooting stay lean until sourced."
+                    "Places not in Stage 1 profile — global xlv Equipment "
+                    "Locations table and guest troubleshooting stay lean "
+                    "until sourced."
                 ),
             }
         )

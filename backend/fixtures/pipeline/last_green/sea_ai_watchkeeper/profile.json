@@ -8,6 +8,7 @@
     {
       "surface": "touchscreen",
       "location_class": "on_device",
+      "hosting": "external_mfd",
       "optional_accessory": false,
       "label_verbatim": "User Interface",
       "path": "control_surfaces[0]",

@@ -328,6 +328,10 @@ def format_places_phrase(
 ) -> str | None:
     """Guest-facing place clause from registry places, or ``None`` if unknown.
 
+    Prefer the Equipment Locations module table (global xlv) over inlining this
+    phrase in capability prose. Reserved for rare non-capability uses when a
+    single sourced place must appear in narrative and the table is not enough.
+
     Examples:
       ``in the Cockpit``
       ``in the Port hull and the Starboard hull``

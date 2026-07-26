@@ -1,0 +1,73 @@
+{
+  "device": {
+    "manufacturer": "Tecma",
+    "model": "Compass Eco electric head",
+    "category_freeform": "electric head"
+  },
+  "entity_kind": "device",
+  "documented_version": "",
+  "ui_pages": [],
+  "alarm_severity": [],
+  "control_surfaces": [
+    {
+      "surface": "physical_controls",
+      "location_class": "on_device",
+      "optional_accessory": false,
+      "label_verbatim": "ECO Rocker switch",
+      "path": "control_surfaces[0]"
+    }
+  ],
+  "operator_actions": [
+    {
+      "action": "activate 'Add Water' function by pressing upper switch",
+      "audience": "operator",
+      "context": "daily",
+      "occasion": "to add water in the bowl before use"
+    },
+    {
+      "action": "activate 'Flush' function by pressing lower switch",
+      "audience": "operator",
+      "context": "daily",
+      "occasion": "to flush after use"
+    }
+  ],
+  "networks": {
+    "speaks": [],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": false
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [],
+  "evidence": [
+    {
+      "supports_field": "control_surfaces[0]",
+      "manual_section": "7. OPERATION",
+      "note": "ECO Rocker switch has two operation modes"
+    },
+    {
+      "supports_field": "operator_actions[action='activate 'Add Water' function by pressing upper switch']",
+      "manual_section": "7. OPERATION",
+      "note": "Add Water function activated by upper switch"
+    },
+    {
+      "supports_field": "operator_actions[action='activate 'Flush' function by pressing lower switch']",
+      "manual_section": "7. OPERATION",
+      "note": "Flush function activated by lower switch"
+    }
+  ],
+  "confidence": {
+    "overall": 0.8,
+    "notes": "Limited excerpts provided; some sections may be missing."
+  }
+}

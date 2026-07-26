@@ -54,7 +54,8 @@ FIXTURE_AUTH = (
     "Fixture-Auth: chat Sea.AI Watchkeeper Stage 1 extract — live extraction "
     "promoted; genres normalized to install/operate/maintain, NMEA Gateway "
     "commissioning action + duplicate remote-access action dropped as "
-    "source-grounded §1.D adjudication"
+    "source-grounded §1.D adjudication; control_surfaces[].hosting="
+    "external_mfd on User Interface (MFD-hosted UI, tip v4.44)"
 )
 
 _DROP_ACTIONS = frozenset(
@@ -63,6 +64,22 @@ _DROP_ACTIONS = frozenset(
         "enable or disable temporary remote access",
     }
 )
+
+
+def _adjudicate_display_host(profile: dict) -> dict:
+    """§1.D: manual Connecting Onboard MFD — UI is MFD-hosted, not integral."""
+    surfaces: list[dict] = []
+    for surf in profile.get("control_surfaces") or []:
+        if not isinstance(surf, dict):
+            continue
+        row = dict(surf)
+        label = str(row.get("label_verbatim") or "").strip().lower()
+        if "user interface" in label or not str(row.get("hosting") or "").strip():
+            row["hosting"] = "external_mfd"
+        surfaces.append(row)
+    if surfaces:
+        profile["control_surfaces"] = surfaces
+    return profile
 
 
 def _prepare(raw: dict) -> dict:
@@ -89,6 +106,8 @@ def _prepare(raw: dict) -> dict:
         kept.append(act)
     profile["operator_actions"] = kept
 
+    profile = _adjudicate_display_host(profile)
+
     profile["genres"] = ["installation", "operation", "maintenance"]
     profile.pop("needs_rextraction", None)
 
@@ -101,7 +120,9 @@ def _prepare(raw: dict) -> dict:
             "severity": "info",
             "detail": (
                 "Normalized genres to installation/operation/maintenance; "
-                f"dropped actions {dropped}. " + FIXTURE_AUTH
+                f"dropped actions {dropped}; "
+                "User Interface hosting=external_mfd (tip v4.44). "
+                + FIXTURE_AUTH
             ),
         }
     )

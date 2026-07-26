@@ -1,0 +1,31 @@
+{
+  "fixture_auth": "Fixture-Auth: chat Heads review — Tecma removed from vessel plant (owner: not in Supernova inventory); valve instance locations from live vessel_equipment; not frozen",
+  "version": "v4.0-founding",
+  "description": "Heads & waste Stage 4 founding expectations for Outremer / Supernova — valves only until heads model inventory-corroborated.",
+  "recorded_vessel_display_name": "Supernova",
+  "expected_guide_link_targets": ["water", "electrical"],
+  "must_exclude_from_body_depth": [],
+  "expected_inputs": {
+    "contributors": [
+      {"device_key": "blackwater_tank_discharge_valve", "depth": "full"}
+    ]
+  },
+  "expected_fact_query_ids": [
+    "heads_model_unknown"
+  ],
+  "forbidden_prose_substrings": [
+    "control surface",
+    "masterbus",
+    "czone touch",
+    "blackwater_tank_discharge_valve",
+    "tecma_compass_eco",
+    "tecma",
+    "day-to-day",
+    "not fitted",
+    "pump out or empty",
+    "open a valve when you pump out",
+    "they are located",
+    "located in"
+  ],
+  "style_deictics_soft": ["this vessel", "this boat", "this yacht"]
+}

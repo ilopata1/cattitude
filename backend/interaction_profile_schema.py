@@ -34,10 +34,24 @@ CONTROL_SURFACE_KEYS = frozenset(
     {
         "surface",
         "location_class",
+        # Where the UI / controls are hosted for the operator (not vessel place).
+        # Distinct from location_class (physical vs remote body of the control).
+        "hosting",
         "optional_accessory",
         "label_verbatim",
         "path",
         "vote_margin",
+    }
+)
+
+# control_surfaces[].hosting — where the operator sees/uses this surface.
+DISPLAY_HOSTING_VALUES = frozenset(
+    {
+        "integral_display",  # built-in screen on this product
+        "external_mfd",  # third-party chartplotter / MFD app or stream
+        "external_pc_app",  # Windows/Mac onboard PC application
+        "mobile_app",  # phone/tablet app
+        "unclear",  # manual silent or ambiguous
     }
 )
 
@@ -392,6 +406,7 @@ INTERACTION_PROFILE_JSON_SCHEMA: dict[str, Any] = _obj(
                 {
                     "surface": _STRING,
                     "location_class": _STRING,
+                    "hosting": _STRING,
                     "optional_accessory": _BOOL,
                     "label_verbatim": _STRING,
                     "path": _STRING,

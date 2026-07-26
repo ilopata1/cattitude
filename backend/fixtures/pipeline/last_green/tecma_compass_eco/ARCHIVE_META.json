@@ -1,0 +1,13 @@
+{
+  "device_key": "tecma_compass_eco",
+  "equipment_id": "797ee578-df79-48e4-9127-7440b4daef94",
+  "manual_work_id": "821045ee-7234-4011-a17f-03e66ae6836d",
+  "manual": "Compass Eco Manual — INSTALLATION AND USE MANUAL (EN/FR/ES combined, 50 pp; file hash 9820eeddc670f04042f4f16a7c0aad7dec8d041607e16b5e65127552ea47f84b)",
+  "fixture_auth": "Fixture-Auth: chat Tecma Compass Eco Stage 1 extract — live extraction promoted; Flush (lower ECO Rocker switch) added as source-grounded §1.D adjudication (extraction omission; evidence already cited OPERATION §7)",
+  "review": {
+    "status": "pending_human_review",
+    "verdict": "promoted_for_heads_founding",
+    "reviewed_by": "agent (Playbook 1 promote)",
+    "date": "2026-07-25"
+  }
+}

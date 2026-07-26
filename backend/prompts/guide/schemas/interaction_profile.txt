@@ -53,6 +53,7 @@
     {
       "surface": "touchscreen|remote_panel_accessory|mobile_app_bluetooth|mobile_app_wifi_cloud|web_interface|physical_controls|rotary_selector|other",
       "location_class": "on_device|remote_wired|wireless|unknown",
+      "hosting": "integral_display|external_mfd|external_pc_app|mobile_app|unclear",
       "optional_accessory": false,
       "label_verbatim": "optional short label from the manual",
       "path": "control_surfaces[0]"

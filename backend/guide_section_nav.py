@@ -1,13 +1,22 @@
-"""Stage 4 Navigation & helm — Zeus MFDs + shared software + Halo radar.
+"""Stage 4 Navigation & helm — Zeus MFDs + shared software + Halo radar +
+Sea.AI Watchkeeper.
 
 Uses ``assemble_section_inputs`` depths:
-  full — Zeus SR instances, Zeus SR Software platform, Halo 20+
+  full — Zeus SR instances, Zeus SR Software platform, Halo 20+, Watchkeeper
   provenance — path bridges (never named in body)
 
 Standing policy: ship-with-honest-gaps — ``config_unsourced`` /
 ``platform_version_unconfirmed`` yield boat-upgradeable placeholders; Halo
 installer-only actions stay out of the guest body (radar is named as fitted
-and controlled from the MFDs).
+and controlled from the MFDs). Watchkeeper maintenance / commissioning actions
+are context_shaping (omitted); guest body covers UI views, voice alarm, and
+threat-level alarm orientation (spec tip v4.43).
+
+Watchkeeper display host (owner review Nav v4.43): do **not** render
+``control_surfaces.location_class: on_device`` as a dedicated on-camera
+display. Manual allows MFD-hosted UI; on Supernova the UI is on the Zeus SR
+chartplotters (``vessel_fact.watchkeeper_ui_on_zeus``). Station prose follows
+the Halo pattern — controlled from those displays / from a chartplotter.
 """
 
 from __future__ import annotations
@@ -56,6 +65,7 @@ DISPLAY_NAMES: dict[str, str] = {
     "bg_zeus_sr_2": "the chartplotters",
     "bg_zeus_sr_software": "Zeus SR Software",
     "bg_halo_20_plus": "the radar",
+    "sea_ai_watchkeeper": "the AI camera system",
 }
 
 MANUFACTURER_MODEL: dict[str, tuple[str, str]] = {
@@ -64,6 +74,7 @@ MANUFACTURER_MODEL: dict[str, tuple[str, str]] = {
     "bg_zeus_sr_2": ("B&G", "Zeus SR 12"),
     "bg_zeus_sr_software": ("B&G", "Zeus SR Software"),
     "bg_halo_20_plus": ("B&G", "Halo 20+"),
+    "sea_ai_watchkeeper": ("Sea.AI", "Watchkeeper"),
 }
 
 _FORBIDDEN_EXTRA = (
@@ -75,6 +86,7 @@ _FORBIDDEN_EXTRA = (
     re.compile(r"\bczone touch\b", re.I),
     re.compile(r"\bbg_zeus_sr\b", re.I),
     re.compile(r"\bbg_halo\b", re.I),
+    re.compile(r"\bsea_ai_watchkeeper\b", re.I),
 )
 
 CONFIG_PLACEHOLDER_MARKER = "[[CONFIG_PENDING]]"
@@ -86,6 +98,23 @@ _HALO_INSTALLER_LEAK_RES = (
     re.compile(r"\bsector blanking\b", re.I),
     re.compile(r"\berror codes?\b", re.I),
 )
+
+# location_class on_device must not become "on-device User Interface" (owner
+# review Nav v4.43 — Watchkeeper UI is MFD-hosted on this vessel).
+_ON_DEVICE_UI_LEAK_RES = (
+    re.compile(r"\bon-device user interface\b", re.I),
+    re.compile(r"\bon its on-device\b", re.I),
+    re.compile(r"\bfrom its on-device\b", re.I),
+)
+
+
+def _vessel_fact(
+    equipment_doc: dict[str, Any], fact_id: str
+) -> dict[str, Any] | None:
+    for fact in equipment_doc.get("vessel_facts") or []:
+        if isinstance(fact, dict) and str(fact.get("id") or "") == fact_id:
+            return fact
+    return None
 
 
 def compose_nav_section(
@@ -117,6 +146,10 @@ def compose_nav_section(
         None,
     )
     halo_key = next((k for k in full_keys if k.startswith("bg_halo")), None)
+    watchkeeper_key = next(
+        (k for k in full_keys if "watchkeeper" in k or k.startswith("sea_ai")),
+        None,
+    )
 
     hub_profile: dict[str, Any] = {}
     if zeus_hub_keys:
@@ -168,6 +201,9 @@ def compose_nav_section(
         for rx in _FORBIDDEN_EXTRA:
             if rx.search(text):
                 hits.append(rx.pattern)
+        for rx in _ON_DEVICE_UI_LEAK_RES:
+            if rx.search(text):
+                hits.append(f"on_device_ui_leak:{rx.pattern}")
         reader_text = text.replace(CONFIG_PLACEHOLDER_MARKER, "").strip()
         hits = [h for h in hits if "CONFIG" not in str(h)]
         if hits:
@@ -223,6 +259,47 @@ def compose_nav_section(
                     "detail": "Halo install-manual commissioning — not guest body",
                 }
             )
+
+    # Watchkeeper maintenance / commissioning → context_shaping.
+    _WK_OMIT_CONTEXTS = frozenset({"maintenance"})
+    _WK_OMIT_ACTION_RES = (
+        re.compile(r"\bclean camera lenses\b", re.I),
+        re.compile(r"\bcheck cables\b", re.I),
+        re.compile(r"\bfirmware\b", re.I),
+        re.compile(r"\bupdate Watchkeeper\b", re.I),
+        re.compile(r"\bremote access\b", re.I),
+        re.compile(r"\bNMEA Gateway\b", re.I),
+        re.compile(r"\breboot and verify\b", re.I),
+        re.compile(r"\bAI feedback\b", re.I),
+        re.compile(r"\bdistance unit\b", re.I),
+        re.compile(r"\bthermal polarity\b", re.I),
+        re.compile(r"\binterface theme\b", re.I),
+        re.compile(r"\bnavigation mode\b", re.I),
+        re.compile(r"\bcheck camera power\b", re.I),
+        re.compile(r"\bNMEA 2000 buzzer\b", re.I),
+    )
+    if watchkeeper_key:
+        wk_prof = graph.devices[watchkeeper_key].profile or {}
+        for action in wk_prof.get("operator_actions") or []:
+            if not isinstance(action, dict):
+                continue
+            act = str(action.get("action") or "")
+            ctx = str(action.get("context") or "")
+            omit = ctx in _WK_OMIT_CONTEXTS or any(
+                rx.search(act) for rx in _WK_OMIT_ACTION_RES
+            )
+            if omit:
+                context_shaping_consumed.append(
+                    {
+                        "flag": "watchkeeper_action_omitted",
+                        "device": watchkeeper_key,
+                        "action": act,
+                        "detail": (
+                            "Watchkeeper maintenance/commissioning/personalization "
+                            "— not Nav guest body (v4.43)"
+                        ),
+                    }
+                )
 
     present_pages = [
         str(p.get("name") or "").strip()
@@ -309,6 +386,56 @@ def compose_nav_section(
             topic="sensors",
         )
 
+    if watchkeeper_key:
+        first_use.add(watchkeeper_key)
+        first_use.add(re.sub(r"_\d+$", "", watchkeeper_key))
+        mm = MANUFACTURER_MODEL.get(watchkeeper_key) or ("Sea.AI", "Watchkeeper")
+        fact_wk_ui = _vessel_fact(equipment_doc, "watchkeeper_ui_on_zeus")
+        if fact_wk_ui and zeus_hub_keys:
+            # Halo parallel: sensor fitted; UI on the chartplotters.
+            _emit_topic(
+                f"An AI camera system ({mm[0]} {mm[1]}) is fitted for object "
+                "detection and is controlled from those displays.",
+                f"equipment.{watchkeeper_key}",
+                f"profile.{watchkeeper_key}.device",
+                f"vessel_fact.{fact_wk_ui['id']}",
+                f"equipment.{zeus_label_key}",
+                block="capability_summary",
+                topic="watchkeeper",
+            )
+        elif fact_wk_ui:
+            _emit_topic(
+                f"An AI camera system ({mm[0]} {mm[1]}) is fitted for object "
+                "detection and is controlled from the chartplotters.",
+                f"equipment.{watchkeeper_key}",
+                f"profile.{watchkeeper_key}.device",
+                f"vessel_fact.{fact_wk_ui['id']}",
+                block="capability_summary",
+                topic="watchkeeper",
+            )
+        else:
+            fact_queries.append(
+                {
+                    "id": "watchkeeper_display_host",
+                    "device": watchkeeper_key,
+                    "query": (
+                        "Confirm where the Watchkeeper User Interface is shown "
+                        "on this vessel (dedicated display vs chartplotter / "
+                        "MFD app). Do not infer a dedicated on-camera screen "
+                        "from control_surfaces.location_class on_device."
+                    ),
+                    "status": "queued",
+                }
+            )
+            _emit_topic(
+                f"An AI camera system ({mm[0]} {mm[1]}) is fitted for object "
+                "detection.",
+                f"equipment.{watchkeeper_key}",
+                f"profile.{watchkeeper_key}.device",
+                block="capability_summary",
+                topic="watchkeeper",
+            )
+
     if app_names:
         listed = ", ".join(app_names)
         _emit_topic(
@@ -367,6 +494,16 @@ def compose_nav_section(
             }
         )
 
+    if watchkeeper_key:
+        _emit_topic(
+            "Threat-level alarms (Object, Warning, and Danger) alert when "
+            "objects are detected.",
+            f"profile.{watchkeeper_key}.alarm_severity",
+            f"equipment.{watchkeeper_key}",
+            block="how_it_works",
+            topic="watchkeeper_alarms",
+        )
+
     # ========== MONITORING ==========
     # nav-x: no "day-to-day"; xxxix still needs a when/why occasion on imperatives.
     if has_alerts:
@@ -383,6 +520,40 @@ def compose_nav_section(
             f"profile.{zeus_label_key}.operator_actions",
             block="monitoring",
             topic="alerts",
+        )
+
+    if watchkeeper_key:
+        fact_wk_ui = _vessel_fact(equipment_doc, "watchkeeper_ui_on_zeus")
+        station = (
+            "from a chartplotter"
+            if fact_wk_ui
+            else "from the Watchkeeper User Interface"
+        )
+        # Prefer chartplotter station when vessel-fact sourced; never "on-device".
+        _emit_topic(
+            f"Select thermal or color view {station} when you want live "
+            "Watchkeeper camera images.",
+            f"profile.{watchkeeper_key}.operator_actions",
+            f"profile.{watchkeeper_key}.control_surfaces",
+            *(
+                [f"vessel_fact.{fact_wk_ui['id']}"]
+                if fact_wk_ui
+                else []
+            ),
+            block="monitoring",
+            topic="watchkeeper_views",
+        )
+        _emit_topic(
+            f"Enable or disable the Watchkeeper voice alarm {station} when "
+            "you want audible alerts for detected objects.",
+            f"profile.{watchkeeper_key}.operator_actions",
+            *(
+                [f"vessel_fact.{fact_wk_ui['id']}"]
+                if fact_wk_ui
+                else []
+            ),
+            block="monitoring",
+            topic="watchkeeper_voice",
         )
 
     # ========== STARTUP (power-on gates monitoring + adjusting) ==========
@@ -468,6 +639,15 @@ def compose_nav_section(
             ),
             block="adjusting",
             topic="mob",
+        )
+
+    if watchkeeper_key:
+        _emit_topic(
+            "Adjust the Watchkeeper camera tilt when you need to compensate "
+            "for boat trim at cruising speed.",
+            f"profile.{watchkeeper_key}.operator_actions",
+            block="adjusting",
+            topic="watchkeeper_tilt",
         )
 
     # ========== TROUBLESHOOTING / CONFIG GAP ==========
@@ -577,7 +757,8 @@ def compose_nav_section(
         "block": "how_it_works",
         "inference_ids": [],
         "note": (
-            "Nav wisdom pending — comparative helm/radar claim not yet sourced."
+            "Nav wisdom pending — comparative helm/radar/Watchkeeper claim "
+            "not yet sourced."
         ),
     }
 
@@ -596,6 +777,7 @@ def compose_nav_section(
         "zeus_hub_keys": zeus_hub_keys,
         "platform_key": platform_key,
         "halo_key": halo_key,
+        "watchkeeper_key": watchkeeper_key,
         "excluded_candidates": list(inputs.get("candidates_excluded") or []),
         "vocabulary_lint": vocab,
         "absence_lint": absence,
@@ -603,7 +785,8 @@ def compose_nav_section(
         "vessel_display_name": boat,
         "wisdom_slot": wisdom_slot,
         "fact_queries": fact_queries,
-        "version": "v4.37.6",
+        "version": "v4.43",
+        "freeze_status": "frozen",
     }
 
 
@@ -632,6 +815,7 @@ def evaluate_nav_draft(
     ) or ("masterbus bridge" in lower)
 
     installer_leak = any(rx.search(draft) for rx in _HALO_INSTALLER_LEAK_RES)
+    on_device_ui_leak = any(rx.search(draft) for rx in _ON_DEVICE_UI_LEAK_RES)
 
     placeholder_rows = [
         p
@@ -646,6 +830,10 @@ def evaluate_nav_draft(
 
     has_zeus = "zeus" in lower or "chartplotter" in lower
     has_halo = "halo" in lower or "radar" in lower
+    has_watchkeeper = (
+        not composed.get("watchkeeper_key")
+        or ("watchkeeper" in lower and "sea.ai" in lower)
+    )
     has_mob = "mob" in lower
     has_controls_xref = "controls" in lower and "section of this guide" in lower
 
@@ -743,9 +931,22 @@ def evaluate_nav_draft(
         "prose_economy_ok": not any(economy.values()),
         "path_devices_unnamed": not path_named,
         "halo_installer_omitted": not installer_leak,
+        "watchkeeper_no_on_device_ui": not on_device_ui_leak,
+        "watchkeeper_station_on_displays": (
+            not composed.get("watchkeeper_key")
+            or (
+                "watchkeeper" in lower
+                and (
+                    "those displays" in lower
+                    or "from a chartplotter" in lower
+                    or "from the chartplotters" in lower
+                )
+            )
+        ),
         "config_placeholder_present": placeholder_ok,
         "names_zeus_station": has_zeus,
         "names_radar": has_halo,
+        "names_watchkeeper": has_watchkeeper,
         "includes_mob": has_mob,
         "app_inventory_present": has_app_inventory,
         "helm_session_arc_ok": helm_arc_ok,
@@ -787,5 +988,5 @@ def evaluate_nav_draft(
         "notes": notes,
         "style_warnings": style_warnings,
         "global_composition": global_comp,
-        "criteria": "nav-i–nav-xiii (founding v4.37.6; plain home step)",
+        "criteria": "nav-i–nav-xiii + Watchkeeper absorb (v4.43; UI on Zeus owner review)",
     }

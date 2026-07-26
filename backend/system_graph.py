@@ -191,6 +191,11 @@ SECTION_LOOKUP: dict[str, tuple[str, ...]] = {
         "macerator",
         "waste",
         "grey water",
+        "blackwater",
+        "black water",
+        "discharge valve",
+        "pump-out",
+        "pump out",
     ),
     "galley": (
         "stove",

@@ -523,7 +523,7 @@ def merge_group_profiles(
             merged["control_surfaces"],
             list(profile.get("control_surfaces") or []),
             same_fn=_surfaces_same_identity,
-            conflict_attrs=("optional_accessory", "location_class", "surface"),
+            conflict_attrs=("optional_accessory", "location_class", "surface", "hosting"),
             group_id=group_id,
             kind="control_surfaces",
             contributions=scratch_contrib,

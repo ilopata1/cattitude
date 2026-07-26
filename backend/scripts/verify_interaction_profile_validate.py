@@ -777,6 +777,94 @@ def main() -> int:
         "evidence_support_mismatch must be warning only",
     )
 
+    # --- v4.44: control_surfaces[].hosting / display_host_unresolved ---
+    mfd_excerpts = [
+        {
+            "text": (
+                "Connecting Onboard MFD: To start the SEA.AI App on your MFD "
+                "please refer to our MFD compatibility page. RTSP streams "
+                "can be shown on the chartplotter."
+            )
+        }
+    ]
+    unresolved = {
+        "device": {
+            "manufacturer": "Sea.AI",
+            "model": "Watchkeeper",
+            "category_freeform": "AI camera",
+        },
+        "control_surfaces": [
+            {
+                "surface": "touchscreen",
+                "location_class": "on_device",
+                "optional_accessory": False,
+                "label_verbatim": "User Interface",
+                "path": "control_surfaces[0]",
+            }
+        ],
+        "operator_actions": [],
+        "networks": {"speaks": [], "bridges": []},
+        "data_roles": {
+            "exposes_data_to_network": False,
+            "displays_data_from_other_devices": False,
+            "controllable_from_network": False,
+        },
+        "requires_devices": [],
+        "safety_role": {
+            "is_protective_device": False,
+            "has_manual_override": False,
+            "has_emergency_procedure": False,
+        },
+        "protected_by": [],
+        "protects": [],
+        "supply_requirements": [],
+        "evidence": [
+            {
+                "supports_field": "device.model",
+                "manual_section": "Overview",
+                "note": "Model on cover",
+            }
+        ],
+        "confidence": {"overall": 0.7, "notes": ""},
+    }
+    unresolved_ann = validate_interaction_profile(
+        unresolved, excerpts=mfd_excerpts
+    )
+    check(
+        "display_host_unresolved" in validation_flag_names(unresolved_ann),
+        "MFD chapter excerpts without hosting must flag display_host_unresolved",
+    )
+    check(
+        unresolved_ann.get("needs_rextraction") is False,
+        "display_host_unresolved must be warning only",
+    )
+
+    resolved = dict(unresolved)
+    resolved["control_surfaces"] = [
+        {
+            **unresolved["control_surfaces"][0],
+            "hosting": "external_mfd",
+        }
+    ]
+    resolved_ann = validate_interaction_profile(resolved, excerpts=mfd_excerpts)
+    check(
+        "display_host_unresolved" not in validation_flag_names(resolved_ann),
+        "hosting=external_mfd must clear display_host_unresolved",
+    )
+
+    bad_host = dict(unresolved)
+    bad_host["control_surfaces"] = [
+        {
+            **unresolved["control_surfaces"][0],
+            "hosting": "on_camera_screen",
+        }
+    ]
+    bad_ann = validate_interaction_profile(bad_host, excerpts=[])
+    check(
+        "display_host_invalid" in validation_flag_names(bad_ann),
+        "unknown hosting enum must flag display_host_invalid",
+    )
+
     if failures:
         print("FAIL")
         for item in failures:

@@ -164,6 +164,7 @@ Do **not** replace the fragment + approve path in one rewrite.
 | Fragment size caps / approve gates | Open |
 | Quarantine bad harvested fragments / manual_type audit | Open (ops) |
 | Stage 1–2 offline spike | Done — Stage 1 map-reduce + voting + cal K/L/M; vessel Outremer live+stub Stage 2+3; see `equipment-classification-spec-v3.9.md` |
+| **Stage 1 display host (v4.44)** | Done — `control_surfaces[].hosting` + `display_host_unresolved` (Playbook 1C); Watchkeeper §1.D `external_mfd` |
 | Stage 3–4 production wire-up | **Stage 4 Phases 1–3 shipped** (composers → substrate → admin Generate) — see `guide-stage4-integration-plan.md`. Stage 3 LLM tier still open; Phase 4 de-hardcode + 2nd vessel open |
 | **Queued:** CZone platform ui_pages action completeness | **Done** — Favourites/Alarms/Control/Monitoring via `reextract_czone_ui_pages.py` (Climate already); completeness `ok`; `promote_czone_2_0.py` |
 | Solar Stage 4 composition pilot (v2 rendering) | Superseded by v3 |
@@ -177,8 +178,10 @@ Do **not** replace the fragment + approve path in one rewrite.
 | **Batteries Stage 4 (v4.14)** | Composer introduced — xxvi–xxxi; Controls/Electrical xrefs; Solar leaf pointer |
 | **Batteries & Energy Stage 4 (frozen)** | Done — frozen for reuse (reaffirmed spec v4.30); xxvi–xli; `verify_batteries_section_v4.py`; frozen-section regression with Solar + Controls |
 | **Water systems Stage 4 (frozen)** | Done — frozen for reuse (spec v4.39); Dessalator Duo; NAVIGATOR panel; Mini Remote + flush omitted; `verify_water_section_v4.py` |
+| **Nav Stage 4 (frozen)** | Done — v4.43 Watchkeeper absorb (Zeus SR×2 + software + Halo + Sea.AI Watchkeeper); prior founding v4.37.6; `verify_nav_section_v4.py` |
 | **Engines Stage 4 (frozen)** | Done — frozen for reuse (spec v4.41); Nanni N4.65; instrument-panel start/stop; xliv affirmative station; `verify_engines_section_v4.py` |
-| **Global composition spine (v4.15)** | Done — `guide_composition_rules.py`; orphan/vocab/wisdom slot; B&E v2; xxxii–xxxv |
+| **Heads & waste Stage 4 (preparing)** | Playbook 2A — founding composer + discharge-valve inventory; Tecma Stage 1 still queued; **not** in `PUBLISHED_SECTIONS`; `verify_heads_section_v4.py` |
+| **Global composition spine (v4.15+)** | Done — `guide_composition_rules.py`; orphan/vocab/wisdom slot; B&E v2; xxxii–**xlv** (v4.42: places → Equipment Locations table, not inline capability) |
 | **Composition clarifications (v4.16)** | Done — same-breath check; sentence-initial spell-out; surface-bound adjusting |
 | **Composition clarifications (v4.17)** | Done — instruction occasion; paragraph-final pointers; ratings/daily/BMS co-location |
 | **Composition clarifications (v4.18)** | Done — provenance-leak vocabulary (`surveyed`/`attested`/…); Combi occasion re-check |
