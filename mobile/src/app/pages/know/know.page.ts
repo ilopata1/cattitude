@@ -196,7 +196,8 @@ export class KnowPage implements OnInit {
         const location = String(
           (row as { location?: unknown }).location || '',
         ).trim();
-        if (!name || !location) {
+        // Name may be blank on successive rows for the same equipment.
+        if (!location) {
           return null;
         }
         return { name, location };

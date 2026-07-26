@@ -714,16 +714,23 @@ def _validate_system_module(content_key: str, payload: Any) -> None:
                         f"equipment_locations section {index} row {row_index} "
                         "must be an object"
                     )
-                if not str(row.get("name") or "").strip():
-                    raise GuideGenerationError(
-                        f"equipment_locations section {index} row {row_index} "
-                        "missing name"
-                    )
-                if not str(row.get("location") or "").strip():
+                name = str(row.get("name") or "").strip()
+                location = str(row.get("location") or "").strip()
+                if not location:
                     raise GuideGenerationError(
                         f"equipment_locations section {index} row {row_index} "
                         "missing location"
                     )
+                # Successive rows for the same equipment may leave name blank.
+                if row_index == 0 and not name:
+                    raise GuideGenerationError(
+                        f"equipment_locations section {index} row 0 "
+                        "missing name"
+                    )
+            if not any(str(r.get("name") or "").strip() for r in rows if isinstance(r, dict)):
+                raise GuideGenerationError(
+                    f"equipment_locations section {index} has no named equipment row"
+                )
     learn_checks = payload.get("learnChecks")
     if learn_checks is not None and (
         not isinstance(learn_checks, list) or not learn_checks
@@ -839,7 +846,8 @@ def _normalize_system_section(section: dict[str, Any]) -> dict[str, Any]:
                 continue
             name = str(row.get("name") or "").strip()
             location = str(row.get("location") or "").strip()
-            if name and location:
+            # Name may be blank on successive rows for the same equipment.
+            if location:
                 fixed_rows.append({"name": name, "location": location})
         normalized["rows"] = fixed_rows
     return normalized

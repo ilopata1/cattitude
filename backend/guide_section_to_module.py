@@ -475,6 +475,10 @@ def _equipment_locations_section(
 
     Prefer devices cited in provenance (named/used in guest body). Fall back to
     ``full_keys`` when provenance has no ``graph.device:`` sources.
+
+    Each place instance is its own row. Successive rows for the same equipment
+    leave the Equipment cell blank (Location still filled) so the table reads
+    as a grouped list — never join places with `` · `` in one cell.
     """
     if not equipment_doc:
         return None
@@ -498,14 +502,22 @@ def _equipment_locations_section(
         if not labels:
             continue
         name = _device_display_name(equipment_doc, key)
-        location = " · ".join(labels)
-        dedupe = (name.lower(), location.lower())
-        if dedupe in seen:
-            continue
-        seen.add(dedupe)
-        rows.append({"name": name, "location": location})
+        for location in labels:
+            dedupe = (name.lower(), location.lower())
+            if dedupe in seen:
+                continue
+            seen.add(dedupe)
+            rows.append({"name": name, "location": location})
     if not rows:
         return None
+    # Suppress repeated Equipment labels on consecutive rows.
+    prev_name = ""
+    for row in rows:
+        name = str(row.get("name") or "").strip()
+        if prev_name and name.lower() == prev_name.lower():
+            row["name"] = ""
+        else:
+            prev_name = name
     return {
         "t": "Equipment Locations",
         "type": "equipment_locations",

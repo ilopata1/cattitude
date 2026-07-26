@@ -16,7 +16,11 @@
           },
           {
             "name": "Victron Energy SmartSolar MPPT 75/15",
-            "location": "Engine / Machinery Space – Engine Bay · Saloon / Living Area (Under sofa near chart table)"
+            "location": "Engine / Machinery Space – Engine Bay"
+          },
+          {
+            "name": "",
+            "location": "Saloon / Living Area (Under sofa near chart table)"
           },
           {
             "name": "Mastervolt Mass Combi Pro",
@@ -299,7 +303,11 @@
         "rows": [
           {
             "name": "Nanni N4.65",
-            "location": "Port – Engine / Machinery Space – Engine Bay · Starboard – Engine / Machinery Space – Engine Bay"
+            "location": "Port – Engine / Machinery Space – Engine Bay"
+          },
+          {
+            "name": "",
+            "location": "Starboard – Engine / Machinery Space – Engine Bay"
           }
         ]
       },
@@ -394,7 +402,15 @@
         "rows": [
           {
             "name": "Generic Blackwater Tank Discharge Valve",
-            "location": "Port – Accommodation / Cabins – Forward Cabin (Under tank in locker) · Starboard – Accommodation / Cabins – Forward Cabin (Under tank in locker) · Starboard – Bilge / Underfloor – Forward Bilge"
+            "location": "Port – Accommodation / Cabins – Forward Cabin (Under tank in locker)"
+          },
+          {
+            "name": "",
+            "location": "Starboard – Accommodation / Cabins – Forward Cabin (Under tank in locker)"
+          },
+          {
+            "name": "",
+            "location": "Starboard – Bilge / Underfloor – Forward Bilge"
           }
         ]
       },
@@ -472,7 +488,11 @@
           },
           {
             "name": "B&G Zeus SR Software",
-            "location": "Port – Helm / Navigation Station – Cockpit Helm · Starboard – Helm / Navigation Station – Cockpit Helm"
+            "location": "Port – Helm / Navigation Station – Cockpit Helm"
+          },
+          {
+            "name": "",
+            "location": "Starboard – Helm / Navigation Station – Cockpit Helm"
           },
           {
             "name": "Sea.AI Watchkeeper",

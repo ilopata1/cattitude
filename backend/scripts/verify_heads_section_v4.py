@@ -16,6 +16,7 @@ sys.path.insert(0, str(_BACKEND))
 from guide_composition_rules import assess_global_composition
 from guide_section_heads import compose_heads_section, evaluate_heads_draft
 from guide_section_to_module import _equipment_locations_section
+from guide_reader_voice import place_labels
 from section_inputs import assemble_section_inputs
 from stage4_substrate import places_for_device
 from system_graph import build_vessel_graph
@@ -116,6 +117,25 @@ def main() -> int:
     if valve_key and places_for_device(equipment_doc, str(valve_key)):
         if not locations or not locations.get("rows"):
             failures.append("expected Equipment Locations table rows from places")
+        else:
+            place_count = len(place_labels(places_for_device(equipment_doc, str(valve_key))))
+            if len(locations["rows"]) < place_count:
+                failures.append(
+                    "expected one Equipment Locations row per place instance; "
+                    f"got {len(locations['rows'])} rows for {place_count} places"
+                )
+            joined = any(" · " in str(r.get("location") or "") for r in locations["rows"])
+            if joined:
+                failures.append(
+                    "Equipment Locations must not join places with · in one cell"
+                )
+            names = [str(r.get("name") or "") for r in locations["rows"]]
+            if names and not names[0].strip():
+                failures.append("first Equipment Locations row must name the equipment")
+            if place_count >= 2 and not any(not n.strip() for n in names[1:]):
+                failures.append(
+                    "successive identical equipment names should blank after the first"
+                )
 
     if composed.get("freeze_status") != "frozen":
         failures.append(
