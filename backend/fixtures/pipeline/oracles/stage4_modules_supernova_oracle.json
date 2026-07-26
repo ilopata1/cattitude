@@ -19,10 +19,6 @@
             "location": "Engine / Machinery Space – Engine Bay · Saloon / Living Area (Under sofa near chart table)"
           },
           {
-            "name": "Victron Energy SmartSolar MPPT 150/60-Tr",
-            "location": "Saloon / Living Area (Under sofa near chart table)"
-          },
-          {
             "name": "Mastervolt Mass Combi Pro",
             "location": "Engine / Machinery Space – Engine Bay"
           },
@@ -201,19 +197,11 @@
         "type": "equipment_locations",
         "rows": [
           {
-            "name": "Blue Sea Class T fuse holder",
-            "location": "Engine / Machinery Space – Engine Bay"
-          },
-          {
             "name": "Blue Sea Systems Automatic Charging Relays (ACR)",
             "location": "Engine / Machinery Space – Engine Bay"
           },
           {
             "name": "CZone / Mastervolt Combination Output Interface (COI)",
-            "location": "Engine / Machinery Space – Engine Bay"
-          },
-          {
-            "name": "ProInstaller busbar",
             "location": "Engine / Machinery Space – Engine Bay"
           }
         ]
@@ -393,12 +381,82 @@
       }
     ]
   },
+  "heads": {
+    "id": "heads",
+    "icon": "🚽",
+    "title": "Heads & waste",
+    "subtitle": "3 blackwater tank discharge valves (Blackwater Tank Discharge Valve) are fitted and…",
+    "summary": "On Supernova, 3 blackwater tank discharge valves (Blackwater Tank Discharge Valve) are fitted and provide each tank's overboard discharge path — open a valve only when emptying the tanks at sea.\n\nElectric-head flush and waste rules for this section are still pending — heads model not yet confirmed.",
+    "sections": [
+      {
+        "t": "Equipment Locations",
+        "type": "equipment_locations",
+        "rows": [
+          {
+            "name": "Generic Blackwater Tank Discharge Valve",
+            "location": "Port – Accommodation / Cabins – Forward Cabin (Under tank in locker) · Starboard – Accommodation / Cabins – Forward Cabin (Under tank in locker) · Starboard – Bilge / Underfloor – Forward Bilge"
+          }
+        ]
+      },
+      {
+        "t": "How it works",
+        "type": "prose",
+        "c": "Marina pump-out uses the waste deck fitting with these valves left closed. Open a discharge valve only when emptying the tanks overboard.\n\nFresh-water supply for heads, when fitted, is covered in the Water Systems section of this guide; DC protection for sanitation circuits can be found in the Electrical Panel section of this guide.",
+        "html": "<p>Marina pump-out uses the waste deck fitting with these valves left closed. Open a discharge valve only when emptying the tanks overboard.</p><p>Fresh-water supply for heads, when fitted, is covered in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:water\">Water Systems section of this guide</span>; DC protection for sanitation circuits can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:electrical\">Electrical Panel section of this guide</span>.</p>"
+      },
+      {
+        "t": "Operating",
+        "type": "prose",
+        "c": "Keep the discharge valves closed in marinas, ports, harbors, and anchorages.\n\nEmpty the tanks at sea only where local rules allow — in international waters that is typically at least 12 nautical miles from land."
+      },
+      {
+        "t": "Related",
+        "type": "prose",
+        "c": "If something goes wrong with this system, open the Fix It cards for plumbing for quick troubleshooting cards.\n\nWhen you are learning the boat, tick off this chapter on the Learn the Boat checklist.",
+        "html": "<p>If something goes wrong with this system, open the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"fix:plumbing\">Fix It cards for plumbing</span> for quick troubleshooting cards.</p><p>When you are learning the boat, tick off this chapter on the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"do:learn\">Learn the Boat checklist</span>.</p>"
+      }
+    ],
+    "locs": [
+      "port-hull",
+      "stbd-hull"
+    ],
+    "learnChecks": [
+      "Can explain in one sentence what this system does on this boat",
+      "Can perform the main operating actions described in this chapter"
+    ],
+    "guideLinks": [
+      {
+        "target_kind": "system",
+        "target_id": "water",
+        "label": "Water Systems section of this guide",
+        "data_guide_link": "system:water"
+      },
+      {
+        "target_kind": "system",
+        "target_id": "electrical",
+        "label": "Electrical Panel section of this guide",
+        "data_guide_link": "system:electrical"
+      },
+      {
+        "target_kind": "fix",
+        "target_id": "plumbing",
+        "label": "Fix It cards for plumbing",
+        "data_guide_link": "fix:plumbing"
+      },
+      {
+        "target_kind": "learn",
+        "target_id": "learn",
+        "label": "Learn the Boat checklist",
+        "data_guide_link": "do:learn"
+      }
+    ]
+  },
   "nav": {
     "id": "nav",
     "icon": "🧭",
     "title": "Navigation & Helm",
     "subtitle": "Helm navigation runs through two chartplotters (B&G Zeus SR 12), which host Zeus SR…",
-    "summary": "On Supernova, helm navigation runs through two chartplotters (B&G Zeus SR 12), which host Zeus SR Software. A radar (B&G Halo 20+) is fitted on the boat network and is controlled from those displays. The home-screen apps include Chart, Radar, MOB, Waypoints & Routes, Tracks, Tides.",
+    "summary": "On Supernova, helm navigation runs through two chartplotters (B&G Zeus SR 12), which host Zeus SR Software. A radar (B&G Halo 20+) is fitted on the boat network and is controlled from those displays. An AI camera system (Sea.AI Watchkeeper) is fitted for object detection and is controlled from those displays. The home-screen apps include Chart, Radar, MOB, Waypoints & Routes, Tracks, Tides.",
     "sections": [
       {
         "t": "Equipment Locations",
@@ -414,15 +472,19 @@
           },
           {
             "name": "B&G Zeus SR Software",
-            "location": "Helm / Navigation Station"
+            "location": "Port – Helm / Navigation Station – Cockpit Helm · Starboard – Helm / Navigation Station – Cockpit Helm"
+          },
+          {
+            "name": "Sea.AI Watchkeeper",
+            "location": "Rigging & Sail Handling – Mast Base/Step"
           }
         ]
       },
       {
         "t": "How it works",
         "type": "prose",
-        "c": "The chartplotters display data from other devices on the boat network.\n\nA CZone Digital switching controller is available on the chartplotters; circuit control can be found in the Controls and Monitoring section of this guide.",
-        "html": "<p>The chartplotters display data from other devices on the boat network.</p><p>A CZone Digital switching controller is available on the chartplotters; circuit control can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:controls\">Controls and Monitoring section of this guide</span>.</p>"
+        "c": "The chartplotters display data from other devices on the boat network. Threat-level alarms (Object, Warning, and Danger) alert when objects are detected.\n\nA CZone Digital switching controller is available on the chartplotters; circuit control can be found in the Controls and Monitoring section of this guide.",
+        "html": "<p>The chartplotters display data from other devices on the boat network. Threat-level alarms (Object, Warning, and Danger) alert when objects are detected.</p><p>A CZone Digital switching controller is available on the chartplotters; circuit control can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:controls\">Controls and Monitoring section of this guide</span>.</p>"
       },
       {
         "t": "Turning it on",
@@ -432,12 +494,12 @@
       {
         "t": "Monitoring",
         "type": "prose",
-        "c": "Open Alerts when you want recent or historic system alerts on the chartplotters."
+        "c": "Open Alerts when you want recent or historic system alerts on the chartplotters.\n\nSelect thermal or color view from a chartplotter when you want live Watchkeeper camera images.\n\nEnable or disable the Watchkeeper voice alarm from a chartplotter when you want audible alerts for detected objects."
       },
       {
         "t": "Operating",
         "type": "prose",
-        "c": "Open the home screen when you need apps, settings, or alerts.\n\nOpen the Chart app from the home screen when you want navigation charts.\n\nOpen the Radar app from the home screen when you want the radar display, and set all radars to standby from a chartplotter when you want connected radars to stop transmitting.\n\nPin apps you use most often to the activity bar when you want faster access, and create a custom app group with New split when you want two or more apps on screen at once.\n\nActivate MOB in an emergency to create a MOB waypoint at the current position and open the MOB app."
+        "c": "Open the home screen when you need apps, settings, or alerts.\n\nOpen the Chart app from the home screen when you want navigation charts.\n\nOpen the Radar app from the home screen when you want the radar display, and set all radars to standby from a chartplotter when you want connected radars to stop transmitting.\n\nPin apps you use most often to the activity bar when you want faster access, and create a custom app group with New split when you want two or more apps on screen at once.\n\nActivate MOB in an emergency to create a MOB waypoint at the current position and open the MOB app.\n\nAdjust the Watchkeeper camera tilt when you need to compensate for boat trim at cruising speed."
       },
       {
         "t": "If something's not right",

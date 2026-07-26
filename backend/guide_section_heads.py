@@ -1,6 +1,6 @@
-"""Stage 4 Heads & waste — founding composer (Playbook 2; not frozen).
+"""Stage 4 Heads & waste — frozen for reuse (spec tip v4.45).
 
-Founding plant (Outremer / Supernova today):
+Plant (Outremer / Supernova today):
   full — blackwater_tank_discharge_valve (PASSIVE inventory members)
   summary / provenance — empty
 
@@ -13,10 +13,8 @@ Standing policy (Heads discharge valves):
   * Inventory **places** follow global xlv (Equipment Locations table —
     never inline in capability).
   * Electric heads model is **unknown** on Supernova until owner confirms —
-    emit honest ``fact_queries``; do not invent flush / waste-rule prose or
-    assume Tecma from the Cattitude checklist.
-  * Do not publish into ``PUBLISHED_SECTIONS`` until human review freezes
-    the section (Playbook 2 §D).
+    ship-with-honest-gaps ``heads_model_unknown``; do not invent flush /
+    waste-rule prose or assume Tecma from the Cattitude checklist.
 """
 
 from __future__ import annotations
@@ -106,7 +104,7 @@ def compose_heads_section(
     equipment_doc: dict[str, Any],
     section_inputs: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Compose Heads & waste Stage 4 (founding scaffold; not frozen)."""
+    """Compose Heads & waste Stage 4 (frozen tip v4.45; valves + honest gaps)."""
     boat = resolve_vessel_display_name(equipment_doc)
     inputs = section_inputs or assemble_section_inputs(
         graph, "heads", equipment_doc=equipment_doc
@@ -554,8 +552,8 @@ def compose_heads_section(
         "vessel_display_name": boat,
         "wisdom_slot": wisdom_slot,
         "fact_queries": fact_queries,
-        "version": "v4.0-founding",
-        "freeze_status": "preparing",
+        "version": "v4.1",
+        "freeze_status": "frozen",
         "review_round": "owner_valve_rules_v1",
     }
 
@@ -565,7 +563,7 @@ def evaluate_heads_draft(
     *,
     expected_inputs: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Evaluate founding Heads draft (pre-freeze criteria subset)."""
+    """Evaluate Heads draft against frozen criteria (tip v4.45)."""
     draft = str(composed.get("draft_markdown") or "")
     lower = draft.lower()
     boat = str(composed.get("vessel_display_name") or "")

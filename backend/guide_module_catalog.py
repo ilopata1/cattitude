@@ -113,7 +113,10 @@ SYSTEM_CATALOG: dict[str, dict[str, Any]] = {
         "icon": "🚽",
         "locs": ["port-hull", "stbd-hull"],
         "equipment_categories": ["sanitation"],
-        "focus": "Tecma electric heads, waste rules, breakers, macerator",
+        "focus": (
+            "Blackwater discharge valves, pump-out vs overboard empty rules; "
+            "electric heads model pending confirmation"
+        ),
         "review_title": "Heads & waste",
         "guest_label": "Learn + Know — heads",
     },

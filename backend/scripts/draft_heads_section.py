@@ -1,7 +1,6 @@
-"""Draft Heads & waste Stage 4 section for Outremer / Supernova (Playbook 2A).
+"""Draft Heads & waste Stage 4 section for Outremer / Supernova (frozen tip v4.45).
 
 Persists ``heads_section_inputs.json`` beside the draft for input-set review.
-Not frozen — founding scaffold until heads model inventory + human review.
 
 Review markdown includes the Equipment Locations table (same chip other
 sections emit via ``section_to_system_module``) above narrative prose —

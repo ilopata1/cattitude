@@ -20,15 +20,16 @@ from typing import Any, Callable
 from guide_section_batteries import compose_batteries_section
 from guide_section_controls import compose_controls_section
 from guide_section_electrical import compose_electrical_section
+from guide_section_engines import compose_engines_section
+from guide_section_heads import compose_heads_section
 from guide_section_nav import compose_nav_section
 from guide_section_solar import compose_solar_section
-from guide_section_water import compose_water_section
-from guide_section_engines import compose_engines_section
 from guide_section_to_module import (
     extract_module_metadata,
     section_to_system_module,
     solar_fold_sections,
 )
+from guide_section_water import compose_water_section
 from section_inputs import assemble_section_inputs
 from system_graph import build_vessel_graph
 
@@ -39,6 +40,7 @@ PUBLISHED_SECTIONS: tuple[str, ...] = (
     "controls",
     "electrical",
     "engines",
+    "heads",
     "nav",
     "water",
 )
@@ -49,6 +51,7 @@ _COMPOSERS: dict[str, tuple[Callable[..., dict[str, Any]], bool]] = {
     "controls": (compose_controls_section, True),
     "electrical": (compose_electrical_section, True),
     "engines": (compose_engines_section, True),
+    "heads": (compose_heads_section, True),
     "nav": (compose_nav_section, True),
     "solar": (compose_solar_section, False),
     "water": (compose_water_section, True),

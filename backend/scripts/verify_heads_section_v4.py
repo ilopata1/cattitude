@@ -1,4 +1,4 @@
-"""Verify Heads section inputs + founding composition (Playbook 2A; not frozen).
+"""Verify Heads section inputs + frozen composition (Playbook 2; tip v4.45).
 
 Usage (from backend/):
   python scripts/verify_heads_section_v4.py
@@ -117,9 +117,14 @@ def main() -> int:
         if not locations or not locations.get("rows"):
             failures.append("expected Equipment Locations table rows from places")
 
-    if composed.get("freeze_status") != "preparing":
+    if composed.get("freeze_status") != "frozen":
         failures.append(
-            f"expected freeze_status=preparing; got {composed.get('freeze_status')!r}"
+            f"expected freeze_status=frozen; got {composed.get('freeze_status')!r}"
+        )
+    if composed.get("version") != expect.get("version"):
+        failures.append(
+            f"version mismatch got={composed.get('version')!r} "
+            f"expected={expect.get('version')!r}"
         )
 
     if failures:
@@ -128,7 +133,7 @@ def main() -> int:
             print(f"  - {line}")
         return 1
 
-    print("OK — heads section founding (v4.0-founding) checks passed")
+    print("OK — heads section frozen (v4.1 / tip v4.45) checks passed")
     print(f"version={composed.get('version')} blocks={composed.get('block_order')}")
     return 0
 

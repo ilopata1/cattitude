@@ -181,7 +181,7 @@ Do **not** replace the fragment + approve path in one rewrite.
 | **Water systems Stage 4 (frozen)** | Done — frozen for reuse (spec v4.39); Dessalator Duo; NAVIGATOR panel; Mini Remote + flush omitted; `verify_water_section_v4.py` |
 | **Nav Stage 4 (frozen)** | Done — v4.43 Watchkeeper absorb (Zeus SR×2 + software + Halo + Sea.AI Watchkeeper); prior founding v4.37.6; `verify_nav_section_v4.py` |
 | **Engines Stage 4 (frozen)** | Done — frozen for reuse (spec v4.41); Nanni N4.65; instrument-panel start/stop; xliv affirmative station; `verify_engines_section_v4.py` |
-| **Heads & waste Stage 4 (preparing)** | Playbook 2A — founding composer + discharge-valve inventory; Tecma Stage 1 still queued; **not** in `PUBLISHED_SECTIONS`; `verify_heads_section_v4.py` |
+| **Heads & waste Stage 4 (frozen)** | Done — frozen for reuse (spec v4.45); discharge valves ×3 + places; honest `heads_model_unknown`; in `PUBLISHED_SECTIONS`; `verify_heads_section_v4.py` |
 | **Global composition spine (v4.15+)** | Done — `guide_composition_rules.py`; orphan/vocab/wisdom slot; B&E v2; xxxii–**xlv** (v4.42: places → Equipment Locations table, not inline capability) |
 | **Composition clarifications (v4.16)** | Done — same-breath check; sentence-initial spell-out; surface-bound adjusting |
 | **Composition clarifications (v4.17)** | Done — instruction occasion; paragraph-final pointers; ratings/daily/BMS co-location |

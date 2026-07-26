@@ -415,7 +415,7 @@ From `backend/`:
 
 | Role | Path |
 |------|------|
-| Spec tip | `backend/equipment-classification-spec-v4.44.md` (Stage 1 `control_surfaces[].hosting` + `display_host_unresolved`; prior v4.43 Nav Watchkeeper absorb; xlv places table; Engines freeze; frozen set = Solar + Batteries + Controls + Electrical + Nav + Water + Engines; Heads founding prepare) |
+| Spec tip | `backend/equipment-classification-spec-v4.45.md` (Heads Stage 4 freeze; prior v4.44 hosting extract; v4.43 Nav Watchkeeper; xlv places; Engines freeze; frozen set = Solar + Batteries + Controls + Electrical + Nav + Water + Engines + Heads) |
 | Pipeline plan | `backend/guide-pipeline-plan.md` |
 | Stage 4 → live integration plan | `backend/guide-stage4-integration-plan.md` (end-state wiring; phases; locked decisions) |
 | Fixture policy | `backend/tests/fixtures/POLICY.md` |
