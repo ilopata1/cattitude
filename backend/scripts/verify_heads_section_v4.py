@@ -7,6 +7,7 @@ Usage (from backend/):
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -129,6 +130,13 @@ def main() -> int:
                 failures.append(
                     "Equipment Locations must not join places with · in one cell"
                 )
+            for row in locations["rows"]:
+                blob = f"{row.get('name') or ''} {row.get('location') or ''}"
+                if re.search(r"\bGeneric\b", blob):
+                    failures.append(
+                        "Equipment Locations must not render manufacturer Generic"
+                    )
+                    break
             names = [str(r.get("name") or "") for r in locations["rows"]]
             if names and not names[0].strip():
                 failures.append("first Equipment Locations row must name the equipment")

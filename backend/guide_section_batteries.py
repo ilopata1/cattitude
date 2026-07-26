@@ -25,6 +25,7 @@ from guide_composition_rules import (
 from guide_reader_voice import (
     VesselNameMissing,
     assess_reader_voice_style,
+    format_guest_equipment_label,
     format_section_xref,
     resolve_vessel_display_name,
     section_xref_link,
@@ -148,7 +149,10 @@ def compose_batteries_section(
                 role = DISPLAY_NAMES.get(base) or "the devices"
                 bare = role.removeprefix("the ")
                 if mm:
-                    return f"{quantity} {bare} ({mm[0]} {mm[1]})"
+                    label = format_guest_equipment_label(mm[0], mm[1])
+                    if label:
+                        return f"{quantity} {bare} ({label})"
+                    return f"{quantity} {bare}"
                 return f"{quantity} {bare}"
             return DISPLAY_NAMES.get(base) or "the devices"
         role = DISPLAY_NAMES.get(key) or DISPLAY_NAMES.get(base) or "the device"
@@ -156,7 +160,9 @@ def compose_batteries_section(
             first_use.add(key)
             first_use.add(base)
             if mm:
-                return f"{role} ({mm[0]} {mm[1]})"
+                label = format_guest_equipment_label(mm[0], mm[1])
+                if label:
+                    return f"{role} ({label})"
             return role
         return role
 

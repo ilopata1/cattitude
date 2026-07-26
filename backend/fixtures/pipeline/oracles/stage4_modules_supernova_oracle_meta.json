@@ -702,7 +702,7 @@
       },
       {
         "id": "S10",
-        "sentence": "The DC distribution busbar (ProInstaller) — a heavy-duty conductor that distributes power — is the main power distribution point behind those protected connections.",
+        "sentence": "The DC distribution busbar (ProInstaller busbar) — a heavy-duty conductor that distributes power — is the main power distribution point behind those protected connections.",
         "sources": [
           "graph.device:busbar",
           "equipment.busbar"

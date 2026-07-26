@@ -58,6 +58,35 @@ def resolve_vessel_display_name(equipment_doc: dict[str, Any]) -> str:
     )
 
 
+def format_guest_equipment_label(
+    manufacturer: str | None,
+    model: str | None,
+) -> str:
+    """Guest-facing equipment label: omit placeholder manufacturer ``Generic``.
+
+    Admin / registry keep ``Generic`` as the manufacturer string; Know prose,
+    Equipment Locations, and fragment headings must not show that word.
+    """
+    mfr = str(manufacturer or "").strip()
+    mdl = str(model or "").strip()
+    if mfr.casefold() == "generic":
+        mfr = ""
+    if mdl.casefold() == "generic":
+        mdl = ""
+    elif mdl.casefold().startswith("generic "):
+        mdl = mdl[8:].lstrip()
+    return " ".join(p for p in (mfr, mdl) if p)
+
+
+def format_guest_equipment_paren(
+    manufacturer: str | None,
+    model: str | None,
+) -> str:
+    """Parenthetical `` (Label)`` for first-use guest prose, or empty string."""
+    label = format_guest_equipment_label(manufacturer, model)
+    return f" ({label})" if label else ""
+
+
 # ---------------------------------------------------------------------------
 # Style detectors (warnings only)
 # ---------------------------------------------------------------------------

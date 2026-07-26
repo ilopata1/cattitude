@@ -25,6 +25,8 @@ from guide_composition_rules import (
 from guide_reader_voice import (
     VesselNameMissing,
     assess_reader_voice_style,
+    format_guest_equipment_label,
+    format_guest_equipment_paren,
     format_section_xref,
     resolve_vessel_display_name,
     section_xref_link,
@@ -240,7 +242,7 @@ def compose_electrical_section(
         mm = MANUFACTURER_MODEL["class_t"]
         _emit(
             f"The house battery bank is protected by {_qty_word(n)} high-current "
-            f"Class-T fuses ({mm[0]} {mm[1]}) — fuses that protect the cables "
+            f"Class-T fuses{format_guest_equipment_paren(mm[0], mm[1])} — fuses that protect the cables "
             "carrying power from the bank if a major electrical fault occurs.",
             *[f"graph.device:{k}" for k in class_t_keys],
             "profile.class_t.device.model",
@@ -257,7 +259,7 @@ def compose_electrical_section(
     if has_acr:
         mm = MANUFACTURER_MODEL["blue_sea_acr"]
         _emit(
-            f"An automatic charging relay ({mm[0]} {mm[1]}) combines and "
+            f"An automatic charging relay{format_guest_equipment_paren(mm[0], mm[1])} combines and "
             "isolates battery banks based on charging voltage.",
             *[f"graph.device:{k}" for k in acr_keys],
             "profile.blue_sea_acr.device.model",
@@ -310,7 +312,8 @@ def compose_electrical_section(
         n = len(coi_keys)
         mm = MANUFACTURER_MODEL["coi"]
         _emit(
-            f"{_qty_word(n).capitalize()} CZone output interfaces ({mm[0]} {mm[1]}) "
+            f"{_qty_word(n).capitalize()} CZone output interfaces"
+            f"{format_guest_equipment_paren(mm[0], mm[1])} "
             "feed the switched DC circuits from the protected distribution. "
             "Use the CZone touchscreen when you need to switch those circuits; "
             f"details can be found in {controls_xref['phrase']}.",
@@ -376,7 +379,8 @@ def compose_electrical_section(
     if has_busbar:
         mm = MANUFACTURER_MODEL["busbar"]
         _emit(
-            f"The DC distribution busbar ({mm[0]}) — a heavy-duty conductor that "
+            f"The DC distribution busbar"
+            f"{format_guest_equipment_paren(mm[0], mm[1])} — a heavy-duty conductor that "
             "distributes power — is the main power distribution point behind "
             "those protected connections.",
             "graph.device:busbar",
@@ -387,7 +391,8 @@ def compose_electrical_section(
     if has_bridge:
         mm = MANUFACTURER_MODEL["masterbus_bridge_interface"]
         _emit(
-            f"The MasterBus–CZone bridge ({mm[0]} {mm[1]}) allows MasterBus "
+            f"The MasterBus–CZone bridge"
+            f"{format_guest_equipment_paren(mm[0], mm[1])} allows MasterBus "
             "equipment and the CZone network to exchange status and control "
             "across that boundary.",
             "graph.device:masterbus_bridge_interface",

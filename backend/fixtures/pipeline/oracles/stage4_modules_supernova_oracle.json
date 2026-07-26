@@ -244,8 +244,8 @@
       {
         "t": "Care & upkeep",
         "type": "prose",
-        "c": "The DC distribution busbar (ProInstaller) — a heavy-duty conductor that distributes power — is the main power distribution point behind those protected connections.\n\nThe MasterBus–CZone bridge (Mastervolt MasterBus Bridge Interface) allows MasterBus equipment and the CZone network to exchange status and control across that boundary.\n\nHouse-bank capacity, charging, and inverter-charger procedures can be found in the Batteries & Energy section of this guide.",
-        "html": "<p>The DC distribution busbar (ProInstaller) — a heavy-duty conductor that distributes power — is the main power distribution point behind those protected connections.</p><p>The MasterBus–CZone bridge (Mastervolt MasterBus Bridge Interface) allows MasterBus equipment and the CZone network to exchange status and control across that boundary.</p><p>House-bank capacity, charging, and inverter-charger procedures can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:batteries\">Batteries &amp; Energy section of this guide</span>.</p>"
+        "c": "The DC distribution busbar (ProInstaller busbar) — a heavy-duty conductor that distributes power — is the main power distribution point behind those protected connections.\n\nThe MasterBus–CZone bridge (Mastervolt MasterBus Bridge Interface) allows MasterBus equipment and the CZone network to exchange status and control across that boundary.\n\nHouse-bank capacity, charging, and inverter-charger procedures can be found in the Batteries & Energy section of this guide.",
+        "html": "<p>The DC distribution busbar (ProInstaller busbar) — a heavy-duty conductor that distributes power — is the main power distribution point behind those protected connections.</p><p>The MasterBus–CZone bridge (Mastervolt MasterBus Bridge Interface) allows MasterBus equipment and the CZone network to exchange status and control across that boundary.</p><p>House-bank capacity, charging, and inverter-charger procedures can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:batteries\">Batteries &amp; Energy section of this guide</span>.</p>"
       },
       {
         "t": "Related",
@@ -401,7 +401,7 @@
         "type": "equipment_locations",
         "rows": [
           {
-            "name": "Generic Blackwater Tank Discharge Valve",
+            "name": "Blackwater Tank Discharge Valve",
             "location": "Port – Accommodation / Cabins – Forward Cabin (Under tank in locker)"
           },
           {

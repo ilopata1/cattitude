@@ -17,6 +17,8 @@ from typing import Any
 from guide_reader_voice import (
     VesselNameMissing,
     assess_reader_voice_style,
+    format_guest_equipment_label,
+    format_guest_equipment_paren,
     format_section_xref,
     resolve_vessel_display_name,
     section_xref_link,
@@ -129,7 +131,9 @@ def compose_controls_section(
             role = DISPLAY_NAMES.get(key) or DISPLAY_NAMES.get(base) or "the device"
             mm = MANUFACTURER_MODEL.get(key) or MANUFACTURER_MODEL.get(base)
             if mm:
-                return f"{role} ({mm[0]} {mm[1]})"
+                label = format_guest_equipment_label(mm[0], mm[1])
+                if label:
+                    return f"{role} ({label})"
             return role
         return DISPLAY_NAMES.get(key) or DISPLAY_NAMES.get(base) or "the device"
 
@@ -353,8 +357,8 @@ def compose_controls_section(
         mm = MANUFACTURER_MODEL.get("mass_combi_pro") or ("Mastervolt", "Mass Combi Pro")
         batteries_xref = format_section_xref("batteries")
         _emit(
-            f"The Inverter Charger page shows the two inverter-chargers "
-            f"({mm[0]} {mm[1]}) for AC/DC power flow; those procedures can "
+            f"The Inverter Charger page shows the two inverter-chargers"
+            f"{format_guest_equipment_paren(mm[0], mm[1])} for AC/DC power flow; those procedures can "
             f"be found in {batteries_xref['phrase']}.",
             f"profile.{platform_key}.ui_pages[Inverter Charger]",
             *[f"graph.control_path->{k}" for k in combi_keys],

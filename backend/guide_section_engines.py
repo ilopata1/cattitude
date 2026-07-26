@@ -25,6 +25,7 @@ from guide_composition_rules import (
 )
 from guide_reader_voice import (
     assess_reader_voice_style,
+    format_guest_equipment_label,
     format_section_xref,
     resolve_vessel_display_name,
     section_xref_link,
@@ -149,10 +150,10 @@ def compose_engines_section(
             first_use.add(base)
             role = DISPLAY_NAMES.get(key) or DISPLAY_NAMES.get(base) or engines_phrase
             mm = MANUFACTURER_MODEL.get(key) or MANUFACTURER_MODEL.get(base)
-            if mm and mm[0]:
-                return f"{role} ({mm[0]} {mm[1]})"
             if mm:
-                return f"{role} ({mm[1]})"
+                label = format_guest_equipment_label(mm[0], mm[1])
+                if label:
+                    return f"{role} ({label})"
             return role
         return DISPLAY_NAMES.get(key) or DISPLAY_NAMES.get(base) or engines_phrase
 

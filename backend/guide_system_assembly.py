@@ -18,6 +18,7 @@ from __future__ import annotations
 from typing import Any
 
 from guide_module_catalog import SYSTEM_CATALOG
+from guide_reader_voice import format_guest_equipment_label
 
 # Systems that share equipment categories and therefore need home routing.
 _OVERLAP_CATEGORIES = frozenset({"electrical_dc", "electrical_ac"})
@@ -331,9 +332,10 @@ def _pick_system_entry(
 
 
 def _device_heading(row: dict[str, Any]) -> dict[str, Any]:
-    manufacturer = str(row.get("manufacturer") or "").strip()
-    model = str(row.get("model") or "").strip()
-    label = " ".join(p for p in (manufacturer, model) if p) or "Equipment"
+    label = (
+        format_guest_equipment_label(row.get("manufacturer"), row.get("model"))
+        or "Equipment"
+    )
     return {
         "t": label,
         "type": "prose",

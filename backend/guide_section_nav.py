@@ -30,6 +30,8 @@ from guide_composition_rules import (
 )
 from guide_reader_voice import (
     assess_reader_voice_style,
+    format_guest_equipment_label,
+    format_guest_equipment_paren,
     format_section_xref,
     resolve_vessel_display_name,
     section_xref_link,
@@ -174,10 +176,10 @@ def compose_nav_section(
             first_use.add(base)
             role = DISPLAY_NAMES.get(key) or DISPLAY_NAMES.get(base) or "the device"
             mm = MANUFACTURER_MODEL.get(key) or MANUFACTURER_MODEL.get(base)
-            if mm and mm[0]:
-                return f"{role} ({mm[0]} {mm[1]})"
             if mm:
-                return f"{role} ({mm[1]})"
+                label = format_guest_equipment_label(mm[0], mm[1])
+                if label:
+                    return f"{role} ({label})"
             return role
         return DISPLAY_NAMES.get(key) or DISPLAY_NAMES.get(base) or "the device"
 
@@ -359,7 +361,7 @@ def compose_nav_section(
 
     if len(zeus_hub_keys) >= 2:
         mm = MANUFACTURER_MODEL.get("bg_zeus_sr") or ("B&G", "Zeus SR 12")
-        chartplotters = f"two chartplotters ({mm[0]} {mm[1]})"
+        chartplotters = f"two chartplotters{format_guest_equipment_paren(mm[0], mm[1])}"
 
     _emit_topic(
         f"On {boat}, helm navigation runs through {chartplotters}, which host "
@@ -377,7 +379,7 @@ def compose_nav_section(
         first_use.add(re.sub(r"_\d+$", "", halo_key))
         mm = MANUFACTURER_MODEL.get("bg_halo_20_plus") or ("B&G", "Halo 20+")
         _emit_topic(
-            f"A radar ({mm[0]} {mm[1]}) is fitted on the boat network and is "
+            f"A radar{format_guest_equipment_paren(mm[0], mm[1])} is fitted on the boat network and is "
             f"controlled from those displays.",
             f"equipment.{halo_key}",
             f"profile.{halo_key}.data_roles",
@@ -394,7 +396,7 @@ def compose_nav_section(
         if fact_wk_ui and zeus_hub_keys:
             # Halo parallel: sensor fitted; UI on the chartplotters.
             _emit_topic(
-                f"An AI camera system ({mm[0]} {mm[1]}) is fitted for object "
+                f"An AI camera system{format_guest_equipment_paren(mm[0], mm[1])} is fitted for object "
                 "detection and is controlled from those displays.",
                 f"equipment.{watchkeeper_key}",
                 f"profile.{watchkeeper_key}.device",
@@ -405,7 +407,7 @@ def compose_nav_section(
             )
         elif fact_wk_ui:
             _emit_topic(
-                f"An AI camera system ({mm[0]} {mm[1]}) is fitted for object "
+                f"An AI camera system{format_guest_equipment_paren(mm[0], mm[1])} is fitted for object "
                 "detection and is controlled from the chartplotters.",
                 f"equipment.{watchkeeper_key}",
                 f"profile.{watchkeeper_key}.device",
@@ -428,7 +430,7 @@ def compose_nav_section(
                 }
             )
             _emit_topic(
-                f"An AI camera system ({mm[0]} {mm[1]}) is fitted for object "
+                f"An AI camera system{format_guest_equipment_paren(mm[0], mm[1])} is fitted for object "
                 "detection.",
                 f"equipment.{watchkeeper_key}",
                 f"profile.{watchkeeper_key}.device",

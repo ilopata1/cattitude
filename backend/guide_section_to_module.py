@@ -30,7 +30,12 @@ from typing import Any
 
 from guide_composition_rules import SECTION_SPINE, normalize_block
 from guide_module_catalog import SYSTEM_CATALOG
-from guide_reader_voice import format_fix_xref, format_learn_xref, place_labels
+from guide_reader_voice import (
+    format_fix_xref,
+    format_guest_equipment_label,
+    format_learn_xref,
+    place_labels,
+)
 from stage4_substrate import places_for_device
 
 # O3 — reader-facing headings per spine block. capability_summary is the module
@@ -458,12 +463,11 @@ def _device_display_name(
 ) -> str:
     row = _equipment_row_for_key(equipment_doc, device_key)
     if row:
-        mfr = str(row.get("manufacturer") or "").strip()
-        model = str(row.get("model") or "").strip()
-        if mfr and model:
-            return f"{mfr} {model}"
-        if model or mfr:
-            return model or mfr
+        label = format_guest_equipment_label(
+            row.get("manufacturer"), row.get("model")
+        )
+        if label:
+            return label
     return str(device_key or "").replace("_", " ").strip() or "Equipment"
 
 

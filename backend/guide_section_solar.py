@@ -33,6 +33,7 @@ from vessel_evidence import (
 from guide_reader_voice import (
     VesselNameMissing,
     assess_reader_voice_style,
+    format_guest_equipment_label,
     resolve_vessel_display_name,
 )
 
@@ -108,6 +109,8 @@ _FORBIDDEN_VOCAB_RES = (
     re.compile(r"\bnot (?:confirmed )?fitted\b", re.I),
     re.compile(r"\bnot confirmed\b", re.I),
     re.compile(r"\bnameplate\b", re.I),
+    # Registry placeholder manufacturer — never show in guest prose / labels.
+    re.compile(r"\bGeneric\b"),
 )
 
 _ABSENCE_PROSE_RES = (
@@ -153,8 +156,9 @@ def first_mention(device_key: str, *, quantity: int = 1) -> str:
         lead = f"{quantity} interchangeable {role.removeprefix('the ')}"
     else:
         lead = role
-    if mfr and model:
-        return f"{lead} ({mfr} {model})"
+    label = format_guest_equipment_label(mfr, model)
+    if label:
+        return f"{lead} ({label})"
     return lead
 
 
