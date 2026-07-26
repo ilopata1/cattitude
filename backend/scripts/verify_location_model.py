@@ -107,6 +107,14 @@ check(
     and hull_side_applicable("bilge_underfloor", "power_catamaran")
     and not hull_side_applicable("bilge_underfloor", "cruising_monohull"),
 )
+check(
+    "hull side: cockpit eligible on multihull only",
+    hull_side_applicable("cockpit", "sailing_catamaran")
+    and hull_side_applicable("cockpit", "sailing_trimaran")
+    and hull_side_applicable("cockpit", "power_catamaran")
+    and not hull_side_applicable("cockpit", "cruising_monohull")
+    and not hull_side_applicable("cockpit", "motor_yacht"),
+)
 
 
 # --- Bridgedeck saloon sub-zone -------------------------------------------

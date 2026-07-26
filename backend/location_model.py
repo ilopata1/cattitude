@@ -60,7 +60,9 @@ _ZONE_ORDER: list[tuple[str, str, bool]] = [
     ("galley", "Galley", False),
     ("head_bathroom", "Head / Bathroom", True),
     ("helm_nav_station", "Helm / Navigation Station", False),
-    ("cockpit", "Cockpit", False),
+    # Multihulls have distinct port/starboard cockpit areas (e.g. Outremer);
+    # hull side is offered only when vessel_type is multihull.
+    ("cockpit", "Cockpit", True),
     ("deck_bow_foredeck", "Deck \u2014 Bow / Foredeck", False),
     ("deck_side_decks_beam", "Deck \u2014 Side Decks & Beam", True),
     ("deck_stern_transom_swim_platform",
