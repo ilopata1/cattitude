@@ -115,6 +115,14 @@ check(
     and not hull_side_applicable("cockpit", "cruising_monohull")
     and not hull_side_applicable("cockpit", "motor_yacht"),
 )
+check(
+    "hull side: helm/nav eligible on multihull only",
+    hull_side_applicable("helm_nav_station", "sailing_catamaran")
+    and hull_side_applicable("helm_nav_station", "sailing_trimaran")
+    and hull_side_applicable("helm_nav_station", "power_catamaran")
+    and not hull_side_applicable("helm_nav_station", "cruising_monohull")
+    and not hull_side_applicable("helm_nav_station", "motor_yacht"),
+)
 
 
 # --- Bridgedeck saloon sub-zone -------------------------------------------

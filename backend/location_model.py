@@ -59,7 +59,9 @@ _ZONE_ORDER: list[tuple[str, str, bool]] = [
     ("saloon_living_area", "Saloon / Living Area", False),
     ("galley", "Galley", False),
     ("head_bathroom", "Head / Bathroom", True),
-    ("helm_nav_station", "Helm / Navigation Station", False),
+    # Multihulls often have distinct port/starboard helm stations;
+    # hull side is offered only when vessel_type is multihull.
+    ("helm_nav_station", "Helm / Navigation Station", True),
     # Multihulls have distinct port/starboard cockpit areas (e.g. Outremer);
     # hull side is offered only when vessel_type is multihull.
     ("cockpit", "Cockpit", True),
