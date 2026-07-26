@@ -165,6 +165,7 @@ Do **not** replace the fragment + approve path in one rewrite.
 | Quarantine bad harvested fragments / manual_type audit | Open (ops) |
 | Stage 1–2 offline spike | Done — Stage 1 map-reduce + voting + cal K/L/M; vessel Outremer live+stub Stage 2+3; see `equipment-classification-spec-v3.9.md` |
 | **Stage 1 display host (v4.44)** | Done — `control_surfaces[].hosting` + `display_host_unresolved` (Playbook 1C); Watchkeeper §1.D `external_mfd` |
+| **Stage 4 plant ops** | Fixture plant → `seed_stage4_substrate` / `make stage4-seed`; drift gate `make stage4-plant-drift`. Admin inventory ≠ Stage 4 plant (places overlay only; merge deferred Phase 4b) |
 | Stage 3–4 production wire-up | **Stage 4 Phases 1–3 shipped** (composers → substrate → admin Generate) — see `guide-stage4-integration-plan.md`. Stage 3 LLM tier still open; Phase 4 de-hardcode + 2nd vessel open |
 | **Queued:** CZone platform ui_pages action completeness | **Done** — Favourites/Alarms/Control/Monitoring via `reextract_czone_ui_pages.py` (Climate already); completeness `ok`; `promote_czone_2_0.py` |
 | Solar Stage 4 composition pilot (v2 rendering) | Superseded by v3 |

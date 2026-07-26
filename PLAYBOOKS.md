@@ -111,6 +111,18 @@ make pipeline-regression
 ```
 
 - [ ] Obtain human review before treating the profile as promoted.
+- [ ] If the vessel fixture plant changed (`equipment.json` / `profiles.json` /
+      `vessel_facts`), re-seed the live Stage 4 substrate and confirm no drift:
+
+```powershell
+cd backend
+make stage4-seed
+make stage4-plant-drift
+```
+
+  Stage 4 Generate reads ``vessel_stage4_equipment``, not admin inventory.
+  Skipping re-seed leaves published chapters on a stale plant (e.g. Watchkeeper
+  in admin but missing from Nav until seed).
 
 **Outputs**
 
@@ -120,6 +132,7 @@ make pipeline-regression
 - Instability report/vote audit
 - `Fixture-Auth` record for fixture changes
 - Optional `last_green/<device>/` diagnostic archive
+- Re-seeded Stage 4 substrate when plant changed
 
 ---
 
@@ -274,6 +287,16 @@ preserving history and removing stale graph state.
 - [ ] Rebuild the vessel graph and compare roles, paths, flags, and
       cross-references before/after.
 - [ ] Run offline fixture and vessel regression gates.
+- [ ] Re-seed Stage 4 substrate when the fixture plant changed, then confirm:
+
+```powershell
+cd backend
+make stage4-seed
+make stage4-plant-drift
+```
+
+  Admin ``vessel_equipment`` places overlay linked profiles; it does **not**
+  replace the Stage 4 plant. Full admin→plant merge remains deferred (Phase 4b).
 
 **Outputs**
 
@@ -282,6 +305,7 @@ preserving history and removing stale graph state.
 - Before/after graph report
 - Retired-node/dangling-reference result
 - Updated expected fixture with authorization
+- Re-seeded Stage 4 substrate when plant changed
 
 ---
 

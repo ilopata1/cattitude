@@ -4,7 +4,7 @@
 # Live extract gate (after extract_interaction_profile.py writes scratch):
 #   make pipeline-compare-scratch
 
-.PHONY: pipeline-verify pipeline-compare-scratch pipeline-regression stage4-bytematch stage4-substrate-match
+.PHONY: pipeline-verify pipeline-compare-scratch pipeline-regression stage4-bytematch stage4-substrate-match stage4-seed stage4-plant-drift
 
 pipeline-verify:
 	python scripts/verify_interaction_profile_validate.py
@@ -33,6 +33,15 @@ stage4-bytematch:
 # Substrate fidelity without location prose (places stripped from DB path).
 stage4-substrate-match:
 	python scripts/verify_stage4_modules.py --substrate-match --slug supernova
+
+# Re-seed Stage 4 plant + profiles from the Outremer fixture into live Supernova.
+# Required after fixture equipment.json / profiles.json / vessel_facts changes.
+stage4-seed:
+	python scripts/seed_stage4_substrate.py --slug supernova --fixture outremer
+
+# Fail when live substrate device_keys drift from the fixture plant.
+stage4-plant-drift:
+	python scripts/check_stage4_plant_drift.py --slug supernova --fixture outremer
 
 pipeline-compare-scratch:
 	python scripts/compare_smartsolar_scratch.py
