@@ -18,7 +18,13 @@ Live Generate/publish for frozen Stage 4 systems:
 
 ## Product constraints (keep)
 
-- **Ask** stays a separate RAG path over cleared manuals.
+- **Ask** stays a separate RAG path over cleared manuals. Later evaluate
+  **retrieval routing** (narrow or boost the manual subset from question +
+  vessel graph/section/power-path signals before top-k) — side-by-side probes
+  showed a compact topology card can help “where is the UI on this boat?”
+  answers, but wrong global top-k (e.g. toilets vs engine cooling) is not fixed
+  by synthesis context alone; do not wire graph into Ask until routing is
+  designed.
 - **Equipment prose** stays vessel-agnostic and reusable (`equipment_guide_fragment`).
 - **Sister ships** must still reuse approved fragments (“first boat pays”).
 - **Guest Know/Fix** exclude install / commissioning / dealer tooling.

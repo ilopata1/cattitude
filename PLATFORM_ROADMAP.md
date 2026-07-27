@@ -16,6 +16,11 @@ High-level delivery phases for the Clever Sailor / Cattitude platform. Detailed 
 
 See `cattitude-rag-implementation-plan.md` Stage 1.
 
+**Later (not started):** evaluate Ask **retrieval routing** — use question +
+vessel graph/section signals to subset or boost manuals before vector top-k,
+rather than stuffing topology into every synthesis prompt. See
+`backend/guide-pipeline-plan.md` (Ask product constraint).
+
 ---
 
 ## Phase 2 — Core platform & manual library
