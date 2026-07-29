@@ -1,0 +1,33 @@
+{
+  "fixture_auth": "Fixture-Auth: chat AC Stage 4 freeze tip v4.46 — Frigomar self-contained BLDC; passive station; no electrical circuit xref; no Configuration-pending when primary UI sourced; Climate + seawater intake queued; human-approved freeze",
+  "version": "v4.1",
+  "description": "Air Conditioning Stage 4 expectations for Outremer / Supernova (frozen tip v4.46).",
+  "recorded_vessel_display_name": "Supernova",
+  "expected_guide_link_targets": [],
+  "must_exclude_from_body_depth": [],
+  "expected_inputs": {
+    "contributors": [
+      {"device_key": "frigomar_air_conditioning_system", "depth": "full"}
+    ]
+  },
+  "expected_fact_query_ids": [
+    "ac_seawater_intake_location",
+    "ac_czone_climate_supported"
+  ],
+  "forbidden_prose_substrings": [
+    "control surface",
+    "masterbus",
+    "czone touch",
+    "frigomar_air_conditioning_system",
+    "day-to-day",
+    "Modbus",
+    "NMEA2000",
+    "NMEA 2000",
+    "Operators",
+    "Operator",
+    "Crew",
+    "Configuration pending",
+    "circuit protection"
+  ],
+  "style_deictics_soft": ["this vessel", "this boat", "this yacht"]
+}

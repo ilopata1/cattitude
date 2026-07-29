@@ -36,6 +36,8 @@ Invoke-Step "Controls section v4.10" "python scripts/verify_controls_section_v4.
 Invoke-Step "Batteries section v4.17" "python scripts/verify_batteries_section_v4.py"
 Invoke-Step "Electrical section v4.35" "python scripts/verify_electrical_section_v4.py"
 Invoke-Step "Field pack occasion v4.19" "python scripts/verify_field_pack_occasion.py"
+Invoke-Step "Phase 4 vessel B fixture" "python scripts/build_outremer_thinned_fixture.py"
+Invoke-Step "Phase 4 vessel B smoke" "python scripts/verify_stage4_vessel_b.py"
 
 if ($CompareScratch -or $Regression) {
     Invoke-Step "Live scratch vs SmartSolar golden" "python scripts/compare_smartsolar_scratch.py"

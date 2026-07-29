@@ -4,7 +4,7 @@
 # Live extract gate (after extract_interaction_profile.py writes scratch):
 #   make pipeline-compare-scratch
 
-.PHONY: pipeline-verify pipeline-compare-scratch pipeline-regression stage4-bytematch stage4-substrate-match stage4-seed stage4-plant-drift
+.PHONY: pipeline-verify pipeline-compare-scratch pipeline-regression stage4-bytematch stage4-substrate-match stage4-seed stage4-seed-vessel-b stage4-plant-drift stage4-phase4-verify stage4-vessel-b
 
 pipeline-verify:
 	python scripts/verify_interaction_profile_validate.py
@@ -22,7 +22,10 @@ pipeline-verify:
 	python scripts/verify_water_section_v4.py
 	python scripts/verify_engines_section_v4.py
 	python scripts/verify_heads_section_v4.py
+	python scripts/verify_ac_section_v4.py
 	python scripts/verify_stage4_modules.py
+	python scripts/build_outremer_thinned_fixture.py
+	python scripts/verify_stage4_vessel_b.py
 
 # Phase 2+ gate (needs DB seeded + frozen oracle under fixtures/pipeline/oracles/):
 #   python scripts/verify_stage4_modules.py --write-oracle --slug supernova
@@ -39,9 +42,32 @@ stage4-substrate-match:
 stage4-seed:
 	python scripts/seed_stage4_substrate.py --slug supernova --fixture outremer
 
+# Seed vessel B (Phase 4) — requires vessels.slug=sister-test already present.
+stage4-seed-vessel-b:
+	python scripts/build_outremer_thinned_fixture.py
+	python scripts/seed_stage4_substrate.py --slug sister-test --fixture outremer_thinned
+
 # Fail when live substrate device_keys drift from the fixture plant.
 stage4-plant-drift:
 	python scripts/check_stage4_plant_drift.py --slug supernova --fixture outremer
+
+# Phase 4 — shared device helpers + vessel B smoke (Outremer byte-match separate).
+stage4-phase4-verify:
+	python scripts/verify_composer_device.py
+	python scripts/verify_electrical_section_v4.py
+	python scripts/verify_controls_section_v4.py
+	python scripts/verify_nav_section_v4.py
+	python scripts/verify_batteries_section_v4.py
+	python scripts/verify_solar_section_v4.py
+	python scripts/verify_engines_section_v4.py
+	python scripts/verify_water_section_v4.py
+	python scripts/verify_heads_section_v4.py
+	python scripts/verify_ac_section_v4.py
+	python scripts/verify_stage4_vessel_b.py
+
+stage4-vessel-b:
+	python scripts/build_outremer_thinned_fixture.py
+	python scripts/verify_stage4_vessel_b.py
 
 pipeline-compare-scratch:
 	python scripts/compare_smartsolar_scratch.py

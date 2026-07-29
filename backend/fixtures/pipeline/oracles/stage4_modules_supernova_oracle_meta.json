@@ -1,4 +1,143 @@
 {
+  "ac": {
+    "section_id": "ac",
+    "version": "v4.1",
+    "provenance_map": [
+      {
+        "id": "S1",
+        "sentence": "On Supernova, cabin climate is handled by the air conditioner (Frigomar self-contained BLDC).",
+        "sources": [
+          "graph.device:frigomar_air_conditioning_system",
+          "equipment.frigomar_air_conditioning_system",
+          "vessel.display_name",
+          "profile.frigomar_air_conditioning_system.device"
+        ],
+        "kind": "sourced",
+        "block": "capability_summary",
+        "topic": "plant"
+      },
+      {
+        "id": "S2",
+        "sentence": "Routine control is from its wall-mounted touch-screen display.",
+        "sources": [
+          "graph.device:frigomar_air_conditioning_system",
+          "profile.frigomar_air_conditioning_system.control_surfaces"
+        ],
+        "kind": "sourced",
+        "block": "capability_summary",
+        "topic": "station"
+      },
+      {
+        "id": "S3",
+        "sentence": "From that panel you choose cooling, heating, dehumidification, automatic, or fan-only mode, set the temperature, and select fan speed.",
+        "sources": [
+          "profile.frigomar_air_conditioning_system.operator_actions",
+          "profile.frigomar_air_conditioning_system.control_surfaces"
+        ],
+        "kind": "sourced",
+        "block": "how_it_works",
+        "topic": "modes"
+      },
+      {
+        "id": "S4",
+        "sentence": "The unit is seawater-cooled; a seawater filter protects the pump.",
+        "sources": [
+          "profile.frigomar_air_conditioning_system.supply_requirements"
+        ],
+        "kind": "sourced",
+        "block": "how_it_works",
+        "topic": "seawater"
+      },
+      {
+        "id": "S5",
+        "sentence": "Turn the unit on from the wall-mounted touch-screen display when you want cooling or heating, and off when you are finished.",
+        "sources": [
+          "profile.frigomar_air_conditioning_system.operator_actions",
+          "profile.frigomar_air_conditioning_system.control_surfaces"
+        ],
+        "kind": "sourced",
+        "block": "startup",
+        "topic": "on_off"
+      },
+      {
+        "id": "S6",
+        "sentence": "The panel shows room temperature; alarms replace that reading in yellow until cleared.",
+        "sources": [
+          "profile.frigomar_air_conditioning_system.operator_actions",
+          "profile.frigomar_air_conditioning_system.alarm_severity",
+          "profile.frigomar_air_conditioning_system.control_surfaces"
+        ],
+        "kind": "sourced",
+        "block": "monitoring",
+        "topic": "display_alarms"
+      },
+      {
+        "id": "S7",
+        "sentence": "On the panel, set mode, temperature, and fan speed for the climate you want; night mode and a relative timer are also available there.",
+        "sources": [
+          "profile.frigomar_air_conditioning_system.operator_actions",
+          "profile.frigomar_air_conditioning_system.control_surfaces"
+        ],
+        "kind": "sourced",
+        "block": "adjusting",
+        "topic": "routine_adjust"
+      },
+      {
+        "id": "S8",
+        "sentence": "If an alarm appears, note the code on the panel, then clear it and restart the unit — or switch the unit off and on again.",
+        "sources": [
+          "profile.frigomar_air_conditioning_system.operator_actions",
+          "profile.frigomar_air_conditioning_system.safety_role"
+        ],
+        "kind": "composed_inference",
+        "block": "troubleshooting",
+        "topic": "alarm_restart"
+      },
+      {
+        "id": "S9",
+        "sentence": "To run the seawater pump alone, hold the mode button for ten seconds while the unit is off until the mode icon turns yellow.",
+        "sources": [
+          "profile.frigomar_air_conditioning_system.operator_actions"
+        ],
+        "kind": "sourced",
+        "block": "troubleshooting",
+        "topic": "pump_only"
+      },
+      {
+        "id": "S10",
+        "sentence": "Keep the seawater filter clean so the pump stays protected.",
+        "sources": [
+          "profile.frigomar_air_conditioning_system.supply_requirements"
+        ],
+        "kind": "sourced",
+        "block": "reference",
+        "topic": "filter_care"
+      }
+    ],
+    "guide_links": [],
+    "wisdom_slot": {
+      "status": "pending",
+      "sentence_id": null,
+      "block": "how_it_works",
+      "inference_ids": [],
+      "note": "AC wisdom pending — seawater/rough-sea operating practice not yet owner-sourced beyond filter requirement."
+    },
+    "fact_queries": [
+      {
+        "id": "ac_czone_climate_supported",
+        "query": "Confirm whether CZone Climate / supported HVAC commands this Frigomar installation on Supernova.",
+        "status": "queued",
+        "note": "Primary guest UI is the wall touch-screen; digital Climate path stays out of body until sourced (AC founding xxii narrow)."
+      },
+      {
+        "id": "ac_seawater_intake_location",
+        "query": "Confirm seawater seacock / strainer location for guest troubleshooting on this vessel.",
+        "status": "queued",
+        "note": "Intake path not in Stage 1 profile — omitted from guest body until sourced."
+      }
+    ],
+    "evaluation": null
+  },
   "batteries": {
     "section_id": "batteries",
     "version": "v4.21",

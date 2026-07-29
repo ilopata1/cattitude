@@ -1,0 +1,351 @@
+{
+  "device": {
+    "manufacturer": "Frigomar",
+    "model": "Air Conditioning System",
+    "category_freeform": "Air Conditioning System"
+  },
+  "control_surfaces": [
+    {
+      "surface": "remote_panel_accessory",
+      "location_class": "remote_wired",
+      "optional_accessory": false,
+      "label_verbatim": "wall-mounted touch-screen display",
+      "path": "control_surfaces[0]"
+    }
+  ],
+  "operator_actions": [
+    {
+      "action": "turn unit ON/OFF",
+      "audience": "operator",
+      "context": "daily",
+      "source": "extracted"
+    },
+    {
+      "action": "switch operating mode",
+      "audience": "operator",
+      "context": "situational",
+      "source": "extracted"
+    },
+    {
+      "action": "switch OFF the unit and then ON again",
+      "audience": "operator",
+      "context": "emergency",
+      "occasion": "if the problem persists after an alarm",
+      "source": "extracted"
+    },
+    {
+      "action": "set temperature via control panel",
+      "audience": "operator",
+      "context": "daily",
+      "source": "extracted"
+    },
+    {
+      "action": "adjust fan speed via control panel",
+      "audience": "operator",
+      "context": "daily",
+      "source": "extracted"
+    },
+    {
+      "action": "set temperature in Auto running mode",
+      "audience": "operator",
+      "context": "situational",
+      "occasion": "to measure indoor temperature",
+      "source": "extracted"
+    },
+    {
+      "action": "set indoor fan speed",
+      "audience": "operator",
+      "context": "situational",
+      "source": "extracted"
+    },
+    {
+      "action": "activate night mode",
+      "audience": "operator",
+      "context": "situational",
+      "source": "extracted"
+    },
+    {
+      "action": "set timer function",
+      "audience": "operator",
+      "context": "situational",
+      "source": "extracted"
+    },
+    {
+      "action": "set temperature unit and sensor choice",
+      "audience": "operator",
+      "context": "situational",
+      "source": "extracted"
+    },
+    {
+      "action": "delete alarm and restart unit",
+      "audience": "operator",
+      "context": "emergency",
+      "source": "extracted"
+    },
+    {
+      "action": "consult error codes and alarms",
+      "audience": "operator",
+      "context": "emergency",
+      "source": "derived",
+      "derived_from": "evidence[3]"
+    },
+    {
+      "action": "activate seawater pump only by holding mode button 10s while unit OFF",
+      "audience": "operator",
+      "context": "situational",
+      "occasion": "to run the seawater pump without cooling/heating",
+      "source": "adjudicated_extraction_omission"
+    }
+  ],
+  "networks": {
+    "speaks": [
+      {
+        "name_verbatim": "Modbus",
+        "physical_or_wireless": "wired"
+      },
+      {
+        "name_verbatim": "NMEA2000",
+        "physical_or_wireless": "wired"
+      }
+    ],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": true,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": true
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": true
+  },
+  "protected_by": [
+    {
+      "description_verbatim": "circuit breaker protects the electrical circuit"
+    }
+  ],
+  "protects": [],
+  "supply_requirements": [
+    {
+      "description_verbatim": "Install a seawater filter to protect the pump"
+    }
+  ],
+  "evidence": [
+    {
+      "supports_field": "operator_actions[action=\"turn unit ON/OFF\"]",
+      "manual_section": "6.1.2  TOUCH SCREEN DESCRIPTION:",
+      "note": "Describes ON/OFF button functionality"
+    },
+    {
+      "supports_field": "operator_actions[action=\"switch operating mode\"]",
+      "manual_section": "6.1.2  TOUCH SCREEN DESCRIPTION:",
+      "note": "Mode button cycles through operating modes"
+    },
+    {
+      "supports_field": "safety_role.has_emergency_procedure",
+      "manual_section": "7. 0 ALARMS",
+      "note": "emergency procedure for alarms includes switching unit OFF"
+    },
+    {
+      "supports_field": "operator_actions[action=set temperature via control panel]",
+      "manual_section": "6.4.1  TEMPERATURE SET POINT:",
+      "note": "Operator can set temperature using control panel"
+    },
+    {
+      "supports_field": "operator_actions[action=adjust fan speed via control panel]",
+      "manual_section": "6.3.1  FAN SPEED:",
+      "note": "Operator can adjust fan speed using control panel"
+    },
+    {
+      "supports_field": "data_roles.exposes_data_to_network",
+      "manual_section": "6.1.2  TOUCH SCREEN DESCRIPTION:",
+      "note": "Unit can be controlled via Modbus/NMEA2000 network."
+    },
+    {
+      "supports_field": "data_roles.controllable_from_network",
+      "manual_section": "6.1.2  TOUCH SCREEN DESCRIPTION:",
+      "note": "Unit can be commanded over Modbus/NMEA2000."
+    },
+    {
+      "supports_field": "control_surfaces[0]",
+      "manual_section": "6.0 WALL-MOUNTED TOUCH-SCREEN DISPLAY",
+      "note": "adjudicated: single wall-mounted touch-screen as remote_panel_accessory (remote wired); dropped duplicate physical_controls; not vessel command-station touchscreen"
+    },
+    {
+      "supports_field": "operator_actions[action=\"activate seawater pump only by holding mode button 10s while unit OFF\"]",
+      "manual_section": "6.2.1  MODE:",
+      "note": "adjudicated: mode held 10s while OFF runs seawater pump only (icon yellow)"
+    }
+  ],
+  "confidence": {
+    "overall": 0.9,
+    "notes": "[batch_0] Extracted actions and features based on provided manual excerpts. | [batch_1] Limited information available; focused on alarms and safety. | [batch_2] Limited excerpts provided; some actions inferred from context. | [batch_3] Manual excerpts provide clear operator actions and requirements."
+  },
+  "coverage": {
+    "chunk_count": 55,
+    "heading_count": 72,
+    "headings_covered_count": 54,
+    "heading_coverage_fraction": 0.75,
+    "coverage_low_threshold": 0.25,
+    "top_k_used": 7
+  },
+  "group_utilization": [
+    {
+      "group_id": "batch_0",
+      "is_introduction": true,
+      "excerpt_count": 10,
+      "predicted_fields": [
+        "control_surfaces",
+        "evidence",
+        "operator_actions",
+        "requires_devices",
+        "supply_requirements"
+      ],
+      "contributions": {
+        "operator_actions": 2,
+        "control_surfaces": 1,
+        "networks": 2,
+        "requires_devices": 0,
+        "evidence": 6,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "contribution_total": 11,
+      "unutilized": false
+    },
+    {
+      "group_id": "batch_1",
+      "is_introduction": false,
+      "excerpt_count": 10,
+      "predicted_fields": [
+        "evidence",
+        "operator_actions",
+        "requires_devices",
+        "safety_role",
+        "supply_requirements"
+      ],
+      "contributions": {
+        "operator_actions": 1,
+        "control_surfaces": 0,
+        "networks": 0,
+        "requires_devices": 0,
+        "evidence": 3,
+        "supply_requirements": 0,
+        "protected_by": 1,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 2
+      },
+      "contribution_total": 7,
+      "unutilized": false
+    },
+    {
+      "group_id": "batch_2",
+      "is_introduction": false,
+      "excerpt_count": 10,
+      "predicted_fields": [
+        "control_surfaces",
+        "evidence",
+        "operator_actions",
+        "requires_devices",
+        "ui_pages"
+      ],
+      "contributions": {
+        "operator_actions": 2,
+        "control_surfaces": 0,
+        "networks": 0,
+        "requires_devices": 0,
+        "evidence": 2,
+        "supply_requirements": 0,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "contribution_total": 4,
+      "unutilized": false
+    },
+    {
+      "group_id": "batch_3",
+      "is_introduction": false,
+      "excerpt_count": 8,
+      "predicted_fields": [
+        "evidence",
+        "operator_actions",
+        "requires_devices",
+        "ui_pages"
+      ],
+      "contributions": {
+        "operator_actions": 4,
+        "control_surfaces": 1,
+        "networks": 0,
+        "requires_devices": 0,
+        "evidence": 5,
+        "supply_requirements": 1,
+        "protected_by": 0,
+        "protects": 0,
+        "data_roles": 0,
+        "safety_role": 0
+      },
+      "contribution_total": 11,
+      "unutilized": false
+    }
+  ],
+  "merge_conflicts": [],
+  "genres": [
+    "installation",
+    "operation"
+  ],
+  "entity_kind": "device",
+  "ui_pages": [
+    {
+      "name": "Settings",
+      "purpose": "Adjust settings for temperature and sensors",
+      "actions": [
+        {
+          "action": "set temperature unit and sensor choice",
+          "audience": "operator",
+          "context": "situational"
+        },
+        {
+          "action": "delete alarm and restart unit",
+          "audience": "operator",
+          "context": "emergency"
+        }
+      ]
+    }
+  ],
+  "alarm_severity": [
+    {
+      "level_verbatim": "Important",
+      "color_verbatim": "Yellow"
+    }
+  ],
+  "validation_flags": [
+    {
+      "flag": "evidence_verbatim",
+      "severity": "warning",
+      "detail": "note has 21 words (max 12 for a paraphrase)",
+      "field_path": "evidence[7].note"
+    },
+    {
+      "flag": "evidence_support_mismatch",
+      "severity": "warning",
+      "detail": "evidence note better matches action 'activate seawater pump only by holding mode button 10s while unit OFF' than linked '\"turn unit ON/OFF\"'",
+      "field_path": "evidence[0].supports_field"
+    },
+    {
+      "flag": "extraction_omission_adjudicated",
+      "severity": "info",
+      "detail": "D1 protective_device=false; D2 single wall remote_panel_accessory (not command-station touchscreen); D3 genres install+operation; D4 seawater-pump-only mode action. Fixture-Auth: chat Frigomar Air Conditioning System Stage 1 extract — live extraction promoted; D1–D4 adjudicated (protective_device false, single wall remote_panel_accessory, genres install+operation, seawater-pump-only mode action); Supernova vessel_equipment saloon team_verified"
+    }
+  ],
+  "repairs": [],
+  "source": "live_extraction",
+  "needs_rextraction": false
+}

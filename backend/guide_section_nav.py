@@ -28,9 +28,19 @@ from guide_composition_rules import (
     WISDOM_PENDING,
     assess_global_composition,
 )
+from guide_composer_device import (
+    build_device_index,
+    catalog_base,
+    chartplotter_capability_phrase,
+    first_key_for_catalog,
+    first_key_matching_catalog_substring,
+    guest_manufacturer_model_for_catalog,
+    guest_role_phrase,
+    nav_platform_key,
+    nav_zeus_hub_keys,
+)
 from guide_reader_voice import (
     assess_reader_voice_style,
-    format_guest_equipment_label,
     format_guest_equipment_paren,
     format_section_xref,
     resolve_vessel_display_name,
@@ -60,24 +70,6 @@ SECTION_ORDER = (
     "troubleshooting",
     "reference",
 )
-
-DISPLAY_NAMES: dict[str, str] = {
-    "bg_zeus_sr": "the chartplotters",
-    "bg_zeus_sr_1": "the chartplotters",
-    "bg_zeus_sr_2": "the chartplotters",
-    "bg_zeus_sr_software": "Zeus SR Software",
-    "bg_halo_20_plus": "the radar",
-    "sea_ai_watchkeeper": "the AI camera system",
-}
-
-MANUFACTURER_MODEL: dict[str, tuple[str, str]] = {
-    "bg_zeus_sr": ("B&G", "Zeus SR 12"),
-    "bg_zeus_sr_1": ("B&G", "Zeus SR 12"),
-    "bg_zeus_sr_2": ("B&G", "Zeus SR 12"),
-    "bg_zeus_sr_software": ("B&G", "Zeus SR Software"),
-    "bg_halo_20_plus": ("B&G", "Halo 20+"),
-    "sea_ai_watchkeeper": ("Sea.AI", "Watchkeeper"),
-}
 
 _FORBIDDEN_EXTRA = (
     re.compile(r"\bmasterbus_bridge_interface\b", re.I),
@@ -128,6 +120,7 @@ def compose_nav_section(
 ) -> dict[str, Any]:
     """Compose Navigation & helm Stage 4 for the vessel (v4.37 founding)."""
     boat = resolve_vessel_display_name(equipment_doc)
+    device_index = build_device_index(equipment_doc)
     inputs = section_inputs or assemble_section_inputs(
         graph, "nav", equipment_doc=equipment_doc
     )
@@ -136,22 +129,20 @@ def compose_nav_section(
     summary_keys = keys_at_depth(inputs, DEPTH_SUMMARY)
     provenance_keys = keys_at_depth(inputs, DEPTH_PROVENANCE)
 
-    # Prefer instance keys; exclude the software platform key.
-    zeus_hub_keys = sorted(
-        k
-        for k in full_keys
-        if (k == "bg_zeus_sr" or k.startswith("bg_zeus_sr_"))
-        and "software" not in k
+    zeus_hub_keys = nav_zeus_hub_keys(full_keys, graph, device_index)
+    platform_key = nav_platform_key(full_keys, graph)
+    halo_key = first_key_for_catalog(full_keys, device_index, "bg_halo_20_plus")
+    if halo_key is None:
+        halo_key = first_key_matching_catalog_substring(
+            full_keys, device_index, "halo"
+        )
+    watchkeeper_key = first_key_for_catalog(
+        full_keys, device_index, "sea_ai_watchkeeper"
     )
-    platform_key = next(
-        (k for k in full_keys if graph.devices[k].role == "PLATFORM"),
-        None,
-    )
-    halo_key = next((k for k in full_keys if k.startswith("bg_halo")), None)
-    watchkeeper_key = next(
-        (k for k in full_keys if "watchkeeper" in k or k.startswith("sea_ai")),
-        None,
-    )
+    if watchkeeper_key is None:
+        watchkeeper_key = first_key_matching_catalog_substring(
+            full_keys, device_index, "watchkeeper"
+        )
 
     hub_profile: dict[str, Any] = {}
     if zeus_hub_keys:
@@ -168,20 +159,6 @@ def compose_nav_section(
     context_shaping_consumed: list[dict[str, Any]] = []
     config_placeholder_ids: list[str] = []
     fact_queries: list[dict[str, str]] = []
-
-    def _name(key: str) -> str:
-        base = re.sub(r"_\d+$", "", key)
-        if key not in first_use and base not in first_use:
-            first_use.add(key)
-            first_use.add(base)
-            role = DISPLAY_NAMES.get(key) or DISPLAY_NAMES.get(base) or "the device"
-            mm = MANUFACTURER_MODEL.get(key) or MANUFACTURER_MODEL.get(base)
-            if mm:
-                label = format_guest_equipment_label(mm[0], mm[1])
-                if label:
-                    return f"{role} ({label})"
-            return role
-        return DISPLAY_NAMES.get(key) or DISPLAY_NAMES.get(base) or "the device"
 
     def _emit(
         text: str,
@@ -349,19 +326,25 @@ def compose_nav_section(
     # ========== CAPABILITY (what is fitted) ==========
     # nav-ix: identity → fitted sensors → app inventory; no imperatives here.
     zeus_label_key = zeus_hub_keys[0] if zeus_hub_keys else "bg_zeus_sr"
-    chartplotters = _name(zeus_label_key)
+    chartplotters = chartplotter_capability_phrase(
+        zeus_hub_keys,
+        equipment_doc,
+        profiles,
+        index=device_index,
+        first_use=first_use,
+    )
     for k in zeus_hub_keys:
         first_use.add(k)
-        first_use.add(re.sub(r"_\d+$", "", k))
+        first_use.add(catalog_base(k))
 
-    plat_role = DISPLAY_NAMES.get(platform_key or "", "Zeus SR Software")
+    plat_role = (
+        guest_role_phrase(platform_key or "", device_index)
+        if platform_key
+        else "Zeus SR Software"
+    )
     if platform_key:
         first_use.add(platform_key)
-        first_use.add(re.sub(r"_\d+$", "", platform_key))
-
-    if len(zeus_hub_keys) >= 2:
-        mm = MANUFACTURER_MODEL.get("bg_zeus_sr") or ("B&G", "Zeus SR 12")
-        chartplotters = f"two chartplotters{format_guest_equipment_paren(mm[0], mm[1])}"
+        first_use.add(catalog_base(platform_key))
 
     _emit_topic(
         f"On {boat}, helm navigation runs through {chartplotters}, which host "
@@ -376,8 +359,10 @@ def compose_nav_section(
 
     if halo_key:
         first_use.add(halo_key)
-        first_use.add(re.sub(r"_\d+$", "", halo_key))
-        mm = MANUFACTURER_MODEL.get("bg_halo_20_plus") or ("B&G", "Halo 20+")
+        first_use.add(catalog_base(halo_key))
+        mm = guest_manufacturer_model_for_catalog(
+            "bg_halo_20_plus", equipment_doc, profiles, index=device_index
+        )
         _emit_topic(
             f"A radar{format_guest_equipment_paren(mm[0], mm[1])} is fitted on the boat network and is "
             f"controlled from those displays.",
@@ -390,8 +375,10 @@ def compose_nav_section(
 
     if watchkeeper_key:
         first_use.add(watchkeeper_key)
-        first_use.add(re.sub(r"_\d+$", "", watchkeeper_key))
-        mm = MANUFACTURER_MODEL.get(watchkeeper_key) or ("Sea.AI", "Watchkeeper")
+        first_use.add(catalog_base(watchkeeper_key))
+        mm = guest_manufacturer_model_for_catalog(
+            "sea_ai_watchkeeper", equipment_doc, profiles, index=device_index
+        )
         fact_wk_ui = _vessel_fact(equipment_doc, "watchkeeper_ui_on_zeus")
         if fact_wk_ui and zeus_hub_keys:
             # Halo parallel: sensor fitted; UI on the chartplotters.

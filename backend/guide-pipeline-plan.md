@@ -172,7 +172,7 @@ Do **not** replace the fragment + approve path in one rewrite.
 | Stage 1–2 offline spike | Done — Stage 1 map-reduce + voting + cal K/L/M; vessel Outremer live+stub Stage 2+3; see `equipment-classification-spec-v3.9.md` |
 | **Stage 1 display host (v4.44)** | Done — `control_surfaces[].hosting` + `display_host_unresolved` (Playbook 1C); Watchkeeper §1.D `external_mfd` |
 | **Stage 4 plant ops** | Fixture plant → `seed_stage4_substrate` / `make stage4-seed`; drift gate `make stage4-plant-drift`. Admin inventory ≠ Stage 4 plant (places overlay only; merge deferred Phase 4b) |
-| Stage 3–4 production wire-up | **Stage 4 Phases 1–3 shipped** (composers → substrate → admin Generate) — see `guide-stage4-integration-plan.md`. Stage 3 LLM tier still open; Phase 4 de-hardcode + 2nd vessel open |
+| Stage 3–4 production wire-up | **Stage 4 Phases 1–4 shipped** (composers → substrate → admin Generate → sister-test W4 human read). Class/role design note: `guide-stage4-class-role-design-note.md`. Stage 3 LLM tier still open |
 | **Queued:** CZone platform ui_pages action completeness | **Done** — Favourites/Alarms/Control/Monitoring via `reextract_czone_ui_pages.py` (Climate already); completeness `ok`; `promote_czone_2_0.py` |
 | Solar Stage 4 composition pilot (v2 rendering) | Superseded by v3 |
 | **Solar Stage 4 v3 (frozen)** | Superseded by v4 (spec v4.9) |
@@ -188,6 +188,7 @@ Do **not** replace the fragment + approve path in one rewrite.
 | **Nav Stage 4 (frozen)** | Done — v4.43 Watchkeeper absorb (Zeus SR×2 + software + Halo + Sea.AI Watchkeeper); prior founding v4.37.6; `verify_nav_section_v4.py` |
 | **Engines Stage 4 (frozen)** | Done — frozen for reuse (spec v4.41); Nanni N4.65; instrument-panel start/stop; xliv affirmative station; `verify_engines_section_v4.py` |
 | **Heads & waste Stage 4 (frozen)** | Done — frozen for reuse (spec v4.45); discharge valves ×3 + places; honest `heads_model_unknown`; in `PUBLISHED_SECTIONS`; `verify_heads_section_v4.py` |
+| **Air Conditioning Stage 4 (frozen)** | Done — frozen for reuse (spec v4.46); Frigomar self-contained BLDC; passive station; AC xxii narrow; in `PUBLISHED_SECTIONS`; `verify_ac_section_v4.py` |
 | **Global composition spine (v4.15+)** | Done — `guide_composition_rules.py`; orphan/vocab/wisdom slot; B&E v2; xxxii–**xlv** (v4.42: places → Equipment Locations table, not inline capability) |
 | **Composition clarifications (v4.16)** | Done — same-breath check; sentence-initial spell-out; surface-bound adjusting |
 | **Composition clarifications (v4.17)** | Done — instruction occasion; paragraph-final pointers; ratings/daily/BMS co-location |

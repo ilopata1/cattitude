@@ -28,9 +28,16 @@ from guide_composition_rules import (
     assess_global_composition,
     normalize_block,
 )
+from guide_composer_device import (
+    build_device_index,
+    catalog_base,
+    discharge_valve_quantity_phrase,
+    equipment_quantity,
+    guest_device_reference,
+    heads_section_member_keys,
+)
 from guide_reader_voice import (
     assess_reader_voice_style,
-    format_guest_equipment_label,
     format_section_xref,
     resolve_vessel_display_name,
     section_xref_link,
@@ -60,16 +67,6 @@ SECTION_ORDER = (
     "troubleshooting",
     "reference",
 )
-
-DISPLAY_NAMES: dict[str, str] = {
-    "blackwater_tank_discharge_valve": "the blackwater tank discharge valves",
-    "tecma_compass_eco": "the electric heads",
-}
-
-MANUFACTURER_MODEL: dict[str, tuple[str, str]] = {
-    "blackwater_tank_discharge_valve": ("", "Blackwater Tank Discharge Valve"),
-    "tecma_compass_eco": ("Tecma", "Compass Eco"),
-}
 
 # Standing Heads rule: never tell the guest to open discharge valves for
 # marina/deck pump-out (owner review Heads v4.0 / legacy Fix holding_tank_full).
@@ -107,6 +104,7 @@ def compose_heads_section(
 ) -> dict[str, Any]:
     """Compose Heads & waste Stage 4 (frozen tip v4.45; valves + honest gaps)."""
     boat = resolve_vessel_display_name(equipment_doc)
+    device_index = build_device_index(equipment_doc)
     inputs = section_inputs or assemble_section_inputs(
         graph, "heads", equipment_doc=equipment_doc
     )
@@ -115,14 +113,7 @@ def compose_heads_section(
     summary_keys = keys_at_depth(inputs, DEPTH_SUMMARY)
     provenance_keys = keys_at_depth(inputs, DEPTH_PROVENANCE)
 
-    valve_keys = [
-        k
-        for k in full_keys
-        if "discharge" in k or "blackwater" in k or "holding" in k
-    ]
-    # Non-valve heads-section members (toilets / macerators / etc.).
-    head_keys = [k for k in full_keys if k not in valve_keys]
-
+    valve_keys, head_keys = heads_section_member_keys(full_keys, device_index)
     valve_key = valve_keys[0] if valve_keys else None
     head_key = head_keys[0] if head_keys else None
 
@@ -146,18 +137,13 @@ def compose_heads_section(
     first_use: set[str] = set()
 
     def _name(key: str) -> str:
-        base = re.sub(r"_\d+$", "", key)
-        if key not in first_use and base not in first_use:
-            first_use.add(key)
-            first_use.add(base)
-            role = DISPLAY_NAMES.get(key) or DISPLAY_NAMES.get(base) or "the equipment"
-            mm = MANUFACTURER_MODEL.get(key) or MANUFACTURER_MODEL.get(base)
-            if mm:
-                label = format_guest_equipment_label(mm[0], mm[1])
-                if label:
-                    return f"{role} ({label})"
-            return role
-        return DISPLAY_NAMES.get(key) or DISPLAY_NAMES.get(base) or "the equipment"
+        return guest_device_reference(
+            key,
+            equipment_doc,
+            profiles,
+            index=device_index,
+            first_use=first_use,
+        )
 
     def _emit(
         text: str,
@@ -297,28 +283,16 @@ def compose_heads_section(
             topic="station",
         )
         if valve_key:
-            qty = 1
-            for row in equipment_doc.get("equipment") or []:
-                if not isinstance(row, dict):
-                    continue
-                if str(row.get("device_key") or "") == valve_key:
-                    try:
-                        qty = int(row.get("quantity") or 1)
-                    except (TypeError, ValueError):
-                        qty = 1
-                    break
-            mm = MANUFACTURER_MODEL.get(valve_key) or (
-                "",
-                "Blackwater Tank Discharge Valve",
-            )
-            model_bit = f" ({mm[1]})" if mm[1] else ""
-            valve_phrase = (
-                f"{qty} blackwater tank discharge valves{model_bit}"
-                if qty > 1
-                else f"a blackwater tank discharge valve{model_bit}"
+            qty = equipment_quantity(valve_key, equipment_doc, index=device_index)
+            valve_phrase = discharge_valve_quantity_phrase(
+                valve_key,
+                qty,
+                equipment_doc,
+                profiles,
+                index=device_index,
             )
             first_use.add(valve_key)
-            first_use.add(re.sub(r"_\d+$", "", valve_key))
+            first_use.add(catalog_base(valve_key))
             _emit(
                 f"{valve_phrase[0].upper()}{valve_phrase[1:]} provide each "
                 "tank's overboard discharge path — open a valve only when "
@@ -335,26 +309,22 @@ def compose_heads_section(
                 topic="valves",
             )
     elif valve_key:
-        qty = 1
-        for row in equipment_doc.get("equipment") or []:
-            if not isinstance(row, dict):
-                continue
-            if str(row.get("device_key") or "") == valve_key:
-                try:
-                    qty = int(row.get("quantity") or 1)
-                except (TypeError, ValueError):
-                    qty = 1
-                break
-        mm = MANUFACTURER_MODEL.get(valve_key) or ("", "Blackwater Tank Discharge Valve")
-        model_bit = f" ({mm[1]})" if mm[1] else ""
+        qty = equipment_quantity(valve_key, equipment_doc, index=device_index)
+        valve_phrase = discharge_valve_quantity_phrase(
+            valve_key,
+            qty,
+            equipment_doc,
+            profiles,
+            index=device_index,
+        )
         if qty > 1:
-            plant = f"{qty} blackwater tank discharge valves{model_bit}"
+            plant = valve_phrase
             verb = "are"
         else:
-            plant = f"a blackwater tank discharge valve{model_bit}"
+            plant = valve_phrase
             verb = "is"
         first_use.add(valve_key)
-        first_use.add(re.sub(r"_\d+$", "", valve_key))
+        first_use.add(catalog_base(valve_key))
         _emit(
             f"On {boat}, {plant} {verb} fitted and provide each tank's "
             "overboard discharge path — open a valve only when emptying "

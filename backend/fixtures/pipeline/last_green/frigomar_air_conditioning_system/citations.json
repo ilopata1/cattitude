@@ -1,0 +1,1627 @@
+{
+  "manuals": [
+    {
+      "id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "title": "Instruction Manual",
+      "manual_type": "operators",
+      "legal_status": "cleared"
+    }
+  ],
+  "manuals_available": [
+    {
+      "id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "title": "Instruction Manual",
+      "manual_type": "operators",
+      "legal_status": "cleared"
+    }
+  ],
+  "manual_selection_policy": "operators",
+  "excerpts": [
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 2,
+      "page_end": 2,
+      "query": "operation daily use display menu controls operator",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.4734761884266785,
+      "text": ".............................................................................................. 20 \n6.1.1  INSTALLATION .......................................................................................................................................................... 20 \n6.1.2  TOUCH SCREEN DESCRIPTION: ............................................................................................................................. 21 \n6.2.1  MODE: ................",
+      "source_heading_guess": null
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 21,
+      "page_end": 21,
+      "query": "operation daily use display menu controls operator",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.45995883512007596,
+      "text": "Instruction manual    Pag. 21 of 32     Rev. 20180919 \n6.1.2  TOUCH SCREEN DESCRIPTION:\n\nWhen unit is ON, ON/OFF button is green color, pressing ON/OFF button turns into white color and unit stop. \nPressing ON/OFF button again, white turns into green and unit switches ON.  \nAt first switch ON the system will start in cooling mode, Auto fan speed, and temperature setting = 23\u00b0C, at \neach subsequent switch ON it will recover the previous setting of mode, fan speed and temperature set. \nAll the other menus can be set both in ON/OFF situation, back-up light is activated after the first touch, then \nit is possible to make selections.\n\nALARMS DO NOT ACTIVATE BACK-UP LIGHT AUTOMATICALLY, IT WILL BE ACTIVATED ONCE THE SCREEN IS \nTOUCHED \n6.2.1  MODE: \nWhen unit is ON, mode button can switch in a cycle from cooling mode  (snowflake) to heating mode \n (flame), dehumidification mode  (drop), automatic mode  \u201cA\u201d, fan mode  . \nThe selection of the operating mode cooling / heating /dehumidification/Auto can be done IN 2 DIFFERENT \nWAYS: from the thermostat panel or via Modbus/Nmea2000(IEC 61162-3).",
+      "source_heading_guess": "6.1.2  TOUCH SCREEN DESCRIPTION:"
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 24,
+      "page_end": 24,
+      "query": "operation daily use display menu controls operator",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.4575804216873195,
+      "text": "Instruction manual    Pag. 24 of 32     Rev. 20180919 \n6.7.1  SETTINGS:\n\nPressing the fan button over 5 s, setting window will be displayed as below:  \nThe current choice will be highlighted. \nTemperature unit and sensor choice is available. \nThe selected button will be highlighted after operation.\n\nWhen finish the choice, press       to go to ne next page.  \nOnce selected the probe, in case it fails, the unit will stop and alarm E1 will be displayed. \nIt will be possible to delete the alarm and restart the unit by replacing the probe or switching to the other \nprobe from the setting page. If switching to the other probe, not replacing the one out of order, the alarm \nwill be deleted and it will appear again only if reselecting the previous one.\n\nLtn (display backlight duration in seconds) value setting with range 10-99, default value=60s:\n\nWhen finish the choice, press   to go to ne next page, press   to go to ne previous page.\n\nBuzzer activation page:\n\nWhen finish the choice, press  to go to ne next page, press   to go to ne previous page.\n\nDisplay \nSelf-contained unit \nInternal temperature sensor \nExternal temperature sensor",
+      "source_heading_guess": "6.7.1  SETTINGS:"
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 2,
+      "page_end": 2,
+      "query": "operation daily use display menu controls operator",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.45602138313223994,
+      "text": "5.1.7  AIR STERILIZATION SYSTEM UVA/UVC (OPTIONAL) ............................................................................................ 19",
+      "source_heading_guess": null
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 25,
+      "page_end": 25,
+      "query": "operation daily use display menu controls operator",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.4511492166829245,
+      "text": "Instruction manual    Pag. 25 of 32     Rev. 20180919 \nDef (default settings restore) setting and exit page:\n\nThe YES button will be highlighted if selected, if no default setting restore is needed it is possible to change \nwindow, press        to go next page, press        to go previous page. \nExit and save page:\n\nIf YES button is selected it will be lighted for 2s and changes become effective and screen come back to \nmain page.",
+      "source_heading_guess": "Instruction manual    Pag. 25 of 32     Rev. 20180919"
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 20,
+      "page_end": 20,
+      "query": "operation daily use display menu controls operator",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.44450255161101593,
+      "text": "Instruction manual    Pag. 20 of 32     Rev. 20180919 \n6.0 WALL-MOUNTED TOUCH-SCREEN DISPLAY\n\nThe self-contained wall-mounted touch-screen display is inside the machine\u2019s package with his connection \ncable (max 5m) and fixing screws. The display is preassembled on Bticino LN4704 support compatible with in-\nbuilt wall box 504 and aesthetic cover Bticino and Vimar. \nThe maximal dimensions of installed display are as below.\n\n6.1.1  INSTALLATION \nInstall the Self-contained wall-mounted touch-screen display away from doors and/or windows and from heat \nsources around 1.5m from the floor then proceed with the following operations: \n- drill holes in the wall (for in-built box 504 or rectangular min. dimension 93mm x 50mm); \n- pass the cable from machine throw the wall and exit from the in-built box (or rectangular hole); \n- connect the cable in the connector placed in rear side of display; \n- fix the display (from Bticino LN4704 support) to the wall using suitable screws; \n- place the aesthetic cover Bticino or Vimar upside the support and around the display;\n\nwall-mounted touch-\nscreen display \nFixing screws \nWall \nHole for in-built \nbox 405 or \nrectangular \nhole 93x50mm \nAesthetic cover",
+      "source_heading_guess": "6.0 WALL-MOUNTED TOUCH-SCREEN DISPLAY"
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 2,
+      "page_end": 2,
+      "query": "operation daily use display menu controls operator",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.44340327811714075,
+      "text": ".......................................................................... 22 \n6.5.1  NIGHT MODE: .......................................................................................................................................................... 23 \n6.6.1  TIMER FUNCTION: .................................................................................................................................................... 23 \n6.7.1  SETTINGS: .............",
+      "source_heading_guess": null
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 2,
+      "page_end": 2,
+      "query": "installation wiring commissioning configuration DIP switches",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.48321535691504613,
+      "text": "5.1.4  CIRCUIT BREAKER .................................................................................................................................................... 17",
+      "source_heading_guess": null
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 16,
+      "page_end": 16,
+      "query": "installation wiring commissioning configuration DIP switches",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.44870874412131134,
+      "text": "Instruction manual    Pag. 16 of 32     Rev. 20180919 \n5.1.3  ELECTRICAL CONNECTION\n\nWarning \nIt is important that the electrical system is done according to the rules, respecting the data provided in \nchapter Technical data and it shall be properly grounded.\n\nFIXING  \nThe electrical box is delivered fixed on the self-contained unit, however in case of limited space during \ninstallation it can be detached (by 3 screws) and fixed elsewhere at a max distance of 1m. It must be \ninstalled inside a space provided with suitable ventilation.\n\nGround connection\n\nCP : contact for remote compressor activation, when closed the unit works normally and can be managed \nvia thermostat display, when CP is open the unit goes into stand-by and cannot be activated by thermostat \ndisplay, SB is shown on the display to indicate this condition.\n\nImportant: in case of connecting two or more units in parallel the CP digital inputs of each unit must be kept \nseparated.\n\nTERMINAL BOARD:\n\nGround connection \nL, N  Line supply voltage 115 or 230 VAC/1ph/50-60 Hz \nN1, L1 power to seawater pump  \nCP remote activation (digital input) \nELECTRICAL BOX \nCompressore driver \nSSPM \nMAIN MCU (Control logic)+",
+      "source_heading_guess": "5.1.3  ELECTRICAL CONNECTION"
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 2,
+      "page_end": 2,
+      "query": "installation wiring commissioning configuration DIP switches",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.44257386763394746,
+      "text": "..................................................................................................... 7 \n4.1.3 RESPONSIBILITY ........................................................................................................................................................... 8 \n5.0 INSTALLATION ......................................................................................................................................................",
+      "source_heading_guess": null
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 2,
+      "page_end": 2,
+      "query": "installation wiring commissioning configuration DIP switches",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.43872191808354155,
+      "text": ".............................................................................. 8 \n5.1.1 HYDRAULIC CONNECTIONS ................................................................................................................................... 10 \n5.1.2 AIR DUCTS CONNECTION ....................................................................................................................................... 13 \n5.1.3  ELECTRICAL CONNECTION .......................................",
+      "source_heading_guess": null
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 26,
+      "page_end": 26,
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.5753881570353762,
+      "text": "Instruction manual    Pag. 26 of 32     Rev. 20180919 \n7. 0 ALARMS \nAlarms codes will be displayed in yellow colour instead of the current temperature, alarm history will be \ndisplayed in the service menu (only relative time, last one on top) \n7.1.1 ALARMS and troubleshooting  \nE1: Room temperature: sensor failure \nE2: Evaporator coil temperature: sensor failure  \nE3: Water outlet temperature: sensor failure (water outlet temperature) \nE4: Condenser temperature: sensor failure  \nE5: Indoor DC Fan failure \nE6: Communication error between Main MCU and room thermostat \nE7: Communication error between Main MCU and SSPM \nE8: Compressor discharge temperature: sensor failure  \nLT:  Low outdoor coil temperature in heating mode \nLP:  Low pressure alarm \nHP: High pressure alarm\n\nIn case of alarm from E1 to E7 please try to switch OFF the unit and then ON again, if the problem persists \ncall a Frigomar authorized service.\n\nHP alarm in cooling mode could be due to obstructed seawater circuit or to the seawater pump not \nworking properly (e.g. thermal load protection). Please check visually the seawater discharge overboard,",
+      "source_heading_guess": "7. 0 ALARMS"
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 2,
+      "page_end": 2,
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.48787079650730414,
+      "text": "........................................ 23 \n6.7.1  SETTINGS: .................................................................................................................................................................. 24 \n7. 0 ALARMS ........................................................................................................................................................................... 26 \n7.1.1 ALARMS and troubleshooting ............................................................................................................................... 26 \n8. 0 WORKING LIMITS ............................................................................................................................................................ 26 \n9.0  WARRANTY TERMS ......................................................................................................................................................... 27 \n9.1.1  LIMITED WARRANTY: ............................................................................................................................................... 27",
+      "source_heading_guess": null
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 17,
+      "page_end": 17,
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.47501625982068907,
+      "text": "Instruction manual    Pag. 17 of 32     Rev. 20180919 \n5.1.4  CIRCUIT BREAKER\n\nThis device protect the electrical circuit from damage caused by excess current from an overload or short \ncircuit. Its basic function is to interrupt current flow after a fault Is detected. \nIt can be reset manually through the pin (see images below) to resume normal operations. \nBefore the reset it is very IMPORTANT to know the causes of the device intervention and to have completely \nsolved them.\n\nIt is possible to remote the electrical box by following these steps: \n1. Remove the electric box metal cover                       2. Unscrew the 3 electrical box fixing screws\n\nNORMAL \nOPERATION \nDuring normal \noperation the pin  \nremains inside \nthe device \nCURRENT FLOW \nINTERRUPTION \nDuring current flow \ninterruption the pin \ncomes out of the \ndevice (about 6mm)\n\nPRESS TO RESET",
+      "source_heading_guess": "5.1.4  CIRCUIT BREAKER"
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 26,
+      "page_end": 26,
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.44561542792571085,
+      "text": "In case of LT alarm, the problem could be due to poor seawater circulation or seawater temperature too \nlow (below 5\u00b0C). Please check first the seawater flow as above specified.\n\n8. 0 WORKING LIMITS \nThe unit operates correctly within the following ranges: \n\u00b7 Summer cooling mode: 15\u00b0C < sea water temperature < 40\u00b0C \n\u00b7 Winter heating mode: 5\u00b0C < sea water temperature < 20\u00b0C \nShould working conditions be out of these ranges, in your particular application, please contact Frigomar \nbefore installation in order to find a suitable solution.",
+      "source_heading_guess": "8. 0 WORKING LIMITS"
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 2,
+      "page_end": 2,
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.4348920422598622,
+      "text": "................................................................................................................................. 5 \n4.1.1 SAFETY MEASURES ...................................................................................................................................................... 7 \n4.1.2 PROHIBITIONS ........................................................................................................................",
+      "source_heading_guess": null
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 30,
+      "page_end": 30,
+      "query": "maintenance service storage winterizing",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.4494531339319279,
+      "text": "The original installer or OEM is responsible for the \naccessibility of the Frigomar product; \nFailures due to improper winterization; \nPumps with cracked heads or pumps that have been run dry, are water damaged or have blown freeze plugs; \nThe following components: pump seals, UV light bulbs, sea strainer elements, cartridge filter elements, sand & \ngravel in a multi-media filter, pump packing assemblies, pump valve assemblies, pump crankcase oil, fuses, \nvalve seals and packings, membrane elements and liquid line filter dryers; \nMis-programmed displays; \nLogic boards and display heads with water damage; \nEnvironmental and/or recovery fees; \nDamages occurring as a result of normal wear or aging; \nReplacement of refrigerant with substitute without Frigomar preauthorization; \nWelding and Nitrogen Fees.",
+      "source_heading_guess": "The original installer or OEM is responsible for the"
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 30,
+      "page_end": 30,
+      "query": "maintenance service storage winterizing",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.41563446691540373,
+      "text": "Instruction manual    Pag. 30 of 32     Rev. 20180919 \n5. To keep the condenser coil free of sediment and scale. \n6. To check monthly and replace (if needed) zinc anodes on seawater condenser (if applied). \n7. To keep clean the fan coil water circuit. \n8. To pay the charges incurred when any of the above has not been done. \n9. To pay for repair or replacement of any material or part other than those within the Frigomar unit. \n10. To check any fuses on the circuit board and replace as required.\n\nThis warranty shall not apply to:\n\nFailures resulting from improper or faulty installation, installation that does not comply with Frigomar\u2019s \ninstructions or otherwise, installation that does not comply with any American Boat and Yacht Council \nstandards, and any damage resulting from such; \nAbuse, misuse of equipment, natural disasters, flooding, fire, submerge, any water leakage, or use contrary to \ninstructions; \nItems not manufactured by Frigomar; \nTransport: product damage as a result of improper return packaging or other freight damage; \nNegligent servicing; \nWrong electrical and hydraulic connections; \nPower supply not in according to manufacturer\u2019s specifications;",
+      "source_heading_guess": "The original installer or OEM is responsible for the"
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 7,
+      "page_end": 7,
+      "query": "maintenance service storage winterizing",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.41025749922662835,
+      "text": "When refilling the system, after eventual leakage and repair, be sure that inside the refrigerant circuit does \nnot enter any substance, such as air, other than the specified refrigerant (R410A). The presence of air or \nother foreign substances in the circuit of refrigerant may cause an abnormal increase of pressure or \nbreakage, resulting in personal injury.\n\nIn the case of water spills from sweater circuit, switch off immediately compressor and seawater pump and \nshut off Manual Valves in order to stop the seawater flow.\n\nDuring the cold period if the unit is not in use, drain all the hydraulic circuits connected to the unit, as well as \nseawater condenser to prevent them from freezing.\n\nSome parts of the appliance produce heat during operation. The room installation must ensure adequate \nventilation and proper heat dissipation.\n\n4.1.2 PROHIBITIONS\n\nWe remember that the use of products that use electricity and water involves the observance of some \nbasic safety rules such as:\n\n\uf0b7 It is forbidden the use by children and unassisted disabled people.  \n\uf0b7 Do not touch the appliance when barefoot or with wet or damp parts of the body.",
+      "source_heading_guess": "4.1.2 PROHIBITIONS"
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 2,
+      "page_end": 2,
+      "query": "maintenance service storage winterizing",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.383078976619305,
+      "text": "..................................... 21 \n6.2.1  MODE: ...................................................................................................................................................................... 21 \n6.2.2  AUTO RUNNING MODE: ......................................................................................................................................... 21 \n6.2.3  COOLING MODE: ..............................................",
+      "source_heading_guess": null
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 2,
+      "page_end": 2,
+      "query": "maintenance service storage winterizing",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.38304930457154696,
+      "text": ".... 21 \n6.2.3  COOLING MODE: ................................................................................................................................................... 22 \n6.2.4  DEHUMIDIFICATION MODE: .................................................................................................................................. 22 \n6.2.5  HEATING MODE: ....................................................................................................",
+      "source_heading_guess": null
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 13,
+      "page_end": 13,
+      "query": "optional accessory gateway interface required for",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.30821823332780607,
+      "text": "Instruction manual    Pag. 13 of 32     Rev. 20180919 \n5.1.2 AIR DUCTS CONNECTION\n\nIMPORTANT! The diameter of the duct should not be less than the diameter of the outlet nozzle.\n\n\uf0b7 SELF CONTAINED ART SCU07VFD (up to 7.000 BTU/h) ducts diameter 120 mm / 152 mm \n\uf0b7 SELF CONTAINED ART SCU10VFD (up to 10.000 BTU/h) ducts diameter 120 mm / 152 mm \n\uf0b7 SELF CONTAINED ART SCU12VFD (up to 12.000 BTU/h) ducts diameter 152 mm \n\uf0b7 SELF CONTAINED ART SCU16VFD (up to 16.000 BTU/h) ducts diameter 152 mm\n\nThe standard machine\u2019s configuration provides the fan outlet flange (rectangular 135x125mm form) as air \ndelivery duct. Are available as optionals two models of flange adapters for ducts \u00d8120mm and \u00d8152mm.\n\n120 mm / 150 mm flange adapters (optional)  \nIn order to connect the \u00d8120mm ducts, it is possible to use a circular adapter (with external diameter \n120mm) to be fixed by means of appropriate screws directly on the fan outlet flange. \nFor \u00d8152mm ducts, after installing the \u00d8120mm adapter flange, can be fitted over it an additional diameter \nexpansion adapter (oval shape), which must be fixed by a metal clamp.",
+      "source_heading_guess": "5.1.2 AIR DUCTS CONNECTION"
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 22,
+      "page_end": 22,
+      "query": "MasterView remote panel remote control display panel monitoring panel MasterAdjust",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.3552813814121951,
+      "text": "6.4.1  TEMPERATURE SET POINT: \nPressing any of \u25b3\u25bdbutton, the room temperature will shift to setting temperature in flashing. \nPressing any of \u25b3\u25bd again, setting temperature will be rising or going down.  \nThe temperature setting mode will be quit automatically in 5s if no any operation. The number will display \nthe current room temperature, without flashing any more \nDuring temperature setting period, if any other button pressed, the temperature setting situation will be quit \nimmediately.",
+      "source_heading_guess": "6.4.1  TEMPERATURE SET POINT:"
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 6,
+      "page_end": 6,
+      "query": "shore power AC input current limit generator mains",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.3910460461445481,
+      "text": "Instruction manual    Pag. 6 of 32     Rev. 20180919\n\nProgressive start (no current peaks)  \nThe starting ramp begins at very low frequency (18 Hz) allowing to eliminate peak current at start-up.\n\nPowerful operation \nThe compressor accelerates to up to 90 HZ (max cooling/heating capacity) after the starting phase, in order \nto reach very quickly the room temperature set point.\n\nComfort  \nThe INVERTER air conditioner continuously adjusts the compressor capacity, adapting to changes in the \nthermal load, and it allows to keep the air temperature stable, always near the Set Point value, without \nsharp fluctuations. \nThanks to the \"Brushless DC \" motor and to the sound-absorbing insulation silence is guaranteed during \noperation.\n\nECO mode (depending on fan speed selected)  \nThe air conditioner INVERTER can vary its capacity during operation, while the traditional system can only \noperate with a fixed capacity. By selecting the minimum fan speed, the compressor will automatically \nswitch to low frequency thus reducing considerably the electrical power consumption. That can be useful \nfor the energy balance in case other electrical appliances are being used simultaneously.",
+      "source_heading_guess": "Instruction manual    Pag. 6 of 32     Rev. 20180919"
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 11,
+      "page_end": 11,
+      "query": "shore power AC input current limit generator mains",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.3705808245507014,
+      "text": "Instruction manual    Pag. 11 of 32     Rev. 20180919\n\nSEA WATER CIRCUIT  \nInstalling seawater electric-pump\n\nThe sea water electric-pump is needed to circulate the amount of water required in the heat exchanger. \nThis pump is normally centrifugal type and not self-priming type, so it must be mounted so that it is always at \nleast 20 cm below the waterline. The electric-pump should be fixed through silent blocks possibly in a sound \ninsulated environment.",
+      "source_heading_guess": "SEA WATER CIRCUIT"
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 5,
+      "page_end": 5,
+      "query": "main switch inverter on off charger operation",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.4751235353117569,
+      "text": "Instruction manual    Pag. 5 of 32     Rev. 20180919 \n3.0 UNIT DESCRIPTION\n\nBrushless DC Inverter Technology  \nThis technology is applied to control the speed of the compressor allowing continuous adjustment of the \ntemperature, in contrast to traditional air conditioning systems where the temperature is controlled by a \ncompressor that can run only at full speed or complete stop.  \nThe system is equipped with a \"Brushless DC\" variable speed compressor and relative inverter regulator able \nto change and control the motor speed.  \nThe elimination of intermittent (ON / OFF) cycles allows to increase considerably the energy efficiency, the \nlifespan of components and increasing the on-board comfort without temperature and relative humidity \nfluctuations.\n\nBy using unit INVERTER \"Brushless DC\u201d it is possible install on board a smaller power generator than the one \nnecessary for operating a traditional ON/OFF air conditioning.\n\nEnergy Saving (40-50% reduction in electrical demand )  \nAs the air temperature approaches the set point value, the inverter control regulates the capacity by",
+      "source_heading_guess": "3.0 UNIT DESCRIPTION"
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 31,
+      "page_end": 31,
+      "query": "Close relay reset battery safety event recovery after disconnect",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.32151080644692653,
+      "text": "The \nrecovered refrigerant must be sent to the appropriate recovery centers in appropriate cylinders with \ninstructions for transport. Do not mix different refrigerants in recovery devices, especially in cylinders. During \ntransport, the space in which the air conditioners are charged must not be sealed. When loading and \nunloading the air conditioners, provide for the correct protection measures to prevent the units from being \ndamaged. When dismantling the compressor or removing the compressor oil, make sure that the \ncompressor is adequately depressurized to prevent the presence of residual amounts of refrigerant in the \nlubricating oil. Complete emptying before returning the compressor to the manufacturer. Pay attention to \nsafety when draining the oil from the system.\n\nNOTE:",
+      "source_heading_guess": "The"
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 31,
+      "page_end": 31,
+      "query": "Close relay reset battery safety event recovery after disconnect",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.3044298399201104,
+      "text": "Instruction manual    Pag. 31 of 32     Rev. 20180919 \n10.0  DISPOSAL AND GAS RECOVERY \n10.1.1  DISPOSAL OF THE EQUIPMENT AND PARTS: \nDisposal of the equipment and parts of it must be done in compliance with the laws in force \nfor the differentiated disposal of waste and / or recycling. \n10.1.2  REFRIGERANT FLUORINATED GAS RECOVERY:\n\nDuring the maintenance or disposal interventions it is necessary to empty the refrigeration system from the \nrefrigerant. The emptying operation requires precision. The refrigerant must be loaded in a special tank \n(cylinder), with a capacity suitable to contain all the refrigerant present in the refrigeration system. The \ncylinders must be specially labeled so that specify clearly that they are destined to contain recovery \nrefrigerant; they must be used for one type of refrigerant (dedicated tank for recovery refrigerant). The \ncylinders must be equipped with working pressure and shut-off valves. If possible, the empty cylinder must \nbe placed under vacuum and kept at normal temperature before use. The devices used for the recovery \nmust be in good condition and equipped with instructions for use; they must be suitable for the recovery of",
+      "source_heading_guess": "10.0  DISPOSAL AND GAS RECOVERY"
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 22,
+      "page_end": 22,
+      "query": "Climate page HVAC air conditioner aircon temperature control fan setpoint",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.6487927638707219,
+      "text": "6.2.5  HEATING MODE: \nIn heating mode, setting range is 18\u2103-30\u2103. \nWhen Troom\u2265Tset + 1\u2103 and compressor running time \u22653 minutes, seawater pump will be stopped 1s later \nthan compressor. Indoor fan motor will run at low speed to blow out the reserved heat, and maximum \nrunning 30s. \nWhen Troom=Tset compressor will start decreasing frequency 1Hz/30sm, minimum frequency 18Hz, if \nTroom\u2264Tset + 1\u2103 frequency will start increasing 1Hz/20s till setting speed is reached. \nWhen Troom\u2264Tset - 1\u2103 and compressor stop time =3minutes, seawater pump starts and compressor starts 5s \nlater Indoor fan motor will run only when the heat exchanger is warm enough. \n6.3.1  FAN SPEED: \nWhen pressing fan speed button, 4 possible running speeds will be showed in a closed cycle: minimum \nspeed (minimum fan symbol size)  , medium speed (medium fan symbol size) , maximum speed \n(maximum fan symbol size) , automatic fan speed  (maximum fan symbol with internal \u201cA\u201d, to have \ndifferent symbol from automatic mode). \nWhen selecting automatic fan speed, the fan speed will be regulated according to the difference between \nTamb and Tset (minimum speed  for DT\u22642\u00b0C, medium speed for 2\u00b0C<DT\u22644\u00b0C and maximum speed for",
+      "source_heading_guess": "6.2.5  HEATING MODE:"
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 2,
+      "page_end": 2,
+      "query": "Climate page HVAC air conditioner aircon temperature control fan setpoint",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.6313560554220059,
+      "text": "................................................................................................................. 22 \n6.3.1  FAN SPEED: ............................................................................................................................................................... 22 \n6.4.1  TEMPERATURE SET POINT: .............................................................................................................................",
+      "source_heading_guess": null
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 21,
+      "page_end": 21,
+      "query": "Climate page HVAC air conditioner aircon temperature control fan setpoint",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.602051084807136,
+      "text": "6.2.2  AUTO RUNNING MODE: \nWhen set to Auto running mode for first time, the indoor fan will run 20s at low speed to measure the indoor \ntemperature, then decide the running mode accord to the difference between setting temperature Tset \nand room temperature Troom. Set temperature range 20\u00f726\u00b0C, default setting 23\u00b0C \nIf any temperature sensor failed, unit stops and related alarm code is displayed. \nWhen unit running in Auto mode: \nIf running in fan mode, the unit will read the difference between room temperature and setting temperature \ncontinuously until mode shift condition is satisfied. Unit will shift to required mode immediately. Compressor \nwill run on the step according to indoor fan speed choice. \nIf running in cooling or heating mode, only after compressor off over 20 minutes, the running mode will be \nselected again according to temperature difference. \nIndoor fan speed can be set freely among auto, low, medium, high. \nMode Fan \nspeed \nNight \nON/OFF \nTemp + \nTemp - \nTimer \nTemperature: current room \ntemperature or settings",
+      "source_heading_guess": "6.2.2  AUTO RUNNING MODE:"
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 22,
+      "page_end": 22,
+      "query": "Climate page HVAC air conditioner aircon temperature control fan setpoint",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.5985884638211355,
+      "text": "Instruction manual    Pag. 22 of 32     Rev. 20180919 \n6.2.3  COOLING MODE: \nIn this mode the setting range is 18\u2103-30\u2103. \nWhen Troom \u2264Tset - 1\u2103 and compressor running time \u2265 3 minutes, compressor will be stopped and seawater \npump will be stopped 1 s later. Indoor fan motor keeps running at setting speed. \nWhen Troom=Tset compressor will start decreasing frequency 1Hz/30sm, minimum frequency 20Hz, forbidden \nfrequencies will be avoided, if Troom\u2265Tset + 1\u2103 frequency will start increasing 1Hz/20s till setting speed is \nreached. \nWhen Troom =Tset + 1\u2103 and compressor stop time \u22653 minutes seawater pump starts and compressor starts \n5s later. Indoor fan motor will run at the setting speed. \nIf any temperature sensor failed, unit stops and related alarm code is displayed. \n6.2.4  DEHUMIDIFICATION MODE: \nWhen set to Dehumidification mode for the first time, the indoor fan will run 60s at low speed to measure the \nindoor temperature Tamb, dehumidification function will run until Troom > Tamb-2\u00b0C, if Troom \u2264 Tamb-2\u00b0C \nunit will run in fan mode minimum speed. \nWhen set to dehumidification mode, indoor fan is forced to run at low speed.",
+      "source_heading_guess": "6.2.3  COOLING MODE:"
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 23,
+      "page_end": 23,
+      "query": "CLIMATE CONTROLS Power Mode Temp Fan air conditioning",
+      "retrieval_phase": "scaled_query",
+      "retrieval_score": 0.5939186391138002,
+      "text": "Instruction manual    Pag. 23 of 32     Rev. 20180919\n\n6.5.1  NIGHT MODE: \nWhen unit is on, pressing night mode button  on the touch thermostat to enter night mode .\n\nIn cooling mode if night mode is activated, after 1 hour, setting temperature increase 1\u2103 automatically. \nAfter another 1 hour, increase another 1\u2103 (totally 2 \u2103 in 2 hours). Then keep it and unit will stop after running \nfor other 6 hours (totally running for 8 hours).\n\nIn heating mode: if night mode is activated, after 1 hour, setting temperature decrease 2\u2103 automatically. \nAfter another 1 hour, decrease another 2\u2103 (totally 4\u2103 in 2 hours). Then keep it and unit will stop after \nrunning for other 6 hours (totally running for 8 hours). \nIf set the night mode and timer OFF simultaneously, Timer OFF function is with first priority.\n\nNight mode activated, fan speed will shift to low speed. \n6.6.1  TIMER FUNCTION: \nWhen clock icon   is pressed it turns into active  and the unit enters into timer mode, if icon is pressed \nagain function is released and icon turn back to . Setting time is relative to current time. \nWhen air conditioner is running, Timer OFF can be set by pressing Timer symbol. After timer symbol lightened,",
+      "source_heading_guess": "6.5.1  NIGHT MODE:"
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 7,
+      "page_end": 7,
+      "query": "4.0 GENERAL NOTICES",
+      "retrieval_phase": "heading_fill",
+      "retrieval_score": 0.3766156898873593,
+      "text": "Instruction manual    Pag. 7 of 32     Rev. 20180919 \n4.0 GENERAL NOTICES\n\n4.1.1 SAFETY MEASURES\n\nThis instruction manual is an integral part of the appliance and therefore must be kept with care and must \nALWAYS accompany the appliance even in case of its sale to another owner or user or to a transfer to \nanother plant. In case it is damaged or lost, request another copy from the Technical Service of the area.\n\nDuring all operations on the device it is necessary to observe the precautions specified in this manual and \non the labels attached to the appliance, as well as all the precautions suggested by common sense, and \nthe safety regulations currents at the place of installation.\n\nPlease read this manual carefully before proceeding with any operation (installation, maintenance, use) \nand follow scrupulously the instructions contained in the individual chapters. Failing to comply with the \ninstructions contained in this manual and use the appliance outside the operating limits specified will void \nthe warranty.\n\nMake known these instructions to all staff interested at the machine.",
+      "source_heading_guess": "4.0 GENERAL NOTICES"
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 18,
+      "page_end": 18,
+      "query": "3. The electrical box can be moved far from the self-contained for max.1m",
+      "retrieval_phase": "heading_fill",
+      "retrieval_score": 0.5713393851921965,
+      "text": "Instruction manual    Pag. 18 of 32     Rev. 20180919 \n3. The electrical box can be moved far from the self-contained for max.1m\n\n4. Replace this screw \n5.1.6  ELECTRICAL BOX WALL HANGING (OPTIONAL) \nTo hang the electrical box on the wall it is necessary to have the appropriate (optional) wall fixing brackets. \nThese brackets must always be assembled in paris: one in the upper and one in the lower edge of the \nelectrical box cover, fixed by the 4 screws for fixing the cover.\n\nThe holes on the two folds that protrude (up and down) from the \nelectrical box must be used to fix the electrical box assembly to \nthe wall using 4 screws not supplied.\n\nTo open the box just repeat these operations in reverse\n\nWALL",
+      "source_heading_guess": "5.1.4  CIRCUIT BREAKER"
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 15,
+      "page_end": 15,
+      "query": "4. To keep the units clean and free of dirt, to keep the air filters clean as well as the air heat exchangers.",
+      "retrieval_phase": "heading_fill",
+      "retrieval_score": 0.47751470360683546,
+      "text": "Instruction manual    Pag. 15 of 32     Rev. 20180919 \nAIR FILTER  \nThe air conditioner sucks air from the environment through an air-gas exchanger equipped with aluminium \nfins having small pitch. A filter must be located upstream the exchanger in order to protect it from dust.\n\nNOTE: the filter must be easy reachable to be extracted for the normal operations of cleaning and / or \nreplacement whenever required.",
+      "source_heading_guess": "AIR FILTER"
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 19,
+      "page_end": 19,
+      "query": "4. To keep the units clean and free of dirt, to keep the air filters clean as well as the air heat exchangers.",
+      "retrieval_phase": "heading_fill",
+      "retrieval_score": 0.44397797449090715,
+      "text": "Instruction manual    Pag. 19 of 32     Rev. 20180919 \n5.1.7  AIR STERILIZATION SYSTEM UVA/UVC (OPTIONAL) \nThis device is constituted by an UVA/UVC led lamp capable of emitting germicidal radiation.  These \nradiations deactivates bacteria, viruses, and other microbes by attacking their DNA. UV light is able to \npenetrate the cells of microorganisms and disrupt the structure of the DNA molecules. \nThe position of this device in the Self-contained unit allows the disinfection of the treated air and prevents \nthe bacteria that nesting between the fins of the heat exchanger. \nOnce installed the device works automatically \nThis LED lamp can last up to 50000 hours and after 20000 can show a 10% yield drop. \nFor installation of the device, refer to the appropriate instruction manual.\n\nWARNING: EYE AND SKIN BURN HAZARD \nFailure to follow this warning could result in personal injury. \nUltraviolet (UV) light is harmful - never look directly at a lit UV lamp without UV protective glasses.  \n  Do not expose your skin directly to the UV light without protection.  \n  Note that the indirect light, the blue glow, is safe. \n  Turn off the breaker and then unplug the lamp before servicing.",
+      "source_heading_guess": "5.1.7  AIR STERILIZATION SYSTEM UVA/UVC (OPTIONAL)"
+    },
+    {
+      "manual_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+      "source_file": "1e9ca775641747af_User-Manual-Self-contained-unit-INVERTER-BLDC_rev20190118.pdf",
+      "page_start": 12,
+      "page_end": 12,
+      "query": "4. To keep the units clean and free of dirt, to keep the air filters clean as well as the air heat exchangers.",
+      "retrieval_phase": "heading_fill",
+      "retrieval_score": 0.4307837679763912,
+      "text": "Instruction manual    Pag. 12 of 32     Rev. 20180919\n\nIMPORTANT! Turn off the air conditioning always when the sea is very rough in order to avoid pump \nunpriming.\n\nIt is required a sea water filter between the sea water intake and electric-pump, in order to protect it from \nany foreign matter. Failure to install a sea water filter void the warranty of the pump and the unit.\n\nSeawater circuit must be installed with a slope upwards: from the seawater intake, through the filter at the \npump inlet to the condenser unit compact entrance.   \nThe unit overboard discharge must be installed as close as possible to the waterline to reduce noise and to \nbe able to check visually the flow / output of the water circuit running.\n\nSelf-contained installation\n\nConnect the self-contained heat exchanger unit in the following manner:\n\nNOTE: to allow the maintenance or repair \noperations it is essential that each hydraulic \nconnection is provided with the respective \nshut off valve.\n\nThe air treatment involves the separation of condensate water from humidity of air treated. This condensate \nmust be discharged in the bilge or in a special tank. Since while operating the air conditioner sucks and",
+      "source_heading_guess": "Instruction manual    Pag. 12 of 32     Rev. 20180919"
+    }
+  ],
+  "query_diagnostics": [
+    {
+      "query": "operation daily use display menu controls operator",
+      "unique_hits_added": 7,
+      "matched": true,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "installation wiring commissioning configuration DIP switches",
+      "unique_hits_added": 4,
+      "matched": true,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "troubleshooting alarms faults error codes emergency protection",
+      "unique_hits_added": 5,
+      "matched": true,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "network communication MasterBus NMEA CZone VE.Direct Bluetooth remote panel app",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "maintenance service storage winterizing",
+      "unique_hits_added": 5,
+      "matched": true,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "optional accessory gateway interface required for",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "MasterView remote panel remote control display panel monitoring panel MasterAdjust",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "optional remote control MasterView Easy remote panel installed",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "shore power AC input current limit generator mains",
+      "unique_hits_added": 2,
+      "matched": true,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "main switch inverter on off charger operation",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "DC fuse battery protection wiring supply requirement",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "BMS battery safety relay protective disconnect undervoltage overvoltage temperature",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "Class T fuse T-Fuse fuse holder positive battery cable",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "Close relay reset battery safety event recovery after disconnect",
+      "unique_hits_added": 2,
+      "matched": true,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "State of charge SOC monitoring MasterBus display",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "Climate page HVAC air conditioner aircon temperature control fan setpoint",
+      "unique_hits_added": 4,
+      "matched": true,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "CLIMATE CONTROLS Power Mode Temp Fan air conditioning",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "supported air conditioner HVAC climate operating modes fan speed",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 7,
+      "phase": "scaled_query"
+    },
+    {
+      "query": "4.0 GENERAL NOTICES",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "3. The electrical box can be moved far from the self-contained for max.1m",
+      "unique_hits_added": 1,
+      "matched": true,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "4. Replace this screw",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "5.1.6  ELECTRICAL BOX WALL HANGING (OPTIONAL)",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "3. To check and reset circuit breakers and disconnect before calling for service.",
+      "unique_hits_added": 0,
+      "matched": false,
+      "top_k": 3,
+      "phase": "heading_fill"
+    },
+    {
+      "query": "4. To keep the units clean and free of dirt, to keep the air filters clean as well as the air heat exchangers.",
+      "unique_hits_added": 3,
+      "matched": true,
+      "top_k": 3,
+      "phase": "heading_fill"
+    }
+  ],
+  "coverage": {
+    "heading_count": 72,
+    "headings_covered_count": 54,
+    "heading_coverage_fraction": 0.75,
+    "coverage_low_threshold": 0.25,
+    "coverage_low": false,
+    "headings_all": [
+      "16042 CARASCO (GE) Italia",
+      "INSTRUCTION MANUAL",
+      "1.0 INTRODUCTION",
+      "2.0 PACKAGING AND IDENTIFICATION",
+      "3.0 UNIT DESCRIPTION",
+      "4.0 GENERAL NOTICES",
+      "4.1.1 SAFETY MEASURES",
+      "4.1.2 PROHIBITIONS",
+      "4.1.3 RESPONSIBILITY",
+      "5.0 INSTALLATION",
+      "5.1.1 HYDRAULIC CONNECTIONS",
+      "CORRECT SYSTEM INSTALLATION",
+      "SEA WATER CIRCUIT",
+      "5.1.2 AIR DUCTS CONNECTION",
+      "120 mm / 150 mm flange adapters (optional)",
+      "AIR FILTER",
+      "5.1.3  ELECTRICAL CONNECTION",
+      "chapter Technical data and it shall be properly grounded.",
+      "TERMINAL BOARD:",
+      "ELECTRICAL BOX",
+      "INDUCTANCE (EMC)",
+      "EMC FILTER",
+      "5.1.4  CIRCUIT BREAKER",
+      "1. Remove the electric box metal cover                       2. Unscrew the 3 electrical box fixing screws",
+      "CURRENT FLOW",
+      "PRESS TO RESET",
+      "3. The electrical box can be moved far from the self-contained for max.1m",
+      "4. Replace this screw",
+      "5.1.6  ELECTRICAL BOX WALL HANGING (OPTIONAL)",
+      "5.1.7  AIR STERILIZATION SYSTEM UVA/UVC (OPTIONAL)",
+      "WARNING: EYE AND SKIN BURN HAZARD",
+      "UVA / UVC LED LAMP",
+      "SELF-CONTAINED BOX-",
+      "BLOWER SPECIAL",
+      "COVER RAL9010",
+      "SUPPLY CONNECTOR",
+      "HEAT EXCHANGER",
+      "TREATED AIR",
+      "SUCTION AIR",
+      "6.0 WALL-MOUNTED TOUCH-SCREEN DISPLAY",
+      "6.1.1  INSTALLATION",
+      "6.1.2  TOUCH SCREEN DESCRIPTION:",
+      "6.2.1  MODE:",
+      "6.2.2  AUTO RUNNING MODE:",
+      "6.2.3  COOLING MODE:",
+      "6.2.4  DEHUMIDIFICATION MODE:",
+      "6.2.5  HEATING MODE:",
+      "6.3.1  FAN SPEED:",
+      "6.4.1  TEMPERATURE SET POINT:",
+      "6.5.1  NIGHT MODE:",
+      "6.6.1  TIMER FUNCTION:",
+      "6.7.1  SETTINGS:",
+      "7. 0 ALARMS",
+      "7.1.1 ALARMS and troubleshooting",
+      "8. 0 WORKING LIMITS",
+      "9.0  WARRANTY TERMS",
+      "9.1.1  LIMITED WARRANTY:",
+      "9.1.2  WARRANTY DURATION:",
+      "9.1.3  WARRANTY CONDITIONS:",
+      "1. To operate the equipment according to the manufacturer\u2019s instructions.",
+      "2. To provide easy accessibility for service.",
+      "3. To check and reset circuit breakers and disconnect before calling for service.",
+      "4. To keep the units clean and free of dirt, to keep the air filters clean as well as the air heat exchangers.",
+      "5. To keep the condenser coil free of sediment and scale.",
+      "6. To check monthly and replace (if needed) zinc anodes on seawater condenser (if applied).",
+      "7. To keep clean the fan coil water circuit.",
+      "8. To pay the charges incurred when any of the above has not been done.",
+      "9. To pay for repair or replacement of any material or part other than those within the Frigomar unit.",
+      "10. To check any fuses on the circuit board and replace as required.",
+      "10.0  DISPOSAL AND GAS RECOVERY",
+      "10.1.1  DISPOSAL OF THE EQUIPMENT AND PARTS:",
+      "10.1.2  REFRIGERANT FLUORINATED GAS RECOVERY:"
+    ],
+    "headings_covered": [
+      "INSTRUCTION MANUAL",
+      "3.0 UNIT DESCRIPTION",
+      "4.0 GENERAL NOTICES",
+      "4.1.1 SAFETY MEASURES",
+      "4.1.2 PROHIBITIONS",
+      "4.1.3 RESPONSIBILITY",
+      "5.0 INSTALLATION",
+      "5.1.1 HYDRAULIC CONNECTIONS",
+      "SEA WATER CIRCUIT",
+      "5.1.2 AIR DUCTS CONNECTION",
+      "120 mm / 150 mm flange adapters (optional)",
+      "AIR FILTER",
+      "5.1.3  ELECTRICAL CONNECTION",
+      "chapter Technical data and it shall be properly grounded.",
+      "TERMINAL BOARD:",
+      "ELECTRICAL BOX",
+      "5.1.4  CIRCUIT BREAKER",
+      "1. Remove the electric box metal cover                       2. Unscrew the 3 electrical box fixing screws",
+      "CURRENT FLOW",
+      "PRESS TO RESET",
+      "3. The electrical box can be moved far from the self-contained for max.1m",
+      "4. Replace this screw",
+      "5.1.6  ELECTRICAL BOX WALL HANGING (OPTIONAL)",
+      "5.1.7  AIR STERILIZATION SYSTEM UVA/UVC (OPTIONAL)",
+      "WARNING: EYE AND SKIN BURN HAZARD",
+      "HEAT EXCHANGER",
+      "TREATED AIR",
+      "6.0 WALL-MOUNTED TOUCH-SCREEN DISPLAY",
+      "6.1.1  INSTALLATION",
+      "6.1.2  TOUCH SCREEN DESCRIPTION:",
+      "6.2.1  MODE:",
+      "6.2.2  AUTO RUNNING MODE:",
+      "6.2.3  COOLING MODE:",
+      "6.2.4  DEHUMIDIFICATION MODE:",
+      "6.2.5  HEATING MODE:",
+      "6.3.1  FAN SPEED:",
+      "6.4.1  TEMPERATURE SET POINT:",
+      "6.5.1  NIGHT MODE:",
+      "6.6.1  TIMER FUNCTION:",
+      "6.7.1  SETTINGS:",
+      "7. 0 ALARMS",
+      "7.1.1 ALARMS and troubleshooting",
+      "8. 0 WORKING LIMITS",
+      "9.0  WARRANTY TERMS",
+      "9.1.1  LIMITED WARRANTY:",
+      "5. To keep the condenser coil free of sediment and scale.",
+      "6. To check monthly and replace (if needed) zinc anodes on seawater condenser (if applied).",
+      "7. To keep clean the fan coil water circuit.",
+      "8. To pay the charges incurred when any of the above has not been done.",
+      "9. To pay for repair or replacement of any material or part other than those within the Frigomar unit.",
+      "10. To check any fuses on the circuit board and replace as required.",
+      "10.0  DISPOSAL AND GAS RECOVERY",
+      "10.1.1  DISPOSAL OF THE EQUIPMENT AND PARTS:",
+      "10.1.2  REFRIGERANT FLUORINATED GAS RECOVERY:"
+    ],
+    "headings_missing": [
+      "16042 CARASCO (GE) Italia",
+      "1.0 INTRODUCTION",
+      "2.0 PACKAGING AND IDENTIFICATION",
+      "CORRECT SYSTEM INSTALLATION",
+      "INDUCTANCE (EMC)",
+      "EMC FILTER",
+      "UVA / UVC LED LAMP",
+      "SELF-CONTAINED BOX-",
+      "BLOWER SPECIAL",
+      "COVER RAL9010",
+      "SUPPLY CONNECTOR",
+      "SUCTION AIR",
+      "9.1.2  WARRANTY DURATION:",
+      "9.1.3  WARRANTY CONDITIONS:",
+      "1. To operate the equipment according to the manufacturer\u2019s instructions.",
+      "2. To provide easy accessibility for service.",
+      "3. To check and reset circuit breakers and disconnect before calling for service.",
+      "4. To keep the units clean and free of dirt, to keep the air filters clean as well as the air heat exchangers."
+    ],
+    "chunk_count": 55,
+    "top_k_used": 7,
+    "heading_fill_queries": 6,
+    "heading_fill_hits": 5,
+    "top_k_scaling": {
+      "base": 4,
+      "max": 16,
+      "chunk_coverage_target": 0.6,
+      "scaled": true
+    }
+  },
+  "map_group_count": 4,
+  "legal_status_required": "cleared",
+  "validation_issues": [],
+  "validation_flags": [],
+  "needs_rextraction": false,
+  "repairs": [],
+  "repair": {
+    "evidence": {
+      "attempted": true,
+      "missing_fields": [
+        "data_roles.exposes_data_to_network",
+        "data_roles.controllable_from_network"
+      ],
+      "added": [
+        "data_roles.controllable_from_network",
+        "data_roles.exposes_data_to_network"
+      ]
+    },
+    "absence": {
+      "attempted": true,
+      "flags": [
+        "speaks_but_inert"
+      ],
+      "excerpt_count": 31,
+      "patched_keys": [
+        "control_surfaces",
+        "data_roles",
+        "device",
+        "requires_devices"
+      ]
+    }
+  },
+  "rextraction": {
+    "attempted": true,
+    "max_retries": 1,
+    "still_needs_rextraction": false,
+    "correction_instruction": "RE-EXTRACTION CORRECTION (prior output failed validation):\nFix ONLY the issues below. Do not copy calibration example action strings.\nDo not attach requires_devices to built-in (optional_accessory:false) surfaces."
+  },
+  "stability_voting": {
+    "n_requested": 3,
+    "n_completed": 3,
+    "short_circuit_identical": false,
+    "unstable_flag_count": 0,
+    "votes": [
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "turn ON/OFF the unit",
+          "audience": "operator",
+          "context": "daily",
+          "occasion": "to start or stop the air conditioning system",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": "2/3",
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "action": "turn ON/OFF the unit",
+              "audience": "operator",
+              "context": "daily",
+              "occasion": "to start or stop the air conditioning system"
+            }
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "turn ON/OFF the unit",
+              "audience": "operator",
+              "context": "daily",
+              "occasion": "to start or stop the air conditioning system"
+            }
+          }
+        ]
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "set temperature in Auto running mode",
+          "audience": "operator",
+          "context": "situational",
+          "occasion": "to measure indoor temperature and decide running mode",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": "2/3",
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "action": "set temperature in Auto running mode",
+              "audience": "operator",
+              "context": "situational",
+              "occasion": "to measure indoor temperature and decide running mode"
+            }
+          },
+          {
+            "run": 2,
+            "value": null
+          },
+          {
+            "run": 3,
+            "value": {
+              "action": "set temperature in Auto running mode",
+              "audience": "operator",
+              "context": "situational",
+              "occasion": "to measure indoor temperature"
+            }
+          }
+        ]
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "turn ON the air conditioning system",
+          "audience": "operator",
+          "context": "daily",
+          "occasion": "to start cooling mode",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": "1/3",
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "turn ON the air conditioning system",
+              "audience": "operator",
+              "context": "daily",
+              "occasion": "to start cooling mode"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ]
+      },
+      {
+        "field_path": "operator_actions",
+        "kind": "operator_actions",
+        "attribute": "presence",
+        "chosen": {
+          "action": "turn OFF the air conditioning system",
+          "audience": "operator",
+          "context": "daily",
+          "occasion": "to stop the system",
+          "vote_margin": "1/3"
+        },
+        "vote_margin": "1/3",
+        "variants": [
+          {
+            "run": 1,
+            "value": null
+          },
+          {
+            "run": 2,
+            "value": {
+              "action": "turn OFF the air conditioning system",
+              "audience": "operator",
+              "context": "daily",
+              "occasion": "to stop the system"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ]
+      },
+      {
+        "field_path": "control_surfaces",
+        "kind": "control_surfaces",
+        "attribute": "presence",
+        "chosen": {
+          "surface": "physical_controls",
+          "location_class": "on_device",
+          "hosting": "integral_display",
+          "optional_accessory": false,
+          "label_verbatim": "Touch thermostat",
+          "path": "control_surfaces[1]",
+          "vote_margin": "2/3"
+        },
+        "vote_margin": "2/3",
+        "variants": [
+          {
+            "run": 1,
+            "value": {
+              "surface": "physical_controls",
+              "location_class": "on_device",
+              "hosting": "integral_display",
+              "optional_accessory": false,
+              "label_verbatim": "Touch thermostat",
+              "path": "control_surfaces[1]"
+            }
+          },
+          {
+            "run": 2,
+            "value": {
+              "surface": "physical_controls",
+              "location_class": "on_device",
+              "hosting": "integral_display",
+              "optional_accessory": false,
+              "label_verbatim": "Touch thermostat",
+              "path": "control_surfaces[1]"
+            }
+          },
+          {
+            "run": 3,
+            "value": null
+          }
+        ]
+      }
+    ]
+  },
+  "procedure_inventory": {
+    "inventory": {
+      "procedures": [],
+      "alternatives": [],
+      "filtered": [
+        {
+          "title": "TOUCH SCREEN DESCRIPTION",
+          "kind": "headed_procedure",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[1]",
+          "snippet": "Instruction manual Pag. 21 of 32 Rev. 20180919 6.1.2 TOUCH SCREEN DESCRIPTION: When unit is ON, ON/OFF button is green color, pressing ON/OFF button turns into white color and unit stop. Pressing ON/OFF button again, white turns",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "MODE When unit is ON, mode button can switch in a cycle from cooling mode (snowflake) to heating",
+          "kind": "numbered_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[1]",
+          "snippet": "6.2.1 MODE: When unit is ON, mode button can switch in a cycle from cooling mode (snowflake) to heating mode (flame), dehumidification mode (drop), automatic mode \u201cA\u201d, fan mode . The selection of the operating mode cooling / heating /dehumi",
+          "disposition": "filtered",
+          "filter": "filter:no_steps_or_procedure_heading"
+        },
+        {
+          "title": "SETTINGS",
+          "kind": "headed_procedure",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[2]",
+          "snippet": "Instruction manual Pag. 24 of 32 Rev. 20180919 6.7.1 SETTINGS: Pressing the fan button over 5 s, setting window will be displayed as below: The current choice will be highlighted. Temperature unit and sensor choice is available",
+          "disposition": "filtered",
+          "filter": "filter:too_few_tokens"
+        },
+        {
+          "title": "WALL-MOUNTED TOUCH-SCREEN DISPLAY",
+          "kind": "headed_procedure",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[5]",
+          "snippet": "Instruction manual Pag. 20 of 32 Rev. 20180919 6.0 WALL-MOUNTED TOUCH-SCREEN DISPLAY The self-contained wall-mounted touch-screen display is inside the machine\u2019s package with his connection cable (max 5m) and fixing screws. The di",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "INSTALLATION",
+          "kind": "numbered_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[5]",
+          "snippet": "6.1.1 INSTALLATION Install the Self-contained wall-mounted touch-screen display away from doors and/or windows and from heat sources around 1.5m from the floor then proceed with the following operations: - drill holes in the wall (for in-bu",
+          "disposition": "filtered",
+          "filter": "filter:too_few_tokens"
+        },
+        {
+          "title": "ELECTRICAL CONNECTION",
+          "kind": "headed_procedure",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[8]",
+          "snippet": "Instruction manual Pag. 16 of 32 Rev. 20180919 5.1.3 ELECTRICAL CONNECTION Warning It is important that the electrical system is done according to the rules, respecting the data provided in chapter Technical data and it shall be",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "0 ALARMS",
+          "kind": "numbered_heading",
+          "group_id": "batch_1",
+          "excerpt_ref": "excerpt[1]",
+          "snippet": "Instruction manual Pag. 26 of 32 Rev. 20180919 7. 0 ALARMS Alarms codes will be displayed in yellow colour instead of the current temperature, alarm history will be displayed in the service menu (only relative time, last one on to",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "ALARMS and troubleshooting",
+          "kind": "numbered_heading",
+          "group_id": "batch_1",
+          "excerpt_ref": "excerpt[1]",
+          "snippet": "7.1.1 ALARMS and troubleshooting E1: Room temperature: sensor failure E2: Evaporator coil temperature: sensor failure E3: Water outlet temperature: sensor failure (water outlet temperature) E4: Condenser temperature: sensor failure E5: Indo",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "CIRCUIT BREAKER",
+          "kind": "headed_procedure",
+          "group_id": "batch_1",
+          "excerpt_ref": "excerpt[3]",
+          "snippet": "Instruction manual Pag. 17 of 32 Rev. 20180919 5.1.4 CIRCUIT BREAKER This device protect the electrical circuit from damage caused by excess current from an overload or short circuit. Its basic function is to interrupt current fl",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "0 WORKING LIMITS",
+          "kind": "numbered_heading",
+          "group_id": "batch_1",
+          "excerpt_ref": "excerpt[4]",
+          "snippet": "In case of LT alarm, the problem could be due to poor seawater circulation or seawater temperature too low (below 5\u00b0C). Please check first the seawater flow as above specified. 8. 0 WORKING LIMITS The unit operates correctly within the f",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "To keep the condenser coil free of sediment and scale",
+          "kind": "numbered_heading",
+          "group_id": "batch_1",
+          "excerpt_ref": "excerpt[7]",
+          "snippet": "Instruction manual Pag. 30 of 32 Rev. 20180919 5. To keep the condenser coil free of sediment and scale. 6. To check monthly and replace (if needed) zinc anodes on seawater condenser (if applied). 7. To keep clean the fan coil water circuit",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "To keep clean the fan coil water circuit",
+          "kind": "numbered_heading",
+          "group_id": "batch_1",
+          "excerpt_ref": "excerpt[7]",
+          "snippet": "Instruction manual Pag. 30 of 32 Rev. 20180919 5. To keep the condenser coil free of sediment and scale. 6. To check monthly and replace (if needed) zinc anodes on seawater condenser (if applied). 7. To keep clean the fan coil water circuit",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "To pay the charges incurred when any of the above has not been done",
+          "kind": "numbered_heading",
+          "group_id": "batch_1",
+          "excerpt_ref": "excerpt[7]",
+          "snippet": "8. To pay the charges incurred when any of the above has not been done. 9. To pay for repair or replacement of any material or part other than those within the Frigomar unit. 10. To check any fuses on the circuit board and replace as requir",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "To check any fuses on the circuit board and replace as required",
+          "kind": "numbered_heading",
+          "group_id": "batch_1",
+          "excerpt_ref": "excerpt[7]",
+          "snippet": "10. To check any fuses on the circuit board and replace as required. This warranty shall not apply to: Failures resulting from improper or faulty installation, installation that does not comply with Frigomar\u2019s instructions or otherwise, ins",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "PROHIBITIONS",
+          "kind": "headed_procedure",
+          "group_id": "batch_1",
+          "excerpt_ref": "excerpt[8]",
+          "snippet": "When refilling the system, after eventual leakage and repair, be sure that inside the refrigerant circuit does not enter any substance, such as air, other than the specified refrigerant (R410A). The presence of air or other foreign substa",
+          "disposition": "filtered",
+          "filter": "filter:too_few_tokens"
+        },
+        {
+          "title": "AIR DUCTS CONNECTION",
+          "kind": "headed_procedure",
+          "group_id": "batch_2",
+          "excerpt_ref": "excerpt[1]",
+          "snippet": "Instruction manual Pag. 13 of 32 Rev. 20180919 5.1.2 AIR DUCTS CONNECTION IMPORTANT! The diameter of the duct should not be less than the diameter of the outlet nozzle. \uf0b7 SELF CONTAINED ART SCU07VFD (up to 7.000 BTU/h) ducts diame",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "TEMPERATURE SET POINT",
+          "kind": "headed_procedure",
+          "group_id": "batch_2",
+          "excerpt_ref": "excerpt[2]",
+          "snippet": "6.4.1 TEMPERATURE SET POINT: Pressing any of \u25b3\u25bdbutton, the room temperature will shift to setting temperature in flashing. Pressing any of \u25b3\u25bd again, setting temperature will be rising or going down. The temperature setting mode will be",
+          "disposition": "filtered",
+          "filter": "filter:no_steps_or_procedure_heading"
+        },
+        {
+          "title": "UNIT DESCRIPTION",
+          "kind": "headed_procedure",
+          "group_id": "batch_2",
+          "excerpt_ref": "excerpt[5]",
+          "snippet": "Instruction manual Pag. 5 of 32 Rev. 20180919 3.0 UNIT DESCRIPTION Brushless DC Inverter Technology This technology is applied to control the speed of the compressor allowing continuous adjustment of the temperature, in contrast",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "DISPOSAL AND GAS RECOVERY",
+          "kind": "headed_procedure",
+          "group_id": "batch_2",
+          "excerpt_ref": "excerpt[7]",
+          "snippet": "Instruction manual Pag. 31 of 32 Rev. 20180919 10.0 DISPOSAL AND GAS RECOVERY 10.1.1 DISPOSAL OF THE EQUIPMENT AND PARTS: Disposal of the equipment and parts of it must be done in compliance with the laws in force for the diffe",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "DISPOSAL OF THE EQUIPMENT AND PARTS",
+          "kind": "numbered_heading",
+          "group_id": "batch_2",
+          "excerpt_ref": "excerpt[7]",
+          "snippet": "Instruction manual Pag. 31 of 32 Rev. 20180919 10.0 DISPOSAL AND GAS RECOVERY 10.1.1 DISPOSAL OF THE EQUIPMENT AND PARTS: Disposal of the equipment and parts of it must be done in compliance with the laws in force for the differentiated dis",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "REFRIGERANT FLUORINATED GAS RECOVERY",
+          "kind": "numbered_heading",
+          "group_id": "batch_2",
+          "excerpt_ref": "excerpt[7]",
+          "snippet": "10.1.2 REFRIGERANT FLUORINATED GAS RECOVERY: During the maintenance or disposal interventions it is necessary to empty the refrigeration system from the refrigerant. The emptying operation requires precision. The refrigerant must be loaded ",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "HEATING MODE In heating mode, setting range is 18\u2103-30\u2103",
+          "kind": "numbered_heading",
+          "group_id": "batch_2",
+          "excerpt_ref": "excerpt[8]",
+          "snippet": "6.2.5 HEATING MODE: In heating mode, setting range is 18\u2103-30\u2103. When Troom\u2265Tset + 1\u2103 and compressor running time \u22653 minutes, seawater pump will be stopped 1s later than compressor. Indoor fan motor will run at low speed to blow out the reser",
+          "disposition": "filtered",
+          "filter": "filter:no_steps_or_procedure_heading"
+        },
+        {
+          "title": "FAN SPEED",
+          "kind": "numbered_heading",
+          "group_id": "batch_2",
+          "excerpt_ref": "excerpt[8]",
+          "snippet": "6.3.1 FAN SPEED: When pressing fan speed button, 4 possible running speeds will be showed in a closed cycle: minimum speed (minimum fan symbol size) , medium speed (medium fan symbol size) , maximum speed (maximum fan symbol size) , automat",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "AUTO RUNNING MODE When set to Auto running mode for first time, the indoor fan will run 20s at low",
+          "kind": "numbered_heading",
+          "group_id": "batch_3",
+          "excerpt_ref": "excerpt[0]",
+          "snippet": "6.2.2 AUTO RUNNING MODE: When set to Auto running mode for first time, the indoor fan will run 20s at low speed to measure the indoor temperature, then decide the running mode accord to the difference between setting temperature Tset and ro",
+          "disposition": "filtered",
+          "filter": "filter:no_steps_or_procedure_heading",
+          "deduped_from": "AUTO RUNNING MODE"
+        },
+        {
+          "title": "NIGHT MODE When unit is on, pressing night mode button on the touch thermostat to enter night mode",
+          "kind": "numbered_heading",
+          "group_id": "batch_3",
+          "excerpt_ref": "excerpt[2]",
+          "snippet": "Instruction manual Pag. 23 of 32 Rev. 20180919 6.5.1 NIGHT MODE: When unit is on, pressing night mode button on the touch thermostat to enter night mode . In cooling mode if night mode is activated, after 1 hour, setting temperature increas",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb",
+          "deduped_from": "NIGHT MODE"
+        },
+        {
+          "title": "TIMER FUNCTION",
+          "kind": "numbered_heading",
+          "group_id": "batch_3",
+          "excerpt_ref": "excerpt[2]",
+          "snippet": "6.6.1 TIMER FUNCTION: When clock icon is pressed it turns into active and the unit enters into timer mode, if icon is pressed again function is released and icon turn back to . Setting time is relative to current time. When air conditioner ",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "GENERAL NOTICES",
+          "kind": "headed_procedure",
+          "group_id": "batch_3",
+          "excerpt_ref": "excerpt[3]",
+          "snippet": "Instruction manual Pag. 7 of 32 Rev. 20180919 4.0 GENERAL NOTICES 4.1.1 SAFETY MEASURES This instruction manual is an integral part of the appliance and therefore must be kept with care and must ALWAYS accompany the appliance eve",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "SAFETY MEASURES",
+          "kind": "numbered_heading",
+          "group_id": "batch_3",
+          "excerpt_ref": "excerpt[3]",
+          "snippet": "Instruction manual Pag. 7 of 32 Rev. 20180919 4.0 GENERAL NOTICES 4.1.1 SAFETY MEASURES This instruction manual is an integral part of the appliance and therefore must be kept with care and must ALWAYS accompany the appliance even in case o",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "The electrical box can be moved far from the self-contained for max.1m",
+          "kind": "numbered_heading",
+          "group_id": "batch_3",
+          "excerpt_ref": "excerpt[4]",
+          "snippet": "Instruction manual Pag. 18 of 32 Rev. 20180919 3. The electrical box can be moved far from the self-contained for max.1m 4. Replace this screw 5.1.6 ELECTRICAL BOX WALL HANGING (OPTIONAL) To hang the electrical box on the wall it is necessa",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "Replace this screw",
+          "kind": "numbered_heading",
+          "group_id": "batch_3",
+          "excerpt_ref": "excerpt[4]",
+          "snippet": "Instruction manual Pag. 18 of 32 Rev. 20180919 3. The electrical box can be moved far from the self-contained for max.1m 4. Replace this screw 5.1.6 ELECTRICAL BOX WALL HANGING (OPTIONAL) To hang the electrical box on the wall it is necessa",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "ELECTRICAL BOX WALL HANGING (OPTIONAL)",
+          "kind": "numbered_heading",
+          "group_id": "batch_3",
+          "excerpt_ref": "excerpt[4]",
+          "snippet": "Instruction manual Pag. 18 of 32 Rev. 20180919 3. The electrical box can be moved far from the self-contained for max.1m 4. Replace this screw 5.1.6 ELECTRICAL BOX WALL HANGING (OPTIONAL) To hang the electrical box on the wall it is necessa",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "AIR STERILIZATION SYSTEM UVA/UVC (OPTIONAL)",
+          "kind": "headed_procedure",
+          "group_id": "batch_3",
+          "excerpt_ref": "excerpt[6]",
+          "snippet": "Instruction manual Pag. 19 of 32 Rev. 20180919 5.1.7 AIR STERILIZATION SYSTEM UVA/UVC (OPTIONAL) This device is constituted by an UVA/UVC led lamp capable of emitting germicidal radiation. These radiations deactivates bacteria,",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        }
+      ],
+      "groups_scanned": [
+        "batch_0",
+        "batch_1",
+        "batch_2",
+        "batch_3"
+      ],
+      "procedure_count": 0,
+      "alternative_count": 0,
+      "filtered_count": 32
+    },
+    "reconciliation": {
+      "accounted": [],
+      "classified": [],
+      "unaccounted": [],
+      "unaccounted_procedures": [],
+      "unaccounted_alternatives": [],
+      "accounting_trail": [
+        {
+          "title": "TOUCH SCREEN DESCRIPTION",
+          "kind": "headed_procedure",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[1]",
+          "snippet": "Instruction manual Pag. 21 of 32 Rev. 20180919 6.1.2 TOUCH SCREEN DESCRIPTION: When unit is ON, ON/OFF button is green color, pressing ON/OFF button turns into white color and unit stop. Pressing ON/OFF button again, white turns",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "MODE When unit is ON, mode button can switch in a cycle from cooling mode (snowflake) to heating",
+          "kind": "numbered_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[1]",
+          "snippet": "6.2.1 MODE: When unit is ON, mode button can switch in a cycle from cooling mode (snowflake) to heating mode (flame), dehumidification mode (drop), automatic mode \u201cA\u201d, fan mode . The selection of the operating mode cooling / heating /dehumi",
+          "disposition": "filtered",
+          "filter": "filter:no_steps_or_procedure_heading"
+        },
+        {
+          "title": "SETTINGS",
+          "kind": "headed_procedure",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[2]",
+          "snippet": "Instruction manual Pag. 24 of 32 Rev. 20180919 6.7.1 SETTINGS: Pressing the fan button over 5 s, setting window will be displayed as below: The current choice will be highlighted. Temperature unit and sensor choice is available",
+          "disposition": "filtered",
+          "filter": "filter:too_few_tokens"
+        },
+        {
+          "title": "WALL-MOUNTED TOUCH-SCREEN DISPLAY",
+          "kind": "headed_procedure",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[5]",
+          "snippet": "Instruction manual Pag. 20 of 32 Rev. 20180919 6.0 WALL-MOUNTED TOUCH-SCREEN DISPLAY The self-contained wall-mounted touch-screen display is inside the machine\u2019s package with his connection cable (max 5m) and fixing screws. The di",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "INSTALLATION",
+          "kind": "numbered_heading",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[5]",
+          "snippet": "6.1.1 INSTALLATION Install the Self-contained wall-mounted touch-screen display away from doors and/or windows and from heat sources around 1.5m from the floor then proceed with the following operations: - drill holes in the wall (for in-bu",
+          "disposition": "filtered",
+          "filter": "filter:too_few_tokens"
+        },
+        {
+          "title": "ELECTRICAL CONNECTION",
+          "kind": "headed_procedure",
+          "group_id": "batch_0",
+          "excerpt_ref": "excerpt[8]",
+          "snippet": "Instruction manual Pag. 16 of 32 Rev. 20180919 5.1.3 ELECTRICAL CONNECTION Warning It is important that the electrical system is done according to the rules, respecting the data provided in chapter Technical data and it shall be",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "0 ALARMS",
+          "kind": "numbered_heading",
+          "group_id": "batch_1",
+          "excerpt_ref": "excerpt[1]",
+          "snippet": "Instruction manual Pag. 26 of 32 Rev. 20180919 7. 0 ALARMS Alarms codes will be displayed in yellow colour instead of the current temperature, alarm history will be displayed in the service menu (only relative time, last one on to",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "ALARMS and troubleshooting",
+          "kind": "numbered_heading",
+          "group_id": "batch_1",
+          "excerpt_ref": "excerpt[1]",
+          "snippet": "7.1.1 ALARMS and troubleshooting E1: Room temperature: sensor failure E2: Evaporator coil temperature: sensor failure E3: Water outlet temperature: sensor failure (water outlet temperature) E4: Condenser temperature: sensor failure E5: Indo",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "CIRCUIT BREAKER",
+          "kind": "headed_procedure",
+          "group_id": "batch_1",
+          "excerpt_ref": "excerpt[3]",
+          "snippet": "Instruction manual Pag. 17 of 32 Rev. 20180919 5.1.4 CIRCUIT BREAKER This device protect the electrical circuit from damage caused by excess current from an overload or short circuit. Its basic function is to interrupt current fl",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "0 WORKING LIMITS",
+          "kind": "numbered_heading",
+          "group_id": "batch_1",
+          "excerpt_ref": "excerpt[4]",
+          "snippet": "In case of LT alarm, the problem could be due to poor seawater circulation or seawater temperature too low (below 5\u00b0C). Please check first the seawater flow as above specified. 8. 0 WORKING LIMITS The unit operates correctly within the f",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "To keep the condenser coil free of sediment and scale",
+          "kind": "numbered_heading",
+          "group_id": "batch_1",
+          "excerpt_ref": "excerpt[7]",
+          "snippet": "Instruction manual Pag. 30 of 32 Rev. 20180919 5. To keep the condenser coil free of sediment and scale. 6. To check monthly and replace (if needed) zinc anodes on seawater condenser (if applied). 7. To keep clean the fan coil water circuit",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "To keep clean the fan coil water circuit",
+          "kind": "numbered_heading",
+          "group_id": "batch_1",
+          "excerpt_ref": "excerpt[7]",
+          "snippet": "Instruction manual Pag. 30 of 32 Rev. 20180919 5. To keep the condenser coil free of sediment and scale. 6. To check monthly and replace (if needed) zinc anodes on seawater condenser (if applied). 7. To keep clean the fan coil water circuit",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "To pay the charges incurred when any of the above has not been done",
+          "kind": "numbered_heading",
+          "group_id": "batch_1",
+          "excerpt_ref": "excerpt[7]",
+          "snippet": "8. To pay the charges incurred when any of the above has not been done. 9. To pay for repair or replacement of any material or part other than those within the Frigomar unit. 10. To check any fuses on the circuit board and replace as requir",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "To check any fuses on the circuit board and replace as required",
+          "kind": "numbered_heading",
+          "group_id": "batch_1",
+          "excerpt_ref": "excerpt[7]",
+          "snippet": "10. To check any fuses on the circuit board and replace as required. This warranty shall not apply to: Failures resulting from improper or faulty installation, installation that does not comply with Frigomar\u2019s instructions or otherwise, ins",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "PROHIBITIONS",
+          "kind": "headed_procedure",
+          "group_id": "batch_1",
+          "excerpt_ref": "excerpt[8]",
+          "snippet": "When refilling the system, after eventual leakage and repair, be sure that inside the refrigerant circuit does not enter any substance, such as air, other than the specified refrigerant (R410A). The presence of air or other foreign substa",
+          "disposition": "filtered",
+          "filter": "filter:too_few_tokens"
+        },
+        {
+          "title": "AIR DUCTS CONNECTION",
+          "kind": "headed_procedure",
+          "group_id": "batch_2",
+          "excerpt_ref": "excerpt[1]",
+          "snippet": "Instruction manual Pag. 13 of 32 Rev. 20180919 5.1.2 AIR DUCTS CONNECTION IMPORTANT! The diameter of the duct should not be less than the diameter of the outlet nozzle. \uf0b7 SELF CONTAINED ART SCU07VFD (up to 7.000 BTU/h) ducts diame",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "TEMPERATURE SET POINT",
+          "kind": "headed_procedure",
+          "group_id": "batch_2",
+          "excerpt_ref": "excerpt[2]",
+          "snippet": "6.4.1 TEMPERATURE SET POINT: Pressing any of \u25b3\u25bdbutton, the room temperature will shift to setting temperature in flashing. Pressing any of \u25b3\u25bd again, setting temperature will be rising or going down. The temperature setting mode will be",
+          "disposition": "filtered",
+          "filter": "filter:no_steps_or_procedure_heading"
+        },
+        {
+          "title": "UNIT DESCRIPTION",
+          "kind": "headed_procedure",
+          "group_id": "batch_2",
+          "excerpt_ref": "excerpt[5]",
+          "snippet": "Instruction manual Pag. 5 of 32 Rev. 20180919 3.0 UNIT DESCRIPTION Brushless DC Inverter Technology This technology is applied to control the speed of the compressor allowing continuous adjustment of the temperature, in contrast",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "DISPOSAL AND GAS RECOVERY",
+          "kind": "headed_procedure",
+          "group_id": "batch_2",
+          "excerpt_ref": "excerpt[7]",
+          "snippet": "Instruction manual Pag. 31 of 32 Rev. 20180919 10.0 DISPOSAL AND GAS RECOVERY 10.1.1 DISPOSAL OF THE EQUIPMENT AND PARTS: Disposal of the equipment and parts of it must be done in compliance with the laws in force for the diffe",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "DISPOSAL OF THE EQUIPMENT AND PARTS",
+          "kind": "numbered_heading",
+          "group_id": "batch_2",
+          "excerpt_ref": "excerpt[7]",
+          "snippet": "Instruction manual Pag. 31 of 32 Rev. 20180919 10.0 DISPOSAL AND GAS RECOVERY 10.1.1 DISPOSAL OF THE EQUIPMENT AND PARTS: Disposal of the equipment and parts of it must be done in compliance with the laws in force for the differentiated dis",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "REFRIGERANT FLUORINATED GAS RECOVERY",
+          "kind": "numbered_heading",
+          "group_id": "batch_2",
+          "excerpt_ref": "excerpt[7]",
+          "snippet": "10.1.2 REFRIGERANT FLUORINATED GAS RECOVERY: During the maintenance or disposal interventions it is necessary to empty the refrigeration system from the refrigerant. The emptying operation requires precision. The refrigerant must be loaded ",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "HEATING MODE In heating mode, setting range is 18\u2103-30\u2103",
+          "kind": "numbered_heading",
+          "group_id": "batch_2",
+          "excerpt_ref": "excerpt[8]",
+          "snippet": "6.2.5 HEATING MODE: In heating mode, setting range is 18\u2103-30\u2103. When Troom\u2265Tset + 1\u2103 and compressor running time \u22653 minutes, seawater pump will be stopped 1s later than compressor. Indoor fan motor will run at low speed to blow out the reser",
+          "disposition": "filtered",
+          "filter": "filter:no_steps_or_procedure_heading"
+        },
+        {
+          "title": "FAN SPEED",
+          "kind": "numbered_heading",
+          "group_id": "batch_2",
+          "excerpt_ref": "excerpt[8]",
+          "snippet": "6.3.1 FAN SPEED: When pressing fan speed button, 4 possible running speeds will be showed in a closed cycle: minimum speed (minimum fan symbol size) , medium speed (medium fan symbol size) , maximum speed (maximum fan symbol size) , automat",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "AUTO RUNNING MODE When set to Auto running mode for first time, the indoor fan will run 20s at low",
+          "kind": "numbered_heading",
+          "group_id": "batch_3",
+          "excerpt_ref": "excerpt[0]",
+          "snippet": "6.2.2 AUTO RUNNING MODE: When set to Auto running mode for first time, the indoor fan will run 20s at low speed to measure the indoor temperature, then decide the running mode accord to the difference between setting temperature Tset and ro",
+          "disposition": "filtered",
+          "filter": "filter:no_steps_or_procedure_heading",
+          "deduped_from": "AUTO RUNNING MODE"
+        },
+        {
+          "title": "NIGHT MODE When unit is on, pressing night mode button on the touch thermostat to enter night mode",
+          "kind": "numbered_heading",
+          "group_id": "batch_3",
+          "excerpt_ref": "excerpt[2]",
+          "snippet": "Instruction manual Pag. 23 of 32 Rev. 20180919 6.5.1 NIGHT MODE: When unit is on, pressing night mode button on the touch thermostat to enter night mode . In cooling mode if night mode is activated, after 1 hour, setting temperature increas",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb",
+          "deduped_from": "NIGHT MODE"
+        },
+        {
+          "title": "TIMER FUNCTION",
+          "kind": "numbered_heading",
+          "group_id": "batch_3",
+          "excerpt_ref": "excerpt[2]",
+          "snippet": "6.6.1 TIMER FUNCTION: When clock icon is pressed it turns into active and the unit enters into timer mode, if icon is pressed again function is released and icon turn back to . Setting time is relative to current time. When air conditioner ",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "GENERAL NOTICES",
+          "kind": "headed_procedure",
+          "group_id": "batch_3",
+          "excerpt_ref": "excerpt[3]",
+          "snippet": "Instruction manual Pag. 7 of 32 Rev. 20180919 4.0 GENERAL NOTICES 4.1.1 SAFETY MEASURES This instruction manual is an integral part of the appliance and therefore must be kept with care and must ALWAYS accompany the appliance eve",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "SAFETY MEASURES",
+          "kind": "numbered_heading",
+          "group_id": "batch_3",
+          "excerpt_ref": "excerpt[3]",
+          "snippet": "Instruction manual Pag. 7 of 32 Rev. 20180919 4.0 GENERAL NOTICES 4.1.1 SAFETY MEASURES This instruction manual is an integral part of the appliance and therefore must be kept with care and must ALWAYS accompany the appliance even in case o",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "The electrical box can be moved far from the self-contained for max.1m",
+          "kind": "numbered_heading",
+          "group_id": "batch_3",
+          "excerpt_ref": "excerpt[4]",
+          "snippet": "Instruction manual Pag. 18 of 32 Rev. 20180919 3. The electrical box can be moved far from the self-contained for max.1m 4. Replace this screw 5.1.6 ELECTRICAL BOX WALL HANGING (OPTIONAL) To hang the electrical box on the wall it is necessa",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "Replace this screw",
+          "kind": "numbered_heading",
+          "group_id": "batch_3",
+          "excerpt_ref": "excerpt[4]",
+          "snippet": "Instruction manual Pag. 18 of 32 Rev. 20180919 3. The electrical box can be moved far from the self-contained for max.1m 4. Replace this screw 5.1.6 ELECTRICAL BOX WALL HANGING (OPTIONAL) To hang the electrical box on the wall it is necessa",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "ELECTRICAL BOX WALL HANGING (OPTIONAL)",
+          "kind": "numbered_heading",
+          "group_id": "batch_3",
+          "excerpt_ref": "excerpt[4]",
+          "snippet": "Instruction manual Pag. 18 of 32 Rev. 20180919 3. The electrical box can be moved far from the self-contained for max.1m 4. Replace this screw 5.1.6 ELECTRICAL BOX WALL HANGING (OPTIONAL) To hang the electrical box on the wall it is necessa",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        },
+        {
+          "title": "AIR STERILIZATION SYSTEM UVA/UVC (OPTIONAL)",
+          "kind": "headed_procedure",
+          "group_id": "batch_3",
+          "excerpt_ref": "excerpt[6]",
+          "snippet": "Instruction manual Pag. 19 of 32 Rev. 20180919 5.1.7 AIR STERILIZATION SYSTEM UVA/UVC (OPTIONAL) This device is constituted by an UVA/UVC led lamp capable of emitting germicidal radiation. These radiations deactivates bacteria,",
+          "disposition": "filtered",
+          "filter": "filter:no_imperative_verb"
+        }
+      ],
+      "counts": {
+        "accounted": 0,
+        "classified": 0,
+        "unaccounted": 0,
+        "filtered": 32,
+        "trail": 32
+      },
+      "corpus_sizes": {
+        "actions": 12,
+        "surfaces": 4,
+        "requires": 0
+      }
+    },
+    "repair": {
+      "attempted": false,
+      "enabled": false
+    },
+    "repair_enabled": true
+  },
+  "structured_outputs": true
+}

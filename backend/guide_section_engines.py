@@ -23,9 +23,14 @@ from guide_composition_rules import (
     assess_global_composition,
     normalize_block,
 )
+from guide_composer_device import (
+    build_device_index,
+    equipment_quantity,
+    propulsion_engines_reference,
+    section_plant_key,
+)
 from guide_reader_voice import (
     assess_reader_voice_style,
-    format_guest_equipment_label,
     format_section_xref,
     resolve_vessel_display_name,
     section_xref_link,
@@ -54,14 +59,6 @@ SECTION_ORDER = (
     "troubleshooting",
     "reference",
 )
-
-DISPLAY_NAMES: dict[str, str] = {
-    "nanni_n4_65": "the engines",
-}
-
-MANUFACTURER_MODEL: dict[str, tuple[str, str]] = {
-    "nanni_n4_65": ("Nanni", "N4.65"),
-}
 
 # Maintenance / commissioning / storage — shaped out of guest body.
 _OMIT_ACTIONS = frozenset(
@@ -96,6 +93,7 @@ def compose_engines_section(
 ) -> dict[str, Any]:
     """Compose Engines Stage 4 for the vessel (v4.1 founding)."""
     boat = resolve_vessel_display_name(equipment_doc)
+    device_index = build_device_index(equipment_doc)
     inputs = section_inputs or assemble_section_inputs(
         graph, "engines", equipment_doc=equipment_doc
     )
@@ -104,33 +102,14 @@ def compose_engines_section(
     summary_keys = keys_at_depth(inputs, DEPTH_SUMMARY)
     provenance_keys = keys_at_depth(inputs, DEPTH_PROVENANCE)
 
-    eng_key = next(
-        (
-            k
-            for k in full_keys
-            if k.startswith("nanni") or "engine" in k
-        ),
-        full_keys[0] if full_keys else None,
-    )
+    eng_key = section_plant_key(full_keys, device_index, "nanni", "engine")
     profile: dict[str, Any] = {}
     if eng_key and eng_key in graph.devices:
         profile = dict(graph.devices[eng_key].profile or {})
     if not profile and eng_key:
         profile = dict(profiles.get(eng_key) or {})
 
-    qty = 1
-    if eng_key:
-        for row in equipment_doc.get("equipment") or []:
-            if not isinstance(row, dict):
-                continue
-            if str(row.get("device_key") or "") == eng_key or str(
-                row.get("catalog_key") or ""
-            ) == eng_key:
-                try:
-                    qty = int(row.get("quantity") or 1)
-                except (TypeError, ValueError):
-                    qty = 1
-                break
+    qty = equipment_quantity(eng_key, equipment_doc, index=device_index) if eng_key else 1
     engines_noun = "engines" if qty >= 2 else "engine"
     engines_phrase = "the engines" if qty >= 2 else "the engine"
 
@@ -144,18 +123,16 @@ def compose_engines_section(
     first_use: set[str] = set()
 
     def _name(key: str) -> str:
-        base = re.sub(r"_\d+$", "", key)
-        if key not in first_use and base not in first_use:
-            first_use.add(key)
-            first_use.add(base)
-            role = DISPLAY_NAMES.get(key) or DISPLAY_NAMES.get(base) or engines_phrase
-            mm = MANUFACTURER_MODEL.get(key) or MANUFACTURER_MODEL.get(base)
-            if mm:
-                label = format_guest_equipment_label(mm[0], mm[1])
-                if label:
-                    return f"{role} ({label})"
-            return role
-        return DISPLAY_NAMES.get(key) or DISPLAY_NAMES.get(base) or engines_phrase
+        if not key:
+            return engines_phrase
+        return propulsion_engines_reference(
+            key,
+            qty,
+            equipment_doc,
+            profiles,
+            index=device_index,
+            first_use=first_use,
+        )
 
     def _emit(
         text: str,

@@ -28,7 +28,8 @@
     "dessalator_duo": "ISLAND",
     "fischer_panda_8000i": "ISLAND",
     "nanni_n4_65": "ISLAND",
-    "sea_ai_watchkeeper": "ISLAND"
+    "sea_ai_watchkeeper": "ISLAND",
+    "frigomar_air_conditioning_system": "ENDPOINT"
   },
   "sections": {
     "czone_touch_7": {
@@ -130,6 +131,10 @@
     "sea_ai_watchkeeper": {
       "value": "nav",
       "source": "lookup"
+    },
+    "frigomar_air_conditioning_system": {
+      "value": "ac",
+      "source": "lookup"
     }
   },
   "control_paths": [
@@ -216,6 +221,7 @@
     "nanni_n4_65": "live Stage 1 extraction promoted (Fixture-Auth: chat Nanni N4.65 Stage 1 extract — live extraction promoted; Nanni instrument panel (main panel key/ON-STOP + Start) added as source-grounded §1.D adjudication (extraction omission after MasterView few-shot drop)); operators manual DGBXXT09007C; standalone ISLAND in engines section; Nanni instrument panel (key/ON-STOP + Start); pending human review",
     "masterbus_usb_interface": "live Stage 1 extraction promoted (Fixture-Auth: chat MasterBus USB Interface Stage 1 extract — live extraction promoted; MasterAdjust PC surface added + hub-commanding data_roles evidence removed (exposes kept for MasterBus participant) as source-grounded §1.D adjudication (extraction omissions / direction)); operators manual EN v2.1; ENDPOINT in electrical; MasterAdjust PC surface; data_roles exposes only (software owns display/control); supersedes inventory stub; reviewed & approved 2026-07-23 (owner/human)",
     "sea_ai_watchkeeper": "live Stage 1 extraction promoted (Fixture-Auth: chat Sea.AI Watchkeeper Stage 1 extract); User Guide Watchkeeper Series; ISLAND in nav; Nav Stage 4 guest prose absorbed in v4.43 (UI views, voice alarm, threat-level alarms, tilt); pending human review",
-    "tecma_compass_eco": "live Stage 1 extraction promoted (Fixture-Auth: chat Tecma Compass Eco Stage 1 extract); catalog profile only — not in Supernova vessel plant until owner inventory-corroborates (owner review Heads draft: Tecma not in inventory); Flush §1.D retained on profile; pending human review"
+    "tecma_compass_eco": "live Stage 1 extraction promoted (Fixture-Auth: chat Tecma Compass Eco Stage 1 extract); catalog profile only — not in Supernova vessel plant until owner inventory-corroborates (owner review Heads draft: Tecma not in inventory); Flush §1.D retained on profile; pending human review",
+    "frigomar_air_conditioning_system": "live Stage 1 extraction promoted (Fixture-Auth: chat Frigomar Air Conditioning System Stage 1 extract — live extraction promoted; D1–D4 adjudicated (protective_device false, single wall remote_panel_accessory, genres install+operation, seawater-pump-only mode action); Supernova vessel_equipment saloon team_verified); operators Instruction Manual Rev. 20190118; standalone ENDPOINT in ac section; wall touch-screen; Modbus/NMEA2000 controllable; reviewed & approved 2026-07-28 (owner/human)"
   }
 }

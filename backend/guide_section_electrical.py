@@ -22,6 +22,12 @@ from guide_composition_rules import (
     format_action_first_occasions,
     normalize_block,
 )
+from guide_composer_device import (
+    build_device_index,
+    guest_manufacturer_model_for_catalog,
+    keys_for_catalog,
+    keys_for_catalog_prefix,
+)
 from guide_reader_voice import (
     VesselNameMissing,
     assess_reader_voice_style,
@@ -54,16 +60,6 @@ SECTION_ORDER = (
     "reference",
 )
 
-MANUFACTURER_MODEL: dict[str, tuple[str, str]] = {
-    "blue_sea_acr": ("Blue Sea Systems", "Automatic Charging Relays (ACR)"),
-    "plain_battery_switch": ("", "rotary battery switch"),
-    "class_t": ("Blue Sea", "Class T"),
-    "busbar": ("ProInstaller", "busbar"),
-    "coi": ("CZone", "Combination Output Interface"),
-    "masterbus_bridge_interface": ("Mastervolt", "MasterBus Bridge Interface"),
-    "masterbus_usb_interface": ("Mastervolt", "MasterBus USB Interface"),
-}
-
 _FORBIDDEN_EXTRA = (
     re.compile(r"\bczone touch\b", re.I),
     re.compile(r"\bfavourites\b", re.I),
@@ -91,6 +87,7 @@ def compose_electrical_section(
 ) -> dict[str, Any]:
     """Compose Electrical Panel Stage 4 for the vessel (v4.36)."""
     boat = resolve_vessel_display_name(equipment_doc)
+    device_index = build_device_index(equipment_doc)
     inputs = section_inputs or assemble_section_inputs(
         graph, "electrical", equipment_doc=equipment_doc
     )
@@ -99,9 +96,9 @@ def compose_electrical_section(
     summary_keys = keys_at_depth(inputs, DEPTH_SUMMARY)
     provenance_keys = keys_at_depth(inputs, DEPTH_PROVENANCE)
 
-    acr_keys = [k for k in full_keys if k.startswith("blue_sea_acr")]
-    class_t_keys = [k for k in full_keys if k.startswith("class_t")]
-    coi_keys = [k for k in full_keys if k.startswith("coi")]
+    acr_keys = keys_for_catalog(full_keys, device_index, "blue_sea_acr")
+    class_t_keys = keys_for_catalog_prefix(full_keys, device_index, "class_t")
+    coi_keys = keys_for_catalog_prefix(full_keys, device_index, "coi")
     has_plain = "plain_battery_switch" in full_keys
     has_busbar = "busbar" in full_keys
     has_bridge = "masterbus_bridge_interface" in full_keys
@@ -239,7 +236,9 @@ def compose_electrical_section(
 
     if class_t_keys:
         n = len(class_t_keys)
-        mm = MANUFACTURER_MODEL["class_t"]
+        mm = guest_manufacturer_model_for_catalog(
+            "class_t", equipment_doc, profiles, index=device_index
+        )
         _emit(
             f"The house battery bank is protected by {_qty_word(n)} high-current "
             f"Class-T fuses{format_guest_equipment_paren(mm[0], mm[1])} — fuses that protect the cables "
@@ -257,7 +256,9 @@ def compose_electrical_section(
         )
 
     if has_acr:
-        mm = MANUFACTURER_MODEL["blue_sea_acr"]
+        mm = guest_manufacturer_model_for_catalog(
+            "blue_sea_acr", equipment_doc, profiles, index=device_index
+        )
         _emit(
             f"An automatic charging relay{format_guest_equipment_paren(mm[0], mm[1])} combines and "
             "isolates battery banks based on charging voltage.",
@@ -310,7 +311,9 @@ def compose_electrical_section(
 
     if coi_keys:
         n = len(coi_keys)
-        mm = MANUFACTURER_MODEL["coi"]
+        mm = guest_manufacturer_model_for_catalog(
+            "coi", equipment_doc, profiles, index=device_index
+        )
         _emit(
             f"{_qty_word(n).capitalize()} CZone output interfaces"
             f"{format_guest_equipment_paren(mm[0], mm[1])} "
@@ -377,7 +380,9 @@ def compose_electrical_section(
 
     # ========== REFERENCE (path devices + remaining xrefs) ==========
     if has_busbar:
-        mm = MANUFACTURER_MODEL["busbar"]
+        mm = guest_manufacturer_model_for_catalog(
+            "busbar", equipment_doc, profiles, index=device_index
+        )
         _emit(
             f"The DC distribution busbar"
             f"{format_guest_equipment_paren(mm[0], mm[1])} — a heavy-duty conductor that "
@@ -389,7 +394,9 @@ def compose_electrical_section(
         )
 
     if has_bridge:
-        mm = MANUFACTURER_MODEL["masterbus_bridge_interface"]
+        mm = guest_manufacturer_model_for_catalog(
+            "masterbus_bridge_interface", equipment_doc, profiles, index=device_index
+        )
         _emit(
             f"The MasterBus–CZone bridge"
             f"{format_guest_equipment_paren(mm[0], mm[1])} allows MasterBus "

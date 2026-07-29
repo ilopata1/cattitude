@@ -415,7 +415,7 @@ From `backend/`:
 
 | Role | Path |
 |------|------|
-| Spec tip | `backend/equipment-classification-spec-v4.45.md` (Heads Stage 4 freeze; prior v4.44 hosting extract; v4.43 Nav Watchkeeper; xlv places; Engines freeze; frozen set = Solar + Batteries + Controls + Electrical + Nav + Water + Engines + Heads) |
+| Spec tip | `backend/equipment-classification-spec-v4.46.md` (Air Conditioning Stage 4 freeze; prior v4.45 Heads; v4.44 hosting extract; v4.43 Nav Watchkeeper; xlv places; Engines freeze; frozen set = Solar + Batteries + Controls + Electrical + Nav + Water + Engines + Heads + AC) |
 | Pipeline plan | `backend/guide-pipeline-plan.md` |
 | Stage 4 → live integration plan | `backend/guide-stage4-integration-plan.md` (end-state wiring; phases; locked decisions) |
 | Fixture policy | `backend/tests/fixtures/POLICY.md` |
@@ -430,7 +430,8 @@ From `backend/`:
 | Nav compose / criteria | `backend/guide_section_nav.py`, `scripts/draft_nav_section.py` |
 | Water compose / criteria | `backend/guide_section_water.py`, `scripts/draft_water_section.py` |
 | Engines compose / criteria | `backend/guide_section_engines.py`, `scripts/draft_engines_section.py` |
-| Heads compose / criteria (founding) | `backend/guide_section_heads.py`, `scripts/draft_heads_section.py` |
+| Heads compose / criteria (frozen) | `backend/guide_section_heads.py`, `scripts/draft_heads_section.py` |
+| AC compose / criteria (frozen) | `backend/guide_section_ac.py`, `scripts/draft_ac_section.py` |
 | Vessel reconcile | `backend/scripts/generate_outremer_reconciliation_report.py`, `fixtures/pipeline/outremer/` |
 | Defect ↔ golden pair | `tests/fixtures/stage15_defective_extraction.json` ↔ `smartsolar_corrected_extraction.json` |
 | Owners | `.github/CODEOWNERS` |

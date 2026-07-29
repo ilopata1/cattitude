@@ -30,6 +30,13 @@ from vessel_evidence import (
     merge_evidence_flags_into_graph_flags,
     validate_evidence_attachments,
 )
+from guide_composer_device import (
+    build_device_index,
+    guest_manufacturer_model,
+    guest_role_phrase,
+    solar_array_controller_keys,
+    solar_mppt_keys_present,
+)
 from guide_reader_voice import (
     VesselNameMissing,
     assess_reader_voice_style,
@@ -74,16 +81,6 @@ _GX_UNRESOLVED_PATH_HINTS = (
     "globallink",
     "vrm",
 )
-
-DISPLAY_NAMES: dict[str, str] = {
-    "victron_mppt_150_60": "the davit array controller",
-    "victron_mppt": "the coachroof array controllers",
-}
-
-MANUFACTURER_MODEL: dict[str, tuple[str, str]] = {
-    "victron_mppt_150_60": ("Victron", "SmartSolar MPPT 150/60"),
-    "victron_mppt": ("Victron", "SmartSolar MPPT 75/15"),
-}
 
 _FORBIDDEN_VOCAB_RES = (
     re.compile(r"\bvictron_mppt(?:_150_60)?\b", re.I),
@@ -144,19 +141,43 @@ def flag_reader_relevance(
     return base
 
 
-def display_name(device_key: str) -> str:
-    return DISPLAY_NAMES.get(device_key, "this solar controller")
+def display_name(
+    device_key: str,
+    *,
+    equipment_doc: dict[str, Any] | None = None,
+    index: dict[str, dict[str, Any]] | None = None,
+) -> str:
+    idx = index
+    if idx is None and equipment_doc is not None:
+        idx = build_device_index(equipment_doc)
+    if idx is None:
+        idx = {}
+    role = guest_role_phrase(device_key, idx)
+    return role if role != "the device" else "this solar controller"
 
 
-def first_mention(device_key: str, *, quantity: int = 1) -> str:
+def first_mention(
+    device_key: str,
+    *,
+    quantity: int = 1,
+    equipment_doc: dict[str, Any] | None = None,
+    profiles: dict[str, dict[str, Any]] | None = None,
+    index: dict[str, dict[str, Any]] | None = None,
+    first_use: set[str] | None = None,
+) -> str:
     """Role first; manufacturer + model in parentheses once (sole paren on phrase)."""
-    role = display_name(device_key)
-    mfr, model = MANUFACTURER_MODEL.get(device_key, ("", ""))
+    eq = equipment_doc or {}
+    prof = profiles or {}
+    idx = index if index is not None else build_device_index(eq)
+    used = first_use if first_use is not None else set()
+    role = display_name(device_key, equipment_doc=eq, index=idx)
+    mfr, model = guest_manufacturer_model(device_key, eq, prof, index=idx)
     if quantity > 1:
         lead = f"{quantity} interchangeable {role.removeprefix('the ')}"
     else:
         lead = role
     label = format_guest_equipment_label(mfr, model)
+    used.add(device_key)
     if label:
         return f"{lead} ({label})"
     return lead
@@ -364,12 +385,19 @@ def compose_solar_section(
     profiles: dict[str, dict[str, Any]],
     equipment_doc: dict[str, Any],
     tiers: dict[str, Any] | None = None,
-    device_keys: tuple[str, ...] = ("victron_mppt_150_60", "victron_mppt"),
+    device_keys: tuple[str, ...] | None = None,
     allow_planted_expectation: bool = False,
 ) -> dict[str, Any]:
     """Compose reader-facing Solar section (v4 template)."""
     _ = tiers
     boat = resolve_vessel_display_name(equipment_doc)
+    device_index = build_device_index(equipment_doc)
+    if device_keys is None:
+        device_keys = solar_mppt_keys_present(
+            equipment_doc,
+            graph_device_keys=set(graph.devices.keys()),
+        )
+    arrays = solar_array_controller_keys(equipment_doc)
 
     by_key = {
         str(r.get("device_key")): r
@@ -405,9 +433,15 @@ def compose_solar_section(
         line = by_key.get(key) or {}
         q = int(quantity if quantity is not None else (line.get("quantity") or 1))
         if key not in first_use_done:
-            first_use_done.add(key)
-            return first_mention(key, quantity=q)
-        return display_name(key)
+            return first_mention(
+                key,
+                quantity=q,
+                equipment_doc=equipment_doc,
+                profiles=profiles,
+                index=device_index,
+                first_use=first_use_done,
+            )
+        return display_name(key, equipment_doc=equipment_doc, index=device_index)
 
     def _emit(
         text: str,
@@ -540,90 +574,170 @@ def compose_solar_section(
     yield_inf = facts_by_id.get("solar_coachroof_yield_inference")
     w = (wattage.get("wattage_kw") or {}) if wattage else {}
 
+    davit_key = arrays.get("davit")
+    coach_key = arrays.get("coachroof")
+
     # ========== 1. CAPABILITY SUMMARY ==========
-    davit = _role("victron_mppt_150_60")
-    coach = _role(
-        "victron_mppt",
-        quantity=int((by_key.get("victron_mppt") or {}).get("quantity") or 2),
-    )
+    davit = _role(davit_key) if davit_key else None
+    coach = None
+    if coach_key:
+        coach = _role(
+            coach_key,
+            quantity=int((by_key.get(coach_key) or {}).get("quantity") or 1),
+        )
     cap_sources = [
-        "graph.role:victron_mppt=ISLAND",
-        "graph.role:victron_mppt_150_60=ISLAND",
-        "equipment.victron_mppt_150_60.model",
-        "equipment.victron_mppt.model",
-        "equipment.victron_mppt.quantity",
-        "graph.section:victron_mppt=batteries",
+        *[f"graph.role:{k}=ISLAND" for k in device_keys],
+        *[f"equipment.{k}.model" for k in device_keys],
+        *[
+            f"equipment.{k}.quantity"
+            for k in device_keys
+            if int((by_key.get(k) or {}).get("quantity") or 1) > 1
+        ],
+        *[f"graph.section:{k}=batteries" for k in device_keys],
         "equipment.mli_ultra",
         "vessel.display_name",
     ]
-    if w:
-        dmin = float(w.get("davit_min", 1.0))
-        dmax = float(w.get("davit_max", 1.2))
-        ckw = float(w.get("coachroof", 0.6))
-        total_lo = dmin + ckw
-        total_hi = dmax + ckw
+    # Keep Outremer provenance token order when both Victron keys are present.
+    if set(device_keys) >= {"victron_mppt_150_60", "victron_mppt"}:
+        cap_sources = [
+            "graph.role:victron_mppt=ISLAND",
+            "graph.role:victron_mppt_150_60=ISLAND",
+            "equipment.victron_mppt_150_60.model",
+            "equipment.victron_mppt.model",
+            "equipment.victron_mppt.quantity",
+            "graph.section:victron_mppt=batteries",
+            "equipment.mli_ultra",
+            "vessel.display_name",
+        ]
+
+    house_bank_label = "Mastervolt MLI Ultra"
+    mli_row = by_key.get("mli_ultra") or {}
+    if mli_row:
+        house_bank_label = (
+            format_guest_equipment_label(
+                str(mli_row.get("manufacturer") or ""),
+                # Guest paren short form matches historical Solar prose.
+                "MLI Ultra"
+                if "MLI Ultra" in str(mli_row.get("model") or "")
+                else str(mli_row.get("model") or ""),
+            )
+            or house_bank_label
+        )
+
+    if w and (davit_key or coach_key):
+        dmin = float(w.get("davit_min") or 0)
+        dmax = float(w.get("davit_max") or 0)
+        ckw = float(w.get("coachroof") or 0)
+        use_davit_w = bool(davit_key) and dmin and dmax
+        use_coach_w = bool(coach_key) and ckw
+        total_lo = (dmin if use_davit_w else 0) + (ckw if use_coach_w else 0)
+        total_hi = (dmax if use_davit_w else 0) + (ckw if use_coach_w else 0)
         cap_sources.extend(
             [
                 "vessel_fact:solar_array_wattage_inventory",
                 f"vessel.installation_notes[{wattage.get('source') or 'survey'}]",
             ]
         )
-        if davit_obs and davit_obs.get("evidence_attached"):
+        if davit_obs and davit_obs.get("evidence_attached") and davit_key:
             cap_sources.extend(
                 [
                     "vessel_fact:solar_davit_array_observation",
                     "artifact:photo_davit_array",
                 ]
             )
-        if coach_obs and coach_obs.get("evidence_attached"):
+        if coach_obs and coach_obs.get("evidence_attached") and coach_key:
             cap_sources.extend(
                 [
                     "vessel_fact:solar_coachroof_array_observation",
                     "artifact:photo_coachroof_boom",
                 ]
             )
+        if use_davit_w and use_coach_w:
+            _emit(
+                f"{boat} carries about {total_lo:.1f}–{total_hi:.1f} kW of solar.",
+                *cap_sources,
+                block="capability_summary",
+                force_sources=True,
+            )
+            _emit(
+                f"Her davit array is three rigid panels, about {dmin:.1f}–{dmax:.1f} kW, "
+                f"on {davit}.",
+                *cap_sources,
+                block="capability_summary",
+                force_sources=True,
+            )
+            _emit(
+                f"Her coachroof array is six semi-flex panels, about "
+                f"{int(ckw * 1000)} W, on {coach}.",
+                *cap_sources,
+                block="capability_summary",
+                force_sources=True,
+            )
+        elif use_davit_w:
+            _emit(
+                f"{boat} carries about {total_lo:.1f}–{total_hi:.1f} kW of solar.",
+                *cap_sources,
+                block="capability_summary",
+                force_sources=True,
+            )
+            _emit(
+                f"Her davit array is three rigid panels, about {dmin:.1f}–{dmax:.1f} kW, "
+                f"on {davit}.",
+                *cap_sources,
+                block="capability_summary",
+                force_sources=True,
+            )
+        elif use_coach_w:
+            _emit(
+                f"{boat} carries about {ckw:.1f} kW of solar.",
+                *cap_sources,
+                block="capability_summary",
+                force_sources=True,
+            )
+            _emit(
+                f"Her coachroof array is six semi-flex panels, about "
+                f"{int(ckw * 1000)} W, on {coach}.",
+                *cap_sources,
+                block="capability_summary",
+                force_sources=True,
+            )
         _emit(
-            f"{boat} carries about {total_lo:.1f}–{total_hi:.1f} kW of solar.",
-            *cap_sources,
-            block="capability_summary",
-            force_sources=True,
-        )
-        _emit(
-            f"Her davit array is three rigid panels, about {dmin:.1f}–{dmax:.1f} kW, "
-            f"on {davit}.",
-            *cap_sources,
-            block="capability_summary",
-            force_sources=True,
-        )
-        _emit(
-            f"Her coachroof array is six semi-flex panels, about "
-            f"{int(ckw * 1000)} W, on {coach}.",
-            *cap_sources,
-            block="capability_summary",
-            force_sources=True,
-        )
-        _emit(
-            "Those chargers feed her Mastervolt MLI Ultra house bank.",
+            f"Those chargers feed her {house_bank_label} house bank.",
             "graph.section:victron_mppt=batteries",
             "equipment.mli_ultra",
             block="capability_summary",
             force_sources=True,
         )
-    else:
+    elif davit or coach:
+        if davit and coach:
+            _emit(
+                f"{boat} has solar on {davit}.",
+                *cap_sources,
+                block="capability_summary",
+                force_sources=True,
+            )
+            _emit(
+                f"She also has {coach}.",
+                *cap_sources,
+                block="capability_summary",
+                force_sources=True,
+            )
+        elif davit:
+            _emit(
+                f"{boat} has solar on {davit}.",
+                *cap_sources,
+                block="capability_summary",
+                force_sources=True,
+            )
+        else:
+            _emit(
+                f"{boat} has solar on {coach}.",
+                *cap_sources,
+                block="capability_summary",
+                force_sources=True,
+            )
         _emit(
-            f"{boat} has solar on {davit}.",
-            *cap_sources,
-            block="capability_summary",
-            force_sources=True,
-        )
-        _emit(
-            f"She also has {coach}.",
-            *cap_sources,
-            block="capability_summary",
-            force_sources=True,
-        )
-        _emit(
-            "Those chargers feed her Mastervolt MLI Ultra house bank.",
+            f"Those chargers feed her {house_bank_label} house bank.",
             "graph.section:victron_mppt=batteries",
             "equipment.mli_ultra",
             block="capability_summary",
@@ -654,7 +768,8 @@ def compose_solar_section(
             flag_facts_in_provenance["fact:gx_telemetry_unresolved"] = sid
 
     if (
-        coach_obs
+        coach_key
+        and coach_obs
         and coach_obs.get("evidence_attached")
         and yield_inf
         and yield_inf.get("evidence_attached")

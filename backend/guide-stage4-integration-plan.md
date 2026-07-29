@@ -683,6 +683,18 @@ run metadata includes provenance; 2 open owner questions upserted;
 
 ## Phase 4 — detailed design (de-hardcode + 2nd vessel)
 
+**Status (2026-07-28): W1–W4 shipped; W4 human read passed; class/role design
+note recorded.** All nine composers migrated to `guide_composer_device`.
+Vessel B = `outremer_thinned` seeded as live slug `sister-test` (Sister Test);
+Generate → approve → publish v1 proved thinned plant (no
+Halo/Watchkeeper/coachroof/second-Combi prose; davit-only solar; singular Combi
+grammar). **Owner/human read of sister-test published chapters: pass
+(2026-07-28).** Outremer byte-match remains the regression gate
+(`make stage4-bytematch`). Vessel B smoke is in `make pipeline-verify` /
+`make stage4-vessel-b`. See [design note — class vs plant role](#design-note--equipment-class-vs-vessel-plant-role-2026-07-28).
+Follow-up: implement class/role data path (spike one family); optional GitHub
+Actions backend gate; do not grow `GUEST_*_BY_CATALOG`.
+
 ### What Phase 4 is for (plain language)
 
 Phases 1–3 proved the *pipeline*: composers → live modules → DB substrate →
@@ -868,10 +880,10 @@ must stay green — predicates must recognize today’s keys.
 to look like Outremer.” Sister ships with similar profiles work; random key
 schemes still need consistent profiling.
 
-**Open for analysis (not locked):** see
-[Explicit plant-function model](#open-analysis--explicit-plant-function-model)
-below — a possible deeper framing of families as a small shared function
-vocabulary that profiles bind into, rather than ad hoc predicates only.
+**Recorded design note (2026-07-28):** see
+[guide-stage4-class-role-design-note.md](guide-stage4-class-role-design-note.md)
+— equipment **class** vs vessel **plant role**, shim-map policy, and classify-at-promote
+(not Generate-time LLM).
 
 ---
 
@@ -968,62 +980,33 @@ hide empty system tiles; Phase 4 doesn’t require full catalog coverage on B.
 | 2 | Vessel B | Pick real slug or thinned synthetic fixture before W3 |
 | 3 | Naming | Derive from profile/equipment fields; retire map-as-primary |
 | 4 | Families | Graph/profile predicates, not Outremer key prefixes |
-| 4a | Plant-function model | **Open** — evaluate thin function vocabulary + profile bindings (see below); not required to start W1 |
-| 5 | Numbers/layout | `vessel_facts` or omit/gap — no silent Outremer defaults |
+| 4a | Plant-function model | **Design note recorded (2026-07-28)** — see [guide-stage4-class-role-design-note.md](guide-stage4-class-role-design-note.md); implementation not started |
+| 5 | Numbers/layout | `vessel_facts` or omit/gap - no silent Outremer defaults |
 | 6 | Oracle | Outremer byte-match stays; B = coherence only |
 | 7 | Registry link | Still deferred |
 | 8 | Empty sections | Honest gap / skip, never wrong brand |
 
 ---
 
-### Open analysis — explicit plant-function model
+### Design note — equipment class vs vessel plant role (2026-07-28)
 
-**Status:** possible approach for further analysis and evaluation before or
-during early W1. **Not** a locked Phase 4 decision. Decision 4’s default
-remains “graph/profile predicates in shared helpers.”
+Full note: [guide-stage4-class-role-design-note.md](guide-stage4-class-role-design-note.md).
 
-**Idea.** The guest-facing plant model today is real but implicit — mostly
-Outremer key checks and sentence templates inside composers, plus computed
-guide sections and topology roles. A thinner, *explicit* layer could make
-Phase 4 family detection honest and reusable:
+**Summary (do not re-litigate without updating that file):**
 
-- A **closed vocabulary of plant functions** (tens of terms, not hundreds):
-  e.g. house battery bank, inverter-charger, MPPT / solar charge controller,
-  alternator regulator, genset, digital-switching hub, helm display, watermaker.
-- **Bindings** on the interaction profile or Stage 4 substrate:
-  `implements: [house_battery_bank]` (curated, or lightly proposed from
-  existing signals and human-reviewed).
-- Composers select members **by function**; profiles supply brand, panel
-  labels, and attested actions. Vessel facts still own layout/numbers/nicknames.
-- Stage 2 topology roles (HUB / ENDPOINT / …) and guide sections stay
-  **computed**. No LLM at Stage 4 runtime; Stage 1 extraction (or a review
-  pass) may *propose* bindings only.
-- Unclassified gear → honest gap, not forced into a role. Same-family
-  ambition still applies; this is not a universal boat ontology.
-
-**Why evaluate it.** Decision 4 predicates may grow into a de facto ontology
-anyway. Naming the vocabulary once could reduce five composer-local heuristics,
-clarify where profiles “find their place,” and make vessel B failures
-(“missing binding” vs “wrong prose”) easier to diagnose. Risk: premature
-schema, Outremer assumptions hiding under nicer names, or blocking W1 on a
-design spike.
-
-**Evaluation questions (when we pick this up):**
-
-1. Can we list the functions already implied by frozen composers (Batteries,
-   Solar, Controls, Electrical, Nav, Water, Engines) in one short table?
-2. Do existing profile/graph signals already distinguish those functions for
-   Outremer without new fields — or do we need an explicit binding column/tag?
-3. Does a binding layer keep Outremer byte-match with less brittle code than
-   pure predicates, or does it just add authoring cost?
-4. Where should bindings live — profile library (model-level), vessel
-   substrate, or vessel facts only for nicknames?
-5. Go / no-go: proceed with Decision 4 predicates only; adopt a thin function
-   vocab + bindings as W1’s backbone; or defer until vessel B proves predicates
-   insufficient.
-
-**Non-goals for this analysis:** registry-level role enums; replacing
-`system_category`; a grand boat-operations theory; LLM Stage 4 classification.
+- **Non-negotiable:** registry growth must not require composer code changes.
+  `GUEST_*_BY_CATALOG` / `GUEST_ROLE_BY_KEY` are Outremer freeze shims — do not
+  grow them for new gear.
+- **Class** (model-level, e.g. `solar_charge_controller`) vs **plant role**
+  (vessel-level, e.g. `house_bank` vs engine bank; davit vs coachroof) — do not
+  collapse. Role is not knowable from the manual alone.
+- **Guest nicknames:** prefer derive from class + `quantity` / `side` / place /
+  vessel facts; brand-as-role discouraged; permanent `guest_role` column still
+  an **open** decision.
+- **Classify class at profile promote** (heuristics first; optional small LLM
+  on misses). **No LLM at Stage 4 Generate.**
+- **Next implement step:** spike one family off the shim maps with Outremer
+  byte-match + `sister-test` coherent.
 
 ---
 
@@ -1032,7 +1015,7 @@ design spike.
 **W1 — Shared naming & family helpers**  
 One place composers ask “what do we call this?” and “which keys are in this
 family?” so we don’t maintain five Outremer dictionaries. Optionally sharpened
-by the [plant-function model analysis](#open-analysis--explicit-plant-function-model)
+by the [class/role design note](guide-stage4-class-role-design-note.md)
 if that evaluation lands on an explicit vocabulary + bindings.
 
 **W2 — Composer pass (Electrical → Controls → Nav → Batteries → Solar)**  
@@ -1040,17 +1023,22 @@ Rewrite one section at a time. After each: Outremer verify + byte-match green;
 spot-read vessel B. Order puts the easier/safer sections first; Batteries/Solar
 are the long pole (layout facts).
 
-**W3 — Seed vessel B’s Stage 4 substrate**  
-Fixture or curated rows + `seed_stage4_substrate.py`. Needs a display name and
-whatever facts W2 requires (or accept gaps).
+**W3 — Seed vessel B’s Stage 4 substrate** ✅  
+Fixture `outremer_thinned` + live slug `sister-test` via
+`seed_stage4_substrate.py --slug sister-test --fixture outremer_thinned`.
 
-**W4 — Generate path proof**  
-CLI or admin Generate on B → drafts validate → approve → publish → open
-`bundle.json` and read it as a human.
+**W4 — Generate path proof** ✅ (2026-07-28)  
+`ingest_stage4_sections.py --slug sister-test` → approve Stage 4 systems (+
+copied branding/emergency/homeRuleSections shell from Supernova) → publish v1.
+Human readout under `fixtures/pipeline/scratch/sister_test_w4/` (local).
+Thinned signals confirmed: Sister Test naming, davit-only solar, one Combi
+(grammar fixed), no Halo/Watchkeeper/coachroof/starboard-Combi prose.
+**Human read: pass (2026-07-28).**
 
-**W5 — Tests**  
-Keep Outremer goldens. Add a thin B smoke test. Do not freeze B prose to match
-Outremer.
+**W5 — Tests** ✅ (local gate)  
+Outremer goldens unchanged. `make stage4-vessel-b` / `pipeline-verify` /
+`pipeline_verify.ps1` rebuild thinned fixture and run
+`verify_stage4_vessel_b.py`. No GitHub Actions backend job yet.
 
 ---
 
@@ -1080,9 +1068,11 @@ fast path; Batteries/Solar are the long pole.
 
 ### Open question before implement
 
-**Which vessel is B?** (a) `cattitude` with curated Stage 4 inventory,
-(b) thinned synthetic fixture, or (c) another real boat. Lock decisions 1–2
-(and confirm 3–8) before W3.
+**Which vessel is B?** **Locked for W3:** synthetic `outremer_thinned` fixture
+(`fixtures/pipeline/outremer_thinned/`) — thinned same-family plant for composer
+smoke tests; swap in a real slug later via `seed_stage4_substrate`. Decisions
+3–8 unchanged; W2 composer pass continues Electrical → Controls → Nav →
+Batteries → Solar.
 
 ---
 

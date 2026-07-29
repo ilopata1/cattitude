@@ -1,0 +1,21 @@
+{
+  "device_key": "frigomar_air_conditioning_system",
+  "equipment_id": "d3f0228f-5c1d-48a1-acdc-dbba6afbd3ee",
+  "manual_work_id": "08e30678-2e08-472e-ad52-7fa9c60f9db4",
+  "vessel_equipment_id": "6d36a369-ad9e-461d-91f3-7d19a2ecb549",
+  "manual": "Instruction Manual — Self-contained unit INVERTER BLDC (SCU07VFD–SCU16VFD), Rev. 20190118, 32pp EN",
+  "fixture_auth": "Fixture-Auth: chat Frigomar Air Conditioning System Stage 1 extract — live extraction promoted; D1–D4 adjudicated (protective_device false, single wall remote_panel_accessory, genres install+operation, seawater-pump-only mode action); Supernova vessel_equipment saloon team_verified",
+  "review": {
+    "status": "reviewed_and_approved",
+    "verdict": "pass",
+    "reviewed_by": "owner/human (chat)",
+    "date": "2026-07-28",
+    "adjudications": [
+      "D1 is_protective_device=false",
+      "D2 single wall remote_panel_accessory (not vessel HUB touchscreen)",
+      "D3 genres installation+operation",
+      "D4 seawater-pump-only mode action",
+      "D5 Supernova vessel_equipment wired (saloon)"
+    ]
+  }
+}

@@ -14,11 +14,18 @@ from __future__ import annotations
 import re
 from typing import Any
 
+from guide_composer_device import (
+    build_device_index,
+    catalog_base,
+    guest_device_reference,
+    guest_role_phrase,
+    inverter_charger_group_phrase,
+    keys_where_catalog_contains,
+    keys_where_device_key_prefix,
+)
 from guide_reader_voice import (
     VesselNameMissing,
     assess_reader_voice_style,
-    format_guest_equipment_label,
-    format_guest_equipment_paren,
     format_section_xref,
     resolve_vessel_display_name,
     section_xref_link,
@@ -47,30 +54,6 @@ SECTION_ORDER = (
     "reference",
 )
 
-DISPLAY_NAMES: dict[str, str] = {
-    "czone_touch_7": "the touchscreen",
-    "czone_2_0": "CZone",
-    "mass_combi_pro": "the inverter-chargers",
-    "mass_combi_pro_1": "the port inverter-charger",
-    "mass_combi_pro_2": "the starboard inverter-charger",
-    "mli_ultra": "the house batteries",
-    "mli_ultra_1": "house battery 1",
-    "mli_ultra_2": "house battery 2",
-    "mli_ultra_3": "house battery 3",
-}
-
-MANUFACTURER_MODEL: dict[str, tuple[str, str]] = {
-    "czone_touch_7": ("CZone", "Touch 7"),
-    "czone_2_0": ("CZone", "2.0"),
-    "mass_combi_pro": ("Mastervolt", "Mass Combi Pro"),
-    "mass_combi_pro_1": ("Mastervolt", "Mass Combi Pro"),
-    "mass_combi_pro_2": ("Mastervolt", "Mass Combi Pro"),
-    "mli_ultra": ("Mastervolt", "MLI Ultra"),
-    "mli_ultra_1": ("Mastervolt", "MLI Ultra"),
-    "mli_ultra_2": ("Mastervolt", "MLI Ultra"),
-    "mli_ultra_3": ("Mastervolt", "MLI Ultra"),
-}
-
 _FORBIDDEN_EXTRA = (
     re.compile(r"\bmasterbus_bridge_interface\b", re.I),
     re.compile(r"\bcoi\b", re.I),
@@ -90,6 +73,7 @@ def compose_controls_section(
 ) -> dict[str, Any]:
     """Compose Controls and Monitoring for the vessel."""
     boat = resolve_vessel_display_name(equipment_doc)
+    device_index = build_device_index(equipment_doc)
     inputs = section_inputs or assemble_section_inputs(
         graph, "controls", equipment_doc=equipment_doc
     )
@@ -124,18 +108,13 @@ def compose_controls_section(
     config_placeholder_ids: list[str] = []
 
     def _name(key: str) -> str:
-        base = re.sub(r"_\d+$", "", key)
-        if key not in first_use and base not in first_use:
-            first_use.add(key)
-            first_use.add(base)
-            role = DISPLAY_NAMES.get(key) or DISPLAY_NAMES.get(base) or "the device"
-            mm = MANUFACTURER_MODEL.get(key) or MANUFACTURER_MODEL.get(base)
-            if mm:
-                label = format_guest_equipment_label(mm[0], mm[1])
-                if label:
-                    return f"{role} ({label})"
-            return role
-        return DISPLAY_NAMES.get(key) or DISPLAY_NAMES.get(base) or "the device"
+        return guest_device_reference(
+            key,
+            equipment_doc,
+            profiles,
+            index=device_index,
+            first_use=first_use,
+        )
 
     def _emit(
         text: str,
@@ -228,10 +207,10 @@ def compose_controls_section(
     # ========== CAPABILITY ==========
     touch = _name(hub_key) if hub_key else "the control station"
     # Platform: role-only on first capability sentence (avoid second paren).
-    plat_role = DISPLAY_NAMES.get(platform_key or "", "CZone")
+    plat_role = guest_role_phrase(platform_key or "", device_index) if platform_key else "CZone"
     if platform_key:
         first_use.add(platform_key)
-        first_use.add(re.sub(r"_\d+$", "", platform_key))
+        first_use.add(catalog_base(platform_key))
     _emit(
         f"On {boat}, switching and monitoring run through {touch}, "
         f"which hosts {plat_role}.",
@@ -282,7 +261,7 @@ def compose_controls_section(
             "section_inputs.summary:mli",
             block="monitoring",
         )
-    mli_summaries = [k for k in summary_keys if k.startswith("mli")]
+    mli_summaries = keys_where_device_key_prefix(summary_keys, "mli")
     if mli_summaries:
         batteries_xref = format_section_xref("batteries")
         _emit(
@@ -352,13 +331,14 @@ def compose_controls_section(
             block="adjusting",
         )
 
-    combi_keys = [k for k in summary_keys if "combi" in k]
+    combi_keys = keys_where_catalog_contains(summary_keys, device_index, "combi")
     if combi_keys:
-        mm = MANUFACTURER_MODEL.get("mass_combi_pro") or ("Mastervolt", "Mass Combi Pro")
+        combi_phrase = inverter_charger_group_phrase(
+            len(combi_keys), equipment_doc, profiles, index=device_index
+        )
         batteries_xref = format_section_xref("batteries")
         _emit(
-            f"The Inverter Charger page shows the two inverter-chargers"
-            f"{format_guest_equipment_paren(mm[0], mm[1])} for AC/DC power flow; those procedures can "
+            f"The Inverter Charger page shows {combi_phrase} for AC/DC power flow; those procedures can "
             f"be found in {batteries_xref['phrase']}.",
             f"profile.{platform_key}.ui_pages[Inverter Charger]",
             *[f"graph.control_path->{k}" for k in combi_keys],

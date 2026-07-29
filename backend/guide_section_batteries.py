@@ -22,6 +22,17 @@ from guide_composition_rules import (
     assess_global_composition,
     normalize_block,
 )
+from guide_composer_device import (
+    build_device_index,
+    catalog_base,
+    guest_device_reference,
+    guest_device_reference_quantity,
+    house_bank_kwh_estimate,
+    keys_for_catalog,
+    keys_for_catalog_prefix,
+    keys_where_catalog_contains,
+    solar_array_controller_keys,
+)
 from guide_reader_voice import (
     VesselNameMissing,
     assess_reader_voice_style,
@@ -46,40 +57,6 @@ from system_graph import VesselGraphResult
 
 SECTION_ORDER = SECTION_SPINE
 
-DISPLAY_NAMES: dict[str, str] = {
-    "mli_ultra": "the house batteries",
-    "mli_ultra_1": "house battery 1",
-    "mli_ultra_2": "house battery 2",
-    "mli_ultra_3": "house battery 3",
-    "mass_combi_pro": "the inverter-chargers",
-    "mass_combi_pro_1": "the port inverter-charger",
-    "mass_combi_pro_2": "the starboard inverter-charger",
-    "victron_mppt_150_60": "the davit array controller",
-    "victron_mppt": "the coachroof array controllers",
-    "silentwind": "the wind generator",
-    "alpha_pro_iii": "the alternator regulators",
-    "alpha_pro_iii_port": "the port alternator regulator",
-    "alpha_pro_iii_stbd": "the starboard alternator regulator",
-    "fischer_panda_8000i": "the generator",
-}
-
-MANUFACTURER_MODEL: dict[str, tuple[str, str]] = {
-    "mli_ultra": ("Mastervolt", "MLI Ultra"),
-    "mli_ultra_1": ("Mastervolt", "MLI Ultra"),
-    "mli_ultra_2": ("Mastervolt", "MLI Ultra"),
-    "mli_ultra_3": ("Mastervolt", "MLI Ultra"),
-    "mass_combi_pro": ("Mastervolt", "Mass Combi Pro"),
-    "mass_combi_pro_1": ("Mastervolt", "Mass Combi Pro"),
-    "mass_combi_pro_2": ("Mastervolt", "Mass Combi Pro"),
-    "victron_mppt_150_60": ("Victron", "SmartSolar MPPT 150/60"),
-    "victron_mppt": ("Victron", "SmartSolar MPPT 75/15"),
-    "silentwind": ("Silentwind", "Hybrid 1000"),
-    "alpha_pro_iii": ("Mastervolt", "Alpha Pro III"),
-    "alpha_pro_iii_port": ("Mastervolt", "Alpha Pro III"),
-    "alpha_pro_iii_stbd": ("Mastervolt", "Alpha Pro III"),
-    "fischer_panda_8000i": ("Fischer Panda", "Panda 8000i"),
-}
-
 _FORBIDDEN_EXTRA = (
     re.compile(r"\bmasterbus_bridge_interface\b", re.I),
     re.compile(r"\bcoi\b", re.I),
@@ -98,13 +75,6 @@ _INSTALL_LEAK_RES = (
     re.compile(r"set the number of pole pairs", re.I),
 )
 
-_SIDE_SUFFIX_RE = re.compile(r"_(port|stbd)$", re.I)
-
-
-def _catalog_base(key: str) -> str:
-    base = re.sub(r"_\d+$", "", key)
-    return _SIDE_SUFFIX_RE.sub("", base)
-
 
 def compose_batteries_section(
     *,
@@ -116,6 +86,7 @@ def compose_batteries_section(
 ) -> dict[str, Any]:
     """Compose Batteries & Energy v2 for the vessel."""
     boat = resolve_vessel_display_name(equipment_doc)
+    device_index = build_device_index(equipment_doc)
     inputs = section_inputs or assemble_section_inputs(
         graph, "batteries", equipment_doc=equipment_doc
     )
@@ -123,12 +94,15 @@ def compose_batteries_section(
     full_keys = keys_at_depth(inputs, DEPTH_FULL)
     provenance_keys = keys_at_depth(inputs, DEPTH_PROVENANCE)
 
-    mli_keys = [k for k in full_keys if k.startswith("mli_ultra")]
-    combi_keys = [k for k in full_keys if "combi" in k]
-    mppt_keys = [k for k in full_keys if "mppt" in k or k.startswith("victron_mppt")]
-    alpha_keys = [k for k in full_keys if "alpha" in k]
-    genset_keys = [k for k in full_keys if "fischer_panda" in k]
-    has_silentwind = "silentwind" in full_keys
+    mli_keys = keys_for_catalog_prefix(full_keys, device_index, "mli_ultra")
+    combi_keys = keys_where_catalog_contains(full_keys, device_index, "combi")
+    mppt_keys = keys_where_catalog_contains(full_keys, device_index, "mppt")
+    alpha_keys = keys_for_catalog(full_keys, device_index, "alpha_pro_iii")
+    if not alpha_keys:
+        alpha_keys = keys_where_catalog_contains(full_keys, device_index, "alpha")
+    genset_keys = keys_where_catalog_contains(full_keys, device_index, "fischer_panda")
+    has_silentwind = bool(keys_for_catalog(full_keys, device_index, "silentwind"))
+    arrays = solar_array_controller_keys(equipment_doc)
 
     first_use: set[str] = set()
     provenance_map: list[dict[str, Any]] = []
@@ -136,35 +110,27 @@ def compose_batteries_section(
     context_shaping_consumed: list[dict[str, Any]] = []
 
     def _name(key: str, *, quantity: int | None = None) -> str:
-        base = _catalog_base(key)
-        mm = MANUFACTURER_MODEL.get(key) or MANUFACTURER_MODEL.get(base)
+        base = catalog_base(key)
         if quantity and quantity > 1 and base in {
             "mli_ultra",
             "mass_combi_pro",
             "alpha_pro_iii",
         }:
-            if key not in first_use and base not in first_use:
-                first_use.add(key)
-                first_use.add(base)
-                role = DISPLAY_NAMES.get(base) or "the devices"
-                bare = role.removeprefix("the ")
-                if mm:
-                    label = format_guest_equipment_label(mm[0], mm[1])
-                    if label:
-                        return f"{quantity} {bare} ({label})"
-                    return f"{quantity} {bare}"
-                return f"{quantity} {bare}"
-            return DISPLAY_NAMES.get(base) or "the devices"
-        role = DISPLAY_NAMES.get(key) or DISPLAY_NAMES.get(base) or "the device"
-        if key not in first_use and base not in first_use:
-            first_use.add(key)
-            first_use.add(base)
-            if mm:
-                label = format_guest_equipment_label(mm[0], mm[1])
-                if label:
-                    return f"{role} ({label})"
-            return role
-        return role
+            return guest_device_reference_quantity(
+                key,
+                quantity,
+                equipment_doc,
+                profiles,
+                index=device_index,
+                first_use=first_use,
+            )
+        return guest_device_reference(
+            key,
+            equipment_doc,
+            profiles,
+            index=device_index,
+            first_use=first_use,
+        )
 
     def _emit(
         text: str,
@@ -234,9 +200,16 @@ def compose_batteries_section(
     if mli_keys:
         n = len(mli_keys)
         n_word = {1: "one", 2: "two", 3: "three"}.get(n, str(n))
+        bank_row = device_index.get("mli_ultra") or device_index.get(mli_keys[0]) or {}
+        bank_model = str(bank_row.get("model") or "MLI Ultra 24/6000").strip()
+        bank_mfr = str(bank_row.get("manufacturer") or "Mastervolt").strip()
+        bank_label = format_guest_equipment_label(bank_mfr, bank_model) or bank_model
+        kwh = house_bank_kwh_estimate(n, bank_model)
+        if kwh is None:
+            kwh = n * 6
         _emit(
             f"On {boat}, the house bank is {n_word} house batteries "
-            f"(Mastervolt MLI Ultra 24/6000), about {n * 6} kWh together.",
+            f"({bank_label}), about {kwh} kWh together.",
             *[f"graph.device:{k}" for k in mli_keys],
             "vessel.display_name",
             "profile.mli_ultra.device.model",
@@ -245,8 +218,8 @@ def compose_batteries_section(
             kind="composed_inference",
             block="capability_summary",
             contributing_facts=[
-                "equipment.mli_ultra.model=MLI Ultra 24/6000",
-                "equipment.mli_ultra.quantity=3",
+                f"equipment.mli_ultra.model={bank_model}",
+                f"equipment.mli_ultra.quantity={n}",
                 "profile.mli_ultra.device.model",
                 "derived:6000_Wh_token_per_unit_from_model",
                 f"derived:bank_kWh≈{n}×6",
@@ -313,12 +286,19 @@ def compose_batteries_section(
         charge_sources.append("leaf:solar")
     if combi_keys:
         n = len(combi_keys)
-        n_word = {1: "one", 2: "two", 3: "three"}.get(n, str(n)).capitalize()
-        charge_sentences.append(
-            f"{n_word} inverter-chargers (Mastervolt Mass Combi Pro) convert "
-            f"between shore or generator AC and the house bank, and supply AC "
-            f"from the bank when no shore or generator power is available"
-        )
+        n_word = {1: "One", 2: "Two", 3: "Three"}.get(n, str(n).capitalize())
+        if n == 1:
+            charge_sentences.append(
+                "One inverter-charger (Mastervolt Mass Combi Pro) converts "
+                "between shore or generator AC and the house bank, and supplies "
+                "AC from the bank when no shore or generator power is available"
+            )
+        else:
+            charge_sentences.append(
+                f"{n_word} inverter-chargers (Mastervolt Mass Combi Pro) convert "
+                "between shore or generator AC and the house bank, and supply AC "
+                "from the bank when no shore or generator power is available"
+            )
         charge_sources.extend(f"graph.device:{k}" for k in combi_keys)
         charge_sources.append("profile.mass_combi_pro.operator_actions")
         first_use.add("mass_combi_pro")
@@ -418,20 +398,37 @@ def compose_batteries_section(
     # Wisdom 4 — charge-mode comparison (behavior), not Solar S1 quantity restatement.
     # xli: alternator half keys off engines running, not vessel underway state.
     if mppt_keys:
-        solar_bits = (
-            "At anchor in good sun, treat solar as the main charge path across "
-            "both arrays"
-        )
-        srcs = [
-            "vessel_fact:solar_davit_array_observation",
-            "vessel_fact:solar_coachroof_array_observation",
-            *[f"graph.device:{k}" for k in mppt_keys],
-        ]
-        contrib = [
-            "solar_davit_array_observation",
-            "solar_coachroof_array_observation",
-            "derived:at_anchor_solar_primary_vs_engines_running_alternators",
-        ]
+        has_davit = bool(arrays.get("davit"))
+        has_coach = bool(arrays.get("coachroof"))
+        if has_davit and has_coach:
+            solar_bits = (
+                "At anchor in good sun, treat solar as the main charge path across "
+                "both arrays"
+            )
+            srcs = [
+                "vessel_fact:solar_davit_array_observation",
+                "vessel_fact:solar_coachroof_array_observation",
+                *[f"graph.device:{k}" for k in mppt_keys],
+            ]
+            contrib = [
+                "solar_davit_array_observation",
+                "solar_coachroof_array_observation",
+                "derived:at_anchor_solar_primary_vs_engines_running_alternators",
+            ]
+        else:
+            solar_bits = (
+                "At anchor in good sun, treat solar as the main charge path"
+            )
+            srcs = [*[f"graph.device:{k}" for k in mppt_keys]]
+            contrib = [
+                "derived:at_anchor_solar_primary_vs_engines_running_alternators",
+            ]
+            if has_davit:
+                srcs.append("vessel_fact:solar_davit_array_observation")
+                contrib.append("solar_davit_array_observation")
+            if has_coach:
+                srcs.append("vessel_fact:solar_coachroof_array_observation")
+                contrib.append("solar_coachroof_array_observation")
         if alpha_keys and alpha_rating_ok:
             solar_bits += (
                 "; when the engines are running, those alternators add "
@@ -471,7 +468,9 @@ def compose_batteries_section(
         davit_lo = float(wattage.get("davit_min") or 0)
         davit_hi = float(wattage.get("davit_max") or 0)
         coach_kw = float(wattage.get("coachroof") or 0)
-        if davit_lo and davit_hi and coach_kw:
+        has_davit_w = bool(arrays.get("davit")) and davit_lo and davit_hi
+        has_coach_w = bool(arrays.get("coachroof")) and coach_kw
+        if has_davit_w and has_coach_w:
             total_lo = davit_lo + coach_kw
             total_hi = davit_hi + coach_kw
             pointed_solar_capability.extend(
@@ -481,6 +480,15 @@ def compose_batteries_section(
                     f"about {int(coach_kw * 1000)} W",
                 ]
             )
+        elif has_davit_w:
+            pointed_solar_capability.extend(
+                [
+                    f"carries about {davit_lo:.1f}–{davit_hi:.1f} kW of solar",
+                    f"about {davit_lo:.1f}–{davit_hi:.1f} kW",
+                ]
+            )
+        elif has_coach_w:
+            pointed_solar_capability.append(f"about {int(coach_kw * 1000)} W")
 
     fact_queries: list[dict[str, str]] = []
 

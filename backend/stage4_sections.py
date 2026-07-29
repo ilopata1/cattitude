@@ -17,6 +17,7 @@ import json
 from pathlib import Path
 from typing import Any, Callable
 
+from guide_section_ac import compose_ac_section
 from guide_section_batteries import compose_batteries_section
 from guide_section_controls import compose_controls_section
 from guide_section_electrical import compose_electrical_section
@@ -36,6 +37,7 @@ from system_graph import build_vessel_graph
 # Published system modules produced by Stage 4 composers today. Solar is not a
 # standalone module — it folds into ``batteries`` (O1).
 PUBLISHED_SECTIONS: tuple[str, ...] = (
+    "ac",
     "batteries",
     "controls",
     "electrical",
@@ -47,6 +49,7 @@ PUBLISHED_SECTIONS: tuple[str, ...] = (
 
 # section_id -> (compose_fn, uses_section_inputs)
 _COMPOSERS: dict[str, tuple[Callable[..., dict[str, Any]], bool]] = {
+    "ac": (compose_ac_section, True),
     "batteries": (compose_batteries_section, True),
     "controls": (compose_controls_section, True),
     "electrical": (compose_electrical_section, True),

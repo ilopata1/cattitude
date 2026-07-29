@@ -1,0 +1,118 @@
+{
+  "device": {
+    "manufacturer": "Frigomar",
+    "model": "Air Conditioning System",
+    "category_freeform": "Air Conditioning System"
+  },
+  "entity_kind": "device",
+  "documented_version": "",
+  "ui_pages": [
+    {
+      "name": "Settings",
+      "purpose": "Adjust settings for temperature and sensors",
+      "appears_if_gate": "",
+      "actions": [
+        {
+          "action": "set temperature unit and sensor choice",
+          "audience": "operator",
+          "context": "situational",
+          "occasion": ""
+        },
+        {
+          "action": "delete alarm and restart unit",
+          "audience": "operator",
+          "context": "emergency",
+          "occasion": "if probe fails"
+        }
+      ]
+    }
+  ],
+  "alarm_severity": [],
+  "control_surfaces": [
+    {
+      "surface": "touchscreen",
+      "location_class": "on_device",
+      "hosting": "integral_display",
+      "optional_accessory": false,
+      "label_verbatim": "Touch Screen",
+      "path": "control_surfaces[0]"
+    }
+  ],
+  "operator_actions": [
+    {
+      "action": "turn unit ON/OFF",
+      "audience": "operator",
+      "context": "daily",
+      "occasion": ""
+    },
+    {
+      "action": "switch operating mode",
+      "audience": "operator",
+      "context": "situational",
+      "occasion": ""
+    }
+  ],
+  "networks": {
+    "speaks": [
+      {
+        "name_verbatim": "Modbus",
+        "physical_or_wireless": "wired"
+      },
+      {
+        "name_verbatim": "NMEA2000",
+        "physical_or_wireless": "wired"
+      }
+    ],
+    "bridges": []
+  },
+  "data_roles": {
+    "exposes_data_to_network": false,
+    "displays_data_from_other_devices": false,
+    "controllable_from_network": false
+  },
+  "requires_devices": [],
+  "safety_role": {
+    "is_protective_device": false,
+    "has_manual_override": false,
+    "has_emergency_procedure": false
+  },
+  "protected_by": [],
+  "protects": [],
+  "supply_requirements": [],
+  "evidence": [
+    {
+      "supports_field": "operator_actions[action=\"turn unit ON/OFF\"]",
+      "manual_section": "6.1.2  TOUCH SCREEN DESCRIPTION:",
+      "note": "Describes ON/OFF button functionality"
+    },
+    {
+      "supports_field": "operator_actions[action=\"switch operating mode\"]",
+      "manual_section": "6.1.2  TOUCH SCREEN DESCRIPTION:",
+      "note": "Mode button cycles through operating modes"
+    },
+    {
+      "supports_field": "ui_pages[0].actions[0]",
+      "manual_section": "6.7.1  SETTINGS:",
+      "note": "Setting temperature unit and sensor choice"
+    },
+    {
+      "supports_field": "ui_pages[0].actions[1]",
+      "manual_section": "6.7.1  SETTINGS:",
+      "note": "Deleting alarm and restarting unit"
+    },
+    {
+      "supports_field": "networks.speaks[0]",
+      "manual_section": "6.1.2  TOUCH SCREEN DESCRIPTION:",
+      "note": "Device communicates via Modbus"
+    },
+    {
+      "supports_field": "networks.speaks[1]",
+      "manual_section": "6.1.2  TOUCH SCREEN DESCRIPTION:",
+      "note": "Device communicates via NMEA2000"
+    }
+  ],
+  "confidence": {
+    "overall": 0.9,
+    "notes": "Extracted actions and features based on provided manual excerpts."
+  }
+}

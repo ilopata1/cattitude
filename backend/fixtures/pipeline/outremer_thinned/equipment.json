@@ -1,6 +1,6 @@
 {
-  "vessel": "outremer_55n60",
-  "notes": "Touch 7 runs_platform czone_2_0; platform_version_unconfirmed + config_unsourced until version photo/.zcf. Climate gate: vessel has 230V aircon (folio 10) but CZone-supported HVAC integration unknown — AC-present ≠ CZone-supported-HVAC. Zeus SR runs_platform bg_zeus_sr_software; platform_version_unconfirmed until settings photo confirms v2.5. Frigomar self-contained AC in saloon (fixture plant); CZone Climate supported_hvac gate still unknown.",
+  "vessel": "outremer_thinned",
+  "notes": "Phase 4 synthetic vessel B — thinned Outremer plant for composer generalization smoke tests (one Combi, davit MPPT only, no radar/Watchkeeper).",
   "fixture_auth": "Fixture-Auth: chat instance-policy + VESSEL_ARTIFACT batch — outremer_post_batch_b primary with distinct Combi/MLI/Alpha instances; Fixture-Auth: chat Solar v3 — vessel_facts observation/inference + evidence refs; Fixture-Auth: chat Solar v4 — vessel_display_name=Supernova; Fixture-Auth: chat channel_map founding — Ind C adjudicated channel_map + COI located instances; Fixture-Auth: chat owner OPT corroboration — Zeus SR 12 x2, Halo 20+, freezer/wifi/electronic/windlass/winches; Fixture-Auth: chat Zeus SR promote — scratch bg_zeus_sr validated (0 flags, material instability 0) into outremer + post_batch_b profiles; Fixture-Auth: chat CZone ui_pages reextract — Favourites/Alarms/Control/Monitoring actions from QSG V1.1 targeted map; Fixture-Auth: chat Zeus SR Software platform — QSG V2.5 as shared UI platform (CZone-style runs_platform); Fixture-Auth: chat Frigomar Air Conditioning System Stage 1 extract — live extraction promoted; D1–D4 adjudicated (protective_device false, single wall touchscreen remote_wired, genres install+operation, seawater-pump-only mode action); Supernova vessel_equipment saloon team_verified",
   "installation_notes": [
     {
@@ -158,7 +158,7 @@
       "model": "Mass Combi Pro",
       "description": "Inverter charger combi",
       "system_category": "electrical_dc",
-      "quantity": 2,
+      "quantity": 1,
       "instance_handling": "distinct",
       "provenance": "folio 6/4; owner's manual",
       "label_notes": "Folio 2C 'Ultra' label outvoted as internal inconsistency — treat as Mass Combi Pro",
@@ -173,30 +173,9 @@
               "note": "Location: chart table. Fault-procedure / local access at chart table."
             }
           ]
-        },
-        {
-          "instance_key": "mass_combi_pro_2",
-          "instance_label": "unit 2 — fwd stbd cabin",
-          "unit_index": 2,
-          "installation_notes": [
-            {
-              "source": "owner's manual p55",
-              "note": "Location: forward starboard cabin. Fault-procedure / local access in fwd stbd cabin."
-            }
-          ]
         }
       ],
-      "relations": [
-        {
-          "kind": "parallel_synchronized",
-          "members": [
-            "mass_combi_pro_1",
-            "mass_combi_pro_2"
-          ],
-          "note": "Synchronized Combi pair per folio 6",
-          "evidence": "folio 6"
-        }
-      ]
+      "relations": []
     },
     {
       "device_key": "victron_mppt_150_60",
@@ -205,16 +184,6 @@
       "description": "Solar MPPT charge controller 150/60-Tr",
       "system_category": "electrical_dc",
       "quantity": 1,
-      "instance_handling": "interchangeable",
-      "provenance": "photo tier; schematic 2D MasterBus-solar claim overruled"
-    },
-    {
-      "device_key": "victron_mppt",
-      "manufacturer": "Victron Energy",
-      "model": "SmartSolar MPPT 75/15",
-      "description": "Solar MPPT charge controller 75/15",
-      "system_category": "electrical_dc",
-      "quantity": 2,
       "instance_handling": "interchangeable",
       "provenance": "photo tier; schematic 2D MasterBus-solar claim overruled"
     },
@@ -346,17 +315,6 @@
       "provenance": "admin vessel link Zeus SR Software + Quick Start Guide V2.5 (988-13244-002); shared UI for Zeus SR displays"
     },
     {
-      "device_key": "bg_halo_20_plus",
-      "catalog_key": "bg_halo_20_plus",
-      "manufacturer": "B&G",
-      "model": "Halo 20+",
-      "description": "B&G Halo 20+ radar",
-      "system_category": "navigation_and_electronics",
-      "quantity": 1,
-      "instance_handling": "interchangeable",
-      "provenance": "owner confirmation; channel_map Ind C [OPT] Radar"
-    },
-    {
       "device_key": "dessalator_duo",
       "catalog_key": "dessalator_duo",
       "manufacturer": "Dessalator",
@@ -388,17 +346,6 @@
       "quantity": 2,
       "instance_handling": "interchangeable",
       "provenance": "DB registry equipment f7cb721c + Supernova vessel; twin diesel plant (Outremer catamaran); operators manual DGBXXT09007C (manual_work 9e95df10) Stage 1 extracted"
-    },
-    {
-      "device_key": "sea_ai_watchkeeper",
-      "catalog_key": "sea_ai_watchkeeper",
-      "manufacturer": "Sea.AI",
-      "model": "Watchkeeper",
-      "description": "SEA.AI Watchkeeper AI camera object-detection / situational-awareness system (thermal + optical)",
-      "system_category": "navigation_and_electronics",
-      "quantity": 1,
-      "instance_handling": "interchangeable",
-      "provenance": "DB registry equipment 3b14f3a7 + Supernova vessel; User Guide Watchkeeper Series Doc SEAAI-442870296-11 Rev 26 Nov 2025 (manual_work 14570452) Stage 1 extracted"
     },
     {
       "device_key": "blackwater_tank_discharge_valve",
@@ -482,20 +429,6 @@
   "platform_version_confirmations": [],
   "vessel_facts": [
     {
-      "id": "watchkeeper_ui_on_zeus",
-      "kind": "observation",
-      "provenance_tier": "owner_survey",
-      "document_citation": "owner review Nav section draft v4.43",
-      "source": "owner review Nav v4.43",
-      "evidence_refs": [],
-      "applies_to": [
-        "sea_ai_watchkeeper",
-        "bg_zeus_sr_1",
-        "bg_zeus_sr_2"
-      ],
-      "text": "Watchkeeper User Interface is displayed on the Zeus SR chartplotters on this vessel (not a dedicated on-camera display)."
-    },
-    {
       "id": "heads_discharge_valve_pumpout_vs_empty",
       "kind": "observation",
       "provenance_tier": "owner_survey",
@@ -544,18 +477,6 @@
       "text": "Davit-mounted array: 3× rigid panels feeding the davit array controller (SmartSolar MPPT 150/60)."
     },
     {
-      "id": "solar_coachroof_array_observation",
-      "kind": "observation",
-      "provenance_tier": "physical_inspection",
-      "evidence_refs": [
-        "photo_coachroof_boom"
-      ],
-      "applies_to": [
-        "victron_mppt"
-      ],
-      "text": "Coachroof array: 6× semi-flex panels; boom geometry can cast shade across that array (visible in deck photo)."
-    },
-    {
       "id": "solar_array_wattage_inventory",
       "kind": "observation",
       "provenance_tier": "owner_survey",
@@ -563,30 +484,13 @@
       "source": "owner survey / array inventory",
       "evidence_refs": [],
       "applies_to": [
-        "victron_mppt_150_60",
-        "victron_mppt"
+        "victron_mppt_150_60"
       ],
-      "text": "Array survey estimate: davit ~1.0–1.2 kW primary; coachroof ~600 W.",
+      "text": "Array survey estimate: davit ~1.0–1.2 kW primary (coachroof array omitted on thinned vessel B).",
       "wattage_kw": {
         "davit_min": 1.0,
-        "davit_max": 1.2,
-        "coachroof": 0.6
+        "davit_max": 1.2
       }
-    },
-    {
-      "id": "solar_coachroof_yield_inference",
-      "kind": "entered_inference",
-      "provenance_tier": "physical_inspection",
-      "evidence_refs": [
-        "photo_coachroof_boom"
-      ],
-      "depends_on": [
-        "solar_coachroof_array_observation"
-      ],
-      "applies_to": [
-        "victron_mppt"
-      ],
-      "text": "Expect lower coachroof contribution when the boom shades those panels."
     },
     {
       "id": "channel_map_ind_c_coi_locations",
@@ -2894,5 +2798,5 @@
       ]
     }
   ],
-  "vessel_display_name": "Supernova"
+  "vessel_display_name": "Sister Test"
 }

@@ -1,4 +1,86 @@
 {
+  "ac": {
+    "id": "ac",
+    "icon": "❄️",
+    "title": "Air Conditioning",
+    "subtitle": "Cabin climate is handled by the air conditioner (Frigomar self-contained BLDC)",
+    "summary": "On Supernova, cabin climate is handled by the air conditioner (Frigomar self-contained BLDC). Routine control is from its wall-mounted touch-screen display.",
+    "sections": [
+      {
+        "t": "Equipment Locations",
+        "type": "equipment_locations",
+        "rows": [
+          {
+            "name": "Frigomar Air Conditioning System",
+            "location": "Saloon / Living Area"
+          }
+        ]
+      },
+      {
+        "t": "How it works",
+        "type": "prose",
+        "c": "From that panel you choose cooling, heating, dehumidification, automatic, or fan-only mode, set the temperature, and select fan speed. The unit is seawater-cooled; a seawater filter protects the pump."
+      },
+      {
+        "t": "Turning it on",
+        "type": "prose",
+        "c": "Turn the unit on from the wall-mounted touch-screen display when you want cooling or heating, and off when you are finished."
+      },
+      {
+        "t": "Monitoring",
+        "type": "prose",
+        "c": "The panel shows room temperature; alarms replace that reading in yellow until cleared."
+      },
+      {
+        "t": "Operating",
+        "type": "prose",
+        "c": "On the panel, set mode, temperature, and fan speed for the climate you want; night mode and a relative timer are also available there."
+      },
+      {
+        "t": "If something's not right",
+        "type": "prose",
+        "c": "If an alarm appears, note the code on the panel, then clear it and restart the unit — or switch the unit off and on again.\n\nTo run the seawater pump alone, hold the mode button for ten seconds while the unit is off until the mode icon turns yellow."
+      },
+      {
+        "t": "Care & upkeep",
+        "type": "prose",
+        "c": "Keep the seawater filter clean so the pump stays protected."
+      },
+      {
+        "t": "Related",
+        "type": "prose",
+        "c": "If something goes wrong with this system, open the Fix It cards for electrical for quick troubleshooting cards.\n\nWhen you are learning the boat, tick off this chapter on the Learn the Boat checklist.",
+        "html": "<p>If something goes wrong with this system, open the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"fix:electrical\">Fix It cards for electrical</span> for quick troubleshooting cards.</p><p>When you are learning the boat, tick off this chapter on the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"do:learn\">Learn the Boat checklist</span>.</p>"
+      }
+    ],
+    "locs": [
+      "saloon",
+      "port-hull",
+      "stbd-hull"
+    ],
+    "learnChecks": [
+      "Can explain in one sentence what this system does on this boat",
+      "Know how to turn this system on and shut it down safely",
+      "Know where to read status, meters, or alerts for this system",
+      "Can perform the main operating actions described in this chapter",
+      "Know the first checks to run when something looks wrong",
+      "Know the care or isolation points called out for this system"
+    ],
+    "guideLinks": [
+      {
+        "target_kind": "fix",
+        "target_id": "electrical",
+        "label": "Fix It cards for electrical",
+        "data_guide_link": "fix:electrical"
+      },
+      {
+        "target_kind": "learn",
+        "target_id": "learn",
+        "label": "Learn the Boat checklist",
+        "data_guide_link": "do:learn"
+      }
+    ]
+  },
   "batteries": {
     "id": "batteries",
     "icon": "🔋",

@@ -156,8 +156,12 @@ SYSTEM_CATALOG: dict[str, dict[str, Any]] = {
         "icon": "❄️",
         "locs": ["saloon", "port-hull", "stbd-hull"],
         "equipment_categories": ["hvac"],
-        "focus": "Dometic CapTouch panels, CruiseAir units, inverter/generator requirements",
+        "focus": (
+            "Frigomar self-contained BLDC air conditioning — wall touch-screen; "
+            "CZone Climate integration pending confirmation"
+        ),
         "review_title": "Air conditioning",
+        "guest_section_title": "Air Conditioning",
         "guest_label": "Learn + Know — AC",
     },
 }
