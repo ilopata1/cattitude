@@ -1,0 +1,16 @@
+# Purpose: Rewrite a follow-up Ask question into a standalone retrieval query.
+# Used by: query.condense_question before vector retrieve
+# API: POST /query (when conversation_history is non-empty)
+# Variables: {conversation_str} — prior user/assistant turns; {question} — current guest question
+#
+Given the prior conversation and the latest guest question, rewrite the latest question into ONE standalone marine equipment search query.
+Preserve system, component, and location names from the prior turns so pronouns like "it", "that", or "again" resolve.
+Output only the rewritten question. Do not answer it. Do not add citations or explanation.
+
+Prior conversation:
+{conversation_str}
+
+Latest question:
+{question}
+
+Standalone search query:

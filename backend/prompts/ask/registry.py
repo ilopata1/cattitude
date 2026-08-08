@@ -8,6 +8,7 @@ ASK_FILES = {
     "marine_context": "ask/marine_context.txt",
     "text_qa": "ask/text_qa.txt",
     "refine": "ask/refine.txt",
+    "condense": "ask/condense.txt",
     "query_prefix": "ask/query_prefix.txt",
     "retry_prefix": "ask/retry_prefix.txt",
     "content_filter_message": "ask/content_filter_message.txt",

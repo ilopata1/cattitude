@@ -45,7 +45,7 @@ class QueryRequest(BaseModel):
     vessel_id: str = Field(..., min_length=1, description="Vessel UUID for inventory-scoped Ask")
     conversation_history: list[dict] = Field(
         default_factory=list,
-        description="[{role, content}] reserved for future multi-turn",
+        description="Prior [{role, content}] turns for multi-turn Ask (user|assistant)",
     )
 
     @field_validator("vessel_id")
@@ -56,6 +56,23 @@ class QueryRequest(BaseModel):
             raise ValueError("vessel_id is required")
         return stripped
 
+    @field_validator("conversation_history", mode="before")
+    @classmethod
+    def _coerce_conversation_history(cls, value: object) -> list[dict]:
+        if value is None:
+            return []
+        if not isinstance(value, list):
+            return []
+        cleaned: list[dict] = []
+        for item in value:
+            if not isinstance(item, dict):
+                continue
+            role = str(item.get("role") or "").strip().lower()
+            content = str(item.get("content") or "").strip()
+            if role not in {"user", "assistant"} or not content:
+                continue
+            cleaned.append({"role": role, "content": content})
+        return cleaned
 
 class SourceItem(BaseModel):
     node_id: str | None = None
@@ -135,7 +152,11 @@ async def query_manuals(req: QueryRequest) -> QueryResponse:
     try:
         response = await loop.run_in_executor(
             None,
-            lambda: run_query(req.question, manual_ids=manual_ids),
+            lambda: run_query(
+                req.question,
+                manual_ids=manual_ids,
+                conversation_history=req.conversation_history,
+            ),
         )
     except ContentFilterError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc

@@ -61,7 +61,8 @@ export class ChatService {
       const body: Record<string, unknown> = {
         question: trimmed,
         vessel_id: vesselId,
-        conversation_history: this.history.slice(-20).map((m) => ({
+        // Prior turns only — current user message was just pushed onto history.
+        conversation_history: this.history.slice(0, -1).slice(-20).map((m) => ({
           role: m.role,
           content: m.content,
         })),

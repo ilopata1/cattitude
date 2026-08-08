@@ -30,6 +30,8 @@ TEXT_QA_PROMPT = PromptTemplate(_MARINE_CONTEXT + get_ask_text("text_qa"))
 
 REFINE_PROMPT = PromptTemplate(_MARINE_CONTEXT + get_ask_text("refine"))
 
+CONDENSE_PROMPT = PromptTemplate(get_ask_text("condense"))
+
 _QUERY_PREFIX = get_ask_text("query_prefix")
 
 CONTENT_FILTER_MESSAGE = get_ask_text("content_filter_message")
@@ -43,6 +45,8 @@ NO_EXCERPTS_MESSAGE = (
 # Keep Ask synthesis under Railway/proxy gateway timeouts (~60s).
 _SIMILARITY_TOP_K = 3
 _MAX_NODE_CHARS = 1200
+_MAX_HISTORY_MESSAGES = 8
+_ALLOWED_HISTORY_ROLES = frozenset({"user", "assistant"})
 
 
 class AskSynthesis(BaseModel):
@@ -75,6 +79,91 @@ def prepare_manual_query(question: str) -> str:
     if q.startswith("["):
         return q
     return _QUERY_PREFIX + q
+
+
+def normalize_conversation_history(
+    history: Sequence[dict] | None,
+    question: str,
+    *,
+    max_messages: int = _MAX_HISTORY_MESSAGES,
+) -> list[dict[str, str]]:
+    """Validate prior turns; drop trailing duplicate of the current question."""
+    if not history:
+        return []
+
+    cleaned: list[dict[str, str]] = []
+    for item in history:
+        if not isinstance(item, dict):
+            continue
+        role = str(item.get("role") or "").strip().lower()
+        content = str(item.get("content") or "").strip()
+        if role not in _ALLOWED_HISTORY_ROLES or not content:
+            continue
+        cleaned.append({"role": role, "content": content})
+
+    question_norm = question.strip()
+    if (
+        cleaned
+        and cleaned[-1]["role"] == "user"
+        and cleaned[-1]["content"] == question_norm
+    ):
+        cleaned = cleaned[:-1]
+
+    if max_messages > 0 and len(cleaned) > max_messages:
+        cleaned = cleaned[-max_messages:]
+    return cleaned
+
+
+def format_conversation_str(history: Sequence[dict[str, str]]) -> str:
+    """Format prior turns for condense/synthesis prompts."""
+    if not history:
+        return "(none)"
+    lines: list[str] = []
+    for turn in history:
+        label = "Guest" if turn["role"] == "user" else "Assistant"
+        lines.append(f"{label}: {turn['content']}")
+    return "\n".join(lines)
+
+
+def condense_question(
+    question: str,
+    history: Sequence[dict[str, str]],
+    *,
+    llm: AzureOpenAI | None = None,
+) -> str:
+    """Rewrite a follow-up into a standalone retrieval query.
+
+    Empty history returns ``question`` unchanged (no LLM call). On content-filter
+    or empty model output, falls back to the raw question.
+    """
+    q = question.strip()
+    if not history:
+        return q
+
+    conversation_str = format_conversation_str(history)
+    ask_llm = llm if llm is not None else get_ask_llm()
+    try:
+        prompt = CONDENSE_PROMPT.format(
+            conversation_str=conversation_str,
+            question=q,
+        )
+        response = ask_llm.complete(prompt)
+        condensed = str(getattr(response, "text", None) or response).strip()
+    except BadRequestError as exc:
+        if _is_content_filter_error(exc):
+            logger.info(
+                "Ask condense hit content filter; falling back to raw question"
+            )
+            return q
+        raise
+    except Exception:
+        logger.exception("Ask condense failed; falling back to raw question")
+        return q
+
+    if not condensed:
+        logger.info("Ask condense returned empty; falling back to raw question")
+        return q
+    return condensed
 
 
 def _is_content_filter_error(exc: BaseException) -> bool:
@@ -285,11 +374,20 @@ def _manual_id_filters(manual_ids: list[str]) -> MetadataFilters:
     )
 
 
-def run_query(question: str, *, manual_ids: list[str]):
+def run_query(
+    question: str,
+    *,
+    manual_ids: list[str],
+    conversation_history: Sequence[dict] | None = None,
+):
     """Run RAG query scoped to vessel inventory manuals.
 
     ``manual_ids`` must be non-empty (caller fail-closes empty allow-lists).
     Never searches the global corpus.
+
+    When ``conversation_history`` has prior turns, the current question is
+    condensed into a standalone retrieval query; synthesis still sees the
+    guest question plus a short conversation transcript.
 
     Synthesis returns structured ``AskSynthesis`` (answer + cited chunk IDs).
     Returned ``source_nodes`` are filtered to cited chunks when the model
@@ -302,24 +400,35 @@ def run_query(question: str, *, manual_ids: list[str]):
     get_query_engine()
     index = get_vector_index()
     question = question.strip()
+    prior = normalize_conversation_history(conversation_history, question)
+    llm = get_ask_llm()
+    retrieve_query = condense_question(question, prior, llm=llm)
+    if prior and retrieve_query != question:
+        logger.info(
+            "Ask condensed follow-up for retrieve: %r -> %r",
+            question,
+            retrieve_query,
+        )
+
     retriever = VectorIndexRetriever(
         index=index,
         similarity_top_k=_SIMILARITY_TOP_K,
         filters=_manual_id_filters(manual_ids),
     )
-    nodes = retriever.retrieve(QueryBundle(query_str=question))
+    nodes = retriever.retrieve(QueryBundle(query_str=retrieve_query))
     nodes = _english_nodes(nodes)
     if not nodes:
         return Response(response=NO_EXCERPTS_MESSAGE, source_nodes=[])
 
     prepared = prepare_manual_query(question)
     context_str = format_labeled_context(nodes)
-    llm = get_ask_llm()
+    conversation_str = format_conversation_str(prior)
     try:
         synthesis = llm.structured_predict(
             AskSynthesis,
             TEXT_QA_PROMPT,
             context_str=context_str,
+            conversation_str=conversation_str,
             query_str=prepared,
         )
     except BadRequestError as exc:
@@ -340,5 +449,7 @@ def run_query(question: str, *, manual_ids: list[str]):
             "cited": normalize_cited_ids(synthesis.cited, len(nodes)),
             "retrieved_count": len(nodes),
             "source_count": len(filtered),
+            "retrieve_query": retrieve_query,
+            "history_turns": len(prior),
         },
     )
