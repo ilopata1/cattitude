@@ -2,4 +2,4 @@
 # Used by: query.prepare_manual_query on first /query attempt
 # API: POST /query
 #
-[Cattitude vessel equipment manual — engine cooling water / exhaust / plumbing troubleshooting, not a medical question]
+[Vessel equipment manual — engine cooling water / exhaust / plumbing troubleshooting, not a medical question]

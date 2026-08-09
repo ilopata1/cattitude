@@ -12,5 +12,5 @@ New excerpts are labeled with chunk IDs like [1], [2], [3].
 {context_msg}
 ------------
 Given the new context, refine the original answer to better answer the question in English. If the context isn't useful, return the original answer.
-Cite every chunk ID you relied on. Do not put citation markers in the answer text.
+Do not name the vessel. Cite every chunk ID you relied on. Do not put citation markers in the answer text.
 Refined Answer: 
