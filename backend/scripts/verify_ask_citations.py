@@ -45,19 +45,37 @@ def main() -> int:
     if [n.node.node_id for n in filtered] != ["n3", "n1"]:
         failures.append(f"filter_nodes_by_cited unexpected: {filtered!r}")
 
-    soft = filter_nodes_by_cited(nodes, [])
+    soft = filter_nodes_by_cited(nodes, [], relevance="direct")
     if soft is not nodes and [n.node.node_id for n in soft] != ["n1", "n2", "n3"]:
-        failures.append("empty cited should fail soft to all nodes")
+        failures.append("empty cited + direct should fail soft to all nodes")
 
-    soft_bad = filter_nodes_by_cited(nodes, [9, 8])
+    soft_bad = filter_nodes_by_cited(nodes, [9, 8], relevance="direct")
     if [n.node.node_id for n in soft_bad] != ["n1", "n2", "n3"]:
-        failures.append("out-of-range cited should fail soft to all nodes")
+        failures.append("out-of-range cited + direct should fail soft to all nodes")
+
+    none_sources = filter_nodes_by_cited(nodes, [], relevance="none")
+    if none_sources != []:
+        failures.append("empty cited + none should drop all sources")
+
+    partial_sources = filter_nodes_by_cited(nodes, [], relevance="partial")
+    if partial_sources != []:
+        failures.append("empty cited + partial should drop all sources")
 
     parsed = AskSynthesis.model_validate(
-        {"answer": "Use the seacock.", "cited": ["1", 2]}
+        {"answer": "Use the seacock.", "cited": ["1", 2], "relevance": "DIRECT"}
     )
-    if parsed.cited != [1, 2] or "seacock" not in parsed.answer:
+    if (
+        parsed.cited != [1, 2]
+        or "seacock" not in parsed.answer
+        or parsed.relevance != "direct"
+    ):
         failures.append(f"AskSynthesis coerce failed: {parsed!r}")
+
+    partial = AskSynthesis.model_validate(
+        {"answer": "Partial.", "cited": [], "relevance": "partial"}
+    )
+    if partial.relevance != "partial":
+        failures.append(f"AskSynthesis partial failed: {partial!r}")
 
     if failures:
         for item in failures:

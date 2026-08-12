@@ -8,10 +8,18 @@
   · {{ item.vessel_name or item.vessel_slug or item.vessel_id }}
   {% if item.chat_deployment %} · {{ item.chat_deployment }}{% endif %}
   {% if item.response_time_ms is not none %} · {{ item.response_time_ms }} ms{% endif %}
+  {% if item.relevance %} · relevance={{ item.relevance }}{% endif %}
+  {% if item.troubleshooting_retrieve %} · troubleshooting retrieve{% endif %}
 </p>
 
 {% if item.no_excerpts %}
 <div class="flash flash-warn">No manual excerpts were retrieved for this question.</div>
+{% endif %}
+{% if item.relevance == 'partial' %}
+<div class="flash flash-warn">Partial manual fit — answer may include labeled general guidance.</div>
+{% endif %}
+{% if item.relevance == 'none' and not item.no_excerpts %}
+<div class="flash flash-warn">Model marked retrieved context as not relevant.</div>
 {% endif %}
 
 <section class="panel">
@@ -27,7 +35,14 @@
     · Retrieved: {{ item.retrieved_count if item.retrieved_count is not none else '—' }}
     · Manual IDs: {% if item.source_manual_ids %}{{ item.source_manual_ids | join(', ') }}{% else %}—{% endif %}
   </p>
-  {% if item.retrieve_query and item.retrieve_query != item.question %}
+  {% if item.retrieve_queries %}
+  <p class="muted">Retrieve queries:</p>
+  <ul class="muted">
+    {% for q in item.retrieve_queries %}
+    <li><code>{{ q }}</code></li>
+    {% endfor %}
+  </ul>
+  {% elif item.retrieve_query and item.retrieve_query != item.question %}
   <p class="muted">Retrieve query (condensed): <code>{{ item.retrieve_query }}</code></p>
   {% endif %}
 </section>

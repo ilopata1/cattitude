@@ -74,6 +74,9 @@ def insert_query_log(
     chat_deployment: str | None = None,
     retrieved_count: int | None = None,
     no_excerpts: bool = False,
+    relevance: str | None = None,
+    retrieve_queries: Sequence[str] | None = None,
+    troubleshooting_retrieve: bool = False,
 ) -> str | None:
     """Insert one Ask log row. Returns new id, or None if vessel_id is invalid."""
     if not _is_uuid(vessel_id):
@@ -90,6 +93,10 @@ def insert_query_log(
     ]
     manual_ids = [str(mid) for mid in (source_manual_ids or []) if mid]
     cited_ids = [int(c) for c in (cited or [])]
+    queries = [str(q) for q in (retrieve_queries or []) if str(q).strip()]
+    rel = (relevance or "").strip().lower() or None
+    if rel not in {"direct", "partial", "none"}:
+        rel = None
 
     row = conn.execute(
         text(
@@ -108,7 +115,10 @@ def insert_query_log(
                 cited,
                 chat_deployment,
                 retrieved_count,
-                no_excerpts
+                no_excerpts,
+                relevance,
+                retrieve_queries,
+                troubleshooting_retrieve
             )
             VALUES (
                 CAST(:vessel_id AS uuid),
@@ -124,7 +134,10 @@ def insert_query_log(
                 CAST(:cited AS jsonb),
                 :chat_deployment,
                 :retrieved_count,
-                :no_excerpts
+                :no_excerpts,
+                :relevance,
+                CAST(:retrieve_queries AS jsonb),
+                :troubleshooting_retrieve
             )
             RETURNING id::text
             """
@@ -144,6 +157,9 @@ def insert_query_log(
             "chat_deployment": chat_deployment,
             "retrieved_count": retrieved_count,
             "no_excerpts": no_excerpts,
+            "relevance": rel,
+            "retrieve_queries": json.dumps(queries, ensure_ascii=False),
+            "troubleshooting_retrieve": troubleshooting_retrieve,
         },
     ).scalar()
     return str(row) if row else None

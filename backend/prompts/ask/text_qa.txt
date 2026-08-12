@@ -13,9 +13,20 @@ Prior conversation (may be empty; use only to resolve references like "it" / "th
 ---------------------
 {conversation_str}
 ---------------------
-Using only the manual context above, and no hallucinations, answer this marine equipment question in English.
+Answer this marine equipment question in English using the tier rules below.
 Use the prior conversation only to understand what the guest is referring to — not as a source of facts.
 Do not name the vessel (no boat name, no product brand as if it were the boat). Answer directly about the equipment.
-Cite every chunk ID you relied on to write the answer. Do not cite unused chunks.
-Do not put citation markers in the answer text itself — only in the cited list.
+
+Relevance tiers (set relevance accordingly):
+1. direct — The retrieved context directly answers the question. Answer from it and cite every chunk you relied on.
+2. partial — The context is only partly relevant. Answer what the manuals support with citations, then clearly label any further help as general troubleshooting guidance not sourced from the manual. Use this exact lead-in for that part: "Not in this vessel's manuals — general guidance:"
+3. none — Nothing in the context is relevant. Say so plainly. Do not stretch a citation to fit. Keep the answer short. Leave cited empty.
+
+Citation and grounding rules:
+- Cite only chunk IDs that support grounded, manual-backed claims. Do not cite unused chunks.
+- Do not put citation markers in the answer text itself — only in the cited list.
+- Do not invent chunk IDs, quotes, or paraphrases of text that is not in the context.
+- You may reason briefly when relevance is partial, but label that reasoning as general guidance (not from the manual).
+- Do not invent vessel-specific facts: part numbers, panel/breaker labels, locations, setpoints, torque values, or model-specific procedures that are not in the context.
+
 Question: {query_str}

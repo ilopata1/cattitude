@@ -31,6 +31,7 @@
       <th>When</th>
       <th>Vessel</th>
       <th>Question</th>
+      <th>Fit</th>
       <th>Latency</th>
       <th>Chunks</th>
       <th>Model</th>
@@ -39,10 +40,19 @@
   </thead>
   <tbody>
     {% for item in items %}
-    <tr {% if item.no_excerpts %}class="row-pending"{% endif %}>
+    <tr {% if item.no_excerpts or item.relevance == 'none' %}class="row-pending"{% endif %}>
       <td>{{ item.created_at }}</td>
       <td>{{ item.vessel_name or item.vessel_slug or item.vessel_id }}</td>
       <td>{{ item.question[:120] }}{% if item.question|length > 120 %}…{% endif %}</td>
+      <td>
+        {% if item.relevance %}
+        <span class="badge {% if item.relevance == 'none' %}badge-warn{% elif item.relevance == 'partial' %}badge-warn{% else %}badge-approved{% endif %}">
+          {{ item.relevance }}{% if item.troubleshooting_retrieve %} · TS{% endif %}
+        </span>
+        {% else %}
+        —
+        {% endif %}
+      </td>
       <td>{% if item.response_time_ms is not none %}{{ item.response_time_ms }} ms{% else %}—{% endif %}</td>
       <td>
         {% if item.no_excerpts %}
@@ -55,7 +65,7 @@
       <td><a href="/admin/query-logs/{{ item.id }}">View</a></td>
     </tr>
     {% else %}
-    <tr><td colspan="7">No Ask queries logged yet.</td></tr>
+    <tr><td colspan="8">No Ask queries logged yet.</td></tr>
     {% endfor %}
   </tbody>
 </table>

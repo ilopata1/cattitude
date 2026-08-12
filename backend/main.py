@@ -237,6 +237,9 @@ async def query_manuals(req: QueryRequest) -> QueryResponse:
         chat_deployment=settings.azure_openai_chat_deployment,
         retrieved_count=meta.get("retrieved_count"),
         no_excerpts=bool(meta.get("no_excerpts")),
+        relevance=meta.get("relevance"),
+        retrieve_queries=meta.get("retrieve_queries") or [],
+        troubleshooting_retrieve=bool(meta.get("troubleshooting_retrieve")),
     )
 
     return QueryResponse(answer=answer_text, sources=sources)

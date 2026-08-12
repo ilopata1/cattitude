@@ -34,6 +34,8 @@ def main() -> int:
         "Where is the seacock?",
         "How do I start the engine?",
         "Prior conversation",
+        "Relevance tiers",
+        "Not in this vessel's manuals — general guidance:",
     ):
         if expected.lower() not in paste.lower() and expected not in paste:
             failures.append(f"paste prompt missing {expected!r}")

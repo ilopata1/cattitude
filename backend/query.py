@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import logging
-from typing import Sequence
+import re
+from typing import Literal, Sequence
 
 from llama_index.core import StorageContext, VectorStoreIndex
 from llama_index.core.base.response.schema import Response
@@ -44,18 +45,40 @@ NO_EXCERPTS_MESSAGE = (
 
 # Keep Ask synthesis under Railway/proxy gateway timeouts (~60s).
 _SIMILARITY_TOP_K = 3
+_SIMILARITY_TOP_K_TROUBLE = 4
+_MAX_CONTEXT_NODES = 6
 _MAX_NODE_CHARS = 1200
 _MAX_HISTORY_MESSAGES = 8
 _ALLOWED_HISTORY_ROLES = frozenset({"user", "assistant"})
+_ASK_RELEVANCE = frozenset({"direct", "partial", "none"})
 
+# Heuristic: guest is diagnosing a fault / abnormal behaviour.
+_TROUBLESHOOT_RE = re.compile(
+    r"\b("
+    r"troubleshoot(?:ing)?|problem|issue|fault|error|alarm|warning|"
+    r"not\s+work(?:ing)?|won'?t|will\s+not|doesn'?t|didn'?t|can'?t|"
+    r"fail(?:ed|ing|ure)?|broken|leak(?:ing|s)?|overheat(?:ing|s)?|"
+    r"smoke|smell|noise|vibration|intermittent|symptom|diagnos|"
+    r"why\s+is|how\s+(?:do|can)\s+i\s+fix|what(?:'?s|\s+is)\s+wrong"
+    r")\b",
+    re.I,
+)
+_TROUBLESHOOT_BOOSTER = (
+    "troubleshooting FAQ fault causes symptoms diagnostics "
+    "alarm warning check procedure"
+)
 
 class AskSynthesis(BaseModel):
-    """Structured Ask answer with 1-based cited chunk IDs from labeled context."""
+    """Structured Ask answer with citations and retrieval-fit relevance."""
 
     answer: str = Field(..., description="Guest-facing English answer; no citation markers")
     cited: list[int] = Field(
         default_factory=list,
-        description="1-based chunk IDs from context that were used for the answer",
+        description="1-based chunk IDs that support manual-backed claims only",
+    )
+    relevance: Literal["direct", "partial", "none"] = Field(
+        default="direct",
+        description="How well retrieved context answers the question",
     )
 
     @field_validator("cited", mode="before")
@@ -72,6 +95,16 @@ class AskSynthesis(BaseModel):
             except (TypeError, ValueError):
                 continue
         return out
+
+    @field_validator("relevance", mode="before")
+    @classmethod
+    def _coerce_relevance(cls, value: object) -> str:
+        if value is None:
+            return "direct"
+        normalized = str(value).strip().lower()
+        if normalized in _ASK_RELEVANCE:
+            return normalized
+        return "direct"
 
 
 def prepare_manual_query(question: str) -> str:
@@ -342,24 +375,104 @@ def normalize_cited_ids(cited: Sequence[int], node_count: int) -> list[int]:
 def filter_nodes_by_cited(
     nodes: Sequence[NodeWithScore] | Sequence[object],
     cited: Sequence[int],
+    *,
+    relevance: str | None = None,
 ) -> list:
-    """Return nodes cited by 1-based IDs; fail soft to all nodes if none valid."""
+    """Return nodes cited by 1-based IDs.
+
+    Empty cited + relevance ``none``/``partial`` ⇒ no guest sources (general
+    guidance or no fit). Empty cited + ``direct`` still fails soft to all
+    retrieved nodes when the model forgets to cite.
+    """
     node_list = list(nodes)
     ids = normalize_cited_ids(cited, len(node_list))
-    if not ids:
+    if ids:
+        return [node_list[i - 1] for i in ids]
+
+    rel = (relevance or "").strip().lower()
+    if rel in {"none", "partial"}:
         if cited:
             logger.warning(
-                "Ask cited IDs %s out of range for %s chunks; keeping all retrieved",
+                "Ask cited IDs %s out of range for %s chunks; dropping sources "
+                "for relevance=%s",
                 list(cited),
                 len(node_list),
+                rel,
             )
-        else:
-            logger.info(
-                "Ask returned empty cited list; keeping all %s retrieved chunks",
-                len(node_list),
-            )
-        return node_list
-    return [node_list[i - 1] for i in ids]
+        return []
+
+    if cited:
+        logger.warning(
+            "Ask cited IDs %s out of range for %s chunks; keeping all retrieved",
+            list(cited),
+            len(node_list),
+        )
+    else:
+        logger.info(
+            "Ask returned empty cited list; keeping all %s retrieved chunks",
+            len(node_list),
+        )
+    return node_list
+
+
+def is_troubleshooting_query(*texts: str) -> bool:
+    """True when any text looks like fault / symptom troubleshooting."""
+    for text in texts:
+        if text and _TROUBLESHOOT_RE.search(text):
+            return True
+    return False
+
+
+def build_retrieve_queries(
+    *,
+    question: str,
+    retrieve_query: str,
+    troubleshooting: bool,
+) -> list[str]:
+    """Ordered unique retrieval strings for one Ask turn."""
+    primary = (retrieve_query or question).strip()
+    raw = question.strip()
+    queries: list[str] = []
+    for candidate in (primary, raw):
+        if candidate and candidate not in queries:
+            queries.append(candidate)
+    if troubleshooting and primary:
+        booster = f"{primary} {_TROUBLESHOOT_BOOSTER}".strip()
+        if booster not in queries:
+            queries.append(booster)
+    return queries or [question.strip()]
+
+
+def _node_identity(node: object) -> str:
+    node_id = getattr(node, "node_id", None)
+    if node_id:
+        return str(node_id)
+    inner = getattr(node, "node", None)
+    if inner is not None:
+        inner_id = getattr(inner, "node_id", None) or getattr(inner, "id_", None)
+        if inner_id:
+            return str(inner_id)
+    return str(id(node))
+
+
+def merge_retrieved_nodes(
+    batches: Sequence[Sequence[object]],
+    *,
+    limit: int,
+) -> list:
+    """Dedupe retrieved nodes across query batches, preserving first-seen order."""
+    seen: set[str] = set()
+    merged: list = []
+    for batch in batches:
+        for node in batch:
+            key = _node_identity(node)
+            if key in seen:
+                continue
+            seen.add(key)
+            merged.append(node)
+            if limit > 0 and len(merged) >= limit:
+                return merged
+    return merged
 
 
 def _manual_id_filters(manual_ids: list[str]) -> MetadataFilters:
@@ -372,6 +485,35 @@ def _manual_id_filters(manual_ids: list[str]) -> MetadataFilters:
         ],
         condition="or",
     )
+
+
+def _retrieve_for_queries(
+    index: VectorStoreIndex,
+    *,
+    manual_ids: list[str],
+    queries: Sequence[str],
+    top_k: int,
+) -> list:
+    filters = _manual_id_filters(manual_ids)
+    batches: list[list] = []
+    for query in queries:
+        retriever = VectorIndexRetriever(
+            index=index,
+            similarity_top_k=top_k,
+            filters=filters,
+        )
+        batches.append(list(retriever.retrieve(QueryBundle(query_str=query))))
+    limit = _MAX_CONTEXT_NODES if len(queries) > 1 else _SIMILARITY_TOP_K
+    return merge_retrieved_nodes(batches, limit=limit)
+
+
+def _node_manual_id(node: object) -> str | None:
+    meta = getattr(node, "metadata", None) or {}
+    inner = getattr(node, "node", None)
+    if inner is not None:
+        meta = getattr(inner, "metadata", None) or meta
+    manual_id = meta.get("manual_id")
+    return str(manual_id) if manual_id else None
 
 
 def run_query(
@@ -389,9 +531,13 @@ def run_query(
     condensed into a standalone retrieval query; synthesis still sees the
     guest question plus a short conversation transcript.
 
-    Synthesis returns structured ``AskSynthesis`` (answer + cited chunk IDs).
-    Returned ``source_nodes`` are filtered to cited chunks when the model
-    provides valid IDs; otherwise all retrieved nodes are kept (fail soft).
+    Troubleshooting-style questions retrieve with an extra FAQ/fault booster
+    query and may include the raw guest question when condensation changed it.
+
+    Synthesis returns structured ``AskSynthesis`` (answer, cited chunk IDs,
+    relevance tier). Returned ``source_nodes`` are filtered to cited chunks
+    when the model provides valid IDs; empty cites with ``none``/``partial``
+    yield no guest sources.
     """
     if not manual_ids:
         raise ValueError("manual_ids must be non-empty for Ask retrieve")
@@ -410,12 +556,26 @@ def run_query(
             retrieve_query,
         )
 
-    retriever = VectorIndexRetriever(
-        index=index,
-        similarity_top_k=_SIMILARITY_TOP_K,
-        filters=_manual_id_filters(manual_ids),
+    troubleshooting = is_troubleshooting_query(question, retrieve_query)
+    retrieve_queries = build_retrieve_queries(
+        question=question,
+        retrieve_query=retrieve_query,
+        troubleshooting=troubleshooting,
     )
-    nodes = retriever.retrieve(QueryBundle(query_str=retrieve_query))
+    top_k = _SIMILARITY_TOP_K_TROUBLE if troubleshooting else _SIMILARITY_TOP_K
+    if troubleshooting:
+        logger.info(
+            "Ask troubleshooting retrieve queries=%s top_k=%s",
+            retrieve_queries,
+            top_k,
+        )
+
+    nodes = _retrieve_for_queries(
+        index,
+        manual_ids=manual_ids,
+        queries=retrieve_queries,
+        top_k=top_k,
+    )
     nodes = _english_nodes(nodes)
     prepared = prepare_manual_query(question)
     if not nodes:
@@ -424,9 +584,12 @@ def run_query(
             source_nodes=[],
             metadata={
                 "cited": [],
+                "relevance": "none",
                 "retrieved_count": 0,
                 "source_count": 0,
                 "retrieve_query": retrieve_query,
+                "retrieve_queries": retrieve_queries,
+                "troubleshooting_retrieve": troubleshooting,
                 "prepared_query": prepared,
                 "retrieved_context": "",
                 "history_turns": len(prior),
@@ -454,25 +617,32 @@ def run_query(
         synthesis = AskSynthesis.model_validate(synthesis)
 
     answer = (synthesis.answer or "").strip() or "Empty Response"
-    filtered = filter_nodes_by_cited(nodes, synthesis.cited)
+    if synthesis.relevance == "none" and not normalize_cited_ids(
+        synthesis.cited, len(nodes)
+    ):
+        # Prefer a clear short decline when the model marks no fit and cites nothing.
+        if len(answer) < 40 or "couldn't find" in answer.lower():
+            answer = NO_EXCERPTS_MESSAGE
+
+    filtered = filter_nodes_by_cited(
+        nodes, synthesis.cited, relevance=synthesis.relevance
+    )
     retrieved_manual_ids: list[str] = []
     for node in nodes:
-        meta = getattr(node, "metadata", None) or {}
-        # NodeWithScore wraps the node; prefer inner metadata when present.
-        inner = getattr(node, "node", None)
-        if inner is not None:
-            meta = getattr(inner, "metadata", None) or meta
-        manual_id = meta.get("manual_id")
-        if manual_id and str(manual_id) not in retrieved_manual_ids:
-            retrieved_manual_ids.append(str(manual_id))
+        manual_id = _node_manual_id(node)
+        if manual_id and manual_id not in retrieved_manual_ids:
+            retrieved_manual_ids.append(manual_id)
     return Response(
         response=answer,
         source_nodes=filtered,
         metadata={
             "cited": normalize_cited_ids(synthesis.cited, len(nodes)),
+            "relevance": synthesis.relevance,
             "retrieved_count": len(nodes),
             "source_count": len(filtered),
             "retrieve_query": retrieve_query,
+            "retrieve_queries": retrieve_queries,
+            "troubleshooting_retrieve": troubleshooting,
             "prepared_query": prepared,
             "retrieved_context": context_str,
             "retrieved_manual_ids": retrieved_manual_ids,

@@ -62,7 +62,9 @@ def list_query_logs(
                 ql.no_excerpts,
                 ql.chat_deployment,
                 ql.created_at,
-                ql.source_manual_edition_ids
+                ql.source_manual_edition_ids,
+                ql.relevance,
+                ql.troubleshooting_retrieve
             FROM query_log ql
             LEFT JOIN vessels v ON v.id = ql.vessel_id
             WHERE {where}
@@ -87,6 +89,8 @@ def list_query_logs(
             "chat_deployment": row[9],
             "created_at": row[10],
             "source_manual_ids": _as_list(row[11]),
+            "relevance": row[12],
+            "troubleshooting_retrieve": bool(row[13]),
         }
         for row in rows
     ]
@@ -115,7 +119,10 @@ def get_query_log(conn: Connection, log_id: str) -> dict[str, Any] | None:
                 ql.chat_deployment,
                 ql.retrieved_count,
                 ql.no_excerpts,
-                ql.created_at
+                ql.created_at,
+                ql.relevance,
+                ql.retrieve_queries,
+                ql.troubleshooting_retrieve
             FROM query_log ql
             LEFT JOIN vessels v ON v.id = ql.vessel_id
             WHERE ql.id = CAST(:id AS uuid)
@@ -148,6 +155,9 @@ def get_query_log(conn: Connection, log_id: str) -> dict[str, Any] | None:
         "retrieved_count": row[15],
         "no_excerpts": bool(row[16]),
         "created_at": row[17],
+        "relevance": row[18],
+        "retrieve_queries": _as_list(row[19]),
+        "troubleshooting_retrieve": bool(row[20]),
     }
     item["paste_prompt"] = build_synthesis_paste_prompt(
         retrieved_context=retrieved_context,
