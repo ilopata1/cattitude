@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Ask query logs — Clever Sailor Admin{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Ask query logs</h1>
+</div>
+<p class="lede">
+  {{ total }} logged Ask turn{% if total != 1 %}s{% endif %}.
+  Open a row to copy the synthesis prompt (retrieved context + instructions) for richer-model comparison.
+</p>
+
+<form method="get" class="search-row">
+  <select name="vessel_id">
+    <option value="">All vessels</option>
+    {% for vessel in vessels %}
+    <option value="{{ vessel.id }}" {% if vessel_id == vessel.id %}selected{% endif %}>
+      {{ vessel.name }}{% if vessel.slug %} ({{ vessel.slug }}){% endif %}
+    </option>
+    {% endfor %}
+  </select>
+  <label class="checkbox-inline">
+    <input type="checkbox" name="no_excerpts" value="1" {% if no_excerpts %}checked{% endif %}>
+    No excerpts only
+  </label>
+  <button type="submit">Filter</button>
+</form>
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>When</th>
+      <th>Vessel</th>
+      <th>Question</th>
+      <th>Latency</th>
+      <th>Chunks</th>
+      <th>Model</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in items %}
+    <tr {% if item.no_excerpts %}class="row-pending"{% endif %}>
+      <td>{{ item.created_at }}</td>
+      <td>{{ item.vessel_name or item.vessel_slug or item.vessel_id }}</td>
+      <td>{{ item.question[:120] }}{% if item.question|length > 120 %}…{% endif %}</td>
+      <td>{% if item.response_time_ms is not none %}{{ item.response_time_ms }} ms{% else %}—{% endif %}</td>
+      <td>
+        {% if item.no_excerpts %}
+        <span class="badge badge-warn">none</span>
+        {% else %}
+        {{ item.retrieved_count if item.retrieved_count is not none else '—' }}
+        {% endif %}
+      </td>
+      <td>{{ item.chat_deployment or '—' }}</td>
+      <td><a href="/admin/query-logs/{{ item.id }}">View</a></td>
+    </tr>
+    {% else %}
+    <tr><td colspan="7">No Ask queries logged yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if total_pages > 1 %}
+<nav class="pagination">
+  {% if page > 1 %}
+  <a href="?vessel_id={{ vessel_id | urlencode }}&no_excerpts={% if no_excerpts %}1{% endif %}&page={{ page - 1 }}">Previous</a>
+  {% endif %}
+  <span class="muted">Page {{ page }} of {{ total_pages }}</span>
+  {% if page < total_pages %}
+  <a href="?vessel_id={{ vessel_id | urlencode }}&no_excerpts={% if no_excerpts %}1{% endif %}&page={{ page + 1 }}">Next</a>
+  {% endif %}
+</nav>
+{% endif %}
+{% endblock %}

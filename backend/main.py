@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import time
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
@@ -17,6 +18,7 @@ from english_text import extract_english
 from guide_api import router as guide_router
 from manual_titles import list_manual_ids_for_vessel, lookup_manual_title
 from query import ContentFilterError, run_query
+from query_log import log_ask_query
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +45,10 @@ NO_VESSEL_MANUALS_DETAIL = (
 class QueryRequest(BaseModel):
     question: str
     vessel_id: str = Field(..., min_length=1, description="Vessel UUID for inventory-scoped Ask")
+    charter_id: str | None = Field(
+        default=None,
+        description="Optional charter UUID when Ask is opened from a guest link",
+    )
     conversation_history: list[dict] = Field(
         default_factory=list,
         description="Prior [{role, content}] turns for multi-turn Ask (user|assistant)",
@@ -55,6 +61,14 @@ class QueryRequest(BaseModel):
         if not stripped:
             raise ValueError("vessel_id is required")
         return stripped
+
+    @field_validator("charter_id", mode="before")
+    @classmethod
+    def _strip_charter_id(cls, value: object) -> str | None:
+        if value is None:
+            return None
+        stripped = str(value).strip()
+        return stripped or None
 
     @field_validator("conversation_history", mode="before")
     @classmethod
@@ -149,6 +163,7 @@ async def query_manuals(req: QueryRequest) -> QueryResponse:
         raise HTTPException(status_code=422, detail=NO_VESSEL_MANUALS_DETAIL)
 
     loop = asyncio.get_event_loop()
+    started = time.perf_counter()
     try:
         response = await loop.run_in_executor(
             None,
@@ -166,6 +181,7 @@ async def query_manuals(req: QueryRequest) -> QueryResponse:
             status_code=500,
             detail="Manual query failed. Check Railway logs for details.",
         ) from exc
+    elapsed_ms = int((time.perf_counter() - started) * 1000)
 
     sources: list[SourceItem] = []
     if hasattr(response, "source_nodes"):
@@ -183,10 +199,11 @@ async def query_manuals(req: QueryRequest) -> QueryResponse:
                 continue
             sources.append(item)
 
+    sync_url, _ = postgres_connection_strings(settings.database_url)
+    engine = create_engine(sync_url, pool_pre_ping=True)
+
     if sources:
         try:
-            sync_url, _ = postgres_connection_strings(settings.database_url)
-            engine = create_engine(sync_url, pool_pre_ping=True)
             with engine.connect() as conn:
                 enriched: list[SourceItem] = []
                 for item in sources:
@@ -199,7 +216,30 @@ async def query_manuals(req: QueryRequest) -> QueryResponse:
             # Title enrichment is best-effort; never fail a successful Ask answer.
             logger.exception("Manual title enrichment failed")
 
-    return QueryResponse(answer=str(response), sources=sources)
+    meta = getattr(response, "metadata", None) or {}
+    answer_text = str(response)
+    source_manual_ids = meta.get("retrieved_manual_ids") or [
+        item.manual_id for item in sources
+    ]
+    log_ask_query(
+        engine,
+        vessel_id=vessel_id,
+        charter_id=req.charter_id,
+        question=req.question,
+        answer=answer_text,
+        source_manual_ids=source_manual_ids,
+        response_time_ms=elapsed_ms,
+        retrieved_context=meta.get("retrieved_context"),
+        conversation_history=req.conversation_history,
+        retrieve_query=meta.get("retrieve_query"),
+        prepared_query=meta.get("prepared_query"),
+        cited=meta.get("cited") or [],
+        chat_deployment=settings.azure_openai_chat_deployment,
+        retrieved_count=meta.get("retrieved_count"),
+        no_excerpts=bool(meta.get("no_excerpts")),
+    )
+
+    return QueryResponse(answer=answer_text, sources=sources)
 
 
 @app.get("/health")

@@ -417,10 +417,23 @@ def run_query(
     )
     nodes = retriever.retrieve(QueryBundle(query_str=retrieve_query))
     nodes = _english_nodes(nodes)
-    if not nodes:
-        return Response(response=NO_EXCERPTS_MESSAGE, source_nodes=[])
-
     prepared = prepare_manual_query(question)
+    if not nodes:
+        return Response(
+            response=NO_EXCERPTS_MESSAGE,
+            source_nodes=[],
+            metadata={
+                "cited": [],
+                "retrieved_count": 0,
+                "source_count": 0,
+                "retrieve_query": retrieve_query,
+                "prepared_query": prepared,
+                "retrieved_context": "",
+                "history_turns": len(prior),
+                "no_excerpts": True,
+            },
+        )
+
     context_str = format_labeled_context(nodes)
     conversation_str = format_conversation_str(prior)
     try:
@@ -442,6 +455,16 @@ def run_query(
 
     answer = (synthesis.answer or "").strip() or "Empty Response"
     filtered = filter_nodes_by_cited(nodes, synthesis.cited)
+    retrieved_manual_ids: list[str] = []
+    for node in nodes:
+        meta = getattr(node, "metadata", None) or {}
+        # NodeWithScore wraps the node; prefer inner metadata when present.
+        inner = getattr(node, "node", None)
+        if inner is not None:
+            meta = getattr(inner, "metadata", None) or meta
+        manual_id = meta.get("manual_id")
+        if manual_id and str(manual_id) not in retrieved_manual_ids:
+            retrieved_manual_ids.append(str(manual_id))
     return Response(
         response=answer,
         source_nodes=filtered,
@@ -450,6 +473,10 @@ def run_query(
             "retrieved_count": len(nodes),
             "source_count": len(filtered),
             "retrieve_query": retrieve_query,
+            "prepared_query": prepared,
+            "retrieved_context": context_str,
+            "retrieved_manual_ids": retrieved_manual_ids,
             "history_turns": len(prior),
+            "no_excerpts": False,
         },
     )

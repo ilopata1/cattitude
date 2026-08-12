@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Clever Sailor Admin{% endblock %}</title>
-  <link rel="stylesheet" href="/admin/static/admin.css?v=20260721b">
+  <link rel="stylesheet" href="/admin/static/admin.css?v=20260812a">
   {% block extra_head %}{% endblock %}
 </head>
 <body>
@@ -33,10 +33,11 @@
         </div>
       </div>
 
-      <div class="nav-group" {% if path.startswith('/admin/prompts') %}data-open{% endif %}>
+      <div class="nav-group" {% if path.startswith('/admin/prompts') or path.startswith('/admin/query-logs') %}data-open{% endif %}>
         <span class="nav-group-label" tabindex="0">Guides</span>
         <div class="nav-submenu">
           <a href="/admin/prompts" {% if path.startswith('/admin/prompts') %}class="is-active"{% endif %}>Prompt Templates</a>
+          <a href="/admin/query-logs" {% if path.startswith('/admin/query-logs') %}class="is-active"{% endif %}>Ask query logs</a>
         </div>
       </div>
     </nav>

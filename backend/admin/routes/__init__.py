@@ -2,7 +2,18 @@ from __future__ import annotations
 
 from fastapi import APIRouter
 
-from admin.routes import companies, equipment, guide, home, manuals, operating_bases, option_packs, prompts, vessels
+from admin.routes import (
+    companies,
+    equipment,
+    guide,
+    home,
+    manuals,
+    operating_bases,
+    option_packs,
+    prompts,
+    query_logs,
+    vessels,
+)
 
 router = APIRouter(prefix="/admin")
 router.include_router(home.router)
@@ -14,3 +25,4 @@ router.include_router(operating_bases.router)
 router.include_router(vessels.router)
 router.include_router(guide.router)
 router.include_router(prompts.router)
+router.include_router(query_logs.router)
