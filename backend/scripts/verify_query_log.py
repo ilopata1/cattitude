@@ -35,10 +35,12 @@ def main() -> int:
         "How do I start the engine?",
         "Prior conversation",
         "Relevance tiers",
-        "Not in this vessel's manuals — general guidance:",
+        "well-organized answer",
     ):
         if expected.lower() not in paste.lower() and expected not in paste:
             failures.append(f"paste prompt missing {expected!r}")
+    if "Not in this vessel's manuals" in paste:
+        failures.append("paste prompt should not require vessel-manuals lead-in")
 
     # insert_query_log rejects non-UUID vessel without hitting the DB.
     class _Boom:

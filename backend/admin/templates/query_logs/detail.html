@@ -16,7 +16,7 @@
 <div class="flash flash-warn">No manual excerpts were retrieved for this question.</div>
 {% endif %}
 {% if item.relevance == 'partial' %}
-<div class="flash flash-warn">Partial manual fit — answer may include labeled general guidance.</div>
+<div class="flash flash-warn">Partial manual fit — answer may include reasoned troubleshooting beyond cited excerpts.</div>
 {% endif %}
 {% if item.relevance == 'none' and not item.no_excerpts %}
 <div class="flash flash-warn">Model marked retrieved context as not relevant.</div>

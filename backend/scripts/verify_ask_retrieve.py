@@ -72,12 +72,14 @@ def main() -> int:
     text_qa = get_ask_text("text_qa")
     for needle in (
         "Relevance tiers",
-        "Not in this vessel's manuals — general guidance:",
+        "one clear, well-organized answer",
         "Do not invent chunk IDs",
         "Do not invent vessel-specific facts",
     ):
         if needle not in text_qa:
             failures.append(f"text_qa missing policy line: {needle!r}")
+    if "Not in this vessel's manuals" in text_qa:
+        failures.append("text_qa should not require vessel-manuals lead-in")
 
     if failures:
         for item in failures:

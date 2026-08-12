@@ -3,7 +3,7 @@
 }
 
 .chat-messages {
-  padding: 16px 16px 100px;
+  padding: 16px 16px 120px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -221,10 +221,18 @@
   align-items: center;
   gap: 8px;
   width: 100%;
-  padding: 10px 12px;
-  padding-bottom: calc(10px + env(safe-area-inset-bottom));
+  padding: 10px 12px 6px;
   border-top: 1px solid var(--cattitude-sand-mid);
   box-sizing: border-box;
+}
+
+.chat-ai-disclaimer {
+  margin: 0;
+  padding: 0 16px calc(8px + env(safe-area-inset-bottom));
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--cattitude-text-light);
+  text-align: center;
 }
 
 .chat-input {
