@@ -21,7 +21,12 @@
       "system_category": "electrical_dc",
       "quantity": 1,
       "instance_handling": "interchangeable",
-      "provenance": "folio 2E TAC box; owner-corrected from Touch 10 assumption"
+      "provenance": "folio 2E TAC box; owner-corrected from Touch 10 assumption",
+      "guest_label": {
+        "manufacturer": "CZone",
+        "model": "Touch 7"
+      },
+      "guest_role": "the touchscreen"
     },
     {
       "device_key": "czone_2_0",
@@ -32,7 +37,12 @@
       "entity_kind": "platform",
       "quantity": 1,
       "instance_handling": "interchangeable",
-      "provenance": "Quick Start Guide extract; shared UI for Touch displays"
+      "provenance": "Quick Start Guide extract; shared UI for Touch displays",
+      "guest_label": {
+        "manufacturer": "CZone",
+        "model": "2.0"
+      },
+      "guest_role": "CZone"
     },
     {
       "device_key": "coi",
@@ -41,7 +51,11 @@
       "description": "CZone Combination Output Interface",
       "system_category": "electrical_dc",
       "quantity": 1,
-      "instance_handling": "interchangeable"
+      "instance_handling": "interchangeable",
+      "guest_label": {
+        "manufacturer": "CZone",
+        "model": "Combination Output Interface"
+      }
     },
     {
       "device_key": "masterbus_bridge_interface",
@@ -51,7 +65,11 @@
       "system_category": "electrical_dc",
       "quantity": 1,
       "instance_handling": "interchangeable",
-      "provenance": "folios 2D/2E/11"
+      "provenance": "folios 2D/2E/11",
+      "guest_label": {
+        "manufacturer": "Mastervolt",
+        "model": "MasterBus Bridge Interface"
+      }
     },
     {
       "device_key": "masterbus_usb_interface",
@@ -61,7 +79,11 @@
       "system_category": "electrical_dc",
       "quantity": 1,
       "instance_handling": "interchangeable",
-      "provenance": "folios 2D/2E/11"
+      "provenance": "folios 2D/2E/11",
+      "guest_label": {
+        "manufacturer": "Mastervolt",
+        "model": "MasterBus USB Interface"
+      }
     },
     {
       "device_key": "mli_ultra",
@@ -84,7 +106,8 @@
               "resolved_to_hint": "class_t_1",
               "source": "folios 3A/3B"
             }
-          ]
+          ],
+          "guest_role": "house battery 1"
         },
         {
           "instance_key": "mli_ultra_2",
@@ -96,7 +119,8 @@
               "resolved_to_hint": "class_t_2",
               "source": "folios 3A/3B"
             }
-          ]
+          ],
+          "guest_role": "house battery 2"
         },
         {
           "instance_key": "mli_ultra_3",
@@ -108,9 +132,15 @@
               "resolved_to_hint": "class_t_3",
               "source": "folios 3A/3B"
             }
-          ]
+          ],
+          "guest_role": "house battery 3"
         }
-      ]
+      ],
+      "guest_label": {
+        "manufacturer": "Mastervolt",
+        "model": "MLI Ultra"
+      },
+      "guest_role": "the house batteries"
     },
     {
       "device_key": "mass_combi_pro",
@@ -133,7 +163,8 @@
               "source": "owner's manual p55",
               "note": "Location: chart table. Fault-procedure / local access at chart table."
             }
-          ]
+          ],
+          "guest_role": "the port inverter-charger"
         },
         {
           "instance_key": "mass_combi_pro_2",
@@ -144,7 +175,8 @@
               "source": "owner's manual p55",
               "note": "Location: forward starboard cabin. Fault-procedure / local access in fwd stbd cabin."
             }
-          ]
+          ],
+          "guest_role": "the starboard inverter-charger"
         }
       ],
       "relations": [
@@ -157,7 +189,12 @@
           "note": "Synchronized Combi pair per folio 6",
           "evidence": "folio 6"
         }
-      ]
+      ],
+      "guest_label": {
+        "manufacturer": "Mastervolt",
+        "model": "Mass Combi Pro"
+      },
+      "guest_role": "the inverter-chargers"
     },
     {
       "device_key": "victron_mppt_150_60",
@@ -167,6 +204,11 @@
       "system_category": "electrical_dc",
       "quantity": 1,
       "instance_handling": "interchangeable",
+      "guest_role": "the davit array controller",
+      "guest_label": {
+        "manufacturer": "Victron",
+        "model": "SmartSolar MPPT 150/60"
+      },
       "provenance": "photo tier; schematic 2D MasterBus-solar claim overruled"
     },
     {
@@ -177,6 +219,11 @@
       "system_category": "electrical_dc",
       "quantity": 2,
       "instance_handling": "interchangeable",
+      "guest_role": "the coachroof array controllers",
+      "guest_label": {
+        "manufacturer": "Victron",
+        "model": "SmartSolar MPPT 75/15"
+      },
       "provenance": "photo tier; schematic 2D MasterBus-solar claim overruled"
     },
     {
@@ -186,7 +233,12 @@
       "description": "Wind generator with own controller",
       "system_category": "electrical_dc",
       "quantity": 1,
-      "instance_handling": "interchangeable"
+      "instance_handling": "interchangeable",
+      "guest_label": {
+        "manufacturer": "Silentwind",
+        "model": "Hybrid 1000"
+      },
+      "guest_role": "the wind generator"
     },
     {
       "device_key": "alpha_pro_iii_port",
@@ -204,7 +256,12 @@
         "inferred": "Mastervolt Alpha family",
         "unconfirmed": "exact Alpha Pro III model pending extraction"
       },
-      "provenance": "folios 17/23; synoptic 2D MBUS 01/10/11"
+      "provenance": "folios 17/23; synoptic 2D MBUS 01/10/11",
+      "guest_label": {
+        "manufacturer": "Mastervolt",
+        "model": "Alpha Pro III"
+      },
+      "guest_role": "the port alternator regulator"
     },
     {
       "device_key": "alpha_pro_iii_stbd",
@@ -222,7 +279,12 @@
         "inferred": "Mastervolt Alpha family",
         "unconfirmed": "exact Alpha Pro III model pending extraction"
       },
-      "provenance": "folios 17/23; synoptic 2D MBUS 01/10/11"
+      "provenance": "folios 17/23; synoptic 2D MBUS 01/10/11",
+      "guest_label": {
+        "manufacturer": "Mastervolt",
+        "model": "Alpha Pro III"
+      },
+      "guest_role": "the starboard alternator regulator"
     },
     {
       "device_key": "blue_sea_acr",
@@ -233,7 +295,11 @@
       "system_category": "electrical_dc",
       "quantity": 1,
       "instance_handling": "interchangeable",
-      "provenance": "owner confirmation; replaces prior ml_switch inventory assumption"
+      "provenance": "owner confirmation; replaces prior ml_switch inventory assumption",
+      "guest_label": {
+        "manufacturer": "Blue Sea Systems",
+        "model": "Automatic Charging Relays (ACR)"
+      }
     },
     {
       "device_key": "plain_battery_switch",
@@ -242,7 +308,11 @@
       "description": "plain on-device battery switch / isolation (local only)",
       "system_category": "electrical_dc",
       "quantity": 1,
-      "instance_handling": "interchangeable"
+      "instance_handling": "interchangeable",
+      "guest_label": {
+        "manufacturer": "",
+        "model": "rotary battery switch"
+      }
     },
     {
       "device_key": "class_t",
@@ -269,7 +339,11 @@
           "instance_label": "Class T for MLI unit 3",
           "unit_index": 3
         }
-      ]
+      ],
+      "guest_label": {
+        "manufacturer": "Blue Sea",
+        "model": "Class T"
+      }
     },
     {
       "device_key": "busbar",
@@ -278,7 +352,11 @@
       "description": "DC distribution busbar",
       "system_category": "electrical_dc",
       "quantity": 1,
-      "instance_handling": "interchangeable"
+      "instance_handling": "interchangeable",
+      "guest_label": {
+        "manufacturer": "ProInstaller",
+        "model": "busbar"
+      }
     },
     {
       "device_key": "bg_zeus_sr_software",
@@ -290,7 +368,12 @@
       "entity_kind": "platform",
       "quantity": 1,
       "instance_handling": "interchangeable",
-      "provenance": "admin vessel link Zeus SR Software + Quick Start Guide V2.5 (988-13244-002); shared UI for Zeus SR displays"
+      "provenance": "admin vessel link Zeus SR Software + Quick Start Guide V2.5 (988-13244-002); shared UI for Zeus SR displays",
+      "guest_label": {
+        "manufacturer": "B&G",
+        "model": "Zeus SR Software"
+      },
+      "guest_role": "Zeus SR Software"
     },
     {
       "device_key": "frigomar_air_conditioning_system",
@@ -311,7 +394,12 @@
           "location_label": "Saloon / Living Area – Saloon General",
           "provenance": "Supernova vessel_equipment 6d36a369 team_verified"
         }
-      ]
+      ],
+      "guest_label": {
+        "manufacturer": "Frigomar",
+        "model": "self-contained BLDC"
+      },
+      "guest_role": "the air conditioner"
     }
   ],
   "vessel_artifact_facts": [

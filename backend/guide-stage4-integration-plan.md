@@ -980,7 +980,7 @@ hide empty system tiles; Phase 4 doesn’t require full catalog coverage on B.
 | 2 | Vessel B | Pick real slug or thinned synthetic fixture before W3 |
 | 3 | Naming | Derive from profile/equipment fields; retire map-as-primary |
 | 4 | Families | Graph/profile predicates, not Outremer key prefixes |
-| 4a | Plant-function model | **Design note recorded (2026-07-28)** — see [guide-stage4-class-role-design-note.md](guide-stage4-class-role-design-note.md); implementation not started |
+| 4a | Plant-function model | **Done 2026-07-31** — hybrid derive+`guest_role` override; `GUEST_*` emptied after data seed; thin admin `/admin/vessels/{id}/stage4-plant`. See [guide-stage4-class-role-design-note.md](guide-stage4-class-role-design-note.md). |
 | 5 | Numbers/layout | `vessel_facts` or omit/gap - no silent Outremer defaults |
 | 6 | Oracle | Outremer byte-match stays; B = coherence only |
 | 7 | Registry link | Still deferred |
@@ -1000,13 +1000,14 @@ Full note: [guide-stage4-class-role-design-note.md](guide-stage4-class-role-desi
 - **Class** (model-level, e.g. `solar_charge_controller`) vs **plant role**
   (vessel-level, e.g. `house_bank` vs engine bank; davit vs coachroof) — do not
   collapse. Role is not knowable from the manual alone.
-- **Guest nicknames:** prefer derive from class + `quantity` / `side` / place /
-  vessel facts; brand-as-role discouraged; permanent `guest_role` column still
-  an **open** decision.
+- **Guest nicknames:** **hybrid** — derive from class + qty/side/facts; store
+  `guest_role` override when needed; brand-as-role discouraged.
 - **Classify class at profile promote** (heuristics first; optional small LLM
   on misses). **No LLM at Stage 4 Generate.**
-- **Next implement step:** spike one family off the shim maps with Outremer
-  byte-match + `sister-test` coherent.
+- **Vessel setup:** thin admin UI for `guest_role` / `guest_label` on Stage 4
+  plant (read-only `plant_class`); not full Phase 4b merge.
+- **Shim retirement:** big-bang migrate remaining `GUEST_*` into data, then
+  empty the maps (MPPT already off-shim).
 
 ---
 

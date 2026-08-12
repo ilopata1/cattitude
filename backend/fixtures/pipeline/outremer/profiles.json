@@ -1,5 +1,6 @@
 {
   "coi": {
+    "plant_class": "combination_output_interface",
     "device": {
       "manufacturer": "CZone / Mastervolt",
       "model": "Combination Output Interface (COI)",
@@ -291,6 +292,7 @@
     "source": "live_extraction"
   },
   "mli_ultra": {
+    "plant_class": "lithium_battery",
     "device": {
       "manufacturer": "Mastervolt",
       "model": "MLI Ultra 24/6000",
@@ -353,6 +355,7 @@
     }
   },
   "mass_combi_pro": {
+    "plant_class": "inverter_charger",
     "device": {
       "manufacturer": "Mastervolt",
       "model": "Mass Combi Pro",
@@ -422,6 +425,7 @@
     "profile_schema_version": "v4.19"
   },
   "victron_mppt": {
+    "plant_class": "solar_charge_controller",
     "device": {
       "manufacturer": "Victron Energy",
       "model": "SmartSolar MPPT 75/15",
@@ -479,6 +483,7 @@
     }
   },
   "plain_battery_switch": {
+    "plant_class": "battery_switch",
     "device": {
       "manufacturer": "generic",
       "model": "rotary battery switch",
@@ -532,6 +537,7 @@
     "source": "stub"
   },
   "class_t": {
+    "plant_class": "class_t_fuse",
     "device": {
       "manufacturer": "Blue Sea",
       "model": "Class T fuse holder",
@@ -571,6 +577,7 @@
     "source": "stub"
   },
   "busbar": {
+    "plant_class": "busbar",
     "device": {
       "manufacturer": "ProInstaller",
       "model": "busbar",
@@ -610,6 +617,7 @@
     "source": "stub"
   },
   "czone_touch_7": {
+    "plant_class": "digital_switching_touchscreen",
     "device": {
       "manufacturer": "CZone",
       "model": "Touch 7",
@@ -1060,6 +1068,7 @@
     ]
   },
   "masterbus_bridge_interface": {
+    "plant_class": "masterbus_bridge",
     "device": {
       "manufacturer": "Mastervolt",
       "model": "MasterBus Bridge Interface",
@@ -1113,6 +1122,7 @@
     "source": "stub"
   },
   "masterbus_usb_interface": {
+    "plant_class": "masterbus_usb",
     "device": {
       "manufacturer": "Mastervolt",
       "model": "MasterBus USB Interface",
@@ -1463,6 +1473,7 @@
     "needs_rextraction": false
   },
   "victron_mppt_150_60": {
+    "plant_class": "solar_charge_controller",
     "device": {
       "manufacturer": "Victron Energy",
       "model": "SmartSolar MPPT 150/60-Tr",
@@ -1521,6 +1532,7 @@
     "source": "stub"
   },
   "alpha_pro_iii": {
+    "plant_class": "alternator_regulator",
     "device": {
       "manufacturer": "Mastervolt",
       "model": "Mastervolt AlphaPro III",
@@ -2568,6 +2580,7 @@
     "source": "live_extraction"
   },
   "czone_2_0": {
+    "plant_class": "digital_switching_platform",
     "device": {
       "manufacturer": "CZone",
       "model": "CZone 2.0",
@@ -3180,6 +3193,7 @@
     "needs_rextraction": false
   },
   "bg_zeus_sr": {
+    "plant_class": "chartplotter",
     "device": {
       "manufacturer": "B&G",
       "model": "Zeus SR",
@@ -4474,6 +4488,7 @@
     ]
   },
   "bg_halo_20_plus": {
+    "plant_class": "radar",
     "device": {
       "manufacturer": "B&G",
       "model": "Halo 20+",
@@ -4738,6 +4753,7 @@
     "needs_rextraction": false
   },
   "blue_sea_acr": {
+    "plant_class": "automatic_charging_relay",
     "device": {
       "manufacturer": "Blue Sea Systems",
       "model": "Automatic Charging Relays (ACR)",
@@ -5011,6 +5027,7 @@
     "source": "live_extraction"
   },
   "bg_zeus_sr_software": {
+    "plant_class": "chartplotter",
     "device": {
       "manufacturer": "B&G",
       "model": "Zeus SR Software",
@@ -5553,6 +5570,7 @@
     "documented_version": "Zeus SR Software v2.5"
   },
   "dessalator_duo": {
+    "plant_class": "watermaker",
     "device": {
       "manufacturer": "Dessalator",
       "model": "Duo AC & DC Navigator",
@@ -5763,6 +5781,7 @@
     "needs_rextraction": false
   },
   "fischer_panda_8000i": {
+    "plant_class": "generator",
     "device": {
       "manufacturer": "Fischer Panda",
       "model": "Panda 8000i",
@@ -6419,6 +6438,7 @@
     "needs_rextraction": false
   },
   "nanni_n4_65": {
+    "plant_class": "propulsion_engine",
     "device": {
       "manufacturer": "Nanni",
       "model": "N4.65",
@@ -6778,6 +6798,7 @@
     "needs_rextraction": false
   },
   "sea_ai_watchkeeper": {
+    "plant_class": "ai_camera",
     "device": {
       "manufacturer": "Sea.AI",
       "model": "Watchkeeper",
@@ -7754,6 +7775,7 @@
     "needs_rextraction": false
   },
   "blackwater_tank_discharge_valve": {
+    "plant_class": "blackwater_discharge_valve",
     "device": {
       "manufacturer": "Generic",
       "model": "Blackwater Tank Discharge Valve",
@@ -7793,6 +7815,7 @@
     "source": "stub"
   },
   "tecma_compass_eco": {
+    "plant_class": "electric_toilet",
     "device": {
       "manufacturer": "Tecma",
       "model": "Compass Eco electric head",
@@ -8053,6 +8076,7 @@
     "needs_rextraction": false
   },
   "frigomar_air_conditioning_system": {
+    "plant_class": "air_conditioner",
     "device": {
       "manufacturer": "Frigomar",
       "model": "Air Conditioning System",

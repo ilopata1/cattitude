@@ -396,8 +396,9 @@ def compose_solar_section(
         device_keys = solar_mppt_keys_present(
             equipment_doc,
             graph_device_keys=set(graph.devices.keys()),
+            profiles=profiles,
         )
-    arrays = solar_array_controller_keys(equipment_doc)
+    arrays = solar_array_controller_keys(equipment_doc, profiles=profiles)
 
     by_key = {
         str(r.get("device_key")): r

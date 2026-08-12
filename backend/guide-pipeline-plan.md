@@ -189,6 +189,7 @@ Do **not** replace the fragment + approve path in one rewrite.
 | **Engines Stage 4 (frozen)** | Done — frozen for reuse (spec v4.41); Nanni N4.65; instrument-panel start/stop; xliv affirmative station; `verify_engines_section_v4.py` |
 | **Heads & waste Stage 4 (frozen)** | Done — frozen for reuse (spec v4.45); discharge valves ×3 + places; honest `heads_model_unknown`; in `PUBLISHED_SECTIONS`; `verify_heads_section_v4.py` |
 | **Air Conditioning Stage 4 (frozen)** | Done — frozen for reuse (spec v4.46); Frigomar self-contained BLDC; passive station; AC xxii narrow; in `PUBLISHED_SECTIONS`; `verify_ac_section_v4.py` |
+| **Phase 4 class/role (A–C locked)** | Done 2026-07-31 — hybrid derive+override; big-bang emptied `GUEST_*`; thin admin `/admin/vessels/{id}/stage4-plant`; see `guide-stage4-class-role-design-note.md` |
 | **Global composition spine (v4.15+)** | Done — `guide_composition_rules.py`; orphan/vocab/wisdom slot; B&E v2; xxxii–**xlv** (v4.42: places → Equipment Locations table, not inline capability) |
 | **Composition clarifications (v4.16)** | Done — same-breath check; sentence-initial spell-out; surface-bound adjusting |
 | **Composition clarifications (v4.17)** | Done — instruction occasion; paragraph-final pointers; ratings/daily/BMS co-location |

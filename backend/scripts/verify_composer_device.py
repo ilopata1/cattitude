@@ -19,6 +19,7 @@ from guide_composer_device import (
     catalog_key_for,
     chartplotter_capability_phrase,
     discharge_valve_quantity_phrase,
+    guest_manufacturer_model,
     guest_manufacturer_model_for_catalog,
     guest_role_phrase,
     heads_section_member_keys,
@@ -27,7 +28,9 @@ from guide_composer_device import (
     nav_zeus_hub_keys,
     propulsion_engines_reference,
     section_plant_key,
+    solar_mppt_keys_present,
 )
+from guide_plant_class import normalize_plant_class, profile_plant_class
 
 OUTREMER = _BACKEND / "fixtures" / "pipeline" / "outremer"
 
@@ -70,6 +73,18 @@ def main() -> int:
     role_touch = guest_role_phrase("czone_touch_7", index)
     if role_touch != "the touchscreen":
         failures.append(f"czone_touch_7 role got {role_touch!r}")
+
+    role_combi_1 = guest_role_phrase("mass_combi_pro_1", index)
+    if role_combi_1 != "the port inverter-charger":
+        failures.append(f"mass_combi_pro_1 role got {role_combi_1!r}")
+
+    role_mli_2 = guest_role_phrase("mli_ultra_2", index)
+    if role_mli_2 != "house battery 2":
+        failures.append(f"mli_ultra_2 role got {role_mli_2!r}")
+
+    from guide_composer_device import GUEST_LABEL_BY_CATALOG, GUEST_ROLE_BY_CATALOG, GUEST_ROLE_BY_KEY
+    if GUEST_LABEL_BY_CATALOG or GUEST_ROLE_BY_CATALOG or GUEST_ROLE_BY_KEY:
+        failures.append("GUEST_* shim maps must be empty after big-bang")
 
     phrase_two = inverter_charger_group_phrase(
         2,
@@ -140,6 +155,31 @@ def main() -> int:
     role_wm = guest_role_phrase("dessalator_duo", index)
     if role_wm != "the watermaker":
         failures.append(f"dessalator_duo role got {role_wm!r}")
+
+    # MPPT family — plant_class + vessel guest_role/label (no GUEST_* shim).
+    for key in ("victron_mppt", "victron_mppt_150_60"):
+        pc = profile_plant_class(profiles.get(key))
+        if pc != "solar_charge_controller":
+            failures.append(f"{key} plant_class got {pc!r}")
+    if normalize_plant_class("solar MPPT charge controller") != "solar_charge_controller":
+        failures.append("normalize_plant_class mppt freeform failed")
+
+    role_davit = guest_role_phrase("victron_mppt_150_60", index)
+    if role_davit != "the davit array controller":
+        failures.append(f"davit mppt role got {role_davit!r}")
+    role_coach = guest_role_phrase("victron_mppt", index)
+    if role_coach != "the coachroof array controllers":
+        failures.append(f"coachroof mppt role got {role_coach!r}")
+
+    mm_davit = guest_manufacturer_model(
+        "victron_mppt_150_60", equipment_doc, profiles, index=index
+    )
+    if mm_davit != ("Victron", "SmartSolar MPPT 150/60"):
+        failures.append(f"davit mppt guest_label got {mm_davit!r}")
+
+    mppts = solar_mppt_keys_present(equipment_doc, profiles=profiles)
+    if mppts != ("victron_mppt_150_60", "victron_mppt"):
+        failures.append(f"solar_mppt_keys_present got {mppts!r}")
 
     if failures:
         print("FAIL:")

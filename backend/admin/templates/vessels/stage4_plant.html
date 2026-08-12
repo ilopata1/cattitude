@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}{{ vessel.name }} — Stage 4 plant — Clever Sailor Admin{% endblock %}
+{% block content %}
+<p class="breadcrumb">
+  <a href="/admin/vessels">Vessels</a> /
+  <a href="/admin/vessels/{{ vessel.id }}/edit">{{ vessel.name }}</a> /
+  Stage 4 plant
+</p>
+<h1>{{ vessel.name }} — Stage 4 plant</h1>
+
+<p class="lede">
+  Guest nicknames and labels for Stage 4 composers. This is the Stage 4 substrate
+  (seeded plant), <strong>not</strong> the registry equipment list.
+  Leave nickname empty to use the derived default from plant class.
+  After saving, regenerate Stage 4 guide modules for prose to update.
+</p>
+
+{% if request.query_params.get('saved') %}
+<div class="flash flash-ok">Guest fields saved.</div>
+{% endif %}
+{% if error %}
+<div class="flash flash-error">{{ error }}</div>
+{% endif %}
+
+{% if not has_substrate %}
+<p class="flash flash-error">
+  Stage 4 substrate is not seeded for this vessel.
+  Seed with <code>python scripts/seed_stage4_substrate.py --slug {{ vessel.slug }}</code>.
+</p>
+{% elif not plant %}
+<p class="muted">No Stage 4 plant rows.</p>
+{% else %}
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Device</th>
+      <th>Plant class</th>
+      <th>Guest nickname (override)</th>
+      <th>Guest label</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in plant %}
+    <tr id="row-{{ row.id }}">
+      <td>
+        <code>{{ row.device_key }}</code>
+        <div class="muted">{{ row.manufacturer }} {{ row.model }}</div>
+        <div class="muted">profile: {{ row.profile_key }}</div>
+        {% if row.instance_roles %}
+        <div class="muted">
+          Instance nicknames (seed/fixture; not edited here):
+          {% for inst in row.instance_roles %}
+            {% if inst.guest_role %}
+            <div><code>{{ inst.instance_key }}</code> → {{ inst.guest_role }}</div>
+            {% endif %}
+          {% endfor %}
+        </div>
+        {% endif %}
+      </td>
+      <td><code>{{ row.plant_class or "—" }}</code></td>
+      <td colspan="2">
+        <form method="post" action="/admin/vessels/{{ vessel.id }}/stage4-plant/{{ row.id }}" class="inline-form">
+          <label class="stack-label">
+            Nickname
+            <input name="guest_role" value="{{ row.guest_role }}" placeholder="e.g. the davit array controller">
+          </label>
+          <label class="stack-label">
+            Label manufacturer
+            <input name="guest_label_manufacturer" value="{{ row.guest_label_manufacturer }}" placeholder="Victron">
+          </label>
+          <label class="stack-label">
+            Label model
+            <input name="guest_label_model" value="{{ row.guest_label_model }}" placeholder="SmartSolar MPPT 150/60">
+          </label>
+          <button type="submit">Save</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+<p class="form-actions">
+  <a href="/admin/vessels/{{ vessel.id }}/equipment">Registry equipment</a>
+  <a href="/admin/vessels/{{ vessel.id }}/guide">Guide</a>
+  <a href="/admin/vessels/{{ vessel.id }}/edit">Back to vessel</a>
+</p>
+{% endblock %}

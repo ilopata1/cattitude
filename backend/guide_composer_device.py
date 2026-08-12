@@ -5,15 +5,18 @@ instead of per-file ``DISPLAY_NAMES`` / ``MANUFACTURER_MODEL`` maps and
 Outremer-specific ``device_key`` prefix checks.
 
 Resolution order for guest manufacturer/model labels:
-  1. ``equipment[].guest_label`` on the substrate row (per-vessel override)
-  2. ``GUEST_LABEL_BY_CATALOG`` (model-level shorthand when registry model
-     strings are too verbose for guest parens — e.g. Class T fuse holder → Class T)
-  3. ``equipment`` row ``manufacturer`` / ``model``
-  4. ``profiles[catalog_key].device`` fields
+  1. ``equipment[].guest_label`` (or instance overlay) on the substrate row
+  2. ``equipment`` row ``manufacturer`` / ``model``
+  3. ``profiles[catalog_key].device`` fields
 
-Role nicknames (``the house batteries``, ``the chartplotters``) are added in a
-later composer pass via ``guest_role`` on equipment rows or vessel facts; this
-module provides ``catalog_base`` and family grouping first.
+Resolution order for guest role phrases (``the davit array controller``, …):
+  1. ``guest_role`` on the instance or parent substrate row (override)
+  2. Derived default from ``plant_class`` + quantity + side
+  3. ``\"the device\"``
+
+``GUEST_*`` shim maps were emptied in the 2026-07-31 big-bang migration —
+seed data via ``scripts/migrate_guest_shims_to_data.py`` / fixture fields.
+See ``guide-stage4-class-role-design-note.md``.
 """
 
 from __future__ import annotations
@@ -21,73 +24,49 @@ from __future__ import annotations
 import re
 from typing import Any
 
+from guide_plant_class import profile_plant_class
 from guide_reader_voice import format_guest_equipment_label, format_guest_equipment_paren
 
 _SIDE_SUFFIX_RE = re.compile(r"_(port|stbd)$", re.I)
 _INSTANCE_SUFFIX_RE = re.compile(r"_\d+$")
 
-# Model-level guest parens overrides (catalog_key → mfr, model). Prefer
-# ``guest_label`` on a vessel equipment row when B differs from Outremer.
-GUEST_LABEL_BY_CATALOG: dict[str, tuple[str, str]] = {
-    "blue_sea_acr": ("Blue Sea Systems", "Automatic Charging Relays (ACR)"),
-    "busbar": ("ProInstaller", "busbar"),
-    "class_t": ("Blue Sea", "Class T"),
-    "coi": ("CZone", "Combination Output Interface"),
-    "masterbus_bridge_interface": ("Mastervolt", "MasterBus Bridge Interface"),
-    "masterbus_usb_interface": ("Mastervolt", "MasterBus USB Interface"),
-    "plain_battery_switch": ("", "rotary battery switch"),
-    "czone_touch_7": ("CZone", "Touch 7"),
-    "czone_2_0": ("CZone", "2.0"),
-    "mass_combi_pro": ("Mastervolt", "Mass Combi Pro"),
-    "mli_ultra": ("Mastervolt", "MLI Ultra"),
-    "bg_zeus_sr": ("B&G", "Zeus SR 12"),
-    "bg_zeus_sr_software": ("B&G", "Zeus SR Software"),
-    "bg_halo_20_plus": ("B&G", "Halo 20+"),
-    "sea_ai_watchkeeper": ("Sea.AI", "Watchkeeper"),
-    "victron_mppt_150_60": ("Victron", "SmartSolar MPPT 150/60"),
-    "victron_mppt": ("Victron", "SmartSolar MPPT 75/15"),
-    "silentwind": ("Silentwind", "Hybrid 1000"),
-    "alpha_pro_iii": ("Mastervolt", "Alpha Pro III"),
-    "fischer_panda_8000i": ("Fischer Panda", "Panda 8000i"),
-    "nanni_n4_65": ("Nanni", "N4.65"),
-    "dessalator_duo": ("Dessalator", "Duo AC & DC Navigator"),
-    "blackwater_tank_discharge_valve": ("", "Blackwater Tank Discharge Valve"),
-    "tecma_compass_eco": ("Tecma", "Compass Eco"),
-    "frigomar_air_conditioning_system": ("Frigomar", "self-contained BLDC"),
-}
+# Emptied 2026-07-31 — kept as empty dicts so any leftover import/reference
+# fails closed rather than resurrecting Outremer hardcoding.
+GUEST_LABEL_BY_CATALOG: dict[str, tuple[str, str]] = {}
+GUEST_ROLE_BY_CATALOG: dict[str, str] = {}
+GUEST_ROLE_BY_KEY: dict[str, str] = {}
 
-# Guest role phrases (catalog_key or device_key → "the …" wording).
-GUEST_ROLE_BY_CATALOG: dict[str, str] = {
-    "czone_touch_7": "the touchscreen",
-    "czone_2_0": "CZone",
-    "mass_combi_pro": "the inverter-chargers",
-    "mli_ultra": "the house batteries",
-    "bg_zeus_sr": "the chartplotters",
-    "bg_zeus_sr_software": "Zeus SR Software",
-    "bg_halo_20_plus": "the radar",
-    "sea_ai_watchkeeper": "the AI camera system",
-    "victron_mppt_150_60": "the davit array controller",
-    "victron_mppt": "the coachroof array controllers",
-    "silentwind": "the wind generator",
-    "alpha_pro_iii": "the alternator regulators",
-    "fischer_panda_8000i": "the generator",
-    "nanni_n4_65": "the engines",
-    "dessalator_duo": "the watermaker",
-    "blackwater_tank_discharge_valve": "the blackwater tank discharge valves",
-    "tecma_compass_eco": "the electric heads",
-    "frigomar_air_conditioning_system": "the air conditioner",
-}
-
-GUEST_ROLE_BY_KEY: dict[str, str] = {
-    "mass_combi_pro_1": "the port inverter-charger",
-    "mass_combi_pro_2": "the starboard inverter-charger",
-    "mli_ultra_1": "house battery 1",
-    "mli_ultra_2": "house battery 2",
-    "mli_ultra_3": "house battery 3",
-    "bg_zeus_sr_1": "the chartplotters",
-    "bg_zeus_sr_2": "the chartplotters",
-    "alpha_pro_iii_port": "the port alternator regulator",
-    "alpha_pro_iii_stbd": "the starboard alternator regulator",
+# plant_class → (singular bare noun, plural bare noun) for derived "the …"
+_DERIVED_ROLE_BARE: dict[str, tuple[str, str]] = {
+    "solar_charge_controller": ("solar charge controller", "solar charge controllers"),
+    "lithium_battery": ("battery", "batteries"),
+    "inverter_charger": ("inverter-charger", "inverter-chargers"),
+    "alternator_regulator": ("alternator regulator", "alternator regulators"),
+    "generator": ("generator", "generators"),
+    "propulsion_engine": ("engine", "engines"),
+    "watermaker": ("watermaker", "watermakers"),
+    "air_conditioner": ("air conditioner", "air conditioners"),
+    "chartplotter": ("chartplotter", "chartplotters"),
+    "radar": ("radar", "radars"),
+    "ai_camera": ("AI camera system", "AI camera systems"),
+    "digital_switching_touchscreen": ("touchscreen", "touchscreens"),
+    "digital_switching_platform": ("digital switching platform", "digital switching platforms"),
+    "combination_output_interface": (
+        "combination output interface",
+        "combination output interfaces",
+    ),
+    "automatic_charging_relay": ("automatic charging relay", "automatic charging relays"),
+    "battery_switch": ("battery switch", "battery switches"),
+    "class_t_fuse": ("Class T fuse", "Class T fuses"),
+    "busbar": ("busbar", "busbars"),
+    "masterbus_bridge": ("MasterBus bridge", "MasterBus bridges"),
+    "masterbus_usb": ("MasterBus USB interface", "MasterBus USB interfaces"),
+    "blackwater_discharge_valve": (
+        "blackwater tank discharge valve",
+        "blackwater tank discharge valves",
+    ),
+    "electric_toilet": ("electric heads", "electric heads"),
+    "wind_generator": ("wind generator", "wind generators"),
 }
 
 # Preferred solar array catalog order (davit primary, coachroof secondary).
@@ -106,7 +85,12 @@ def catalog_base(device_key: str) -> str:
 
 
 def build_device_index(equipment_doc: dict[str, Any]) -> dict[str, dict[str, Any]]:
-    """Map device_key and instance keys to their equipment substrate row."""
+    """Map device_key and instance keys to their equipment substrate row.
+
+    Instance keys get a shallow overlay so ``guest_role`` / ``guest_label`` on
+    the instance win over the parent row (needed for port/stbd Combis, numbered
+    house batteries, etc.).
+    """
     index: dict[str, dict[str, Any]] = {}
     for row in equipment_doc.get("equipment") or []:
         if not isinstance(row, dict):
@@ -118,8 +102,14 @@ def build_device_index(equipment_doc: dict[str, Any]) -> dict[str, dict[str, Any
             if not isinstance(inst, dict):
                 continue
             instance_key = str(inst.get("instance_key") or "").strip()
-            if instance_key:
-                index[instance_key] = row
+            if not instance_key:
+                continue
+            overlay = dict(row)
+            for field in ("guest_role", "guest_label", "instance_label", "side"):
+                if field in inst and inst[field] not in (None, ""):
+                    overlay[field] = inst[field]
+            overlay["_instance_key"] = instance_key
+            index[instance_key] = overlay
     return index
 
 
@@ -173,11 +163,60 @@ def keys_where_catalog_contains(
     ]
 
 
+def _normalize_side(side: str | None) -> str | None:
+    s = str(side or "").strip().lower()
+    if s in {"port", "p"}:
+        return "port"
+    if s in {"stbd", "starboard", "s"}:
+        return "starboard"
+    return None
+
+
+def derive_guest_role_phrase(
+    *,
+    plant_class: str | None,
+    quantity: int = 1,
+    side: str | None = None,
+) -> str | None:
+    """Hybrid default nickname from class + qty + side. None if unknown class."""
+    bare = _DERIVED_ROLE_BARE.get(str(plant_class or "").strip())
+    if not bare:
+        return None
+    singular, plural = bare
+    side_word = _normalize_side(side)
+    if side_word:
+        return f"the {side_word} {singular}"
+    noun = plural if quantity > 1 else singular
+    return f"the {noun}"
+
+
 def guest_role_phrase(
     device_key: str,
     index: dict[str, dict[str, Any]],
+    *,
+    profiles: dict[str, dict[str, Any]] | None = None,
 ) -> str:
     key = str(device_key or "")
+    row = index.get(key)
+    if row:
+        role = str(row.get("guest_role") or "").strip()
+        if role:
+            return role
+    # Derive from plant_class when no stored override.
+    if row is not None and profiles is not None:
+        cat = catalog_key_for(key, index)
+        prof = profiles.get(cat) or profiles.get(catalog_base(key)) or {}
+        try:
+            qty = int(row.get("quantity") or 1)
+        except (TypeError, ValueError):
+            qty = 1
+        derived = derive_guest_role_phrase(
+            plant_class=profile_plant_class(prof),
+            quantity=qty,
+            side=str(row.get("side") or "") or None,
+        )
+        if derived:
+            return derived
     if key in GUEST_ROLE_BY_KEY:
         return GUEST_ROLE_BY_KEY[key]
     base = catalog_base(key)
@@ -186,11 +225,6 @@ def guest_role_phrase(
     cat = catalog_key_for(key, index)
     if cat in GUEST_ROLE_BY_CATALOG:
         return GUEST_ROLE_BY_CATALOG[cat]
-    row = index.get(key)
-    if row:
-        role = str(row.get("guest_role") or "").strip()
-        if role:
-            return role
     return "the device"
 
 
@@ -413,38 +447,67 @@ def solar_mppt_keys_present(
     equipment_doc: dict[str, Any],
     *,
     graph_device_keys: set[str] | None = None,
+    profiles: dict[str, dict[str, Any]] | None = None,
 ) -> tuple[str, ...]:
-    """Ordered MPPT catalog keys actually fitted on this vessel."""
+    """Ordered MPPT catalog keys actually fitted on this vessel.
+
+    Prefers ``SOLAR_MPPT_CATALOG_ORDER`` when those catalogs are fitted so
+    Outremer davit→coachroof order holds. Also accepts any fitted row whose
+    profile ``plant_class`` (or normalized freeform) is
+    ``solar_charge_controller``.
+    """
     index = build_device_index(equipment_doc)
     present: list[str] = []
-    for cat in SOLAR_MPPT_CATALOG_ORDER:
-        if cat in index or any(
-            catalog_key_for(k, index) == cat for k in index
-        ):
-            if graph_device_keys is not None and cat not in graph_device_keys:
-                # Prefer parent catalog key; also accept instances
-                if not any(
+    seen: set[str] = set()
+
+    def _accept(cat: str, device_key: str) -> None:
+        if cat in seen:
+            return
+        if graph_device_keys is not None:
+            if (
+                device_key not in graph_device_keys
+                and cat not in graph_device_keys
+                and not any(
                     catalog_key_for(k, index) == cat for k in graph_device_keys
-                ):
-                    continue
-            present.append(cat)
+                )
+            ):
+                return
+        seen.add(cat)
+        present.append(cat)
+
+    for cat in SOLAR_MPPT_CATALOG_ORDER:
+        if cat in index or any(catalog_key_for(k, index) == cat for k in index):
+            _accept(cat, cat)
             continue
-        # Parent row may use device_key == catalog_key
         for row in equipment_doc.get("equipment") or []:
             if not isinstance(row, dict):
                 continue
             dk = str(row.get("device_key") or "")
             ck = str(row.get("catalog_key") or dk)
             if ck == cat or dk == cat:
-                if graph_device_keys is not None and dk not in graph_device_keys and cat not in graph_device_keys:
-                    continue
-                present.append(cat)
+                _accept(cat, dk or cat)
                 break
+
+    if profiles:
+        for row in equipment_doc.get("equipment") or []:
+            if not isinstance(row, dict):
+                continue
+            dk = str(row.get("device_key") or "").strip()
+            ck = str(row.get("catalog_key") or dk).strip()
+            if not ck:
+                continue
+            prof = profiles.get(ck) or profiles.get(catalog_base(dk)) or {}
+            if profile_plant_class(prof) != "solar_charge_controller":
+                continue
+            _accept(ck, dk or ck)
+
     return tuple(present)
 
 
 def solar_array_controller_keys(
     equipment_doc: dict[str, Any],
+    *,
+    profiles: dict[str, dict[str, Any]] | None = None,
 ) -> dict[str, str | None]:
     """Map array role → MPPT device_key when that controller is fitted.
 
@@ -452,7 +515,7 @@ def solar_array_controller_keys(
     Vessel facts may rebind via ``applies_to`` on solar_*_array_observation.
     """
     index = build_device_index(equipment_doc)
-    fitted = set(solar_mppt_keys_present(equipment_doc))
+    fitted = set(solar_mppt_keys_present(equipment_doc, profiles=profiles))
     out: dict[str, str | None] = {"davit": None, "coachroof": None}
 
     for fact in equipment_doc.get("vessel_facts") or []:

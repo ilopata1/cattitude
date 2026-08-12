@@ -29,7 +29,12 @@
       "system_category": "electrical_dc",
       "quantity": 1,
       "instance_handling": "interchangeable",
-      "provenance": "folio 2E TAC box; owner-corrected from Touch 10 assumption"
+      "provenance": "folio 2E TAC box; owner-corrected from Touch 10 assumption",
+      "guest_label": {
+        "manufacturer": "CZone",
+        "model": "Touch 7"
+      },
+      "guest_role": "the touchscreen"
     },
     {
       "device_key": "czone_2_0",
@@ -40,7 +45,12 @@
       "entity_kind": "platform",
       "quantity": 1,
       "instance_handling": "interchangeable",
-      "provenance": "Quick Start Guide extract; shared UI for Touch displays"
+      "provenance": "Quick Start Guide extract; shared UI for Touch displays",
+      "guest_label": {
+        "manufacturer": "CZone",
+        "model": "2.0"
+      },
+      "guest_role": "CZone"
     },
     {
       "device_key": "coi",
@@ -80,7 +90,11 @@
           "network_address": "1000 0011",
           "document_label": "COI n°3"
         }
-      ]
+      ],
+      "guest_label": {
+        "manufacturer": "CZone",
+        "model": "Combination Output Interface"
+      }
     },
     {
       "device_key": "masterbus_bridge_interface",
@@ -90,7 +104,11 @@
       "system_category": "electrical_dc",
       "quantity": 1,
       "instance_handling": "interchangeable",
-      "provenance": "folios 2D/2E/11"
+      "provenance": "folios 2D/2E/11",
+      "guest_label": {
+        "manufacturer": "Mastervolt",
+        "model": "MasterBus Bridge Interface"
+      }
     },
     {
       "device_key": "masterbus_usb_interface",
@@ -100,7 +118,11 @@
       "system_category": "electrical_dc",
       "quantity": 1,
       "instance_handling": "interchangeable",
-      "provenance": "folios 2D/2E/11"
+      "provenance": "folios 2D/2E/11",
+      "guest_label": {
+        "manufacturer": "Mastervolt",
+        "model": "MasterBus USB Interface"
+      }
     },
     {
       "device_key": "mli_ultra",
@@ -123,7 +145,8 @@
               "resolved_to_hint": "class_t_1",
               "source": "folios 3A/3B"
             }
-          ]
+          ],
+          "guest_role": "house battery 1"
         },
         {
           "instance_key": "mli_ultra_2",
@@ -135,7 +158,8 @@
               "resolved_to_hint": "class_t_2",
               "source": "folios 3A/3B"
             }
-          ]
+          ],
+          "guest_role": "house battery 2"
         },
         {
           "instance_key": "mli_ultra_3",
@@ -147,9 +171,15 @@
               "resolved_to_hint": "class_t_3",
               "source": "folios 3A/3B"
             }
-          ]
+          ],
+          "guest_role": "house battery 3"
         }
-      ]
+      ],
+      "guest_label": {
+        "manufacturer": "Mastervolt",
+        "model": "MLI Ultra"
+      },
+      "guest_role": "the house batteries"
     },
     {
       "device_key": "mass_combi_pro",
@@ -172,10 +202,16 @@
               "source": "owner's manual p55",
               "note": "Location: chart table. Fault-procedure / local access at chart table."
             }
-          ]
+          ],
+          "guest_role": "the port inverter-charger"
         }
       ],
-      "relations": []
+      "relations": [],
+      "guest_label": {
+        "manufacturer": "Mastervolt",
+        "model": "Mass Combi Pro"
+      },
+      "guest_role": "the inverter-chargers"
     },
     {
       "device_key": "victron_mppt_150_60",
@@ -185,6 +221,11 @@
       "system_category": "electrical_dc",
       "quantity": 1,
       "instance_handling": "interchangeable",
+      "guest_role": "the davit array controller",
+      "guest_label": {
+        "manufacturer": "Victron",
+        "model": "SmartSolar MPPT 150/60"
+      },
       "provenance": "photo tier; schematic 2D MasterBus-solar claim overruled"
     },
     {
@@ -203,7 +244,12 @@
         "inferred": "Mastervolt Alpha family",
         "unconfirmed": "exact Alpha Pro III model pending extraction"
       },
-      "provenance": "folios 17/23; synoptic 2D MBUS 01/10/11"
+      "provenance": "folios 17/23; synoptic 2D MBUS 01/10/11",
+      "guest_label": {
+        "manufacturer": "Mastervolt",
+        "model": "Alpha Pro III"
+      },
+      "guest_role": "the port alternator regulator"
     },
     {
       "device_key": "alpha_pro_iii_stbd",
@@ -221,7 +267,12 @@
         "inferred": "Mastervolt Alpha family",
         "unconfirmed": "exact Alpha Pro III model pending extraction"
       },
-      "provenance": "folios 17/23; synoptic 2D MBUS 01/10/11"
+      "provenance": "folios 17/23; synoptic 2D MBUS 01/10/11",
+      "guest_label": {
+        "manufacturer": "Mastervolt",
+        "model": "Alpha Pro III"
+      },
+      "guest_role": "the starboard alternator regulator"
     },
     {
       "device_key": "blue_sea_acr",
@@ -232,7 +283,11 @@
       "system_category": "electrical_dc",
       "quantity": 1,
       "instance_handling": "interchangeable",
-      "provenance": "owner confirmation; replaces prior ml_switch inventory assumption"
+      "provenance": "owner confirmation; replaces prior ml_switch inventory assumption",
+      "guest_label": {
+        "manufacturer": "Blue Sea Systems",
+        "model": "Automatic Charging Relays (ACR)"
+      }
     },
     {
       "device_key": "plain_battery_switch",
@@ -241,7 +296,11 @@
       "description": "plain on-device battery switch / isolation (local only)",
       "system_category": "electrical_dc",
       "quantity": 1,
-      "instance_handling": "interchangeable"
+      "instance_handling": "interchangeable",
+      "guest_label": {
+        "manufacturer": "",
+        "model": "rotary battery switch"
+      }
     },
     {
       "device_key": "class_t",
@@ -268,7 +327,11 @@
           "instance_label": "Class T for MLI unit 3",
           "unit_index": 3
         }
-      ]
+      ],
+      "guest_label": {
+        "manufacturer": "Blue Sea",
+        "model": "Class T"
+      }
     },
     {
       "device_key": "busbar",
@@ -277,7 +340,11 @@
       "description": "DC distribution busbar",
       "system_category": "electrical_dc",
       "quantity": 1,
-      "instance_handling": "interchangeable"
+      "instance_handling": "interchangeable",
+      "guest_label": {
+        "manufacturer": "ProInstaller",
+        "model": "busbar"
+      }
     },
     {
       "device_key": "bg_zeus_sr",
@@ -293,14 +360,21 @@
         {
           "instance_key": "bg_zeus_sr_1",
           "instance_label": "Zeus SR 12 (unit 1)",
-          "unit_index": 1
+          "unit_index": 1,
+          "guest_role": "the chartplotters"
         },
         {
           "instance_key": "bg_zeus_sr_2",
           "instance_label": "Zeus SR 12 (unit 2)",
-          "unit_index": 2
+          "unit_index": 2,
+          "guest_role": "the chartplotters"
         }
-      ]
+      ],
+      "guest_label": {
+        "manufacturer": "B&G",
+        "model": "Zeus SR 12"
+      },
+      "guest_role": "the chartplotters"
     },
     {
       "device_key": "bg_zeus_sr_software",
@@ -312,7 +386,12 @@
       "entity_kind": "platform",
       "quantity": 1,
       "instance_handling": "interchangeable",
-      "provenance": "admin vessel link Zeus SR Software + Quick Start Guide V2.5 (988-13244-002); shared UI for Zeus SR displays"
+      "provenance": "admin vessel link Zeus SR Software + Quick Start Guide V2.5 (988-13244-002); shared UI for Zeus SR displays",
+      "guest_label": {
+        "manufacturer": "B&G",
+        "model": "Zeus SR Software"
+      },
+      "guest_role": "Zeus SR Software"
     },
     {
       "device_key": "dessalator_duo",
@@ -323,7 +402,12 @@
       "system_category": "fresh_water_and_plumbing",
       "quantity": 1,
       "instance_handling": "interchangeable",
-      "provenance": "owner confirmation (fitted); channel_map Ind C DCD2-04 [OPT] DESSALINISATEUR / WATER MAKER (35A); operators start-up guide v4.9 (manual_work ffe1b474) Stage 1 extracted"
+      "provenance": "owner confirmation (fitted); channel_map Ind C DCD2-04 [OPT] DESSALINISATEUR / WATER MAKER (35A); operators start-up guide v4.9 (manual_work ffe1b474) Stage 1 extracted",
+      "guest_label": {
+        "manufacturer": "Dessalator",
+        "model": "Duo AC & DC Navigator"
+      },
+      "guest_role": "the watermaker"
     },
     {
       "device_key": "fischer_panda_8000i",
@@ -334,7 +418,12 @@
       "system_category": "electrical_ac",
       "quantity": 1,
       "instance_handling": "interchangeable",
-      "provenance": "owner request (Playbook 1 new equipment); DB registry equipment 17c202cc + Supernova vessel; operators manual marine generator Panda 8000i (manual_work eb6dc5c9, R10 29.4.25, 178pp) Stage 1 extracted"
+      "provenance": "owner request (Playbook 1 new equipment); DB registry equipment 17c202cc + Supernova vessel; operators manual marine generator Panda 8000i (manual_work eb6dc5c9, R10 29.4.25, 178pp) Stage 1 extracted",
+      "guest_label": {
+        "manufacturer": "Fischer Panda",
+        "model": "Panda 8000i"
+      },
+      "guest_role": "the generator"
     },
     {
       "device_key": "nanni_n4_65",
@@ -345,7 +434,12 @@
       "system_category": "propulsion_and_machinery",
       "quantity": 2,
       "instance_handling": "interchangeable",
-      "provenance": "DB registry equipment f7cb721c + Supernova vessel; twin diesel plant (Outremer catamaran); operators manual DGBXXT09007C (manual_work 9e95df10) Stage 1 extracted"
+      "provenance": "DB registry equipment f7cb721c + Supernova vessel; twin diesel plant (Outremer catamaran); operators manual DGBXXT09007C (manual_work 9e95df10) Stage 1 extracted",
+      "guest_label": {
+        "manufacturer": "Nanni",
+        "model": "N4.65"
+      },
+      "guest_role": "the engines"
     },
     {
       "device_key": "blackwater_tank_discharge_valve",
@@ -382,7 +476,12 @@
           "location_label": "Starboard – Bilge / Underfloor – Forward Bilge",
           "provenance": "Supernova vessel_equipment b731a3e0 team_verified"
         }
-      ]
+      ],
+      "guest_label": {
+        "manufacturer": "",
+        "model": "Blackwater Tank Discharge Valve"
+      },
+      "guest_role": "the blackwater tank discharge valves"
     },
     {
       "device_key": "frigomar_air_conditioning_system",
@@ -403,7 +502,12 @@
           "location_label": "Saloon / Living Area – Saloon General",
           "provenance": "Supernova vessel_equipment 6d36a369 team_verified"
         }
-      ]
+      ],
+      "guest_label": {
+        "manufacturer": "Frigomar",
+        "model": "self-contained BLDC"
+      },
+      "guest_role": "the air conditioner"
     }
   ],
   "vessel_artifact_facts": [

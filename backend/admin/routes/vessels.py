@@ -10,6 +10,11 @@ from sqlalchemy import text
 from admin.auth import require_admin_user
 from admin.deps import get_engine, templates
 from admin.enums import SYSTEM_CATEGORIES, VESSEL_TYPES
+from admin.stage4_admin_service import (
+    Stage4AdminError,
+    list_vessel_stage4_plant,
+    update_stage4_equipment_guest_fields,
+)
 from admin.vessel_service import (
     VesselServiceError,
     add_vessel_equipment,
@@ -33,6 +38,7 @@ from admin.vessel_service import (
 from guide_context_utils import build_guide_context_from_form
 from guide_equipment_coverage import list_system_equipment_gaps
 from location_model import build_catalog
+from stage4_generation import vessel_has_stage4_substrate
 
 router = APIRouter(prefix="/vessels", tags=["admin-vessels"])
 
@@ -573,6 +579,65 @@ async def apply_pack_action(
             )
     return RedirectResponse(
         f"/admin/vessels/{vessel_id}/equipment?pack_applied=1#installed",
+        status_code=303,
+    )
+
+
+@router.get("/{vessel_id}/stage4-plant")
+async def vessel_stage4_plant_page(
+    request: Request,
+    vessel_id: str,
+    admin_user: str = Depends(require_admin_user),
+):
+    with get_engine().connect() as conn:
+        vessel = get_vessel(conn, vessel_id)
+        if vessel is None:
+            return RedirectResponse("/admin/vessels", status_code=303)
+        has_substrate = vessel_has_stage4_substrate(conn, vessel_id)
+        plant = list_vessel_stage4_plant(conn, vessel_id) if has_substrate else []
+    return templates.TemplateResponse(
+        request,
+        "vessels/stage4_plant.html",
+        {
+            "admin_user": admin_user,
+            "vessel": vessel,
+            "has_substrate": has_substrate,
+            "plant": plant,
+            "error": request.query_params.get("error") or "",
+        },
+    )
+
+
+@router.post("/{vessel_id}/stage4-plant/{row_id}")
+async def save_stage4_plant_guest_fields(
+    request: Request,
+    vessel_id: str,
+    row_id: str,
+    guest_role: str = Form(""),
+    guest_label_manufacturer: str = Form(""),
+    guest_label_model: str = Form(""),
+    admin_user: str = Depends(require_admin_user),
+):
+    with get_engine().begin() as conn:
+        vessel = get_vessel(conn, vessel_id)
+        if vessel is None:
+            return RedirectResponse("/admin/vessels", status_code=303)
+        try:
+            update_stage4_equipment_guest_fields(
+                conn,
+                vessel_id,
+                row_id,
+                guest_role=guest_role,
+                guest_label_manufacturer=guest_label_manufacturer,
+                guest_label_model=guest_label_model,
+            )
+        except Stage4AdminError as exc:
+            return RedirectResponse(
+                f"/admin/vessels/{vessel_id}/stage4-plant?error={quote(str(exc))}",
+                status_code=303,
+            )
+    return RedirectResponse(
+        f"/admin/vessels/{vessel_id}/stage4-plant?saved=1#row-{row_id}",
         status_code=303,
     )
 
