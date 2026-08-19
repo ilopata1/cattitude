@@ -1,0 +1,72 @@
+<app-header></app-header>
+
+<ion-content [fullscreen]="true" class="page-content">
+  <div class="scroll-area settings-page">
+
+    <!-- Signal-K Connection -->
+    <div class="settings-section">
+      <div class="settings-section-title">Signal-K Server</div>
+
+      <div class="settings-row">
+        <ion-label class="settings-label">Server URL</ion-label>
+        <ion-input
+          [formControl]="urlControl"
+          type="url"
+          placeholder="e.g. https://your-vessel.trycloudflare.com"
+          inputmode="url"
+          autocorrect="off"
+          autocapitalize="none"
+          class="settings-input"
+          (keyup.enter)="saveAndConnect()"
+        ></ion-input>
+        <p class="settings-hint">
+          Enter your Signal-K server URL. Cloudflare tunnel URLs (https://) are
+          supported and automatically upgraded to a secure WebSocket connection.
+        </p>
+      </div>
+
+      <div class="settings-actions">
+        <ion-button
+          (click)="saveAndConnect()"
+          [disabled]="urlControl.invalid || !urlControl.value"
+          expand="block"
+          color="primary"
+          class="settings-btn"
+        >
+          Save &amp; Connect
+        </ion-button>
+        <ion-button
+          *ngIf="connectionState === 'connected' || connectionState === 'connecting'"
+          (click)="disconnect()"
+          expand="block"
+          fill="outline"
+          color="medium"
+          class="settings-btn"
+        >
+          Disconnect
+        </ion-button>
+      </div>
+
+      <!-- Status -->
+      <div class="connection-status">
+        <ion-badge [color]="stateColor" class="status-badge">{{ stateLabel }}</ion-badge>
+        <span *ngIf="selfContext" class="status-detail">{{ selfContext }}</span>
+        <span *ngIf="lastError" class="status-error">{{ lastError }}</span>
+      </div>
+    </div>
+
+    <!-- Required Plugins -->
+    <div class="settings-section">
+      <div class="settings-section-title">Required Signal-K Plugins</div>
+      <p class="settings-hint">
+        The following plugins must be installed on your Signal-K server to enable
+        all live-data features in this app.
+      </p>
+      <div class="plugin-item">
+        <span class="plugin-name">hoeken/hoekens-anchor-alarm</span>
+        <span class="plugin-purpose">Anchor drag alarm with engine auto-cancel</span>
+      </div>
+    </div>
+
+  </div>
+</ion-content>

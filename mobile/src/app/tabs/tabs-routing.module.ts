@@ -32,6 +32,11 @@ const routes: Routes = [
         loadChildren: () =>
           import('../pages/ask/ask.module').then((m) => m.AskPageModule),
       },
+      {
+        path: 'settings',
+        loadChildren: () =>
+          import('../pages/settings/settings.module').then((m) => m.SettingsPageModule),
+      },
       { path: '', redirectTo: 'home', pathMatch: 'full' },
     ],
   },
