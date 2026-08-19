@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { NotificationBridgeService } from './core/services/notification-bridge.service';
 
 @Component({
   selector: 'app-root',
@@ -7,5 +8,7 @@ import { Component } from '@angular/core';
   standalone: false,
 })
 export class AppComponent {
-  constructor() {}
+  constructor(notificationBridge: NotificationBridgeService) {
+    notificationBridge.start();
+  }
 }

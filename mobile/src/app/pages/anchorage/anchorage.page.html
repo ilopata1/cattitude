@@ -1,0 +1,75 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Anchorage</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="clearAll()" title="Clear all vessels">
+        <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <!-- No Signal-K connection banner -->
+  <ion-card *ngIf="!skConnected" color="warning" class="status-card">
+    <ion-card-content>
+      <ion-icon name="warning-outline"></ion-icon>
+      Signal-K not connected. Configure the server URL in Settings.
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Map -->
+  <div class="map-wrapper">
+    <div #mapContainer class="leaflet-map"></div>
+  </div>
+
+  <!-- Controls strip -->
+  <div class="controls-strip">
+    <ion-button
+      [color]="isRecording ? 'danger' : 'success'"
+      (click)="isRecording ? stopRecording() : startRecording()"
+      [disabled]="!skConnected"
+      size="small">
+      <ion-icon [name]="isRecording ? 'stop-circle-outline' : 'radio-button-on-outline'" slot="start"></ion-icon>
+      {{ isRecording ? 'Stop Recording' : 'Start Recording' }}
+    </ion-button>
+    <ion-note *ngIf="isRecording" class="recording-note">
+      Recording AIS — building swing circles…
+    </ion-note>
+  </div>
+
+  <!-- Own MMSI setting -->
+  <ion-item class="mmsi-item">
+    <ion-label position="stacked">Own MMSI</ion-label>
+    <ion-input [formControl]="ownMmsiControl" placeholder="e.g. 123456789" inputmode="numeric" clearInput></ion-input>
+    <ion-button slot="end" fill="clear" (click)="saveOwnMmsi()">Save</ion-button>
+  </ion-item>
+
+  <!-- Vessel list -->
+  <ion-list *ngIf="vessels.length > 0">
+    <ion-list-header>
+      <ion-label>Vessels ({{ vessels.length }})</ion-label>
+    </ion-list-header>
+
+    <ion-item *ngFor="let v of vessels; trackBy: trackByMmsi">
+      <ion-label>
+        <h2>{{ v.name }}</h2>
+        <p>MMSI {{ v.mmsi }} · {{ v.lengthMetres | number:'1.0-0' }} m</p>
+        <p *ngIf="v.anchorPoint">
+          Swing radius {{ v.swingRadius | number:'1.0-0' }} m
+          · confidence {{ v.confidence }}
+        </p>
+      </ion-label>
+      <ion-badge slot="end" [style.background]="stateBadgeColour(v.state)">
+        {{ stateLabel(v.state) }}
+      </ion-badge>
+    </ion-item>
+  </ion-list>
+
+  <div *ngIf="vessels.length === 0 && isRecording" class="empty-hint">
+    <ion-icon name="boat-outline" class="empty-icon"></ion-icon>
+    <p>Waiting for AIS data from Signal-K…</p>
+  </div>
+
+</ion-content>

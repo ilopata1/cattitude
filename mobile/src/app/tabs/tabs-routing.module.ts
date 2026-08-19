@@ -38,6 +38,11 @@ const routes: Routes = [
           import('../pages/sail/sail.module').then((m) => m.SailPageModule),
       },
       {
+        path: 'anchorage',
+        loadChildren: () =>
+          import('../pages/anchorage/anchorage.module').then((m) => m.AnchorageModule),
+      },
+      {
         path: 'settings',
         loadChildren: () =>
           import('../pages/settings/settings.module').then((m) => m.SettingsPageModule),
