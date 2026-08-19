@@ -76,7 +76,7 @@ wholesale; redirect only the *system* slot to Stage 4.
 | **2 ✅ DONE** | Input substrate in DB: persist profiles + relations + vessel facts (per-model library + per-boat wiring); DB→`equipment_doc`/`profiles` adapter | Composer output from DB-built inputs == frozen fixture drafts, exactly | shipped |
 | **3 ✅ DONE** | Orchestrator + admin: `run_stage4_generation(vessel)`; wire into admin generate; persist provenance/fact_queries (owner-questions store only — no admin UI) | One-click DB-native generate → publish | shipped |
 | **4** | De-hardcode composers for arbitrary vessels (remove Outremer constants, `DISPLAY_NAMES`/`MANUFACTURER_MODEL`, pinned device keys); add a 2nd vessel | A different vessel generates coherent system chapters | see design below |
-| **5** | Consolidate: retire the old fragment/LLM path for system modules; delete dead code + frozen-bundle path | Single generation path for systems | ~few days |
+| **5 ✅ DONE** | Consolidate: retire the old fragment/LLM path for system modules; delete dead code + frozen-bundle path | Single generation path for systems | shipped |
 | **6 (later)** | **Admin-driven authoring UI** — productize extract / review / compose / freeze workflows that today run via Cursor + [`PLAYBOOKS.md`](../PLAYBOOKS.md) / [`standard_frame.txt`](../standard_frame.txt) | Staff onboard a same-family vessel and promote a reviewed profile without leaving admin (Cursor remains for novel composers / hard defects) | after Phase 4–5 + multi-vessel learning |
 
 Value lands after Phase 1–3 and **1b** (reader polish) are done. Next: Phase 4

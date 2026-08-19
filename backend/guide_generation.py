@@ -15,7 +15,6 @@ from config import settings
 from guide_bootstrap import canonical_json_hash
 from guide_context_utils import emergency_contacts_count, merge_guide_context
 from guide_equipment_coverage import (
-    build_fragment_pending_system_module,
     build_placeholder_system_module,
     equipment_for_system,
     system_has_equipment,
@@ -1046,16 +1045,11 @@ def generate_module(
             snapshot_payload.get("equipment") or [], content_key
         )
     )
-    use_fragment_pending_placeholder = (
-        content_type == "system"
-        and system_requires_equipment(content_key)
-        and system_has_equipment(
-            snapshot_payload.get("equipment") or [], content_key
-        )
-    )
-
     # Equipment content library: shared per-equipment fragments assemble system
     # modules (skipping the LLM) and enrich fix cards with model-specific steps.
+    # Note: PUBLISHED_SECTIONS are handled exclusively by Stage 4 and never reach
+    # generate_module, so fragment assembly here only fires for non-Stage-4 systems
+    # (overview, safety, sails, galley, anchoring, dinghy).
     fragment_rows: list[dict[str, Any]] = []
     if content_type in ("system", "fix_card_set"):
         fragment_rows = load_vessel_fragments(conn, vessel_id)
@@ -1064,15 +1058,10 @@ def generate_module(
         fragment_system_payload = assemble_system_from_fragments(
             content_key, fragment_rows
         )
-        if fragment_system_payload is None and use_fragment_pending_placeholder:
-            use_fragment_pending_placeholder = True
-        else:
-            use_fragment_pending_placeholder = False
 
     uses_llm = (
         template_builder is None
         and not use_equipment_placeholder
-        and not use_fragment_pending_placeholder
         and fragment_system_payload is None
     )
 
@@ -1088,8 +1077,6 @@ def generate_module(
         model_id = "equipment_content_library"
     elif use_equipment_placeholder:
         model_id = "equipment_gap_placeholder"
-    elif use_fragment_pending_placeholder:
-        model_id = "equipment_fragment_pending"
     else:
         model_id = settings.azure_openai_chat_deployment
 
@@ -1122,12 +1109,6 @@ def generate_module(
             )
         elif use_equipment_placeholder:
             payload = build_placeholder_system_module(content_key)
-            payload = _finalize_system_payload(content_key, payload, reference)
-        elif use_fragment_pending_placeholder:
-            payload = build_fragment_pending_system_module(
-                content_key,
-                snapshot_payload.get("equipment") or [],
-            )
             payload = _finalize_system_payload(content_key, payload, reference)
         else:
             llm = llm or _build_llm()
@@ -1189,7 +1170,6 @@ def generate_module(
             "status": "completed",
             "reused_draft": reused_draft,
             "equipment_placeholder": use_equipment_placeholder,
-            "equipment_fragment_pending": use_fragment_pending_placeholder,
             "template_assembly": template_builder is not None,
             "equipment_content_library": fragment_system_payload is not None,
         }
@@ -1219,7 +1199,9 @@ def run_guide_generation(
     results: list[dict[str, Any]] = []
     module_list = modules or list(STARTER_MODULES)
 
-    # Phase 3: batch Stage 4 published systems once when substrate is present.
+    # Phase 5: Stage 4 is the exclusive path for PUBLISHED_SECTIONS.
+    # Vessels without a Stage 4 substrate produce per-key errors for those
+    # sections rather than silently falling back to fragments or LLM output.
     from stage4_generation import (
         run_stage4_generation,
         vessel_has_stage4_substrate,
@@ -1232,29 +1214,43 @@ def run_guide_generation(
         if content_type == "system" and key in PUBLISHED_SECTIONS
     ]
     stage4_handled: set[str] = set()
-    if stage4_keys and vessel_has_stage4_substrate(conn, vessel_id):
+    if stage4_keys:
         unique_stage4 = tuple(dict.fromkeys(stage4_keys))
-        try:
-            stage4_results = run_stage4_generation(
-                conn,
-                vessel_id,
-                created_by=created_by,
-                trigger=trigger,
-                sections=unique_stage4,
-                snapshot_id=snapshot_id,
-            )
-            results.extend(stage4_results)
-        except GuideGenerationError as exc:
+        if not vessel_has_stage4_substrate(conn, vessel_id):
             for key in unique_stage4:
                 results.append(
                     {
                         "content_type": "system",
                         "content_key": key,
                         "status": "failed",
-                        "error": str(exc),
+                        "error": (
+                            f"Stage 4 substrate missing for vessel {vessel_id!r}. "
+                            "Run scripts/seed_stage4_substrate.py before generating "
+                            f"system/{key}."
+                        ),
                     }
                 )
-        # Never fall back to fragments for these keys when substrate exists.
+        else:
+            try:
+                stage4_results = run_stage4_generation(
+                    conn,
+                    vessel_id,
+                    created_by=created_by,
+                    trigger=trigger,
+                    sections=unique_stage4,
+                    snapshot_id=snapshot_id,
+                )
+                results.extend(stage4_results)
+            except GuideGenerationError as exc:
+                for key in unique_stage4:
+                    results.append(
+                        {
+                            "content_type": "system",
+                            "content_key": key,
+                            "status": "failed",
+                            "error": str(exc),
+                        }
+                    )
         stage4_handled = set(unique_stage4)
 
     for content_type, content_key in module_list:

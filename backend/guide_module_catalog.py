@@ -33,8 +33,8 @@ SYSTEM_MODULES: list[tuple[str, str]] = [("system", sid) for sid in SYSTEM_IDS]
 CHECKLIST_MODULES: list[tuple[str, str]] = [("checklist", cid) for cid in CHECKLIST_IDS]
 FIXES_MODULE: list[tuple[str, str]] = [("fix_card_set", "all")]
 
-# Generated per vessel (branding/emergency via template assembly; overview/safety via LLM;
-# equipment-backed systems via approved fragments).
+# Generated per vessel (branding/emergency via template assembly; published systems via
+# Stage 4 composers; remaining systems via LLM or equipment-gap placeholder).
 GENERATED_GUIDE_MODULES: list[tuple[str, str]] = (
     STARTER_MODULES + SYSTEM_MODULES + CHECKLIST_MODULES + FIXES_MODULE
 )
