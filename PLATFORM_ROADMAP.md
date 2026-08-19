@@ -335,6 +335,40 @@ When touching the **publication contract** or **fix/checklist/system payloads**,
 
 ---
 
+## Workstream — Live Data Expansion (Signal-K, Skip, Anchor, Polar)
+
+**Status:** planned (design complete; implementation not started)
+
+Extends the Cattitude mobile app with a live Signal-K data layer running in parallel
+with the existing guide/content platform work. Does not depend on Phase 4 auth.
+
+### Scope summary
+
+- **Signal-K connection service** — shared WebSocket singleton (Cloudflare tunnel URL,
+  auto-reconnect, delta stream consumed by all live-data features)
+- **Skip integration** — fork `halos-org/skip`, embed as a monorepo sub-app under a
+  new "Sail" tab; theme-bridged to Cattitude design tokens; KipConfig seed with 10
+  instrument widgets (boat speed, heading, TWS/TWD, AWA, SOG/COG, log)
+- **Hoeken's anchor alarm** — Skip dashboard widget wrapping the `hoekens-anchor-alarm`
+  SK server plugin (engine auto-cancel, polygon zones, rode-length radius); added to
+  default KipConfig dashboards
+- **SwingCircle anchorage awareness** — port of SwingCircle's neighbour swing-circle
+  conflict detection as a native Cattitude page; consumes AIS data from the shared
+  Signal-K stream; works remotely over Cloudflare URL
+- **NotificationBridgeService** — forwards SK `alarm`/`emergency` notifications to
+  Capacitor local notifications for off-board monitoring
+- **Polar performance page** — D3 chart with Outremer 55SC polar, live boat-speed dot,
+  5/10/15-minute percentage-of-polar readouts
+- **Extensibility framework** — `LivePageConfig` registry so future dashboards
+  (batteries, tanks, charge rate) slot in as single-line entries
+
+**Relationship to Phase 6:** the Signal-K server URL configured here is the same
+endpoint Phase 6 will use for equipment scan automation during vessel onboarding.
+
+**Full plan:** [`live-data-expansion-plan.md`](live-data-expansion-plan.md)
+
+---
+
 ## Related documents
 
 | Document | Scope |
@@ -346,3 +380,4 @@ When touching the **publication contract** or **fix/checklist/system payloads**,
 | `README.md` | Product overview |
 | `PLATFORM_ROADMAP.md` § Guide generation economics | Freemium / LLM cost workstream (this document) |
 | `cursor-build-user-overlays.md` | User guide personalization (mobile edits, sync, regen conflicts) |
+| `live-data-expansion-plan.md` | Signal-K, Skip, anchor safety, polar performance workstream |
