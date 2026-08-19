@@ -33,6 +33,11 @@ const routes: Routes = [
           import('../pages/ask/ask.module').then((m) => m.AskPageModule),
       },
       {
+        path: 'sail',
+        loadChildren: () =>
+          import('../pages/sail/sail.module').then((m) => m.SailPageModule),
+      },
+      {
         path: 'settings',
         loadChildren: () =>
           import('../pages/settings/settings.module').then((m) => m.SettingsPageModule),

@@ -1,0 +1,56 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.sail-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background: var(--cattitude-navy, #0d2137);
+}
+
+/* ── Skip iframe ─────────────────────────────────────────────────── */
+
+.skip-iframe {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+  background: transparent;
+}
+
+/* ── No-connection prompt ────────────────────────────────────────── */
+
+.no-connection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  text-align: center;
+  color: var(--ion-color-medium);
+}
+
+.no-connection-icon {
+  font-size: 3.5rem;
+  margin-bottom: 16px;
+}
+
+.no-connection-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--ion-text-color);
+  margin: 0 0 12px;
+}
+
+.no-connection-body {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  max-width: 300px;
+  margin: 0 0 24px;
+}

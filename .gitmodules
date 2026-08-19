@@ -1,0 +1,3 @@
+[submodule "skip"]
+	path = skip
+	url = https://github.com/halos-org/skip.git

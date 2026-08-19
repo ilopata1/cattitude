@@ -1,0 +1,26 @@
+<div class="sail-page">
+
+  <!-- No Signal-K URL configured -->
+  <div *ngIf="!hasSignalKUrl" class="no-connection">
+    <div class="no-connection-icon">⛵</div>
+    <h2 class="no-connection-title">Connect to Signal-K</h2>
+    <p class="no-connection-body">
+      Configure your vessel's Signal-K server URL in Settings to access
+      live instrument data, dashboards, and anchor watch.
+    </p>
+    <ion-button routerLink="/v/cattitude/tabs/settings" color="primary" fill="solid">
+      Open Settings
+    </ion-button>
+  </div>
+
+  <!-- Skip instrument panel iframe -->
+  <iframe
+    *ngIf="hasSignalKUrl && skipUrl"
+    [src]="skipUrl"
+    class="skip-iframe"
+    title="Skip instrument panel"
+    allow="fullscreen"
+    frameborder="0"
+  ></iframe>
+
+</div>
