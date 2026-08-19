@@ -3,7 +3,7 @@ import {
   ElementRef, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Subscription, combineLatest } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { AnchorageVesselStoreService } from './core/services/anchorage-vessel-store.service';
 import { AnchorageSettingsService } from './core/services/anchorage-settings.service';
 import { SignalKService } from '../../core/services/signal-k.service';
@@ -29,6 +29,7 @@ const STATE_COLOUR: Record<VesselState, string> = {
   templateUrl: './anchorage.page.html',
   styleUrls: ['./anchorage.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy {
 
