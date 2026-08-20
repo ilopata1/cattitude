@@ -10,6 +10,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ContentService } from './core/services/content.service';
 import { GuideLoadService } from './core/services/guide-load.service';
+import { SailPlanService } from './core/services/sail-plan.service';
 import { VesselContextService } from './core/services/vessel-context.service';
 import { VesselResolverService } from './core/services/vessel-resolver.service';
 import { appInitializer } from './core/initializers/app.initializer';
@@ -38,6 +39,7 @@ import { SharedModule } from './shared/shared.module';
         VesselResolverService,
         VesselContextService,
         GuideLoadService,
+        SailPlanService,
       ],
       multi: true,
     },

@@ -25,6 +25,7 @@ export class SailPlanPage implements OnInit {
 
   ngOnInit(): void {
     this.draft = clonePlan(this.sailPlans.plan);
+    void this.refreshDraft();
   }
 
   twaBands() { return bandsFromCuts(this.draft.twaCuts); }
@@ -99,12 +100,14 @@ export class SailPlanPage implements OnInit {
   }
 
   async save(): Promise<void> {
-    this.sailPlans.save(this.draft);
+    const remote = await this.sailPlans.save(this.draft);
     this.draft = clonePlan(this.sailPlans.plan);
     const toast = await this.toasts.create({
-      message: 'Sail plan saved — Polar will use these cutovers for live advice.',
+      message: remote
+        ? 'Sail plan saved for this vessel — Polar will use these cutovers for live advice.'
+        : 'Saved on this device, but the server could not be reached. Try Save again when you are online.',
       duration: 2200,
-      color: 'success',
+      color: remote ? 'success' : 'warning',
     });
     await toast.present();
     this.cdr.markForCheck();
@@ -120,9 +123,7 @@ export class SailPlanPage implements OnInit {
           text: 'Reset',
           role: 'destructive',
           handler: () => {
-            this.sailPlans.resetToTemplate();
-            this.draft = clonePlan(this.sailPlans.plan);
-            this.cdr.markForCheck();
+            void this.applyTemplateReset();
           },
         },
       ],
@@ -131,6 +132,18 @@ export class SailPlanPage implements OnInit {
   }
 
   trackByIndex(index: number): number { return index; }
+
+  private async refreshDraft(): Promise<void> {
+    await this.sailPlans.ensureLoaded();
+    this.draft = clonePlan(this.sailPlans.plan);
+    this.cdr.markForCheck();
+  }
+
+  private async applyTemplateReset(): Promise<void> {
+    await this.sailPlans.resetToTemplate();
+    this.draft = clonePlan(this.sailPlans.plan);
+    this.cdr.markForCheck();
+  }
 
   private mutateCuts(kind: 'twa' | 'tws' | 'hw', update: (cuts: number[]) => number[]): void {
     const oldTwa = [...this.draft.twaCuts];

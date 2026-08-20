@@ -1,5 +1,6 @@
 import { ContentService } from '../services/content.service';
 import { GuideLoadService } from '../services/guide-load.service';
+import { SailPlanService } from '../services/sail-plan.service';
 import { VesselContextService } from '../services/vessel-context.service';
 import { VesselResolverService } from '../services/vessel-resolver.service';
 
@@ -8,6 +9,7 @@ export function appInitializer(
   resolver: VesselResolverService,
   vesselContext: VesselContextService,
   guideLoad: GuideLoadService,
+  sailPlans: SailPlanService,
 ) {
   return async () => {
     const slug = resolver.resolveSlugFromLocation();
@@ -19,5 +21,6 @@ export function appInitializer(
     } catch (error) {
       guideLoad.setError(slug, error);
     }
+    await sailPlans.ensureLoaded();
   };
 }

@@ -1,16 +1,38 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, firstValueFrom } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { SailAdvice, SailPlan, cloneCell } from '../models/sail-plan.model';
 import { adviseSailPlan, resizeCells, resizeHeavyWeatherCells } from './sail-plan-advisor';
 import { DEFAULT_SAIL_PLAN } from './sail-plan-default';
+import { VesselContextService } from './vessel-context.service';
 
 const STORAGE_KEY = 'cattitude.sailPlan.v1';
+
+interface SailPlanResponse {
+  vesselId?: string;
+  vesselSlug?: string;
+  plan: SailPlan | null;
+  updatedAt?: string | null;
+}
 
 @Injectable({ providedIn: 'root' })
 export class SailPlanService {
 
-  private readonly planSubject = new BehaviorSubject<SailPlan>(this.load());
-  readonly plan$ = this.planSubject.asObservable();
+  private readonly planSubject: BehaviorSubject<SailPlan>;
+  readonly plan$: Observable<SailPlan>;
+
+  private hydratePromise: Promise<void> | null = null;
+  private hydrateSlug: string | null = null;
+
+  constructor(
+    private readonly http: HttpClient,
+    private readonly vesselContext: VesselContextService,
+  ) {
+    const initial = this.readCache(this.vesselContext.vesselSlug) ?? structuredClone(DEFAULT_SAIL_PLAN);
+    this.planSubject = new BehaviorSubject<SailPlan>(initial);
+    this.plan$ = this.planSubject.asObservable();
+  }
 
   get plan(): SailPlan {
     return this.planSubject.value;
@@ -20,24 +42,88 @@ export class SailPlanService {
     return adviseSailPlan(this.plan, twaDeg, twsKnots, polarPct);
   }
 
-  save(plan: SailPlan): void {
+  /** Load the vessel's plan from the API (once per slug). Safe to call from APP_INITIALIZER. */
+  ensureLoaded(): Promise<void> {
+    const slug = this.vesselContext.vesselSlug;
+    if (this.hydratePromise && this.hydrateSlug === slug) return this.hydratePromise;
+    this.hydrateSlug = slug;
+    this.hydratePromise = this.hydrate(slug).catch(() => {
+      this.hydratePromise = null;
+      this.hydrateSlug = null;
+    });
+    return this.hydratePromise;
+  }
+
+  async save(plan: SailPlan): Promise<boolean> {
+    const slug = this.vesselContext.vesselSlug;
     const next = sanitizePlan(plan);
-    this.planSubject.next(next);
+    this.apply(next, slug);
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-    } catch { /* ignore quota */ }
+      await this.push(next, slug);
+      return true;
+    } catch {
+      return false;
+    }
   }
 
-  resetToTemplate(): void {
-    this.save(structuredClone(DEFAULT_SAIL_PLAN));
+  async resetToTemplate(): Promise<boolean> {
+    return this.save(structuredClone(DEFAULT_SAIL_PLAN));
   }
 
-  private load(): SailPlan {
+  private async hydrate(slug: string): Promise<void> {
+    const cached = this.readCache(slug);
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const res = await firstValueFrom(this.http.get<SailPlanResponse>(this.url(slug)));
+      if (res.plan) {
+        this.apply(sanitizePlan(res.plan), slug);
+        return;
+      }
+      if (cached) {
+        await this.push(cached, slug);
+      }
+    } catch {
+      if (cached) this.apply(cached, slug, false);
+    }
+  }
+
+  private async push(plan: SailPlan, slug: string): Promise<void> {
+    const res = await firstValueFrom(this.http.post<SailPlanResponse>(this.url(slug), plan));
+    if (res.plan) this.apply(sanitizePlan(res.plan), slug);
+  }
+
+  private apply(plan: SailPlan, slug: string, persistCache = true): void {
+    this.planSubject.next(plan);
+    if (persistCache) this.writeCache(slug, plan);
+  }
+
+  private url(slug: string): string {
+    return `${environment.apiUrl}/api/v1/vessels/${encodeURIComponent(slug)}/sail-plan`;
+  }
+
+  private cacheKey(slug: string): string {
+    return `${STORAGE_KEY}:${slug}`;
+  }
+
+  private readCache(slug: string): SailPlan | null {
+    try {
+      const raw = localStorage.getItem(this.cacheKey(slug));
       if (raw) return sanitizePlan(JSON.parse(raw) as SailPlan);
+      if (slug === environment.defaultVesselSlug) {
+        const legacy = localStorage.getItem(STORAGE_KEY);
+        if (legacy) return sanitizePlan(JSON.parse(legacy) as SailPlan);
+      }
     } catch { /* ignore */ }
-    return structuredClone(DEFAULT_SAIL_PLAN);
+    return null;
+  }
+
+  private writeCache(slug: string, plan: SailPlan): void {
+    try {
+      const raw = JSON.stringify(plan);
+      localStorage.setItem(this.cacheKey(slug), raw);
+      if (slug === environment.defaultVesselSlug) {
+        localStorage.setItem(STORAGE_KEY, raw);
+      }
+    } catch { /* ignore quota */ }
   }
 }
 
