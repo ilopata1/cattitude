@@ -157,18 +157,30 @@ export class AnchorageVesselStoreService implements OnDestroy {
         break;
       case 'mmsi':
       case 'navigation.mmsi':
-        if (typeof value === 'string') p.mmsi = value;
+        if (typeof value === 'string' || typeof value === 'number') p.mmsi = String(value);
         break;
       case 'name':
         if (typeof value === 'string') p.name = value;
         break;
+      case 'design.length.overall':
+        if (typeof value === 'number') p.lengthM = value;
+        break;
       case 'design.length.value':
       case 'design.length':
         if (typeof value === 'number') p.lengthM = value;
+        else if (value && typeof value === 'object' && typeof (value as { overall?: number }).overall === 'number') {
+          p.lengthM = (value as { overall: number }).overall;
+        }
+        break;
+      case 'design.beam.maximum':
+        if (typeof value === 'number') p.beamM = value;
         break;
       case 'design.beam.value':
       case 'design.beam':
         if (typeof value === 'number') p.beamM = value;
+        else if (value && typeof value === 'object' && typeof (value as { maximum?: number }).maximum === 'number') {
+          p.beamM = (value as { maximum: number }).maximum;
+        }
         break;
     }
   }

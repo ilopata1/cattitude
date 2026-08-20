@@ -1,0 +1,16 @@
+{
+  "name": "cattitude-signalk-sim",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local Signal K delta simulator for Cattitude polar, wind, and AIS testing",
+  "main": "generator.js",
+  "scripts": {
+    "start": "node generator.js",
+    "sailing": "node generator.js sailing",
+    "demo": "node generator.js demo",
+    "crossover": "node generator.js sail_crossover"
+  },
+  "dependencies": {
+    "ws": "^8.20.1"
+  }
+}

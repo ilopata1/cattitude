@@ -11,6 +11,14 @@ Capacitor), the Skip source, SwingCircle, and the available Signal K server plug
 
 ---
 
+## Local Signal K simulator
+
+`signalk-sim/` is a standalone WebSocket generator (ported from SwingCircle, extended
+for polar/wind). Default scenario `sailing` streams own-vessel TWA, TWS, and STW.
+See `signalk-sim/README.md`. Point Settings at `http://localhost:3000`.
+
+---
+
 ## Architecture Overview
 
 ```mermaid

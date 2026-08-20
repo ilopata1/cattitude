@@ -147,12 +147,16 @@ export class PolarService implements OnDestroy {
         if (typeof value === 'number') this.partial.sogMps = value;
         break;
       case 'environment.wind.speedTrue':
-      case 'environment.wind.speedApparent':
         if (typeof value === 'number') this.partial.twsMps = value;
         break;
+      case 'environment.wind.speedApparent':
+        if (typeof value === 'number' && this.partial.twsMps === undefined) this.partial.twsMps = value;
+        break;
       case 'environment.wind.angleTrueWater':
-      case 'environment.wind.angleApparent':
         if (typeof value === 'number') this.partial.twaRad = value;
+        break;
+      case 'environment.wind.angleApparent':
+        if (typeof value === 'number' && this.partial.twaRad === undefined) this.partial.twaRad = value;
         break;
     }
   }

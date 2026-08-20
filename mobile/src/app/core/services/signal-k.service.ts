@@ -157,7 +157,7 @@ export class SignalKService implements OnDestroy {
 
   private handleMessage(msg: Record<string, unknown>): void {
     // Signal-K hello / welcome message carries the self context.
-    if (msg['name'] && msg['self']) {
+    if (msg['self'] && !msg['updates']) {
       this.selfSubject.next(msg['self'] as string);
       return;
     }
