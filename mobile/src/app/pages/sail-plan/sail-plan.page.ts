@@ -79,7 +79,7 @@ export class SailPlanPage implements OnInit {
     return true;
   }
 
-  updateCut(kind: 'twa' | 'tws' | 'hw', index: number, raw: string | number | null): void {
+  updateCut(kind: 'twa' | 'tws' | 'hw', index: number, raw: string | number | null | undefined): void {
     const value = typeof raw === 'number' ? raw : Number(raw);
     if (!Number.isFinite(value)) return;
     this.mutateCuts(kind, cuts => {
