@@ -1,0 +1,102 @@
+.editor {
+  padding: 12px 12px 32px;
+}
+
+.intro,
+.hint {
+  font-size: 13px;
+  color: var(--ion-color-medium);
+  line-height: 1.4;
+  margin: 8px 4px 12px;
+}
+
+.section-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ion-color-primary);
+  margin: 20px 4px 4px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px 8px 8px;
+}
+
+.cuts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0 8px;
+}
+
+.cut {
+  display: flex;
+  align-items: center;
+  width: 88px;
+
+  ion-input {
+    --padding-start: 8px;
+    border: 1px solid var(--ion-color-step-150, #ddd);
+    border-radius: 8px;
+  }
+}
+
+.matrix-scroll {
+  overflow-x: auto;
+  margin: 8px 0 16px;
+}
+
+.matrix {
+  border-collapse: collapse;
+  min-width: 720px;
+
+  th, td {
+    border: 1px solid var(--ion-color-step-150, #ddd);
+    vertical-align: top;
+    padding: 6px;
+    min-width: 160px;
+  }
+
+  th {
+    background: var(--ion-color-step-50, #f6f6f6);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  ion-input {
+    margin-bottom: 4px;
+    --padding-start: 6px;
+    font-size: 13px;
+  }
+}
+
+.hw-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.hw-row {
+  border: 1px solid var(--ion-color-step-150, #ddd);
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.hw-band {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 20px 0 8px;
+}

@@ -43,6 +43,11 @@ const routes: Routes = [
           import('../pages/anchorage/anchorage.module').then((m) => m.AnchorageModule),
       },
       {
+        path: 'polar',
+        loadChildren: () =>
+          import('../pages/polar/polar.module').then((m) => m.PolarModule),
+      },
+      {
         path: 'settings',
         loadChildren: () =>
           import('../pages/settings/settings.module').then((m) => m.SettingsPageModule),

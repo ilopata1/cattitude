@@ -1,0 +1,129 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/v/cattitude/tabs/settings"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Sail Plan</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="save()">Save</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="editor" *ngIf="draft">
+
+    <p class="intro">
+      Enter your vessel's TWA and TWS cutovers and the sail combination for each cell.
+      Polar uses this matrix with live wind to recommend a sail plan, and shows neighbouring
+      cells when you are close to a cutover.
+    </p>
+
+    <ion-item>
+      <ion-label position="stacked">Plan name</ion-label>
+      <ion-input [(ngModel)]="draft.name" placeholder="e.g. Outremer 55"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Inventory (sails you carry)</ion-label>
+      <ion-input [(ngModel)]="newSail" placeholder="Add a sail name" (keyup.enter)="addSail()"></ion-input>
+      <ion-button slot="end" fill="clear" (click)="addSail()">Add</ion-button>
+    </ion-item>
+    <div class="chips">
+      <ion-chip *ngFor="let sail of draft.sails; let i = index; trackBy: trackByIndex">
+        <ion-label>{{ sail }}</ion-label>
+        <ion-icon name="close-circle" (click)="removeSail(i)"></ion-icon>
+      </ion-chip>
+    </div>
+
+    <h2 class="section-title">TWA cutovers (°)</h2>
+    <p class="hint">Row boundaries. Typical start is 0° and end is 180°.</p>
+    <div class="cuts">
+      <div class="cut" *ngFor="let cut of draft.twaCuts; let i = index; trackBy: trackByIndex">
+          <ion-input type="number" [value]="cut" (ionChange)="updateCut('twa', i, $event.detail.value)"></ion-input>
+        <ion-button fill="clear" size="small" color="danger" (click)="removeCut('twa', i)" [disabled]="draft.twaCuts.length <= 2">
+          <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </div>
+      <ion-button size="small" fill="outline" (click)="addCut('twa')">Add TWA</ion-button>
+    </div>
+
+    <h2 class="section-title">TWS cutovers (kn)</h2>
+    <p class="hint">Column boundaries for normal sailing. Heavy-weather mode starts at the last value unless you set it below.</p>
+    <div class="cuts">
+      <div class="cut" *ngFor="let cut of draft.twsCuts; let i = index; trackBy: trackByIndex">
+          <ion-input type="number" [value]="cut" (ionChange)="updateCut('tws', i, $event.detail.value)"></ion-input>
+        <ion-button fill="clear" size="small" color="danger" (click)="removeCut('tws', i)" [disabled]="draft.twsCuts.length <= 2">
+          <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </div>
+      <ion-button size="small" fill="outline" (click)="addCut('tws')">Add TWS</ion-button>
+    </div>
+
+    <h2 class="section-title">Crossover matrix</h2>
+    <div class="matrix-scroll">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th>TWA \ TWS</th>
+            <th *ngFor="let band of twsBands(); let ci = index; trackBy: trackByIndex">{{ formatTws(ci) }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of draft.cells; let ri = index; trackBy: trackByIndex">
+            <th>{{ formatTwa(ri) }}</th>
+            <td *ngFor="let cell of row; let ci = index; trackBy: trackByIndex">
+              <ion-input placeholder="Primary" [(ngModel)]="cell.primary"></ion-input>
+              <ion-input placeholder="Alternatives (comma-separated)" [ngModel]="altsText(cell)" (ngModelChange)="setAlts(cell, $event)"></ion-input>
+              <ion-input placeholder="Notes" [(ngModel)]="cell.notes"></ion-input>
+              <ion-input placeholder="Avoid" [(ngModel)]="cell.avoid"></ion-input>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="section-title">Heavy weather</h2>
+    <ion-item>
+      <ion-toggle [(ngModel)]="draft.heavyWeather.enabled" (ngModelChange)="onHwToggle()">Use overlay above TWS threshold</ion-toggle>
+    </ion-item>
+    <ion-item *ngIf="draft.heavyWeather.enabled">
+      <ion-label position="stacked">TWS threshold (kn)</ion-label>
+      <ion-input type="number" [(ngModel)]="draft.heavyWeather.twsFrom"></ion-input>
+    </ion-item>
+
+    <ng-container *ngIf="draft.heavyWeather.enabled">
+      <p class="hint">Heavy-weather TWA cutovers can differ from the main grid.</p>
+      <div class="cuts">
+        <div class="cut" *ngFor="let cut of draft.heavyWeather.twaCuts; let i = index; trackBy: trackByIndex">
+          <ion-input type="number" [value]="cut" (ionChange)="updateCut('hw', i, $event.detail.value)"></ion-input>
+          <ion-button fill="clear" size="small" color="danger" (click)="removeCut('hw', i)" [disabled]="draft.heavyWeather.twaCuts.length <= 2">
+            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+        <ion-button size="small" fill="outline" (click)="addCut('hw')">Add TWA</ion-button>
+      </div>
+      <div class="hw-rows">
+        <div class="hw-row" *ngFor="let cell of draft.heavyWeather.cells; let i = index; trackBy: trackByIndex">
+          <div class="hw-band">{{ formatHw(i) }}</div>
+          <ion-input placeholder="Primary" [(ngModel)]="cell.primary"></ion-input>
+          <ion-input placeholder="Alternatives" [ngModel]="altsText(cell)" (ngModelChange)="setAlts(cell, $event)"></ion-input>
+          <ion-input placeholder="Notes" [(ngModel)]="cell.notes"></ion-input>
+          <ion-input placeholder="Avoid" [(ngModel)]="cell.avoid"></ion-input>
+        </div>
+      </div>
+    </ng-container>
+
+    <ion-item>
+      <ion-label position="stacked">Owner notes</ion-label>
+      <ion-textarea [(ngModel)]="draft.notes" autoGrow="true" rows="3"></ion-textarea>
+    </ion-item>
+
+    <div class="actions">
+      <ion-button expand="block" (click)="save()">Save sail plan</ion-button>
+      <ion-button expand="block" fill="outline" color="medium" (click)="resetTemplate()">
+        Reset to Outremer 55 template
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

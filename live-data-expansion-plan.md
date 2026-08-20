@@ -218,7 +218,7 @@ Both Hoeken's alarm (C1) and SwingCircle (C2) need to wake the phone at 2am.
 
 ---
 
-## Phase D — Polar Performance Page
+## Phase D — Polar Performance Page ✅ DONE
 
 **New page**: `mobile/src/app/pages/polar/`
 
@@ -246,6 +246,20 @@ D3 polar chart (add `d3` to `mobile/package.json`):
 - Live boat speed as an animated dot on the chart
 - Three large numeric readouts: 5 min / 10 min / 15 min percentage of polar
 - Wind angle + speed readout, stale-data dimming when Signal K drops
+- **Sail-plan advice card**: looks up the owner-edited TWA×TWS matrix (see Sail Plan Editor) and shows the primary recommendation, neighbouring-cell alternatives when close to a cutover, and a performance hint when polar % is low
+
+### Sail Plan Editor
+
+**New page**: `mobile/src/app/pages/sail-plan/` (Settings → Open sail plan editor, also Polar → Edit plan)
+
+Owners enter a vessel-specific crossover chart rather than relying on the Outremer 55 PDF:
+- Sail inventory
+- Editable TWA and TWS cutover lists (any band widths)
+- Matrix cells: primary combination, comma-separated alternatives, notes, avoid
+- Optional heavy-weather overlay with its own TWA bands and TWS threshold
+- Seeded with the Incidence Outremer 55 chart as a template; persisted in `localStorage`
+
+Live advice (`sail-plan-advisor.ts`) uses current TWA/TWS from Signal-K plus instantaneous polar %. Near a band edge (4° TWA or 1.5 kn TWS) neighbouring cells are surfaced as close alternatives.
 
 ---
 
@@ -294,6 +308,7 @@ are driven from it.
 | Notification mute levels | Which SK alarm severities trigger device notifications |
 | Night mode | Toggle (delegates to Skip config when on Sail tab) |
 | Polar file | Shows current polar filename; future: upload custom `.pol` |
+| Sail plan | Link to sail-plan editor (TWA/TWS cutovers and sail combinations) |
 
 ---
 
@@ -329,7 +344,7 @@ are driven from it.
 | 3 | **C1** | B | Hoeken's anchor alarm dashboard (KipConfig entry only) |
 | 4 | **C3** | A | NotificationBridgeService (small; delivers remote-alarm value immediately) |
 | 5 | **C2** | A | SwingCircle anchorage awareness page + Leaflet map |
-| 6 | **D** | A | Polar performance page (D3 chart + rolling averages) |
+| 6 | **D** ✅ | A | Polar performance page (D3 chart + rolling averages) |
 | 7 | **E/F** | B–D | Extensibility framework formalization + Settings page completion |
 
 ---

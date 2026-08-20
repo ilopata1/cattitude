@@ -1,0 +1,87 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Polar</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/v/cattitude/tabs/settings/sail-plan">
+        Edit plan
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-card *ngIf="!skConnected" color="warning" class="status-card">
+    <ion-card-content>
+      <ion-icon name="warning-outline"></ion-icon>
+      Signal-K not connected. Configure the server URL in Settings.
+    </ion-card-content>
+  </ion-card>
+
+  <div class="chart-section" [class.stale]="live.stale">
+    <div #chartHost class="chart-host"></div>
+    <p class="polar-file">{{ polarFilename }}</p>
+  </div>
+
+  <div class="live-readouts" [class.stale]="live.stale">
+    <div class="live-item">
+      <span class="label">STW</span>
+      <span class="value">{{ formatKnots(live.stwKnots) }}</span>
+    </div>
+    <div class="live-item">
+      <span class="label">TWS</span>
+      <span class="value">{{ formatKnots(live.twsKnots) }}</span>
+    </div>
+    <div class="live-item">
+      <span class="label">TWA</span>
+      <span class="value">{{ formatDeg(live.twaDeg) }}</span>
+    </div>
+    <div class="live-item highlight">
+      <span class="label">Now</span>
+      <span class="value">{{ formatPct(live.instantPolarPct) }}</span>
+    </div>
+  </div>
+
+  <ion-card class="advice-card" [class.stale]="live.stale">
+    <ion-card-header>
+      <ion-card-subtitle>Sail plan{{ planName ? ' · ' + planName : '' }}</ion-card-subtitle>
+      <ion-card-title *ngIf="advice && !advice.empty">{{ advice.primary || 'No primary set for this band' }}</ion-card-title>
+      <ion-card-title *ngIf="!advice">Waiting for TWA and TWS</ion-card-title>
+      <ion-card-title *ngIf="advice?.empty">This band is empty — add a recommendation in the editor</ion-card-title>
+    </ion-card-header>
+    <ion-card-content *ngIf="advice">
+      <p class="advice-meta" *ngIf="!advice.empty">
+        {{ formatBand(advice.twaBand, '°') }} TWA
+        · {{ advice.heavyWeather ? 'heavy weather' : formatBand(advice.twsBand, 'kn') + ' TWS' }}
+      </p>
+      <div class="alts" *ngIf="advice.alternatives.length">
+        <div class="alts-label">{{ advice.nearCrossover ? 'Close alternatives' : 'Alternatives' }}</div>
+        <ion-chip *ngFor="let alt of advice.alternatives">{{ alt }}</ion-chip>
+      </div>
+      <p class="advice-note" *ngIf="advice.crossoverHint">{{ advice.crossoverHint }}</p>
+      <p class="advice-note warn" *ngIf="advice.performanceHint">{{ advice.performanceHint }}</p>
+      <p class="advice-note" *ngIf="advice.notes">{{ advice.notes }}</p>
+      <p class="advice-note avoid" *ngIf="advice.avoid">Avoid: {{ advice.avoid }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <div class="window-readouts" [class.stale]="live.stale">
+    <div class="window-card">
+      <span class="window-label">5 min</span>
+      <span class="window-value">{{ formatPct(pct5) }}</span>
+    </div>
+    <div class="window-card">
+      <span class="window-label">10 min</span>
+      <span class="window-value">{{ formatPct(pct10) }}</span>
+    </div>
+    <div class="window-card">
+      <span class="window-label">15 min</span>
+      <span class="window-value">{{ formatPct(pct15) }}</span>
+    </div>
+  </div>
+
+  <p *ngIf="live.stale && skConnected" class="stale-note">
+    Live data stale — waiting for Signal-K updates…
+  </p>
+
+</ion-content>
