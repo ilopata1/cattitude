@@ -1,0 +1,118 @@
+## Touch, Mouse, and Keyboard Navigation
+Skip supports touch, mouse, and keyboard input across devices.
+
+| Action               | Touch                        | Mouse / wheel                         | Keyboard                                          |
+|----------------------|------------------------------|---------------------------------------|---------------------------------------------------|
+| Show the toolbar     | Swipe down from the top      | Scroll up, or tap the top peek strip  | —                                                 |
+| Move between pages   | Swipe left or right          | Scroll horizontally                   | <kbd>←</kbd>/<kbd>→</kbd> (Left/Right Arrow)       |
+| Jump to a page       | Tap its icon in the toolbar  | Click its icon in the toolbar         | —                                                 |
+| Enter page edit mode | Tap the edit button          | Click the edit button                 | <kbd>E</kbd>                                       |
+| Save page edit       | Tap the Done button          | Click the Done button                 | —                                                 |
+| Cancel page edit     | Tap the Cancel button        | Click the Cancel button               | <kbd>Esc</kbd>                                     |
+| Toggle Fullscreen    | —                            | Click the fullscreen button           | <kbd>F</kbd>                                       |
+| Toggle Night mode    | Tap the night-mode button    | Click the night-mode button           | <kbd>N</kbd>                                       |
+| Open notifications   | Tap the notifications button (or alarm badge) | Click the notifications button (or alarm badge) | —                                |
+
+> Note that the words Touch and Tap are synonymous with mouse click.
+
+> Keyboard shortcuts are single keys with no modifier, and are ignored while you are typing in a text field or adjusting a control.
+
+## The Toolbar
+Skip has no permanent navigation bar. A toolbar sits hidden at the top of the page and slides down when you need it — swipe down from the top, scroll up, or tap the thin strip that peeks at the top edge. It hides again when you scroll back, tap elsewhere, or leave it idle.
+
+It also slides down on its own at startup and on every page change, so its page icons show you where you are. On a display you only watch — one at the helm you step through with a remote, say — that wait gets tiresome; turn off **Show the toolbar automatically** in **Settings > Display > Toolbar** and it will appear only when you ask for it, by the same swipe, scroll, or peek-strip tap as always. The setting is stored with your configuration profile, so it applies to every display using that profile.
+
+<img src="assets/help-docs/img/toolbar.png" alt="The Skip toolbar with numbered callouts, left to right" title="The Skip toolbar" width="100%">
+
+The toolbar holds, from left to right:
+1. Menu — opens Settings, Connection, Remote Control, and Help (with a footer showing the Skip version and host)
+2. *Fullscreen toggle
+3. **Night-mode toggle
+4. Page navigator — one icon per page; tap a page’s icon to jump to it
+5. Manage pages — add, reorder, rename, duplicate, or delete pages
+6. Notifications
+7. Edit button — unlock the current page to change its layout
+
+When an alarm is active, a notification badge also appears in the lower-left corner and stays there until the alarm clears. It is the one piece of always-on chrome, for safety. Tap it to see the alarms.
+
+*Only visible if the mode is supported.
+
+**Only visible if automatic day and night is not enabled. See <Menu / Settings / Display>.
+
+## Loading Skip on Phones, Tablets, Raspberry Pi, and Computers
+Navigate to `<Signal K Server URL>:<port>/@halos-org/skip/` to load Skip on any device. On a secured server Skip is reached over **HTTPS** through the Signal K reverse proxy; use that HTTPS address, since a secure connection is required for features like keeping the screen awake.
+
+## Mobile App
+Add Skip to your home screen to launch it full-screen, without browser controls, like a native app — a single-tap icon on most mobile and desktop browsers. This uses your browser's standard "Add to Home Screen" and creates a shortcut (Skip has no offline/service-worker install).
+
+**iOS**
+1. Press the "Share" button.
+2. Select "Add to Home Screen" from the action popup list.
+3. Tap "Add" in the top right corner to finish installation.
+Skip now launches full-screen from your home screen.
+
+**Android**
+1. Press the "three dot" icon in the upper right to open the menu.
+2. Select "Add to Home screen."
+3. Press the "Add" button in the popup.
+Skip now launches full-screen from your home screen.
+
+## Fullscreen
+Toggle fullscreen mode with the Expand/Reduce button on the toolbar or the <kbd>F</kbd> hotkey (not available on mobile devices).
+
+## Keeping the Screen Awake
+Suppressing the screen saver and device sleep is a separate setting: **Settings > Display > Keep screen awake** (on by default). It needs a secure connection (HTTPS), so use your server's HTTPS address.
+
+## Night Mode
+Save your night vision by automatically switching Skip to day or night mode based on sunrise and sunset hours (the Signal K Derived Data plugin is required for automatic switching). This feature can be enabled in the **Settings > Display** page. You can also manually set the mode by tapping the Moon/Sun button on the toolbar. Note that if automatic switching is enabled, brightness will reset to the Signal K mode value.
+
+## Multiple User Profiles and Configuration Sharing
+Skip supports multiple user profiles, allowing different roles on board—such as captain, skipper, tactician, navigator, or engineer—to tailor the interface to their needs. Profiles can also be used to tie specific configuration arrangements to use cases or device form factors. See the Login & Configurations help sections for mode details.
+
+## Remote Control Other Skip Displays
+Control which page is shown on another Skip instance (for example: a mast display, a TV or pilot‑house screen that is hard to reach, or a device with no local input hardware).
+
+### Typical Use Cases
+- Mast display: change pages from the cockpit without going forward.
+- Salon / TV screen: rotate between navigation and status pages easily.
+- Headless / no input device: select pages when there is no keyboard/mouse or touch is disabled.
+
+### Requirements
+- Both devices must be connected to the same Signal K server.
+- You must be signed in (authenticated) to the Signal K server on both devices (Menu > Connection → Sign in).
+- The target device must explicitly allow remote control (Display tab → Remote Control option group).
+
+### Good Naming Practice
+If multiple devices log in with the same Signal K user to share configuration, they inevitably share the same Instance Name. Whilst being confusing, it will still work. To fix this, you must use different Signal K users and set a descriptive name on each configuration (e.g. Mast Display, Helm Port, Nav Station) so you can identify them quickly.
+
+### Setup
+1. On the device you want to control (Target Skip)
+  - Open: Settings → Display → Remote Control.
+  - Enable: Allow this Skip dashboard to be managed remotely.
+  - Set: Instance Name (this is what will appear in the controller list).
+2. On the controlling device
+  - Open: reveal the toolbar → Menu → Remote Control.
+  - Select the target device by its Instance Name.
+  - Click / tap a page tile to activate it on the target device.
+
+### Using Remote Control
+- The currently active page on the target device is highlighted.
+- Switching is usually instantaneous; brief delays can indicate network latency.
+- You can leave the Remote Control panel open to step through pages live.
+
+### Troubleshooting
+| Problem | What to Check |
+|---------|----------------|
+| Target device not listed | Is remote control enabled there? Is Instance Name set? Both on same Signal K server? |
+| No highlight / not switching | Confirm target device stays online (no sleep / browser closed). Refresh controller panel. |
+| Wrong device switched | Two devices share same Instance Name—rename one. |
+| Works, then stops | Network drop or Signal K reconnect in progress—wait a few seconds or reload. |
+
+> **Tips**
+>- Keep Instance Names short but meaningful (e.g. Mast, Helm, NavTV).
+>- For unattended displays, keep the screen awake via **Settings > Display > Keep screen awake** (needs an HTTPS connection).
+>- Combine with Night Mode + per‑profile layouts for role‑specific remote switching.
+>- Use different Signal K users if you want fully isolated configurations.
+
+### Privacy / Safety Note
+Anyone with access to a logged‑in controlling Skip instance can switch pages on enabled targets. Only enable remote management on displays where that is acceptable.
