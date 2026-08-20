@@ -7,6 +7,6 @@ export const environment = {
   bootstrapContentPath: 'data/bootstrap/cattitude.json',
   guideSyncEnabled: false,
   /** When false, only the defaultVesselSlug uses bundled JSON; other slugs load from the API. */
-  /** Skip instrument panel is served co-located under /skip/ in production. */
-  skipUrl: '/skip/',
+  /** Skip instrument panel co-deployed under /cattitude/@halos-org/skip/ on GitHub Pages. */
+  skipUrl: '/cattitude/@halos-org/skip/',
 };

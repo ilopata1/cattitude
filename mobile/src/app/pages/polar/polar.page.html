@@ -18,29 +18,53 @@
     </ion-card-content>
   </ion-card>
 
-  <div class="chart-section" [class.stale]="live.stale">
-    <div #chartHost class="chart-host"></div>
-    <p class="polar-file">{{ polarFilename }}</p>
-  </div>
+  <section class="panel" [class.stale]="live.stale">
+    <h2 class="section-title">Conditions</h2>
+    <div class="live-readouts">
+      <div class="live-item">
+        <span class="label">STW</span>
+        <span class="value">{{ formatKnots(live.stwKnots) }}</span>
+      </div>
+      <div class="live-item">
+        <span class="label">TWS</span>
+        <span class="value">{{ formatKnots(live.twsKnots) }}</span>
+      </div>
+      <div class="live-item">
+        <span class="label">TWA</span>
+        <span class="value">{{ formatDeg(live.twaDeg) }}</span>
+      </div>
+      <div class="live-item">
+        <span class="label">Target</span>
+        <span class="value">{{ formatKnots(live.targetKnots) }}</span>
+      </div>
+    </div>
+  </section>
 
-  <div class="live-readouts" [class.stale]="live.stale">
-    <div class="live-item">
-      <span class="label">STW</span>
-      <span class="value">{{ formatKnots(live.stwKnots) }}</span>
+  <section class="panel perf-panel" [class.stale]="live.stale">
+    <h2 class="section-title">Performance</h2>
+    <div class="perf-now">
+      <span class="perf-label">Performance Percentage</span>
+      <span class="perf-value">{{ formatPct(live.instantPolarPct) }}</span>
+      <span class="perf-hint">vs polar target at current TWA and TWS</span>
     </div>
-    <div class="live-item">
-      <span class="label">TWS</span>
-      <span class="value">{{ formatKnots(live.twsKnots) }}</span>
+    <div class="window-readouts">
+      <div class="window-card">
+        <span class="window-label">5 min average</span>
+        <span class="window-sublabel">Performance Percentage</span>
+        <span class="window-value">{{ formatPct(pct5) }}</span>
+      </div>
+      <div class="window-card">
+        <span class="window-label">10 min average</span>
+        <span class="window-sublabel">Performance Percentage</span>
+        <span class="window-value">{{ formatPct(pct10) }}</span>
+      </div>
+      <div class="window-card">
+        <span class="window-label">15 min average</span>
+        <span class="window-sublabel">Performance Percentage</span>
+        <span class="window-value">{{ formatPct(pct15) }}</span>
+      </div>
     </div>
-    <div class="live-item">
-      <span class="label">TWA</span>
-      <span class="value">{{ formatDeg(live.twaDeg) }}</span>
-    </div>
-    <div class="live-item highlight">
-      <span class="label">Now</span>
-      <span class="value">{{ formatPct(live.instantPolarPct) }}</span>
-    </div>
-  </div>
+  </section>
 
   <ion-card class="advice-card" [class.stale]="live.stale">
     <ion-card-header>
@@ -64,21 +88,6 @@
       <p class="advice-note avoid" *ngIf="advice.avoid">Avoid: {{ advice.avoid }}</p>
     </ion-card-content>
   </ion-card>
-
-  <div class="window-readouts" [class.stale]="live.stale">
-    <div class="window-card">
-      <span class="window-label">5 min</span>
-      <span class="window-value">{{ formatPct(pct5) }}</span>
-    </div>
-    <div class="window-card">
-      <span class="window-label">10 min</span>
-      <span class="window-value">{{ formatPct(pct10) }}</span>
-    </div>
-    <div class="window-card">
-      <span class="window-label">15 min</span>
-      <span class="window-value">{{ formatPct(pct15) }}</span>
-    </div>
-  </div>
 
   <p *ngIf="live.stale && skConnected" class="stale-note">
     Live data stale — waiting for Signal-K updates…

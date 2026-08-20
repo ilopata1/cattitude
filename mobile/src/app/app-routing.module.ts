@@ -27,6 +27,10 @@ const routes: Routes = [
   { path: 'tabs/know', redirectTo: 'v/cattitude/tabs/know', pathMatch: 'full' },
   { path: 'tabs/fix', redirectTo: 'v/cattitude/tabs/fix', pathMatch: 'full' },
   { path: 'tabs/ask', redirectTo: 'v/cattitude/tabs/ask', pathMatch: 'full' },
+  { path: 'tabs/sail', redirectTo: 'v/cattitude/tabs/sail', pathMatch: 'full' },
+  { path: 'tabs/anchorage', redirectTo: 'v/cattitude/tabs/anchorage', pathMatch: 'full' },
+  { path: 'tabs/polar', redirectTo: 'v/cattitude/tabs/polar', pathMatch: 'full' },
+  { path: 'tabs/settings', redirectTo: 'v/cattitude/tabs/settings', pathMatch: 'full' },
   { path: 'tabs/do/learn', redirectTo: 'v/cattitude/tabs/do/learn', pathMatch: 'full' },
   {
     path: 'tabs/do/checklist/:key',

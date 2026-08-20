@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { SkipBridgeService } from '../../core/services/skip-bridge.service';
 import { SignalKSettingsService } from '../../core/services/signal-k-settings.service';
 import { SignalKService } from '../../core/services/signal-k.service';
+import { VesselRouteService } from '../../core/services/vessel-route.service';
 import { environment } from '../../../environments/environment';
 
 /**
@@ -37,6 +38,7 @@ export class SailPage implements OnInit, OnDestroy {
     private readonly bridge: SkipBridgeService,
     private readonly skSettings: SignalKSettingsService,
     private readonly sk: SignalKService,
+    readonly routes: VesselRouteService,
   ) {}
 
   ngOnInit(): void {
@@ -58,7 +60,7 @@ export class SailPage implements OnInit, OnDestroy {
   }
 
   private buildSkipUrl(): SafeResourceUrl {
-    const base = environment.skipUrl ?? `${window.location.origin}/skip/`;
+    const base = environment.skipUrl ?? '/cattitude/@halos-org/skip/';
     return this.sanitizer.bypassSecurityTrustResourceUrl(base);
   }
 }
