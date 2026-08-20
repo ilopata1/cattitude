@@ -31,6 +31,8 @@ import { SignalKSettingsService } from './signal-k-settings.service';
 
 const SKIP_CONNECTION_KEY = 'skip.connectionConfig';
 const CONNECTION_CONFIG_VERSION = 13;
+/** Query param on the Skip iframe URL — mirrored in skip/src/.../cattitude-host.util.ts */
+export const CATTITUDE_SK_URL_PARAM = 'cattitudeSkUrl';
 
 interface SkipConnectionConfig {
   configVersion: number;
@@ -86,6 +88,20 @@ export class SkipBridgeService {
   /** Read Skip's stored URL (if any). Useful for detecting drift. */
   getSkipStoredUrl(): string | null {
     return this.readExistingConfig()?.signalKUrl ?? null;
+  }
+
+  /**
+   * Build the Skip iframe src with embed mode and the host Signal-K URL.
+   * The query param is read by Skip at boot (see skip cattitude-host.util.ts).
+   */
+  buildSkipIframeUrl(signalKUrl: string, skipBasePath?: string): string {
+    const base = skipBasePath ?? '/cattitude/@halos-org/skip/';
+    const params = new URLSearchParams();
+    params.set('embed', '');
+    params.set(CATTITUDE_SK_URL_PARAM, signalKUrl.trim());
+    params.set('_cb', String(Date.now()));
+    const separator = base.includes('?') ? '&' : '?';
+    return `${base}${separator}${params.toString()}`;
   }
 
   private readExistingConfig(): SkipConnectionConfig | null {

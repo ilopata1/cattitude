@@ -13,6 +13,7 @@ on:
       - 'utilities/embed_bootstrap_ui.mjs'
       - 'utilities/validate_bootstrap_content.mjs'
       - 'utilities/patch_github_pages_assets.mjs'
+      - 'utilities/patch_skip_cattitude_embed.mjs'
       - 'utilities/generate_pwa_icons.py'
       - '.github/workflows/sync-mobile-pages-live.yml'
 
@@ -44,6 +45,7 @@ jobs:
       - name: Build Skip instrument panel
         working-directory: skip
         run: |
+          node ../utilities/patch_skip_cattitude_embed.mjs
           npm ci
           npm run build:prod -- --base-href=/cattitude/@halos-org/skip/
 

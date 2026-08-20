@@ -47,7 +47,7 @@ export class SailPage implements OnInit, OnDestroy {
         this.hasSignalKUrl = !!url;
         if (url) {
           this.bridge.syncConnectionConfig();
-          this.skipUrl = this.buildSkipUrl();
+          this.skipUrl = this.buildSkipUrl(url);
         } else {
           this.skipUrl = null;
         }
@@ -59,8 +59,11 @@ export class SailPage implements OnInit, OnDestroy {
     this.subs.forEach(s => s.unsubscribe());
   }
 
-  private buildSkipUrl(): SafeResourceUrl {
-    const base = environment.skipUrl ?? '/cattitude/@halos-org/skip/';
-    return this.sanitizer.bypassSecurityTrustResourceUrl(base);
+  private buildSkipUrl(signalKUrl: string): SafeResourceUrl {
+    const iframeUrl = this.bridge.buildSkipIframeUrl(
+      signalKUrl,
+      environment.skipUrl ?? '/cattitude/@halos-org/skip/',
+    );
+    return this.sanitizer.bypassSecurityTrustResourceUrl(iframeUrl);
   }
 }
