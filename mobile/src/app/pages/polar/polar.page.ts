@@ -11,13 +11,11 @@ import { SailPlanService } from '../../core/services/sail-plan.service';
 
 const WINDOW_MS = 15 * 60 * 1000;
 const BUCKET_MS = 10_000;
-const BUCKET_COUNT = WINDOW_MS / BUCKET_MS; // 90 bars
+const BUCKET_COUNT = WINDOW_MS / BUCKET_MS;
 
 export interface PerfBar {
-  /** Index 0 = oldest … last = now. */
-  index: number;
-  /** 0–100 height within the plot (clamped to yMax). */
-  heightPct: number;
+  x: number;
+  h: number;
   value: number;
   color: string;
 }
@@ -49,14 +47,17 @@ export class PolarPage implements OnInit, OnDestroy {
   advice: SailAdvice | null = null;
   planName = '';
 
-  /** Fixed plot height in CSS pixels — set on a plain div, not an SVG. */
-  readonly chartHeightPx = 200;
+  /** Original viewBox sizing — CSS uses width:100%; height:auto. */
+  readonly chartW = 320;
+  readonly chartH = 160;
+  readonly padL = 34;
+  readonly padR = 10;
+  readonly padT = 10;
+  readonly padB = 24;
   readonly yMax = 150;
-  readonly yTicks = [150, 100, 75, 50, 0];
+  readonly yTicks = [0, 50, 75, 100, 150];
 
   bars: PerfBar[] = [];
-  /** Sparse list including empty slots so layout stays 90 columns wide. */
-  columns: Array<PerfBar | null> = [];
 
   private samples: PolarSample[] = [];
   private subs: Subscription[] = [];
@@ -99,8 +100,33 @@ export class PolarPage implements OnInit, OnDestroy {
     this.subs.forEach(s => s.unsubscribe());
   }
 
-  tickTopPct(tick: number): number {
-    return ((this.yMax - tick) / this.yMax) * 100;
+  get plotW(): number {
+    return this.chartW - this.padL - this.padR;
+  }
+
+  get plotH(): number {
+    return this.chartH - this.padT - this.padB;
+  }
+
+  barX(bar: PerfBar): number {
+    const slot = this.plotW / BUCKET_COUNT;
+    return this.padL + bar.x * this.plotW + slot * 0.1;
+  }
+
+  barWidth(): number {
+    return (this.plotW / BUCKET_COUNT) * 0.8;
+  }
+
+  barY(bar: PerfBar): number {
+    return this.padT + this.plotH - Math.min(bar.h, 1) * this.plotH;
+  }
+
+  barHeight(bar: PerfBar): number {
+    return Math.max(0, Math.min(bar.h, 1) * this.plotH);
+  }
+
+  yToSvg(pct: number): number {
+    return this.padT + this.plotH - (pct / this.yMax) * this.plotH;
   }
 
   formatKnots(value: number | null): string {
@@ -128,10 +154,6 @@ export class PolarPage implements OnInit, OnDestroy {
     }
   }
 
-  get hasBars(): boolean {
-    return this.bars.length > 0;
-  }
-
   private refreshAdvice(): void {
     this.advice = this.sailPlans.advise(
       this.live.twaDeg,
@@ -140,6 +162,7 @@ export class PolarPage implements OnInit, OnDestroy {
     );
   }
 
+  /** Absolute wall-clock buckets so completed intervals stay frozen. */
   private rebuildChart(): void {
     const now = Date.now();
     const newestBucket = Math.floor(now / BUCKET_MS);
@@ -159,23 +182,16 @@ export class PolarPage implements OnInit, OnDestroy {
     }
 
     this.bars = [];
-    this.columns = [];
     for (let i = 0; i < BUCKET_COUNT; i++) {
-      const key = oldestBucket + i;
-      const entry = sums.get(key);
-      if (!entry) {
-        this.columns.push(null);
-        continue;
-      }
+      const entry = sums.get(oldestBucket + i);
+      if (!entry) continue;
       const value = entry.sum / entry.count;
-      const bar: PerfBar = {
-        index: i,
-        heightPct: (Math.min(value, this.yMax) / this.yMax) * 100,
+      this.bars.push({
+        x: i / BUCKET_COUNT,
+        h: Math.min(value, this.yMax) / this.yMax,
         value,
         color: this.colorForPct(value),
-      };
-      this.bars.push(bar);
-      this.columns.push(bar);
+      });
     }
   }
 

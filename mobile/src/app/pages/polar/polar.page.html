@@ -46,39 +46,61 @@
   <section class="panel perf-panel" [class.stale]="live.stale">
     <h2 class="section-title">Performance</h2>
     <div class="perf-chart-wrap">
-      <div class="perf-chart" [style.height.px]="chartHeightPx">
-        <div class="perf-y-axis">
-          <span
-            *ngFor="let tick of yTicks"
-            class="perf-y-tick"
-            [style.top.%]="tickTopPct(tick)"
-          >{{ tick }}%</span>
-        </div>
-        <div class="perf-plot">
-          <div
-            *ngFor="let tick of yTicks"
-            class="perf-grid"
-            [class.strong]="tick === 50 || tick === 75 || tick === 100"
-            [style.top.%]="tickTopPct(tick)"
-          ></div>
-          <div class="perf-columns">
-            <div class="perf-col" *ngFor="let col of columns">
-              <div
-                *ngIf="col"
-                class="perf-bar"
-                [style.height.%]="col.heightPct"
-                [style.background]="col.color"
-              ></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="perf-x-axis">
-        <span>−15 min</span>
-        <span>Now</span>
-      </div>
-      <p class="perf-hint" *ngIf="!hasBars">Waiting for performance samples…</p>
-      <p class="perf-hint" *ngIf="hasBars">
+      <svg
+        class="perf-chart"
+        [attr.viewBox]="'0 0 ' + chartW + ' ' + chartH"
+        role="img"
+        aria-label="Performance percentage over the last 15 minutes"
+      >
+        <rect
+          class="plot-bg"
+          [attr.x]="padL"
+          [attr.y]="padT"
+          [attr.width]="plotW"
+          [attr.height]="plotH"
+        ></rect>
+
+        <ng-container *ngFor="let tick of yTicks">
+          <line
+            class="grid-line"
+            [class.grid-line-strong]="tick === 100 || tick === 50 || tick === 75"
+            [attr.x1]="padL"
+            [attr.x2]="padL + plotW"
+            [attr.y1]="yToSvg(tick)"
+            [attr.y2]="yToSvg(tick)"
+          ></line>
+          <text
+            class="y-label"
+            [attr.x]="padL - 4"
+            [attr.y]="yToSvg(tick) + 3"
+            text-anchor="end"
+          >{{ tick }}%</text>
+        </ng-container>
+
+        <rect
+          *ngFor="let bar of bars"
+          class="perf-bar"
+          [attr.x]="barX(bar)"
+          [attr.y]="barY(bar)"
+          [attr.width]="barWidth()"
+          [attr.height]="barHeight(bar)"
+          [attr.fill]="bar.color"
+        ></rect>
+
+        <line
+          class="axis"
+          [attr.x1]="padL"
+          [attr.y1]="padT + plotH"
+          [attr.x2]="padL + plotW"
+          [attr.y2]="padT + plotH"
+        ></line>
+        <text class="x-label" [attr.x]="padL" [attr.y]="chartH - 4">−15 min</text>
+        <text class="x-label" [attr.x]="padL + plotW" [attr.y]="chartH - 4" text-anchor="end">Now</text>
+      </svg>
+      <p class="perf-hint" *ngIf="bars.length === 0">
+        Waiting for performance samples…
+      </p>
+      <p class="perf-hint" *ngIf="bars.length > 0">
         Last 15 minutes · vs polar target at current TWA / TWS
       </p>
       <div class="perf-legend">
