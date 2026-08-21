@@ -63,11 +63,13 @@ export class PolarService implements OnDestroy {
   private lastSampleAt = 0;
 
   private readonly liveSubject = new BehaviorSubject<PolarLiveState>(EMPTY_LIVE);
+  private readonly samplesSubject = new BehaviorSubject<PolarSample[]>([]);
   private readonly pct5Subject  = new BehaviorSubject<number | null>(null);
   private readonly pct10Subject = new BehaviorSubject<number | null>(null);
   private readonly pct15Subject = new BehaviorSubject<number | null>(null);
 
   readonly live$ = this.liveSubject.asObservable();
+  readonly samples$ = this.samplesSubject.asObservable();
   readonly polarFilename$ = new BehaviorSubject<string>(this.polarFilename);
 
   constructor(
@@ -95,6 +97,7 @@ export class PolarService implements OnDestroy {
     this.polarFilename = filename;
     this.polarFilename$.next(filename);
     this.samples = [];
+    this.samplesSubject.next([]);
     this.refreshRollingAverages();
   }
 
@@ -257,6 +260,7 @@ export class PolarService implements OnDestroy {
     });
 
     this.pruneSamples(now);
+    this.samplesSubject.next(this.samples.slice());
     this.refreshRollingAverages();
   }
 
@@ -266,7 +270,11 @@ export class PolarService implements OnDestroy {
     if (stale !== live.stale) {
       this.liveSubject.next({ ...live, stale });
     }
+    const before = this.samples.length;
     this.pruneSamples(Date.now());
+    if (this.samples.length !== before) {
+      this.samplesSubject.next(this.samples.slice());
+    }
     this.refreshRollingAverages();
   }
 
