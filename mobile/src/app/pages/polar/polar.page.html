@@ -50,8 +50,9 @@
         <svg
           class="perf-chart"
           [attr.viewBox]="'0 0 ' + chartW + ' ' + chartH"
-          [attr.height]="chartCssHeight"
-          width="100%"
+          [style.width]="'100%'"
+          [style.height.px]="chartCssHeight"
+          [style.display]="'block'"
           preserveAspectRatio="none"
           role="img"
           aria-label="Performance percentage over the last 15 minutes"

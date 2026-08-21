@@ -64,19 +64,16 @@
 .perf-chart-frame {
   display: block;
   width: 100%;
-  max-width: 560px;
+  max-width: 640px;
   margin: 0 auto;
   overflow: hidden;
   line-height: 0;
-  /* Intrinsic SVG size must not expand this box */
-  contain: layout size;
 }
 
+/* Height is set inline on the SVG (beats stylesheet `height: auto`). */
 .perf-chart {
   display: block;
   width: 100%;
-  max-height: 100px;
-  overflow: hidden;
 }
 
 .plot-bg {
