@@ -46,12 +46,14 @@
   <section class="panel perf-panel" [class.stale]="live.stale">
     <h2 class="section-title">Performance</h2>
     <div class="perf-chart-wrap">
-      <svg
-        class="perf-chart"
-        [attr.viewBox]="'0 0 ' + chartW + ' ' + chartH"
-        role="img"
-        aria-label="Performance percentage over the last 15 minutes"
-      >
+      <div class="perf-chart-frame">
+        <svg
+          class="perf-chart"
+          [attr.viewBox]="'0 0 ' + chartW + ' ' + chartH"
+          preserveAspectRatio="xMidYMid meet"
+          role="img"
+          aria-label="Performance percentage over the last 15 minutes"
+        >
         <!-- Plot background -->
         <rect
           class="plot-bg"
@@ -100,7 +102,8 @@
         ></line>
         <text class="x-label" [attr.x]="padL" [attr.y]="chartH - 4">−15 min</text>
         <text class="x-label" [attr.x]="padL + plotW" [attr.y]="chartH - 4" text-anchor="end">{{ nowLabel }}</text>
-      </svg>
+        </svg>
+      </div>
       <p class="perf-hint" *ngIf="bars.length === 0">
         Waiting for performance samples…
       </p>

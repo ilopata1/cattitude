@@ -61,13 +61,17 @@
   margin-bottom: 12px;
 }
 
+.perf-chart-frame {
+  width: 100%;
+  max-width: 480px;
+  height: 140px;
+  margin: 0 auto;
+}
+
 .perf-chart {
   display: block;
   width: 100%;
-  max-width: 420px;
-  max-height: 180px;
-  height: auto;
-  margin: 0 auto;
+  height: 100%;
 }
 
 .plot-bg {
