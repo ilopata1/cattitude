@@ -49,13 +49,14 @@ export class PolarPage implements OnInit, OnDestroy {
   advice: SailAdvice | null = null;
   planName = '';
 
-  /** SVG chart geometry (viewBox units). */
+  /** SVG chart geometry (viewBox units) — keep short; CSS locks rendered height. */
   readonly chartW = 320;
-  readonly chartH = 160;
-  readonly padL = 34;
-  readonly padR = 10;
-  readonly padT = 10;
-  readonly padB = 24;
+  readonly chartH = 100;
+  readonly padL = 32;
+  readonly padR = 8;
+  readonly padT = 6;
+  readonly padB = 18;
+  readonly chartCssHeight = 100;
 
   bars: PerfBar[] = [];
   /** Fixed Y scale so historical bars do not resize when peaks change. */

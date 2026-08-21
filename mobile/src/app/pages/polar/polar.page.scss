@@ -57,21 +57,26 @@
 .perf-chart-wrap {
   background: var(--ion-color-step-50);
   border-radius: 10px;
-  padding: 10px 8px 8px;
-  margin-bottom: 12px;
+  padding: 8px 8px 6px;
+  margin-bottom: 10px;
 }
 
 .perf-chart-frame {
+  display: block;
   width: 100%;
-  max-width: 480px;
-  height: 140px;
+  max-width: 560px;
   margin: 0 auto;
+  overflow: hidden;
+  line-height: 0;
+  /* Intrinsic SVG size must not expand this box */
+  contain: layout size;
 }
 
 .perf-chart {
   display: block;
   width: 100%;
-  height: 100%;
+  max-height: 100px;
+  overflow: hidden;
 }
 
 .plot-bg {
