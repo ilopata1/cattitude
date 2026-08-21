@@ -8,19 +8,16 @@ import { fileURLToPath } from 'url';
  *
  * Skip's stock design assumes same-origin with Signal-K (session cookies + /admin login).
  * That cannot work when Skip is served from ilopata1.github.io and SK is at e.g.
- * sailsupernova.com — credentials in the host Settings page also cannot fix it, because
- * Skip deliberately never accepts/stores passwords or tokens.
+ * sailsupernova.com.
  *
- * This patch:
- *  - Reads ?cattitudeSkUrl= from the iframe URL
- *  - Disables proxy remapping (API/WS stay on the SK host)
- *  - Probes loginStatus on the SK origin (best-effort; usually CORS-blocked)
- *  - On host embed, skips the cookie auth wall and boots anonymous/shipped dashboards
- *  - Makes Sign-in navigate to the absolute SK /admin login (not GitHub Pages)
+ * Critical failure mode we fix here: when Skip thinks it is same-origin, Sign-in does
+ * window.top.location.replace('/admin/#/login'), which navigates the whole Cattitude app
+ * to https://ilopata1.github.io/admin (404 / ERR_CACHE_MISS) and leaves Sail stuck loading.
  */
 
 const repoRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const skipRoot = path.join(repoRoot, 'skip');
+
 function readText(filePath) {
   return fs.readFileSync(filePath, 'utf8').replace(/\r\n/g, '\n');
 }
@@ -29,14 +26,34 @@ function writeText(filePath, contents) {
   fs.writeFileSync(filePath, contents.replace(/\r\n/g, '\n'));
 }
 
-const AUTH_PATCH_MARKER = 'cattitudeHostSignalKOrigin';
-
 const hostUtil = `/** Query param Cattitude's Sail tab passes when embedding Skip in an iframe. */
 export const CATTITUDE_SK_URL_PARAM = 'cattitudeSkUrl';
+const CONNECTION_CONFIG_KEY = 'skip.connectionConfig';
+
+/**
+ * Signal-K URL from the iframe query string (preferred) or Skip's localStorage config
+ * (same-origin as the Cattitude host, written by SkipBridgeService before the iframe loads).
+ */
+export function resolveConfiguredSignalKUrl(): string | null {
+  const fromQuery = readCattitudeHostSignalKUrl();
+  if (fromQuery) {
+    return fromQuery;
+  }
+  try {
+    const raw = localStorage.getItem(CONNECTION_CONFIG_KEY);
+    if (!raw) {
+      return null;
+    }
+    const parsed = JSON.parse(raw) as { signalKUrl?: unknown };
+    const url = typeof parsed?.signalKUrl === 'string' ? parsed.signalKUrl.trim() : '';
+    return url.length > 0 ? url : null;
+  } catch {
+    return null;
+  }
+}
 
 /**
  * Signal-K server URL supplied by the Cattitude host app on the iframe URL.
- * Read once at boot — the host rewrites the iframe src when the URL changes.
  */
 export function readCattitudeHostSignalKUrl(): string | null {
   try {
@@ -44,21 +61,39 @@ export function readCattitudeHostSignalKUrl(): string | null {
     if (!raw) {
       return null;
     }
-    const url = decodeURIComponent(raw).trim();
+    // URLSearchParams already decodes; avoid double-decode throwing on stray '%'.
+    const url = raw.trim();
     return url.length > 0 ? url : null;
   } catch {
     return null;
   }
 }
 
-/** True when Cattitude is hosting Skip with an explicit remote Signal-K URL. */
-export function isCattitudeHostEmbed(): boolean {
-  return readCattitudeHostSignalKUrl() !== null;
+/**
+ * True when the configured Signal-K server is on a different origin than this Skip page
+ * (e.g. Skip on GitHub Pages, SK on sailsupernova.com). Session cookies and relative
+ * /admin login cannot work in that topology.
+ */
+export function isCrossOriginSignalK(): boolean {
+  const url = resolveConfiguredSignalKUrl();
+  if (!url) {
+    return false;
+  }
+  try {
+    return new URL(url).origin !== window.location.origin;
+  } catch {
+    return false;
+  }
 }
 
-/** Origin of the host-provided Signal-K URL, or null. */
+/** @deprecated Use isCrossOriginSignalK — kept as an alias for older patch call sites. */
+export function isCattitudeHostEmbed(): boolean {
+  return isCrossOriginSignalK();
+}
+
+/** Origin of the configured Signal-K URL, or null. */
 export function cattitudeHostSignalKOrigin(): string | null {
-  const url = readCattitudeHostSignalKUrl();
+  const url = resolveConfiguredSignalKUrl();
   if (!url) {
     return null;
   }
@@ -77,35 +112,25 @@ function writeHostUtil() {
   console.log(`Wrote ${path.relative(repoRoot, utilPath)}`);
 }
 
-function ensureImport(src, fromPath, symbol) {
-  if (src.includes(symbol) && src.includes(fromPath)) {
-    return src;
-  }
-  const importLine = `import { ${symbol} } from '${fromPath}';\n`;
-  // Prefer inserting after an existing local-storage / util import block.
-  const anchor = "from '../utils/local-storage.util';";
-  const idx = src.indexOf(anchor);
-  if (idx >= 0) {
-    const end = src.indexOf('\n', idx) + 1;
-    return src.slice(0, end) + importLine + src.slice(end);
-  }
-  const firstImport = src.indexOf('import ');
-  if (firstImport >= 0) {
-    return src.slice(0, firstImport) + importLine + src.slice(firstImport);
-  }
-  return importLine + src;
-}
-
 function patchAppInitNetwork() {
   const filePath = path.join(skipRoot, 'src/app/core/services/app-initNetwork.service.ts');
   let src = readText(filePath);
 
-  if (!src.includes('readCattitudeHostSignalKUrl')) {
-    src = src.replace(
-      "import { getLocalStorageItem, setLocalStorageItem } from '../utils/local-storage.util';",
-      "import { getLocalStorageItem, setLocalStorageItem } from '../utils/local-storage.util';\nimport { isCattitudeHostEmbed, readCattitudeHostSignalKUrl } from '../utils/cattitude-host.util';",
-    );
+  if (!src.includes('isCrossOriginSignalK')) {
+    if (src.includes("from '../utils/cattitude-host.util'")) {
+      src = src.replace(
+        /import \{[^}]+\} from '\.\.\/utils\/cattitude-host\.util';/,
+        "import { isCrossOriginSignalK, readCattitudeHostSignalKUrl } from '../utils/cattitude-host.util';",
+      );
+    } else {
+      src = src.replace(
+        "import { getLocalStorageItem, setLocalStorageItem } from '../utils/local-storage.util';",
+        "import { getLocalStorageItem, setLocalStorageItem } from '../utils/local-storage.util';\nimport { isCrossOriginSignalK, readCattitudeHostSignalKUrl } from '../utils/cattitude-host.util';",
+      );
+    }
+  }
 
+  if (!src.includes('hostSkUrl ?? window.location.origin')) {
     src = src.replace(
       `  private loadLocalStorageConfig(): void {
     const stored = getLocalStorageItem(CONNECTION_CONFIG_KEY);
@@ -147,14 +172,8 @@ function patchAppInitNetwork() {
       }
     }`,
     );
-  } else if (!src.includes('isCattitudeHostEmbed')) {
-    src = src.replace(
-      "import { readCattitudeHostSignalKUrl } from '../utils/cattitude-host.util';",
-      "import { isCattitudeHostEmbed, readCattitudeHostSignalKUrl } from '../utils/cattitude-host.util';",
-    );
   }
 
-  // Do not force same-origin proxy when hosted by Cattitude (cross-origin SK URL).
   if (!src.includes('useProxyForSk')) {
     src = src.replace(
       `        const embedOrEphemeral = this.embedMode.embed() || this.embedMode.profile() !== null;
@@ -167,9 +186,8 @@ function patchAppInitNetwork() {
       `        const embedOrEphemeral = this.embedMode.embed() || this.embedMode.profile() !== null;
         const profileDemand = this.config.remoteContextDemand?.[this.config.sharedConfigName];
         // Stock Skip forces proxy=true so APIs stay on window.location.origin for cookies.
-        // Cattitude embeds Skip on a different origin (e.g. GitHub Pages) than Signal-K, so
-        // proxy remapping would hit the Pages host instead of the boat — connect directly.
-        const useProxyForSk = !isCattitudeHostEmbed();
+        // Cross-origin Cattitude embeds must talk to the boat host directly.
+        const useProxyForSk = !isCrossOriginSignalK();
         await this.connection.initializeConnection(
           {url: this.config.signalKUrl, new: false},
           useProxyForSk,
@@ -178,9 +196,7 @@ function patchAppInitNetwork() {
     );
   }
 
-  // Cross-origin host embed cannot establish a same-origin SK session cookie. Prefer anonymous
-  // shipped dashboards over a Sign-in wall that navigates to the wrong origin.
-  if (!src.includes('Cattitude host embed:')) {
+  if (!src.includes('cross-origin Signal-K')) {
     src = src.replace(
       `  private handleCookieAuth(status: ILoginStatus | null): TCookieAuthOutcome {
     if (status?.status === 'loggedIn') {
@@ -199,11 +215,11 @@ function patchAppInitNetwork() {
       // finally), so a loggedIn -> applicationData-401 -> reauth path cannot reset-then-loop.
       return 'proceed';
     }
-    // Cattitude host embed: Skip is on a different origin than Signal-K, so the SK session
-    // cookie cannot authenticate this page. Boot anonymous/shipped dashboards with a direct
-    // WebSocket to the host-provided URL instead of a broken same-origin Sign-in redirect.
-    if (isCattitudeHostEmbed()) {
-      console.log('[AppInit Network Service] Cattitude host embed: using anonymous instrument mode (no same-origin SK session).');
+    // Cross-origin Signal-K (Cattitude on GitHub Pages): session cookies cannot authenticate this
+    // page. Boot anonymous/shipped dashboards — never the Sign-in wall that replaces window.top
+    // with /admin on the Pages origin (404 / ERR_CACHE_MISS).
+    if (isCrossOriginSignalK()) {
+      console.log('[AppInit Network Service] Cross-origin Signal-K: anonymous instrument mode.');
       this._bootstrapIssue$.next({ reason: 'none' });
       return 'anonymous';
     }
@@ -266,15 +282,17 @@ function patchSettingsService() {
 function patchAuthenticationService() {
   const filePath = path.join(skipRoot, 'src/app/core/services/authentication.service.ts');
   let src = readText(filePath);
-  if (src.includes(AUTH_PATCH_MARKER) && src.includes('Prefer the host-provided Signal-K origin')) {
+  if (src.includes('Prefer the host-provided Signal-K origin')) {
     console.log('authentication.service.ts already patched');
     return;
   }
 
-  src = src.replace(
-    `import { distinctUntilChanged, map } from "rxjs/operators";`,
-    `import { distinctUntilChanged, map } from "rxjs/operators";\nimport { cattitudeHostSignalKOrigin } from '../utils/cattitude-host.util';`,
-  );
+  if (!src.includes('cattitudeHostSignalKOrigin')) {
+    src = src.replace(
+      `import { distinctUntilChanged, map } from "rxjs/operators";`,
+      `import { distinctUntilChanged, map } from "rxjs/operators";\nimport { cattitudeHostSignalKOrigin } from '../utils/cattitude-host.util';`,
+    );
+  }
 
   src = src.replace(
     `  public async refreshLoginStatus(): Promise<ILoginStatus | null> {
@@ -299,40 +317,133 @@ function patchAuthenticationService() {
 function patchSsoRedirectService() {
   const filePath = path.join(skipRoot, 'src/app/core/services/sso-redirect.service.ts');
   let src = readText(filePath);
-  if (src.includes('cattitudeHostSignalKOrigin')) {
-    console.log('sso-redirect.service.ts already patched');
-    return;
+
+  if (!src.includes('cattitudeHostSignalKOrigin')) {
+    src = src.replace(
+      `import { SSO_REDIRECT_BUDGET_KEY } from '../constants/config-storage.const';`,
+      `import { SSO_REDIRECT_BUDGET_KEY } from '../constants/config-storage.const';\nimport { cattitudeHostSignalKOrigin, isCrossOriginSignalK } from '../utils/cattitude-host.util';`,
+    );
+  } else if (!src.includes('isCrossOriginSignalK')) {
+    src = src.replace(
+      /import \{[^}]+\} from '\.\.\/utils\/cattitude-host\.util';/,
+      "import { cattitudeHostSignalKOrigin, isCrossOriginSignalK } from '../utils/cattitude-host.util';",
+    );
   }
 
-  src = src.replace(
-    `import { SSO_REDIRECT_BUDGET_KEY } from '../constants/config-storage.const';`,
-    `import { SSO_REDIRECT_BUDGET_KEY } from '../constants/config-storage.const';\nimport { cattitudeHostSignalKOrigin } from '../utils/cattitude-host.util';`,
-  );
-
-  src = src.replace(
-    `  private resolveLoginUrl(status: ILoginStatus | null): string {
+  if (!src.includes('prefix with the Signal-K origin')) {
+    src = src.replace(
+      `  private resolveLoginUrl(status: ILoginStatus | null): string {
     if (status?.oidcEnabled && status.oidcLoginUrl) {
       return status.oidcLoginUrl;
     }
     return ADMIN_LOGIN_URL;
   }`,
-    `  private resolveLoginUrl(status: ILoginStatus | null): string {
+      `  private resolveLoginUrl(status: ILoginStatus | null): string {
     let loginUrl = ADMIN_LOGIN_URL;
     if (status?.oidcEnabled && status.oidcLoginUrl) {
       loginUrl = status.oidcLoginUrl;
     }
-    // Relative /admin or OIDC paths resolve against the Pages origin and 404. When Cattitude
-    // hosts Skip, prefix with the Signal-K origin so Sign-in opens the boat's admin UI.
+    // Relative /admin resolves against the Pages origin and 404s. Prefix with the SK origin.
     const skOrigin = cattitudeHostSignalKOrigin();
     if (skOrigin && loginUrl.startsWith('/')) {
       return skOrigin + loginUrl;
     }
     return loginUrl;
   }`,
-  );
+    );
+  }
+
+  // Hard stop: never replace window.top with a relative /admin URL when SK is cross-origin.
+  if (!src.includes('Refusing cross-origin Sign-in navigation')) {
+    src = src.replace(
+      `  public attemptAutoRedirect(status: ILoginStatus | null): TAutoRedirectOutcome {
+    // A framed SSO redirect is blocked by the login endpoint's frame-ancestors 'none' and would just
+    // render broken. Do not auto-redirect (and do not spend budget) when embedded; the caller then
+    // surfaces the auth-blocked recovery, whose explicit Sign in breaks out to the top window.
+    if (this.isFramed()) {
+      return 'framed';
+    }`,
+      `  public attemptAutoRedirect(status: ILoginStatus | null): TAutoRedirectOutcome {
+    // Cross-origin Cattitude embed: never bounce the shell to /admin on the Pages host.
+    if (isCrossOriginSignalK()) {
+      console.warn('[SsoRedirect] Refusing cross-origin Sign-in navigation (auto).');
+      return 'framed';
+    }
+    // A framed SSO redirect is blocked by the login endpoint's frame-ancestors 'none' and would just
+    // render broken. Do not auto-redirect (and do not spend budget) when embedded; the caller then
+    // surfaces the auth-blocked recovery, whose explicit Sign in breaks out to the top window.
+    if (this.isFramed()) {
+      return 'framed';
+    }`,
+    );
+
+    src = src.replace(
+      `  public manualSignIn(): void {
+    this.resetBudget();
+    this.navigate(buildLoginRedirectUrl({
+      loginUrl: this.resolveLoginUrl(this.auth.loginStatusValue),
+      returnTo: this.currentReturnTo(),
+      noAutoLogin: true
+    }));
+  }`,
+      `  public manualSignIn(): void {
+    this.resetBudget();
+    // Cross-origin: open the boat admin UI in a new tab. Never replace window.top with
+    // https://<pages-host>/admin (that unloads Cattitude and yields ERR_CACHE_MISS).
+    if (isCrossOriginSignalK()) {
+      const loginUrl = this.resolveLoginUrl(this.auth.loginStatusValue);
+      console.warn('[SsoRedirect] Refusing cross-origin Sign-in navigation (manual); opening SK admin separately.');
+      try {
+        window.open(loginUrl, '_blank', 'noopener,noreferrer');
+      } catch {
+        /* ignore */
+      }
+      return;
+    }
+    this.navigate(buildLoginRedirectUrl({
+      loginUrl: this.resolveLoginUrl(this.auth.loginStatusValue),
+      returnTo: this.currentReturnTo(),
+      noAutoLogin: true
+    }));
+  }`,
+    );
+  }
 
   writeText(filePath, src);
   console.log('Patched sso-redirect.service.ts');
+}
+
+function patchAppComponent() {
+  const filePath = path.join(skipRoot, 'src/app/app.component.ts');
+  let src = readText(filePath);
+  if (src.includes('isCrossOriginSignalK')) {
+    console.log('app.component.ts already patched');
+    return;
+  }
+
+  src = src.replace(
+    `import { HOTKEY_KEYS, isInteractiveKeyTarget, isBlockingOverlayOpen } from './core/utils/hotkey-target.util';`,
+    `import { HOTKEY_KEYS, isInteractiveKeyTarget, isBlockingOverlayOpen } from './core/utils/hotkey-target.util';\nimport { isCrossOriginSignalK } from './core/utils/cattitude-host.util';`,
+  );
+
+  src = src.replace(
+    `    effect(() => {
+      const issue = this.bootstrapIssue();
+      if (issue.reason !== 'auth-blocked' || this.authBlockedPromptShown) {
+        return;
+      }
+      this.authBlockedPromptShown = true;`,
+    `    effect(() => {
+      const issue = this.bootstrapIssue();
+      // Cross-origin Cattitude embed cannot establish an SK session cookie on this origin.
+      if (issue.reason !== 'auth-blocked' || this.authBlockedPromptShown || isCrossOriginSignalK()) {
+        return;
+      }
+      this.authBlockedPromptShown = true;`,
+  );
+
+  writeText(filePath, src);
+  console.log('Patched app.component.ts');
 }
 
 writeHostUtil();
@@ -340,4 +451,5 @@ patchAppInitNetwork();
 patchSettingsService();
 patchAuthenticationService();
 patchSsoRedirectService();
+patchAppComponent();
 console.log('Skip Cattitude embed patch complete');
