@@ -57,54 +57,90 @@
 .perf-chart-wrap {
   background: var(--ion-color-step-50);
   border-radius: 10px;
-  padding: 8px 8px 6px;
+  padding: 10px 10px 8px;
   margin-bottom: 10px;
 }
 
-.perf-chart-frame {
-  display: block;
+.perf-chart {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
   width: 100%;
   max-width: 640px;
   margin: 0 auto;
+  gap: 6px;
+}
+
+.perf-y-axis {
+  position: relative;
+  width: 36px;
+  flex: 0 0 36px;
+}
+
+.perf-y-tick {
+  position: absolute;
+  right: 0;
+  transform: translateY(-50%);
+  font-size: 10px;
+  line-height: 1;
+  color: var(--ion-color-medium);
+  white-space: nowrap;
+}
+
+.perf-plot {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  background: var(--ion-background-color, #fff);
+  border-radius: 6px;
+  border: 1px solid var(--ion-color-step-150, #ddd);
   overflow: hidden;
-  line-height: 0;
 }
 
-/* Height is set inline on the SVG (beats stylesheet `height: auto`). */
-.perf-chart {
-  display: block;
-  width: 100%;
+.perf-grid {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 1px dashed var(--ion-color-step-200, #ccc);
+  pointer-events: none;
+
+  &.strong {
+    border-top-style: solid;
+    border-top-color: var(--ion-color-step-350, #aaa);
+  }
 }
 
-.plot-bg {
-  fill: var(--ion-background-color, #fff);
-  opacity: 0.55;
+.perf-columns {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 1px;
+  padding: 0 2px;
 }
 
-.grid-line {
-  stroke: var(--ion-color-step-200, #ccc);
-  stroke-width: 1;
-  stroke-dasharray: 3 3;
-}
-
-.grid-line-strong {
-  stroke: var(--ion-color-step-350, #aaa);
-  stroke-dasharray: none;
-}
-
-.axis {
-  stroke: var(--ion-color-step-400, #999);
-  stroke-width: 1;
-}
-
-.y-label,
-.x-label {
-  fill: var(--ion-color-medium);
-  font-size: 9px;
+.perf-col {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
 }
 
 .perf-bar {
-  opacity: 0.92;
+  width: 100%;
+  border-radius: 1px 1px 0 0;
+  min-height: 2px;
+}
+
+.perf-x-axis {
+  display: flex;
+  justify-content: space-between;
+  max-width: 640px;
+  margin: 4px auto 0;
+  padding-left: 42px;
+  font-size: 11px;
+  color: var(--ion-color-medium);
 }
 
 .perf-hint {

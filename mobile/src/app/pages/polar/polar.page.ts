@@ -14,10 +14,10 @@ const BUCKET_MS = 10_000;
 const BUCKET_COUNT = WINDOW_MS / BUCKET_MS; // 90 bars
 
 export interface PerfBar {
-  /** 0–1 across the chart (left = oldest, right = now). */
-  x: number;
-  /** Bar height as fraction of yMax (0–1+). */
-  h: number;
+  /** Index 0 = oldest … last = now. */
+  index: number;
+  /** 0–100 height within the plot (clamped to yMax). */
+  heightPct: number;
   value: number;
   color: string;
 }
@@ -49,21 +49,14 @@ export class PolarPage implements OnInit, OnDestroy {
   advice: SailAdvice | null = null;
   planName = '';
 
-  /** SVG chart geometry (viewBox units). */
-  readonly chartW = 320;
-  readonly chartH = 140;
-  readonly padL = 34;
-  readonly padR = 8;
-  readonly padT = 8;
-  readonly padB = 22;
-  /** Rendered CSS height — applied as an inline style so it wins over `height: auto`. */
-  readonly chartCssHeight = 200;
+  /** Fixed plot height in CSS pixels — set on a plain div, not an SVG. */
+  readonly chartHeightPx = 200;
+  readonly yMax = 150;
+  readonly yTicks = [150, 100, 75, 50, 0];
 
   bars: PerfBar[] = [];
-  /** Fixed Y scale so historical bars do not resize when peaks change. */
-  readonly yMax = 150;
-  readonly yTicks = [0, 50, 75, 100, 150];
-  nowLabel = 'Now';
+  /** Sparse list including empty slots so layout stays 90 columns wide. */
+  columns: Array<PerfBar | null> = [];
 
   private samples: PolarSample[] = [];
   private subs: Subscription[] = [];
@@ -106,34 +99,8 @@ export class PolarPage implements OnInit, OnDestroy {
     this.subs.forEach(s => s.unsubscribe());
   }
 
-  get plotW(): number {
-    return this.chartW - this.padL - this.padR;
-  }
-
-  get plotH(): number {
-    return this.chartH - this.padT - this.padB;
-  }
-
-  barX(bar: PerfBar): number {
-    const slot = this.plotW / BUCKET_COUNT;
-    return this.padL + bar.x * this.plotW + slot * 0.1;
-  }
-
-  barWidth(): number {
-    return (this.plotW / BUCKET_COUNT) * 0.8;
-  }
-
-  barY(bar: PerfBar): number {
-    const h = Math.min(bar.h, 1) * this.plotH;
-    return this.padT + this.plotH - h;
-  }
-
-  barHeight(bar: PerfBar): number {
-    return Math.max(0, Math.min(bar.h, 1) * this.plotH);
-  }
-
-  yToSvg(pct: number): number {
-    return this.padT + this.plotH - (pct / this.yMax) * this.plotH;
+  tickTopPct(tick: number): number {
+    return ((this.yMax - tick) / this.yMax) * 100;
   }
 
   formatKnots(value: number | null): string {
@@ -161,6 +128,10 @@ export class PolarPage implements OnInit, OnDestroy {
     }
   }
 
+  get hasBars(): boolean {
+    return this.bars.length > 0;
+  }
+
   private refreshAdvice(): void {
     this.advice = this.sailPlans.advise(
       this.live.twaDeg,
@@ -171,9 +142,6 @@ export class PolarPage implements OnInit, OnDestroy {
 
   private rebuildChart(): void {
     const now = Date.now();
-    // Absolute wall-clock buckets: a sample always maps to the same bucket key, so once
-    // a 10s interval is complete its average (and color) never changes. Only the open
-    // bucket at "now" keeps updating; older bars only scroll left as the window moves.
     const newestBucket = Math.floor(now / BUCKET_MS);
     const oldestBucket = newestBucket - (BUCKET_COUNT - 1);
 
@@ -191,17 +159,23 @@ export class PolarPage implements OnInit, OnDestroy {
     }
 
     this.bars = [];
+    this.columns = [];
     for (let i = 0; i < BUCKET_COUNT; i++) {
       const key = oldestBucket + i;
       const entry = sums.get(key);
-      if (!entry) continue;
+      if (!entry) {
+        this.columns.push(null);
+        continue;
+      }
       const value = entry.sum / entry.count;
-      this.bars.push({
-        x: i / BUCKET_COUNT,
-        h: Math.min(value, this.yMax) / this.yMax,
+      const bar: PerfBar = {
+        index: i,
+        heightPct: (Math.min(value, this.yMax) / this.yMax) * 100,
         value,
         color: this.colorForPct(value),
-      });
+      };
+      this.bars.push(bar);
+      this.columns.push(bar);
     }
   }
 
