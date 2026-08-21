@@ -58,8 +58,9 @@ export class PolarPage implements OnInit, OnDestroy {
   readonly padB = 24;
 
   bars: PerfBar[] = [];
-  yMax = 120;
-  yTicks: number[] = [0, 50, 75, 100];
+  /** Fixed Y scale so historical bars do not resize when peaks change. */
+  readonly yMax = 150;
+  readonly yTicks = [0, 50, 75, 100, 150];
   nowLabel = 'Now';
 
   private samples: PolarSample[] = [];
@@ -81,7 +82,6 @@ export class PolarPage implements OnInit, OnDestroy {
       this.polar.live$.subscribe(live => {
         this.live = live;
         this.refreshAdvice();
-        this.rebuildChart();
         this.cdr.markForCheck();
       }),
       this.polar.samples$.subscribe(samples => {
@@ -169,57 +169,34 @@ export class PolarPage implements OnInit, OnDestroy {
 
   private rebuildChart(): void {
     const now = Date.now();
-    const start = now - WINDOW_MS;
-    const buckets: (number | null)[] = Array.from({ length: BUCKET_COUNT }, () => null);
-    const counts = Array.from({ length: BUCKET_COUNT }, () => 0);
+    // Absolute wall-clock buckets: a sample always maps to the same bucket key, so once
+    // a 10s interval is complete its average (and color) never changes. Only the open
+    // bucket at "now" keeps updating; older bars only scroll left as the window moves.
+    const newestBucket = Math.floor(now / BUCKET_MS);
+    const oldestBucket = newestBucket - (BUCKET_COUNT - 1);
 
+    const sums = new Map<number, { sum: number; count: number }>();
     for (const sample of this.samples) {
-      if (sample.timestamp < start) continue;
-      const idx = Math.min(
-        BUCKET_COUNT - 1,
-        Math.max(0, Math.floor((sample.timestamp - start) / BUCKET_MS)),
-      );
-      const prev = buckets[idx];
-      if (prev === null) {
-        buckets[idx] = sample.polarPct;
-        counts[idx] = 1;
+      const key = Math.floor(sample.timestamp / BUCKET_MS);
+      if (key < oldestBucket || key > newestBucket) continue;
+      const entry = sums.get(key);
+      if (entry) {
+        entry.sum += sample.polarPct;
+        entry.count += 1;
       } else {
-        counts[idx] += 1;
-        buckets[idx] = prev + (sample.polarPct - prev) / counts[idx];
+        sums.set(key, { sum: sample.polarPct, count: 1 });
       }
-    }
-
-    // Include the latest live point in the newest bucket so the right edge feels live.
-    if (
-      this.live.instantPolarPct !== null &&
-      !this.live.stale &&
-      this.live.lastUpdate &&
-      now - this.live.lastUpdate < 15_000
-    ) {
-      const idx = BUCKET_COUNT - 1;
-      const prev = buckets[idx];
-      if (prev === null) {
-        buckets[idx] = this.live.instantPolarPct;
-      } else {
-        buckets[idx] = (prev + this.live.instantPolarPct) / 2;
-      }
-    }
-
-    const values = buckets.filter((v): v is number => v !== null);
-    const peak = values.length ? Math.max(...values) : 100;
-    this.yMax = Math.max(120, Math.ceil(peak / 10) * 10);
-    this.yTicks = [0, 50, 75, 100].filter(t => t <= this.yMax);
-    if (this.yMax > 100 && !this.yTicks.includes(this.yMax)) {
-      this.yTicks = [...this.yTicks, this.yMax];
     }
 
     this.bars = [];
     for (let i = 0; i < BUCKET_COUNT; i++) {
-      const value = buckets[i];
-      if (value === null) continue;
+      const key = oldestBucket + i;
+      const entry = sums.get(key);
+      if (!entry) continue;
+      const value = entry.sum / entry.count;
       this.bars.push({
         x: i / BUCKET_COUNT,
-        h: value / this.yMax,
+        h: Math.min(value, this.yMax) / this.yMax,
         value,
         color: this.colorForPct(value),
       });
