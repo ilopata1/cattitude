@@ -16,8 +16,14 @@ export interface PolarSample {
   polarPct: number;
 }
 
+/** Which Signal-K boat-speed path is driving polar %. */
+export type PolarBoatSpeedSource = 'stw' | 'sog';
+
 export interface PolarLiveState {
+  /** Boat speed used for polar % (STW when available, else SOG). */
   stwKnots: number | null;
+  /** Which path produced {@link stwKnots}. */
+  boatSpeedSource: PolarBoatSpeedSource | null;
   twsKnots: number | null;
   twaDeg: number | null;
   targetKnots: number | null;

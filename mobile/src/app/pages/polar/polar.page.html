@@ -22,7 +22,7 @@
     <h2 class="section-title">Conditions</h2>
     <div class="live-readouts">
       <div class="live-item">
-        <span class="label">STW</span>
+        <span class="label">{{ boatSpeedLabel }}</span>
         <span class="value">{{ formatKnots(live.stwKnots) }}</span>
       </div>
       <div class="live-item">
@@ -38,6 +38,9 @@
         <span class="value">{{ formatKnots(live.targetKnots) }}</span>
       </div>
     </div>
+    <p class="source-note" *ngIf="live.boatSpeedSource === 'sog'">
+      Using SOG (STW not available). Polar % is approximate vs a water-referenced polar.
+    </p>
   </section>
 
   <section class="panel perf-panel" [class.stale]="live.stale">

@@ -20,6 +20,7 @@ export class PolarPage implements OnInit, OnDestroy {
 
   live: PolarLiveState = {
     stwKnots: null,
+    boatSpeedSource: null,
     twsKnots: null,
     twaDeg: null,
     targetKnots: null,
@@ -83,6 +84,17 @@ export class PolarPage implements OnInit, OnDestroy {
   }
 
   formatBand = formatBand;
+
+  get boatSpeedLabel(): string {
+    switch (this.live.boatSpeedSource) {
+      case 'stw':
+        return 'STW';
+      case 'sog':
+        return 'SOG';
+      default:
+        return 'Speed';
+    }
+  }
 
   private refreshAdvice(): void {
     this.advice = this.sailPlans.advise(

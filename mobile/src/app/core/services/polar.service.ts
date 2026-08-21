@@ -1,8 +1,11 @@
 /**
  * PolarService
  *
- * Loads a vessel polar (.pol), subscribes to Signal-K for STW/TWS/TWA,
+ * Loads a vessel polar (.pol), subscribes to Signal-K for boat speed/TWS/TWA,
  * computes instantaneous and rolling-average percentage-of-polar performance.
+ *
+ * Boat speed prefers navigation.speedThroughWater; falls back to
+ * navigation.speedOverGround when STW is missing or effectively zero.
  */
 import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -10,6 +13,7 @@ import { BehaviorSubject, Observable, Subscription, firstValueFrom, interval } f
 import { SignalKService, SignalKDelta } from './signal-k.service';
 import { interpolateTargetSpeed, parsePolarFile, targetCurveAtTws } from './polar-parser';
 import {
+  PolarBoatSpeedSource,
   PolarCurvePoint,
   PolarLiveState,
   PolarSample,
@@ -23,9 +27,12 @@ const SAMPLE_INTERVAL_MS = 1_000;
 const STALE_AFTER_MS = 15_000;
 const MPS_TO_KNOTS = 1.94384;
 const RAD_TO_DEG = 180 / Math.PI;
+/** Below this, a published STW is treated as "no sensor" so SOG can win. */
+const STW_MIN_USEFUL_MPS = 0.05;
 
 const EMPTY_LIVE: PolarLiveState = {
   stwKnots: null,
+  boatSpeedSource: null,
   twsKnots: null,
   twaDeg: null,
   targetKnots: null,
@@ -38,7 +45,9 @@ interface SkPartial {
   stwMps?: number;
   sogMps?: number;
   twsMps?: number;
-  twaRad?: number;
+  twaWaterRad?: number;
+  twaGroundRad?: number;
+  twaApparentRad?: number;
   lastSeen: number;
 }
 
@@ -139,7 +148,8 @@ export class PolarService implements OnDestroy {
   }
 
   private applyPath(path: string, value: unknown): void {
-    switch (path) {
+    const normalized = path.startsWith('self.') ? path.slice(5) : path;
+    switch (normalized) {
       case 'navigation.speedThroughWater':
         if (typeof value === 'number') this.partial.stwMps = value;
         break;
@@ -153,20 +163,45 @@ export class PolarService implements OnDestroy {
         if (typeof value === 'number' && this.partial.twsMps === undefined) this.partial.twsMps = value;
         break;
       case 'environment.wind.angleTrueWater':
-        if (typeof value === 'number') this.partial.twaRad = value;
+        if (typeof value === 'number') this.partial.twaWaterRad = value;
+        break;
+      case 'environment.wind.angleTrueGround':
+        if (typeof value === 'number') this.partial.twaGroundRad = value;
         break;
       case 'environment.wind.angleApparent':
-        if (typeof value === 'number' && this.partial.twaRad === undefined) this.partial.twaRad = value;
+        if (typeof value === 'number') this.partial.twaApparentRad = value;
         break;
     }
   }
 
+  /**
+   * Prefer STW for polar % (matches water-referenced polars). Use SOG when STW is
+   * missing or effectively zero — common when no paddlewheel/log is installed.
+   */
+  private resolveBoatSpeed(): { knots: number | null; source: PolarBoatSpeedSource | null } {
+    const stw = this.partial.stwMps;
+    const sog = this.partial.sogMps;
+    if (stw !== undefined && Number.isFinite(stw) && Math.abs(stw) >= STW_MIN_USEFUL_MPS) {
+      return { knots: stw * MPS_TO_KNOTS, source: 'stw' };
+    }
+    if (sog !== undefined && Number.isFinite(sog)) {
+      return { knots: sog * MPS_TO_KNOTS, source: 'sog' };
+    }
+    if (stw !== undefined && Number.isFinite(stw)) {
+      return { knots: stw * MPS_TO_KNOTS, source: 'stw' };
+    }
+    return { knots: null, source: null };
+  }
+
   private publishLive(): void {
-    const stwKnots = this.toKnots(this.partial.stwMps ?? this.partial.sogMps);
+    const boat = this.resolveBoatSpeed();
+    const stwKnots = boat.knots;
     const twsKnots = this.toKnots(this.partial.twsMps);
-    const twaDeg   = this.partial.twaRad !== undefined
-      ? Math.abs(this.partial.twaRad * RAD_TO_DEG)
-      : null;
+    const twaRad =
+      this.partial.twaWaterRad ??
+      this.partial.twaGroundRad ??
+      this.partial.twaApparentRad;
+    const twaDeg = twaRad !== undefined ? Math.abs(twaRad * RAD_TO_DEG) : null;
 
     let targetKnots: number | null = null;
     let instantPolarPct: number | null = null;
@@ -183,6 +218,7 @@ export class PolarService implements OnDestroy {
 
     this.liveSubject.next({
       stwKnots,
+      boatSpeedSource: boat.source,
       twsKnots,
       twaDeg,
       targetKnots,
