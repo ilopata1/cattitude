@@ -20,8 +20,16 @@
           (keyup.enter)="saveAndConnect()"
         ></ion-input>
         <p class="settings-hint">
-          Enter your Signal-K server URL. Cloudflare tunnel URLs (https://) are
-          supported and automatically upgraded to a secure WebSocket connection.
+          Enter your Signal-K server URL (for example
+          <code>https://sailsupernova.com</code>). Cloudflare tunnel URLs are
+          supported and upgraded to a secure WebSocket automatically.
+        </p>
+        <p class="settings-hint">
+          The Sail tab connects Skip directly to this URL for live instruments.
+          Sign-in passwords are not stored here: Skip only uses Signal-K session
+          cookies when it is served from the same origin as the boat server.
+          Manage the server at its own admin page (e.g.
+          <code>https://your-server/admin</code>), not inside this app.
         </p>
         <p class="settings-hint">
           For local testing, run <code>node generator.js</code> in
