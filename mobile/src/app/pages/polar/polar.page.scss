@@ -64,7 +64,10 @@
 .perf-chart {
   display: block;
   width: 100%;
+  max-width: 420px;
+  max-height: 180px;
   height: auto;
+  margin: 0 auto;
 }
 
 .plot-bg {
