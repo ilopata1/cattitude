@@ -2,6 +2,7 @@ import {
   Component, OnInit, OnDestroy, AfterViewInit,
   ElementRef, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
+import { ViewWillEnter } from '@ionic/angular';
 import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { AnchorageVesselStoreService } from './core/services/anchorage-vessel-store.service';
@@ -31,7 +32,9 @@ const STATE_COLOUR: Record<VesselState, string> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
-export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy {
+export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWillEnter {
+
+  private static readonly DEFAULT_ZOOM = 15;
 
   @ViewChild('mapContainer', { static: false }) mapContainer!: ElementRef<HTMLDivElement>;
 
@@ -46,6 +49,10 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy {
   private circles = new Map<string, unknown>();   // mmsi → L.Circle
   private subs: Subscription[] = [];
   private leafletReady = false;
+  /** Set after the first successful center on own vessel. */
+  private hasCenteredOnOwn = false;
+  /** User panned or zoomed — suppress automatic re-centering. */
+  private userAdjustedMap = false;
 
   constructor(
     private readonly vesselStore: AnchorageVesselStoreService,
@@ -58,7 +65,11 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy {
     this.ownMmsiControl.setValue(this.anchorSettings.get().ownMmsi);
 
     this.subs.push(
-      this.sk.connected$.subscribe(c => { this.skConnected = c; this.cdr.markForCheck(); }),
+      this.sk.connected$.subscribe(c => {
+        this.skConnected = c;
+        if (c) this.vesselStore.start();
+        this.cdr.markForCheck();
+      }),
     );
 
     this.subs.push(
@@ -84,11 +95,26 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy {
     this.vesselStore.stop();
   }
 
+  ionViewWillEnter(): void {
+    if (this.skConnected) this.vesselStore.start();
+    // Leaflet mis-sizes when the tab was hidden; refresh then center if needed.
+    requestAnimationFrame(() => {
+      if (!this.map) return;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (this.map as any).invalidateSize();
+      this.centerOnOwnVessel(false);
+    });
+  }
+
   // ---------------------------------------------------------------------------
   // User actions
 
+  recenterOnBoat(): void {
+    this.userAdjustedMap = false;
+    this.centerOnOwnVessel(true);
+  }
+
   startRecording(): void {
-    this.vesselStore.start();
     this.vesselStore.startRecording();
     this.isRecording = true;
     this.cdr.markForCheck();
@@ -156,16 +182,22 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy {
   private initMap(): void {
     if (!this.mapContainer?.nativeElement) return;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    this.map = (L as any).map(this.mapContainer.nativeElement, {
+    const map = (L as any).map(this.mapContainer.nativeElement, {
       center: [0, 0],
-      zoom: 15,
+      zoom: AnchoragePage.DEFAULT_ZOOM,
       zoomControl: true,
     });
+    this.map = map;
+
+    map.on('dragstart', () => { this.userAdjustedMap = true; });
+    map.on('zoomstart', (e: { originalEvent?: Event }) => {
+      if (e.originalEvent) this.userAdjustedMap = true;
+    });
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (L as any).tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors',
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    }).addTo(this.map as any);
+    }).addTo(map);
   }
 
   private updateMap(): void {
@@ -237,15 +269,22 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy {
       }
     }
 
-    // Pan to own vessel if one exists.
+    this.centerOnOwnVessel(false);
+  }
+
+  /** Center on own vessel once on open, or when the user taps Recenter. */
+  private centerOnOwnVessel(force: boolean): void {
+    if (!this.map || (!force && (this.userAdjustedMap || this.hasCenteredOnOwn))) return;
+
     const own = this.vessels.find(v => v.isOwn);
-    if (own) {
-      const p = own.positions[own.positions.length - 1];
-      if (p) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (this.map as any).setView([p.lat, p.lon], (this.map as any).getZoom(), { animate: true });
-      }
-    }
+    const p = own?.positions[own.positions.length - 1];
+    if (!p) return;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const map = this.map as any;
+    const zoom = force ? map.getZoom() : AnchoragePage.DEFAULT_ZOOM;
+    map.setView([p.lat, p.lon], zoom, { animate: force });
+    this.hasCenteredOnOwn = true;
   }
 
   private clearMapLayers(): void {
