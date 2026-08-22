@@ -1,0 +1,83 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/v/cattitude/tabs/settings"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Instruments</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="save()" [disabled]="scanning">Save</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="editor" *ngIf="draft">
+
+    <p class="intro">
+      Map each Sail instrument to the path your boat publishes on Signal-K.
+      Run a scan while connected so you can pick live paths instead of guessing.
+    </p>
+
+    <div class="scan-row">
+      <ion-button
+        expand="block"
+        (click)="startScan()"
+        [disabled]="!connected || scanning"
+      >
+        {{ scanning ? 'Scanning boat…' : 'Scan boat (45 s)' }}
+      </ion-button>
+      <ion-progress-bar *ngIf="scanning || scanProgress === 100" [value]="scanProgress / 100"></ion-progress-bar>
+      <p class="hint" *ngIf="!connected">
+        Connect to your Signal-K server on Settings before scanning.
+      </p>
+      <p class="hint" *ngIf="connected && discovered.size > 0 && !scanning">
+        Found {{ discovered.size }} numeric paths on this vessel.
+      </p>
+    </div>
+
+    <div class="role-block" *ngFor="let cfg of roles; trackBy: trackByRole">
+      <ion-item lines="full">
+        <ion-label position="stacked">{{ cfg.label }}</ion-label>
+        <ion-select
+          [value]="selectedPath(cfg.role)"
+          (ionChange)="setPath(cfg.role, $event.detail.value)"
+          placeholder="Choose path"
+          interface="action-sheet"
+        >
+          <ion-select-option *ngFor="let path of optionsFor(cfg.role)" [value]="path">
+            {{ path }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+      <p class="role-hint">{{ cfg.hint }}</p>
+      <p class="live-hint" [class.attention]="needsAttention(selectedPath(cfg.role))">
+        {{ liveHint(selectedPath(cfg.role)) }}
+        <span *ngIf="needsAttention(selectedPath(cfg.role))"> — check wiring or pick another path</span>
+      </p>
+    </div>
+
+    <div class="role-block">
+      <ion-item lines="full">
+        <ion-label position="stacked">Speed fallback (SOG)</ion-label>
+        <ion-select
+          [value]="selectedSogFallback()"
+          (ionChange)="setSogFallback($event.detail.value)"
+          placeholder="Optional SOG path"
+          interface="action-sheet"
+        >
+          <ion-select-option *ngFor="let path of sogOptions()" [value]="path">
+            {{ path }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+      <p class="role-hint">Used when STW is missing or near zero (common under motor).</p>
+      <p class="live-hint" [class.attention]="needsAttention(selectedSogFallback())">
+        {{ liveHint(selectedSogFallback()) }}
+      </p>
+    </div>
+
+    <ion-button expand="block" fill="outline" color="medium" (click)="resetDefaults()">
+      Reset to defaults
+    </ion-button>
+  </div>
+</ion-content>

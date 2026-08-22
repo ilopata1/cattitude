@@ -1,0 +1,42 @@
+.editor {
+  padding: 16px;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.intro {
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: var(--ion-color-medium-shade);
+  margin-bottom: 16px;
+}
+
+.scan-row {
+  margin-bottom: 20px;
+}
+
+.hint,
+.role-hint {
+  font-size: 0.8rem;
+  color: var(--ion-color-medium);
+  margin: 4px 0 0;
+}
+
+.live-hint {
+  font-size: 0.78rem;
+  color: var(--ion-color-success-shade, #2dd36f);
+  margin: 0 0 12px 12px;
+
+  &.attention {
+    color: var(--ion-color-warning-shade, #e0ac08);
+  }
+}
+
+.role-block {
+  margin-bottom: 8px;
+}
+
+ion-select {
+  width: 100%;
+  max-width: 100%;
+}

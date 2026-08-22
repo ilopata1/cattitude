@@ -37,6 +37,27 @@ export class InstrumentMapService {
     return this.hydratePromise;
   }
 
+  async save(map: InstrumentMap): Promise<boolean> {
+    const slug = this.vesselContext.vesselSlug;
+    const next = sanitizeMap(map);
+    this.apply(next, slug);
+    try {
+      await this.push(next, slug);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async resetToDefault(): Promise<boolean> {
+    return this.save(structuredClone(DEFAULT_INSTRUMENT_MAP));
+  }
+
+  private async push(map: InstrumentMap, slug: string): Promise<void> {
+    const res = await firstValueFrom(this.http.post<InstrumentMapResponse>(this.url(slug), map));
+    if (res.map?.instruments) this.apply(sanitizeMap(res.map), slug);
+  }
+
   private async hydrate(slug: string): Promise<void> {
     const cached = this.readCache(slug);
     try {
@@ -86,4 +107,23 @@ export class InstrumentMapService {
       localStorage.setItem(this.cacheKey(slug), JSON.stringify(map));
     } catch { /* ignore */ }
   }
+}
+
+function sanitizeMap(map: InstrumentMap): InstrumentMap {
+  const instruments: InstrumentMap['instruments'] = {};
+  for (const [role, binding] of Object.entries(map.instruments ?? {})) {
+    if (!binding?.path?.trim()) continue;
+    const entry = {
+      path: binding.path.trim(),
+      source: binding.source?.trim() || 'owner',
+    };
+    if (binding.fallback?.path?.trim()) {
+      (entry as typeof binding).fallback = {
+        path: binding.fallback.path.trim(),
+        source: binding.fallback.source?.trim() || 'owner',
+      };
+    }
+    instruments[role as keyof InstrumentMap['instruments']] = entry;
+  }
+  return { version: map.version || 1, instruments };
 }

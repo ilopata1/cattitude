@@ -9,6 +9,11 @@ const routes: Routes = [
     loadChildren: () =>
       import('../sail-plan/sail-plan.module').then((m) => m.SailPlanModule),
   },
+  {
+    path: 'instruments',
+    loadChildren: () =>
+      import('../instruments/instruments.module').then((m) => m.InstrumentsModule),
+  },
 ];
 
 @NgModule({

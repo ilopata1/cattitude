@@ -25,10 +25,9 @@
           supported and upgraded to a secure WebSocket automatically.
         </p>
         <p class="settings-hint">
-          The Sail tab connects Skip directly to this URL for live instruments.
-          Sign-in passwords are not stored here: Skip only uses Signal-K session
-          cookies when it is served from the same origin as the boat server.
-          Manage the server at its own admin page (e.g.
+          The Sail tab reads live instruments through this connection using the
+          instrument map below. Sign-in passwords are not stored here. Manage the
+          server at its own admin page (e.g.
           <code>https://your-server/admin</code>), not inside this app.
         </p>
         <p class="settings-hint">
@@ -83,16 +82,34 @@
       </ion-button>
     </div>
 
+    <!-- Instruments -->
+    <div class="settings-section">
+      <div class="settings-section-title">Instruments</div>
+      <p class="settings-hint">
+        Choose which Signal-K paths feed depth, speed, and wind on the Sail tab.
+        Run a short scan while connected to your boat so paths match what the
+        server actually publishes (e.g. depth below transducer vs below surface).
+      </p>
+      <ion-button expand="block" routerLink="instruments" class="settings-btn">
+        Map instruments
+      </ion-button>
+    </div>
+
     <!-- Required Plugins -->
     <div class="settings-section">
-      <div class="settings-section-title">Required Signal-K Plugins</div>
+      <div class="settings-section-title">Signal-K Plugins</div>
       <p class="settings-hint">
-        The following plugins must be installed on your Signal-K server to enable
-        all live-data features in this app.
+        Optional server plugins extend anchoring and alarms. Cattitude does not
+        require Skip for these features.
       </p>
       <div class="plugin-item">
         <span class="plugin-name">hoeken/hoekens-anchor-alarm</span>
-        <span class="plugin-purpose">Anchor drag alarm with engine auto-cancel</span>
+        <span class="plugin-purpose">
+          Anchor drag alarm — open
+          <code>/hoekens-anchor-alarm/</code> on your boat server to set the
+          watch circle; alarm/emergency notifications reach the app via
+          Signal-K (no Skip needed).
+        </span>
       </div>
     </div>
 
