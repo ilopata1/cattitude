@@ -47,7 +47,11 @@ class Settings(BaseSettings):
         "http://127.0.0.1:8080",
         "http://localhost:8100",
         "https://ilopata1.github.io",
+        "https://app.sailsupernova.com",
     ]
+
+    # Extra allowed browser origins (e.g. PWA custom domain subdomains).
+    cors_origin_regex: str = r"https://([a-z0-9-]+\.)*sailsupernova\.com"
 
     # Admin portal (HTTP Basic Auth placeholder until Auth0)
     admin_username: str = "admin"
