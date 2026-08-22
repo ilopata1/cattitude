@@ -3,14 +3,15 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const wwwDir = process.argv[2] || path.join(path.dirname(fileURLToPath(import.meta.url)), '../mobile/www');
-const prefix = '/cattitude/';
+/** Site root on GitHub Pages custom domain (app.sailsupernova.com). */
+const prefix = (process.env.PAGES_BASE_PATH || '/').replace(/\/?$/, '/');
 /** Enables GitHub Pages HTTPS for a custom domain (DNS CNAME → *.github.io). */
 const customDomain = (process.env.PAGES_CUSTOM_DOMAIN || '').trim();
 
 function patchHtml(filePath) {
   let html = fs.readFileSync(filePath, 'utf8');
   html = html.replace(
-    /\b(src|href)="(?!https?:|\/cattitude\/|\/\/|#|data:)([^"]+)"/g,
+    /\b(src|href)="(?!(?:https?:|\/|\/\/|#|data:))([^"]+)"/g,
     `$1="${prefix}$2"`,
   );
   fs.writeFileSync(filePath, html);

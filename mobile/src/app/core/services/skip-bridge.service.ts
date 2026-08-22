@@ -95,7 +95,7 @@ export class SkipBridgeService {
    * The query param is read by Skip at boot (see skip cattitude-host.util.ts).
    */
   buildSkipIframeUrl(signalKUrl: string, skipBasePath?: string): string {
-    const base = skipBasePath ?? '/cattitude/@halos-org/skip/';
+    const base = skipBasePath ?? '/@halos-org/skip/';
     const params = new URLSearchParams();
     params.set('embed', '');
     params.set(CATTITUDE_SK_URL_PARAM, signalKUrl.trim());
