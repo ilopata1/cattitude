@@ -2,6 +2,13 @@ name: Sync mobile web to pages-live
 
 # Deploys the Ionic PWA to GitHub Pages. In repo Settings → Pages, set
 # "Build and deployment" source to GitHub Actions (not a static branch).
+#
+# Custom domain (HTTPS): DNS CNAME app.sailsupernova.com → <owner>.github.io,
+# enter the same hostname under Settings → Pages → Custom domain, and keep
+# PAGES_CUSTOM_DOMAIN in sync below (writes mobile/www/CNAME each deploy).
+env:
+  PAGES_CUSTOM_DOMAIN: app.sailsupernova.com
+
 on:
   workflow_dispatch:
   push:
@@ -51,6 +58,8 @@ jobs:
 
       - name: Install and build Ionic app
         working-directory: mobile
+        env:
+          PAGES_CUSTOM_DOMAIN: ${{ env.PAGES_CUSTOM_DOMAIN }}
         run: |
           node ../utilities/validate_bootstrap_content.mjs
           npm ci
