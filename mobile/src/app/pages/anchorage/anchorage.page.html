@@ -65,8 +65,9 @@
 
     <ion-item *ngFor="let v of vessels; trackBy: trackByMmsi">
       <ion-label>
-        <h2>{{ v.name }}</h2>
-        <p>MMSI {{ v.mmsi }} · {{ v.lengthMetres | number:'1.0-0' }} m</p>
+        <h2>{{ displayName(v) }}</h2>
+        <p *ngIf="hasShipName(v)">MMSI {{ v.mmsi }} · {{ v.lengthMetres | number:'1.0-0' }} m</p>
+        <p *ngIf="!hasShipName(v)">{{ v.lengthMetres | number:'1.0-0' }} m</p>
         <p *ngIf="v.anchorPoint">
           Swing radius {{ v.swingRadius | number:'1.0-0' }} m
           · confidence {{ v.confidence }}

@@ -17,12 +17,23 @@ declare let L: any;
 const LEAFLET_CSS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
 const LEAFLET_JS  = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
 
+/** Match SwingCircle map visuals. */
+const ESRI_TILE_URL =
+  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+const ESRI_ATTRIBUTION = 'Tiles © Esri';
+const MIN_VESSEL_VIEWPORT_FRACTION = 0.015;
+const VESSEL_FILL_OWN = '#ADFF2F';
+const VESSEL_FILL_OTHER = '#FF007F';
+const VESSEL_STROKE_COLOR = '#111111';
+const VESSEL_ICON_ASPECT = 40 / 60;
+const VESSEL_ICON_ANCHOR_Y_FRAC = 26 / 60;
+
 const STATE_COLOUR: Record<VesselState, string> = {
-  green:   '#4caf50',
-  amber:   '#ff9800',
-  red:     '#f44336',
-  moving:  '#2196f3',
-  unknown: '#9e9e9e',
+  green:   '#2ecc71',
+  amber:   '#f39c12',
+  red:     '#e74c3c',
+  moving:  '#3498db',
+  unknown: '#95a5a6',
 };
 
 @Component({
@@ -45,8 +56,11 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
   ownMmsiControl = new FormControl('');
 
   private map: unknown = null;
-  private markers = new Map<string, unknown>();   // mmsi → L.CircleMarker
-  private circles = new Map<string, unknown>();   // mmsi → L.Circle
+  private markers = new Map<string, unknown>();       // mmsi → L.Marker (boat icon)
+  private circles = new Map<string, unknown>();       // mmsi → L.Circle
+  private anchorMarkers = new Map<string, unknown>(); // mmsi → L.CircleMarker
+  private monitoringCircle: unknown = null;
+  private centreMarker: unknown = null;
   private subs: Subscription[] = [];
   private leafletReady = false;
   /** Set after the first successful center on own vessel. */
@@ -97,12 +111,12 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
 
   ionViewWillEnter(): void {
     if (this.skConnected) this.vesselStore.start();
-    // Leaflet mis-sizes when the tab was hidden; refresh then center if needed.
     requestAnimationFrame(() => {
       if (!this.map) return;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.map as any).invalidateSize();
       this.centerOnOwnVessel(false);
+      this.updateMap();
     });
   }
 
@@ -117,6 +131,7 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
   startRecording(): void {
     this.vesselStore.startRecording();
     this.isRecording = true;
+    this.updateMap();
     this.cdr.markForCheck();
   }
 
@@ -124,6 +139,7 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
     this.vesselStore.stopRecording();
     this.vesselStore.stop();
     this.isRecording = false;
+    this.updateMap();
     this.cdr.markForCheck();
   }
 
@@ -139,6 +155,20 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
 
   // ---------------------------------------------------------------------------
   // Helpers
+
+  /** True when AIS published a real ship name (not just the MMSI fallback). */
+  hasShipName(v: Vessel): boolean {
+    const name = (v.name ?? '').trim();
+    return !!name && name !== v.mmsi;
+  }
+
+  displayName(v: Vessel): string {
+    return this.hasShipName(v) ? v.name.trim() : `MMSI ${v.mmsi}`;
+  }
+
+  tooltipLabel(v: Vessel): string {
+    return this.hasShipName(v) ? `${v.name.trim()} (${v.mmsi})` : `MMSI ${v.mmsi}`;
+  }
 
   stateBadgeColour(state: VesselState): string {
     return STATE_COLOUR[state] ?? STATE_COLOUR.unknown;
@@ -160,7 +190,6 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
   private async loadLeaflet(): Promise<void> {
     if (typeof L !== 'undefined') return;
 
-    // Inject CSS
     if (!document.querySelector(`link[href="${LEAFLET_CSS}"]`)) {
       const link = document.createElement('link');
       link.rel  = 'stylesheet';
@@ -168,7 +197,6 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
       document.head.appendChild(link);
     }
 
-    // Inject JS
     await new Promise<void>((resolve, reject) => {
       if (document.querySelector(`script[src="${LEAFLET_JS}"]`)) { resolve(); return; }
       const script = document.createElement('script');
@@ -185,7 +213,10 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
     const map = (L as any).map(this.mapContainer.nativeElement, {
       center: [0, 0],
       zoom: AnchoragePage.DEFAULT_ZOOM,
-      zoomControl: true,
+      zoomControl: false,
+      zoomSnap: 1,
+      zoomDelta: 1,
+      wheelPxPerZoomLevel: 120,
     });
     this.map = map;
 
@@ -193,17 +224,27 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
     map.on('zoomstart', (e: { originalEvent?: Event }) => {
       if (e.originalEvent) this.userAdjustedMap = true;
     });
+    map.on('zoomend', () => this.updateMap());
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (L as any).tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors',
+    (L as any).tileLayer(ESRI_TILE_URL, {
+      attribution: ESRI_ATTRIBUTION,
+      maxZoom: 19,
     }).addTo(map);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (L as any).control.zoom({ position: 'bottomright' }).addTo(map);
   }
 
   private updateMap(): void {
     if (!this.leafletReady || !this.map) return;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const map = this.map as any;
     const seenMmsis = new Set<string>();
+    const minLengthM = this.getMinVesselLengthMetres();
+
+    this.updateMonitoringArea();
 
     for (const vessel of this.vessels) {
       const last = vessel.positions[vessel.positions.length - 1];
@@ -211,68 +252,243 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
 
       seenMmsis.add(vessel.mmsi);
       const colour = STATE_COLOUR[vessel.state];
+      const isStale = this.vesselStore.isStale(vessel);
+      const label = this.tooltipLabel(vessel);
+      const icon = this.buildVesselIcon(
+        last.heading,
+        vessel.lengthMetres,
+        minLengthM,
+        isStale,
+        vessel.isOwn,
+        vessel.mmsi,
+      );
 
-      // Update or create vessel marker.
       if (this.markers.has(vessel.mmsi)) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (this.markers.get(vessel.mmsi) as any).setLatLng([last.lat, last.lon]);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (this.markers.get(vessel.mmsi) as any).setStyle({ color: colour, fillColor: colour });
+        const marker = this.markers.get(vessel.mmsi) as any;
+        marker.setLatLng([last.lat, last.lon]);
+        marker.setIcon(icon);
+        marker.setTooltipContent(label);
       } else {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const marker = (L as any).circleMarker([last.lat, last.lon], {
-          radius: vessel.isOwn ? 10 : 6,
-          color: colour, fillColor: colour, fillOpacity: 0.8, weight: 2,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        }).bindTooltip(vessel.name).addTo(this.map as any);
+        const marker = (L as any).marker([last.lat, last.lon], { icon })
+          .bindTooltip(label, { direction: 'top', offset: [0, -8], opacity: 0.85 })
+          .addTo(map);
         this.markers.set(vessel.mmsi, marker);
       }
 
-      // Update or create swing-circle.
-      if (vessel.anchorPoint && vessel.swingRadius > 0) {
+      if (vessel.tracked && vessel.anchorPoint && vessel.swingRadius > 0) {
+        const dashArray = vessel.confidence === 'low' ? '6,4' : undefined;
+        const circleStyle = {
+          color: colour,
+          fillColor: colour,
+          fillOpacity: 0.12,
+          weight: 2,
+          opacity: isStale ? 0.3 : 0.8,
+          dashArray,
+        };
+
         if (this.circles.has(vessel.mmsi)) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (this.circles.get(vessel.mmsi) as any).setLatLng([vessel.anchorPoint.lat, vessel.anchorPoint.lon]);
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (this.circles.get(vessel.mmsi) as any).setRadius(vessel.swingRadius);
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (this.circles.get(vessel.mmsi) as any).setStyle({ color: colour });
+          const circle = this.circles.get(vessel.mmsi) as any;
+          circle.setLatLng([vessel.anchorPoint.lat, vessel.anchorPoint.lon]);
+          circle.setRadius(vessel.swingRadius);
+          circle.setStyle(circleStyle);
         } else {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const circle = (L as any).circle(
             [vessel.anchorPoint.lat, vessel.anchorPoint.lon],
-            { radius: vessel.swingRadius, color: colour, fill: false, weight: 1.5, dashArray: '4 4' },
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          ).addTo(this.map as any);
+            { radius: vessel.swingRadius, ...circleStyle, interactive: false },
+          ).addTo(map);
           this.circles.set(vessel.mmsi, circle);
         }
-      } else if (this.circles.has(vessel.mmsi)) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (this.map as any).removeLayer(this.circles.get(vessel.mmsi) as any);
-        this.circles.delete(vessel.mmsi);
+
+        if (vessel.confidence !== 'low') {
+          if (this.anchorMarkers.has(vessel.mmsi)) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (this.anchorMarkers.get(vessel.mmsi) as any)
+              .setLatLng([vessel.anchorPoint.lat, vessel.anchorPoint.lon]);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (this.anchorMarkers.get(vessel.mmsi) as any).setStyle({ fillColor: colour });
+          } else {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const anchorMark = (L as any).circleMarker(
+              [vessel.anchorPoint.lat, vessel.anchorPoint.lon],
+              {
+                radius: 3,
+                color: '#ffffff',
+                fillColor: colour,
+                fillOpacity: 1,
+                weight: 1,
+              },
+            ).addTo(map);
+            this.anchorMarkers.set(vessel.mmsi, anchorMark);
+          }
+        } else if (this.anchorMarkers.has(vessel.mmsi)) {
+          map.removeLayer(this.anchorMarkers.get(vessel.mmsi));
+          this.anchorMarkers.delete(vessel.mmsi);
+        }
+      } else {
+        if (this.circles.has(vessel.mmsi)) {
+          map.removeLayer(this.circles.get(vessel.mmsi));
+          this.circles.delete(vessel.mmsi);
+        }
+        if (this.anchorMarkers.has(vessel.mmsi)) {
+          map.removeLayer(this.anchorMarkers.get(vessel.mmsi));
+          this.anchorMarkers.delete(vessel.mmsi);
+        }
       }
     }
 
-    // Remove stale map layers for vessels that have been evicted.
     for (const [mmsi, marker] of this.markers) {
       if (!seenMmsis.has(mmsi)) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (this.map as any).removeLayer(marker as any);
+        map.removeLayer(marker);
         this.markers.delete(mmsi);
       }
     }
     for (const [mmsi, circle] of this.circles) {
       if (!seenMmsis.has(mmsi)) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (this.map as any).removeLayer(circle as any);
+        map.removeLayer(circle);
         this.circles.delete(mmsi);
+      }
+    }
+    for (const [mmsi, anchor] of this.anchorMarkers) {
+      if (!seenMmsis.has(mmsi)) {
+        map.removeLayer(anchor);
+        this.anchorMarkers.delete(mmsi);
       }
     }
 
     this.centerOnOwnVessel(false);
   }
 
-  /** Center on own vessel once on open, or when the user taps Recenter. */
+  private updateMonitoringArea(): void {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const map = this.map as any;
+    const settings = this.anchorSettings.get();
+    const own = this.vessels.find(v => v.isOwn);
+    const last = own?.positions[own.positions.length - 1];
+    const centre = settings.monitoringCentre
+      ?? (last ? { lat: last.lat, lon: last.lon } : null);
+
+    if (!this.isRecording || !centre) {
+      if (this.monitoringCircle) {
+        map.removeLayer(this.monitoringCircle);
+        this.monitoringCircle = null;
+      }
+      if (this.centreMarker) {
+        map.removeLayer(this.centreMarker);
+        this.centreMarker = null;
+      }
+      return;
+    }
+
+    const radius = settings.trackingRadiusM;
+    if (this.monitoringCircle) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (this.monitoringCircle as any).setLatLng([centre.lat, centre.lon]);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (this.monitoringCircle as any).setRadius(radius);
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      this.monitoringCircle = (L as any).circle([centre.lat, centre.lon], {
+        radius,
+        color: '#ffffff',
+        weight: 1,
+        dashArray: '8,4',
+        fillOpacity: 0.03,
+        interactive: false,
+      }).addTo(map);
+    }
+
+    if (this.centreMarker) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (this.centreMarker as any).setLatLng([centre.lat, centre.lon]);
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      this.centreMarker = (L as any).marker([centre.lat, centre.lon], {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        icon: (L as any).divIcon({
+          className: 'centre-marker',
+          html: '<div class="crosshair"></div>',
+          iconSize: [20, 20],
+          iconAnchor: [10, 10],
+        }),
+        interactive: false,
+      }).addTo(map);
+    }
+  }
+
+  private getMinVesselLengthMetres(): number {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const map = this.map as any;
+    const container = map.getContainer();
+    const minDimPx = Math.min(container.clientWidth, container.clientHeight);
+    const minPx = minDimPx * MIN_VESSEL_VIEWPORT_FRACTION;
+    const bounds = map.getBounds();
+    const mapWidthM = map.distance(bounds.getSouthWest(), bounds.getSouthEast());
+    const metresPerPx = mapWidthM / container.clientWidth;
+    return minPx * metresPerPx;
+  }
+
+  private metresToPixels(metres: number): number {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const map = this.map as any;
+    const container = map.getContainer();
+    const bounds = map.getBounds();
+    const mapWidthM = map.distance(bounds.getSouthWest(), bounds.getSouthEast());
+    const metresPerPx = mapWidthM / container.clientWidth;
+    return metres / metresPerPx;
+  }
+
+  private buildVesselIcon(
+    headingDeg: number,
+    lengthM: number,
+    minLengthM: number,
+    isStale: boolean,
+    isOwn: boolean,
+    mmsi: string,
+  ): unknown {
+    let drawLength = lengthM;
+    if (drawLength < minLengthM) drawLength = minLengthM;
+
+    const heightPx = Math.max(14, Math.round(this.metresToPixels(drawLength)));
+    const widthPx = Math.round(heightPx * VESSEL_ICON_ASPECT);
+    const anchorX = widthPx / 2;
+    const anchorY = heightPx * VESSEL_ICON_ANCHOR_Y_FRAC;
+    const shadowId = `vessel-shadow-${mmsi.replace(/\W/g, '')}`;
+    const opacity = isStale ? 0.4 : 1;
+    const strokeWidth = isOwn ? 4 : 3;
+    const fillColor = isOwn ? VESSEL_FILL_OWN : VESSEL_FILL_OTHER;
+    const originY = `${VESSEL_ICON_ANCHOR_Y_FRAC * 100}%`;
+
+    const html = `<div class="vessel-marker-wrap" style="width:${widthPx}px;height:${heightPx}px;opacity:${opacity};">
+      <div class="vessel-marker-inner" style="transform:rotate(${headingDeg}deg);transform-origin:50% ${originY};width:100%;height:100%;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 60" width="100%" height="100%">
+          <defs>
+            <filter id="${shadowId}" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.6"/>
+            </filter>
+          </defs>
+          <path d="M 20,2 L 38,50 L 20,38 L 2,50 Z"
+                fill="${fillColor}"
+                stroke="${VESSEL_STROKE_COLOR}"
+                stroke-width="${strokeWidth}"
+                stroke-linejoin="round"
+                filter="url(#${shadowId})" />
+        </svg>
+      </div>
+    </div>`;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (L as any).divIcon({
+      className: 'vessel-marker-leaflet',
+      html,
+      iconSize: [widthPx, heightPx],
+      iconAnchor: [anchorX, anchorY],
+    });
+  }
+
   private centerOnOwnVessel(force: boolean): void {
     if (!this.map || (!force && (this.userAdjustedMap || this.hasCenteredOnOwn))) return;
 
@@ -289,15 +505,17 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
 
   private clearMapLayers(): void {
     if (!this.map) return;
-    for (const m of this.markers.values()) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (this.map as any).removeLayer(m as any);
-    }
-    for (const c of this.circles.values()) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (this.map as any).removeLayer(c as any);
-    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const map = this.map as any;
+    for (const m of this.markers.values()) map.removeLayer(m);
+    for (const c of this.circles.values()) map.removeLayer(c);
+    for (const a of this.anchorMarkers.values()) map.removeLayer(a);
+    if (this.monitoringCircle) map.removeLayer(this.monitoringCircle);
+    if (this.centreMarker) map.removeLayer(this.centreMarker);
     this.markers.clear();
     this.circles.clear();
+    this.anchorMarkers.clear();
+    this.monitoringCircle = null;
+    this.centreMarker = null;
   }
 }
