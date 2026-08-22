@@ -8,9 +8,20 @@ import {
   emptyCell,
 } from '../models/sail-plan.model';
 
-const NEAR_TWA_DEG = 4;
-const NEAR_TWS_KN = 1.5;
+export const NEAR_TWA_ENTER_DEG = 4;
+export const NEAR_TWA_EXIT_DEG = 7;
+export const NEAR_TWS_ENTER_KN = 1.5;
+export const NEAR_TWS_EXIT_KN = 2.5;
 const LOW_POLAR_PCT = 85;
+
+/** How close the value is to a band edge (degrees or knots). */
+export interface EdgeProximity {
+  toLower: number;
+  toUpper: number;
+  nearEnter: boolean;
+  nearExit: boolean;
+  hints: string[];
+}
 
 export function findBandIndex(bands: WindBand[], value: number): number {
   if (bands.length === 0) return -1;
@@ -74,7 +85,14 @@ export function adviseSailPlan(
     const idx = findBandIndex(twaBands, twa);
     const cell = plan.heavyWeather.cells[idx] ?? emptyCell();
     const band = twaBands[idx] ?? { from: 0, to: 180 };
-    return finishAdvice(cell, band, { from: plan.heavyWeather.twsFrom, to: 99 }, true, polarPct, nearHeavy(twa, twaBands, idx));
+    return finishAdvice(
+      cell,
+      band,
+      { from: plan.heavyWeather.twsFrom, to: 99 },
+      true,
+      polarPct,
+      nearHeavy(twa, twaBands, idx),
+    );
   }
 
   const twaBands = bandsFromCuts(plan.twaCuts);
@@ -96,32 +114,26 @@ export function adviseSailPlan(
   const cell = plan.cells[ri]?.[ci] ?? emptyCell();
 
   const neighbors: SailPlanCell[] = [];
-  const hints: string[] = [];
+  const twaProx = edgeProximity(twa, twaBands, ri, NEAR_TWA_ENTER_DEG, NEAR_TWA_EXIT_DEG, '° TWA');
+  const twsProx = edgeProximity(twsKnots, twsBands, ci, NEAR_TWS_ENTER_KN, NEAR_TWS_EXIT_KN, ' kn TWS');
 
-  const twaNear = nearEdges(twa, twaBands, ri, NEAR_TWA_DEG);
-  if (twaNear.prev) {
+  if (ri > 0 && twaProx.toLower <= NEAR_TWA_ENTER_DEG) {
     neighbors.push(plan.cells[ri - 1]?.[ci] ?? emptyCell());
-    hints.push(`near ${twaBands[ri].from}° TWA`);
   }
-  if (twaNear.next) {
+  if (ri < twaBands.length - 1 && twaProx.toUpper <= NEAR_TWA_ENTER_DEG) {
     neighbors.push(plan.cells[ri + 1]?.[ci] ?? emptyCell());
-    hints.push(`near ${twaBands[ri].to}° TWA`);
   }
-
-  const twsNear = nearEdges(twsKnots, twsBands, ci, NEAR_TWS_KN);
-  if (twsNear.prev) {
+  if (ci > 0 && twsProx.toLower <= NEAR_TWS_ENTER_KN) {
     neighbors.push(plan.cells[ri]?.[ci - 1] ?? emptyCell());
-    hints.push(`near ${twsBands[ci].from} kn TWS`);
   }
-  if (twsNear.next) {
+  if (ci < twsBands.length - 1 && twsProx.toUpper <= NEAR_TWS_ENTER_KN) {
     neighbors.push(plan.cells[ri]?.[ci + 1] ?? emptyCell());
-    hints.push(`near ${twsBands[ci].to} kn TWS`);
   }
 
-  const extraAlts = uniqueAlternatives(cell, neighbors);
+  const hints = [...twaProx.hints, ...twsProx.hints];
   const merged: SailPlanCell = {
     ...cell,
-    alternatives: extraAlts,
+    alternatives: uniqueAlternatives(cell, neighbors),
   };
 
   const nearCrossover = hints.length > 0;
@@ -131,8 +143,70 @@ export function adviseSailPlan(
     twsBands[ci],
     false,
     polarPct,
-    nearCrossover ? `Close to a cutover (${hints.join(', ')}) — alternatives may be equally valid.` : undefined,
+    nearCrossover
+      ? `Near a cutover (${hints.join(', ')}) — neighboring sail options may also fit.`
+      : undefined,
   );
+}
+
+/** Distance to band edges; used for sticky near-cutover hysteresis. */
+export function edgeProximity(
+  value: number,
+  bands: WindBand[],
+  idx: number,
+  enterThreshold: number,
+  exitThreshold: number,
+  unitLabel: string,
+): EdgeProximity {
+  const band = bands[idx];
+  if (!band) {
+    return { toLower: Infinity, toUpper: Infinity, nearEnter: false, nearExit: false, hints: [] };
+  }
+  const toLower = idx > 0 ? Math.abs(value - band.from) : Infinity;
+  const toUpper = idx < bands.length - 1 ? Math.abs(value - band.to) : Infinity;
+  const hints: string[] = [];
+  if (idx > 0 && toLower <= enterThreshold) hints.push(`near ${band.from}${unitLabel}`);
+  if (idx < bands.length - 1 && toUpper <= enterThreshold) hints.push(`near ${band.to}${unitLabel}`);
+  const nearEnter = hints.length > 0;
+  const nearExit =
+    (idx > 0 && toLower <= exitThreshold) ||
+    (idx < bands.length - 1 && toUpper <= exitThreshold);
+  return { toLower, toUpper, nearEnter, nearExit, hints };
+}
+
+/**
+ * Whether live TWA/TWS are still inside the sticky near-cutover zone for the given plan.
+ * Used so the UI can keep showing a cutover hint until conditions clearly leave the seam.
+ */
+export function stillNearCrossoverExit(
+  plan: SailPlan,
+  twaDeg: number,
+  twsKnots: number,
+): boolean {
+  const twa = Math.abs(twaDeg);
+  if (plan.heavyWeather?.enabled && twsKnots >= plan.heavyWeather.twsFrom) {
+    const bands = bandsFromCuts(plan.heavyWeather.twaCuts);
+    const idx = findBandIndex(bands, twa);
+    return edgeProximity(twa, bands, idx, NEAR_TWA_ENTER_DEG, NEAR_TWA_EXIT_DEG, '').nearExit;
+  }
+  const twaBands = bandsFromCuts(plan.twaCuts);
+  const twsBands = bandsFromCuts(plan.twsCuts);
+  const ri = findBandIndex(twaBands, twa);
+  const ci = findBandIndex(twsBands, twsKnots);
+  const twaProx = edgeProximity(twa, twaBands, ri, NEAR_TWA_ENTER_DEG, NEAR_TWA_EXIT_DEG, '');
+  const twsProx = edgeProximity(twsKnots, twsBands, ci, NEAR_TWS_ENTER_KN, NEAR_TWS_EXIT_KN, '');
+  return twaProx.nearExit || twsProx.nearExit;
+}
+
+export function adviceBandKey(advice: SailAdvice): string {
+  return [
+    advice.heavyWeather ? 'h' : 'n',
+    advice.twaBand.from,
+    advice.twaBand.to,
+    advice.twsBand.from,
+    advice.twsBand.to,
+    advice.primary,
+  ].join('|');
 }
 
 function finishAdvice(
@@ -184,28 +258,14 @@ function uniqueAlternatives(current: SailPlanCell, neighbors: SailPlanCell[]): s
   return out.filter(a => a.toLowerCase() !== primaryKey);
 }
 
-function nearEdges(
-  value: number,
-  bands: WindBand[],
-  idx: number,
-  threshold: number,
-): { prev: boolean; next: boolean } {
-  const band = bands[idx];
-  if (!band) return { prev: false, next: false };
-  return {
-    prev: idx > 0 && Math.abs(value - band.from) <= threshold,
-    next: idx < bands.length - 1 && Math.abs(value - band.to) <= threshold,
-  };
-}
-
 function nearHeavy(
   twa: number,
   bands: WindBand[],
   idx: number,
 ): string | undefined {
-  const near = nearEdges(twa, bands, idx, NEAR_TWA_DEG);
-  if (near.prev || near.next) {
-    return 'Close to a heavy-weather TWA cutover — confirm sea state before changing sail.';
+  const prox = edgeProximity(twa, bands, idx, NEAR_TWA_ENTER_DEG, NEAR_TWA_EXIT_DEG, '° TWA');
+  if (prox.nearEnter) {
+    return 'Near a heavy-weather TWA cutover — confirm sea state before changing sail.';
   }
   return undefined;
 }

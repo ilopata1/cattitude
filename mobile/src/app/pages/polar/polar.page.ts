@@ -7,6 +7,7 @@ import { PolarLiveState, PolarSample } from '../../core/models/polar.model';
 import { PolarService } from '../../core/services/polar.service';
 import { SignalKService } from '../../core/services/signal-k.service';
 import { SailAdvice, formatBand } from '../../core/models/sail-plan.model';
+import { SailAdviceStabilizer } from '../../core/services/sail-advice-stabilizer';
 import { SailPlanService } from '../../core/services/sail-plan.service';
 
 const WINDOW_MS = 15 * 60 * 1000;
@@ -61,6 +62,7 @@ export class PolarPage implements OnInit, OnDestroy {
 
   private samples: PolarSample[] = [];
   private subs: Subscription[] = [];
+  private readonly adviceStabilizer = new SailAdviceStabilizer();
 
   constructor(
     private readonly polar: PolarService,
@@ -87,6 +89,7 @@ export class PolarPage implements OnInit, OnDestroy {
       }),
       this.sailPlans.plan$.subscribe(plan => {
         this.planName = plan.name;
+        this.adviceStabilizer.reset();
         this.refreshAdvice();
         this.cdr.markForCheck();
       }),
@@ -155,10 +158,16 @@ export class PolarPage implements OnInit, OnDestroy {
   }
 
   private refreshAdvice(): void {
-    this.advice = this.sailPlans.advise(
+    const raw = this.sailPlans.advise(
       this.live.twaDeg,
       this.live.twsKnots,
       this.live.instantPolarPct,
+    );
+    this.advice = this.adviceStabilizer.update(
+      this.sailPlans.plan,
+      raw,
+      this.live.twaDeg,
+      this.live.twsKnots,
     );
   }
 

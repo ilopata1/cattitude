@@ -1,0 +1,123 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+svg {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+
+.fixed-dial-background {
+  fill: var(--skip-grey-color);
+}
+
+.rotating-dial-Backplate {
+  stroke: var(--mat-sys-background);
+  fill: none;
+  stroke-width: 95;
+}
+
+.starboard  {
+  stroke: var(--skip-starboard-color);
+}
+
+.port {
+  stroke: var(--skip-port-color);
+}
+
+.heading-background {
+  stroke: var(--skip-grey-color);
+  fill: var(--skip-widget-card-background-color);
+}
+
+.boat {
+  stop-color: var(--skip-grey-color) !important;
+}
+
+.contrast-text {
+  fill: var(--skip-contrast-color);
+}
+
+.contrast-stroke {
+  stroke: var(--skip-contrast-color);
+}
+
+.card-color {
+  fill: var(--skip-widget-card-background-color);
+}
+
+.true-wind {
+  fill: var(--skip-yellow-color);
+}
+
+.true-wind-label {
+  fill: var(--skip-yellow-dim-color);
+}
+
+.app-wind {
+    fill: var(--skip-orange-color);
+}
+
+.app-wind-label {
+    fill: var(--skip-orange-dim-color);
+}
+
+.course-over-ground {
+  fill: var(--skip-pink-color);
+}
+
+.next-waypoint {
+  stroke: var(--skip-green-color);
+}
+
+.next-waypoint-bar {
+  stroke: var(--skip-grey-color);
+}
+
+.laylines {
+  stroke:  var(--skip-contrast-color);
+}
+
+.wind-sector-port {
+  fill: var(--skip-port-color);
+}
+
+.wind-sector-stbd {
+  fill: var(--skip-starboard-color);
+}
+
+.drift-arrow {
+  stop-color: var(--skip-blue-color);
+}
+
+.crosshair {
+  fill: none;
+  stroke: var(--skip-contrast-color);
+  stroke-width: 3;
+  stroke-linecap: round;
+  opacity: 0.38;
+}
+
+.rudder-stbd,
+.rudder-port {
+  fill: none;
+  stroke-width: 39.6875;
+  stroke-linecap: butt;
+  stroke-dasharray: 100 100;
+  // The dial's port/starboard band colours are too dark to read on this thin bar; lift them
+  // per-theme without disturbing the shared band/sector colours.
+  filter: brightness(1.8);
+}
+
+.rudder-stbd {
+  stroke: var(--skip-starboard-color);
+}
+
+.rudder-port {
+  stroke: var(--skip-port-color);
+}

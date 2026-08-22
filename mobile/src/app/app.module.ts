@@ -10,6 +10,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ContentService } from './core/services/content.service';
 import { GuideLoadService } from './core/services/guide-load.service';
+import { InstrumentMapService } from './core/services/instrument-map.service';
 import { SailPlanService } from './core/services/sail-plan.service';
 import { VesselContextService } from './core/services/vessel-context.service';
 import { VesselResolverService } from './core/services/vessel-resolver.service';
@@ -40,6 +41,7 @@ import { SharedModule } from './shared/shared.module';
         VesselContextService,
         GuideLoadService,
         SailPlanService,
+        InstrumentMapService,
       ],
       multi: true,
     },

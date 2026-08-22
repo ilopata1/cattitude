@@ -1,0 +1,34 @@
+.essentials {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 0 12px 12px;
+
+  &.stale {
+    opacity: 0.5;
+  }
+}
+
+.card {
+  background: var(--cattitude-navy-light, #152a45);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ion-color-medium);
+}
+
+.value {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--ion-text-color);
+  line-height: 1.1;
+}

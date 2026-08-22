@@ -1,29 +1,20 @@
 <div class="sail-page">
 
-  <!-- No Signal-K URL configured -->
   <div *ngIf="!hasSignalKUrl" class="no-connection">
     <div class="no-connection-icon">⛵</div>
     <h2 class="no-connection-title">Connect to Signal-K</h2>
     <p class="no-connection-body">
-      Configure your vessel's Signal-K server URL in Settings to access
-      live instrument data, dashboards, and anchor watch.
+      Configure your vessel's Signal-K server URL in Settings to see live
+      wind, depth, and speed instruments.
     </p>
     <ion-button [routerLink]="routes.tabs('settings')" color="primary" fill="solid">
       Open Settings
     </ion-button>
   </div>
 
-  <!-- Skip instrument panel iframe.
-       Omit allow-top-navigation so a Skip Sign-in redirect cannot unload the whole Cattitude app
-       onto https://<pages-host>/admin (404 / ERR_CACHE_MISS). -->
-  <iframe
-    *ngIf="hasSignalKUrl && skipUrl"
-    [src]="skipUrl"
-    class="skip-iframe"
-    title="Skip instrument panel"
-    allow="fullscreen"
-    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
-    frameborder="0"
-  ></iframe>
+  <div *ngIf="hasSignalKUrl" class="instruments">
+    <app-wind-steer-panel></app-wind-steer-panel>
+    <app-sail-essentials></app-sail-essentials>
+  </div>
 
 </div>

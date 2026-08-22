@@ -12,18 +12,13 @@
   background: var(--cattitude-navy, #0d2137);
 }
 
-/* ── Skip iframe ─────────────────────────────────────────────────── */
-
-.skip-iframe {
+.instruments {
   flex: 1;
-  width: 100%;
-  height: 100%;
-  border: none;
-  display: block;
-  background: transparent;
+  display: flex;
+  flex-direction: column;
+  padding-top: 8px;
+  overflow-y: auto;
 }
-
-/* ── No-connection prompt ────────────────────────────────────────── */
 
 .no-connection {
   flex: 1;

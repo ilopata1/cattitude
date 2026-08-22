@@ -1,0 +1,19 @@
+/**
+ * Skip instrument CSS variables mapped to Cattitude tokens.
+ * Source widgets: skip/src/app/widgets/svg-windsteer (MIT).
+ */
+:host {
+  --skip-grey-color: rgba(255, 255, 255, 0.22);
+  --skip-widget-card-background-color: var(--cattitude-navy-light, #152a45);
+  --skip-contrast-color: rgba(255, 255, 255, 0.92);
+  --skip-starboard-color: #3d9a5c;
+  --skip-port-color: #c0392b;
+  --skip-yellow-color: #d4a017;
+  --skip-yellow-dim-color: #a88412;
+  --skip-orange-color: #e67e22;
+  --skip-orange-dim-color: #b8651a;
+  --skip-pink-color: #e056fd;
+  --skip-green-color: #2ecc71;
+  --skip-blue-color: #3498db;
+  --mat-sys-background: var(--cattitude-navy, #0d2137);
+}

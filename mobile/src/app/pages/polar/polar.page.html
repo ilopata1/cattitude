@@ -131,7 +131,10 @@
   <ion-card class="advice-card" [class.stale]="live.stale">
     <ion-card-header>
       <ion-card-subtitle>Sail plan{{ planName ? ' · ' + planName : '' }}</ion-card-subtitle>
-      <ion-card-title *ngIf="advice && !advice.empty">{{ advice.primary || 'No primary set for this band' }}</ion-card-title>
+      <ng-container *ngIf="advice && !advice.empty">
+        <p class="recommend-label">Recommended for current conditions</p>
+        <ion-card-title>{{ advice.primary || 'No primary set for this band' }}</ion-card-title>
+      </ng-container>
       <ion-card-title *ngIf="!advice">Waiting for TWA and TWS</ion-card-title>
       <ion-card-title *ngIf="advice?.empty">This band is empty — add a recommendation in the editor</ion-card-title>
     </ion-card-header>
@@ -141,10 +144,10 @@
         · {{ advice.heavyWeather ? 'heavy weather' : formatBand(advice.twsBand, 'kn') + ' TWS' }}
       </p>
       <div class="alts" *ngIf="advice.alternatives.length">
-        <div class="alts-label">{{ advice.nearCrossover ? 'Close alternatives' : 'Alternatives' }}</div>
+        <div class="alts-label">{{ advice.nearCrossover ? 'Also consider near this cutover' : 'Alternatives' }}</div>
         <ion-chip *ngFor="let alt of advice.alternatives">{{ alt }}</ion-chip>
       </div>
-      <p class="advice-note" *ngIf="advice.crossoverHint">{{ advice.crossoverHint }}</p>
+      <p class="advice-note crossover" *ngIf="advice.crossoverHint">{{ advice.crossoverHint }}</p>
       <p class="advice-note warn" *ngIf="advice.performanceHint">{{ advice.performanceHint }}</p>
       <p class="advice-note" *ngIf="advice.notes">{{ advice.notes }}</p>
       <p class="advice-note avoid" *ngIf="advice.avoid">Avoid: {{ advice.avoid }}</p>

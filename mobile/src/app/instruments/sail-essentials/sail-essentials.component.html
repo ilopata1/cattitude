@@ -1,0 +1,10 @@
+<div class="essentials" [class.stale]="essentials().stale">
+  <div class="card">
+    <span class="label">Depth</span>
+    <span class="value">{{ formatDepth(essentials().depthM) }}</span>
+  </div>
+  <div class="card">
+    <span class="label">Speed</span>
+    <span class="value">{{ formatSpeed(essentials().speedKn, essentials().speedSource) }}</span>
+  </div>
+</div>
