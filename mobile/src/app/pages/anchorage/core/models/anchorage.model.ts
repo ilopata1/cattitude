@@ -21,3 +21,15 @@ export const DEFAULT_ANCHORAGE_SETTINGS: AnchorageSettings = {
   windRangeStartDeg: 0,
   windRangeEndDeg: 90,
 };
+
+export interface AnchorageAlert {
+  id: string;
+  vesselMmsi: string;
+  otherMmsi: string;
+  vesselName: string;
+  otherName: string;
+  type: 'collision' | 'rode_conflict';
+  state: 'red' | 'amber';
+  timestamp: number;
+  resolved: boolean;
+}

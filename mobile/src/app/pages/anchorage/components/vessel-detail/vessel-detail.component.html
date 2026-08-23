@@ -1,0 +1,40 @@
+<div class="vessel-detail-panel" (click)="$event.stopPropagation()">
+  <div class="handle-bar" (click)="onDismiss()">
+    <div class="handle"></div>
+  </div>
+
+  <div class="vessel-header">
+    <div class="vessel-name">
+      <h2>{{ displayName }}</h2>
+      <span class="mmsi" *ngIf="vessel.name && vessel.name !== vessel.mmsi">MMSI {{ vessel.mmsi }}</span>
+    </div>
+    <div class="state-badge" [style.background]="stateColor">{{ stateLabel }}</div>
+  </div>
+
+  <div class="detail-grid">
+    <div class="detail-item">
+      <span class="label">Length</span>
+      <span class="value">{{ vessel.lengthMetres | number:'1.0-0' }} m</span>
+    </div>
+    <div class="detail-item">
+      <span class="label">Positions</span>
+      <span class="value">{{ positionCount }} · {{ vessel.confidence }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="label">Last Update</span>
+      <span class="value" [class.stale]="isStale">{{ lastUpdateAge }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="label">Anchor Point</span>
+      <span class="value">{{ anchorCoords }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="label">Swing Radius</span>
+      <span class="value">{{ vessel.swingRadius | number:'1.0-0' }} m</span>
+    </div>
+    <div class="detail-item" *ngIf="vessel.isOwn">
+      <span class="label">Status</span>
+      <span class="value own-vessel">Own Vessel</span>
+    </div>
+  </div>
+</div>

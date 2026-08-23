@@ -53,6 +53,18 @@ export class NotificationBridgeService implements OnDestroy {
     ).subscribe(delta => this.handleDelta(delta));
   }
 
+  /**
+   * Fire a local/device notification from app logic (e.g. anchorage conflict).
+   * Uses the same Capacitor / browser path as Signal-K alarms, with cooldown per key.
+   */
+  notifyAppEvent(key: string, title: string, body: string): void {
+    const now = Date.now();
+    const lastFired = this.notifiedAt.get(key) ?? 0;
+    if (now - lastFired < NOTIFICATION_COOLDOWN_MS) return;
+    this.notifiedAt.set(key, now);
+    void this.fireNotification(key, { state: 'alarm', message: body }, title);
+  }
+
   stop(): void {
     this.sub?.unsubscribe();
     this.sub = null;
@@ -83,8 +95,12 @@ export class NotificationBridgeService implements OnDestroy {
     }
   }
 
-  private async fireNotification(path: string, value: SkNotificationValue): Promise<void> {
-    const title = this.titleForPath(path, value.state ?? 'alarm');
+  private async fireNotification(
+    path: string,
+    value: SkNotificationValue,
+    titleOverride?: string,
+  ): Promise<void> {
+    const title = titleOverride ?? this.titleForPath(path, value.state ?? 'alarm');
     const body  = value.message ?? `Signal-K notification on ${path}`;
     const id    = this.nextId++;
 

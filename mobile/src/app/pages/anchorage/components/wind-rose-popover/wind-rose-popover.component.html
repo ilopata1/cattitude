@@ -1,0 +1,83 @@
+<ion-button
+  id="anchorage-wind-rose-trigger"
+  fill="clear"
+  color="light"
+  class="wind-toolbar-btn"
+  aria-label="Expected wind direction"
+>
+  <ion-icon name="cloudy-outline" slot="icon-only"></ion-icon>
+</ion-button>
+
+<ion-popover
+  trigger="anchorage-wind-rose-trigger"
+  [dismissOnSelect]="false"
+  side="bottom"
+  alignment="end"
+  cssClass="wind-rose-popover-panel"
+>
+  <ng-template>
+    <div class="wind-popover-inner">
+      <div class="wind-popover-title">Expected wind (from)</div>
+
+      <svg
+        class="rose-svg"
+        viewBox="-18 -18 236 236"
+        width="196"
+        height="196"
+        (pointerdown)="onSvgPointerDown($event)"
+      >
+        <circle [attr.cx]="100" [attr.cy]="100" [attr.r]="88" class="rose-disk" />
+        <circle *ngIf="isFullCircle" [attr.cx]="100" [attr.cy]="100" [attr.r]="86" class="rose-sector-ok rose-full" />
+        <path *ngIf="!isFullCircle && dimSectorPath" [attr.d]="dimSectorPath" class="rose-sector-dim" />
+        <path *ngIf="!isFullCircle && sectorPath" [attr.d]="sectorPath" class="rose-sector-ok" />
+        <circle [attr.cx]="100" [attr.cy]="100" [attr.r]="88" class="rose-ring" fill="none" />
+
+        <g *ngFor="let lb of labels">
+          <text
+            [attr.x]="labelXY(lb.bearing).x"
+            [attr.y]="labelXY(lb.bearing).y"
+            class="rose-label"
+            text-anchor="middle"
+            dominant-baseline="middle"
+          >{{ lb.text }}</text>
+        </g>
+
+        <line class="rose-tick" x1="100" y1="18" x2="100" y2="28" />
+        <line class="rose-tick" x1="182" y1="100" x2="172" y2="100" />
+        <line class="rose-tick" x1="100" y1="182" x2="100" y2="172" />
+        <line class="rose-tick" x1="18" y1="100" x2="28" y2="100" />
+
+        <circle [attr.cx]="handleStartXY().x" [attr.cy]="handleStartXY().y" r="9" class="rose-handle rose-handle-start" />
+        <circle [attr.cx]="handleEndXY().x" [attr.cy]="handleEndXY().y" r="9" class="rose-handle rose-handle-end" />
+      </svg>
+
+      <p class="rose-legend">
+        <span class="lg-ok">Green</span> = expected wind from this arc.
+        <span class="lg-dim">Dim</span> = outside the range.
+      </p>
+
+      <ion-item lines="none" class="wind-toggle-item">
+        <ion-label>Use in swing calculations</ion-label>
+        <ion-toggle
+          slot="end"
+          [checked]="windUseInSwing"
+          (ionChange)="onUseWindToggle($any($event).detail.checked)"
+        ></ion-toggle>
+      </ion-item>
+
+      <ion-button
+        expand="block"
+        fill="outline"
+        color="primary"
+        (click)="loadForecast()"
+        [disabled]="forecastLoading"
+      >
+        {{ forecastLoading ? 'Loading…' : 'Retrieve weather' }}
+      </ion-button>
+      <p class="forecast-hint" *ngIf="forecastError">{{ forecastError }}</p>
+      <p class="forecast-hint subtle">
+        Uses Open-Meteo hourly wind direction (10 m) for the map centre.
+      </p>
+    </div>
+  </ng-template>
+</ion-popover>

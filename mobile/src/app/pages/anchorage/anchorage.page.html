@@ -2,16 +2,30 @@
   <ion-toolbar color="primary">
     <ion-title>Anchorage</ion-title>
     <ion-buttons slot="end">
+      <app-wind-rose-popover [mapCentre]="windMapCentre"></app-wind-rose-popover>
       <ion-button (click)="clearAll()" title="Clear all vessels">
         <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
+  <ion-toolbar color="primary">
+    <ion-segment
+      [value]="viewMode"
+      (ionChange)="onViewModeChange($any($event).detail.value)"
+      class="view-mode-segment"
+    >
+      <ion-segment-button value="myboat">
+        <ion-label>My Boat</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="anchorage">
+        <ion-label>Anchorage</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content>
 
-  <!-- No Signal-K connection banner -->
   <ion-card *ngIf="!skConnected" color="warning" class="status-card">
     <ion-card-content>
       <ion-icon name="warning-outline"></ion-icon>
@@ -19,9 +33,14 @@
     </ion-card-content>
   </ion-card>
 
-  <!-- Map -->
   <div class="map-wrapper">
+    <app-anchorage-alert-banner
+      [alerts]="activeAlerts"
+      (alertTapped)="focusOnAlert($event)"
+    ></app-anchorage-alert-banner>
+
     <div #mapContainer class="leaflet-map"></div>
+
     <ion-button
       class="recenter-btn"
       fill="solid"
@@ -33,15 +52,21 @@
     >
       <ion-icon name="locate-outline" slot="icon-only"></ion-icon>
     </ion-button>
+
+    <app-anchorage-vessel-detail
+      *ngIf="selectedVessel"
+      [vessel]="selectedVessel"
+      (dismiss)="dismissVesselDetail()"
+    ></app-anchorage-vessel-detail>
   </div>
 
-  <!-- Controls strip -->
   <div class="controls-strip">
     <ion-button
       [color]="isRecording ? 'danger' : 'success'"
       (click)="isRecording ? stopRecording() : startRecording()"
       [disabled]="!skConnected"
-      size="small">
+      size="small"
+    >
       <ion-icon [name]="isRecording ? 'stop-circle-outline' : 'radio-button-on-outline'" slot="start"></ion-icon>
       {{ isRecording ? 'Stop Recording' : 'Start Recording' }}
     </ion-button>
@@ -50,20 +75,18 @@
     </ion-note>
   </div>
 
-  <!-- Own MMSI setting -->
   <ion-item class="mmsi-item">
     <ion-label position="stacked">Own MMSI</ion-label>
     <ion-input [formControl]="ownMmsiControl" placeholder="e.g. 123456789" inputmode="numeric" clearInput></ion-input>
     <ion-button slot="end" fill="clear" (click)="saveOwnMmsi()">Save</ion-button>
   </ion-item>
 
-  <!-- Vessel list -->
-  <ion-list *ngIf="vessels.length > 0">
+  <ion-list *ngIf="listVessels.length > 0">
     <ion-list-header>
-      <ion-label>Vessels ({{ vessels.length }})</ion-label>
+      <ion-label>Vessels ({{ listVessels.length }})</ion-label>
     </ion-list-header>
 
-    <ion-item *ngFor="let v of vessels; trackBy: trackByMmsi">
+    <ion-item *ngFor="let v of listVessels; trackBy: trackByMmsi" button (click)="selectVessel(v)">
       <ion-label>
         <h2>{{ displayName(v) }}</h2>
         <p *ngIf="hasShipName(v)">MMSI {{ v.mmsi }} · {{ v.lengthMetres | number:'1.0-0' }} m</p>
@@ -79,7 +102,7 @@
     </ion-item>
   </ion-list>
 
-  <div *ngIf="vessels.length === 0 && isRecording" class="empty-hint">
+  <div *ngIf="listVessels.length === 0 && isRecording" class="empty-hint">
     <ion-icon name="boat-outline" class="empty-icon"></ion-icon>
     <p>Waiting for AIS data from Signal-K…</p>
   </div>

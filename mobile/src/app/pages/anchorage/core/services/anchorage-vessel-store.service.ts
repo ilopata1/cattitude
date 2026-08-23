@@ -22,7 +22,10 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SignalKService, SignalKDelta } from '../../../../core/services/signal-k.service';
+import { NotificationBridgeService } from '../../../../core/services/notification-bridge.service';
 import { AnchorageSettingsService } from './anchorage-settings.service';
+import { AnchorageAlertService } from './anchorage-alert.service';
+import { AnchoragePersistenceService } from './anchorage-persistence.service';
 import {
   Vessel, VesselUpdate, VesselPosition, LatLon,
 } from '../models/vessel.model';
@@ -38,6 +41,7 @@ const VESSEL_REMOVE_AGE_MS  = 60 * 60 * 1000;
 const STALE_THRESHOLD_MS    = 15 * 60 * 1000;
 const MPS_TO_KNOTS          = 1.94384;
 const RAD_TO_DEG            = 180 / Math.PI;
+const PERSIST_EVERY_N_UPDATES = 25;
 
 /** Partial accumulator while we wait for all paths to arrive for a context. */
 interface VesselPartial {
@@ -61,6 +65,8 @@ export class AnchorageVesselStoreService implements OnDestroy {
   private sub: Subscription | null = null;
   private recording             = false;
   private ownContext            = '';    // e.g. "vessels.urn:mrn:imo:mmsi:123"
+  private persistCounter        = 0;
+  private restored              = false;
 
   readonly vessels$: Observable<Vessel[]> = this.vesselMap.pipe(
     map(m => Array.from(m.values())),
@@ -69,6 +75,9 @@ export class AnchorageVesselStoreService implements OnDestroy {
   constructor(
     private readonly sk: SignalKService,
     private readonly settings: AnchorageSettingsService,
+    private readonly alerts: AnchorageAlertService,
+    private readonly persistence: AnchoragePersistenceService,
+    private readonly notifications: NotificationBridgeService,
   ) {
     // Track own context from SK hello.
     this.sk.self$.subscribe(self => { this.ownContext = self; });
@@ -80,10 +89,12 @@ export class AnchorageVesselStoreService implements OnDestroy {
 
   startRecording(): void {
     this.recording = true;
+    void this.ensureRestored();
   }
 
   stopRecording(): void {
     this.recording = false;
+    void this.persistence.saveSnapshot(Array.from(this.vesselMap.value.values()));
     const current = new Map(this.vesselMap.value);
     for (const v of current.values()) {
       if (v.positions.length > 0) v.positions = [v.positions[v.positions.length - 1]];
@@ -94,6 +105,7 @@ export class AnchorageVesselStoreService implements OnDestroy {
       v.tracked      = false;
     }
     this.vesselMap.next(current);
+    this.alerts.clear();
   }
 
   get isRecording(): boolean { return this.recording; }
@@ -112,6 +124,22 @@ export class AnchorageVesselStoreService implements OnDestroy {
   clear(): void {
     this.vesselMap.next(new Map());
     this.partials.clear();
+    this.alerts.clear();
+    void this.persistence.clear();
+  }
+
+  /** Merge persisted tracks into memory (once per session). */
+  async ensureRestored(): Promise<void> {
+    if (this.restored) return;
+    this.restored = true;
+    const stored = await this.persistence.loadRecentVessels();
+    if (stored.length === 0) return;
+    const current = new Map(this.vesselMap.value);
+    for (const v of stored) {
+      if (!current.has(v.mmsi)) current.set(v.mmsi, v);
+    }
+    this.vesselMap.next(current);
+    this.recalculateStates();
   }
 
   ngOnDestroy(): void { this.stop(); }
@@ -279,6 +307,14 @@ export class AnchorageVesselStoreService implements OnDestroy {
 
     this.vesselMap.next(current);
     this.recalculateStates();
+
+    if (this.recording && isTracked) {
+      this.persistCounter += 1;
+      if (this.persistCounter >= PERSIST_EVERY_N_UPDATES) {
+        this.persistCounter = 0;
+        void this.persistence.saveSnapshot(Array.from(this.vesselMap.value.values()));
+      }
+    }
   }
 
   private recalculateStates(): void {
@@ -298,6 +334,14 @@ export class AnchorageVesselStoreService implements OnDestroy {
       );
     }
     this.vesselMap.next(current);
+    this.alerts.evaluateAlerts(Array.from(current.values()));
+    for (const alert of this.alerts.consumeNewlyRaised()) {
+      const title = alert.state === 'red' ? 'Anchorage collision risk' : 'Anchorage rode conflict';
+      const body = alert.type === 'collision'
+        ? `${alert.vesselName} and ${alert.otherName}`
+        : `${alert.vesselName} near ${alert.otherName}`;
+      this.notifications.notifyAppEvent(`anchorage.${alert.id}`, title, body);
+    }
   }
 
   private getOrCreatePartial(ctx: string): VesselPartial {

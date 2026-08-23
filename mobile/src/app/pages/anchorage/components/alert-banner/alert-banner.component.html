@@ -1,0 +1,10 @@
+<div
+  class="alert-banner-container"
+  *ngIf="topAlert"
+  [style.background]="alertColor"
+  (click)="onTap()"
+>
+  <ion-icon [name]="topAlert.state === 'red' ? 'alert-circle' : 'warning'"></ion-icon>
+  <span class="message">{{ alertMessage }}</span>
+  <span class="count" *ngIf="alerts.length > 1">+{{ alerts.length - 1 }}</span>
+</div>

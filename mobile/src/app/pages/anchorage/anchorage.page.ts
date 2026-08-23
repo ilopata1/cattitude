@@ -7,8 +7,10 @@ import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { AnchorageVesselStoreService } from './core/services/anchorage-vessel-store.service';
 import { AnchorageSettingsService } from './core/services/anchorage-settings.service';
+import { AnchorageAlertService } from './core/services/anchorage-alert.service';
 import { SignalKService } from '../../core/services/signal-k.service';
-import { Vessel, VesselState } from './core/models/vessel.model';
+import { Vessel, VesselState, LatLon } from './core/models/vessel.model';
+import { AnchorageAlert } from './core/models/anchorage.model';
 
 // Leaflet is loaded dynamically to keep the bundle clean and avoid SSR issues.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -50,8 +52,12 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
   @ViewChild('mapContainer', { static: false }) mapContainer!: ElementRef<HTMLDivElement>;
 
   vessels: Vessel[] = [];
+  activeAlerts: AnchorageAlert[] = [];
+  selectedVessel: Vessel | null = null;
   isRecording = false;
   skConnected = false;
+  viewMode: 'myboat' | 'anchorage' = 'anchorage';
+  windMapCentre: LatLon | null = null;
 
   ownMmsiControl = new FormControl('');
 
@@ -71,12 +77,14 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
   constructor(
     private readonly vesselStore: AnchorageVesselStoreService,
     private readonly anchorSettings: AnchorageSettingsService,
+    private readonly alertService: AnchorageAlertService,
     private readonly sk: SignalKService,
     private readonly cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
     this.ownMmsiControl.setValue(this.anchorSettings.get().ownMmsi);
+    void this.vesselStore.ensureRestored();
 
     this.subs.push(
       this.sk.connected$.subscribe(c => {
@@ -90,7 +98,14 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
       this.vesselStore.vessels$.subscribe(vessels => {
         this.vessels = vessels;
         this.isRecording = this.vesselStore.isRecording;
+        if (this.selectedVessel) {
+          this.selectedVessel = vessels.find(v => v.mmsi === this.selectedVessel!.mmsi) ?? null;
+        }
         this.updateMap();
+        this.cdr.markForCheck();
+      }),
+      this.alertService.activeAlerts$.subscribe(alerts => {
+        this.activeAlerts = alerts;
         this.cdr.markForCheck();
       }),
     );
@@ -128,6 +143,28 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
     this.centerOnOwnVessel(true);
   }
 
+  onViewModeChange(mode: 'myboat' | 'anchorage'): void {
+    this.viewMode = mode;
+    this.updateMap();
+    this.cdr.markForCheck();
+  }
+
+  selectVessel(vessel: Vessel): void {
+    this.selectedVessel = vessel;
+    this.cdr.markForCheck();
+  }
+
+  dismissVesselDetail(): void {
+    this.selectedVessel = null;
+    this.cdr.markForCheck();
+  }
+
+  focusOnAlert(alert: AnchorageAlert): void {
+    const vessel = this.vessels.find(v => v.mmsi === alert.vesselMmsi)
+      ?? this.vessels.find(v => v.mmsi === alert.otherMmsi);
+    if (vessel) this.selectVessel(vessel);
+  }
+
   startRecording(): void {
     this.vesselStore.startRecording();
     this.isRecording = true;
@@ -150,7 +187,12 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
   clearAll(): void {
     this.stopRecording();
     this.vesselStore.clear();
+    this.selectedVessel = null;
     this.clearMapLayers();
+  }
+
+  get listVessels(): Vessel[] {
+    return this.filterVesselsForView(this.vessels);
   }
 
   // ---------------------------------------------------------------------------
@@ -225,6 +267,7 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
       if (e.originalEvent) this.userAdjustedMap = true;
     });
     map.on('zoomend', () => this.updateMap());
+    map.on('moveend', () => this.updateWindMapCentre());
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (L as any).tileLayer(ESRI_TILE_URL, {
@@ -234,6 +277,25 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (L as any).control.zoom({ position: 'bottomright' }).addTo(map);
+    this.updateWindMapCentre();
+  }
+
+  private updateWindMapCentre(): void {
+    if (!this.map) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const c = (this.map as any).getCenter();
+    this.windMapCentre = { lat: c.lat, lon: c.lng };
+    this.cdr.markForCheck();
+  }
+
+  private filterVesselsForView(vessels: Vessel[]): Vessel[] {
+    if (this.viewMode === 'anchorage') return vessels;
+    const conflicting = new Set<string>();
+    for (const a of this.activeAlerts) {
+      conflicting.add(a.vesselMmsi);
+      conflicting.add(a.otherMmsi);
+    }
+    return vessels.filter(v => v.isOwn || conflicting.has(v.mmsi));
   }
 
   private updateMap(): void {
@@ -241,12 +303,13 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const map = this.map as any;
+    const visible = this.filterVesselsForView(this.vessels);
     const seenMmsis = new Set<string>();
     const minLengthM = this.getMinVesselLengthMetres();
 
     this.updateMonitoringArea();
 
-    for (const vessel of this.vessels) {
+    for (const vessel of visible) {
       const last = vessel.positions[vessel.positions.length - 1];
       if (!last) continue;
 
@@ -274,6 +337,11 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
         const marker = (L as any).marker([last.lat, last.lon], { icon })
           .bindTooltip(label, { direction: 'top', offset: [0, -8], opacity: 0.85 })
           .addTo(map);
+        const mmsi = vessel.mmsi;
+        marker.on('click', () => {
+          const v = this.vessels.find(x => x.mmsi === mmsi);
+          if (v) this.selectVessel(v);
+        });
         this.markers.set(vessel.mmsi, marker);
       }
 

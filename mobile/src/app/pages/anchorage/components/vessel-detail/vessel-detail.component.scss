@@ -1,0 +1,81 @@
+.vessel-detail-panel {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 700;
+  background: rgba(15, 15, 30, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px 16px 0 0;
+  padding: 8px 16px 24px;
+  color: #fff;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+  max-height: 50%;
+  overflow-y: auto;
+}
+
+.handle-bar {
+  display: flex;
+  justify-content: center;
+  padding: 4px 0 12px;
+  cursor: pointer;
+
+  .handle {
+    width: 40px;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.3);
+  }
+}
+
+.vessel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+
+  .vessel-name {
+    h2 {
+      margin: 0 0 2px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .mmsi {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+  }
+
+  .state-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.detail-item {
+  .label {
+    display: block;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  .value {
+    font-size: 14px;
+    font-weight: 500;
+
+    &.stale { color: #f39c12; }
+    &.own-vessel { color: #2ecc71; font-weight: 600; }
+  }
+}

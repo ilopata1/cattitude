@@ -1,0 +1,31 @@
+.alert-banner-container {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  gap: 8px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 600;
+
+  ion-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .message {
+    flex: 1;
+  }
+
+  .count {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+  }
+}
