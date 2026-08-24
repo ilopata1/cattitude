@@ -3,6 +3,12 @@
     <ion-title>Anchorage</ion-title>
     <ion-buttons slot="end">
       <app-wind-rose-popover [mapCentre]="windMapCentre"></app-wind-rose-popover>
+      <ion-button
+        (click)="toggleLabels()"
+        [title]="showLabels ? 'Hide vessel names' : 'Show vessel names'"
+      >
+        <ion-icon [name]="showLabels ? 'pricetag' : 'pricetag-outline'" slot="icon-only"></ion-icon>
+      </ion-button>
       <ion-button (click)="clearAll()" title="Clear all vessels">
         <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
       </ion-button>
@@ -83,10 +89,10 @@
     <ion-item *ngFor="let v of listVessels; trackBy: trackByMmsi" button (click)="selectVessel(v)">
       <ion-label>
         <h2>{{ displayName(v) }}</h2>
-        <p *ngIf="hasShipName(v)">MMSI {{ v.mmsi }} · {{ v.lengthMetres | number:'1.0-0' }} m</p>
-        <p *ngIf="!hasShipName(v)">{{ v.lengthMetres | number:'1.0-0' }} m</p>
+        <p *ngIf="hasShipName(v)">MMSI {{ v.mmsi }} · {{ v.lengthMetres | metres }}</p>
+        <p *ngIf="!hasShipName(v)">{{ v.lengthMetres | metres }}</p>
         <p *ngIf="v.anchorPoint">
-          Swing radius {{ v.swingRadius | number:'1.0-0' }} m
+          Swing radius {{ v.swingRadius | metres }}
           · confidence {{ v.confidence }}
         </p>
       </ion-label>

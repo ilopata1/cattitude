@@ -14,7 +14,7 @@
   <div class="detail-grid">
     <div class="detail-item">
       <span class="label">Length</span>
-      <span class="value">{{ vessel.lengthMetres | number:'1.0-0' }} m</span>
+      <span class="value">{{ vessel.lengthMetres | metres }}</span>
     </div>
     <div class="detail-item">
       <span class="label">Positions</span>
@@ -22,7 +22,7 @@
     </div>
     <div class="detail-item">
       <span class="label">Last Update</span>
-      <span class="value" [class.stale]="isStale">{{ lastUpdateAge }}</span>
+      <span class="value" [class.stale]="isStale">{{ vessel.lastUpdated | age }}</span>
     </div>
     <div class="detail-item">
       <span class="label">Anchor Point</span>
@@ -30,7 +30,7 @@
     </div>
     <div class="detail-item">
       <span class="label">Swing Radius</span>
-      <span class="value">{{ vessel.swingRadius | number:'1.0-0' }} m</span>
+      <span class="value">{{ vessel.swingRadius | metres }}</span>
     </div>
     <div class="detail-item" *ngIf="vessel.isOwn">
       <span class="label">Status</span>

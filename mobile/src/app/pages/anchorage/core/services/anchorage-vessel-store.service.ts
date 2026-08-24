@@ -42,6 +42,8 @@ const STALE_THRESHOLD_MS    = 15 * 60 * 1000;
 const MPS_TO_KNOTS          = 1.94384;
 const RAD_TO_DEG            = 180 / Math.PI;
 const PERSIST_EVERY_N_UPDATES = 25;
+/** Re-check conflicts and ages even while AIS is silent. */
+const MAINTENANCE_INTERVAL_MS = 60_000;
 
 /** Partial accumulator while we wait for all paths to arrive for a context. */
 interface VesselPartial {
@@ -65,6 +67,7 @@ export class AnchorageVesselStoreService implements OnDestroy {
   private sub: Subscription | null = null;
   private hydrateSub: Subscription | null = null;
   private hydrateTimer: ReturnType<typeof setInterval> | null = null;
+  private maintenanceTimer: ReturnType<typeof setInterval> | null = null;
   private recording             = false;
   private ownContext            = '';    // e.g. "vessels.urn:mrn:imo:mmsi:123"
   private persistCounter        = 0;
@@ -126,6 +129,7 @@ export class AnchorageVesselStoreService implements OnDestroy {
     this.hydrateTimer = setInterval(() => {
       if (this.sk.state === 'connected') void this.hydrateFromRest();
     }, 60_000);
+    this.maintenanceTimer = setInterval(() => this.runMaintenance(), MAINTENANCE_INTERVAL_MS);
   }
 
   stop(): void {
@@ -137,7 +141,14 @@ export class AnchorageVesselStoreService implements OnDestroy {
       clearInterval(this.hydrateTimer);
       this.hydrateTimer = null;
     }
+    if (this.maintenanceTimer !== null) {
+      clearInterval(this.maintenanceTimer);
+      this.maintenanceTimer = null;
+    }
   }
+
+  /** True while deltas are being consumed. */
+  get isRunning(): boolean { return this.sub !== null; }
 
   clear(): void {
     this.vesselMap.next(new Map());
@@ -357,6 +368,32 @@ export class AnchorageVesselStoreService implements OnDestroy {
         void this.persistence.saveSnapshot(Array.from(this.vesselMap.value.values()));
       }
     }
+  }
+
+  /**
+   * AIS can go quiet for long stretches, so age-outs and conflict state cannot
+   * rely on incoming deltas alone.
+   */
+  private runMaintenance(): void {
+    const current = new Map(this.vesselMap.value);
+    const now = Date.now();
+    let changed = false;
+
+    for (const [mmsi, v] of current) {
+      if (now - v.lastUpdated > VESSEL_REMOVE_AGE_MS) {
+        current.delete(mmsi);
+        changed = true;
+        continue;
+      }
+      const pruned = prunePositions(v.positions);
+      if (pruned.length !== v.positions.length) {
+        v.positions = pruned;
+        changed = true;
+      }
+    }
+
+    if (changed) this.vesselMap.next(current);
+    this.recalculateStates();
   }
 
   private recalculateStates(): void {

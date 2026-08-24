@@ -15,14 +15,6 @@ export class AnchorageVesselDetailComponent {
     return this.vessel?.positions?.length || 0;
   }
 
-  get lastUpdateAge(): string {
-    if (!this.vessel) return '—';
-    const sec = Math.round((Date.now() - this.vessel.lastUpdated) / 1000);
-    if (sec < 60) return `${sec}s ago`;
-    if (sec < 3600) return `${Math.round(sec / 60)}m ago`;
-    return `${Math.round(sec / 3600)}h ago`;
-  }
-
   get isStale(): boolean {
     return this.vessel ? Date.now() - this.vessel.lastUpdated > 900_000 : false;
   }

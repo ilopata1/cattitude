@@ -3,7 +3,11 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AnchorageAlert } from '../models/anchorage.model';
 import { Vessel } from '../models/vessel.model';
-import { pairwiseSeverityBetweenAnchoredVessels } from '../calculators/anchor.calculator';
+import {
+  pairwiseSeverityBetweenAnchoredVessels,
+  canSwingConflictOccurForWindRange,
+} from '../calculators/anchor.calculator';
+import { AnchorageSettingsService } from './anchorage-settings.service';
 
 @Injectable({ providedIn: 'root' })
 export class AnchorageAlertService {
@@ -15,6 +19,8 @@ export class AnchorageAlertService {
 
   /** Pair keys newly introduced as unresolved conflicts since the last evaluate. */
   private readonly newlyRaised: AnchorageAlert[] = [];
+
+  constructor(private readonly settings: AnchorageSettingsService) {}
 
   consumeNewlyRaised(): AnchorageAlert[] {
     const out = [...this.newlyRaised];
@@ -28,6 +34,7 @@ export class AnchorageAlertService {
     const tracked = vessels.filter(
       v => v.tracked && v.anchorPoint && v.state !== 'moving' && v.state !== 'unknown',
     );
+    const s = this.settings.get();
 
     for (let i = 0; i < tracked.length; i++) {
       for (let j = i + 1; j < tracked.length; j++) {
@@ -35,6 +42,12 @@ export class AnchorageAlertService {
         const b = tracked[j];
         const sev = pairwiseSeverityBetweenAnchoredVessels(a, b);
         if (sev !== 'red' && sev !== 'amber') continue;
+        // Match the map: an overlap the expected wind can never realise is not a conflict.
+        if (
+          sev === 'amber'
+          && s.windUseInSwingCalculations
+          && !canSwingConflictOccurForWindRange(a, b, s.windRangeStartDeg, s.windRangeEndDeg)
+        ) continue;
 
         const pairKey = [a.mmsi, b.mmsi].sort().join('-');
         activeConflicts.add(pairKey);
