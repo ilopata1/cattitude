@@ -223,15 +223,6 @@
   line-height: 1.4;
   margin: 8px 0 0;
 
-  &.crossover {
-    color: var(--ion-color-medium-shade, #6d6d6d);
-  }
-
-  &.warn {
-    color: var(--ion-color-warning-shade, #c08c00);
-    font-weight: 600;
-  }
-
   &.avoid {
     color: var(--ion-color-danger);
   }

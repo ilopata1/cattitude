@@ -133,8 +133,6 @@
             {{ formatBand(w.advice.twaBand, '°') }} TWA
             · {{ w.advice.heavyWeather ? 'heavy weather' : formatBand(w.advice.twsBand, 'kn') + ' TWS' }}
           </p>
-          <p class="advice-note crossover" *ngIf="w.advice.crossoverHint">{{ w.advice.crossoverHint }}</p>
-          <p class="advice-note warn" *ngIf="w.advice.performanceHint">{{ w.advice.performanceHint }}</p>
           <p class="advice-note" *ngIf="w.advice.notes">{{ w.advice.notes }}</p>
           <p class="advice-note avoid" *ngIf="w.advice.avoid">Avoid: {{ w.advice.avoid }}</p>
         </ng-container>
