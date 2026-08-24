@@ -30,7 +30,8 @@ export class GuideSyncService {
 
   async fetchBundleFromApi(vesselSlug: string): Promise<BootstrapContent> {
     // No manifest hash available here; bust caches with a timestamp instead.
-    return this.fetchBundle(vesselSlug, `${Date.now()}`);
+    const guide = await this.fetchBundle(vesselSlug, `${Date.now()}`);
+    return this.rewriteAssetUrls(vesselSlug, guide);
   }
 
   async ensureGuide(vesselSlug: string): Promise<BootstrapContent> {
@@ -71,7 +72,12 @@ export class GuideSyncService {
   }
 
   private assetUrl(vesselSlug: string, path: string): string {
-    return `${environment.apiUrl}/api/v1/vessels/${vesselSlug}/guide/assets/${path}`;
+    const encoded = path
+      .replace(/^\/+/, '')
+      .split('/')
+      .map(segment => encodeURIComponent(segment))
+      .join('/');
+    return `${environment.apiUrl}/api/v1/vessels/${vesselSlug}/guide/assets/${encoded}`;
   }
 
   private async fetchManifest(vesselSlug: string): Promise<GuideManifest> {
@@ -118,13 +124,13 @@ export class GuideSyncService {
     const cloned = structuredClone(content) as BootstrapContent;
 
     if (cloned.branding?.headerLogo) {
-      cloned.branding.headerLogo = await this.store.resolveAssetUrl(
+      cloned.branding.headerLogo = await this.resolveDisplayUrl(
         vesselSlug,
         cloned.branding.headerLogo,
       );
     }
     if (cloned.branding?.heroLogo) {
-      cloned.branding.heroLogo = await this.store.resolveAssetUrl(
+      cloned.branding.heroLogo = await this.resolveDisplayUrl(
         vesselSlug,
         cloned.branding.heroLogo,
       );
@@ -156,11 +162,26 @@ export class GuideSyncService {
     const paths = [...new Set(html.match(ASSET_PATH_RE) ?? [])];
     let updated = html;
     for (const path of paths) {
-      const resolved = await this.store.resolveAssetUrl(vesselSlug, path);
+      const resolved = await this.resolveDisplayUrl(vesselSlug, path);
       if (resolved !== path) {
         updated = updated.split(path).join(resolved);
       }
     }
     return updated;
+  }
+
+  /**
+   * Prefer a cached blob URL. If the file is not in IndexedDB (common for
+   * Supernova logos, which are not in the GitHub Pages bundle), use the API.
+   */
+  private async resolveDisplayUrl(vesselSlug: string, logicalPath: string): Promise<string> {
+    const resolved = await this.store.resolveAssetUrl(vesselSlug, logicalPath);
+    if (resolved !== logicalPath) {
+      return resolved;
+    }
+    if (logicalPath.startsWith('assets/')) {
+      return this.assetUrl(vesselSlug, logicalPath);
+    }
+    return logicalPath;
   }
 }
