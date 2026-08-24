@@ -110,10 +110,7 @@
       </div>
     </div>
 
-    <h2 class="section-title">Sail plan{{ planName ? ' · ' + planName : '' }}</h2>
-    <p class="window-intro">
-      Each window uses mean TWA and TWS over that interval.
-    </p>
+    <h2 class="section-title">Sail Plan</h2>
     <div class="window-readouts">
       <article class="window-card" *ngFor="let w of windows; trackBy: trackWindow">
         <header class="window-head">
@@ -136,10 +133,6 @@
             {{ formatBand(w.advice.twaBand, '°') }} TWA
             · {{ w.advice.heavyWeather ? 'heavy weather' : formatBand(w.advice.twsBand, 'kn') + ' TWS' }}
           </p>
-          <div class="alts" *ngIf="w.advice.alternatives.length">
-            <div class="alts-label">{{ w.advice.nearCrossover ? 'Also consider near this cutover' : 'Alternatives' }}</div>
-            <ion-chip *ngFor="let alt of w.advice.alternatives">{{ alt }}</ion-chip>
-          </div>
           <p class="advice-note crossover" *ngIf="w.advice.crossoverHint">{{ w.advice.crossoverHint }}</p>
           <p class="advice-note warn" *ngIf="w.advice.performanceHint">{{ w.advice.performanceHint }}</p>
           <p class="advice-note" *ngIf="w.advice.notes">{{ w.advice.notes }}</p>

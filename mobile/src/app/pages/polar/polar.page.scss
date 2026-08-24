@@ -24,6 +24,7 @@
 
 .live-item {
   background: var(--ion-color-step-50);
+  border: 1px solid var(--ion-color-step-250, #c8c8c8);
   border-radius: 8px;
   padding: 10px 8px;
   text-align: center;
@@ -135,12 +136,6 @@
   }
 }
 
-.window-intro {
-  margin: -4px 0 10px;
-  font-size: 12px;
-  color: var(--ion-color-medium);
-}
-
 .window-readouts {
   display: grid;
   grid-template-columns: 1fr;
@@ -156,6 +151,7 @@
 
 .window-card {
   background: var(--ion-color-step-100);
+  border: 1px solid var(--ion-color-step-250, #c8c8c8);
   border-radius: 10px;
   padding: 14px 14px 12px;
   text-align: left;
@@ -220,18 +216,6 @@
   margin: 12px 0 0;
   font-size: 13px;
   color: var(--ion-color-medium);
-}
-
-.alts {
-  margin-top: 10px;
-}
-
-.alts-label {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--ion-color-medium);
-  margin-bottom: 4px;
 }
 
 .advice-note {

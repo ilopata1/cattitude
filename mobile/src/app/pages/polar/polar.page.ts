@@ -59,7 +59,6 @@ export class PolarPage implements OnInit, OnDestroy {
   };
 
   skConnected = false;
-  planName = '';
   windows: PolarWindowAssessment[] = [
     this.emptyAssessment(5),
     this.emptyAssessment(10),
@@ -113,8 +112,7 @@ export class PolarPage implements OnInit, OnDestroy {
         this.rebuildChart();
         this.cdr.markForCheck();
       }),
-      this.sailPlans.plan$.subscribe(plan => {
-        this.planName = plan.name;
+      this.sailPlans.plan$.subscribe(() => {
         this.refreshAssessments();
         this.cdr.markForCheck();
       }),
