@@ -61,8 +61,6 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
   private markers = new Map<string, unknown>();       // mmsi → L.Marker (boat icon)
   private circles = new Map<string, unknown>();       // mmsi → L.Circle
   private anchorMarkers = new Map<string, unknown>(); // mmsi → L.CircleMarker
-  private monitoringCircle: unknown = null;
-  private centreMarker: unknown = null;
   private subs: Subscription[] = [];
   private leafletReady = false;
   /** Set after the first successful center on own vessel. */
@@ -297,8 +295,6 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
     const seenMmsis = new Set<string>();
     const minLengthM = this.getMinVesselLengthMetres();
 
-    this.updateMonitoringArea();
-
     for (const vessel of visible) {
       const last = vessel.positions[vessel.positions.length - 1];
       if (!last) continue;
@@ -420,63 +416,6 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
     this.centerOnOwnVessel(false);
   }
 
-  private updateMonitoringArea(): void {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const map = this.map as any;
-    const settings = this.anchorSettings.get();
-    const own = this.vessels.find(v => v.isOwn);
-    const last = own?.positions[own.positions.length - 1];
-    const centre = settings.monitoringCentre
-      ?? (last ? { lat: last.lat, lon: last.lon } : null);
-
-    if (!this.isRecording || !centre) {
-      if (this.monitoringCircle) {
-        map.removeLayer(this.monitoringCircle);
-        this.monitoringCircle = null;
-      }
-      if (this.centreMarker) {
-        map.removeLayer(this.centreMarker);
-        this.centreMarker = null;
-      }
-      return;
-    }
-
-    const radius = settings.trackingRadiusM;
-    if (this.monitoringCircle) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (this.monitoringCircle as any).setLatLng([centre.lat, centre.lon]);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (this.monitoringCircle as any).setRadius(radius);
-    } else {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      this.monitoringCircle = (L as any).circle([centre.lat, centre.lon], {
-        radius,
-        color: '#ffffff',
-        weight: 1,
-        dashArray: '8,4',
-        fillOpacity: 0.03,
-        interactive: false,
-      }).addTo(map);
-    }
-
-    if (this.centreMarker) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (this.centreMarker as any).setLatLng([centre.lat, centre.lon]);
-    } else {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      this.centreMarker = (L as any).marker([centre.lat, centre.lon], {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        icon: (L as any).divIcon({
-          className: 'centre-marker',
-          html: '<div class="crosshair"></div>',
-          iconSize: [20, 20],
-          iconAnchor: [10, 10],
-        }),
-        interactive: false,
-      }).addTo(map);
-    }
-  }
-
   private getMinVesselLengthMetres(): number {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const map = this.map as any;
@@ -568,12 +507,8 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
     for (const m of this.markers.values()) map.removeLayer(m);
     for (const c of this.circles.values()) map.removeLayer(c);
     for (const a of this.anchorMarkers.values()) map.removeLayer(a);
-    if (this.monitoringCircle) map.removeLayer(this.monitoringCircle);
-    if (this.centreMarker) map.removeLayer(this.centreMarker);
     this.markers.clear();
     this.circles.clear();
     this.anchorMarkers.clear();
-    this.monitoringCircle = null;
-    this.centreMarker = null;
   }
 }
