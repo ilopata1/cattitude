@@ -302,8 +302,7 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
       seenMmsis.add(vessel.mmsi);
       const colour = STATE_COLOUR[vessel.state];
       const isStale = this.vesselStore.isStale(vessel);
-      const hasName = this.hasShipName(vessel);
-      const label = hasName ? vessel.name.trim() : `MMSI ${vessel.mmsi}`;
+      const label = this.tooltipLabel(vessel);
       const icon = this.buildVesselIcon(
         last.heading,
         vessel.lengthMetres,
@@ -318,11 +317,25 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
         const marker = this.markers.get(vessel.mmsi) as any;
         marker.setLatLng([last.lat, last.lon]);
         marker.setIcon(icon);
-        this.bindVesselLabel(marker, label, hasName);
+        if (marker.getTooltip?.()) marker.unbindTooltip();
+        marker.bindTooltip(label, {
+          permanent: false,
+          direction: 'top',
+          offset: [0, -8],
+          opacity: 0.9,
+          className: 'vessel-name-tooltip',
+        });
       } else {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const marker = (L as any).marker([last.lat, last.lon], { icon }).addTo(map);
-        this.bindVesselLabel(marker, label, hasName);
+        const marker = (L as any).marker([last.lat, last.lon], { icon })
+          .bindTooltip(label, {
+            permanent: false,
+            direction: 'top',
+            offset: [0, -8],
+            opacity: 0.9,
+            className: 'vessel-name-tooltip',
+          })
+          .addTo(map);
         const mmsi = vessel.mmsi;
         marker.on('click', () => {
           const v = this.vessels.find(x => x.mmsi === mmsi);
@@ -498,29 +511,6 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
     const zoom = force ? map.getZoom() : AnchoragePage.DEFAULT_ZOOM;
     map.setView([p.lat, p.lon], zoom, { animate: force });
     this.hasCenteredOnOwn = true;
-  }
-
-  /** Permanent label only for resolved ship names; MMSI stays hover/tap tooltip. */
-  private bindVesselLabel(marker: { bindTooltip: Function; setTooltipContent: Function; getTooltip?: Function; unbindTooltip?: Function }, label: string, permanent: boolean): void {
-    const opts = permanent
-      ? {
-          permanent: true,
-          direction: 'right',
-          offset: [14, 0],
-          opacity: 0.95,
-          className: 'vessel-name-tooltip',
-        }
-      : {
-          permanent: false,
-          direction: 'top',
-          offset: [0, -8],
-          opacity: 0.85,
-          className: 'vessel-name-tooltip',
-        };
-    if (marker.getTooltip?.()) {
-      marker.unbindTooltip?.();
-    }
-    marker.bindTooltip(label, opts);
   }
 
   private clearMapLayers(): void {
