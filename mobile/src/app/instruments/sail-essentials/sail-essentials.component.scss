@@ -5,12 +5,13 @@
   padding: 0 12px 12px;
 
   &.stale {
-    opacity: 0.5;
+    opacity: 0.55;
   }
 }
 
 .card {
-  background: var(--cattitude-navy-light, #152a45);
+  background: #fff;
+  border: 1px solid rgba(13, 33, 55, 0.1);
   border-radius: 10px;
   padding: 12px 14px;
   display: flex;
@@ -23,12 +24,12 @@
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--ion-color-medium);
+  color: var(--cattitude-text-light, #7a95a8);
 }
 
 .value {
   font-size: 1.35rem;
   font-weight: 700;
-  color: var(--ion-text-color);
+  color: var(--cattitude-navy, #0d2137);
   line-height: 1.1;
 }

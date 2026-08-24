@@ -1,19 +1,20 @@
 /**
- * Skip instrument CSS variables mapped to Cattitude tokens.
+ * Skip instrument CSS variables mapped for Cattitude's light (sand) surfaces.
+ * Compass tick/heading text use navy contrast; dial gaps match the page background.
  * Source widgets: skip/src/app/widgets/svg-windsteer (MIT).
  */
 :host {
-  --skip-grey-color: rgba(255, 255, 255, 0.22);
-  --skip-widget-card-background-color: var(--cattitude-navy-light, #152a45);
-  --skip-contrast-color: rgba(255, 255, 255, 0.92);
-  --skip-starboard-color: #3d9a5c;
+  --skip-grey-color: rgba(13, 33, 55, 0.38);
+  --skip-widget-card-background-color: #ffffff;
+  --skip-contrast-color: var(--cattitude-navy, #0d2137);
+  --skip-starboard-color: #2d8a4e;
   --skip-port-color: #c0392b;
-  --skip-yellow-color: #d4a017;
-  --skip-yellow-dim-color: #a88412;
-  --skip-orange-color: #e67e22;
-  --skip-orange-dim-color: #b8651a;
-  --skip-pink-color: #e056fd;
-  --skip-green-color: #2ecc71;
-  --skip-blue-color: #3498db;
-  --mat-sys-background: var(--cattitude-navy, #0d2137);
+  --skip-yellow-color: #c4920f;
+  --skip-yellow-dim-color: #8a6a10;
+  --skip-orange-color: #d35400;
+  --skip-orange-dim-color: #a04000;
+  --skip-pink-color: #c039db;
+  --skip-green-color: #27ae60;
+  --skip-blue-color: #2980b9;
+  --mat-sys-background: var(--cattitude-sand, #f5f0e8);
 }
