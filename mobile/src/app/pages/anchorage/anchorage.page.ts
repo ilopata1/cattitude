@@ -61,6 +61,8 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
   private markers = new Map<string, unknown>();       // mmsi → L.Marker (boat icon)
   private circles = new Map<string, unknown>();       // mmsi → L.Circle
   private anchorMarkers = new Map<string, unknown>(); // mmsi → L.CircleMarker
+  /** Single shared hover label — never opened via Leaflet's touch/click path. */
+  private hoverTip: unknown = null;
   private subs: Subscription[] = [];
   private leafletReady = false;
   /** Set after the first successful center on own vessel. */
@@ -193,11 +195,13 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
   }
 
   displayName(v: Vessel): string {
-    return this.hasShipName(v) ? v.name.trim() : `MMSI ${v.mmsi}`;
+    return this.hasShipName(v) ? toHeadingCase(v.name.trim()) : `MMSI ${v.mmsi}`;
   }
 
   tooltipLabel(v: Vessel): string {
-    return this.hasShipName(v) ? `${v.name.trim()} (${v.mmsi})` : `MMSI ${v.mmsi}`;
+    return this.hasShipName(v)
+      ? `${toHeadingCase(v.name.trim())} (${v.mmsi})`
+      : `MMSI ${v.mmsi}`;
   }
 
   stateBadgeColour(state: VesselState): string {
@@ -250,10 +254,15 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
     });
     this.map = map;
 
-    map.on('dragstart', () => { this.userAdjustedMap = true; });
+    map.on('dragstart', () => {
+      this.userAdjustedMap = true;
+      this.closeAllTooltips();
+    });
     map.on('zoomstart', (e: { originalEvent?: Event }) => {
       if (e.originalEvent) this.userAdjustedMap = true;
+      this.closeAllTooltips();
     });
+    map.on('click', () => this.closeAllTooltips());
     map.on('zoomend', () => this.updateMap());
     map.on('moveend', () => this.updateWindMapCentre());
 
@@ -289,6 +298,8 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
   private updateMap(): void {
     if (!this.leafletReady || !this.map) return;
 
+    this.closeAllTooltips();
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const map = this.map as any;
     const visible = this.filterVesselsForView(this.vessels);
@@ -317,27 +328,14 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
         const marker = this.markers.get(vessel.mmsi) as any;
         marker.setLatLng([last.lat, last.lon]);
         marker.setIcon(icon);
-        if (marker.getTooltip?.()) marker.unbindTooltip();
-        marker.bindTooltip(label, {
-          permanent: false,
-          direction: 'top',
-          offset: [0, -8],
-          opacity: 0.9,
-          className: 'vessel-name-tooltip',
-        });
+        this.syncHoverTooltip(marker, label);
       } else {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const marker = (L as any).marker([last.lat, last.lon], { icon })
-          .bindTooltip(label, {
-            permanent: false,
-            direction: 'top',
-            offset: [0, -8],
-            opacity: 0.9,
-            className: 'vessel-name-tooltip',
-          })
-          .addTo(map);
+        const marker = (L as any).marker([last.lat, last.lon], { icon }).addTo(map);
+        this.syncHoverTooltip(marker, label);
         const mmsi = vessel.mmsi;
         marker.on('click', () => {
+          this.closeAllTooltips();
           const v = this.vessels.find(x => x.mmsi === mmsi);
           if (v) this.selectVessel(v);
         });
@@ -513,10 +511,73 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
     this.hasCenteredOnOwn = true;
   }
 
+  /**
+   * Leaflet opens non-permanent tooltips on click when the browser reports touch
+   * (common on Windows), and they stick open. Drive hover labels ourselves instead.
+   */
+  private syncHoverTooltip(
+    marker: {
+      unbindTooltip?: Function;
+      getTooltip?: Function;
+      getLatLng: Function;
+      off: Function;
+      on: Function;
+    },
+    label: string,
+  ): void {
+    if (marker.getTooltip?.()) marker.unbindTooltip?.();
+    marker.off('mouseover');
+    marker.off('mouseout');
+
+    if (!this.mapSupportsHover() || !this.map) return;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const map = this.map as any;
+    if (!this.hoverTip) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      this.hoverTip = (L as any).tooltip({
+        permanent: false,
+        direction: 'top',
+        offset: [0, -8],
+        opacity: 0.9,
+        className: 'vessel-name-tooltip',
+        interactive: false,
+      });
+    }
+
+    marker.on('mouseover', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const tip = this.hoverTip as any;
+      tip.setContent(label);
+      tip.setLatLng(marker.getLatLng());
+      if (!map.hasLayer(tip)) tip.addTo(map);
+    });
+    marker.on('mouseout', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const tip = this.hoverTip as any;
+      if (map.hasLayer(tip)) map.removeLayer(tip);
+    });
+  }
+
+  private mapSupportsHover(): boolean {
+    return typeof window !== 'undefined'
+      && !!window.matchMedia?.('(hover: hover) and (pointer: fine)').matches;
+  }
+
+  private closeAllTooltips(): void {
+    if (!this.map || !this.hoverTip) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const map = this.map as any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const tip = this.hoverTip as any;
+    if (map.hasLayer(tip)) map.removeLayer(tip);
+  }
+
   private clearMapLayers(): void {
     if (!this.map) return;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const map = this.map as any;
+    this.closeAllTooltips();
     for (const m of this.markers.values()) map.removeLayer(m);
     for (const c of this.circles.values()) map.removeLayer(c);
     for (const a of this.anchorMarkers.values()) map.removeLayer(a);
@@ -524,4 +585,11 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
     this.circles.clear();
     this.anchorMarkers.clear();
   }
+}
+
+/** AIS names are often ALL CAPS — show as Heading Case in the UI. */
+function toHeadingCase(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/\b([a-z])/g, ch => ch.toUpperCase());
 }

@@ -54,7 +54,9 @@ export class AnchorageVesselDetailComponent {
 
   get displayName(): string {
     const name = (this.vessel?.name ?? '').trim();
-    if (name && name !== this.vessel.mmsi) return name;
+    if (name && name !== this.vessel.mmsi) {
+      return name.toLowerCase().replace(/\b([a-z])/g, ch => ch.toUpperCase());
+    }
     return `MMSI ${this.vessel.mmsi}`;
   }
 
