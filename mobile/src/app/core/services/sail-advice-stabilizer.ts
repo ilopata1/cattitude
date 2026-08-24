@@ -1,24 +1,31 @@
 import { SailAdvice, SailPlan } from '../models/sail-plan.model';
-import { adviceBandKey, stillNearCrossoverExit } from './sail-plan-advisor';
+import {
+  adviceBandKey,
+  collectCrossoverEdges,
+  formatCrossoverHint,
+} from './sail-plan-advisor';
 
 /** Seconds a new band must persist before replacing the displayed recommendation. */
 const BAND_DWELL_MS = 12_000;
 /** Instantly accept a new band after a large step (tack, bear away, wind shift). */
 const MAJOR_TWA_JUMP_DEG = 15;
 const MAJOR_TWS_JUMP_KN = 4;
+/** Keep a cutover in the hint this long after TWA/TWS leave the exit zone. */
+const EDGE_DROP_MS = 10_000;
 
 /**
  * Stabilizes sail-plan advice for the Polar UI:
  * - Primary recommendation changes only after a short dwell, unless TWA/TWS jumps hard
  *   (so a course change or wind shift still updates promptly).
- * - Near-cutover hint uses enter/exit hysteresis so it does not flicker on the seam.
+ * - Each cutover edge in the hint uses enter/exit hysteresis independently, so a jittery
+ *   TWS reading cannot add/remove "near N kn TWS" every second while TWA stays near.
  */
 export class SailAdviceStabilizer {
   private displayed: SailAdvice | null = null;
   private pending: SailAdvice | null = null;
   private pendingSince = 0;
-  private stickyNear = false;
-  private lastHint: string | undefined;
+  private stickyHints = new Map<string, string>();
+  private dropAfter = new Map<string, number>();
   private lastTwa: number | null = null;
   private lastTws: number | null = null;
 
@@ -26,8 +33,8 @@ export class SailAdviceStabilizer {
     this.displayed = null;
     this.pending = null;
     this.pendingSince = 0;
-    this.stickyNear = false;
-    this.lastHint = undefined;
+    this.stickyHints.clear();
+    this.dropAfter.clear();
     this.lastTwa = null;
     this.lastTws = null;
   }
@@ -55,14 +62,11 @@ export class SailAdviceStabilizer {
     this.lastTwa = twa;
     this.lastTws = tws;
 
-    // --- Near-cutover hysteresis ---
-    if (raw.nearCrossover) {
-      this.stickyNear = true;
-      this.lastHint = raw.crossoverHint;
-    } else if (this.stickyNear && !stillNearCrossoverExit(plan, twa, tws)) {
-      this.stickyNear = false;
-      this.lastHint = undefined;
+    if (majorJump) {
+      this.stickyHints.clear();
+      this.dropAfter.clear();
     }
+    this.updateStickyEdges(plan, twa, tws, now);
 
     // --- Band / primary dwell ---
     if (!this.displayed) {
@@ -74,7 +78,6 @@ export class SailAdviceStabilizer {
     const sameBand = adviceBandKey(raw) === adviceBandKey(this.displayed);
     if (sameBand) {
       this.pending = null;
-      // Same band: refresh alts / notes / polar hint from live; keep sticky near.
       this.displayed = this.withNear(raw);
       return this.displayed;
     }
@@ -83,9 +86,6 @@ export class SailAdviceStabilizer {
       this.displayed = this.withNear(raw);
       this.pending = null;
       this.pendingSince = 0;
-      // After a big shift, re-seed near from the new cell.
-      this.stickyNear = raw.nearCrossover;
-      this.lastHint = raw.crossoverHint;
       return this.displayed;
     }
 
@@ -98,28 +98,49 @@ export class SailAdviceStabilizer {
     if (now - this.pendingSince >= BAND_DWELL_MS) {
       this.displayed = this.withNear(this.pending);
       this.pending = null;
-      this.stickyNear = this.displayed.nearCrossover;
-      this.lastHint = this.displayed.crossoverHint;
       return this.displayed;
     }
 
     return this.withNear(this.displayed);
   }
 
-  private withNear(base: SailAdvice): SailAdvice {
-    if (!this.stickyNear) {
-      return {
-        ...base,
-        nearCrossover: false,
-        crossoverHint: undefined,
-      };
+  private updateStickyEdges(
+    plan: SailPlan,
+    twa: number,
+    tws: number,
+    now: number,
+  ): void {
+    const edges = collectCrossoverEdges(plan, twa, tws);
+    const byId = new Map(edges.map(e => [e.id, e]));
+
+    for (const e of edges) {
+      if (!e.inEnter) continue;
+      this.stickyHints.set(e.id, e.hint);
+      this.dropAfter.delete(e.id);
     }
+
+    for (const id of [...this.stickyHints.keys()]) {
+      const e = byId.get(id);
+      if (e?.inEnter || e?.inExit) {
+        this.dropAfter.delete(id);
+        continue;
+      }
+      const since = this.dropAfter.get(id) ?? now;
+      this.dropAfter.set(id, since);
+      if (now - since >= EDGE_DROP_MS) {
+        this.stickyHints.delete(id);
+        this.dropAfter.delete(id);
+      }
+    }
+  }
+
+  private withNear(base: SailAdvice): SailAdvice {
+    const hints = [...this.stickyHints.values()];
+    const crossoverHint = formatCrossoverHint(hints);
     return {
       ...base,
-      nearCrossover: true,
-      crossoverHint:
-        this.lastHint ??
-        'Near a sail-plan cutover — neighboring sail options may also fit.',
+      nearCrossover: !!crossoverHint,
+      crossoverHint,
     };
   }
 }

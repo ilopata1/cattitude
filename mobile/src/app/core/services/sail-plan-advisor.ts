@@ -10,9 +10,18 @@ import {
 
 export const NEAR_TWA_ENTER_DEG = 4;
 export const NEAR_TWA_EXIT_DEG = 7;
-export const NEAR_TWS_ENTER_KN = 1.5;
-export const NEAR_TWS_EXIT_KN = 2.5;
+export const NEAR_TWS_ENTER_KN = 2;
+export const NEAR_TWS_EXIT_KN = 4;
 const LOW_POLAR_PCT = 85;
+
+/** One TWA or TWS cutover the boat is currently near. */
+export interface CrossoverEdge {
+  /** Stable id for hysteresis (same physical cutover keeps the same id across bands). */
+  id: string;
+  hint: string;
+  inEnter: boolean;
+  inExit: boolean;
+}
 
 /** How close the value is to a band edge (degrees or knots). */
 export interface EdgeProximity {
@@ -21,6 +30,7 @@ export interface EdgeProximity {
   nearEnter: boolean;
   nearExit: boolean;
   hints: string[];
+  edges: CrossoverEdge[];
 }
 
 export function findBandIndex(bands: WindBand[], value: number): number {
@@ -136,17 +146,40 @@ export function adviseSailPlan(
     alternatives: uniqueAlternatives(cell, neighbors),
   };
 
-  const nearCrossover = hints.length > 0;
   return finishAdvice(
     merged,
     twaBands[ri],
     twsBands[ci],
     false,
     polarPct,
-    nearCrossover
-      ? `Near a cutover (${hints.join(', ')}) — neighboring sail options may also fit.`
-      : undefined,
+    formatCrossoverHint(hints),
   );
+}
+
+export function formatCrossoverHint(hints: string[]): string | undefined {
+  if (hints.length === 0) return undefined;
+  return `Near a cutover (${hints.join(', ')}) — neighboring sail options may also fit.`;
+}
+
+/** Live cutover edges for sticky Polar hint text (enter vs exit independently). */
+export function collectCrossoverEdges(
+  plan: SailPlan,
+  twaDeg: number,
+  twsKnots: number,
+): CrossoverEdge[] {
+  const twa = Math.abs(twaDeg);
+  if (plan.heavyWeather?.enabled && twsKnots >= plan.heavyWeather.twsFrom) {
+    const bands = bandsFromCuts(plan.heavyWeather.twaCuts);
+    const idx = findBandIndex(bands, twa);
+    return edgeProximity(twa, bands, idx, NEAR_TWA_ENTER_DEG, NEAR_TWA_EXIT_DEG, '° TWA').edges;
+  }
+  const twaBands = bandsFromCuts(plan.twaCuts);
+  const twsBands = bandsFromCuts(plan.twsCuts);
+  const ri = findBandIndex(twaBands, twa);
+  const ci = findBandIndex(twsBands, twsKnots);
+  const twaProx = edgeProximity(twa, twaBands, ri, NEAR_TWA_ENTER_DEG, NEAR_TWA_EXIT_DEG, '° TWA');
+  const twsProx = edgeProximity(twsKnots, twsBands, ci, NEAR_TWS_ENTER_KN, NEAR_TWS_EXIT_KN, ' kn TWS');
+  return [...twaProx.edges, ...twsProx.edges];
 }
 
 /** Distance to band edges; used for sticky near-cutover hysteresis. */
@@ -160,18 +193,48 @@ export function edgeProximity(
 ): EdgeProximity {
   const band = bands[idx];
   if (!band) {
-    return { toLower: Infinity, toUpper: Infinity, nearEnter: false, nearExit: false, hints: [] };
+    return {
+      toLower: Infinity,
+      toUpper: Infinity,
+      nearEnter: false,
+      nearExit: false,
+      hints: [],
+      edges: [],
+    };
   }
   const toLower = idx > 0 ? Math.abs(value - band.from) : Infinity;
   const toUpper = idx < bands.length - 1 ? Math.abs(value - band.to) : Infinity;
-  const hints: string[] = [];
-  if (idx > 0 && toLower <= enterThreshold) hints.push(`near ${band.from}${unitLabel}`);
-  if (idx < bands.length - 1 && toUpper <= enterThreshold) hints.push(`near ${band.to}${unitLabel}`);
-  const nearEnter = hints.length > 0;
-  const nearExit =
-    (idx > 0 && toLower <= exitThreshold) ||
-    (idx < bands.length - 1 && toUpper <= exitThreshold);
-  return { toLower, toUpper, nearEnter, nearExit, hints };
+  const edges: CrossoverEdge[] = [];
+  if (idx > 0) {
+    edges.push(makeEdge(unitLabel, band.from, toLower, enterThreshold, exitThreshold));
+  }
+  if (idx < bands.length - 1) {
+    edges.push(makeEdge(unitLabel, band.to, toUpper, enterThreshold, exitThreshold));
+  }
+  const hints = edges.filter(e => e.inEnter).map(e => e.hint);
+  return {
+    toLower,
+    toUpper,
+    nearEnter: hints.length > 0,
+    nearExit: edges.some(e => e.inExit),
+    hints,
+    edges,
+  };
+}
+
+function makeEdge(
+  unitLabel: string,
+  cut: number,
+  distance: number,
+  enterThreshold: number,
+  exitThreshold: number,
+): CrossoverEdge {
+  return {
+    id: `${unitLabel}|${cut}`,
+    hint: `near ${cut}${unitLabel}`,
+    inEnter: distance <= enterThreshold,
+    inExit: distance <= exitThreshold,
+  };
 }
 
 /**
@@ -183,19 +246,7 @@ export function stillNearCrossoverExit(
   twaDeg: number,
   twsKnots: number,
 ): boolean {
-  const twa = Math.abs(twaDeg);
-  if (plan.heavyWeather?.enabled && twsKnots >= plan.heavyWeather.twsFrom) {
-    const bands = bandsFromCuts(plan.heavyWeather.twaCuts);
-    const idx = findBandIndex(bands, twa);
-    return edgeProximity(twa, bands, idx, NEAR_TWA_ENTER_DEG, NEAR_TWA_EXIT_DEG, '').nearExit;
-  }
-  const twaBands = bandsFromCuts(plan.twaCuts);
-  const twsBands = bandsFromCuts(plan.twsCuts);
-  const ri = findBandIndex(twaBands, twa);
-  const ci = findBandIndex(twsBands, twsKnots);
-  const twaProx = edgeProximity(twa, twaBands, ri, NEAR_TWA_ENTER_DEG, NEAR_TWA_EXIT_DEG, '');
-  const twsProx = edgeProximity(twsKnots, twsBands, ci, NEAR_TWS_ENTER_KN, NEAR_TWS_EXIT_KN, '');
-  return twaProx.nearExit || twsProx.nearExit;
+  return collectCrossoverEdges(plan, twaDeg, twsKnots).some(e => e.inExit);
 }
 
 export function adviceBandKey(advice: SailAdvice): string {
