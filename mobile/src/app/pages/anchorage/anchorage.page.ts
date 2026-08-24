@@ -29,6 +29,8 @@ const VESSEL_ICON_ASPECT = 40 / 60;
 const VESSEL_ICON_ANCHOR_Y_FRAC = 26 / 60;
 /** Minimum marker hit box so hover tips are easy to trigger and keep open. */
 const VESSEL_HIT_MIN_PX = 52;
+/** Keep tip visible briefly after leaving the hit box (ms). */
+const HOVER_TIP_CLOSE_MS = 1200;
 
 const STATE_COLOUR: Record<VesselState, string> = {
   green:   '#2ecc71',
@@ -66,6 +68,9 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
   /** Single shared hover label — never opened via Leaflet's touch/click path. */
   private hoverTip: unknown = null;
   private hoverCloseTimer: ReturnType<typeof setTimeout> | null = null;
+  /** MMSI currently under the pointer (survives marker icon refreshes). */
+  private hoveredMmsi: string | null = null;
+  private readonly hoverLabels = new Map<string, string>();
   private subs: Subscription[] = [];
   private leafletReady = false;
   /** Set after the first successful center on own vessel. */
@@ -299,8 +304,6 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
   private updateMap(): void {
     if (!this.leafletReady || !this.map) return;
 
-    this.closeAllTooltips();
-
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const map = this.map as any;
     const visible = this.filterVesselsForView(this.vessels);
@@ -315,25 +318,43 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
       const colour = STATE_COLOUR[vessel.state];
       const isStale = this.vesselStore.isStale(vessel);
       const label = this.tooltipLabel(vessel);
-      const icon = this.buildVesselIcon(
+      this.hoverLabels.set(vessel.mmsi, label);
+      const iconKey = this.vesselIconKey(
         last.heading,
         vessel.lengthMetres,
         minLengthM,
         isStale,
         vessel.isOwn,
-        vessel.mmsi,
       );
 
       if (this.markers.has(vessel.mmsi)) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const marker = this.markers.get(vessel.mmsi) as any;
         marker.setLatLng([last.lat, last.lon]);
-        marker.setIcon(icon);
-        this.syncHoverTooltip(marker, label);
+        if (marker._cattitudeIconKey !== iconKey) {
+          marker.setIcon(this.buildVesselIcon(
+            last.heading,
+            vessel.lengthMetres,
+            minLengthM,
+            isStale,
+            vessel.isOwn,
+            vessel.mmsi,
+          ));
+          marker._cattitudeIconKey = iconKey;
+        }
       } else {
+        const icon = this.buildVesselIcon(
+          last.heading,
+          vessel.lengthMetres,
+          minLengthM,
+          isStale,
+          vessel.isOwn,
+          vessel.mmsi,
+        );
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const marker = (L as any).marker([last.lat, last.lon], { icon }).addTo(map);
-        this.syncHoverTooltip(marker, label);
+        marker._cattitudeIconKey = iconKey;
+        this.bindHoverTooltip(marker, vessel.mmsi);
         const mmsi = vessel.mmsi;
         marker.on('click', () => {
           this.closeAllTooltips();
@@ -410,6 +431,8 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
       if (!seenMmsis.has(mmsi)) {
         map.removeLayer(marker);
         this.markers.delete(mmsi);
+        this.hoverLabels.delete(mmsi);
+        if (this.hoveredMmsi === mmsi) this.closeAllTooltips();
       }
     }
     for (const [mmsi, circle] of this.circles) {
@@ -425,6 +448,7 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
       }
     }
 
+    this.refreshOpenHoverTip();
     this.centerOnOwnVessel(false);
   }
 
@@ -475,8 +499,8 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
     const fillColor = isOwn ? VESSEL_FILL_OWN : VESSEL_FILL_OTHER;
     const originY = `${VESSEL_ICON_ANCHOR_Y_FRAC * 100}%`;
 
-    const html = `<div class="vessel-marker-hit" style="width:${hitW}px;height:${hitH}px;">
-      <div class="vessel-marker-wrap" style="width:${widthPx}px;height:${heightPx}px;margin:${padY}px 0 0 ${padX}px;opacity:${opacity};">
+    const html = `<div class="vessel-marker-hit" style="width:${hitW}px;height:${hitH}px;position:relative;">
+      <div class="vessel-marker-wrap" style="position:absolute;left:${padX}px;top:${padY}px;width:${widthPx}px;height:${heightPx}px;opacity:${opacity};">
         <div class="vessel-marker-inner" style="transform:rotate(${headingDeg}deg);transform-origin:50% ${originY};width:100%;height:100%;">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 60" width="100%" height="100%">
             <defs>
@@ -518,11 +542,24 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
     this.hasCenteredOnOwn = true;
   }
 
+  private vesselIconKey(
+    headingDeg: number,
+    lengthM: number,
+    minLengthM: number,
+    isStale: boolean,
+    isOwn: boolean,
+  ): string {
+    let drawLength = lengthM;
+    if (drawLength < minLengthM) drawLength = minLengthM;
+    const heightPx = Math.max(14, Math.round(this.metresToPixels(drawLength)));
+    return `${Math.round(headingDeg)}|${heightPx}|${isStale ? 1 : 0}|${isOwn ? 1 : 0}`;
+  }
+
   /**
    * Leaflet opens non-permanent tooltips on click when the browser reports touch
    * (common on Windows), and they stick open. Drive hover labels ourselves instead.
    */
-  private syncHoverTooltip(
+  private bindHoverTooltip(
     marker: {
       unbindTooltip?: Function;
       getTooltip?: Function;
@@ -530,12 +567,9 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
       off: Function;
       on: Function;
     },
-    label: string,
+    mmsi: string,
   ): void {
     if (marker.getTooltip?.()) marker.unbindTooltip?.();
-    marker.off('mouseover');
-    marker.off('mouseout');
-
     if (!this.mapSupportsHover() || !this.map) return;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -557,21 +591,39 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
         clearTimeout(this.hoverCloseTimer);
         this.hoverCloseTimer = null;
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const tip = this.hoverTip as any;
-      tip.setContent(label);
-      tip.setLatLng(marker.getLatLng());
-      if (!map.hasLayer(tip)) tip.addTo(map);
+      this.hoveredMmsi = mmsi;
+      this.showHoverTipFor(mmsi);
     });
     marker.on('mouseout', () => {
       if (this.hoverCloseTimer !== null) clearTimeout(this.hoverCloseTimer);
       this.hoverCloseTimer = setTimeout(() => {
         this.hoverCloseTimer = null;
+        if (this.hoveredMmsi !== mmsi) return;
+        this.hoveredMmsi = null;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const tip = this.hoverTip as any;
-        if (map.hasLayer(tip)) map.removeLayer(tip);
-      }, 280);
+        if (tip && map.hasLayer(tip)) map.removeLayer(tip);
+      }, HOVER_TIP_CLOSE_MS);
     });
+  }
+
+  private showHoverTipFor(mmsi: string): void {
+    if (!this.map || !this.hoverTip) return;
+    const marker = this.markers.get(mmsi) as { getLatLng: Function } | undefined;
+    const label = this.hoverLabels.get(mmsi);
+    if (!marker || !label) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const map = this.map as any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const tip = this.hoverTip as any;
+    tip.setContent(label);
+    tip.setLatLng(marker.getLatLng());
+    if (!map.hasLayer(tip)) tip.addTo(map);
+  }
+
+  private refreshOpenHoverTip(): void {
+    if (!this.hoveredMmsi) return;
+    this.showHoverTipFor(this.hoveredMmsi);
   }
 
   private mapSupportsHover(): boolean {
@@ -584,6 +636,7 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
       clearTimeout(this.hoverCloseTimer);
       this.hoverCloseTimer = null;
     }
+    this.hoveredMmsi = null;
     if (!this.map || !this.hoverTip) return;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const map = this.map as any;
@@ -603,6 +656,7 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
     this.markers.clear();
     this.circles.clear();
     this.anchorMarkers.clear();
+    this.hoverLabels.clear();
   }
 }
 

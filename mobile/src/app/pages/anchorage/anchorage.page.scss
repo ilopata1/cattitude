@@ -79,11 +79,15 @@
 
   .vessel-marker-hit {
     display: block;
+    position: relative;
+    overflow: visible;
+    pointer-events: auto;
   }
 
   .vessel-marker-wrap,
   .vessel-marker-inner {
     display: block;
+    pointer-events: none;
   }
 
   .vessel-name-tooltip {
