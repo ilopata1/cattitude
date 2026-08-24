@@ -91,6 +91,9 @@
         <h2>{{ displayName(v) }}</h2>
         <p *ngIf="hasShipName(v)">MMSI {{ v.mmsi }} · {{ v.lengthMetres | metres }}</p>
         <p *ngIf="!hasShipName(v)">{{ v.lengthMetres | metres }}</p>
+        <p *ngIf="!v.isOwn">
+          Distance {{ distanceFromOwn(v) | metres }}
+        </p>
         <p *ngIf="v.anchorPoint">
           Swing radius {{ v.swingRadius | metres }}
           · confidence {{ v.confidence }}

@@ -9,6 +9,7 @@ import { AnchorageAlertService } from './core/services/anchorage-alert.service';
 import { SignalKService } from '../../core/services/signal-k.service';
 import { Vessel, VesselState, LatLon } from './core/models/vessel.model';
 import { AnchorageAlert } from './core/models/anchorage.model';
+import { haversineDistance } from './core/calculators/anchor.calculator';
 
 // Leaflet is loaded dynamically to keep the bundle clean and avoid SSR issues.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -34,6 +35,8 @@ const VESSEL_HIT_MIN_RADIUS_PX = 26;
  * drawn length — the icon box must hold the hull at any heading.
  */
 const VESSEL_HULL_REACH_FRAC = 0.55;
+/** Upper bound on map redraws, independent of AIS delta rate. */
+const RENDER_INTERVAL_MS = 500;
 
 const STATE_COLOUR: Record<VesselState, string> = {
   green:   '#2ecc71',
@@ -78,6 +81,7 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
   /** mmsi → pointer radius in pixels that counts as hovering that vessel. */
   private readonly hoverRadii = new Map<string, number>();
   private subs: Subscription[] = [];
+  private renderTimer: ReturnType<typeof setTimeout> | null = null;
   private leafletReady = false;
   /** Set after the first successful center on own vessel. */
   private hasCenteredOnOwn = false;
@@ -110,8 +114,7 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
         if (this.selectedVessel) {
           this.selectedVessel = vessels.find(v => v.mmsi === this.selectedVessel!.mmsi) ?? null;
         }
-        this.updateMap();
-        this.cdr.markForCheck();
+        this.scheduleRender();
       }),
       this.alertService.activeAlerts$.subscribe(alerts => {
         this.activeAlerts = alerts;
@@ -130,8 +133,22 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
 
   ngOnDestroy(): void {
     this.subs.forEach(s => s.unsubscribe());
+    if (this.renderTimer !== null) clearTimeout(this.renderTimer);
     // Keep watching for swing conflicts while recording, even off-screen.
     if (!this.vesselStore.isRecording) this.vesselStore.stop();
+  }
+
+  /**
+   * A busy anchorage produces many deltas per second; redrawing every marker
+   * and running change detection on each one starves the browser.
+   */
+  private scheduleRender(): void {
+    if (this.renderTimer !== null) return;
+    this.renderTimer = setTimeout(() => {
+      this.renderTimer = null;
+      this.updateMap();
+      this.cdr.markForCheck();
+    }, RENDER_INTERVAL_MS);
   }
 
   ionViewWillEnter(): void {
@@ -211,11 +228,29 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
   }
 
   get listVessels(): Vessel[] {
-    return this.filterVesselsForView(this.vessels);
+    const own = this.vessels.find(v => v.isOwn);
+    const ownPos = lastPosition(own);
+    const list = this.filterVesselsForView(this.vessels).slice();
+    list.sort((a, b) => {
+      if (a.isOwn !== b.isOwn) return a.isOwn ? -1 : 1;
+      const da = distanceFrom(ownPos, a);
+      const db = distanceFrom(ownPos, b);
+      if (da === null && db === null) return 0;
+      if (da === null) return 1;
+      if (db === null) return -1;
+      return da - db;
+    });
+    return list;
   }
 
   // ---------------------------------------------------------------------------
   // Helpers
+
+  /** Metres from own vessel's latest fix, or null when either side has no position. */
+  distanceFromOwn(v: Vessel): number | null {
+    if (v.isOwn) return null;
+    return distanceFrom(lastPosition(this.vessels.find(x => x.isOwn)), v);
+  }
 
   /** True when AIS published a real ship name (not just the MMSI fallback). */
   hasShipName(v: Vessel): boolean {
@@ -718,4 +753,16 @@ function toHeadingCase(text: string): string {
   return text
     .toLowerCase()
     .replace(/\b([a-z])/g, ch => ch.toUpperCase());
+}
+
+function lastPosition(v: Vessel | undefined): LatLon | null {
+  if (!v?.positions?.length) return null;
+  const p = v.positions[v.positions.length - 1];
+  return { lat: p.lat, lon: p.lon };
+}
+
+function distanceFrom(origin: LatLon | null, v: Vessel): number | null {
+  const pos = lastPosition(v);
+  if (!origin || !pos) return null;
+  return haversineDistance(origin, pos);
 }

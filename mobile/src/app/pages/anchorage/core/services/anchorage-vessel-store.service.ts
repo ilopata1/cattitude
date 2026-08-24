@@ -41,9 +41,21 @@ const VESSEL_REMOVE_AGE_MS  = 60 * 60 * 1000;
 const STALE_THRESHOLD_MS    = 15 * 60 * 1000;
 const MPS_TO_KNOTS          = 1.94384;
 const RAD_TO_DEG            = 180 / Math.PI;
-const PERSIST_EVERY_N_UPDATES = 25;
 /** Re-check conflicts and ages even while AIS is silent. */
 const MAINTENANCE_INTERVAL_MS = 60_000;
+/**
+ * Signal-K can deliver several fixes per second per vessel. Anchor geometry
+ * needs spread over time, not resolution, so denser samples are collapsed —
+ * without this the per-delta cost grows with the whole history and the tab
+ * eventually locks up.
+ */
+const MIN_POSITION_SAMPLE_MS = 10_000;
+/** Hard ceiling on retained samples per vessel (~5.5 h at the sample rate). */
+const MAX_POSITIONS_PER_VESSEL = 2000;
+/** Conflict maths is O(vessels²) with wind sampling — run it on a timer, not per delta. */
+const STATE_RECALC_INTERVAL_MS = 2000;
+/** Snapshot cadence while recording. */
+const PERSIST_INTERVAL_MS = 60_000;
 
 /** Partial accumulator while we wait for all paths to arrive for a context. */
 interface VesselPartial {
@@ -68,10 +80,13 @@ export class AnchorageVesselStoreService implements OnDestroy {
   private hydrateSub: Subscription | null = null;
   private hydrateTimer: ReturnType<typeof setInterval> | null = null;
   private maintenanceTimer: ReturnType<typeof setInterval> | null = null;
+  private persistTimer: ReturnType<typeof setInterval> | null = null;
+  private recalcTimer: ReturnType<typeof setTimeout> | null = null;
   private recording             = false;
   private ownContext            = '';    // e.g. "vessels.urn:mrn:imo:mmsi:123"
-  private persistCounter        = 0;
   private restored              = false;
+  /** mmsi → newest position timestamp already written to IndexedDB. */
+  private readonly persistedThrough = new Map<string, number>();
 
   readonly vessels$: Observable<Vessel[]> = this.vesselMap.pipe(
     map(m => Array.from(m.values())),
@@ -98,11 +113,18 @@ export class AnchorageVesselStoreService implements OnDestroy {
     this.recording = true;
     void this.ensureRestored();
     void this.hydrateFromRest();
+    if (this.persistTimer === null) {
+      this.persistTimer = setInterval(() => void this.persistSnapshot(), PERSIST_INTERVAL_MS);
+    }
   }
 
   stopRecording(): void {
     this.recording = false;
-    void this.persistence.saveSnapshot(Array.from(this.vesselMap.value.values()));
+    if (this.persistTimer !== null) {
+      clearInterval(this.persistTimer);
+      this.persistTimer = null;
+    }
+    void this.persistSnapshot();
     const current = new Map(this.vesselMap.value);
     for (const v of current.values()) {
       if (v.positions.length > 0) v.positions = [v.positions[v.positions.length - 1]];
@@ -145,6 +167,10 @@ export class AnchorageVesselStoreService implements OnDestroy {
       clearInterval(this.maintenanceTimer);
       this.maintenanceTimer = null;
     }
+    if (this.recalcTimer !== null) {
+      clearTimeout(this.recalcTimer);
+      this.recalcTimer = null;
+    }
   }
 
   /** True while deltas are being consumed. */
@@ -153,6 +179,7 @@ export class AnchorageVesselStoreService implements OnDestroy {
   clear(): void {
     this.vesselMap.next(new Map());
     this.partials.clear();
+    this.persistedThrough.clear();
     this.alerts.clear();
     void this.persistence.clear();
   }
@@ -331,17 +358,19 @@ export class AnchorageVesselStoreService implements OnDestroy {
     vessel.tracked = isTracked;
 
     if (isTracked) {
-      vessel.positions.push(position);
-      vessel.positions = prunePositions(vessel.positions);
-
-      const anchorPos = vessel.positions.filter(p => p.sog < SOG_THRESHOLD);
-      if (anchorPos.length >= 2) {
-        vessel.anchorPoint = computeAnchorPoint(anchorPos);
-        if (vessel.anchorPoint) {
-          vessel.swingRadius = computeSwingRadius(vessel.anchorPoint, anchorPos, vessel.lengthMetres);
+      const appended = appendSample(vessel.positions, position);
+      // Only the sample set changes the geometry; a replaced sample does not.
+      if (appended) {
+        vessel.positions = prunePositions(vessel.positions);
+        const anchorPos = vessel.positions.filter(p => p.sog < SOG_THRESHOLD);
+        if (anchorPos.length >= 2) {
+          vessel.anchorPoint = computeAnchorPoint(anchorPos);
+          if (vessel.anchorPoint) {
+            vessel.swingRadius = computeSwingRadius(vessel.anchorPoint, anchorPos, vessel.lengthMetres);
+          }
         }
+        vessel.confidence = computeConfidence(anchorPos.length);
       }
-      vessel.confidence = computeConfidence(anchorPos.length);
     } else {
       vessel.positions = [position];
       vessel.anchorPoint = null;
@@ -359,15 +388,26 @@ export class AnchorageVesselStoreService implements OnDestroy {
     }
 
     this.vesselMap.next(current);
-    this.recalculateStates();
+    this.scheduleRecalculate();
+  }
 
-    if (this.recording && isTracked) {
-      this.persistCounter += 1;
-      if (this.persistCounter >= PERSIST_EVERY_N_UPDATES) {
-        this.persistCounter = 0;
-        void this.persistence.saveSnapshot(Array.from(this.vesselMap.value.values()));
-      }
-    }
+  /**
+   * Conflict evaluation is quadratic in vessel count and samples 37 wind
+   * directions per pair, so it is coalesced rather than run per delta.
+   */
+  private scheduleRecalculate(): void {
+    if (this.recalcTimer !== null) return;
+    this.recalcTimer = setTimeout(() => {
+      this.recalcTimer = null;
+      this.recalculateStates();
+    }, STATE_RECALC_INTERVAL_MS);
+  }
+
+  /** Write only the samples added since the last snapshot. */
+  private async persistSnapshot(): Promise<void> {
+    const vessels = Array.from(this.vesselMap.value.values());
+    const written = await this.persistence.saveSnapshot(vessels, this.persistedThrough);
+    for (const [mmsi, ts] of written) this.persistedThrough.set(mmsi, ts);
   }
 
   /**
@@ -529,7 +569,24 @@ function isWithinRadius(lat: number, lon: number, centre: LatLon | null, radiusM
 
 function prunePositions(positions: VesselPosition[]): VesselPosition[] {
   const cutoff = Date.now() - POSITION_MAX_AGE_MS;
-  return positions.filter(p => p.timestamp > cutoff);
+  const kept = positions.filter(p => p.timestamp > cutoff);
+  return kept.length > MAX_POSITIONS_PER_VESSEL
+    ? kept.slice(kept.length - MAX_POSITIONS_PER_VESSEL)
+    : kept;
+}
+
+/**
+ * Adds a sample, collapsing bursts onto the newest one so history stays sparse.
+ * @returns true when the sample set grew (geometry needs recomputing).
+ */
+function appendSample(positions: VesselPosition[], sample: VesselPosition): boolean {
+  const last = positions[positions.length - 1];
+  if (last && sample.timestamp - last.timestamp < MIN_POSITION_SAMPLE_MS) {
+    positions[positions.length - 1] = sample;
+    return false;
+  }
+  positions.push(sample);
+  return true;
 }
 
 function computeConfidence(posCount: number): 'low' | 'medium' | 'high' {

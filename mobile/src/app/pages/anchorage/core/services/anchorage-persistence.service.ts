@@ -48,7 +48,16 @@ export class AnchoragePersistenceService {
     return this.dbPromise;
   }
 
-  async saveSnapshot(vessels: Vessel[]): Promise<void> {
+  /**
+   * @param persistedThrough newest sample timestamp already stored per MMSI;
+   *   anything at or below it is skipped so a snapshot costs only the delta.
+   * @returns the new high-water timestamp per MMSI actually written.
+   */
+  async saveSnapshot(
+    vessels: Vessel[],
+    persistedThrough?: ReadonlyMap<string, number>,
+  ): Promise<Map<string, number>> {
+    const written = new Map<string, number>();
     try {
       const db = await this.openDb();
       const cutoff = Date.now() - 24 * 60 * 60 * 1000;
@@ -72,10 +81,15 @@ export class AnchoragePersistenceService {
             confidence: v.confidence,
           };
           vesselStore.put(meta);
+
+          const since = persistedThrough?.get(v.mmsi) ?? 0;
+          let newest = since;
           for (const p of v.positions) {
-            if (p.timestamp < cutoff) continue;
+            if (p.timestamp < cutoff || p.timestamp <= since) continue;
             posStore.put({ mmsi: v.mmsi, ...p });
+            if (p.timestamp > newest) newest = p.timestamp;
           }
+          if (newest > since) written.set(v.mmsi, newest);
         }
         tx.oncomplete = () => resolve();
         tx.onerror = () => reject(tx.error ?? new Error('Anchorage IDB write failed'));
@@ -84,6 +98,7 @@ export class AnchoragePersistenceService {
     } catch (err) {
       console.warn('Anchorage persistence save failed', err);
     }
+    return written;
   }
 
   async loadRecentVessels(): Promise<Vessel[]> {
