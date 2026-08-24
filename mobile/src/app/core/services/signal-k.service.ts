@@ -80,6 +80,28 @@ export class SignalKService implements OnDestroy {
     return this.selfSubject.value;
   }
 
+  /**
+   * HTTP(S) origin for Signal-K REST (e.g. http://localhost:3000).
+   * Used to hydrate vessel identity that the delta stream may not replay.
+   */
+  httpBaseUrl(): string | null {
+    const input = this.settings.url.trim();
+    if (!input) return null;
+    let base = input.replace(/\/+$/, '');
+    if (!/^(https?|wss?):\/\//i.test(base)) {
+      const hasPort = /:\d+/.test(base);
+      base = hasPort ? `http://${base}` : `http://${base}:3000`;
+    }
+    try {
+      const parsed = new URL(base);
+      const scheme = (parsed.protocol === 'https:' || parsed.protocol === 'wss:')
+        ? 'https:' : 'http:';
+      return `${scheme}//${parsed.host}`;
+    } catch {
+      return null;
+    }
+  }
+
   constructor(private readonly settings: SignalKSettingsService) {
     // Auto-connect when a URL is already stored.
     if (settings.url) {

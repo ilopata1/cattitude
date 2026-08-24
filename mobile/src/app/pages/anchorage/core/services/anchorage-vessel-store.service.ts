@@ -63,6 +63,8 @@ export class AnchorageVesselStoreService implements OnDestroy {
   private readonly vesselMap    = new BehaviorSubject<Map<string, Vessel>>(new Map());
   private readonly partials     = new Map<string, VesselPartial>();
   private sub: Subscription | null = null;
+  private hydrateSub: Subscription | null = null;
+  private hydrateTimer: ReturnType<typeof setInterval> | null = null;
   private recording             = false;
   private ownContext            = '';    // e.g. "vessels.urn:mrn:imo:mmsi:123"
   private persistCounter        = 0;
@@ -80,7 +82,9 @@ export class AnchorageVesselStoreService implements OnDestroy {
     private readonly notifications: NotificationBridgeService,
   ) {
     // Track own context from SK hello.
-    this.sk.self$.subscribe(self => { this.ownContext = self; });
+    this.sk.self$.subscribe(self => {
+      this.ownContext = self.startsWith('vessels.') ? self : self ? `vessels.${self}` : '';
+    });
     this.settings.settings$.subscribe(() => this.recalculateStates());
   }
 
@@ -90,6 +94,7 @@ export class AnchorageVesselStoreService implements OnDestroy {
   startRecording(): void {
     this.recording = true;
     void this.ensureRestored();
+    void this.hydrateFromRest();
   }
 
   stopRecording(): void {
@@ -110,15 +115,28 @@ export class AnchorageVesselStoreService implements OnDestroy {
 
   get isRecording(): boolean { return this.recording; }
 
-  /** Start consuming Signal-K deltas. */
+  /** Start consuming Signal-K deltas and hydrate names from the REST API. */
   start(): void {
     this.stop();
     this.sub = this.sk.delta$.subscribe(delta => this.handleDelta(delta));
+    this.hydrateSub = this.sk.connected$.subscribe(connected => {
+      if (connected) void this.hydrateFromRest();
+    });
+    if (this.sk.state === 'connected') void this.hydrateFromRest();
+    this.hydrateTimer = setInterval(() => {
+      if (this.sk.state === 'connected') void this.hydrateFromRest();
+    }, 60_000);
   }
 
   stop(): void {
     this.sub?.unsubscribe();
     this.sub = null;
+    this.hydrateSub?.unsubscribe();
+    this.hydrateSub = null;
+    if (this.hydrateTimer !== null) {
+      clearInterval(this.hydrateTimer);
+      this.hydrateTimer = null;
+    }
   }
 
   clear(): void {
@@ -147,8 +165,10 @@ export class AnchorageVesselStoreService implements OnDestroy {
   // ---------------------------------------------------------------------------
 
   private handleDelta(delta: SignalKDelta): void {
-    const ctx = delta.context ?? '';
+    let ctx = delta.context ?? '';
     if (!ctx.startsWith('vessels.')) return;
+    // Own-boat deltas often use vessels.self while AIS targets use the MMSI URN.
+    if (ctx === 'vessels.self' && this.ownContext) ctx = this.ownContext;
 
     const partial = this.getOrCreatePartial(ctx);
     partial.lastSeen = Date.now();
@@ -166,8 +186,9 @@ export class AnchorageVesselStoreService implements OnDestroy {
       this.applyNameIfKnown(ctx, partial);
     }
 
-    // Flush to vessel map when we have enough to construct a full update.
-    if (partial.lat !== undefined && partial.lon !== undefined && partial.sogKnots !== undefined) {
+    // Flush when we have a fix. SOG is optional — AIS targets often omit it briefly.
+    if (partial.lat !== undefined && partial.lon !== undefined) {
+      if (partial.sogKnots === undefined) partial.sogKnots = 0;
       this.flushPartial(ctx, partial);
     }
   }
@@ -392,6 +413,73 @@ export class AnchorageVesselStoreService implements OnDestroy {
   isStale(vessel: Vessel): boolean {
     return Date.now() - vessel.lastUpdated > STALE_THRESHOLD_MS;
   }
+
+  /**
+   * Pull current vessel identity from Signal-K REST.
+   * The data browser shows the full store; the WebSocket often only streams
+   * later changes, so AIS `name` set before connect never arrives otherwise.
+   */
+  private async hydrateFromRest(): Promise<void> {
+    const base = this.sk.httpBaseUrl();
+    if (!base) return;
+    try {
+      const res = await fetch(`${base}/signalk/v1/api/vessels`, { cache: 'no-store' });
+      if (!res.ok) return;
+      const body = await res.json() as Record<string, unknown>;
+      const current = new Map(this.vesselMap.value);
+      let changed = false;
+
+      for (const [key, raw] of Object.entries(body)) {
+        if (!raw || typeof raw !== 'object') continue;
+        const tree = raw as Record<string, unknown>;
+        const ctxKey = key.startsWith('vessels.') ? key : `vessels.${key}`;
+        if (ctxKey === 'vessels.self') continue;
+
+        const mmsi =
+          (typeof skLeaf(tree, 'mmsi') === 'string' || typeof skLeaf(tree, 'mmsi') === 'number'
+            ? String(skLeaf(tree, 'mmsi'))
+            : undefined) ??
+          this.mmsiFromContext(ctxKey);
+        if (!mmsi || !/^\d{5,}$/.test(mmsi)) continue;
+
+        const name = coerceVesselName(skLeaf(tree, 'name'));
+        const lengthM = skNumber(tree, 'design.length.overall')
+          ?? skNumber(tree, 'design.length');
+        const beamM = skNumber(tree, 'design.beam.maximum')
+          ?? skNumber(tree, 'design.beam');
+
+        const partial = this.getOrCreatePartial(ctxKey);
+        if (name) partial.name = name;
+        partial.mmsi = mmsi;
+        if (lengthM !== undefined) partial.lengthM = lengthM;
+        if (beamM !== undefined) partial.beamM = beamM;
+
+        // Only enrich vessels already seen on the delta stream (have a position).
+        const vessel = current.get(mmsi);
+        if (!vessel) continue;
+
+        if (name && vessel.name !== name) {
+          vessel.name = name;
+          changed = true;
+        }
+        if (lengthM !== undefined && vessel.lengthMetres !== lengthM) {
+          vessel.lengthMetres = lengthM;
+          changed = true;
+        }
+        if (beamM !== undefined && vessel.beamMetres !== beamM) {
+          vessel.beamMetres = beamM;
+          changed = true;
+        }
+      }
+
+      if (changed) {
+        this.vesselMap.next(current);
+        this.recalculateStates();
+      }
+    } catch (err) {
+      console.warn('Anchorage SK REST hydrate failed', err);
+    }
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -431,7 +519,39 @@ function coerceVesselName(value: unknown): string | undefined {
   if (value && typeof value === 'object') {
     const rec = value as Record<string, unknown>;
     for (const key of ['default', 'en', 'name', 'value']) {
-      if (typeof rec[key] === 'string' && rec[key].trim()) return rec[key].trim();
+      if (typeof rec[key] === 'string' && (rec[key] as string).trim()) {
+        return (rec[key] as string).trim();
+      }
+    }
+  }
+  return undefined;
+}
+
+/** Read a leaf from a Signal-K REST vessel tree (handles nested `.value`). */
+function skLeaf(tree: Record<string, unknown>, dotted: string): unknown {
+  const parts = dotted.split('.');
+  let cur: unknown = tree;
+  for (const part of parts) {
+    if (!cur || typeof cur !== 'object') return undefined;
+    cur = (cur as Record<string, unknown>)[part];
+  }
+  if (cur && typeof cur === 'object' && 'value' in (cur as object)) {
+    return (cur as { value: unknown }).value;
+  }
+  return cur;
+}
+
+function skNumber(tree: Record<string, unknown>, dotted: string): number | undefined {
+  const leaf = skLeaf(tree, dotted);
+  if (typeof leaf === 'number' && Number.isFinite(leaf)) return leaf;
+  if (leaf && typeof leaf === 'object') {
+    const rec = leaf as Record<string, unknown>;
+    for (const key of ['overall', 'maximum', 'value']) {
+      const inner = rec[key];
+      if (typeof inner === 'number' && Number.isFinite(inner)) return inner;
+      if (inner && typeof inner === 'object' && typeof (inner as { value?: number }).value === 'number') {
+        return (inner as { value: number }).value;
+      }
     }
   }
   return undefined;

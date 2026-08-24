@@ -25,6 +25,10 @@ export class AnchorageSettingsService {
       if (stored) {
         const parsed = JSON.parse(stored) as Partial<AnchorageSettings> & { ownMmsi?: string };
         delete parsed.ownMmsi;
+        // Migrate legacy 200 m default — it only ever tracked own boat in a real anchorage.
+        if (parsed.trackingRadiusM === 200) {
+          parsed.trackingRadiusM = DEFAULT_ANCHORAGE_SETTINGS.trackingRadiusM;
+        }
         return { ...DEFAULT_ANCHORAGE_SETTINGS, ...parsed };
       }
     } catch { /* ignore */ }

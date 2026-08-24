@@ -12,7 +12,8 @@ export interface AnchorageSettings {
 }
 
 export const DEFAULT_ANCHORAGE_SETTINGS: AnchorageSettings = {
-  trackingRadiusM: 200,
+  /** ~0.8 nm — enough for a typical anchorage; 200 m only covered own boat. */
+  trackingRadiusM: 1500,
   monitoringCentre: null,
   windUseInSwingCalculations: false,
   windRangeStartDeg: 0,
