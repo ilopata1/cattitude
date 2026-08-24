@@ -22,7 +22,11 @@ export class AnchorageSettingsService {
   private load(): AnchorageSettings {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) return { ...DEFAULT_ANCHORAGE_SETTINGS, ...(JSON.parse(stored) as Partial<AnchorageSettings>) };
+      if (stored) {
+        const parsed = JSON.parse(stored) as Partial<AnchorageSettings> & { ownMmsi?: string };
+        delete parsed.ownMmsi;
+        return { ...DEFAULT_ANCHORAGE_SETTINGS, ...parsed };
+      }
     } catch { /* ignore */ }
     return { ...DEFAULT_ANCHORAGE_SETTINGS };
   }

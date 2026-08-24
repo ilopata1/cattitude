@@ -357,8 +357,6 @@ export class AnchorageVesselStoreService implements OnDestroy {
   }
 
   private ownMmsi(): string {
-    const s = this.settings.get();
-    if (s.ownMmsi) return s.ownMmsi;
     return this.mmsiFromContext(this.ownContext);
   }
 

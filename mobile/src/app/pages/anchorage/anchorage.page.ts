@@ -3,10 +3,8 @@ import {
   ElementRef, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
 import { ViewWillEnter } from '@ionic/angular';
-import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { AnchorageVesselStoreService } from './core/services/anchorage-vessel-store.service';
-import { AnchorageSettingsService } from './core/services/anchorage-settings.service';
 import { AnchorageAlertService } from './core/services/anchorage-alert.service';
 import { SignalKService } from '../../core/services/signal-k.service';
 import { Vessel, VesselState, LatLon } from './core/models/vessel.model';
@@ -59,8 +57,6 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
   viewMode: 'myboat' | 'anchorage' = 'anchorage';
   windMapCentre: LatLon | null = null;
 
-  ownMmsiControl = new FormControl('');
-
   private map: unknown = null;
   private markers = new Map<string, unknown>();       // mmsi → L.Marker (boat icon)
   private circles = new Map<string, unknown>();       // mmsi → L.Circle
@@ -76,14 +72,12 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
 
   constructor(
     private readonly vesselStore: AnchorageVesselStoreService,
-    private readonly anchorSettings: AnchorageSettingsService,
     private readonly alertService: AnchorageAlertService,
     private readonly sk: SignalKService,
     private readonly cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
-    this.ownMmsiControl.setValue(this.anchorSettings.get().ownMmsi);
     void this.vesselStore.ensureRestored();
 
     this.subs.push(
@@ -178,10 +172,6 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
     this.isRecording = false;
     this.updateMap();
     this.cdr.markForCheck();
-  }
-
-  saveOwnMmsi(): void {
-    this.anchorSettings.update({ ownMmsi: this.ownMmsiControl.value ?? '' });
   }
 
   clearAll(): void {

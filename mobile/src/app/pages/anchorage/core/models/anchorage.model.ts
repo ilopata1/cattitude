@@ -1,6 +1,4 @@
 export interface AnchorageSettings {
-  /** MMSI of own vessel so we can mark it on the map. */
-  ownMmsi: string;
   /** Monitoring radius in metres — vessels outside this radius are displayed only. */
   trackingRadiusM: number;
   /** Optional fixed monitoring centre.  When null, auto-follows own vessel. */
@@ -14,7 +12,6 @@ export interface AnchorageSettings {
 }
 
 export const DEFAULT_ANCHORAGE_SETTINGS: AnchorageSettings = {
-  ownMmsi: '',
   trackingRadiusM: 200,
   monitoringCentre: null,
   windUseInSwingCalculations: false,

@@ -75,12 +75,6 @@
     </ion-note>
   </div>
 
-  <ion-item class="mmsi-item">
-    <ion-label position="stacked">Own MMSI</ion-label>
-    <ion-input [formControl]="ownMmsiControl" placeholder="e.g. 123456789" inputmode="numeric" clearInput></ion-input>
-    <ion-button slot="end" fill="clear" (click)="saveOwnMmsi()">Save</ion-button>
-  </ion-item>
-
   <ion-list *ngIf="listVessels.length > 0">
     <ion-list-header>
       <ion-label>Vessels ({{ listVessels.length }})</ion-label>
