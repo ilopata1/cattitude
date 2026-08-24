@@ -34,13 +34,15 @@ export interface PolarLiveState {
 
 export type PolarWindowMinutes = 5 | 10 | 15;
 
-/** Rolling means used to drive sail-plan advice (smoother than live TWA/TWS). */
-export interface PolarAdviceAverages {
+/** Rolling means of TWA / TWS / polar % over a Polar window. */
+export interface PolarWindowAverages {
   twaDeg: number | null;
   twsKnots: number | null;
   polarPct: number | null;
   sampleCount: number;
 }
+
+export type PolarWindowSet = Record<PolarWindowMinutes, PolarWindowAverages>;
 
 export interface PolarCurvePoint {
   twaDeg: number;

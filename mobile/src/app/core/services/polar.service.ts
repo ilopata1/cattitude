@@ -2,39 +2,43 @@
  * PolarService
  *
  * Loads a vessel polar (.pol), subscribes to Signal-K for boat speed/TWS/TWA,
- * computes instantaneous and rolling-average percentage-of-polar performance,
- * and 1-minute TWA/TWS means for sail-plan advice.
+ * and computes instantaneous plus 5/10/15-minute mean TWA, TWS, and polar %.
  *
  * Boat speed prefers navigation.speedThroughWater; falls back to
  * navigation.speedOverGround when STW is missing or effectively zero.
  */
 import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, Subscription, firstValueFrom, interval } from 'rxjs';
+import { BehaviorSubject, Subscription, firstValueFrom, interval } from 'rxjs';
 import { SignalKService, SignalKDelta } from './signal-k.service';
 import { interpolateTargetSpeed, parsePolarFile, targetCurveAtTws } from './polar-parser';
 import {
-  PolarAdviceAverages,
   PolarBoatSpeedSource,
   PolarCurvePoint,
   PolarLiveState,
   PolarSample,
   PolarTable,
+  PolarWindowAverages,
   PolarWindowMinutes,
+  PolarWindowSet,
 } from '../models/polar.model';
 
 const DEFAULT_POLAR_ASSET = 'assets/polars/outremer-55sc.pol';
 const BUFFER_MS = 15 * 60 * 1000;
 const SAMPLE_INTERVAL_MS = 1_000;
 const STALE_AFTER_MS = 15_000;
-/** Window for sail-plan recommendation / cutover hints. */
-const ADVICE_AVG_MS = 60_000;
 
-const EMPTY_ADVICE_AVG: PolarAdviceAverages = {
+const EMPTY_WINDOW: PolarWindowAverages = {
   twaDeg: null,
   twsKnots: null,
   polarPct: null,
   sampleCount: 0,
+};
+
+const EMPTY_WINDOWS: PolarWindowSet = {
+  5: EMPTY_WINDOW,
+  10: EMPTY_WINDOW,
+  15: EMPTY_WINDOW,
 };
 const MPS_TO_KNOTS = 1.94384;
 const RAD_TO_DEG = 180 / Math.PI;
@@ -75,19 +79,16 @@ export class PolarService implements OnDestroy {
 
   private readonly liveSubject = new BehaviorSubject<PolarLiveState>(EMPTY_LIVE);
   private readonly samplesSubject = new BehaviorSubject<PolarSample[]>([]);
-  private readonly adviceAvgSubject = new BehaviorSubject<PolarAdviceAverages>(EMPTY_ADVICE_AVG);
-  private readonly pct5Subject  = new BehaviorSubject<number | null>(null);
-  private readonly pct10Subject = new BehaviorSubject<number | null>(null);
-  private readonly pct15Subject = new BehaviorSubject<number | null>(null);
+  private readonly windowsSubject = new BehaviorSubject<PolarWindowSet>(EMPTY_WINDOWS);
 
   readonly live$ = this.liveSubject.asObservable();
   readonly samples$ = this.samplesSubject.asObservable();
-  /** 1-minute mean TWA/TWS/polar% for sail-plan advice. */
-  readonly adviceAverages$ = this.adviceAvgSubject.asObservable();
+  /** 5/10/15-minute mean TWA, TWS, and polar %. */
+  readonly windows$ = this.windowsSubject.asObservable();
   readonly polarFilename$ = new BehaviorSubject<string>(this.polarFilename);
 
-  get adviceAverages(): PolarAdviceAverages {
-    return this.adviceAvgSubject.value;
+  get windows(): PolarWindowSet {
+    return this.windowsSubject.value;
   }
 
   constructor(
@@ -117,14 +118,6 @@ export class PolarService implements OnDestroy {
     this.samples = [];
     this.samplesSubject.next([]);
     this.refreshRollingAverages();
-  }
-
-  polarPct$(window: PolarWindowMinutes): Observable<number | null> {
-    switch (window) {
-      case 5:  return this.pct5Subject.asObservable();
-      case 10: return this.pct10Subject.asObservable();
-      case 15: return this.pct15Subject.asObservable();
-    }
   }
 
   /** Target-speed curve at the current (or supplied) TWS for chart rendering. */
@@ -310,24 +303,17 @@ export class PolarService implements OnDestroy {
 
   private refreshRollingAverages(): void {
     const now = Date.now();
-    this.pct5Subject.next(this.averagePct(now, 5));
-    this.pct10Subject.next(this.averagePct(now, 10));
-    this.pct15Subject.next(this.averagePct(now, 15));
-    this.adviceAvgSubject.next(this.averageAdviceInputs(now));
+    this.windowsSubject.next({
+      5: this.averageWindow(now, 5),
+      10: this.averageWindow(now, 10),
+      15: this.averageWindow(now, 15),
+    });
   }
 
-  private averagePct(now: number, minutes: PolarWindowMinutes): number | null {
+  private averageWindow(now: number, minutes: PolarWindowMinutes): PolarWindowAverages {
     const cutoff = now - minutes * 60 * 1000;
     const windowSamples = this.samples.filter(s => s.timestamp >= cutoff);
-    if (windowSamples.length === 0) return null;
-    const sum = windowSamples.reduce((acc, s) => acc + s.polarPct, 0);
-    return sum / windowSamples.length;
-  }
-
-  private averageAdviceInputs(now: number): PolarAdviceAverages {
-    const cutoff = now - ADVICE_AVG_MS;
-    const windowSamples = this.samples.filter(s => s.timestamp >= cutoff);
-    if (windowSamples.length === 0) return EMPTY_ADVICE_AVG;
+    if (windowSamples.length === 0) return EMPTY_WINDOW;
     const n = windowSamples.length;
     let twa = 0;
     let tws = 0;

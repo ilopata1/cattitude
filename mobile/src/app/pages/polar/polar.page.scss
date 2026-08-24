@@ -135,25 +135,46 @@
   }
 }
 
+.window-intro {
+  margin: -4px 0 10px;
+  font-size: 12px;
+  color: var(--ion-color-medium);
+}
+
 .window-readouts {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr;
   gap: 10px;
-  padding-bottom: 8px;
+  padding-bottom: 16px;
+}
+
+@media (min-width: 720px) {
+  .window-readouts {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 .window-card {
   background: var(--ion-color-step-100);
   border-radius: 10px;
-  padding: 14px 8px;
-  text-align: center;
+  padding: 14px 14px 12px;
+  text-align: left;
+}
+
+.window-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .window-label {
   display: block;
-  font-size: 11px;
-  color: var(--ion-color-medium);
-  margin-bottom: 2px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ion-color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .window-sublabel {
@@ -163,7 +184,7 @@
   color: var(--ion-color-medium);
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  margin-bottom: 6px;
+  margin-top: 2px;
 }
 
 .window-value {
@@ -171,33 +192,38 @@
   font-size: 26px;
   font-weight: 700;
   line-height: 1.1;
+  flex-shrink: 0;
 }
 
-.advice-card {
-  margin: 8px 12px 4px;
-
-  &.stale {
-    opacity: 0.45;
-  }
-
-  .recommend-label {
-    margin: 6px 0 2px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-    color: var(--ion-color-primary, #3880ff);
-  }
-
-  ion-card-title {
-    margin-top: 0;
-  }
-}
-
-.advice-meta {
+.window-means,
+.window-band {
   font-size: 12px;
   color: var(--ion-color-medium);
-  margin: 0 0 8px;
+  margin: 8px 0 0;
+}
+
+.window-would {
+  margin: 12px 0 4px;
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--ion-color-medium-shade, #6d6d6d);
+}
+
+.window-plan {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.window-waiting {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: var(--ion-color-medium);
+}
+
+.alts {
+  margin-top: 10px;
 }
 
 .alts-label {

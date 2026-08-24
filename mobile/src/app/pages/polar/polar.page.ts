@@ -3,22 +3,39 @@ import {
   Component, OnDestroy, OnInit,
 } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { PolarAdviceAverages, PolarLiveState, PolarSample } from '../../core/models/polar.model';
+import {
+  PolarLiveState,
+  PolarSample,
+  PolarWindowAverages,
+  PolarWindowMinutes,
+  PolarWindowSet,
+} from '../../core/models/polar.model';
 import { PolarService } from '../../core/services/polar.service';
 import { SignalKService } from '../../core/services/signal-k.service';
 import { SailAdvice, formatBand } from '../../core/models/sail-plan.model';
-import { SailAdviceStabilizer } from '../../core/services/sail-advice-stabilizer';
 import { SailPlanService } from '../../core/services/sail-plan.service';
 
 const WINDOW_MS = 15 * 60 * 1000;
 const BUCKET_MS = 10_000;
 const BUCKET_COUNT = WINDOW_MS / BUCKET_MS;
+const EMPTY_WINDOW: PolarWindowAverages = {
+  twaDeg: null,
+  twsKnots: null,
+  polarPct: null,
+  sampleCount: 0,
+};
 
 export interface PerfBar {
   x: number;
   h: number;
   value: number;
   color: string;
+}
+
+export interface PolarWindowAssessment {
+  minutes: PolarWindowMinutes;
+  avg: PolarWindowAverages;
+  advice: SailAdvice | null;
 }
 
 @Component({
@@ -41,19 +58,13 @@ export class PolarPage implements OnInit, OnDestroy {
     stale: true,
   };
 
-  pct5: number | null = null;
-  pct10: number | null = null;
-  pct15: number | null = null;
   skConnected = false;
-  advice: SailAdvice | null = null;
   planName = '';
-  /** 1-min means that drive sail-plan advice (not the live instrument tiles). */
-  adviceAvg: PolarAdviceAverages = {
-    twaDeg: null,
-    twsKnots: null,
-    polarPct: null,
-    sampleCount: 0,
-  };
+  windows: PolarWindowAssessment[] = [
+    this.emptyAssessment(5),
+    this.emptyAssessment(10),
+    this.emptyAssessment(15),
+  ];
 
   /** Original viewBox sizing — CSS uses width:100%; height:auto. */
   readonly chartW = 320;
@@ -68,8 +79,12 @@ export class PolarPage implements OnInit, OnDestroy {
   bars: PerfBar[] = [];
 
   private samples: PolarSample[] = [];
+  private windowSet: PolarWindowSet = {
+    5: EMPTY_WINDOW,
+    10: EMPTY_WINDOW,
+    15: EMPTY_WINDOW,
+  };
   private subs: Subscription[] = [];
-  private readonly adviceStabilizer = new SailAdviceStabilizer();
 
   constructor(
     private readonly polar: PolarService,
@@ -86,12 +101,11 @@ export class PolarPage implements OnInit, OnDestroy {
       }),
       this.polar.live$.subscribe(live => {
         this.live = live;
-        this.refreshAdvice();
         this.cdr.markForCheck();
       }),
-      this.polar.adviceAverages$.subscribe(avg => {
-        this.adviceAvg = avg;
-        this.refreshAdvice();
+      this.polar.windows$.subscribe(set => {
+        this.windowSet = set;
+        this.refreshAssessments();
         this.cdr.markForCheck();
       }),
       this.polar.samples$.subscribe(samples => {
@@ -101,13 +115,9 @@ export class PolarPage implements OnInit, OnDestroy {
       }),
       this.sailPlans.plan$.subscribe(plan => {
         this.planName = plan.name;
-        this.adviceStabilizer.reset();
-        this.refreshAdvice();
+        this.refreshAssessments();
         this.cdr.markForCheck();
       }),
-      this.polar.polarPct$(5).subscribe(v => { this.pct5 = v; this.cdr.markForCheck(); }),
-      this.polar.polarPct$(10).subscribe(v => { this.pct10 = v; this.cdr.markForCheck(); }),
-      this.polar.polarPct$(15).subscribe(v => { this.pct15 = v; this.cdr.markForCheck(); }),
     );
   }
 
@@ -169,19 +179,23 @@ export class PolarPage implements OnInit, OnDestroy {
     }
   }
 
-  private refreshAdvice(): void {
-    // Prefer 1-min means so cutover text / band choice do not chase gusty live TWS.
-    // Fall back to live until the sample buffer has at least one point.
-    const twaDeg = this.adviceAvg.twaDeg ?? this.live.twaDeg;
-    const twsKnots = this.adviceAvg.twsKnots ?? this.live.twsKnots;
-    const polarPct = this.adviceAvg.polarPct ?? this.live.instantPolarPct;
-    const raw = this.sailPlans.advise(twaDeg, twsKnots, polarPct);
-    this.advice = this.adviceStabilizer.update(
-      this.sailPlans.plan,
-      raw,
-      twaDeg,
-      twsKnots,
-    );
+  trackWindow(_: number, w: PolarWindowAssessment): PolarWindowMinutes {
+    return w.minutes;
+  }
+
+  private refreshAssessments(): void {
+    this.windows = ([5, 10, 15] as PolarWindowMinutes[]).map(minutes => {
+      const avg = this.windowSet[minutes];
+      return {
+        minutes,
+        avg,
+        advice: this.sailPlans.advise(avg.twaDeg, avg.twsKnots, avg.polarPct),
+      };
+    });
+  }
+
+  private emptyAssessment(minutes: PolarWindowMinutes): PolarWindowAssessment {
+    return { minutes, avg: EMPTY_WINDOW, advice: null };
   }
 
   /** Absolute wall-clock buckets so completed intervals stay frozen. */
