@@ -152,11 +152,18 @@ export class AnchorageVesselStoreService implements OnDestroy {
 
     const partial = this.getOrCreatePartial(ctx);
     partial.lastSeen = Date.now();
+    let nameTouched = false;
 
     for (const update of delta.updates ?? []) {
       for (const kv of update.values ?? []) {
-        this.applyPath(partial, kv.path, kv.value);
+        const path = relativeSkPath(kv.path, ctx);
+        this.applyPath(partial, path, kv.value);
+        if (path === 'name' || path.endsWith('.name')) nameTouched = true;
       }
+    }
+
+    if (nameTouched && partial.name) {
+      this.applyNameIfKnown(ctx, partial);
     }
 
     // Flush to vessel map when we have enough to construct a full update.
@@ -187,9 +194,6 @@ export class AnchorageVesselStoreService implements OnDestroy {
       case 'navigation.mmsi':
         if (typeof value === 'string' || typeof value === 'number') p.mmsi = String(value);
         break;
-      case 'name':
-        if (typeof value === 'string') p.name = value;
-        break;
       case 'design.length.overall':
         if (typeof value === 'number') p.lengthM = value;
         break;
@@ -208,6 +212,12 @@ export class AnchorageVesselStoreService implements OnDestroy {
         if (typeof value === 'number') p.beamM = value;
         else if (value && typeof value === 'object' && typeof (value as { maximum?: number }).maximum === 'number') {
           p.beamM = (value as { maximum: number }).maximum;
+        }
+        break;
+      default:
+        if (path === 'name' || path.endsWith('.name')) {
+          const name = coerceVesselName(value);
+          if (name) p.name = name;
         }
         break;
     }
@@ -234,6 +244,17 @@ export class AnchorageVesselStoreService implements OnDestroy {
     };
 
     this.processUpdate(update, ctx === this.ownContext || mmsi === this.ownMmsi());
+  }
+
+  /** Name often arrives in a separate AIS static-data delta — apply it without waiting for another position. */
+  private applyNameIfKnown(ctx: string, partial: VesselPartial): void {
+    const mmsi = partial.mmsi ?? this.mmsiFromContext(ctx);
+    if (!mmsi || !partial.name) return;
+    const current = new Map(this.vesselMap.value);
+    const vessel = current.get(mmsi);
+    if (!vessel || vessel.name === partial.name) return;
+    vessel.name = partial.name;
+    this.vesselMap.next(current);
   }
 
   private processUpdate(update: VesselUpdate, isOwn: boolean): void {
@@ -390,4 +411,28 @@ function computeConfidence(posCount: number): 'low' | 'medium' | 'high' {
   if (posCount > 15) return 'high';
   if (posCount >= 5)  return 'medium';
   return 'low';
+}
+
+/** Strip self. / vessels.<ctx>. so "vessels.urn:…mmsi:123.name" becomes "name". */
+function relativeSkPath(path: string, context: string): string {
+  let p = path.startsWith('self.') ? path.slice(5) : path;
+  if (p.startsWith('vessels.self.')) p = p.slice('vessels.self.'.length);
+  const ctxPrefix = context.endsWith('.') ? context : `${context}.`;
+  if (p.startsWith(ctxPrefix)) p = p.slice(ctxPrefix.length);
+  return p;
+}
+
+/** SK `name` is usually a string; some plugins send { default: "…" }. */
+function coerceVesselName(value: unknown): string | undefined {
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    return trimmed || undefined;
+  }
+  if (value && typeof value === 'object') {
+    const rec = value as Record<string, unknown>;
+    for (const key of ['default', 'en', 'name', 'value']) {
+      if (typeof rec[key] === 'string' && rec[key].trim()) return rec[key].trim();
+    }
+  }
+  return undefined;
 }

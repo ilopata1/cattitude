@@ -302,7 +302,7 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
       seenMmsis.add(vessel.mmsi);
       const colour = STATE_COLOUR[vessel.state];
       const isStale = this.vesselStore.isStale(vessel);
-      const label = this.tooltipLabel(vessel);
+      const label = this.displayName(vessel);
       const icon = this.buildVesselIcon(
         last.heading,
         vessel.lengthMetres,
@@ -321,7 +321,13 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
       } else {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const marker = (L as any).marker([last.lat, last.lon], { icon })
-          .bindTooltip(label, { direction: 'top', offset: [0, -8], opacity: 0.85 })
+          .bindTooltip(label, {
+            permanent: true,
+            direction: 'right',
+            offset: [14, 0],
+            opacity: 0.95,
+            className: 'vessel-name-tooltip',
+          })
           .addTo(map);
         const mmsi = vessel.mmsi;
         marker.on('click', () => {
