@@ -27,6 +27,8 @@ const VESSEL_FILL_OTHER = '#FF007F';
 const VESSEL_STROKE_COLOR = '#111111';
 const VESSEL_ICON_ASPECT = 40 / 60;
 const VESSEL_ICON_ANCHOR_Y_FRAC = 26 / 60;
+/** Minimum marker hit box so hover tips are easy to trigger and keep open. */
+const VESSEL_HIT_MIN_PX = 52;
 
 const STATE_COLOUR: Record<VesselState, string> = {
   green:   '#2ecc71',
@@ -63,6 +65,7 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
   private anchorMarkers = new Map<string, unknown>(); // mmsi → L.CircleMarker
   /** Single shared hover label — never opened via Leaflet's touch/click path. */
   private hoverTip: unknown = null;
+  private hoverCloseTimer: ReturnType<typeof setTimeout> | null = null;
   private subs: Subscription[] = [];
   private leafletReady = false;
   /** Set after the first successful center on own vessel. */
@@ -199,9 +202,7 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
   }
 
   tooltipLabel(v: Vessel): string {
-    return this.hasShipName(v)
-      ? `${toHeadingCase(v.name.trim())} (${v.mmsi})`
-      : `MMSI ${v.mmsi}`;
+    return this.displayName(v);
   }
 
   stateBadgeColour(state: VesselState): string {
@@ -462,29 +463,35 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
 
     const heightPx = Math.max(14, Math.round(this.metresToPixels(drawLength)));
     const widthPx = Math.round(heightPx * VESSEL_ICON_ASPECT);
-    const anchorX = widthPx / 2;
-    const anchorY = heightPx * VESSEL_ICON_ANCHOR_Y_FRAC;
+    const hitW = Math.max(widthPx, VESSEL_HIT_MIN_PX);
+    const hitH = Math.max(heightPx, VESSEL_HIT_MIN_PX);
+    const padX = (hitW - widthPx) / 2;
+    const padY = (hitH - heightPx) / 2;
+    const anchorX = padX + widthPx / 2;
+    const anchorY = padY + heightPx * VESSEL_ICON_ANCHOR_Y_FRAC;
     const shadowId = `vessel-shadow-${mmsi.replace(/\W/g, '')}`;
     const opacity = isStale ? 0.4 : 1;
     const strokeWidth = isOwn ? 4 : 3;
     const fillColor = isOwn ? VESSEL_FILL_OWN : VESSEL_FILL_OTHER;
     const originY = `${VESSEL_ICON_ANCHOR_Y_FRAC * 100}%`;
 
-    const html = `<div class="vessel-marker-wrap" style="width:${widthPx}px;height:${heightPx}px;opacity:${opacity};">
-      <div class="vessel-marker-inner" style="transform:rotate(${headingDeg}deg);transform-origin:50% ${originY};width:100%;height:100%;">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 60" width="100%" height="100%">
-          <defs>
-            <filter id="${shadowId}" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.6"/>
-            </filter>
-          </defs>
-          <path d="M 20,2 L 38,50 L 20,38 L 2,50 Z"
-                fill="${fillColor}"
-                stroke="${VESSEL_STROKE_COLOR}"
-                stroke-width="${strokeWidth}"
-                stroke-linejoin="round"
-                filter="url(#${shadowId})" />
-        </svg>
+    const html = `<div class="vessel-marker-hit" style="width:${hitW}px;height:${hitH}px;">
+      <div class="vessel-marker-wrap" style="width:${widthPx}px;height:${heightPx}px;margin:${padY}px 0 0 ${padX}px;opacity:${opacity};">
+        <div class="vessel-marker-inner" style="transform:rotate(${headingDeg}deg);transform-origin:50% ${originY};width:100%;height:100%;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 60" width="100%" height="100%">
+            <defs>
+              <filter id="${shadowId}" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.6"/>
+              </filter>
+            </defs>
+            <path d="M 20,2 L 38,50 L 20,38 L 2,50 Z"
+                  fill="${fillColor}"
+                  stroke="${VESSEL_STROKE_COLOR}"
+                  stroke-width="${strokeWidth}"
+                  stroke-linejoin="round"
+                  filter="url(#${shadowId})" />
+          </svg>
+        </div>
       </div>
     </div>`;
 
@@ -492,7 +499,7 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
     return (L as any).divIcon({
       className: 'vessel-marker-leaflet',
       html,
-      iconSize: [widthPx, heightPx],
+      iconSize: [hitW, hitH],
       iconAnchor: [anchorX, anchorY],
     });
   }
@@ -546,6 +553,10 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
     }
 
     marker.on('mouseover', () => {
+      if (this.hoverCloseTimer !== null) {
+        clearTimeout(this.hoverCloseTimer);
+        this.hoverCloseTimer = null;
+      }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const tip = this.hoverTip as any;
       tip.setContent(label);
@@ -553,9 +564,13 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
       if (!map.hasLayer(tip)) tip.addTo(map);
     });
     marker.on('mouseout', () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const tip = this.hoverTip as any;
-      if (map.hasLayer(tip)) map.removeLayer(tip);
+      if (this.hoverCloseTimer !== null) clearTimeout(this.hoverCloseTimer);
+      this.hoverCloseTimer = setTimeout(() => {
+        this.hoverCloseTimer = null;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const tip = this.hoverTip as any;
+        if (map.hasLayer(tip)) map.removeLayer(tip);
+      }, 280);
     });
   }
 
@@ -565,6 +580,10 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
   }
 
   private closeAllTooltips(): void {
+    if (this.hoverCloseTimer !== null) {
+      clearTimeout(this.hoverCloseTimer);
+      this.hoverCloseTimer = null;
+    }
     if (!this.map || !this.hoverTip) return;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const map = this.map as any;
