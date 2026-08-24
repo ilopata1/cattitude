@@ -62,6 +62,7 @@
     </div>
 
     <h2 class="section-title">Crossover matrix</h2>
+    <p class="hint">Primary, alternatives, and avoid pick from inventory. Select more than one sail for a combination.</p>
     <div class="matrix-scroll">
       <table class="matrix">
         <thead>
@@ -74,10 +75,7 @@
           <tr *ngFor="let row of draft.cells; let ri = index; trackBy: trackByIndex">
             <th>{{ formatTwa(ri) }}</th>
             <td *ngFor="let cell of row; let ci = index; trackBy: trackByIndex">
-              <ion-input placeholder="Primary" [(ngModel)]="cell.primary"></ion-input>
-              <ion-input placeholder="Alternatives (comma-separated)" [ngModel]="altsText(cell)" (ngModelChange)="setAlts(cell, $event)"></ion-input>
-              <ion-input placeholder="Notes" [(ngModel)]="cell.notes"></ion-input>
-              <ion-input placeholder="Avoid" [(ngModel)]="cell.avoid"></ion-input>
+              <ng-container *ngTemplateOutlet="cellFields; context: { $implicit: cell }"></ng-container>
             </td>
           </tr>
         </tbody>
@@ -107,10 +105,7 @@
       <div class="hw-rows">
         <div class="hw-row" *ngFor="let cell of draft.heavyWeather.cells; let i = index; trackBy: trackByIndex">
           <div class="hw-band">{{ formatHw(i) }}</div>
-          <ion-input placeholder="Primary" [(ngModel)]="cell.primary"></ion-input>
-          <ion-input placeholder="Alternatives" [ngModel]="altsText(cell)" (ngModelChange)="setAlts(cell, $event)"></ion-input>
-          <ion-input placeholder="Notes" [(ngModel)]="cell.notes"></ion-input>
-          <ion-input placeholder="Avoid" [(ngModel)]="cell.avoid"></ion-input>
+          <ng-container *ngTemplateOutlet="cellFields; context: { $implicit: cell }"></ng-container>
         </div>
       </div>
     </ng-container>
@@ -127,4 +122,53 @@
       </ion-button>
     </div>
   </div>
+
+  <ng-template #cellFields let-cell>
+    <label class="field-label">Primary</label>
+    <ion-select
+      [multiple]="true"
+      [value]="primarySails(cell)"
+      (ionChange)="setPrimarySails(cell, $event.detail.value)"
+      placeholder="Choose sails"
+      [disabled]="!sailOptions(primarySails(cell)).length"
+      interface="alert"
+      okText="Done"
+      cancelText="Cancel"
+    >
+      <ion-select-option *ngFor="let sail of sailOptions(primarySails(cell)); trackBy: trackBySail" [value]="sail">
+        {{ sail }}
+      </ion-select-option>
+    </ion-select>
+    <label class="field-label">Alternatives</label>
+    <ion-select
+      [multiple]="true"
+      [value]="altSails(cell)"
+      (ionChange)="setAltSails(cell, $event.detail.value)"
+      placeholder="Optional"
+      [disabled]="!sailOptions(altSails(cell)).length"
+      interface="alert"
+      okText="Done"
+      cancelText="Cancel"
+    >
+      <ion-select-option *ngFor="let sail of sailOptions(altSails(cell)); trackBy: trackBySail" [value]="sail">
+        {{ sail }}
+      </ion-select-option>
+    </ion-select>
+    <ion-input placeholder="Notes" [(ngModel)]="cell.notes"></ion-input>
+    <label class="field-label">Avoid</label>
+    <ion-select
+      [multiple]="true"
+      [value]="avoidSails(cell)"
+      (ionChange)="setAvoidSails(cell, $event.detail.value)"
+      placeholder="Optional"
+      [disabled]="!sailOptions(avoidSails(cell)).length"
+      interface="alert"
+      okText="Done"
+      cancelText="Cancel"
+    >
+      <ion-select-option *ngFor="let sail of sailOptions(avoidSails(cell)); trackBy: trackBySail" [value]="sail">
+        {{ sail }}
+      </ion-select-option>
+    </ion-select>
+  </ng-template>
 </ion-content>

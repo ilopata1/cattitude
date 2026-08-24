@@ -68,11 +68,28 @@
     font-weight: 600;
   }
 
-  ion-input {
+  ion-input,
+  ion-select {
     margin-bottom: 4px;
     --padding-start: 6px;
     font-size: 13px;
   }
+
+  ion-select {
+    min-height: 38px;
+    border: 1px solid var(--ion-color-step-150, #ddd);
+    border-radius: 8px;
+  }
+}
+
+.field-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ion-color-medium);
+  margin: 6px 0 2px;
 }
 
 .hw-rows {
@@ -86,6 +103,19 @@
   border: 1px solid var(--ion-color-step-150, #ddd);
   border-radius: 8px;
   padding: 8px;
+
+  ion-input,
+  ion-select {
+    margin-bottom: 4px;
+    --padding-start: 6px;
+    font-size: 13px;
+  }
+
+  ion-select {
+    min-height: 38px;
+    border: 1px solid var(--ion-color-step-150, #ddd);
+    border-radius: 8px;
+  }
 }
 
 .hw-band {

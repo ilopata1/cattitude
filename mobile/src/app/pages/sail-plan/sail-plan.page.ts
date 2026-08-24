@@ -15,6 +15,7 @@ export class SailPlanPage implements OnInit {
 
   draft!: SailPlan;
   newSail = '';
+  private readonly comboCache = new WeakMap<SailPlanCell, Record<string, { raw: string; sails: string[] }>>();
 
   constructor(
     private readonly sailPlans: SailPlanService,
@@ -35,24 +36,52 @@ export class SailPlanPage implements OnInit {
   formatTws(i: number) { return formatBand(this.twsBands()[i], 'kn'); }
   formatHw(i: number) { return formatBand(this.hwBands()[i], '°'); }
 
-  altsText(cell: SailPlanCell): string {
-    return (cell.alternatives ?? []).join(', ');
+  primarySails(cell: SailPlanCell): string[] {
+    return this.cachedCombo(cell, 'p', cell.primary);
   }
 
-  setAlts(cell: SailPlanCell, text: string): void {
-    cell.alternatives = text.split(',').map(s => s.trim()).filter(Boolean);
+  altSails(cell: SailPlanCell): string[] {
+    return this.cachedCombo(cell, 'a', (cell.alternatives ?? []).join(' + '));
+  }
+
+  avoidSails(cell: SailPlanCell): string[] {
+    return this.cachedCombo(cell, 'v', cell.avoid ?? '');
+  }
+
+  sailOptions(selected: string[]): string[] {
+    const inv = this.draft?.sails ?? [];
+    const extra = selected.filter(s => !inv.some(i => i.toLowerCase() === s.toLowerCase()));
+    return [...inv, ...extra];
+  }
+
+  setPrimarySails(cell: SailPlanCell, value: string[] | string | null | undefined): void {
+    cell.primary = this.formatCombo(this.asList(value));
+    this.cdr.markForCheck();
+  }
+
+  setAltSails(cell: SailPlanCell, value: string[] | string | null | undefined): void {
+    cell.alternatives = this.asList(value);
+    this.cdr.markForCheck();
+  }
+
+  setAvoidSails(cell: SailPlanCell, value: string[] | string | null | undefined): void {
+    cell.avoid = this.formatCombo(this.asList(value)) || undefined;
+    this.cdr.markForCheck();
   }
 
   addSail(): void {
     const name = this.newSail.trim();
     if (!name) return;
-    if (!this.draft.sails.includes(name)) this.draft.sails.push(name);
+    if (!this.draft.sails.some(s => s.toLowerCase() === name.toLowerCase())) {
+      this.draft.sails.push(name);
+    }
     this.newSail = '';
     this.cdr.markForCheck();
   }
 
   removeSail(index: number): void {
-    this.draft.sails.splice(index, 1);
+    const [removed] = this.draft.sails.splice(index, 1);
+    if (removed) this.stripSail(removed);
     this.cdr.markForCheck();
   }
 
@@ -132,6 +161,75 @@ export class SailPlanPage implements OnInit {
   }
 
   trackByIndex(index: number): number { return index; }
+
+  trackBySail(_: number, sail: string): string { return sail; }
+
+  private cachedCombo(cell: SailPlanCell, kind: string, raw: string): string[] {
+    let bag = this.comboCache.get(cell);
+    if (!bag) {
+      bag = {};
+      this.comboCache.set(cell, bag);
+    }
+    const hit = bag[kind];
+    if (hit && hit.raw === raw) return hit.sails;
+    const sails = this.parseCombo(raw);
+    bag[kind] = { raw, sails };
+    return sails;
+  }
+
+  private asList(value: string[] | string | null | undefined): string[] {
+    const list = Array.isArray(value) ? value : value ? [value] : [];
+    return this.unique(list.map(s => this.canonical(s)).filter(Boolean));
+  }
+
+  private parseCombo(text: string | undefined): string[] {
+    if (!text?.trim()) return [];
+    const raw = text.trim();
+    const parts = raw.split(/\s*(?:\+|\/|,|;|&|\band\b)\s*/i).map(s => s.trim()).filter(Boolean);
+    const canon = parts.map(p => this.canonical(p));
+    const anyInventory = canon.some(p => this.inInventory(p));
+    if (!anyInventory && parts.length !== 1) return [this.canonical(raw)];
+    return this.unique(canon);
+  }
+
+  private formatCombo(sails: string[]): string {
+    return sails.join(' + ');
+  }
+
+  private canonical(name: string): string {
+    const hit = (this.draft?.sails ?? []).find(s => s.toLowerCase() === name.toLowerCase());
+    return hit ?? name;
+  }
+
+  private inInventory(name: string): boolean {
+    return (this.draft?.sails ?? []).some(s => s.toLowerCase() === name.toLowerCase());
+  }
+
+  private unique(sails: string[]): string[] {
+    const seen = new Set<string>();
+    const out: string[] = [];
+    for (const s of sails) {
+      const key = s.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push(s);
+    }
+    return out;
+  }
+
+  private stripSail(name: string): void {
+    const keep = (s: string) => s.toLowerCase() !== name.toLowerCase();
+    const rewrite = (cell: SailPlanCell) => {
+      cell.primary = this.formatCombo(this.parseCombo(cell.primary).filter(keep));
+      cell.alternatives = this.altSails(cell).filter(keep);
+      const avoid = this.parseCombo(cell.avoid).filter(keep);
+      cell.avoid = this.formatCombo(avoid) || undefined;
+    };
+    for (const row of this.draft.cells) {
+      for (const cell of row) rewrite(cell);
+    }
+    for (const cell of this.draft.heavyWeather.cells) rewrite(cell);
+  }
 
   private async refreshDraft(): Promise<void> {
     await this.sailPlans.ensureLoaded();
