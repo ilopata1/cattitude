@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 const STORAGE_KEY = 'cattitude.signalk.url';
+/** Used when no URL has been saved yet (local Signal-K / signalk-sim). */
+export const DEFAULT_SIGNALK_URL = 'http://localhost:3000';
 
 @Injectable({ providedIn: 'root' })
 export class SignalKSettingsService {
@@ -36,9 +38,10 @@ export class SignalKSettingsService {
 
   private readStored(): string {
     try {
-      return localStorage.getItem(STORAGE_KEY) ?? '';
+      const stored = localStorage.getItem(STORAGE_KEY)?.trim();
+      return stored || DEFAULT_SIGNALK_URL;
     } catch {
-      return '';
+      return DEFAULT_SIGNALK_URL;
     }
   }
 }

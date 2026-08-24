@@ -6,7 +6,8 @@
  * polar service, notification bridge).
  *
  * Connection lifecycle:
- *  - Connects automatically when a URL is set in SignalKSettingsService.
+ *  - Connects automatically when a URL is set in SignalKSettingsService
+ *    (defaults to http://localhost:3000 if none has been saved).
  *  - Auto-reconnects with exponential back-off (cap: 30 s) on any close/error.
  *  - Stops reconnecting when the URL is cleared.
  *  - Call connect() explicitly after setting a new URL.
