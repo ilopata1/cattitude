@@ -3,7 +3,7 @@ import {
   Component, OnDestroy, OnInit,
 } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { PolarLiveState, PolarSample } from '../../core/models/polar.model';
+import { PolarAdviceAverages, PolarLiveState, PolarSample } from '../../core/models/polar.model';
 import { PolarService } from '../../core/services/polar.service';
 import { SignalKService } from '../../core/services/signal-k.service';
 import { SailAdvice, formatBand } from '../../core/models/sail-plan.model';
@@ -47,6 +47,13 @@ export class PolarPage implements OnInit, OnDestroy {
   skConnected = false;
   advice: SailAdvice | null = null;
   planName = '';
+  /** 1-min means that drive sail-plan advice (not the live instrument tiles). */
+  adviceAvg: PolarAdviceAverages = {
+    twaDeg: null,
+    twsKnots: null,
+    polarPct: null,
+    sampleCount: 0,
+  };
 
   /** Original viewBox sizing — CSS uses width:100%; height:auto. */
   readonly chartW = 320;
@@ -79,6 +86,11 @@ export class PolarPage implements OnInit, OnDestroy {
       }),
       this.polar.live$.subscribe(live => {
         this.live = live;
+        this.refreshAdvice();
+        this.cdr.markForCheck();
+      }),
+      this.polar.adviceAverages$.subscribe(avg => {
+        this.adviceAvg = avg;
         this.refreshAdvice();
         this.cdr.markForCheck();
       }),
@@ -158,16 +170,17 @@ export class PolarPage implements OnInit, OnDestroy {
   }
 
   private refreshAdvice(): void {
-    const raw = this.sailPlans.advise(
-      this.live.twaDeg,
-      this.live.twsKnots,
-      this.live.instantPolarPct,
-    );
+    // Prefer 1-min means so cutover text / band choice do not chase gusty live TWS.
+    // Fall back to live until the sample buffer has at least one point.
+    const twaDeg = this.adviceAvg.twaDeg ?? this.live.twaDeg;
+    const twsKnots = this.adviceAvg.twsKnots ?? this.live.twsKnots;
+    const polarPct = this.adviceAvg.polarPct ?? this.live.instantPolarPct;
+    const raw = this.sailPlans.advise(twaDeg, twsKnots, polarPct);
     this.advice = this.adviceStabilizer.update(
       this.sailPlans.plan,
       raw,
-      this.live.twaDeg,
-      this.live.twsKnots,
+      twaDeg,
+      twsKnots,
     );
   }
 

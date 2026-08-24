@@ -2,7 +2,8 @@
  * PolarService
  *
  * Loads a vessel polar (.pol), subscribes to Signal-K for boat speed/TWS/TWA,
- * computes instantaneous and rolling-average percentage-of-polar performance.
+ * computes instantaneous and rolling-average percentage-of-polar performance,
+ * and 1-minute TWA/TWS means for sail-plan advice.
  *
  * Boat speed prefers navigation.speedThroughWater; falls back to
  * navigation.speedOverGround when STW is missing or effectively zero.
@@ -13,6 +14,7 @@ import { BehaviorSubject, Observable, Subscription, firstValueFrom, interval } f
 import { SignalKService, SignalKDelta } from './signal-k.service';
 import { interpolateTargetSpeed, parsePolarFile, targetCurveAtTws } from './polar-parser';
 import {
+  PolarAdviceAverages,
   PolarBoatSpeedSource,
   PolarCurvePoint,
   PolarLiveState,
@@ -25,6 +27,15 @@ const DEFAULT_POLAR_ASSET = 'assets/polars/outremer-55sc.pol';
 const BUFFER_MS = 15 * 60 * 1000;
 const SAMPLE_INTERVAL_MS = 1_000;
 const STALE_AFTER_MS = 15_000;
+/** Window for sail-plan recommendation / cutover hints. */
+const ADVICE_AVG_MS = 60_000;
+
+const EMPTY_ADVICE_AVG: PolarAdviceAverages = {
+  twaDeg: null,
+  twsKnots: null,
+  polarPct: null,
+  sampleCount: 0,
+};
 const MPS_TO_KNOTS = 1.94384;
 const RAD_TO_DEG = 180 / Math.PI;
 /** Below this, a published STW is treated as "no sensor" so SOG can win. */
@@ -64,13 +75,20 @@ export class PolarService implements OnDestroy {
 
   private readonly liveSubject = new BehaviorSubject<PolarLiveState>(EMPTY_LIVE);
   private readonly samplesSubject = new BehaviorSubject<PolarSample[]>([]);
+  private readonly adviceAvgSubject = new BehaviorSubject<PolarAdviceAverages>(EMPTY_ADVICE_AVG);
   private readonly pct5Subject  = new BehaviorSubject<number | null>(null);
   private readonly pct10Subject = new BehaviorSubject<number | null>(null);
   private readonly pct15Subject = new BehaviorSubject<number | null>(null);
 
   readonly live$ = this.liveSubject.asObservable();
   readonly samples$ = this.samplesSubject.asObservable();
+  /** 1-minute mean TWA/TWS/polar% for sail-plan advice. */
+  readonly adviceAverages$ = this.adviceAvgSubject.asObservable();
   readonly polarFilename$ = new BehaviorSubject<string>(this.polarFilename);
+
+  get adviceAverages(): PolarAdviceAverages {
+    return this.adviceAvgSubject.value;
+  }
 
   constructor(
     private readonly http: HttpClient,
@@ -295,6 +313,7 @@ export class PolarService implements OnDestroy {
     this.pct5Subject.next(this.averagePct(now, 5));
     this.pct10Subject.next(this.averagePct(now, 10));
     this.pct15Subject.next(this.averagePct(now, 15));
+    this.adviceAvgSubject.next(this.averageAdviceInputs(now));
   }
 
   private averagePct(now: number, minutes: PolarWindowMinutes): number | null {
@@ -303,6 +322,27 @@ export class PolarService implements OnDestroy {
     if (windowSamples.length === 0) return null;
     const sum = windowSamples.reduce((acc, s) => acc + s.polarPct, 0);
     return sum / windowSamples.length;
+  }
+
+  private averageAdviceInputs(now: number): PolarAdviceAverages {
+    const cutoff = now - ADVICE_AVG_MS;
+    const windowSamples = this.samples.filter(s => s.timestamp >= cutoff);
+    if (windowSamples.length === 0) return EMPTY_ADVICE_AVG;
+    const n = windowSamples.length;
+    let twa = 0;
+    let tws = 0;
+    let pct = 0;
+    for (const s of windowSamples) {
+      twa += s.twaDeg;
+      tws += s.twsKnots;
+      pct += s.polarPct;
+    }
+    return {
+      twaDeg: twa / n,
+      twsKnots: tws / n,
+      polarPct: pct / n,
+      sampleCount: n,
+    };
   }
 
   private toKnots(mps: number | undefined): number | null {
