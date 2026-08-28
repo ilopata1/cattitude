@@ -1,4 +1,6 @@
-import { LatLon, VesselPosition, Vessel, VesselState } from '../models/vessel.model';
+import {
+  LatLon, VesselPosition, Vessel, VesselState, AisReferencePoint,
+} from '../models/vessel.model';
 import { enumerateWindFromBearingsInRange, normalizeDeg } from './wind-arc';
 
 const EARTH_RADIUS = 6371000;
@@ -77,6 +79,30 @@ export function computeAnchorPoint(positions: VesselPosition[]): LatLon | null {
   const y = (a00 * b1 - a01 * b0) / det;
 
   return { lat: y, lon: x };
+}
+
+/**
+ * Moves a reported fix to the bow on the centreline — where the rode actually
+ * leaves the boat — using the AIS reference point.
+ *
+ * Without this the heading rays used for anchor fitting run through the
+ * antenna, which is offset aft and (on ships) well off the centreline, biasing
+ * the fitted anchor. Returns the fix unchanged when the offsets are unknown.
+ */
+export function toRodePoint(pos: VesselPosition, aisRef: AisReferencePoint): VesselPosition {
+  const { fromBow, fromCenter } = aisRef;
+  if (!fromBow && !fromCenter) return pos;
+
+  let point: LatLon = { lat: pos.lat, lon: pos.lon };
+  if (fromBow) {
+    point = pointAtBearingDistance(point, fromBow, pos.heading);
+  }
+  if (fromCenter) {
+    // +ve fromCenter means the antenna sits to port, so the centreline is that
+    // far to starboard of it.
+    point = pointAtBearingDistance(point, fromCenter, pos.heading + 90);
+  }
+  return { ...pos, lat: point.lat, lon: point.lon };
 }
 
 /**

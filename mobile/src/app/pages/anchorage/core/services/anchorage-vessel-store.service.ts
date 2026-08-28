@@ -26,12 +26,13 @@ import { NotificationBridgeService } from '../../../../core/services/notificatio
 import { AnchorageSettingsService } from './anchorage-settings.service';
 import { AnchorageAlertService } from './anchorage-alert.service';
 import { AnchoragePersistenceService } from './anchorage-persistence.service';
+import { AnchorageNameCacheService } from './anchorage-name-cache.service';
 import {
   Vessel, VesselUpdate, VesselPosition, LatLon,
 } from '../models/vessel.model';
 import {
   computeAnchorPoint, computeSwingRadius, computeState,
-  applyWindRangeToAnchoredState, haversineDistance,
+  applyWindRangeToAnchoredState, haversineDistance, toRodePoint,
 } from '../calculators/anchor.calculator';
 
 const SOG_THRESHOLD         = 0.5;     // knots — below this we treat vessel as at anchor
@@ -68,6 +69,8 @@ interface VesselPartial {
   cogDeg?: number;
   lengthM?: number;
   beamM?: number;
+  aisFromBow?: number;
+  aisFromCenter?: number;
   lastSeen: number;
 }
 
@@ -98,6 +101,7 @@ export class AnchorageVesselStoreService implements OnDestroy {
     private readonly alerts: AnchorageAlertService,
     private readonly persistence: AnchoragePersistenceService,
     private readonly notifications: NotificationBridgeService,
+    private readonly nameCache: AnchorageNameCacheService,
   ) {
     // Track own context from SK hello.
     this.sk.self$.subscribe(self => {
@@ -263,6 +267,12 @@ export class AnchorageVesselStoreService implements OnDestroy {
           p.lengthM = (value as { overall: number }).overall;
         }
         break;
+      case 'sensors.ais.fromBow':
+        if (typeof value === 'number') p.aisFromBow = value;
+        break;
+      case 'sensors.ais.fromCenter':
+        if (typeof value === 'number') p.aisFromCenter = value;
+        break;
       case 'design.beam.maximum':
         if (typeof value === 'number') p.beamM = value;
         break;
@@ -299,6 +309,8 @@ export class AnchorageVesselStoreService implements OnDestroy {
       heading,
       lengthMetres: partial.lengthM,
       beamMetres: partial.beamM,
+      aisFromBow: partial.aisFromBow,
+      aisFromCenter: partial.aisFromCenter,
       timestamp: partial.lastSeen,
     };
 
@@ -309,6 +321,7 @@ export class AnchorageVesselStoreService implements OnDestroy {
   private applyNameIfKnown(ctx: string, partial: VesselPartial): void {
     const mmsi = partial.mmsi ?? this.mmsiFromContext(ctx);
     if (!mmsi || !partial.name) return;
+    this.nameCache.remember(mmsi, partial.name);
     const current = new Map(this.vesselMap.value);
     const vessel = current.get(mmsi);
     if (!vessel || vessel.name === partial.name) return;
@@ -333,12 +346,18 @@ export class AnchorageVesselStoreService implements OnDestroy {
       timestamp: update.timestamp,
     };
 
+    this.nameCache.remember(update.mmsi, update.name);
+
     if (!vessel) {
       vessel = {
         mmsi: update.mmsi,
-        name: update.name ?? update.mmsi,
+        name: update.name ?? this.nameCache.get(update.mmsi) ?? update.mmsi,
         lengthMetres: update.lengthMetres ?? 10,
-        beamMetres: update.beamMetres ?? 3,
+        beamMetres: update.beamMetres ?? 0,   // 0 = not reported; the map estimates one
+        aisRef: {
+          fromBow: update.aisFromBow ?? null,
+          fromCenter: update.aisFromCenter ?? null,
+        },
         positions: [],
         anchorPoint: null,
         swingRadius: 0,
@@ -350,9 +369,15 @@ export class AnchorageVesselStoreService implements OnDestroy {
       };
     }
 
-    if (update.name) vessel.name = update.name;
+    if (update.name) {
+      vessel.name = update.name;
+    } else if (!vessel.name || vessel.name === vessel.mmsi) {
+      vessel.name = this.nameCache.get(update.mmsi) ?? vessel.name;
+    }
     if (update.lengthMetres) vessel.lengthMetres = update.lengthMetres;
     if (update.beamMetres) vessel.beamMetres = update.beamMetres;
+    if (update.aisFromBow !== undefined) vessel.aisRef.fromBow = update.aisFromBow;
+    if (update.aisFromCenter !== undefined) vessel.aisRef.fromCenter = update.aisFromCenter;
     vessel.lastUpdated = update.timestamp;
     vessel.isOwn = isOwn;
     vessel.tracked = isTracked;
@@ -362,7 +387,10 @@ export class AnchorageVesselStoreService implements OnDestroy {
       // Only the sample set changes the geometry; a replaced sample does not.
       if (appended) {
         vessel.positions = prunePositions(vessel.positions);
-        const anchorPos = vessel.positions.filter(p => p.sog < SOG_THRESHOLD);
+        // Anchor geometry works from the bow on the centreline, not the antenna.
+        const anchorPos = vessel.positions
+          .filter(p => p.sog < SOG_THRESHOLD)
+          .map(p => toRodePoint(p, vessel.aisRef));
         if (anchorPos.length >= 2) {
           vessel.anchorPoint = computeAnchorPoint(anchorPos);
           if (vessel.anchorPoint) {
@@ -524,19 +552,25 @@ export class AnchorageVesselStoreService implements OnDestroy {
           ?? skNumber(tree, 'design.length');
         const beamM = skNumber(tree, 'design.beam.maximum')
           ?? skNumber(tree, 'design.beam');
+        const fromBow = skNumber(tree, 'sensors.ais.fromBow');
+        const fromCenter = skNumber(tree, 'sensors.ais.fromCenter');
 
         const partial = this.getOrCreatePartial(ctxKey);
         if (name) partial.name = name;
         partial.mmsi = mmsi;
+        this.nameCache.remember(mmsi, name);
         if (lengthM !== undefined) partial.lengthM = lengthM;
         if (beamM !== undefined) partial.beamM = beamM;
+        if (fromBow !== undefined) partial.aisFromBow = fromBow;
+        if (fromCenter !== undefined) partial.aisFromCenter = fromCenter;
 
         // Only enrich vessels already seen on the delta stream (have a position).
         const vessel = current.get(mmsi);
         if (!vessel) continue;
 
-        if (name && vessel.name !== name) {
-          vessel.name = name;
+        const resolved = name ?? this.nameCache.get(mmsi);
+        if (resolved && vessel.name !== resolved) {
+          vessel.name = resolved;
           changed = true;
         }
         if (lengthM !== undefined && vessel.lengthMetres !== lengthM) {
@@ -545,6 +579,14 @@ export class AnchorageVesselStoreService implements OnDestroy {
         }
         if (beamM !== undefined && vessel.beamMetres !== beamM) {
           vessel.beamMetres = beamM;
+          changed = true;
+        }
+        if (fromBow !== undefined && vessel.aisRef.fromBow !== fromBow) {
+          vessel.aisRef.fromBow = fromBow;
+          changed = true;
+        }
+        if (fromCenter !== undefined && vessel.aisRef.fromCenter !== fromCenter) {
+          vessel.aisRef.fromCenter = fromCenter;
           changed = true;
         }
       }

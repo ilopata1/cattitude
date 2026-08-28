@@ -26,17 +26,70 @@ const MIN_VESSEL_VIEWPORT_FRACTION = 0.015;
 const VESSEL_FILL_OWN = '#ADFF2F';
 const VESSEL_FILL_OTHER = '#FF007F';
 const VESSEL_STROKE_COLOR = '#111111';
-const VESSEL_ICON_ASPECT = 40 / 60;
-const VESSEL_ICON_ANCHOR_Y_FRAC = 26 / 60;
+/** Hull outline stretched to the vessel's real length and beam. */
+const HULL_PATH = 'M 20,2 L 38,50 L 20,38 L 2,50 Z';
+/** Tight around the hull path so it fills the icon box exactly. */
+const HULL_VIEWBOX = '2 2 36 48';
+const MIN_HULL_LENGTH_PX = 14;
+const MIN_HULL_BEAM_PX = 5;
+/** Used when AIS reports no beam — a plausible length-to-beam ratio. */
+const ASSUMED_BEAM_RATIO = 0.3;
 /** Minimum pointer radius around a vessel that counts as a hover, in pixels. */
 const VESSEL_HIT_MIN_RADIUS_PX = 26;
-/**
- * Distance from the anchor point to the furthest hull corner, as a fraction of
- * drawn length — the icon box must hold the hull at any heading.
- */
-const VESSEL_HULL_REACH_FRAC = 0.55;
 /** Upper bound on map redraws, independent of AIS delta rate. */
 const RENDER_INTERVAL_MS = 500;
+/** Quiet period after a manual pan/zoom before the map follows the boat again. */
+const FOLLOW_RESUME_MS = 30_000;
+/** Fraction of the viewport treated as the edge when deciding to follow. */
+const FOLLOW_EDGE_INSET = 0.08;
+
+interface VesselGeometry {
+  lengthPx: number;
+  beamPx: number;
+  /** Reference point along the hull: 0 at the bow, 1 at the stern. */
+  alongFrac: number;
+  /** Reference point across the hull: 0 at the port side, 1 at starboard. */
+  acrossFrac: number;
+  /** Radius of the square hit box centred on the reference point. */
+  reachPx: number;
+}
+
+function clamp01(v: number): number {
+  return Math.min(1, Math.max(0, v));
+}
+
+/**
+ * Circle covering the drawn hull, for pointer hit-testing. Centred on the hull
+ * rather than the reported position, which can sit right up at the bow.
+ */
+function hullHitCircle(
+  geom: VesselGeometry,
+  headingDeg: number,
+): { centre: { x: number; y: number }; radius: number } {
+  const { lengthPx, beamPx, alongFrac, acrossFrac } = geom;
+  // Hull centre relative to the reference point, bow-up: +x starboard, +y aft.
+  const dx = (0.5 - acrossFrac) * beamPx;
+  const dy = (0.5 - alongFrac) * lengthPx;
+  const rad = headingDeg * Math.PI / 180;
+  const cos = Math.cos(rad);
+  const sin = Math.sin(rad);
+  return {
+    centre: { x: dx * cos - dy * sin, y: dx * sin + dy * cos },
+    radius: Math.max(VESSEL_HIT_MIN_RADIUS_PX, Math.hypot(beamPx, lengthPx) / 2),
+  };
+}
+
+/** Reported beam, or an estimate from length when AIS omits it. */
+function hullBeamMetres(vessel: Vessel): number {
+  const reported = vessel.beamMetres;
+  const estimated = vessel.lengthMetres * ASSUMED_BEAM_RATIO;
+  // Reject implausible values, including the fixed placeholder beam that older
+  // records carry for targets which never reported one.
+  if (!reported || reported < vessel.lengthMetres / 10 || reported > vessel.lengthMetres) {
+    return estimated;
+  }
+  return reported;
+}
 
 const STATE_COLOUR: Record<VesselState, string> = {
   green:   '#2ecc71',
@@ -80,13 +133,17 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
   private readonly hoverLabels = new Map<string, string>();
   /** mmsi → pointer radius in pixels that counts as hovering that vessel. */
   private readonly hoverRadii = new Map<string, number>();
+  /** Hull centre relative to the reported position, in rotated screen pixels. */
+  private readonly hoverOffsets = new Map<string, { x: number; y: number }>();
   private subs: Subscription[] = [];
   private renderTimer: ReturnType<typeof setTimeout> | null = null;
   private leafletReady = false;
   /** Set after the first successful center on own vessel. */
   private hasCenteredOnOwn = false;
-  /** User panned or zoomed — suppress automatic re-centering. */
+  /** User panned or zoomed — suppress the initial automatic centering. */
   private userAdjustedMap = false;
+  /** When the user last moved the map, so following does not fight them. */
+  private lastUserMapMove = 0;
 
   constructor(
     private readonly vesselStore: AnchorageVesselStoreService,
@@ -167,6 +224,7 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
 
   recenterOnBoat(): void {
     this.userAdjustedMap = false;
+    this.lastUserMapMove = 0;
     this.centerOnOwnVessel(true);
   }
 
@@ -318,10 +376,14 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
 
     map.on('dragstart', () => {
       this.userAdjustedMap = true;
+      this.lastUserMapMove = Date.now();
       this.closeAllTooltips();
     });
     map.on('zoomstart', (e: { originalEvent?: Event }) => {
-      if (e.originalEvent) this.userAdjustedMap = true;
+      if (e.originalEvent) {
+        this.userAdjustedMap = true;
+        this.lastUserMapMove = Date.now();
+      }
       this.closeAllTooltips();
     });
     map.on('click', () => this.closeAllTooltips());
@@ -382,17 +444,11 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
       const isStale = this.vesselStore.isStale(vessel);
       const label = this.tooltipLabel(vessel);
       this.hoverLabels.set(vessel.mmsi, label);
-      this.hoverRadii.set(vessel.mmsi, Math.max(
-        VESSEL_HIT_MIN_RADIUS_PX,
-        this.vesselHeightPx(vessel.lengthMetres, minLengthM) * VESSEL_HULL_REACH_FRAC,
-      ));
-      const iconKey = this.vesselIconKey(
-        last.heading,
-        vessel.lengthMetres,
-        minLengthM,
-        isStale,
-        vessel.isOwn,
-      );
+      const geom = this.vesselGeometry(vessel, minLengthM);
+      const hit = hullHitCircle(geom, last.heading);
+      this.hoverRadii.set(vessel.mmsi, hit.radius);
+      this.hoverOffsets.set(vessel.mmsi, hit.centre);
+      const iconKey = this.vesselIconKey(geom, last.heading, isStale, vessel.isOwn);
 
       if (this.markers.has(vessel.mmsi)) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -401,9 +457,8 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
         this.syncPinnedLabel(marker, label);
         if (marker._cattitudeIconKey !== iconKey) {
           marker.setIcon(this.buildVesselIcon(
+            geom,
             last.heading,
-            vessel.lengthMetres,
-            minLengthM,
             isStale,
             vessel.isOwn,
             vessel.mmsi,
@@ -412,9 +467,8 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
         }
       } else {
         const icon = this.buildVesselIcon(
+          geom,
           last.heading,
-          vessel.lengthMetres,
-          minLengthM,
           isStale,
           vessel.isOwn,
           vessel.mmsi,
@@ -498,6 +552,7 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
         this.markers.delete(mmsi);
         this.hoverLabels.delete(mmsi);
         this.hoverRadii.delete(mmsi);
+        this.hoverOffsets.delete(mmsi);
         if (this.hoveredMmsi === mmsi) this.closeAllTooltips();
       }
     }
@@ -516,6 +571,7 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
 
     this.refreshOpenHoverTip();
     this.centerOnOwnVessel(false);
+    this.followOwnVessel();
   }
 
   private getMinVesselLengthMetres(): number {
@@ -540,47 +596,79 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
     return metres / metresPerPx;
   }
 
+  /**
+   * Hull footprint in pixels plus where the reported position sits on it.
+   *
+   * AIS gives the position at the antenna, not the middle of the boat, so the
+   * icon is anchored (and rotated) about that point rather than amidships.
+   */
+  private vesselGeometry(vessel: Vessel, minLengthM: number): VesselGeometry {
+    const hullBeamM = hullBeamMetres(vessel);
+    const drawLength = Math.max(vessel.lengthMetres, minLengthM);
+    // Keep the beam in proportion when a small vessel is floored to stay visible.
+    const scale = vessel.lengthMetres > 0 ? drawLength / vessel.lengthMetres : 1;
+
+    const lengthPx = Math.max(MIN_HULL_LENGTH_PX, Math.round(this.metresToPixels(drawLength)));
+    const beamPx = Math.max(MIN_HULL_BEAM_PX, Math.round(this.metresToPixels(hullBeamM * scale)));
+
+    const { fromBow, fromCenter } = vessel.aisRef;
+    const alongFrac = fromBow != null && vessel.lengthMetres > 0
+      ? clamp01(fromBow / vessel.lengthMetres)
+      : 0.5;
+    const acrossFrac = fromCenter != null && hullBeamM > 0
+      ? clamp01(0.5 - fromCenter / hullBeamM)
+      : 0.5;
+
+    // Furthest hull corner from the reference point — the hit box must hold it
+    // at any heading, so the box is a square of that radius.
+    let reachPx = 0;
+    for (const cx of [0, 1]) {
+      for (const cy of [0, 1]) {
+        reachPx = Math.max(
+          reachPx,
+          Math.hypot((cx - acrossFrac) * beamPx, (cy - alongFrac) * lengthPx),
+        );
+      }
+    }
+    reachPx = Math.max(VESSEL_HIT_MIN_RADIUS_PX, reachPx);
+
+    return { lengthPx, beamPx, alongFrac, acrossFrac, reachPx };
+  }
+
   private buildVesselIcon(
+    geom: VesselGeometry,
     headingDeg: number,
-    lengthM: number,
-    minLengthM: number,
     isStale: boolean,
     isOwn: boolean,
     mmsi: string,
   ): unknown {
-    let drawLength = lengthM;
-    if (drawLength < minLengthM) drawLength = minLengthM;
-
-    const heightPx = Math.max(14, Math.round(this.metresToPixels(drawLength)));
-    const widthPx = Math.round(heightPx * VESSEL_ICON_ASPECT);
-    // Square box centred on the anchor point so the hull stays inside it at any heading.
-    const reachPx = Math.max(VESSEL_HIT_MIN_RADIUS_PX, heightPx * VESSEL_HULL_REACH_FRAC);
-    const hitW = Math.round(reachPx * 2);
-    const hitH = hitW;
-    const padX = hitW / 2 - widthPx / 2;
-    const padY = hitH / 2 - heightPx * VESSEL_ICON_ANCHOR_Y_FRAC;
-    const anchorX = hitW / 2;
-    const anchorY = hitH / 2;
+    const { lengthPx, beamPx, alongFrac, acrossFrac, reachPx } = geom;
+    const box = Math.round(reachPx * 2);
+    const padX = box / 2 - acrossFrac * beamPx;
+    const padY = box / 2 - alongFrac * lengthPx;
     const shadowId = `vessel-shadow-${mmsi.replace(/\W/g, '')}`;
     const opacity = isStale ? 0.4 : 1;
     const strokeWidth = isOwn ? 4 : 3;
     const fillColor = isOwn ? VESSEL_FILL_OWN : VESSEL_FILL_OTHER;
-    const originY = `${VESSEL_ICON_ANCHOR_Y_FRAC * 100}%`;
+    const originX = `${acrossFrac * 100}%`;
+    const originY = `${alongFrac * 100}%`;
 
-    const html = `<div class="vessel-marker-hit" style="width:${hitW}px;height:${hitH}px;position:relative;">
-      <div class="vessel-marker-wrap" style="position:absolute;left:${padX}px;top:${padY}px;width:${widthPx}px;height:${heightPx}px;opacity:${opacity};">
-        <div class="vessel-marker-inner" style="transform:rotate(${headingDeg}deg);transform-origin:50% ${originY};width:100%;height:100%;">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 60" width="100%" height="100%">
+    const html = `<div class="vessel-marker-hit" style="width:${box}px;height:${box}px;position:relative;">
+      <div class="vessel-marker-wrap" style="position:absolute;left:${padX}px;top:${padY}px;width:${beamPx}px;height:${lengthPx}px;opacity:${opacity};">
+        <div class="vessel-marker-inner" style="transform:rotate(${headingDeg}deg);transform-origin:${originX} ${originY};width:100%;height:100%;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="${HULL_VIEWBOX}"
+               width="100%" height="100%" preserveAspectRatio="none">
             <defs>
               <filter id="${shadowId}" x="-20%" y="-20%" width="140%" height="140%">
                 <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.6"/>
               </filter>
             </defs>
-            <path d="M 20,2 L 38,50 L 20,38 L 2,50 Z"
+            <path d="${HULL_PATH}"
                   fill="${fillColor}"
                   stroke="${VESSEL_STROKE_COLOR}"
                   stroke-width="${strokeWidth}"
                   stroke-linejoin="round"
+                  vector-effect="non-scaling-stroke"
                   filter="url(#${shadowId})" />
           </svg>
         </div>
@@ -591,8 +679,8 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
     return (L as any).divIcon({
       className: 'vessel-marker-leaflet',
       html,
-      iconSize: [hitW, hitH],
-      iconAnchor: [anchorX, anchorY],
+      iconSize: [box, box],
+      iconAnchor: [box / 2, box / 2],
     });
   }
 
@@ -610,20 +698,40 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
     this.hasCenteredOnOwn = true;
   }
 
-  private vesselHeightPx(lengthM: number, minLengthM: number): number {
-    const drawLength = Math.max(lengthM, minLengthM);
-    return Math.max(14, Math.round(this.metresToPixels(drawLength)));
+  /**
+   * Pan back once the boat drifts out of view. Held off briefly after a manual
+   * pan or zoom so looking at a neighbour is not immediately undone.
+   */
+  private followOwnVessel(): void {
+    if (!this.map || !this.hasCenteredOnOwn) return;
+    if (Date.now() - this.lastUserMapMove < FOLLOW_RESUME_MS) return;
+
+    const own = this.vessels.find(v => v.isOwn);
+    const p = own?.positions[own.positions.length - 1];
+    if (!p) return;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const map = this.map as any;
+    // Inset the bounds so the pan happens as the boat nears the edge.
+    if (map.getBounds().pad(-FOLLOW_EDGE_INSET).contains([p.lat, p.lon])) return;
+    map.panTo([p.lat, p.lon], { animate: true });
   }
 
   private vesselIconKey(
+    geom: VesselGeometry,
     headingDeg: number,
-    lengthM: number,
-    minLengthM: number,
     isStale: boolean,
     isOwn: boolean,
   ): string {
-    const heightPx = this.vesselHeightPx(lengthM, minLengthM);
-    return `${Math.round(headingDeg)}|${heightPx}|${isStale ? 1 : 0}|${isOwn ? 1 : 0}`;
+    return [
+      Math.round(headingDeg),
+      geom.lengthPx,
+      geom.beamPx,
+      geom.alongFrac.toFixed(3),
+      geom.acrossFrac.toFixed(3),
+      isStale ? 1 : 0,
+      isOwn ? 1 : 0,
+    ].join('|');
   }
 
   /**
@@ -670,7 +778,8 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
     for (const [mmsi, marker] of this.markers) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const p = map.latLngToContainerPoint((marker as any).getLatLng());
-      const dist = Math.hypot(p.x - point.x, p.y - point.y);
+      const off = this.hoverOffsets.get(mmsi);
+      const dist = Math.hypot(p.x + (off?.x ?? 0) - point.x, p.y + (off?.y ?? 0) - point.y);
       const radius = this.hoverRadii.get(mmsi) ?? VESSEL_HIT_MIN_RADIUS_PX;
       if (dist <= radius && dist < nearestDist) {
         nearest = mmsi;
@@ -745,6 +854,7 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
     this.anchorMarkers.clear();
     this.hoverLabels.clear();
     this.hoverRadii.clear();
+    this.hoverOffsets.clear();
   }
 }
 

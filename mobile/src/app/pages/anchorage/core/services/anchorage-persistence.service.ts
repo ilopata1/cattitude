@@ -14,6 +14,8 @@ interface StoredVesselMeta {
   name: string;
   lengthMetres: number;
   beamMetres: number;
+  aisFromBow: number | null;
+  aisFromCenter: number | null;
   isOwn: boolean;
   lastUpdated: number;
   anchorLat: number | null;
@@ -73,6 +75,8 @@ export class AnchoragePersistenceService {
             name: v.name,
             lengthMetres: v.lengthMetres,
             beamMetres: v.beamMetres,
+            aisFromBow: v.aisRef?.fromBow ?? null,
+            aisFromCenter: v.aisRef?.fromCenter ?? null,
             isOwn: v.isOwn,
             lastUpdated: v.lastUpdated,
             anchorLat: v.anchorPoint?.lat ?? null,
@@ -117,6 +121,10 @@ export class AnchoragePersistenceService {
           name: meta.name,
           lengthMetres: meta.lengthMetres,
           beamMetres: meta.beamMetres,
+          aisRef: {
+            fromBow: meta.aisFromBow ?? null,
+            fromCenter: meta.aisFromCenter ?? null,
+          },
           positions,
           anchorPoint:
             meta.anchorLat != null && meta.anchorLon != null
