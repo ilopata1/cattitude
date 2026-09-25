@@ -1,0 +1,21 @@
+# Purpose: Guest handbook sections merged onto the Heads system after generation.
+# Used by: content.assembler.apply_guest_layers
+# Module: system / heads
+#
+
+learnChecks:
+- Left a little water in the bowl and put paper in the bin
+sections:
+- t: Using the heads
+  type: list
+  items:
+  - c: These heads flush with fresh water, so every flush counts against the tanks.
+    when:
+      heads_flush_fresh: true
+  - c: These heads flush with seawater.
+    when:
+      heads_flush_sea: true
+  - c: If the holding tank is full, the flush stops working. Say so.
+  - c: Keep the toilet roll where it cannot get wet.
+  - c: Leave a little water in the bowl when you finish.
+  - c: If you are unsure, ask for a demonstration.

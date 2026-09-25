@@ -1,0 +1,28 @@
+# Purpose: Handbook facts for Supernova only. Not shared defaults.
+# Used by: scripts/verify_content_library.py
+#
+
+lifeRaft:
+  location: under the seat at the aft of the cockpit
+manualBilge:
+  location: the cockpit
+swimLadders:
+- label: Stern ladder
+  location: the stern of the starboard hull
+  deploy: ""
+- label: Emergency ladder
+  location: towards the aft of the starboard hull
+  deploy: Pull down on the rope to release the ladder.
+waste:
+  routing: The galley island has two circular hatches. The one nearer the aft goes straight to the sea and is for organic waste. The other goes into a bin, also reached through a cupboard, for recyclables.
+  organicOverboard: true
+headsFlushWater: fresh
+holdToDim: true
+hasTrampoline: true
+sailsCarried:
+- mainsail
+- jib
+- code zero
+- gennaker
+- asymmetric spinnaker
+- symmetric spinnaker

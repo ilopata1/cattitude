@@ -107,6 +107,163 @@ def local_rules_joined_lower(snapshot: dict[str, Any]) -> str:
     return " ".join(local_rules_text(snapshot)).lower()
 
 
+def guest_facts(snapshot: dict[str, Any]) -> dict[str, Any]:
+    raw = (snapshot.get("guide_context") or {}).get("guestFacts")
+    return raw if isinstance(raw, dict) else {}
+
+
+def _vessel_type(snapshot: dict[str, Any]) -> str:
+    return (snapshot.get("vessel") or {}).get("vessel_type") or ""
+
+
+def is_catamaran(snapshot: dict[str, Any]) -> bool:
+    return "catamaran" in _vessel_type(snapshot)
+
+
+def life_raft_location(snapshot: dict[str, Any]) -> str:
+    raft = guest_facts(snapshot).get("lifeRaft") or {}
+    if not isinstance(raft, dict):
+        return ""
+    return str(raft.get("location") or "").strip()
+
+
+def life_raft_sentence(snapshot: dict[str, Any]) -> str:
+    location = life_raft_location(snapshot)
+    if location:
+        return f"It is kept {location}."
+    return "The skipper will show you where the life raft is kept."
+
+
+def manual_bilge_location(snapshot: dict[str, Any]) -> str:
+    bilge = guest_facts(snapshot).get("manualBilge") or {}
+    if not isinstance(bilge, dict):
+        return ""
+    return str(bilge.get("location") or "").strip()
+
+
+def swim_ladders(snapshot: dict[str, Any]) -> list[dict[str, str]]:
+    raw = guest_facts(snapshot).get("swimLadders") or []
+    if not isinstance(raw, list):
+        return []
+    ladders: list[dict[str, str]] = []
+    for item in raw:
+        if not isinstance(item, dict):
+            continue
+        location = str(item.get("location") or "").strip()
+        if not location:
+            continue
+        ladders.append(
+            {
+                "label": str(item.get("label") or "").strip() or "Boarding ladder",
+                "location": location,
+                "deploy": str(item.get("deploy") or "").strip(),
+            }
+        )
+    return ladders
+
+
+def primary_ladder_subtitle(snapshot: dict[str, Any]) -> str:
+    ladders = swim_ladders(snapshot)
+    if not ladders:
+        return ""
+    first = ladders[0]
+    text = first["location"]
+    if first["deploy"]:
+        text = f"{text}. {first['deploy']}"
+    return text
+
+
+def waste_routing(snapshot: dict[str, Any]) -> str:
+    waste = guest_facts(snapshot).get("waste") or {}
+    if not isinstance(waste, dict):
+        return ""
+    return str(waste.get("routing") or "").strip()
+
+
+def organic_overboard(snapshot: dict[str, Any]) -> bool:
+    waste = guest_facts(snapshot).get("waste") or {}
+    if not isinstance(waste, dict):
+        return False
+    return bool(waste.get("organicOverboard"))
+
+
+def heads_flush_water(snapshot: dict[str, Any]) -> str:
+    value = str(guest_facts(snapshot).get("headsFlushWater") or "").strip().lower()
+    return value if value in {"fresh", "sea"} else ""
+
+
+def shower_pump_switch(snapshot: dict[str, Any]) -> str:
+    value = str(guest_facts(snapshot).get("showerPumpSwitch") or "").strip()
+    return value or "the switch on the wall"
+
+
+def hold_to_dim(snapshot: dict[str, Any]) -> bool:
+    return bool(guest_facts(snapshot).get("holdToDim"))
+
+
+def has_trampoline(snapshot: dict[str, Any]) -> bool:
+    facts = guest_facts(snapshot)
+    if "hasTrampoline" in facts and facts.get("hasTrampoline") is not None:
+        return bool(facts.get("hasTrampoline"))
+    return is_catamaran(snapshot)
+
+
+def has_jacklines(snapshot: dict[str, Any]) -> bool:
+    facts = guest_facts(snapshot)
+    if "hasJacklines" in facts and facts.get("hasJacklines") is not None:
+        return bool(facts.get("hasJacklines"))
+    return is_sailing(snapshot)
+
+
+def jackline_phrase(snapshot: dict[str, Any]) -> str:
+    if is_catamaran(snapshot):
+        return "along the edge of either deck"
+    return "along the side decks"
+
+
+def has_water_heater(snapshot: dict[str, Any]) -> bool:
+    hints = ("water heater", "hot water", "calorifier")
+    for row in equipment(snapshot):
+        text = (
+            f"{row.get('manufacturer') or ''} {row.get('model') or ''} "
+            f"{row.get('description') or ''}"
+        ).lower()
+        if any(hint in text for hint in hints):
+            return True
+    return False
+
+
+def sails_carried_names(snapshot: dict[str, Any]) -> list[str]:
+    names: list[str] = []
+    for row in equipment(snapshot):
+        if row.get("system_category") != "rigging_and_sail_handling":
+            continue
+        description = str(row.get("description") or "").strip()
+        if description:
+            names.append(description)
+    if names:
+        return names
+    raw = guest_facts(snapshot).get("sailsCarried") or []
+    if isinstance(raw, str):
+        parts = raw.split(",")
+    elif isinstance(raw, list):
+        parts = [str(item) for item in raw]
+    else:
+        parts = []
+    return [part.strip() for part in parts if part.strip()]
+
+
+def sails_on_this_boat(snapshot: dict[str, Any]) -> str:
+    names = sails_carried_names(snapshot)
+    if not names:
+        return ""
+    if len(names) == 1:
+        listed = names[0]
+    else:
+        listed = ", ".join(names[:-1]) + ", and " + names[-1]
+    return f"Sails on this boat: {listed}."
+
+
 def slot_values(snapshot: dict[str, Any]) -> dict[str, str]:
     vhf = office_vhf(snapshot)
     company = company_name(snapshot)
@@ -140,6 +297,14 @@ def slot_values(snapshot: dict[str, Any]) -> dict[str, str]:
             if company and vhf["channel"]
             else ""
         ),
+        "life_raft_location": life_raft_location(snapshot),
+        "life_raft_sentence": life_raft_sentence(snapshot),
+        "manual_bilge_location": manual_bilge_location(snapshot),
+        "shower_pump_switch": shower_pump_switch(snapshot),
+        "jackline_phrase": jackline_phrase(snapshot),
+        "sails_on_this_boat": sails_on_this_boat(snapshot),
+        "waste_routing": waste_routing(snapshot),
+        "primary_ladder_subtitle": primary_ladder_subtitle(snapshot),
     }
 
 

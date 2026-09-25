@@ -110,8 +110,24 @@ def validate_publication_payload(payload: dict[str, Any]) -> list[str]:
         errors.append("Navigation assembly failed: empty systemOrder.")
     if payload.get("checklists") and not ui.get("doMenu"):
         errors.append("Navigation assembly failed: empty doMenu.")
+    if not overview_has_layout_photo(payload.get("systems")):
+        warnings.append(
+            "Overview has no Layout diagram. Upload one under Guide images."
+        )
 
     return errors + [f"Warning: {message}" for message in warnings]
+
+
+def overview_has_layout_photo(systems: dict[str, Any] | None) -> bool:
+    overview = (systems or {}).get("overview") or {}
+    for section in overview.get("sections") or []:
+        if not isinstance(section, dict):
+            continue
+        if section.get("type") != "photo":
+            continue
+        if str(section.get("t") or "").strip().lower() == "layout":
+            return True
+    return False
 
 
 def assemble_publication(

@@ -1,0 +1,15 @@
+# Purpose: Guest handbook sections merged onto the tender and swim-platform system.
+# Used by: content.assembler.apply_guest_layers
+# Module: system / dinghy
+#
+
+learnChecks:
+- Confirmed when swimming is allowed and where the ladder is
+sections:
+- t: Swimming
+  type: list
+  items:
+  - c: Swim only when the skipper says it is safe, and always tell someone you are swimming.
+  - c: The engines should be off, and stay clear of the propellers anyway.
+  - c: Watch the current and passing boats.
+  - repeat: swim_ladders

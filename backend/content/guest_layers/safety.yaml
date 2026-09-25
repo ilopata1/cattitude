@@ -1,0 +1,31 @@
+# Purpose: Guest handbook sections merged onto the Safety system after generation.
+# Used by: content.assembler.apply_guest_layers
+# Module: system / safety
+#
+
+learnChecks:
+- Heard what to do if you fall overboard
+- Found where the life raft is kept and when it is launched
+sections:
+- t: If you fall overboard
+  type: list
+  items:
+  - c: Do not panic, and conserve your energy.
+  - c: Turning the boat around takes time. You may drop out of sight, and the electronics can backtrack to find you.
+- t: Life raft
+  type: list
+  items:
+  - c: "{life_raft_sentence}"
+  - c: Do not launch the life raft early. Life rafts are more often launched too soon than too late.
+  - c: Launch it only when the boat is no longer a safe platform.
+  - c: Release it from its straps, keep its painter fast to the boat, throw the raft into the sea, and keep pulling the painter until it inflates.
+  - c: Take the grab bag. On a long passage that includes the passports.
+  - c: When everyone is off the boat, cut the painter. There is a knife in the raft.
+- t: Leaks and bilge
+  type: list
+  items:
+  - c: If you see water where there should be none, say so.
+  - c: A bilge buzzer and light means a pump is running. Tell the skipper.
+  - c: Manual bilge pumps can be worked from {manual_bilge_location}.
+    when:
+      has_manual_bilge_location: true

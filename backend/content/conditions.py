@@ -39,6 +39,24 @@ def matches(when: dict[str, Any] | None, snapshot: dict[str, Any]) -> bool:
         if not (slots.company_name(snapshot) and vhf["channel"]):
             return False
 
+    flag_checks = {
+        "has_life_raft_location": slots.life_raft_location(snapshot),
+        "has_manual_bilge_location": slots.manual_bilge_location(snapshot),
+        "has_waste_routing": slots.waste_routing(snapshot),
+        "organic_overboard": slots.organic_overboard(snapshot),
+        "heads_flush_fresh": slots.heads_flush_water(snapshot) == "fresh",
+        "heads_flush_sea": slots.heads_flush_water(snapshot) == "sea",
+        "hold_to_dim": slots.hold_to_dim(snapshot),
+        "has_trampoline": slots.has_trampoline(snapshot),
+        "has_jacklines": slots.has_jacklines(snapshot),
+        "has_sails_carried": bool(slots.sails_carried_names(snapshot)),
+        "has_water_heater": slots.has_water_heater(snapshot),
+        "has_swim_ladders": bool(slots.swim_ladders(snapshot)),
+    }
+    for key, actual in flag_checks.items():
+        if key in when and bool(when[key]) != bool(actual):
+            return False
+
     excludes = when.get("local_rules_exclude") or []
     joined = slots.local_rules_joined_lower(snapshot)
     for token in excludes:

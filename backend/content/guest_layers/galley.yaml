@@ -1,0 +1,19 @@
+# Purpose: Guest handbook sections merged onto the Galley system after generation.
+# Used by: content.assembler.apply_guest_layers
+# Module: system / galley
+#
+
+learnChecks:
+- Found where rubbish and recycling go
+sections:
+- t: Rubbish
+  type: list
+  items:
+  - c: Crush bottles and cans.
+  - c: Never throw general rubbish into the sea.
+  - c: "{waste_routing}"
+    when:
+      has_waste_routing: true
+  - c: Organic waste is discharged overboard. General rubbish still never goes in the sea.
+    when:
+      organic_overboard: true

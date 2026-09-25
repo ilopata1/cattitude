@@ -65,6 +65,58 @@
     <textarea name="local_rules_text" rows="6">{{ local_rules_text }}</textarea>
   </fieldset>
 
+  <fieldset class="full-width">
+    <legend>Guest handbook facts</legend>
+    <p class="muted">Locations and habits that differ from boat to boat. Leave a choice on “Default” when the shared rule is right: trampolines on catamarans, jacklines on sailing boats.</p>
+    <label>Life raft location
+      <input name="life_raft_location" value="{{ guest_form.life_raft_location }}" placeholder="under the seat at the aft of the cockpit">
+    </label>
+    <label>Manual bilge pump location
+      <input name="manual_bilge_location" value="{{ guest_form.manual_bilge_location }}" placeholder="the cockpit">
+    </label>
+    <label>Swim ladders (one per line: label | where it is | how to deploy)
+      <textarea name="swim_ladders_text" rows="4">{{ guest_form.swim_ladders_text }}</textarea>
+    </label>
+    <label>Rubbish routing
+      <textarea name="waste_routing" rows="3">{{ guest_form.waste_routing }}</textarea>
+    </label>
+    <label>Organic waste overboard
+      <input type="checkbox" name="organic_overboard" value="yes" {% if guest_form.organic_overboard %}checked{% endif %}>
+      Only when this boat actually discharges organic waste overboard
+    </label>
+    <label>Heads flush water
+      <select name="heads_flush_water">
+        <option value="" {% if not guest_form.heads_flush_water %}selected{% endif %}>Unset</option>
+        <option value="fresh" {% if guest_form.heads_flush_water == 'fresh' %}selected{% endif %}>Fresh water</option>
+        <option value="sea" {% if guest_form.heads_flush_water == 'sea' %}selected{% endif %}>Seawater</option>
+      </select>
+    </label>
+    <label>Shower pump switch
+      <input name="shower_pump_switch" value="{{ guest_form.shower_pump_switch }}" placeholder="the switch on the wall">
+    </label>
+    <label>Hold-to-dim switches
+      <input type="checkbox" name="hold_to_dim" value="yes" {% if guest_form.hold_to_dim %}checked{% endif %}>
+      Some switches dim when held
+    </label>
+    <label>Trampoline
+      <select name="has_trampoline">
+        <option value="default" {% if guest_form.has_trampoline == 'default' %}selected{% endif %}>Default (catamarans only)</option>
+        <option value="yes" {% if guest_form.has_trampoline == 'yes' %}selected{% endif %}>Yes</option>
+        <option value="no" {% if guest_form.has_trampoline == 'no' %}selected{% endif %}>No</option>
+      </select>
+    </label>
+    <label>Jacklines
+      <select name="has_jacklines">
+        <option value="default" {% if guest_form.has_jacklines == 'default' %}selected{% endif %}>Default (sailing boats)</option>
+        <option value="yes" {% if guest_form.has_jacklines == 'yes' %}selected{% endif %}>Yes</option>
+        <option value="no" {% if guest_form.has_jacklines == 'no' %}selected{% endif %}>No</option>
+      </select>
+    </label>
+    <label>Sails carried (comma-separated, used only when rigging equipment has no description)
+      <input name="sails_carried" value="{{ guest_form.sails_carried }}" placeholder="mainsail, jib, code zero">
+    </label>
+  </fieldset>
+
   <div class="form-actions full-width">
     <button type="submit">Save guide context</button>
     <a href="/admin/vessels/{{ vessel.id }}/guide">Guide overview</a>

@@ -1,0 +1,11 @@
+# Purpose: Pointer from sail-handling hardware to the seamanship chapter.
+# Used by: content.assembler.apply_guest_layers
+# Module: system / sails
+#
+
+sections:
+- t: Names of the lines
+  type: prose
+  when:
+    is_sailing: true
+  c: What the halyards, sheets, and other lines are called is in the Seamanship section of this guide.

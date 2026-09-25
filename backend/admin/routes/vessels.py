@@ -35,7 +35,11 @@ from admin.vessel_service import (
     update_vessel,
     update_vessel_equipment_location,
 )
-from guide_context_utils import build_guide_context_from_form
+from guide_context_utils import (
+    build_guest_facts,
+    build_guide_context_from_form,
+    guest_facts_form_values,
+)
 from guide_equipment_coverage import list_system_equipment_gaps
 from location_model import build_catalog
 from stage4_generation import vessel_has_stage4_substrate
@@ -684,6 +688,7 @@ async def vessel_guide_context_form(
                 context.get("emergencyContacts", []), indent=2
             ),
             "local_rules_text": "\n".join(context.get("localRules", [])),
+            "guest_form": guest_facts_form_values(context.get("guestFacts")),
             "error": None,
         },
     )
@@ -708,9 +713,46 @@ async def save_vessel_guide_context(
     marina_vhf_detail: str = Form(""),
     emergency_contacts_json: str = Form("[]"),
     local_rules_text: str = Form(""),
+    life_raft_location: str = Form(""),
+    manual_bilge_location: str = Form(""),
+    swim_ladders_text: str = Form(""),
+    waste_routing: str = Form(""),
+    organic_overboard: str = Form(""),
+    heads_flush_water: str = Form(""),
+    shower_pump_switch: str = Form(""),
+    hold_to_dim: str = Form(""),
+    has_trampoline: str = Form("default"),
+    has_jacklines: str = Form("default"),
+    sails_carried: str = Form(""),
 ):
+    guest_form = {
+        "life_raft_location": life_raft_location,
+        "manual_bilge_location": manual_bilge_location,
+        "swim_ladders_text": swim_ladders_text,
+        "waste_routing": waste_routing,
+        "organic_overboard": organic_overboard == "yes",
+        "heads_flush_water": heads_flush_water,
+        "shower_pump_switch": shower_pump_switch,
+        "hold_to_dim": hold_to_dim == "yes",
+        "has_trampoline": has_trampoline or "default",
+        "has_jacklines": has_jacklines or "default",
+        "sails_carried": sails_carried,
+    }
     error: str | None = None
     try:
+        guest_facts = build_guest_facts(
+            life_raft_location=life_raft_location,
+            manual_bilge_location=manual_bilge_location,
+            swim_ladders_text=swim_ladders_text,
+            waste_routing=waste_routing,
+            organic_overboard=organic_overboard == "yes",
+            heads_flush_water=heads_flush_water,
+            shower_pump_switch=shower_pump_switch,
+            hold_to_dim=hold_to_dim == "yes",
+            has_trampoline=has_trampoline,
+            has_jacklines=has_jacklines,
+            sails_carried=sails_carried,
+        )
         guide_context = build_guide_context_from_form(
             display_name=display_name,
             region_label=region_label,
@@ -726,6 +768,7 @@ async def save_vessel_guide_context(
             marina_vhf_detail=marina_vhf_detail,
             emergency_contacts_json=emergency_contacts_json,
             local_rules_text=local_rules_text,
+            guest_facts=guest_facts,
         )
     except (json.JSONDecodeError, ValueError) as exc:
         error = str(exc)
@@ -790,6 +833,7 @@ async def save_vessel_guide_context(
             "context": context,
             "emergency_contacts_json": emergency_contacts_json,
             "local_rules_text": local_rules_text,
+            "guest_form": guest_form,
             "error": error,
         },
         status_code=400,

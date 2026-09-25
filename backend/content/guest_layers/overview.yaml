@@ -1,0 +1,12 @@
+# Purpose: Short deck note merged onto the overview system after generation.
+# Used by: content.assembler.apply_guest_layers
+# Module: system / overview
+#
+
+sections:
+- t: Trampoline
+  type: list
+  when:
+    has_trampoline: true
+  items:
+  - c: The trampoline is a good place to lie or sit. Do not bounce on it.

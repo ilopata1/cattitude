@@ -24,6 +24,26 @@ rules:
   icon: 🛟
   text: Run the Safety Briefing with all guests before every departure
   link: /tabs/do/checklist/safety-brief
+- section: caution
+  icon: ✋
+  text: Keep one hand for you and one for the boat when you move around
+  link: /tabs/do/checklist/safety-brief
+- section: danger
+  icon: 👟
+  text: Wear non-marking shoes on board. Shore shoes stay ashore — they can bring cockroach eggs aboard.
+- section: danger
+  icon: 🚫
+  text: Never sit on lifelines or lean outside them. They are lines, not rails.
+- when:
+    is_sailing: true
+  section: caution
+  icon: ⛵
+  text: Under sail, stay clear of sheets, winches, and the boom unless you are asked to help.
+- when:
+    has_trampoline: true
+  section: good
+  icon: 🪢
+  text: The trampoline is for lying or sitting — do not bounce on it.
 - when:
     has_category:
     - electrical_dc
@@ -42,3 +62,12 @@ rules:
   section: good
   icon: 💧
   text: Treat fresh water as precious — short showers, taps off while soaping
+- section: good
+  icon: 🚪
+  text: Latch cupboard, fridge, freezer, and drawer catches after use, and latch doors open or closed so they cannot swing.
+- section: caution
+  icon: 🌧️
+  text: If in doubt, close hatches against rain or spray.
+- section: caution
+  icon: 👀
+  text: Tell someone at once if something breaks, you spill a lot of water, notice an unusual smell, feel unwell, or see anything that concerns you.

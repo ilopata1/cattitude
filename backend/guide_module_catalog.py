@@ -13,6 +13,7 @@ STARTER_MODULES: list[tuple[str, str]] = [
 SYSTEM_IDS: list[str] = [
     "overview",
     "safety",
+    "seamanship",
     "sails",
     "engines",
     "controls",
@@ -58,6 +59,14 @@ SYSTEM_CATALOG: dict[str, dict[str, Any]] = {
         "focus": "Life jackets, EPIRB, flares, fire extinguishers, life raft locations",
         "review_title": "Safety gear",
         "guest_label": "Learn + Know — safety",
+    },
+    "seamanship": {
+        "icon": "🪢",
+        "locs": ["cockpit", "bow"],
+        "equipment_categories": [],
+        "focus": "Knots, fenders, and the names of lines and sails",
+        "review_title": "Seamanship",
+        "guest_label": "Learn + Know — seamanship",
     },
     "sails": {
         "icon": "⛵",

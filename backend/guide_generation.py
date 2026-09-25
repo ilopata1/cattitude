@@ -1125,6 +1125,10 @@ def generate_module(
                 if not isinstance(payload, dict):
                     raise GuideGenerationError("system payload must be an object")
                 payload = _finalize_system_payload(content_key, payload, reference)
+        if content_type == "system" and isinstance(payload, dict):
+            from content.assembler import apply_guest_layers
+
+            payload = apply_guest_layers(content_key, payload, snapshot_payload)
         _validate_module_payload(content_type, content_key, payload)
 
         reader_voice_style = None
@@ -1239,6 +1243,7 @@ def run_guide_generation(
                     trigger=trigger,
                     sections=unique_stage4,
                     snapshot_id=snapshot_id,
+                    snapshot_payload=snapshot_payload,
                 )
                 results.extend(stage4_results)
             except GuideGenerationError as exc:

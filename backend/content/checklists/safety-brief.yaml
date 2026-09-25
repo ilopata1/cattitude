@@ -42,6 +42,7 @@ groups:
   - c: 'Explain recovery manoeuvre: slow down, circle back, approach from downwind'
     s: Engine on immediately. Approach slowly from the downwind side.
   - c: Show the boarding ladder location and how to deploy it
+    s: "{primary_ladder_subtitle}"
   - c: Show the throwable buoy / horseshoe buoy location
     s: Throw immediately on MOB.
 - t: Fire

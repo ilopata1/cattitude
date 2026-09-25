@@ -72,6 +72,7 @@ def run_stage4_generation(
     trigger: str = "regenerate",
     sections: tuple[str, ...] | list[str] | None = None,
     snapshot_id: str | None = None,
+    snapshot_payload: dict[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
     """Compose Stage 4 sections from the DB substrate and save as drafts.
 
@@ -96,6 +97,14 @@ def run_stage4_generation(
     # the caller only requested a subset (e.g. batteries alone).
     ctx = load_vessel_context_from_db(conn, vessel_id)
     modules, metadata = build_modules_from_context(ctx)
+    if snapshot_payload is None:
+        from guide_generation import load_vessel_generation_context
+
+        snapshot_payload = load_vessel_generation_context(conn, vessel_id)
+    from content.assembler import apply_guest_layers
+
+    for sid in wanted:
+        modules[sid] = apply_guest_layers(sid, modules[sid], snapshot_payload)
     for sid in wanted:
         try:
             _validate_module_payload("system", sid, modules[sid])

@@ -27,6 +27,7 @@ from guide_publish import (
     NO_PUBLISHABLE_MODULES_MSG,
     PublishValidationError,
     assemble_publication,
+    overview_has_layout_photo,
     publish_vessel_guide,
 )
 
@@ -321,6 +322,18 @@ async def vessel_guide_overview(
 
     draft_count = sum(1 for module in modules if module["status"] == "draft")
     guide_images = list_vessel_guide_images(vessel["slug"])
+    layout_present = False
+    if preview:
+        layout_present = overview_has_layout_photo(
+            (preview.get("payload") or {}).get("systems")
+        )
+    if not layout_present:
+        for module in modules:
+            if module.get("content_type") != "system" or module.get("content_key") != "overview":
+                continue
+            if overview_has_layout_photo({"overview": module.get("payload") or {}}):
+                layout_present = True
+                break
 
     return templates.TemplateResponse(
         request,
@@ -340,6 +353,7 @@ async def vessel_guide_overview(
             "guide_images": guide_images,
             "system_ids": SYSTEM_IDS,
             "stage4_substrate": stage4_substrate,
+            "layout_gap": not layout_present,
         },
     )
 

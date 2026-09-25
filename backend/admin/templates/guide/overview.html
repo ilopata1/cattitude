@@ -60,6 +60,13 @@
         <a href="/admin/vessels/{{ vessel.id }}/equipment">Configure equipment</a>
       </div>
     {% endif %}
+    {% if layout_gap %}
+      <div class="flash flash-warn">
+        This vessel has no layout diagram yet.
+        <a href="#guide-assets">Upload a Layout photo</a>
+        on the overview topic. Every boat should have its own.
+      </div>
+    {% endif %}
 
     <p><a href="/admin/vessels/{{ vessel.id }}/guide-context">Edit guide context</a> (emergency contacts, VHF, local rules)</p>
 
@@ -162,6 +169,16 @@
     </form>
 
     <form method="post" action="/admin/vessels/{{ vessel.id }}/guide/assets/system-photo" enctype="multipart/form-data" class="asset-upload-form asset-upload-form--wide">
+      <h3>Layout diagram</h3>
+      <p class="muted">One diagram per vessel. It is stored as the overview photo titled Layout and kept when that chapter is regenerated.</p>
+      <input type="hidden" name="system_id" value="overview">
+      <input type="hidden" name="photo_title" value="Layout">
+      <label>Caption (optional)<input name="photo_caption" placeholder="How to read the diagram"></label>
+      <label>Image file<input type="file" name="image" accept="image/png,image/jpeg,image/webp,image/gif" required></label>
+      <button type="submit">Upload layout diagram</button>
+    </form>
+
+    <form method="post" action="/admin/vessels/{{ vessel.id }}/guide/assets/system-photo" enctype="multipart/form-data" class="asset-upload-form asset-upload-form--wide">
       <h3>System photo</h3>
       <label>System topic
         <select name="system_id" required>
@@ -170,7 +187,7 @@
           {% endfor %}
         </select>
       </label>
-      <label>Section title<input name="photo_title" required placeholder="e.g. Deck Layout Plan"></label>
+      <label>Section title<input name="photo_title" required placeholder="e.g. Engine hatch"></label>
       <label>Caption (optional)<input name="photo_caption" placeholder="Short subtitle under the image"></label>
       <label>Image file<input type="file" name="image" accept="image/png,image/jpeg,image/webp,image/gif" required></label>
       <button type="submit">Upload &amp; add to system module</button>

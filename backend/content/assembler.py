@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any, Callable
 
 from content import conditions, slots
-from content.loader import load_yaml_cached
+from content.loader import CONTENT_ROOT, load_yaml_cached
 from guide_fix_icons import normalize_fix_icon
 
 _DANGER_PREFIXES = ("never", "do not", "don't", "no ")
@@ -169,6 +169,164 @@ def build_fix_cards_module(
     return cards
 
 
+def _knot_cards_html() -> str:
+    cards = (
+        (
+            "assets/images/guide/knots/clove-hitch.png",
+            "Clove hitch",
+            "Used for fenders.",
+        ),
+        (
+            "assets/images/guide/knots/round-turn.png",
+            "Round turn and two half hitches",
+            "A general knot for fenders, dinghies, and similar jobs.",
+        ),
+        (
+            "assets/images/guide/knots/bowline.png",
+            "Bowline",
+            "Makes a loop for joining to another rope, a sheet on a sail, or a mooring line around a cleat or bollard.",
+        ),
+    )
+    parts: list[str] = []
+    for path, title, caption in cards:
+        alt = title.replace('"', "&quot;")
+        parts.append(
+            '<div class="photo-card">'
+            f'<img style="max-width:384px;width:100%;" src="{path}" alt="{alt}" '
+            f"onclick=\"openPhoto(this.src,'{alt}')\">"
+            '<div class="photo-caption"><span class="photo-caption-icon">🪢</span>'
+            f"<div><div class=\"photo-caption-text\">{alt}</div>"
+            f'<div class="photo-caption-sub">{caption}</div></div></div></div>'
+        )
+    return "".join(parts)
+
+
+def _resolve_guest_items(
+    items: list[Any], snapshot: dict[str, Any]
+) -> list[str]:
+    resolved: list[str] = []
+    for item in items or []:
+        if isinstance(item, str):
+            text = slots.apply_slots(item, snapshot).strip()
+            if text:
+                resolved.append(text)
+            continue
+        if not isinstance(item, dict):
+            continue
+        if item.get("repeat") == "swim_ladders":
+            for ladder in slots.swim_ladders(snapshot):
+                sentence = f"{ladder['label']}: {ladder['location']}."
+                if ladder["deploy"]:
+                    sentence = f"{sentence} {ladder['deploy']}"
+                resolved.append(sentence)
+            continue
+        if not conditions.matches(item.get("when"), snapshot):
+            continue
+        text = slots.apply_slots(str(item.get("c") or ""), snapshot).strip()
+        if text:
+            resolved.append(text)
+    return resolved
+
+
+def _sections_from_spec(
+    specs: list[dict[str, Any]], snapshot: dict[str, Any]
+) -> list[dict[str, Any]]:
+    built: list[dict[str, Any]] = []
+    for spec in specs or []:
+        if not isinstance(spec, dict):
+            continue
+        if not conditions.matches(spec.get("when"), snapshot):
+            continue
+        section_type = str(spec.get("type") or "list")
+        section: dict[str, Any] = {"t": spec.get("t") or "Section", "type": section_type}
+        if section_type == "prose":
+            text = slots.apply_slots(str(spec.get("c") or ""), snapshot).strip()
+            if not text:
+                continue
+            section["c"] = text
+        elif section_type == "photo":
+            html = spec.get("html")
+            if html == "knots":
+                html = _knot_cards_html()
+            if not isinstance(html, str) or not html.strip():
+                continue
+            section["html"] = html
+        else:
+            items = _resolve_guest_items(spec.get("items") or [], snapshot)
+            if not items:
+                continue
+            section["items"] = items
+        built.append(section)
+    return built
+
+
+def _learn_checks_from_spec(specs: list[Any], snapshot: dict[str, Any]) -> list[str]:
+    checks: list[str] = []
+    for item in specs or []:
+        if isinstance(item, str):
+            text = slots.apply_slots(item, snapshot).strip()
+        elif isinstance(item, dict):
+            if not conditions.matches(item.get("when"), snapshot):
+                continue
+            text = slots.apply_slots(str(item.get("c") or ""), snapshot).strip()
+        else:
+            continue
+        if text and text not in checks:
+            checks.append(text)
+    return checks
+
+
+def apply_guest_layers(
+    system_id: str, payload: dict[str, Any], snapshot: dict[str, Any]
+) -> dict[str, Any]:
+    """Append curated handbook sections. Same titles are replaced, not duplicated."""
+    relative = f"guest_layers/{system_id}.yaml"
+    if not (CONTENT_ROOT / relative).is_file():
+        return payload
+    data = load_yaml_cached(relative)
+    incoming = _sections_from_spec(data.get("sections") or [], snapshot)
+    titles = {section["t"] for section in incoming}
+    merged = dict(payload)
+    existing = [
+        section
+        for section in (payload.get("sections") or [])
+        if not (isinstance(section, dict) and section.get("t") in titles)
+    ]
+    merged["sections"] = existing + incoming
+    extra = _learn_checks_from_spec(data.get("learnChecks") or [], snapshot)
+    if extra:
+        current = [
+            check
+            for check in (payload.get("learnChecks") or [])
+            if isinstance(check, str) and check.strip()
+        ]
+        for check in extra:
+            if check not in current:
+                current.append(check)
+        merged["learnChecks"] = current
+    return merged
+
+
+def build_seamanship_module(
+    snapshot: dict[str, Any], reference: Any = None
+) -> dict[str, Any]:
+    del reference
+    data = load_yaml_cached("systems/seamanship.yaml")
+    payload: dict[str, Any] = {
+        "id": data["id"],
+        "icon": data["icon"],
+        "title": data["title"],
+        "subtitle": data["subtitle"],
+        "locs": list(data.get("locs") or []),
+        "summary": data["summary"],
+        "sections": _sections_from_spec(data.get("sections") or [], snapshot),
+    }
+    checks = _learn_checks_from_spec(data.get("learnChecks") or [], snapshot)
+    if checks:
+        payload["learnChecks"] = checks
+    return payload
+
+
 def _make_checklist_builder(
     checklist_id: str,
 ) -> Callable[[dict[str, Any], Any], dict[str, Any]]:
@@ -185,6 +343,7 @@ LIBRARY_MODULE_BUILDERS: dict[
 ] = {
     ("ui", "homeRuleSections"): build_home_rules_module,
     ("fix_card_set", "all"): build_fix_cards_module,
+    ("system", "seamanship"): build_seamanship_module,
     **{
         ("checklist", checklist_id): _make_checklist_builder(checklist_id)
         for checklist_id in _CHECKLIST_IDS

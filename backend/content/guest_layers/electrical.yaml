@@ -1,0 +1,27 @@
+# Purpose: Guest handbook sections merged onto the Electrical system after generation.
+# Used by: content.assembler.apply_guest_layers
+# Module: system / electrical
+#
+
+learnChecks:
+- Switched off something that was not in use
+sections:
+- t: Using electricity
+  type: list
+  items:
+  - c: Electricity is limited, except when the boat is on shore power.
+  - c: Switch off anything that is not in use.
+  - c: Heating water is one of the large electrical loads.
+    when:
+      has_water_heater: true
+  - c: Air conditioning is one of the large electrical loads.
+    when:
+      has_category:
+      - hvac
+  - c: Cooking is one of the large electrical loads.
+    when:
+      has_category:
+      - galley_appliances
+  - c: Some switches dim when you hold them.
+    when:
+      hold_to_dim: true

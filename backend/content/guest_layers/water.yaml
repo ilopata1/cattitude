@@ -1,0 +1,20 @@
+# Purpose: Guest handbook sections merged onto the Water system after generation.
+# Used by: content.assembler.apply_guest_layers
+# Module: system / water
+#
+
+learnChecks:
+- Practised a short shower and found the shower-tray pump switch
+sections:
+- t: Using fresh water
+  type: list
+  items:
+  - c: Hot water is limited. Take short showers and never leave a tap running.
+  - c: Report a dripping tap, a tap with no flow, and any pump that seems to be running when it should not.
+- t: Showers
+  type: list
+  items:
+  - c: Keep the water in the shower tray, not on the floor.
+  - c: Do not expect a long hot shower. There may be no hot water at all.
+  - c: Either run the shower briefly so the tray does not fill, then empty it with {shower_pump_switch}, or switch that pump on while you shower and switch it off afterwards.
+  - c: In port, use the marina showers and toilets when they are available. That saves water and fills the holding tanks more slowly.
