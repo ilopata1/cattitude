@@ -148,6 +148,23 @@ def load_vessel_generation_context(conn: Connection, vessel_id: str) -> dict[str
         {"vessel_id": vessel_id},
     ).fetchall()
 
+    sail_plan_row = conn.execute(
+        text(
+            """
+            SELECT plan
+            FROM vessel_sail_plan
+            WHERE vessel_id = :vessel_id
+            """
+        ),
+        {"vessel_id": vessel_id},
+    ).fetchone()
+    sail_names: list[str] = []
+    if sail_plan_row and sail_plan_row[0]:
+        stored = _coerce_jsonb(sail_plan_row[0])
+        raw_sails = stored.get("sails") if isinstance(stored, dict) else None
+        if isinstance(raw_sails, list):
+            sail_names = [str(item).strip() for item in raw_sails if str(item).strip()]
+
     base_guide_context = _coerce_jsonb(row[8]) if row[8] else {}
     vessel_guide_context = _coerce_jsonb(row[9]) if row[9] else {}
     merged_guide_context = merge_guide_context(base_guide_context, vessel_guide_context)
@@ -193,6 +210,7 @@ def load_vessel_generation_context(conn: Connection, vessel_id: str) -> dict[str
             }
             for eq in equipment_rows
         ],
+        "sail_plan": {"sails": sail_names},
     }
 
 

@@ -55,10 +55,6 @@ def parse_swim_ladders(raw: str) -> list[dict[str, str]]:
     return ladders
 
 
-def parse_sails_carried(raw: str) -> list[str]:
-    return [part.strip() for part in raw.split(",") if part.strip()]
-
-
 def build_guest_facts(
     *,
     life_raft_location: str = "",
@@ -71,7 +67,6 @@ def build_guest_facts(
     hold_to_dim: bool = False,
     has_trampoline: str = "",
     has_jacklines: str = "",
-    sails_carried: str = "",
 ) -> dict[str, Any]:
     """Vessel handbook facts. Omitted keys keep the shared defaults."""
     facts: dict[str, Any] = {}
@@ -114,9 +109,6 @@ def build_guest_facts(
         facts["hasJacklines"] = False
     elif jacklines not in {"", "default"}:
         raise ValueError("Jacklines must be default, yes, or no.")
-    sails = parse_sails_carried(sails_carried)
-    if sails:
-        facts["sailsCarried"] = sails
     return facts
 
 
@@ -135,15 +127,6 @@ def format_swim_ladders(facts: dict[str, Any] | None) -> str:
             continue
         lines.append(f"{label} | {location} | {deploy}".rstrip())
     return "\n".join(lines)
-
-
-def format_sails_carried(facts: dict[str, Any] | None) -> str:
-    raw = (facts or {}).get("sailsCarried") or []
-    if isinstance(raw, str):
-        return raw
-    if isinstance(raw, list):
-        return ", ".join(str(item).strip() for item in raw if str(item).strip())
-    return ""
 
 
 def guest_facts_form_values(facts: dict[str, Any] | None) -> dict[str, Any]:
@@ -169,7 +152,6 @@ def guest_facts_form_values(facts: dict[str, Any] | None) -> dict[str, Any]:
         "has_jacklines": (
             "yes" if jacklines is True else "no" if jacklines is False else "default"
         ),
-        "sails_carried": format_sails_carried(facts),
     }
 
 

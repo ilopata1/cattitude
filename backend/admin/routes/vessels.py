@@ -723,7 +723,6 @@ async def save_vessel_guide_context(
     hold_to_dim: str = Form(""),
     has_trampoline: str = Form("default"),
     has_jacklines: str = Form("default"),
-    sails_carried: str = Form(""),
 ):
     guest_form = {
         "life_raft_location": life_raft_location,
@@ -736,7 +735,6 @@ async def save_vessel_guide_context(
         "hold_to_dim": hold_to_dim == "yes",
         "has_trampoline": has_trampoline or "default",
         "has_jacklines": has_jacklines or "default",
-        "sails_carried": sails_carried,
     }
     error: str | None = None
     try:
@@ -751,7 +749,6 @@ async def save_vessel_guide_context(
             hold_to_dim=hold_to_dim == "yes",
             has_trampoline=has_trampoline,
             has_jacklines=has_jacklines,
-            sails_carried=sails_carried,
         )
         guide_context = build_guide_context_from_form(
             display_name=display_name,

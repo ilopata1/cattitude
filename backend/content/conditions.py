@@ -49,7 +49,7 @@ def matches(when: dict[str, Any] | None, snapshot: dict[str, Any]) -> bool:
         "hold_to_dim": slots.hold_to_dim(snapshot),
         "has_trampoline": slots.has_trampoline(snapshot),
         "has_jacklines": slots.has_jacklines(snapshot),
-        "has_sails_carried": bool(slots.sails_carried_names(snapshot)),
+        "has_sail_inventory": bool(slots.sail_inventory(snapshot)),
         "has_water_heater": slots.has_water_heater(snapshot),
         "has_swim_ladders": bool(slots.swim_ladders(snapshot)),
     }

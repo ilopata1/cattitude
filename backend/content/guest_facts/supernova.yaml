@@ -19,10 +19,3 @@ waste:
 headsFlushWater: fresh
 holdToDim: true
 hasTrampoline: true
-sailsCarried:
-- mainsail
-- jib
-- code zero
-- gennaker
-- asymmetric spinnaker
-- symmetric spinnaker

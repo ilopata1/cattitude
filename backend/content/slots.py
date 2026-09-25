@@ -233,28 +233,28 @@ def has_water_heater(snapshot: dict[str, Any]) -> bool:
     return False
 
 
-def sails_carried_names(snapshot: dict[str, Any]) -> list[str]:
+def sail_inventory(snapshot: dict[str, Any]) -> list[str]:
+    """Sail names from the polar sail plan. That inventory is the only source."""
+    plan = snapshot.get("sail_plan") or {}
+    if not isinstance(plan, dict):
+        return []
+    raw = plan.get("sails") or []
+    if not isinstance(raw, list):
+        return []
     names: list[str] = []
-    for row in equipment(snapshot):
-        if row.get("system_category") != "rigging_and_sail_handling":
+    seen: set[str] = set()
+    for item in raw:
+        name = str(item).strip()
+        key = name.lower()
+        if not name or key in seen:
             continue
-        description = str(row.get("description") or "").strip()
-        if description:
-            names.append(description)
-    if names:
-        return names
-    raw = guest_facts(snapshot).get("sailsCarried") or []
-    if isinstance(raw, str):
-        parts = raw.split(",")
-    elif isinstance(raw, list):
-        parts = [str(item) for item in raw]
-    else:
-        parts = []
-    return [part.strip() for part in parts if part.strip()]
+        seen.add(key)
+        names.append(name)
+    return names
 
 
 def sails_on_this_boat(snapshot: dict[str, Any]) -> str:
-    names = sails_carried_names(snapshot)
+    names = sail_inventory(snapshot)
     if not names:
         return ""
     if len(names) == 1:
