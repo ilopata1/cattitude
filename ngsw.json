@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1787924781985,
+  "timestamp": 1790367867665,
   "index": "/index.html",
   "assetGroups": [
     {
@@ -106,6 +106,9 @@
         "/assets/icons/apple-touch-icon.png",
         "/assets/icons/icon-192.png",
         "/assets/icons/icon-512.png",
+        "/assets/images/guide/knots/bowline.png",
+        "/assets/images/guide/knots/clove-hitch.png",
+        "/assets/images/guide/knots/round-turn.png",
         "/assets/images/vessels/cattitude/systems/asset-fixes-16-steps-1-0-babdc0a751d3.jpg",
         "/assets/images/vessels/cattitude/systems/asset-fixes-16-steps-3-0-6b5510e8e442.jpg",
         "/assets/images/vessels/cattitude/systems/asset-fixes-16-steps-5-0-e1fba3d63007.jpg",
@@ -1593,6 +1596,9 @@
     "/assets/icons/apple-touch-icon.png": "eff21d458474617daeb2bc674258a6af7a6c1a9f",
     "/assets/icons/icon-192.png": "f6da22097ee9bef8e3f25753ce3d8015918ba2d1",
     "/assets/icons/icon-512.png": "6b4592216e08b972a42c341159452a28e5b71b7f",
+    "/assets/images/guide/knots/bowline.png": "46f6ca928fb9d55db283fa77fa40a8f6a70a3e1f",
+    "/assets/images/guide/knots/clove-hitch.png": "ec622d3c46399c65a9b6d9b1f9de9c37a3f0bcd3",
+    "/assets/images/guide/knots/round-turn.png": "60c1bf60dbea7dae4d9b4ae95292f967cfde570b",
     "/assets/images/vessels/cattitude/systems/asset-fixes-16-steps-1-0-babdc0a751d3.jpg": "3558962d0bdbbe75edb757c5357a5005bdcfbe00",
     "/assets/images/vessels/cattitude/systems/asset-fixes-16-steps-3-0-6b5510e8e442.jpg": "26de1ef5d68e2f2d73c2d23200d60fdf26741d60",
     "/assets/images/vessels/cattitude/systems/asset-fixes-16-steps-5-0-e1fba3d63007.jpg": "fdeb6097d36a07412482f5dce4dd0a4da11c9ef9",
