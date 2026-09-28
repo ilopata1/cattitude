@@ -122,38 +122,33 @@ export class GuideSyncService {
     content: BootstrapContent,
   ): Promise<BootstrapContent> {
     const cloned = structuredClone(content) as BootstrapContent;
-
-    if (cloned.branding?.headerLogo) {
-      cloned.branding.headerLogo = await this.resolveDisplayUrl(
-        vesselSlug,
-        cloned.branding.headerLogo,
-      );
-    }
-    if (cloned.branding?.heroLogo) {
-      cloned.branding.heroLogo = await this.resolveDisplayUrl(
-        vesselSlug,
-        cloned.branding.heroLogo,
-      );
-    }
-
-    await this.rewriteHtmlAssets(vesselSlug, cloned.systems);
+    await this.rewriteAssetValue(vesselSlug, cloned);
     return cloned;
   }
 
-  private async rewriteHtmlAssets(
-    vesselSlug: string,
-    modules: Record<string, { sections?: { html?: string }[] }> | undefined,
-  ): Promise<void> {
-    if (!modules) {
+  /** Logos, system HTML, fix-card steps, and shared diagrams such as knots. */
+  private async rewriteAssetValue(vesselSlug: string, value: unknown): Promise<void> {
+    if (Array.isArray(value)) {
+      for (let index = 0; index < value.length; index++) {
+        const item = value[index];
+        if (typeof item === 'string') {
+          value[index] = await this.replaceAssetPaths(vesselSlug, item);
+        } else if (item && typeof item === 'object') {
+          await this.rewriteAssetValue(vesselSlug, item);
+        }
+      }
       return;
     }
-
-    for (const module of Object.values(modules)) {
-      for (const section of module.sections ?? []) {
-        if (!section.html) {
-          continue;
-        }
-        section.html = await this.replaceAssetPaths(vesselSlug, section.html);
+    if (!value || typeof value !== 'object') {
+      return;
+    }
+    const record = value as Record<string, unknown>;
+    for (const key of Object.keys(record)) {
+      const item = record[key];
+      if (typeof item === 'string') {
+        record[key] = await this.replaceAssetPaths(vesselSlug, item);
+      } else if (item && typeof item === 'object') {
+        await this.rewriteAssetValue(vesselSlug, item);
       }
     }
   }

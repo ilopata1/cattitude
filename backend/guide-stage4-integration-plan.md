@@ -32,8 +32,8 @@ scratch vs golden vs oracle fixture roles are in
   admin generate→approve→publish (`guide_generation.py`, `guide_publish.py`),
   public API `/api/v1/vessels/{slug}/guide/{manifest,version,bundle.json,assets}`
   (`guide_api.py`/`guide_service.py`), mobile sync (`GuideSyncService` /
-  `ContentService`). Production is only gated off (`guideSyncEnabled: false`,
-  frozen `mobile/src/data/bootstrap/cattitude.json`).
+  `ContentService`). Every slug, including Cattitude, loads from that API. The frozen
+  `cattitude.json` bundle has been removed.
 - **The Stage 4 composers are standalone offline scripts.** `draft_*_section.py`
   read `fixtures/pipeline/outremer/{equipment,profiles}.json` and write markdown
   to `fixtures/pipeline/scratch/`. Nothing imports them into `guide_generation`,
@@ -141,8 +141,7 @@ with no new downstream code.
 ### Client change (minimal)
 Flip the target vessel to sync from the API
 (`ContentService.shouldSyncFromApi`) and stop depending on the frozen
-`cattitude.json`. Full deletion of the frozen-bundle path can wait; Phase 1
-proves the live fetch.
+`cattitude.json`. The frozen bundle was later removed; every slug loads from the API.
 
 ### New / changed files
 - **New:** `backend/guide_section_to_module.py` (transform);

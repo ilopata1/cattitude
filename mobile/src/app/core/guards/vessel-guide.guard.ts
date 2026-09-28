@@ -4,6 +4,7 @@ import { ContentService } from '../services/content.service';
 import { GuideLoadService } from '../services/guide-load.service';
 import { InstrumentMapService } from '../services/instrument-map.service';
 import { SailPlanService } from '../services/sail-plan.service';
+import { environment } from '../../../environments/environment';
 import { VesselContextService } from '../services/vessel-context.service';
 
 /** Ensure the guide for `:vesselSlug` is loaded before entering tab routes. */
@@ -17,7 +18,7 @@ export const vesselGuideGuard: CanActivateFn = async (route) => {
 
   const slug = route.paramMap.get('vesselSlug');
   if (!slug) {
-    return router.createUrlTree(['/v', 'cattitude', 'error']);
+    return router.createUrlTree(['/v', environment.defaultVesselSlug, 'error']);
   }
 
   vesselContext.setVesselSlug(slug);

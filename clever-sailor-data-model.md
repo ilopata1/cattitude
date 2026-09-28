@@ -598,7 +598,7 @@ Created automatically on first ingest. Before ingestion:
 
 ### Published bootstrap shape
 
-Matches `mobile/src/app/core/models/bootstrap-content.model.ts` and `mobile/src/data/bootstrap/cattitude.json`:
+Matches `mobile/src/app/core/models/bootstrap-content.model.ts`:
 
 ```
 vesselId, vesselSlug, branding, emergency, systems, checklists, fixes, locations
@@ -608,7 +608,7 @@ ui             ← homeRuleSections, doMenu, checklistMeta, systemOrder, locatio
 
 **Stable keys (overlay prerequisite):** published `fixes[]` MUST include `key` (from content library; not stripped at publish). Checklist groups and items SHOULD include `key`. System `sections[]` SHOULD include `key` (or stable slug) so user patches survive regen. See [`cursor-build-user-overlays.md`](cursor-build-user-overlays.md).
 
-Validate with `utilities/validate_bootstrap_content.mjs`.
+Publish checks the payload in `validate_publication_payload` (`backend/guide_publish.py`).
 
 ### Content modules (`guide_content`)
 
@@ -872,7 +872,7 @@ Object storage (S3, R2, Railway bucket, etc.) is the **origin** for guide images
 
 Railway or S3 URLs appear in the manifest as fetch targets during step 1–2, not as runtime dependencies. The installed app must complete at least one successful sync before going offline without images.
 
-**Planned:** upload assets to object storage at **publish** time; manifest URLs point to durable storage. Until that ships, the production Cattitude PWA continues to use images bundled in the GitHub Pages build (`guideSyncEnabled: false`).
+Guide images are served by `GET /api/v1/vessels/{slug}/guide/assets/…` from `GUIDE_ASSETS_STORAGE_DIR` when that volume is set, otherwise from `backend/data/guide_assets` in the API image. Startup copies any bundled image that is missing on the volume. Object storage at publish time is still not built.
 
 ### Auth
 
@@ -1002,8 +1002,8 @@ Charter fleets with repeated hull types (e.g. multiple Tanna 47s) should default
 
 Cattitude’s guide was migrated once from `cattitude.json` into `guide_content` + `vessel_guide_publication`. That one-time import path has been **removed** from the codebase; Postgres is now the source of truth for API and admin.
 
-- **Live PWA:** still ships frozen bootstrap JSON + images from the `mobile/` build until `guideSyncEnabled` is enabled and publish-time asset storage exists.
-- **Ongoing edits:** via admin module review + publish (and eventually LLM generation) — not by editing `cattitude.json`.
+- **Live PWA:** every slug, including Cattitude, downloads the published bundle from the API. The frozen `cattitude.json` bundle has been removed.
+- **Ongoing edits:** via admin module review + publish (and eventually LLM generation).
 
 ### Admin build order (charter onboarding)
 
@@ -1119,4 +1119,4 @@ For new local dev databases without guide data, restore from a DB dump or wait f
 | `cursor-build-intake-flow.md` | **Private-owner** mobile intake → `guide_generation_input_snapshot` |
 | `mobile/src/app/core/models/bootstrap-content.model.ts` | Published payload types |
 | `mobile/src/app/core/models/schema-enums.ts` | TS mirrors of Postgres enums |
-| `utilities/validate_bootstrap_content.mjs` | Publication validation |
+| `backend/guide_publish.py` | Publication validation |

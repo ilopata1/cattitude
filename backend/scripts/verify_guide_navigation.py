@@ -1,4 +1,9 @@
-"""Verify publish-time navigation assembly against bundled cattitude.json."""
+"""Verify publish-time navigation assembly against the Cattitude navigation golden.
+
+Fixture-Auth: chat 2026-09-28 — create backend/tests/fixtures/guide_navigation_cattitude.json
+as the navigation golden, replacing mobile/src/data/bootstrap/cattitude.json, with the
+current expected keys copied (not regenerated).
+"""
 
 from __future__ import annotations
 
@@ -7,12 +12,11 @@ import sys
 from pathlib import Path
 
 _BACKEND = Path(__file__).resolve().parent.parent
-_REPO = _BACKEND.parent
 sys.path.insert(0, str(_BACKEND))
 
 from guide_navigation import enrich_navigation  # noqa: E402
 
-CATTITUDE_JSON = _REPO / "mobile" / "src" / "data" / "bootstrap" / "cattitude.json"
+CATTITUDE_JSON = _BACKEND / "tests" / "fixtures" / "guide_navigation_cattitude.json"
 
 
 def main() -> int:
@@ -65,7 +69,7 @@ def main() -> int:
             print(f"  - {failure}")
         return 1
 
-    print("OK: navigation assembly matches cattitude.json structure")
+    print("OK: navigation assembly matches guide_navigation_cattitude.json")
     return 0
 
 

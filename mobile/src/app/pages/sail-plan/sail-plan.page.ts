@@ -3,6 +3,7 @@ import { AlertController, ToastController } from '@ionic/angular';
 import { SailPlan, SailPlanCell, bandsFromCuts, formatBand } from '../../core/models/sail-plan.model';
 import { resizeCells, resizeHeavyWeatherCells } from '../../core/services/sail-plan-advisor';
 import { clonePlan, SailPlanService } from '../../core/services/sail-plan.service';
+import { VesselContextService } from '../../core/services/vessel-context.service';
 
 @Component({
   selector: 'app-sail-plan',
@@ -22,7 +23,12 @@ export class SailPlanPage implements OnInit {
     private readonly alerts: AlertController,
     private readonly toasts: ToastController,
     private readonly cdr: ChangeDetectorRef,
+    private readonly vesselContext: VesselContextService,
   ) {}
+
+  get settingsHref(): string {
+    return `/v/${this.vesselContext.vesselSlug}/tabs/settings`;
+  }
 
   ngOnInit(): void {
     this.draft = clonePlan(this.sailPlans.plan);

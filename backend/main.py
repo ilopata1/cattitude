@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import time
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
@@ -24,7 +25,18 @@ from query_log import log_ask_query
 
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="Clever Sailor API")
+
+@asynccontextmanager
+async def _app_lifespan(_app: FastAPI):
+    from guide_assets_service import seed_missing_guide_assets
+
+    copied = seed_missing_guide_assets()
+    if copied:
+        logger.info("Seeded %s guide image(s) into GUIDE_ASSETS_STORAGE_DIR", copied)
+    yield
+
+
+app = FastAPI(title="Clever Sailor API", lifespan=_app_lifespan)
 
 app.include_router(guide_router)
 app.include_router(sail_plan_router)

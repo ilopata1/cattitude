@@ -21,7 +21,6 @@ on:
       - 'skip/**'
       - 'utilities/bootstrap_ui.json'
       - 'utilities/embed_bootstrap_ui.mjs'
-      - 'utilities/validate_bootstrap_content.mjs'
       - 'utilities/patch_github_pages_assets.mjs'
       - 'utilities/patch_skip_cattitude_embed.mjs'
       - 'utilities/generate_pwa_icons.py'
@@ -65,7 +64,6 @@ jobs:
           PAGES_CUSTOM_DOMAIN: ${{ env.PAGES_CUSTOM_DOMAIN }}
           PAGES_BASE_PATH: ${{ env.PAGES_BASE_PATH }}
         run: |
-          node ../utilities/validate_bootstrap_content.mjs
           npm ci
           npm run build
           mkdir -p www/@halos-org/skip

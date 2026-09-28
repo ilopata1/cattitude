@@ -108,21 +108,13 @@ export class SailPlanService {
     try {
       const raw = localStorage.getItem(this.cacheKey(slug));
       if (raw) return sanitizePlan(JSON.parse(raw) as SailPlan);
-      if (slug === environment.defaultVesselSlug) {
-        const legacy = localStorage.getItem(STORAGE_KEY);
-        if (legacy) return sanitizePlan(JSON.parse(legacy) as SailPlan);
-      }
     } catch { /* ignore */ }
     return null;
   }
 
   private writeCache(slug: string, plan: SailPlan): void {
     try {
-      const raw = JSON.stringify(plan);
-      localStorage.setItem(this.cacheKey(slug), raw);
-      if (slug === environment.defaultVesselSlug) {
-        localStorage.setItem(STORAGE_KEY, raw);
-      }
+      localStorage.setItem(this.cacheKey(slug), JSON.stringify(plan));
     } catch { /* ignore quota */ }
   }
 }

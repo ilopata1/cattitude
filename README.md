@@ -173,22 +173,17 @@ mobile/src/
       services/         # ContentService, GuideSyncService, GuideStoreService,
                         # GuideLoadService, ChatService, ProgressService,
                         # VesselContextService, VesselResolverService, EmergencyService
-      initializers/     # Loads bootstrap JSON at startup (transitional)
+      initializers/     # Loads the published guide at startup
     pages/              # home, do, know, fix, ask, vessel-error
     shared/             # Header, emergency modal, photo lightbox, rich HTML
     tabs/               # Tab shell + routing
-  data/bootstrap/       # cattitude.json — frozen copy for production (transitional)
   assets/images/vessels/{slug}/systems/
-  environments/         # apiUrl, defaultVesselSlug, bootstrapContentPath, guideSyncEnabled
+  environments/         # apiUrl, defaultVesselSlug
 ```
 
 **Routing:** vessel-scoped URLs at `/v/{slug}/tabs/…` (e.g. `/v/cattitude/tabs/home`). Legacy `/tabs/…` paths redirect to the default vessel. Add/switch-vessel UI is not built yet.
 
-**Transitional vs target loading:**
-
-- **Today (production):** `ContentService` loads bundled `data/bootstrap/cattitude.json` (`guideSyncEnabled: false`). Legacy `/tabs/…` URLs redirect to `/v/cattitude/tabs/…`.
-- **Development:** `guideSyncEnabled: true` — sync from `GET /api/v1/vessels/{slug}/guide/*` into IndexedDB, with bundled JSON / cache fallback.
-- **Target:** Same sync path in production; admin publish updates content without a mobile redeploy.
+**Guide loading:** every slug, including the site-root default `cattitude`, syncs from `GET /api/v1/vessels/{slug}/guide/*` into IndexedDB. Legacy `/tabs/…` URLs redirect to `/v/{defaultVesselSlug}/tabs/…`. If the download fails and there is no cache, the vessel-error page explains that the guide is not on the phone yet. Admin publish updates content without a mobile redeploy.
 
 **Offline / PWA:** Production builds register `@angular/service-worker`. Installed home-screen apps may lag behind browser tabs until the service worker updates; see `mobile/README.md`.
 
@@ -209,7 +204,7 @@ mobile/src/
 | `GET` | `/api/v1/vessels/{slug}/guide/assets/{path}` | Guide images |
 | `GET` | `/api/v1/vessels/{slug}/guide/version` | Lightweight content-hash check |
 
-Auth for guide download is not enforced yet (planned: charter guest / owner tokens). The mobile app still loads bundled `cattitude.json` by default; set `guideSyncEnabled: true` in environment to sync from the API into IndexedDB.
+Auth for guide download is not enforced yet (planned: charter guest / owner tokens). The mobile app loads each vessel's published guide from the API.
 
 **Admin portal** (`/admin/`, HTTP Basic Auth): server-rendered screens for companies, operating bases, vessels (CRUD, clone, equipment, guide context), equipment registry, option packs, manuals (upload + legal review), guide generation/review/approve/publish, and prompt templates. See [`backend/README.md`](backend/README.md) for the content-author workflow. Still **planned:** intake review queue, query log UI, notifications (see roadmap).
 
@@ -280,7 +275,7 @@ Three conceptual layers in one database:
 
 **System modules (Know):** when a vessel has a Stage 4 substrate, published sections are composed by Python Stage 4 composers (`stage4_composer`) from interaction profiles + vessel graph + facts. Solar folds into `batteries`. Other system topics still use equipment fragments, pending placeholders, or AI (overview/safety). See [`backend/README.md`](backend/README.md).
 
-**Mobile PWA** still ships a frozen copy of `cattitude.json` + images from the `mobile/` build (`guideSyncEnabled: false` in production). Prefer admin republication for content changes; enable `guideSyncEnabled: true` in `environment.ts` to sync publications during development.
+**Mobile PWA** loads the published guide from the API for every vessel. Change guide content by publishing in admin; the next sync picks it up. Guide images are served by the API from `backend/data/guide_assets` (or `GUIDE_ASSETS_STORAGE_DIR` when a volume is mounted).
 
 ### Target (broader platform)
 
@@ -288,7 +283,7 @@ Three conceptual layers in one database:
 2. **Generation** assembles modules (templates, library, Stage 4 composers, fragments, optional AI) → `guide_content` drafts.
 3. **Admin review** — diff, accept, approve modules.
 4. **Publish** — assembler validates and writes `vessel_guide_publication`.
-5. **Client sync** — app downloads manifest once; uses local copy until hash changes (production still gated on `guideSyncEnabled`).
+5. **Client sync** — app downloads manifest once; uses local copy until hash changes.
 
 Open Stage 4 work: Phase 4 (de-hardcode composers + second vessel) and Phase 5 (retire fragment/LLM path for remaining systems). `utilities/extract_bootstrap_content.mjs` is **legacy only** (one-time migration from archived `app/index.html`).
 
@@ -417,7 +412,7 @@ Seed is for initial tenancy/equipment setup — not every deploy.
 | Postgres schema migrations 001–024 | **Shipped** (includes Stage 4 substrate / owner questions) |
 | Operating bases + `guide_context` | **Shipped** (schema + seed) |
 | Cattitude guide in Postgres (`guide_content` + publication) | **Shipped** (one-time migration complete) |
-| Guide sync API + mobile local store | **Shipped** (API + IndexedDB sync; `guideSyncEnabled` off by default) |
+| Guide sync API + mobile local store | **Shipped** (every slug, including Cattitude, syncs from the API into IndexedDB) |
 | Admin portal — operating base + publish + vessels | **Shipped** (vessel CRUD, clone, equipment picker) |
 | Admin portal — equipment registry, manuals, option packs | **Shipped** |
 | Stage 4 system composers (batteries, controls, electrical, engines, nav, water) | **Shipped** for vessels with Stage 4 substrate (Phases 1–3); Phase 4 de-hardcode + 2nd vessel and Phase 5 fragment-path retirement still open — [`guide-stage4-integration-plan.md`](backend/guide-stage4-integration-plan.md) |
@@ -441,7 +436,7 @@ Seed is for initial tenancy/equipment setup — not every deploy.
 
 1. **Read `clever-sailor-data-model.md` first** if you touch the database, guide generation, or API contracts. The mobile bootstrap JSON shape is the published output contract — TypeScript types in `mobile/src/app/core/models/bootstrap-content.model.ts` must stay aligned.
 
-2. **Distinguish vessel guide from Ask.** Guide content is authored in admin (or the curated YAML library under `backend/content/`), then published to Postgres. The bundled `cattitude.json` is a transitional frozen copy for production — do not edit it for content changes. Changing manuals or ingest affects Ask only. Operating base or vessel `guide_context` affects generation output, not the live app until republication and client sync.
+2. **Distinguish vessel guide from Ask.** Guide content is authored in admin (or the curated YAML library under `backend/content/`), then published to Postgres. The app downloads that publication. Changing manuals or ingest affects Ask only. Operating base or vessel `guide_context` affects generation output, not the live app until republication and client sync.
 
 3. **Cattitude is a transitional deployment.** Single `vesselSlug` in environment, bootstrap file in git, GitHub Pages path prefix `/cattitude/`. Platform work should generalize without breaking this URL.
 

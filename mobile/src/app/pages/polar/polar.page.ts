@@ -14,6 +14,7 @@ import { PolarService } from '../../core/services/polar.service';
 import { SignalKService } from '../../core/services/signal-k.service';
 import { SailAdvice, formatBand } from '../../core/models/sail-plan.model';
 import { SailPlanService } from '../../core/services/sail-plan.service';
+import { VesselContextService } from '../../core/services/vessel-context.service';
 
 const WINDOW_MS = 15 * 60 * 1000;
 const BUCKET_MS = 10_000;
@@ -90,7 +91,12 @@ export class PolarPage implements OnInit, OnDestroy {
     private readonly sk: SignalKService,
     private readonly sailPlans: SailPlanService,
     private readonly cdr: ChangeDetectorRef,
+    private readonly vesselContext: VesselContextService,
   ) {}
+
+  get sailPlanLink(): string {
+    return `/v/${this.vesselContext.vesselSlug}/tabs/settings/sail-plan`;
+  }
 
   ngOnInit(): void {
     this.subs.push(

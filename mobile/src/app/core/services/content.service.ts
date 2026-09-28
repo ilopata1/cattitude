@@ -1,7 +1,5 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { firstValueFrom } from 'rxjs';
 import {
   BootstrapContent,
   Checklist,
@@ -9,15 +7,20 @@ import {
   LocationZone,
   SystemModule,
 } from '../models/bootstrap-content.model';
-import { environment } from '../../../environments/environment';
 import { GuideSyncService } from './guide-sync.service';
 import { VesselContextService } from './vessel-context.service';
 import { VesselRouteService } from './vessel-route.service';
+
+export type GuideLoadFailure = 'offline' | 'missing' | 'failed';
+
+const OFFLINE_GUIDE_MESSAGE =
+  "This boat's guide isn't on this phone yet. Connect to the internet once to download it.";
 
 export class GuideLoadError extends Error {
   constructor(
     readonly vesselSlug: string,
     message = `Unable to load guide for vessel "${vesselSlug}".`,
+    readonly failure: GuideLoadFailure = 'failed',
   ) {
     super(message);
     this.name = 'GuideLoadError';
@@ -29,7 +32,6 @@ export class ContentService {
   private content: BootstrapContent | null = null;
 
   constructor(
-    private readonly http: HttpClient,
     private readonly vesselContext: VesselContextService,
     private readonly guideSync: GuideSyncService,
     private readonly vesselRoutes: VesselRouteService,
@@ -37,44 +39,35 @@ export class ContentService {
   ) {}
 
   async loadBootstrapContent(slug: string): Promise<BootstrapContent> {
-    if (this.shouldSyncFromApi(slug)) {
-      try {
-        const synced = await this.guideSync.ensureGuide(slug);
-        return this.applyLoadedContent(synced, slug);
-      } catch (error) {
-        console.warn('Guide sync failed; trying local cache or bundled JSON.', error);
-        const cached = await this.guideSync.loadFromCache(slug);
-        if (cached) {
-          return this.applyLoadedContent(cached, slug);
-        }
-        if (slug !== environment.defaultVesselSlug) {
-          try {
-            const direct = await this.guideSync.fetchBundleFromApi(slug);
-            return this.applyLoadedContent(direct, slug);
-          } catch {
-            // fall through to GuideLoadError below
-          }
-          const detail =
-            error instanceof Error ? error.message : 'Guide sync failed.';
-          throw new GuideLoadError(
-            slug,
-            `Unable to load guide for vessel "${slug}" from the API. ${detail}`,
-          );
-        }
-      }
-    }
-
     try {
-      const bundled = await this.loadBundledContent(slug);
-      return this.applyLoadedContent(bundled, slug);
-    } catch {
-      throw new GuideLoadError(slug);
+      const synced = await this.guideSync.ensureGuide(slug);
+      return this.applyLoadedContent(synced, slug);
+    } catch (error) {
+      console.warn('Guide sync failed; trying local cache.', error);
+      const cached = await this.guideSync.loadFromCache(slug);
+      if (cached) {
+        return this.applyLoadedContent(cached, slug);
+      }
+      throw this.toLoadError(slug, error);
     }
   }
 
-  /** Published non-default vessels always sync from the API; default vessel uses bundled JSON unless sync is enabled. */
-  private shouldSyncFromApi(slug: string): boolean {
-    return environment.guideSyncEnabled || slug !== environment.defaultVesselSlug;
+  private toLoadError(slug: string, error: unknown): GuideLoadError {
+    const status = (error as { status?: number } | null)?.status;
+    const offline =
+      (typeof navigator !== 'undefined' && navigator.onLine === false) ||
+      status === 0;
+    if (offline) {
+      return new GuideLoadError(slug, OFFLINE_GUIDE_MESSAGE, 'offline');
+    }
+    if (status === 404) {
+      return new GuideLoadError(slug, `No published guide for "${slug}".`, 'missing');
+    }
+    const detail = error instanceof Error ? error.message : 'Guide sync failed.';
+    return new GuideLoadError(
+      slug,
+      `Unable to load guide for vessel "${slug}" from the API. ${detail}`,
+    );
   }
 
   get loaded(): boolean {
@@ -126,11 +119,6 @@ export class ContentService {
       this.bootstrap.manualTitles[manualId] ??
       manualId.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
     );
-  }
-
-  private async loadBundledContent(slug: string): Promise<BootstrapContent> {
-    const path = environment.bootstrapContentPath.replace('cattitude', slug);
-    return firstValueFrom(this.http.get<BootstrapContent>(path));
   }
 
   private applyLoadedContent(content: BootstrapContent, slug: string): BootstrapContent {

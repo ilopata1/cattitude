@@ -12,6 +12,7 @@ import { InstrumentBinding, InstrumentMap, InstrumentRole } from '../../core/mod
 import { DiscoveredPath, InstrumentDiscoveryService } from '../../core/services/instrument-discovery.service';
 import { InstrumentMapService } from '../../core/services/instrument-map.service';
 import { SignalKConnectionState, SignalKService } from '../../core/services/signal-k.service';
+import { VesselContextService } from '../../core/services/vessel-context.service';
 
 const MPS_TO_KNOTS = 1.94384;
 const STALE_AFTER_MS = 60_000;
@@ -43,7 +44,12 @@ export class InstrumentsPage implements OnInit, OnDestroy {
     private readonly sk: SignalKService,
     private readonly toasts: ToastController,
     private readonly cdr: ChangeDetectorRef,
+    private readonly vesselContext: VesselContextService,
   ) {}
+
+  get settingsHref(): string {
+    return `/v/${this.vesselContext.vesselSlug}/tabs/settings`;
+  }
 
   ngOnInit(): void {
     this.draft = cloneMap(this.maps.map);

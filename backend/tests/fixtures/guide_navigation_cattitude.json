@@ -1,0 +1,432 @@
+{
+  "vesselId": null,
+  "vesselSlug": "cattitude",
+  "branding": {
+    "vesselName": "Cattitude",
+    "vesselSlug": "cattitude",
+    "vesselType": "sailing_catamaran",
+    "model": "Fountaine Pajot Tanna 47",
+    "charterCompany": "Cruise Abaco",
+    "location": "Marsh Harbour, Abacos",
+    "marina": "Boat Harbour Marina",
+    "tagline": "Fountaine Pajot Tanna 47 · Abacos Charter Guide",
+    "headerLogo": "assets/images/vessels/cattitude/systems/logo-header-637ece4c168d.png",
+    "heroLogo": "assets/images/vessels/cattitude/systems/logo-hero-6e4130b11588.png"
+  },
+  "emergency": {
+    "mayday": {
+      "channel": "VHF Ch 16",
+      "vesselCallsign": "Cattitude",
+      "steps": [
+        "Tune VHF to Channel 16 — switch to high power (25W)",
+        "Say \"MAYDAY MAYDAY MAYDAY\"",
+        "Say \"This is Cattitude, Cattitude, Cattitude\"",
+        "Say \"MAYDAY Cattitude\"",
+        "State your position — GPS lat/long or bearing and distance from known landmark",
+        "State nature of distress — fire, sinking, medical, etc.",
+        "State assistance required",
+        "State number of persons on board",
+        "Release transmit button and listen for response"
+      ]
+    },
+    "contacts": [
+      {
+        "label": "Cruise Abaco — Jesse",
+        "detail": "Dockmaster 24/7",
+        "value": "+1 305-304-5821",
+        "tel": "+13053045821",
+        "action": "call"
+      },
+      {
+        "label": "Cruise Abaco VHF",
+        "detail": "Office hours approx 9am–5pm",
+        "value": "Ch 09",
+        "action": "vhf"
+      },
+      {
+        "label": "Boat Harbour Marina VHF",
+        "detail": "Working channel",
+        "value": "Ch 68",
+        "action": "vhf"
+      }
+    ],
+    "modalSubtitle": "Cattitude · Cruise Abaco · Marsh Harbour, Bahamas"
+  },
+  "systems": {
+    "overview": {
+      "locs": [
+        "cockpit",
+        "helm",
+        "saloon"
+      ]
+    },
+    "safety": {
+      "locs": [
+        "cockpit",
+        "saloon",
+        "helm"
+      ]
+    },
+    "sails": {
+      "locs": [
+        "bow",
+        "cockpit",
+        "helm"
+      ]
+    },
+    "engines": {
+      "locs": [
+        "port-hull",
+        "stbd-hull",
+        "cockpit"
+      ]
+    },
+    "electrical": {
+      "locs": [
+        "saloon"
+      ]
+    },
+    "batteries": {
+      "locs": [
+        "stbd-hull",
+        "saloon"
+      ]
+    },
+    "water": {
+      "locs": [
+        "stbd-hull",
+        "saloon",
+        "bow"
+      ]
+    },
+    "heads": {
+      "locs": [
+        "port-hull",
+        "stbd-hull"
+      ]
+    },
+    "galley": {
+      "locs": [
+        "galley",
+        "cockpit"
+      ]
+    },
+    "nav": {
+      "locs": [
+        "helm",
+        "saloon"
+      ]
+    },
+    "anchoring": {
+      "locs": [
+        "bow",
+        "cockpit"
+      ]
+    },
+    "dinghy": {
+      "locs": [
+        "swim"
+      ]
+    },
+    "ac": {
+      "locs": [
+        "port-hull",
+        "stbd-hull",
+        "saloon"
+      ]
+    }
+  },
+  "checklists": {
+    "safety-brief": {},
+    "pd": {},
+    "anch": {},
+    "lu": {},
+    "ec": {}
+  },
+  "fixes": [],
+  "manualTitles": {},
+  "ui": {
+    "homeRuleSections": [
+      {
+        "title": "⛔ Never Do This",
+        "tone": "danger",
+        "rules": [
+          {
+            "icon": "🚽",
+            "tone": "danger",
+            "text": "Never put ANYTHING in the toilet except human waste — no toilet paper, no wipes, no paper towels. Paper goes in the bin."
+          },
+          {
+            "icon": "⚓",
+            "tone": "danger",
+            "text": "Never anchor on coral — always find sand. Coral damage is your liability"
+          },
+          {
+            "icon": "🛞",
+            "tone": "danger",
+            "text": "Never leave helm unattended with autopilot on in traffic, channels, or near shore"
+          }
+        ]
+      },
+      {
+        "title": "⚠️ Always Do This",
+        "tone": "caution",
+        "rules": [
+          {
+            "icon": "📻",
+            "tone": "caution",
+            "text": "Always monitor VHF Ch 16 underway — call Cruise Abaco on Ch 09 during office hours (approx 9am–5pm)"
+          },
+          {
+            "icon": "🛟",
+            "tone": "caution",
+            "text": "Run the Safety Briefing with all guests before every departure",
+            "link": "/tabs/do/checklist/safety-brief"
+          },
+          {
+            "icon": "🔋",
+            "tone": "caution",
+            "text": "Keep battery state above 80% — run engines or generator if solar isn't keeping up"
+          }
+        ]
+      },
+      {
+        "title": "✅ Good Habits",
+        "tone": "good",
+        "rules": [
+          {
+            "icon": "🧊",
+            "tone": "good",
+            "text": "Minimise fridge/freezer door openings — it's your biggest continuous power draw"
+          }
+        ]
+      }
+    ],
+    "doMenu": [
+      {
+        "label": "Day One",
+        "items": [
+          {
+            "key": "safety-brief",
+            "title": "Safety Briefing",
+            "subtitle": "Run with all guests before every departure",
+            "icon": "🛟",
+            "iconClass": "ic-coral",
+            "route": "/tabs/do/checklist/safety-brief",
+            "progressType": "checklist"
+          },
+          {
+            "key": "learn",
+            "title": "Learn the Boat",
+            "subtitle": "Understand every system on Cattitude",
+            "icon": "🛥️",
+            "iconClass": "ic-blue",
+            "route": "/tabs/do/learn",
+            "progressType": "learn"
+          }
+        ]
+      },
+      {
+        "label": "Every Departure",
+        "items": [
+          {
+            "key": "pd",
+            "title": "Pre-Departure",
+            "subtitle": "Run before every time you leave",
+            "icon": "🚀",
+            "iconClass": "ic-green",
+            "route": "/tabs/do/checklist/pd",
+            "progressType": "checklist"
+          }
+        ]
+      },
+      {
+        "label": "At Anchor",
+        "items": [
+          {
+            "key": "anch",
+            "title": "Anchoring",
+            "subtitle": "Setting the hook safely in the Abacos",
+            "icon": "⚓",
+            "iconClass": "ic-amber",
+            "route": "/tabs/do/checklist/anch",
+            "progressType": "checklist"
+          },
+          {
+            "key": "lu",
+            "title": "Leaving Boat Unattended",
+            "subtitle": "Going ashore — secure Cattitude first",
+            "icon": "🔒",
+            "iconClass": "ic-coral",
+            "route": "/tabs/do/checklist/lu",
+            "progressType": "checklist"
+          }
+        ]
+      },
+      {
+        "label": "End of Trip",
+        "items": [
+          {
+            "key": "ec",
+            "title": "End of Charter",
+            "subtitle": "Return to Boat Harbour Marina",
+            "icon": "🏁",
+            "iconClass": "ic-navy",
+            "route": "/tabs/do/checklist/ec",
+            "progressType": "checklist"
+          }
+        ]
+      }
+    ],
+    "checklistMeta": {
+      "safety-brief": {
+        "title": "Safety Briefing",
+        "subtitle": "Run with all guests before every departure",
+        "icon": "🛟"
+      },
+      "pd": {
+        "title": "Pre-Departure",
+        "subtitle": "Complete before every departure",
+        "icon": "🚀"
+      },
+      "anch": {
+        "title": "Anchoring",
+        "subtitle": "Setting the hook safely in the Abacos",
+        "icon": "⚓"
+      },
+      "lu": {
+        "title": "Leaving Boat Unattended",
+        "subtitle": "Going ashore — secure Cattitude first",
+        "icon": "🔒"
+      },
+      "ec": {
+        "title": "End of Charter",
+        "subtitle": "Return to Boat Harbour Marina",
+        "icon": "🏁"
+      }
+    },
+    "systemOrder": [
+      "overview",
+      "safety",
+      "sails",
+      "engines",
+      "electrical",
+      "batteries",
+      "water",
+      "heads",
+      "galley",
+      "ac",
+      "nav",
+      "anchoring",
+      "dinghy"
+    ],
+    "locationLayout": [
+      {
+        "id": "bow",
+        "label": "⬆ Bow / Foredeck",
+        "rowClass": "center"
+      },
+      {
+        "id": "port-hull",
+        "label": "◀ Port Hull"
+      },
+      {
+        "id": "saloon",
+        "label": "🏠 Saloon"
+      },
+      {
+        "id": "stbd-hull",
+        "label": "Stbd Hull ▶"
+      },
+      {
+        "id": "galley",
+        "label": "🍳 Galley"
+      },
+      {
+        "id": "cockpit",
+        "label": "☀️ Cockpit"
+      },
+      {
+        "id": "helm",
+        "label": "🧭 Helm Station"
+      },
+      {
+        "id": "swim",
+        "label": "🏊 Swim Platform"
+      }
+    ]
+  },
+  "locations": {
+    "bow": {
+      "label": "Bow / Foredeck",
+      "sys": [
+        "anchoring",
+        "sails",
+        "overview"
+      ]
+    },
+    "port-hull": {
+      "label": "Port Hull",
+      "sys": [
+        "engines",
+        "heads",
+        "water",
+        "ac",
+        "overview"
+      ]
+    },
+    "stbd-hull": {
+      "label": "Starboard Hull",
+      "sys": [
+        "engines",
+        "heads",
+        "batteries",
+        "water",
+        "ac",
+        "overview"
+      ]
+    },
+    "saloon": {
+      "label": "Saloon",
+      "sys": [
+        "electrical",
+        "batteries",
+        "ac",
+        "nav",
+        "overview"
+      ]
+    },
+    "galley": {
+      "label": "Galley",
+      "sys": [
+        "galley",
+        "water"
+      ]
+    },
+    "cockpit": {
+      "label": "Cockpit",
+      "sys": [
+        "sails",
+        "safety",
+        "anchoring",
+        "engines",
+        "overview"
+      ]
+    },
+    "helm": {
+      "label": "Helm Station",
+      "sys": [
+        "nav",
+        "engines",
+        "sails"
+      ]
+    },
+    "swim": {
+      "label": "Swim Platform",
+      "sys": [
+        "dinghy",
+        "safety"
+      ]
+    }
+  }
+}

@@ -26,11 +26,6 @@
                 "output": "assets"
               },
               {
-                "glob": "**/*",
-                "input": "src/data",
-                "output": "data"
-              },
-              {
                 "glob": "**/*.svg",
                 "input": "node_modules/ionicons/dist/ionicons/svg",
                 "output": "./svg"

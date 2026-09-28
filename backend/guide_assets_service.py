@@ -26,13 +26,50 @@ class GuideAssetError(Exception):
     pass
 
 
+def bundled_guide_assets_dir() -> Path:
+    """Images shipped in the API image. Not the volume mount."""
+    return _BACKEND_DIR / "data" / "guide_assets"
+
+
 def get_guide_assets_root() -> Path:
     if settings.guide_assets_storage_dir.strip():
         path = Path(settings.guide_assets_storage_dir).expanduser()
     else:
-        path = _BACKEND_DIR / "data" / "guide_assets"
+        path = bundled_guide_assets_dir()
     path.mkdir(parents=True, exist_ok=True)
     return path
+
+
+def seed_missing_guide_assets() -> int:
+    """Copy bundled images onto the storage dir when that dir is a volume.
+
+    Existing files are left in place, so an admin upload is not replaced by
+    the image seed. Mount the volume at a path other than the bundled dir
+    (for example ``/data/guide_assets``) and set ``GUIDE_ASSETS_STORAGE_DIR``
+    to that path. A mount directly over ``backend/data/guide_assets`` hides
+    the seed and this copy cannot see it.
+    """
+    source_root = bundled_guide_assets_dir()
+    dest_root = get_guide_assets_root()
+    if not source_root.is_dir():
+        return 0
+    try:
+        if dest_root.resolve() == source_root.resolve():
+            return 0
+    except OSError:
+        return 0
+
+    copied = 0
+    for path in source_root.rglob("*"):
+        if not path.is_file() or path.suffix.lower() not in _ALLOWED_SUFFIXES:
+            continue
+        dest = dest_root / path.relative_to(source_root)
+        if dest.is_file():
+            continue
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_bytes(path.read_bytes())
+        copied += 1
+    return copied
 
 
 def _sanitize_stem(name: str) -> str:

@@ -45,15 +45,7 @@ npx serve www -p 8100
 
 **Source of truth:** Postgres via the admin portal — generate, review, approve, and publish at http://localhost:8000/admin/ (see [`backend/README.md`](../backend/README.md)). Curated standard content lives in [`backend/content/`](../backend/content/README.md).
 
-**Transitional production bundle:** The PWA still ships a frozen copy of `src/data/bootstrap/cattitude.json` plus images (`guideSyncEnabled: false` in `environment.prod.ts`). Do **not** edit the JSON for routine content changes — publish via admin instead, then either flip `guideSyncEnabled` or refresh the bundled copy when ready to redeploy.
-
-**Development sync:** With `guideSyncEnabled: true` in `environment.ts`, the app downloads the latest publication from `GET /api/v1/vessels/{slug}/guide/*` into IndexedDB, falling back to the bundled JSON or cache on failure.
-
-If you must update the bundled JSON directly (e.g. before admin publish is wired for a hotfix), validate after edits:
-
-```bash
-node ../utilities/validate_bootstrap_content.mjs
-```
+Every vessel, including Cattitude, loads its guide from `GET /api/v1/vessels/{slug}/guide/*` into IndexedDB, and uses that cache if a later refresh fails. Publish from admin. There is no bundled guide JSON.
 
 The `ui` block can also be maintained in `utilities/bootstrap_ui.json` and merged:
 
@@ -102,5 +94,5 @@ src/app/
   pages/          # Home, Do, Know, Fix, Ask, vessel-error
   shared/         # Header, emergency modal, photo lightbox, rich HTML
   tabs/           # Tab shell + routing
-src/data/bootstrap/   # Frozen cattitude.json (transitional production bundle)
+src/environments/     # apiUrl, defaultVesselSlug, skipUrl
 ```

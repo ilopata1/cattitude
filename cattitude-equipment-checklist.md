@@ -1,6 +1,6 @@
 # Cattitude — admin equipment & manual checklist
 
-Use this while populating Postgres via the admin portal so Cattitude matches the live PWA guide (`mobile/src/data/bootstrap/cattitude.json`). Tick boxes as you go.
+Use this while populating Postgres via the admin portal so Cattitude matches the published guide. Tick boxes as you go.
 
 **Goal:** accurate `vessels` + `vessel_equipment` + manual library linkage — inputs for guide generation, not a manual rewrite of guide text.
 
@@ -231,7 +231,7 @@ You are ready to start **guide generation v0** when:
 
 ## Reference
 
-- PWA content source: `mobile/src/data/bootstrap/cattitude.json`
+- PWA content source: published guide for slug `cattitude`
 - **Registry manifest:** `data/cattitude_vessel_equipment.csv` (25 planned links after owner review)
 - **Seed script:** `backend/scripts/seed_cattitude_equipment.py`
 - Seed placeholder (replace): `backend/scripts/seed_dev_data.py` → 3 sample `vessel_equipment` rows only

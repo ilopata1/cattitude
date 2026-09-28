@@ -1,6 +1,9 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { environment } from '../environments/environment';
 import { vesselGuideGuard } from './core/guards/vessel-guide.guard';
+
+const defaultVessel = environment.defaultVesselSlug;
 
 const routes: Routes = [
   {
@@ -22,22 +25,23 @@ const routes: Routes = [
       { path: '', redirectTo: 'tabs/home', pathMatch: 'full' },
     ],
   },
-  { path: 'tabs/home', redirectTo: 'v/cattitude/tabs/home', pathMatch: 'full' },
-  { path: 'tabs/do', redirectTo: 'v/cattitude/tabs/do', pathMatch: 'full' },
-  { path: 'tabs/know', redirectTo: 'v/cattitude/tabs/know', pathMatch: 'full' },
-  { path: 'tabs/fix', redirectTo: 'v/cattitude/tabs/fix', pathMatch: 'full' },
-  { path: 'tabs/ask', redirectTo: 'v/cattitude/tabs/ask', pathMatch: 'full' },
-  { path: 'tabs/sail', redirectTo: 'v/cattitude/tabs/sail', pathMatch: 'full' },
-  { path: 'tabs/anchorage', redirectTo: 'v/cattitude/tabs/anchorage', pathMatch: 'full' },
-  { path: 'tabs/polar', redirectTo: 'v/cattitude/tabs/polar', pathMatch: 'full' },
-  { path: 'tabs/settings', redirectTo: 'v/cattitude/tabs/settings', pathMatch: 'full' },
-  { path: 'tabs/do/learn', redirectTo: 'v/cattitude/tabs/do/learn', pathMatch: 'full' },
+  { path: 'tabs/home', redirectTo: () => `/v/${defaultVessel}/tabs/home`, pathMatch: 'full' },
+  { path: 'tabs/do', redirectTo: () => `/v/${defaultVessel}/tabs/do`, pathMatch: 'full' },
+  { path: 'tabs/know', redirectTo: () => `/v/${defaultVessel}/tabs/know`, pathMatch: 'full' },
+  { path: 'tabs/fix', redirectTo: () => `/v/${defaultVessel}/tabs/fix`, pathMatch: 'full' },
+  { path: 'tabs/ask', redirectTo: () => `/v/${defaultVessel}/tabs/ask`, pathMatch: 'full' },
+  { path: 'tabs/sail', redirectTo: () => `/v/${defaultVessel}/tabs/sail`, pathMatch: 'full' },
+  { path: 'tabs/anchorage', redirectTo: () => `/v/${defaultVessel}/tabs/anchorage`, pathMatch: 'full' },
+  { path: 'tabs/polar', redirectTo: () => `/v/${defaultVessel}/tabs/polar`, pathMatch: 'full' },
+  { path: 'tabs/settings', redirectTo: () => `/v/${defaultVessel}/tabs/settings`, pathMatch: 'full' },
+  { path: 'tabs/do/learn', redirectTo: () => `/v/${defaultVessel}/tabs/do/learn`, pathMatch: 'full' },
   {
     path: 'tabs/do/checklist/:key',
-    redirectTo: 'v/cattitude/tabs/do/checklist/:key',
+    redirectTo: ({ params }) => `/v/${defaultVessel}/tabs/do/checklist/${params['key']}`,
+    pathMatch: 'full',
   },
-  { path: 'tabs', redirectTo: 'v/cattitude/tabs/home', pathMatch: 'full' },
-  { path: '', redirectTo: 'v/cattitude/tabs/home', pathMatch: 'full' },
+  { path: 'tabs', redirectTo: () => `/v/${defaultVessel}/tabs/home`, pathMatch: 'full' },
+  { path: '', redirectTo: () => `/v/${defaultVessel}/tabs/home`, pathMatch: 'full' },
 ];
 
 @NgModule({
