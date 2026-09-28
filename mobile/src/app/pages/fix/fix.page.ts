@@ -1,10 +1,13 @@
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, ViewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
+import { IonContent } from '@ionic/angular';
 import { ContentService } from '../../core/services/content.service';
 import { EmergencyService } from '../../core/services/emergency.service';
 import { VesselRouteService } from '../../core/services/vessel-route.service';
 import { FixCard } from '../../core/models/bootstrap-content.model';
+import { fixCardSlugs } from '../../core/search/guide-search';
+import { scrollToElement } from '../../core/search/scroll-into-content';
 
 const FIX_CATEGORIES = [
   { key: 'all', label: 'All' },
@@ -64,6 +67,8 @@ export class FixPage implements OnInit {
   expandedIndex: number | null = null;
   readonly categories = FIX_CATEGORIES;
 
+  @ViewChild(IonContent) private ionContent?: IonContent;
+
   private readonly destroyRef = inject(DestroyRef);
 
   constructor(
@@ -78,12 +83,30 @@ export class FixPage implements OnInit {
     this.route.queryParamMap
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((params) => {
+        const card = (params.get('card') || '').trim();
+        if (card) {
+          this.openCard(card);
+          return;
+        }
         const cat = (params.get('cat') || '').trim().toLowerCase();
         if (cat && this.categories.some((c) => c.key === cat)) {
           this.categoryFilter = cat;
           this.expandedIndex = null;
         }
       });
+  }
+
+  private openCard(slug: string): void {
+    this.query = '';
+    this.categoryFilter = 'all';
+    const fixes = this.content.getFixes();
+    const index = fixCardSlugs(fixes.map((fix) => fix.title)).indexOf(slug);
+    const found = index >= 0 ? fixes[index] : undefined;
+    const shown = found ? this.filteredFixes().indexOf(found) : -1;
+    this.expandedIndex = shown >= 0 ? shown : null;
+    if (this.expandedIndex != null) {
+      scrollToElement(this.ionContent, `fix-card-${this.expandedIndex}`);
+    }
   }
 
   get charterCompany(): string {

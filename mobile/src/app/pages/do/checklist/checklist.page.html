@@ -26,7 +26,9 @@
       <button
         type="button"
         class="cl-item"
+        [id]="'cl-' + gi + '-' + ii"
         [class.chk]="isDone(gi, ii)"
+        [class.cl-target]="pendingItem === gi + '-' + ii"
         *ngFor="let item of group.items; let ii = index"
         (click)="toggle(gi, ii)"
       >

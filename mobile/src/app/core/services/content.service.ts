@@ -7,6 +7,7 @@ import {
   LocationZone,
   SystemModule,
 } from '../models/bootstrap-content.model';
+import { buildGuideIndex, GuideIndex, GuideSearchGroup, searchGuide } from '../search/guide-search';
 import { GuideSyncService } from './guide-sync.service';
 import { VesselContextService } from './vessel-context.service';
 import { VesselRouteService } from './vessel-route.service';
@@ -30,6 +31,7 @@ export class GuideLoadError extends Error {
 @Injectable({ providedIn: 'root' })
 export class ContentService {
   private content: BootstrapContent | null = null;
+  private guideIndex: GuideIndex | null = null;
 
   constructor(
     private readonly vesselContext: VesselContextService,
@@ -114,6 +116,13 @@ export class ContentService {
     return this.bootstrap.fixes;
   }
 
+  search(query: string): GuideSearchGroup[] {
+    if (!this.guideIndex) {
+      return [];
+    }
+    return searchGuide(this.guideIndex, query);
+  }
+
   formatManualTitle(manualId: string): string {
     return (
       this.bootstrap.manualTitles[manualId] ??
@@ -124,6 +133,7 @@ export class ContentService {
   private applyLoadedContent(content: BootstrapContent, slug: string): BootstrapContent {
     const prepared = this.prefixVesselRoutes(structuredClone(content) as BootstrapContent, slug);
     this.content = prepared;
+    this.guideIndex = buildGuideIndex(prepared);
     this.vesselContext.applyResolvedContext({
       vesselId: prepared.vesselId,
       vesselSlug: prepared.vesselSlug,

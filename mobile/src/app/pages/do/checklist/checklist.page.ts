@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit, ViewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
+import { IonContent } from '@ionic/angular';
 import { Checklist } from '../../../core/models/bootstrap-content.model';
 import { ContentService } from '../../../core/services/content.service';
 import { ProgressService } from '../../../core/services/progress.service';
+import { scrollToElement } from '../../../core/search/scroll-into-content';
 
 @Component({
   selector: 'app-checklist',
@@ -15,6 +18,11 @@ export class ChecklistPage implements OnInit {
   key = '';
   checklist: Checklist | undefined;
   meta = { title: '', subtitle: '', icon: '📋' };
+  pendingItem: string | null = null;
+
+  @ViewChild(IonContent) private ionContent?: IonContent;
+
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor(
     public readonly content: ContentService,
@@ -24,9 +32,20 @@ export class ChecklistPage implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.key = this.route.snapshot.paramMap.get('key') ?? '';
-    this.checklist = this.content.getChecklist(this.key);
-    this.meta = this.content.bootstrap.ui.checklistMeta[this.key] ?? this.meta;
+    this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      this.key = params.get('key') ?? '';
+      this.checklist = this.content.getChecklist(this.key);
+      this.meta = this.content.bootstrap.ui.checklistMeta[this.key] ?? {
+        title: '',
+        subtitle: '',
+        icon: '📋',
+      };
+      this.scrollToPendingItem();
+    });
+    this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      this.pendingItem = params.get('item');
+      this.scrollToPendingItem();
+    });
   }
 
   get progressState() {
@@ -47,5 +66,12 @@ export class ChecklistPage implements OnInit {
 
   back(): void {
     this.location.back();
+  }
+
+  private scrollToPendingItem(): void {
+    if (!this.pendingItem || !/^\d+-\d+$/.test(this.pendingItem)) {
+      return;
+    }
+    scrollToElement(this.ionContent, `cl-${this.pendingItem}`);
   }
 }

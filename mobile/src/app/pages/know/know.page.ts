@@ -1,9 +1,12 @@
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, ViewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import { IonContent } from '@ionic/angular';
 import { ContentService } from '../../core/services/content.service';
 import { VesselRouteService } from '../../core/services/vessel-route.service';
+import { GuideSearchHit } from '../../core/search/guide-search';
+import { scrollToElement } from '../../core/search/scroll-into-content';
 import {
   LocationZone,
   SystemModule,
@@ -20,7 +23,11 @@ export class KnowPage implements OnInit {
   mode: 'topic' | 'location' = 'topic';
   selected: SystemModule | null = null;
   selectedZone: string | null = null;
+  query = '';
 
+  @ViewChild(IonContent) private ionContent?: IonContent;
+
+  private pendingSection: number | null = null;
   private readonly destroyRef = inject(DestroyRef);
 
   constructor(
@@ -35,6 +42,14 @@ export class KnowPage implements OnInit {
     return this.content.bootstrap.ui.locationLayout;
   }
 
+  get searching(): boolean {
+    return this.query.trim().length >= 2;
+  }
+
+  get searchGroups() {
+    return this.searching ? this.content.search(this.query) : [];
+  }
+
   ngOnInit(): void {
     // Ionic keeps tab pages alive — subscribe so Learn → Know deep-links
     // re-apply on every navigation, not only the first construction.
@@ -47,6 +62,11 @@ export class KnowPage implements OnInit {
         }
         const system = this.content.getSystem(systemId);
         this.selected = system ?? null;
+        const section = params.get('section');
+        this.pendingSection = section == null || section === '' ? null : Number(section);
+        if (this.selected) {
+          this.scrollToPendingSection();
+        }
       });
   }
 
@@ -59,16 +79,57 @@ export class KnowPage implements OnInit {
     this.selected = system;
   }
 
-  closeDetail(): void {
-    this.selected = null;
-    if (this.route.snapshot.queryParamMap.has('system')) {
+  openHit(hit: GuideSearchHit): void {
+    this.query = '';
+    if (hit.kind === 'chapter' && hit.systemId) {
+      this.selected = this.content.getSystem(hit.systemId) ?? null;
+      this.pendingSection = hit.sectionIndex ?? null;
+      this.scrollToPendingSection();
       void this.router.navigate([], {
         relativeTo: this.route,
-        queryParams: { system: null },
+        queryParams: {
+          system: hit.systemId,
+          section: hit.sectionIndex == null ? null : String(hit.sectionIndex),
+        },
+        queryParamsHandling: 'merge',
+      });
+      return;
+    }
+    if (hit.kind === 'checklist' && hit.checklistKey) {
+      void this.vesselRoutes.navigateTabsWithExtras(['do', 'checklist', hit.checklistKey], {
+        queryParams: { item: hit.item },
+      });
+      return;
+    }
+    if (hit.kind === 'fix' && hit.card) {
+      void this.vesselRoutes.navigateTabsWithExtras(['fix'], {
+        queryParams: { card: hit.card, cat: null },
+      });
+    }
+  }
+
+  closeDetail(): void {
+    this.selected = null;
+    this.pendingSection = null;
+    if (
+      this.route.snapshot.queryParamMap.has('system') ||
+      this.route.snapshot.queryParamMap.has('section')
+    ) {
+      void this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { system: null, section: null },
         queryParamsHandling: 'merge',
         replaceUrl: true,
       });
     }
+  }
+
+  private scrollToPendingSection(): void {
+    const id =
+      this.pendingSection == null || Number.isNaN(this.pendingSection)
+        ? 'know-sec-top'
+        : `know-sec-${this.pendingSection}`;
+    scrollToElement(this.ionContent, id);
   }
 
   /**

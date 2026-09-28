@@ -1,5 +1,30 @@
 <app-header></app-header>
 <ion-content [fullscreen]="true" class="page-content">
+  <div class="know-search">
+    <ion-searchbar
+      [(ngModel)]="query"
+      placeholder="Search this boat..."
+      debounce="200"
+    ></ion-searchbar>
+  </div>
+
+  <div class="search-results" *ngIf="searching; else knowBrowse">
+    <p class="search-empty" *ngIf="!searchGroups.length">Nothing in this guide matches that.</p>
+    <section *ngFor="let group of searchGroups" class="search-group">
+      <h2 class="section-label">{{ group.label }}</h2>
+      <button
+        type="button"
+        class="search-hit"
+        *ngFor="let hit of group.hits"
+        (click)="openHit(hit)"
+      >
+        <span class="search-hit-title">{{ hit.title }}</span>
+        <span class="search-hit-snippet">{{ hit.snippet }}</span>
+      </button>
+    </section>
+  </div>
+
+  <ng-template #knowBrowse>
   <ng-container *ngIf="!selected">
     <div class="know-toggle">
       <button
@@ -72,11 +97,12 @@
         <div class="detail-sub">{{ system.subtitle }}</div>
       </div>
     </div>
-    <div class="detail-body">
+    <div class="detail-body" id="know-sec-top">
       <p *ngIf="system.summary" class="summary">{{ system.summary }}</p>
       <section
         *ngFor="let section of system.sections; let i = index"
         class="detail-section"
+        [id]="'know-sec-' + i"
         [class.detail-section--warnings]="section.type === 'warnings'"
         [class.detail-section--notes]="section.type === 'notes'"
       >
@@ -144,4 +170,5 @@
       </div>
     </div>
   </div>
+  </ng-template>
 </ion-content>
