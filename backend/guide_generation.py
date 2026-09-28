@@ -23,6 +23,7 @@ from guide_equipment_coverage import (
 from guide_content_library import LIBRARY_MODULE_BUILDERS
 from location_model import generate_label
 from guide_fix_icons import normalize_fix_card_icons, normalize_fix_icon
+from guide_learn_checks import filter_generated_learn_checks
 from guide_equipment_fragments import (
     apply_fix_card_fragments,
     assemble_system_from_fragments,
@@ -883,8 +884,12 @@ def _normalize_system_payload(payload: dict[str, Any]) -> dict[str, Any]:
             "Regenerate after equipment is configured for full detail."
         )
     learn_checks = payload.get("learnChecks")
-    if isinstance(learn_checks, list) and not learn_checks:
-        payload.pop("learnChecks", None)
+    if isinstance(learn_checks, list):
+        filtered = filter_generated_learn_checks(learn_checks)
+        if filtered:
+            payload["learnChecks"] = filtered
+        else:
+            payload.pop("learnChecks", None)
 
     sections = payload.get("sections")
     if isinstance(sections, list):

@@ -10,6 +10,7 @@ from sqlalchemy.engine import Connection
 
 from guide_bootstrap import assemble_bootstrap, build_asset_manifest, canonical_json_hash
 from guide_guest_withhold import withhold_pipeline_status
+from guide_learn_checks import rewrite_learn_checks
 from guide_navigation import NAVIGATION_MODULE_KEYS, enrich_navigation
 from guide_section_duplicates import duplicate_warnings, fold_consecutive_sections
 from manual_titles import build_manual_titles_for_vessel
@@ -159,6 +160,7 @@ def assemble_publication(
     # leaves system order, locations, and Learn. Drafts are unchanged.
     withheld = withhold_pipeline_status(payload)
     fold_consecutive_sections(payload)
+    rewrite_learn_checks(payload)
     duplicates = duplicate_warnings(payload)
     enrich_navigation(payload, vessel_type=vessel_type)
     validation = validate_publication_payload(payload)

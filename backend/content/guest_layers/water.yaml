@@ -4,7 +4,8 @@
 #
 
 learnChecks:
-- Practised a short shower and found the shower-tray pump switch
+- key: water/shower
+  c: Practised a short shower and found the shower-tray pump switch
 sections:
 - t: Using fresh water
   type: list

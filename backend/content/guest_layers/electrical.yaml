@@ -4,7 +4,8 @@
 #
 
 learnChecks:
-- Switched off something that was not in use
+- key: electrical/unused-load
+  c: Switched off something that was not in use
 sections:
 - t: Using electricity
   type: list

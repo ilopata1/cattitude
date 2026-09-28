@@ -42,6 +42,11 @@ export interface SystemSection {
   [key: string]: unknown;
 }
 
+export interface LearnCheck {
+  key: string;
+  text: string;
+}
+
 export interface SystemModule {
   id: string;
   icon: string;
@@ -49,7 +54,7 @@ export interface SystemModule {
   subtitle: string;
   locs?: string[];
   summary?: string;
-  learnChecks?: string[];
+  learnChecks?: Array<string | LearnCheck>;
   /** Phase 1b — structured cross-section links (also embedded in section.html). */
   guideLinks?: Array<{
     target_kind?: string;

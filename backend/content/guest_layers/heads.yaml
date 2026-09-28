@@ -4,7 +4,8 @@
 #
 
 learnChecks:
-- Left a little water in the bowl and put paper in the bin
+- key: heads/bowl
+  c: Left a little water in the bowl and put paper in the bin
 sections:
 - t: Using the heads
   type: list

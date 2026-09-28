@@ -34,10 +34,10 @@
         </div>
         <div
           class="acc-check"
-          [class.done]="isDone(system.id)"
-          (click)="toggleDone(system.id, $event)"
+          [class.done]="isDone(system)"
+          (click)="toggleDone(system, $event)"
         >
-          {{ isDone(system.id) ? '✓' : '' }}
+          {{ isDone(system) ? '✓' : '' }}
         </div>
         <span class="acc-chevron">›</span>
       </button>
@@ -49,8 +49,12 @@
           <div class="acc-sec-title">Review checklist</div>
           <ul class="li-list">
             <li *ngFor="let check of system.learnChecks">
-              <span class="li-icon">☐</span>
-              <span>{{ check }}</span>
+              <button type="button" class="check-row" (click)="toggleCheck(system, check)">
+                <span class="acc-check" [class.done]="isCheckDone(system, check)">
+                  {{ isCheckDone(system, check) ? '✓' : '' }}
+                </span>
+                <span>{{ checkText(check) }}</span>
+              </button>
             </li>
           </ul>
         </div>

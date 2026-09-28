@@ -13,6 +13,8 @@ import html
 import re
 from typing import Any
 
+from guide_learn_checks import check_text
+
 _SKIP_TYPES = frozenset({"photo", "equipment_locations"})
 _OVERSIZED_SECTIONS = 12
 _NEAR_RATIO = 0.62
@@ -90,7 +92,7 @@ def duplicate_warnings(payload: dict[str, Any]) -> list[str]:
             _text_warnings(
                 label,
                 "learn check",
-                [str(check) for check in (module.get("learnChecks") or []) if str(check).strip()],
+                [check_text(check) for check in (module.get("learnChecks") or []) if check_text(check)],
             )
         )
         if len(sections) > _OVERSIZED_SECTIONS:

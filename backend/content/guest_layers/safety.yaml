@@ -4,8 +4,10 @@
 #
 
 learnChecks:
-- Heard what to do if you fall overboard
-- Found where the life raft is kept and when it is launched
+- key: safety/overboard
+  c: Heard what to do if you fall overboard
+- key: safety/life-raft
+  c: Found where the life raft is kept and when it is launched
 sections:
 - t: If you fall overboard
   type: list

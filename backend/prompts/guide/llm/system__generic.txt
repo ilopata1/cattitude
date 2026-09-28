@@ -9,7 +9,8 @@ TARGET: {focus}
 {category_note}{empty_note}
 
 Produce id "{system_id}", icon "{icon}", locs {locs_json}.
-Include title, subtitle, summary (1-2 sentences), learnChecks (6-8 items), and sections.
+Include title, subtitle, summary (1-2 sentences), learnChecks (3-5 items), and sections.
+Each learn check names gear from the snapshot and an action the guest can do or a place they can find. Do not use "familiarize", "understand", "know how", or "if applicable".
 Section types allowed: prose, list, steps, warnings, notes. Do NOT include photo sections — photos are merged from REFERENCE separately.
 Prose sections MUST use field "c" for paragraph text (not "text" or "content").
 

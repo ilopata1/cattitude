@@ -12,8 +12,10 @@ locs:
 - bow
 summary: Three knots, how to handle fenders, and — on a sailing boat — what the lines are called.
 learnChecks:
-- Tied a clove hitch, a round turn and two half hitches, and a bowline
-- Brought a fender aboard before undoing its knot
+- key: seamanship/knots
+  c: Tied a clove hitch, a round turn and two half hitches, and a bowline
+- key: seamanship/fender
+  c: Brought a fender aboard before undoing its knot
 sections:
 - t: Fenders
   type: list

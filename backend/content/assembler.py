@@ -261,19 +261,32 @@ def _sections_from_spec(
     return built
 
 
-def _learn_checks_from_spec(specs: list[Any], snapshot: dict[str, Any]) -> list[str]:
-    checks: list[str] = []
+def _check_text(check: Any) -> str:
+    if isinstance(check, str):
+        return check.strip()
+    if isinstance(check, dict):
+        return str(check.get("text") or check.get("c") or "").strip()
+    return ""
+
+
+def _learn_checks_from_spec(specs: list[Any], snapshot: dict[str, Any]) -> list[Any]:
+    checks: list[Any] = []
+    seen: set[str] = set()
     for item in specs or []:
+        key = ""
         if isinstance(item, str):
             text = slots.apply_slots(item, snapshot).strip()
         elif isinstance(item, dict):
             if not conditions.matches(item.get("when"), snapshot):
                 continue
-            text = slots.apply_slots(str(item.get("c") or ""), snapshot).strip()
+            text = slots.apply_slots(str(item.get("c") or item.get("text") or ""), snapshot).strip()
+            key = str(item.get("key") or "").strip()
         else:
             continue
-        if text and text not in checks:
-            checks.append(text)
+        if not text or text in seen:
+            continue
+        seen.add(text)
+        checks.append({"key": key, "text": text} if key else text)
     return checks
 
 
@@ -307,13 +320,14 @@ def apply_guest_layers(
     extra = _learn_checks_from_spec(data.get("learnChecks") or [], snapshot)
     if extra:
         current = [
-            check
-            for check in (payload.get("learnChecks") or [])
-            if isinstance(check, str) and check.strip()
+            check for check in (payload.get("learnChecks") or []) if _check_text(check)
         ]
+        seen = {_check_text(check) for check in current}
         for check in extra:
-            if check not in current:
+            text = _check_text(check)
+            if text and text not in seen:
                 current.append(check)
+                seen.add(text)
         merged["learnChecks"] = current
     return merged
 

@@ -3,7 +3,7 @@ import { Location } from '@angular/common';
 import { ContentService } from '../../../core/services/content.service';
 import { ProgressService } from '../../../core/services/progress.service';
 import { VesselRouteService } from '../../../core/services/vessel-route.service';
-import { SystemModule } from '../../../core/models/bootstrap-content.model';
+import { LearnCheck, SystemModule } from '../../../core/models/bootstrap-content.model';
 
 @Component({
   selector: 'app-learn',
@@ -33,13 +33,25 @@ export class LearnPage {
     this.openId = this.openId === id ? null : id;
   }
 
-  toggleDone(id: string, event: Event): void {
+  toggleDone(system: SystemModule, event: Event): void {
     event.stopPropagation();
-    this.progress.toggleLearnDone(id);
+    this.progress.toggleSystem(system);
   }
 
-  isDone(id: string): boolean {
-    return this.progress.isLearnDone(id);
+  isDone(system: SystemModule): boolean {
+    return this.progress.isSystemDone(system);
+  }
+
+  toggleCheck(system: SystemModule, check: string | LearnCheck): void {
+    this.progress.toggleCheck(system, check);
+  }
+
+  isCheckDone(system: SystemModule, check: string | LearnCheck): boolean {
+    return this.progress.isCheckDone(system, check);
+  }
+
+  checkText(check: string | LearnCheck): string {
+    return typeof check === 'string' ? check : check.text;
   }
 
   openSystemDetail(id: string, event: Event): void {

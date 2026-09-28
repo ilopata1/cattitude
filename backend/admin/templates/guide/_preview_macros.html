@@ -180,7 +180,7 @@
     <div class="guide-preview-sys-block-title">Review checklist</div>
     <ul class="guide-preview-sys-checks">
       {% for check in payload.learnChecks[:4] %}
-      <li><span>☐</span> {{ check }}</li>
+      <li><span>☐</span> {% if check is mapping %}{{ check.text }}{% else %}{{ check }}{% endif %}</li>
       {% endfor %}
       {% if payload.learnChecks|length > 4 %}
       <li class="guide-preview-sys-more">… {{ payload.learnChecks|length - 4 }} more checks</li>

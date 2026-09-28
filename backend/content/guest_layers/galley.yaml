@@ -4,7 +4,8 @@
 #
 
 learnChecks:
-- Found where rubbish and recycling go
+- key: galley/rubbish
+  c: Found where rubbish and recycling go
 sections:
 - t: Rubbish
   type: list

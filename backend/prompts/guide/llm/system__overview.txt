@@ -16,7 +16,8 @@ Reader voice (style — strong preference):
 - Cross-section pointers: "can be found in the <Section> section of this guide" — not "lives in" / "home procedures".
 
 Produce id "overview", icon "🗺️", locs for cockpit/helm/saloon.
-Include summary (1-2 sentences), learnChecks (6-10 walkthrough items), and sections:
+Include summary (1-2 sentences), learnChecks (3-5 walkthrough items), and sections.
+Each learn check names a recorded place and something the guest can find or do there. Walk recorded places. When the snapshot has separate port and starboard machinery spaces, do not write "the engine room". Do not use "familiarize", "understand", "know how", or "if applicable".
 - About [vessel name] (prose) — hull model facts from snapshot only; prose sections MUST use field "c" for paragraph text
 - Layout (list) — cabin/hull layout using hull model; do not invent cabin counts not supported by snapshot
 - Find These on Day 1 (steps) — safety gear and key locations (life jackets, EPIRB, fire ext, panel, fuel/water fills)
