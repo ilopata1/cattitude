@@ -17,7 +17,12 @@ export class DoPage {
   ) {}
 
   get menu() {
-    return this.content.bootstrap.ui.doMenu;
+    return this.content.bootstrap.ui.doMenu
+      .map((section) => ({
+        ...section,
+        items: section.items.filter((item) => item.progressType !== 'learn'),
+      }))
+      .filter((section) => section.items.length > 0);
   }
 
   progressLabel(itemKey: string, progressType: 'checklist' | 'learn'): string {

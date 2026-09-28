@@ -88,60 +88,18 @@ _CHECKLIST_META_SUBTITLES: dict[str, str] = {
 
 _EC_SUBTITLE_PRIVATE = "Secure and shut down before leaving"
 
-_DO_MENU_SECTIONS: list[dict[str, Any]] = [
-    {
-        "label": "Day One",
-        "items": [
-            {
-                "key": "safety-brief",
-                "route": "/tabs/do/checklist/safety-brief",
-                "progressType": "checklist",
-            },
-            {
-                "key": "learn",
-                "title": "Learn the Boat",
-                "icon": "🛥️",
-                "iconClass": "ic-blue",
-                "route": "/tabs/do/learn",
-                "progressType": "learn",
-            },
-        ],
-    },
-    {
-        "label": "Every Departure",
-        "items": [
-            {
-                "key": "pd",
-                "route": "/tabs/do/checklist/pd",
-                "progressType": "checklist",
-            },
-        ],
-    },
-    {
-        "label": "At Anchor",
-        "items": [
-            {
-                "key": "anch",
-                "route": "/tabs/do/checklist/anch",
-                "progressType": "checklist",
-            },
-            {
-                "key": "lu",
-                "route": "/tabs/do/checklist/lu",
-                "progressType": "checklist",
-            },
-        ],
-    },
-    {
-        "label": "End of Trip",
-        "items": [
-            {
-                "key": "ec",
-                "route": "/tabs/do/checklist/ec",
-                "progressType": "checklist",
-            },
-        ],
-    },
+# Recurring checklists, in trip order. Learn is a separate path.
+_DO_TRIP_ORDER: list[str] = ["safety-brief", "pd", "anch", "lu", "ec"]
+
+_POWER_PART_IDS = ("electrical", "controls", "batteries")
+
+# (stage id, title, lesson ids). ``power`` is emitted when any power part exists.
+_LEARN_STAGE_SPECS: list[tuple[str, str, list[str]]] = [
+    ("walk", "Walk-around", ["overview"]),
+    ("safety", "Safety briefing", ["safety-brief"]),
+    ("living", "Living aboard", ["heads", "water", "power", "galley", "ac"]),
+    ("underway", "Underway", ["engines", "sails", "nav", "anchoring"]),
+    ("ashore", "Going ashore", ["dinghy"]),
 ]
 
 
@@ -215,54 +173,68 @@ def build_do_menu(
     branding: dict[str, Any],
     *,
     published_checklists: set[str],
-    has_systems: bool,
 ) -> list[dict[str, Any]]:
     vessel = _vessel_name(branding)
     region = _region_label(branding)
-    sections: list[dict[str, Any]] = []
+    items: list[dict[str, Any]] = []
+    for key in _DO_TRIP_ORDER:
+        if key not in published_checklists:
+            continue
+        icon, icon_class = _CHECKLIST_ICONS[key]
+        subtitle = _CHECKLIST_META_SUBTITLES[key]
+        if key == "anch":
+            subtitle = f"Setting the hook safely in {region}"
+        elif key == "lu":
+            subtitle = f"Going ashore — secure {vessel} first"
+        elif key == "ec":
+            if _is_charter_vessel(branding):
+                if branding.get("marina"):
+                    subtitle = f"Return to {branding['marina']}"
+            else:
+                subtitle = _EC_SUBTITLE_PRIVATE
+        items.append(
+            {
+                "key": key,
+                "route": f"/tabs/do/checklist/{key}",
+                "progressType": "checklist",
+                "title": _checklist_title(key, branding=branding),
+                "subtitle": subtitle,
+                "icon": icon,
+                "iconClass": icon_class,
+            }
+        )
+    if not items:
+        return []
+    return [{"label": "This trip", "items": items}]
 
-    for section in _DO_MENU_SECTIONS:
-        items: list[dict[str, Any]] = []
-        for item in section["items"]:
-            key = item["key"]
-            if key == "learn":
-                if not has_systems:
+
+def build_learn_path(
+    systems: dict[str, Any],
+    published_checklists: set[str],
+) -> list[dict[str, Any]]:
+    """Stages for Learn. A stage with no published lesson is omitted."""
+    present = set(systems)
+    has_power = any(system_id in present for system_id in _POWER_PART_IDS)
+    stages: list[dict[str, Any]] = []
+    for stage_id, title, lesson_ids in _LEARN_STAGE_SPECS:
+        lessons: list[dict[str, str]] = []
+        for lesson_id in lesson_ids:
+            if lesson_id == "safety-brief":
+                if lesson_id not in published_checklists:
                     continue
-                items.append(
-                    {
-                        **item,
-                        "subtitle": f"Understand every system on {vessel}",
-                    }
-                )
+                lessons.append({"id": lesson_id, "kind": "checklist"})
                 continue
-            if key not in published_checklists:
+            if lesson_id == "power":
+                if not has_power:
+                    continue
+                lessons.append({"id": "power", "kind": "power"})
                 continue
-
-            icon, icon_class = _CHECKLIST_ICONS[key]
-            subtitle = _CHECKLIST_META_SUBTITLES[key]
-            if key == "anch":
-                subtitle = f"Setting the hook safely in {region}"
-            elif key == "lu":
-                subtitle = f"Going ashore — secure {vessel} first"
-            elif key == "ec":
-                if _is_charter_vessel(branding):
-                    if branding.get("marina"):
-                        subtitle = f"Return to {branding['marina']}"
-                else:
-                    subtitle = _EC_SUBTITLE_PRIVATE
-
-            items.append(
-                {
-                    **item,
-                    "title": _checklist_title(key, branding=branding),
-                    "subtitle": subtitle,
-                    "icon": icon,
-                    "iconClass": icon_class,
-                }
-            )
-        if items:
-            sections.append({"label": section["label"], "items": items})
-    return sections
+            if lesson_id not in present:
+                continue
+            lessons.append({"id": lesson_id, "kind": "chapter"})
+        if lessons:
+            stages.append({"id": stage_id, "title": title, "lessons": lessons})
+    return stages
 
 
 def build_location_layout(vessel_type: str) -> list[dict[str, str]]:
@@ -317,8 +289,8 @@ def enrich_navigation(bootstrap: dict[str, Any], *, vessel_type: str) -> dict[st
     ui["doMenu"] = build_do_menu(
         branding,
         published_checklists=published_checklists,
-        has_systems=bool(systems),
     )
+    ui["learnPath"] = build_learn_path(systems, published_checklists)
     ui["locationLayout"] = build_location_layout(vessel_type)
     if home_rules is not None:
         ui["homeRuleSections"] = home_rules

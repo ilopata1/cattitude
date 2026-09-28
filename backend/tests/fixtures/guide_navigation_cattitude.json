@@ -214,15 +214,6 @@
             "iconClass": "ic-coral",
             "route": "/tabs/do/checklist/safety-brief",
             "progressType": "checklist"
-          },
-          {
-            "key": "learn",
-            "title": "Learn the Boat",
-            "subtitle": "Understand every system on Cattitude",
-            "icon": "🛥️",
-            "iconClass": "ic-blue",
-            "route": "/tabs/do/learn",
-            "progressType": "learn"
           }
         ]
       },

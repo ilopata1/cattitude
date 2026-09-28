@@ -36,6 +36,15 @@ const routes: Routes = [
   { path: 'tabs/settings', redirectTo: () => `/v/${defaultVessel}/tabs/settings`, pathMatch: 'full' },
   { path: 'tabs/do/learn', redirectTo: () => `/v/${defaultVessel}/tabs/do/learn`, pathMatch: 'full' },
   {
+    path: 'tabs/do/learn/:stageId/:lessonId',
+    redirectTo: ({ params }) =>
+      `/v/${defaultVessel}/tabs/do/learn/${params['stageId']}/${params['lessonId']}`,
+  },
+  {
+    path: 'tabs/do/learn/:stageId',
+    redirectTo: ({ params }) => `/v/${defaultVessel}/tabs/do/learn/${params['stageId']}`,
+  },
+  {
     path: 'tabs/do/checklist/:key',
     redirectTo: ({ params }) => `/v/${defaultVessel}/tabs/do/checklist/${params['key']}`,
     pathMatch: 'full',

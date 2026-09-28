@@ -1,0 +1,283 @@
+.detail-body {
+  padding: 16px;
+}
+
+.summary {
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.know-group-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cattitude-text-light);
+  margin: 18px 0 8px;
+}
+
+.know-reference {
+  margin: 18px 0 10px;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 1px 6px rgba(13, 33, 55, 0.07);
+
+  > summary {
+    padding: 14px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cattitude-text-light);
+    cursor: pointer;
+  }
+
+  .detail-section {
+    margin: 0 10px 10px;
+    box-shadow: none;
+  }
+}
+
+.learn-link {
+  display: inline-block;
+  margin: 12px 0 4px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cattitude-teal, #0d7377);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.detail-section {
+  background: #fff;
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 6px rgba(13, 33, 55, 0.07);
+
+  h3 {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--cattitude-text-light);
+    margin: 0 0 8px;
+  }
+}
+
+.prose {
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+  // Stage 4 modules join block paragraphs with newlines and may embed simple
+  // "- " bullet lines; preserve those breaks. Legacy single-paragraph prose
+  // has no newlines, so it is unaffected.
+  white-space: pre-line;
+}
+
+.prose--rich {
+  // Linked prose is real HTML (<p>/<br>/guide-link spans); don't double-preserve newlines.
+  white-space: normal;
+
+  p {
+    margin: 0 0 0.75em;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  // Prefer <span role="link"> — <a href="#"> resolves to <base href="/cattitude/">.
+  a.guide-link,
+  span.guide-link,
+  [data-guide-link].guide-link {
+    color: var(--cattitude-teal, #0d7377);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+  }
+}
+
+.detail-section--warnings {
+  border-left: 3px solid #c0392b;
+}
+
+.detail-section--notes {
+  border-left: 3px solid var(--cattitude-teal);
+}
+
+.equipment-locations {
+  background: #fff;
+  border: 1px solid var(--cattitude-sand-mid);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.equipment-locations-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  line-height: 1.4;
+
+  th,
+  td {
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  thead th {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--cattitude-text-light);
+    background: rgba(237, 230, 214, 0.45);
+    border-bottom: 1px solid var(--cattitude-sand-mid);
+  }
+
+  tbody td {
+    color: var(--cattitude-navy);
+    border-bottom: 1px solid rgba(237, 230, 214, 0.55);
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  td:first-child {
+    font-weight: 600;
+    width: 48%;
+  }
+
+  td:last-child {
+    color: var(--cattitude-text-light);
+  }
+}
+
+.section-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: flex;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(237, 230, 214, 0.5);
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--cattitude-navy);
+
+    &:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    &:first-child {
+      padding-top: 0;
+    }
+  }
+}
+
+.section-items--steps {
+  list-style: decimal;
+  padding-left: 1.25rem;
+
+  li {
+    display: list-item;
+    padding-left: 0.25rem;
+  }
+}
+
+.section-items--warnings li {
+  color: #7a1f1a;
+}
+
+.section-item-mark {
+  flex-shrink: 0;
+  width: 1.1em;
+  text-align: center;
+  color: var(--cattitude-text-light);
+}
+
+.section-items--warnings .section-item-mark {
+  color: #c0392b;
+}
+
+:host ::ng-deep .photo-card {
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 16px rgba(13, 33, 55, 0.1);
+
+  img {
+    width: 100%;
+    display: block;
+    cursor: pointer;
+  }
+}
+
+.det-fix-btn {
+  background: var(--cattitude-teal-light);
+  border: none;
+  border-radius: 8px;
+  padding: 12px 16px;
+  width: 100%;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cattitude-teal-dark);
+  cursor: pointer;
+}
+
+.chapter-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  margin: 0;
+  padding: 10px 0;
+  border: none;
+  border-bottom: 1px solid rgba(237, 230, 214, 0.6);
+  background: none;
+  text-align: left;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--cattitude-navy);
+  cursor: pointer;
+}
+
+.chapter-check:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.chapter-check-box {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--cattitude-sand-mid);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: #fff;
+}
+
+.chapter-check.done .chapter-check-box {
+  background: var(--cattitude-green, #1da462);
+  border-color: var(--cattitude-green, #1da462);
+}

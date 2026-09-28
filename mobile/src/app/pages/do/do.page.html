@@ -2,7 +2,7 @@
 <ion-content [fullscreen]="true" class="page-content">
   <div class="scroll-area do-menu">
     <ng-container *ngFor="let section of menu">
-      <div class="section-label">{{ section.label }}</div>
+      <div class="section-label" *ngIf="section.label">{{ section.label }}</div>
       <button
         type="button"
         class="do-card"

@@ -137,12 +137,25 @@ export interface LocationLayoutItem {
   rowClass?: string;
 }
 
+export interface LearnPathLesson {
+  id: string;
+  kind: 'chapter' | 'power' | 'checklist';
+}
+
+export interface LearnPathStage {
+  id: string;
+  title: string;
+  lessons: LearnPathLesson[];
+}
+
 export interface BootstrapUi {
   homeRuleSections: HomeRuleSection[];
   doMenu: DoMenuSection[];
   checklistMeta: Record<string, ChecklistMeta>;
   systemOrder: string[];
   locationLayout: LocationLayoutItem[];
+  /** Present after the next publish. Older bundles derive the same stages in the app. */
+  learnPath?: LearnPathStage[];
 }
 
 export interface BootstrapContent {

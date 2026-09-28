@@ -5,10 +5,12 @@ import { DoPageRoutingModule } from './do-routing.module';
 import { DoPage } from './do.page';
 import { ChecklistPage } from './checklist/checklist.page';
 import { LearnPage } from './learn/learn.page';
+import { LearnStagePage } from './learn/learn-stage.page';
+import { LearnLessonPage } from './learn/learn-lesson.page';
 import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   imports: [CommonModule, IonicModule, DoPageRoutingModule, SharedModule],
-  declarations: [DoPage, ChecklistPage, LearnPage],
+  declarations: [DoPage, ChecklistPage, LearnPage, LearnStagePage, LearnLessonPage],
 })
 export class DoPageModule {}

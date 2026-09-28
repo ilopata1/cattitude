@@ -158,6 +158,17 @@ export class KnowPage implements OnInit {
     }
   }
 
+  openLinkedSystem(id: string): void {
+    if (isPowerPart(id) || id === POWER_TOPIC_ID) {
+      this.openPower(id === POWER_TOPIC_ID ? null : id, null);
+      return;
+    }
+    const system = this.content.getSystem(id);
+    if (system) {
+      this.openSystem(system);
+    }
+  }
+
   openSystem(system: SystemModule): void {
     this.closeReference();
     this.powerOpen = false;
