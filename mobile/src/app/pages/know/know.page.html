@@ -97,18 +97,77 @@
         <div class="detail-sub">{{ system.subtitle }}</div>
       </div>
     </div>
+    <ng-container *ngIf="chapterOf(system) as chapter">
     <div class="detail-body" id="know-sec-top">
-      <p *ngIf="system.summary" class="summary">{{ system.summary }}</p>
-      <section
-        *ngFor="let section of system.sections; let i = index"
-        class="detail-section"
-        [id]="'know-sec-' + i"
-        [class.detail-section--warnings]="section.type === 'warnings'"
-        [class.detail-section--notes]="section.type === 'notes'"
+      <p *ngIf="chapter.oneLiner" class="summary">{{ chapter.oneLiner }}</p>
+
+      <ng-container *ngFor="let placed of chapter.where">
+        <ng-container *ngTemplateOutlet="sectionCard; context: { placed: placed }"></ng-container>
+      </ng-container>
+
+      <h2 class="know-group-label" *ngIf="chapter.tasks.length">Everyday tasks</h2>
+      <ng-container *ngFor="let placed of chapter.tasks">
+        <ng-container *ngTemplateOutlet="sectionCard; context: { placed: placed }"></ng-container>
+      </ng-container>
+
+      <h2 class="know-group-label" *ngIf="chapter.warnings.length">Warnings</h2>
+      <ng-container *ngFor="let placed of chapter.warnings">
+        <ng-container *ngTemplateOutlet="sectionCard; context: { placed: placed }"></ng-container>
+      </ng-container>
+
+      <h2
+        class="know-group-label"
+        *ngIf="chapter.troubleshoot.length || chapter.fixButtons.length"
       >
-        <h3 *ngIf="section.t && showSectionHeading(system.sections, i)">{{ section.t }}</h3>
-        <ng-container *ngIf="section.type === 'equipment_locations'; else proseOrList">
-          <div class="equipment-locations" *ngIf="sectionLocationRows(section) as rows">
+        If something's not right
+      </h2>
+      <ng-container *ngFor="let placed of chapter.troubleshoot">
+        <ng-container *ngTemplateOutlet="sectionCard; context: { placed: placed }"></ng-container>
+      </ng-container>
+      <button
+        type="button"
+        class="det-fix-btn"
+        *ngFor="let card of chapter.fixButtons"
+        (click)="openFixCard(card.slug)"
+      >
+        {{ card.title }}
+      </button>
+      <button
+        type="button"
+        class="learn-link"
+        *ngIf="chapter.learnLink as learn"
+        (click)="openLearn(learn.token)"
+      >
+        {{ learn.label }}
+      </button>
+
+      <details
+        id="know-reference"
+        class="know-reference"
+        *ngIf="chapter.reference.length || chapter.referenceSummary"
+      >
+        <summary>Reference</summary>
+        <section class="detail-section" *ngIf="chapter.referenceSummary">
+          <h3>About this system</h3>
+          <p class="prose">{{ chapter.referenceSummary }}</p>
+        </section>
+        <ng-container *ngFor="let placed of chapter.reference">
+          <ng-container *ngTemplateOutlet="sectionCard; context: { placed: placed }"></ng-container>
+        </ng-container>
+      </details>
+    </div>
+    </ng-container>
+
+    <ng-template #sectionCard let-placed="placed">
+      <section
+        class="detail-section"
+        [id]="'know-sec-' + placed.index"
+        [class.detail-section--warnings]="placed.role === 'warning'"
+        [class.detail-section--notes]="placed.section.type === 'notes'"
+      >
+        <h3 *ngIf="placed.showHeading">{{ placed.section.t }}</h3>
+        <ng-container *ngIf="placed.section.type === 'equipment_locations'; else proseOrList">
+          <div class="equipment-locations" *ngIf="sectionLocationRows(placed.section) as rows">
             <table class="equipment-locations-table">
               <thead>
                 <tr>
@@ -126,36 +185,36 @@
           </div>
         </ng-container>
         <ng-template #proseOrList>
-          <ng-container *ngIf="section.html; else plainProse">
+          <ng-container *ngIf="placed.section.html; else plainProse">
             <div
               class="prose prose--rich"
-              [innerHTML]="trustedGuideHtml(section.html)"
+              [innerHTML]="trustedGuideHtml(placed.section.html)"
               (click)="onGuideHtmlClick($event)"
               (keydown)="onGuideHtmlKeydown($event)"
             ></div>
           </ng-container>
           <ng-template #plainProse>
-            <p *ngIf="section.c" class="prose">{{ section.c }}</p>
+            <p *ngIf="placed.section.c" class="prose">{{ placed.section.c }}</p>
           </ng-template>
-          <ng-container *ngIf="sectionItems(section) as items">
+          <ng-container *ngIf="sectionItems(placed.section) as items">
             <ol
-              *ngIf="section.type === 'steps' && items.length"
+              *ngIf="placed.section.type === 'steps' && items.length"
               class="section-items section-items--steps"
             >
               <li *ngFor="let item of items">{{ item }}</li>
             </ol>
             <ul
               *ngIf="
-                section.type !== 'steps' &&
-                section.type !== 'equipment_locations' &&
+                placed.section.type !== 'steps' &&
+                placed.section.type !== 'equipment_locations' &&
                 items.length
               "
               class="section-items"
-              [class.section-items--warnings]="section.type === 'warnings'"
+              [class.section-items--warnings]="placed.section.type === 'warnings'"
             >
               <li *ngFor="let item of items">
                 <span class="section-item-mark" aria-hidden="true">{{
-                  section.type === 'warnings' ? '⚠' : '•'
+                  placed.section.type === 'warnings' ? '⚠' : '•'
                 }}</span>
                 <span>{{ item }}</span>
               </li>
@@ -163,12 +222,7 @@
           </ng-container>
         </ng-template>
       </section>
-      <div class="detail-section">
-        <button type="button" class="det-fix-btn" (click)="goToFix()">
-          🔧 Having a problem with this system? → Fix It
-        </button>
-      </div>
-    </div>
+    </ng-template>
   </div>
   </ng-template>
 </ion-content>

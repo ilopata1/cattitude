@@ -5,6 +5,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IonContent } from '@ionic/angular';
 import { ContentService } from '../../core/services/content.service';
 import { VesselRouteService } from '../../core/services/vessel-route.service';
+import {
+  ChapterPresentation,
+  classifySection,
+  presentChapter,
+} from '../../core/guide/chapter-presentation';
 import { GuideSearchHit } from '../../core/search/guide-search';
 import { scrollToElement } from '../../core/search/scroll-into-content';
 import {
@@ -26,6 +31,10 @@ export class KnowPage implements OnInit {
   query = '';
 
   @ViewChild(IonContent) private ionContent?: IonContent;
+
+  private presentedSystem: SystemModule | null = null;
+  private presentedFixes: ReturnType<ContentService['getFixes']> | null = null;
+  private presented: ChapterPresentation<SystemSection> | null = null;
 
   private pendingSection: number | null = null;
   private readonly destroyRef = inject(DestroyRef);
@@ -61,6 +70,9 @@ export class KnowPage implements OnInit {
           return;
         }
         const system = this.content.getSystem(systemId);
+        if (this.selected?.id !== system?.id) {
+          this.closeReference();
+        }
         this.selected = system ?? null;
         const section = params.get('section');
         this.pendingSection = section == null || section === '' ? null : Number(section);
@@ -76,13 +88,40 @@ export class KnowPage implements OnInit {
   }
 
   openSystem(system: SystemModule): void {
+    this.closeReference();
+    this.pendingSection = null;
     this.selected = system;
+  }
+
+  chapterOf(system: SystemModule): ChapterPresentation<SystemSection> {
+    const fixes = this.content.getFixes();
+    if (this.presented && this.presentedSystem === system && this.presentedFixes === fixes) {
+      return this.presented;
+    }
+    this.presentedSystem = system;
+    this.presentedFixes = fixes;
+    this.presented = presentChapter(system, fixes);
+    return this.presented;
+  }
+
+  openFixCard(slug: string): void {
+    void this.vesselRoutes.navigateTabsWithExtras(['fix'], {
+      queryParams: { card: slug, cat: null },
+    });
+  }
+
+  openLearn(token: string): void {
+    void this.navigateGuideLink(token);
   }
 
   openHit(hit: GuideSearchHit): void {
     this.query = '';
     if (hit.kind === 'chapter' && hit.systemId) {
-      this.selected = this.content.getSystem(hit.systemId) ?? null;
+      const next = this.content.getSystem(hit.systemId) ?? null;
+      if (this.selected?.id !== next?.id) {
+        this.closeReference();
+      }
+      this.selected = next;
       this.pendingSection = hit.sectionIndex ?? null;
       this.scrollToPendingSection();
       void this.router.navigate([], {
@@ -109,6 +148,7 @@ export class KnowPage implements OnInit {
   }
 
   closeDetail(): void {
+    this.closeReference();
     this.selected = null;
     this.pendingSection = null;
     if (
@@ -125,11 +165,34 @@ export class KnowPage implements OnInit {
   }
 
   private scrollToPendingSection(): void {
+    const index = this.pendingSection;
+    const section =
+      this.selected && index != null && !Number.isNaN(index)
+        ? this.selected.sections[index]
+        : undefined;
+    const inReference = !!section && classifySection(section).role === 'reference';
     const id =
-      this.pendingSection == null || Number.isNaN(this.pendingSection)
-        ? 'know-sec-top'
-        : `know-sec-${this.pendingSection}`;
-    scrollToElement(this.ionContent, id);
+      index == null || Number.isNaN(index) ? 'know-sec-top' : `know-sec-${index}`;
+    scrollToElement(
+      this.ionContent,
+      id,
+      inReference ? () => this.openReference() : undefined,
+    );
+  }
+
+  /** Reference is collapsed until the guest opens it, or a search hit is inside it. */
+  private openReference(): void {
+    const details = document.getElementById('know-reference');
+    if (details instanceof HTMLDetailsElement) {
+      details.open = true;
+    }
+  }
+
+  private closeReference(): void {
+    const details = document.getElementById('know-reference');
+    if (details instanceof HTMLDetailsElement) {
+      details.open = false;
+    }
   }
 
   /**
@@ -266,18 +329,6 @@ export class KnowPage implements OnInit {
       .filter((row): row is { name: string; location: string } => !!row);
   }
 
-  /** Hide consecutive duplicate O3 headings when one block splits into prose+list. */
-  showSectionHeading(sections: SystemSection[], index: number): boolean {
-    const title = (sections[index]?.t || '').trim();
-    if (!title) {
-      return false;
-    }
-    if (index === 0) {
-      return true;
-    }
-    return (sections[index - 1]?.t || '').trim() !== title;
-  }
-
   itemLabel(item: unknown): string {
     if (typeof item === 'string') {
       return item.trim();
@@ -294,25 +345,4 @@ export class KnowPage implements OnInit {
     return '';
   }
 
-  goToFix(): void {
-    const cat = this.selected
-      ? this.fixCategoryForSystem(this.selected.id)
-      : undefined;
-    void this.vesselRoutes.navigateTabsWithExtras(
-      ['fix'],
-      cat ? { queryParams: { cat } } : undefined,
-    );
-  }
-
-  private fixCategoryForSystem(systemId: string): string | undefined {
-    const map: Record<string, string> = {
-      batteries: 'electrical',
-      controls: 'electrical',
-      electrical: 'electrical',
-      engines: 'engine',
-      nav: 'nav',
-      water: 'plumbing',
-    };
-    return map[systemId];
-  }
 }
