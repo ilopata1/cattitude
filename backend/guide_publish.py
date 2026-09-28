@@ -11,6 +11,7 @@ from sqlalchemy.engine import Connection
 from guide_bootstrap import assemble_bootstrap, build_asset_manifest, canonical_json_hash
 from guide_guest_withhold import withhold_pipeline_status
 from guide_navigation import NAVIGATION_MODULE_KEYS, enrich_navigation
+from guide_section_duplicates import duplicate_warnings, fold_consecutive_sections
 from manual_titles import build_manual_titles_for_vessel
 
 NO_PUBLISHABLE_MODULES_MSG = (
@@ -157,6 +158,8 @@ def assemble_publication(
     # Drop pipeline-status prose before navigation so a withheld system
     # leaves system order, locations, and Learn. Drafts are unchanged.
     withheld = withhold_pipeline_status(payload)
+    fold_consecutive_sections(payload)
+    duplicates = duplicate_warnings(payload)
     enrich_navigation(payload, vessel_type=vessel_type)
     validation = validate_publication_payload(payload)
     hard_errors = [message for message in validation if not message.startswith("Warning:")]
@@ -192,6 +195,7 @@ def assemble_publication(
         "published_module_count": published_count,
         "validation_messages": validation,
         "withheld": withheld,
+        "duplicates": duplicates,
         "missing_assets": [asset for asset in asset_manifest if asset.get("missing")],
     }
 

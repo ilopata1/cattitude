@@ -146,6 +146,14 @@
           {% endfor %}
         </ul>
       {% endif %}
+      {% if preview.duplicates %}
+        <h3>Duplicate sections</h3>
+        <ul class="note-list">
+          {% for message in preview.duplicates %}
+          <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
       {% if preview.validation_messages %}
         <ul class="note-list">
           {% for message in preview.validation_messages %}

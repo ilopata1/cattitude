@@ -7,6 +7,7 @@ from typing import Any, Callable
 from content import conditions, slots
 from content.loader import CONTENT_ROOT, load_yaml_cached
 from guide_fix_icons import normalize_fix_icon
+from guide_section_duplicates import normalise_title
 
 _DANGER_PREFIXES = ("never", "do not", "don't", "no ")
 
@@ -279,18 +280,28 @@ def _learn_checks_from_spec(specs: list[Any], snapshot: dict[str, Any]) -> list[
 def apply_guest_layers(
     system_id: str, payload: dict[str, Any], snapshot: dict[str, Any]
 ) -> dict[str, Any]:
-    """Append curated handbook sections. Same titles are replaced, not duplicated."""
+    """Append curated handbook sections. Same titles are replaced, not duplicated.
+
+    Title match ignores case and extra whitespace. The curated section wins.
+    """
     relative = f"guest_layers/{system_id}.yaml"
     if not (CONTENT_ROOT / relative).is_file():
         return payload
     data = load_yaml_cached(relative)
     incoming = _sections_from_spec(data.get("sections") or [], snapshot)
-    titles = {section["t"] for section in incoming}
+    titles = {
+        normalise_title(str(section.get("t") or ""))
+        for section in incoming
+        if normalise_title(str(section.get("t") or ""))
+    }
     merged = dict(payload)
     existing = [
         section
         for section in (payload.get("sections") or [])
-        if not (isinstance(section, dict) and section.get("t") in titles)
+        if not (
+            isinstance(section, dict)
+            and normalise_title(str(section.get("t") or "")) in titles
+        )
     ]
     merged["sections"] = existing + incoming
     extra = _learn_checks_from_spec(data.get("learnChecks") or [], snapshot)

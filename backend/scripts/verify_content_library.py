@@ -174,6 +174,30 @@ def _check_handbook(failures: list[str]) -> None:
     if "starboard hull" in mono_home:
         failures.append("monohull home rules invent a ladder")
 
+    safety_replaced = apply_guest_layers(
+        "safety",
+        {
+            "id": "safety",
+            "sections": [
+                {
+                    "t": "Life Raft",
+                    "type": "prose",
+                    "c": "The life raft is stored in the cockpit area.",
+                }
+            ],
+        },
+        catamaran,
+    )
+    life_titles = [
+        section.get("t")
+        for section in safety_replaced["sections"]
+        if str(section.get("t") or "").casefold() == "life raft"
+    ]
+    if life_titles != ["Life raft"]:
+        failures.append(f"life raft title was not replaced by the guest layer: {life_titles}")
+    if any("stored in the cockpit area" in str(section) for section in safety_replaced["sections"]):
+        failures.append("generated Life Raft prose was kept beside the guest layer")
+
     safety = apply_guest_layers("safety", {"id": "safety", "sections": [], "learnChecks": []}, catamaran)
     safety_text = _texts(safety)
     if "under the seat at the aft of the cockpit" not in safety_text:
