@@ -68,6 +68,7 @@ def build_branding_module(
         "model": model,
         "charterCompany": charter_company or _clean(reference.get("charterCompany")),
         "location": location,
+        "regionLabel": _clean(context.get("regionLabel")),
         "marina": _clean(context.get("marina")) or _clean(reference.get("marina")),
         "tagline": tagline,
         "headerLogo": reference.get("headerLogo"),

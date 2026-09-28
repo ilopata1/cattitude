@@ -1125,7 +1125,13 @@ def generate_module(
         if template_builder is not None:
             payload = template_builder(snapshot_payload, reference)
             if content_type == "fix_card_set":
-                payload = apply_fix_card_fragments(payload, fragment_rows)
+                from content.slots import has_generator
+
+                payload = apply_fix_card_fragments(
+                    payload,
+                    fragment_rows,
+                    has_generator=has_generator(snapshot_payload),
+                )
         elif fragment_system_payload is not None:
             payload = _finalize_system_payload(
                 content_key, fragment_system_payload, reference

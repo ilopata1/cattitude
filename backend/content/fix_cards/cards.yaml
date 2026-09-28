@@ -40,8 +40,10 @@ cards:
   - '{contact_step}'
 - key: toilet_wont_flush
   when:
-    has_category:
-    - sanitation
+    all:
+    - has_category:
+      - sanitation
+    - heads_drive: electric
   icon: 🚽
   cat: plumbing
   catL: Plumbing
@@ -140,7 +142,9 @@ cards:
   - '{contact_step}'
 - key: headsail_wont_furl
   when:
-    is_sailing: true
+    all:
+    - is_sailing: true
+    - published_system: sails
   icon: ⛵
   cat: sails
   catL: Sails
@@ -181,8 +185,10 @@ cards:
   - Report a non-functioning fixed VHF immediately — {contact_step}
 - key: windlass
   when:
-    has_category:
-    - ground_tackle_and_mooring
+    all:
+    - has_category:
+      - ground_tackle_and_mooring
+    - published_system: anchoring
   icon: ⚓
   cat: general
   catL: General

@@ -1,67 +1,98 @@
 # Purpose: safety-brief checklist content.
 # Used by: content.assembler.build_checklist_module
 # Module: checklist / safety-brief
-# Slots: {vessel_name}, {company}, {company_or_charter}, {engine_group_title}, etc.
+# Slots: {vessel_name}, {company}, {engine_group_title}, etc.
 #
 
 groups:
-- t: Life Jackets
+- key: sb/jackets
+  t: Life Jackets
   items:
-  - c: Show guests where life jackets are stored
+  - key: sb/jackets-where
+    c: Show guests where life jackets are stored
     s: One per person plus spares.
-  - c: Demonstrate how to put on a life jacket
-  - c: Confirm one life jacket per person on board
-- t: Emergency Equipment Locations
+  - key: sb/jackets-demo
+    c: Demonstrate how to put on a life jacket
+  - key: sb/jackets-count
+    c: Confirm one life jacket per person on board
+- key: sb/equipment
+  t: Emergency Equipment Locations
   items:
-  - c: Show flare kit location
+  - key: sb/flares
+    c: Show flare kit location
     s: Red parachute = night. Orange smoke = day.
-  - c: Show fire extinguisher locations
-  - c: Show life raft location and how to release it
-  - c: Show EPIRB location
+  - key: sb/extinguishers
+    c: Show fire extinguisher locations
+  - key: sb/life-raft
+    c: Show life raft location and how to release it
+  - key: sb/epirb
+    c: Show EPIRB location
     s: Only activate in a genuine life-threatening emergency.
-  - c: Show first aid kit location
-- t: Emergency Hatches & Escape
+  - key: sb/first-aid
+    c: Show first aid kit location
+- key: sb/hatches
+  t: Emergency Hatches & Escape
   items:
-  - c: 'Warn guests: do not walk on deck hatches or solar panels'
+  - key: sb/deck-hatches
+    c: 'Warn guests: do not walk on deck hatches or solar panels'
     s: Hatches can crack or open unexpectedly under weight.
-  - c: Point out all companionway and deck hatch exits
+  - key: sb/exits
+    c: Point out all companionway and deck hatch exits
     s: In a flooding situation these are your exit routes.
-  - c: Show guests how to open hatches from inside
+  - key: sb/open-hatches
+    c: Show guests how to open hatches from inside
     s: Confirm each guest can operate them independently.
-  - c: '"One hand for you, one for the boat" — always'
+  - key: sb/one-hand
+    c: '"One hand for you, one for the boat" — always'
     s: Keep one hand holding a fixed part of the boat when moving around, especially on deck or in a seaway. Move deliberately, never rush.
-- t: Man Overboard (MOB)
+- key: sb/mob
+  t: Man Overboard (MOB)
   items:
-  - c: Explain MOB call — shout "MAN OVERBOARD" immediately
-  - c: Assign one person to keep eyes on the person in the water at all times — point continuously, never look away
+  - key: sb/mob-call
+    c: Explain MOB call — shout "MAN OVERBOARD" immediately
+  - key: sb/mob-point
+    c: Assign one person to keep eyes on the person in the water at all times — point continuously, never look away
     s: This is the most important job. Do not stop pointing.
-  - c: Show the SOS/MOB button on the chartplotter — press immediately to mark position
+  - key: sb/mob-button
+    c: Show the SOS/MOB button on the chartplotter — press immediately to mark position
     when:
       has_category:
       - navigation_and_electronics
-  - c: 'Explain recovery manoeuvre: slow down, circle back, approach from downwind'
+  - key: sb/mob-recovery
+    c: 'Explain recovery manoeuvre: slow down, circle back, approach from downwind'
     s: Engine on immediately. Approach slowly from the downwind side.
-  - c: Show the boarding ladder location and how to deploy it
+  - key: sb/mob-ladder
+    c: Show the boarding ladder location and how to deploy it
     s: "{primary_ladder_subtitle}"
-  - c: Show the throwable buoy / horseshoe buoy location
+  - key: sb/mob-buoy
+    c: Show the throwable buoy / horseshoe buoy location
     s: Throw immediately on MOB.
-- t: Fire
+- key: sb/fire
+  t: Fire
   items:
-  - c: 'Explain fire drill: shout "FIRE", locate source, grab extinguisher'
-  - c: 'For an engine compartment fire: do NOT open the hatch — use the fire port / extinguisher outlet if fitted'
+  - key: sb/fire-drill
+    c: 'Explain fire drill: shout "FIRE", locate source, grab extinguisher'
+  - key: sb/engine-fire
+    c: 'For an engine compartment fire: do NOT open the hatch — use the fire port / extinguisher outlet if fitted'
     s: Opening the hatch feeds oxygen to the fire.
     when:
       has_category:
       - propulsion_and_machinery
-  - c: 'If fire cannot be controlled: MAYDAY, prepare to abandon ship'
+  - key: sb/abandon
+    c: 'If fire cannot be controlled: MAYDAY, prepare to abandon ship'
     s: Life raft, EPIRB, flares, water, VHF.
-- t: VHF & Communications
+- key: sb/vhf
+  t: VHF & Communications
   items:
-  - c: Show guests where the VHF radio is located
+  - key: sb/vhf-where
+    c: Show guests where the VHF radio is located
     s: Confirm everyone can find and switch on the radio without help.
-  - c: 'Explain Channel 16: primary distress channel — always monitored. Say MAYDAY here first.'
-  - c: '{vhf_working_channel_line}'
+  - key: sb/ch16
+    c: 'Explain Channel 16: primary distress channel — always monitored. Say MAYDAY here first.'
+  - key: sb/working-channel
+    c: '{vhf_working_channel_line}'
     when:
       has_company_vhf: true
-  - c: Run through the MAYDAY procedure verbally
+  - key: sb/mayday
+    c: Run through the MAYDAY procedure verbally
     s: '{mayday_verbal_script}'

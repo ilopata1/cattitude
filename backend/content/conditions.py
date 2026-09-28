@@ -63,4 +63,24 @@ def matches(when: dict[str, Any] | None, snapshot: dict[str, Any]) -> bool:
         if token.lower() in joined:
             return False
 
+    profile = slots.vessel_profile(snapshot)
+    if "operating_mode" in when and profile["operating_mode"] != when["operating_mode"]:
+        return False
+    if "switching_system" in when and profile["switching_system"] != when["switching_system"]:
+        return False
+    if "engine_count" in when and profile["engine_count"] != int(when["engine_count"]):
+        return False
+    if "has_generator" in when and bool(when["has_generator"]) != bool(profile["has_generator"]):
+        return False
+    if "tender_launch" in when:
+        expected = when["tender_launch"]
+        actual = profile["tender_launch"]
+        if expected == "unset":
+            if actual is not None:
+                return False
+        elif actual != expected:
+            return False
+    if "heads_drive" in when and profile["heads_drive"] != when["heads_drive"]:
+        return False
+    # published_system is decided after withhold. Keep the item and tag it.
     return True

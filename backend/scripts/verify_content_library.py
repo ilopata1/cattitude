@@ -96,11 +96,17 @@ FIXTURES = [
     ("monohull", make_snapshot(["propulsion_and_machinery"], vessel_type="sailing_monohull")),
 ]
 
-# Home rules, the safety brief, and seamanship now carry handbook copy the
-# legacy Python library does not. Compare every other module to legacy.
+# Home rules, seamanship, and the checklists/fix cards follow the vessel
+# profile (operating mode, panel, engine count). Those modules are checked
+# by verify_library_profile.py. Compare every other module to legacy.
 LEGACY_SKIP = {
     ("ui", "homeRuleSections"),
     ("checklist", "safety-brief"),
+    ("checklist", "pd"),
+    ("checklist", "anch"),
+    ("checklist", "lu"),
+    ("checklist", "ec"),
+    ("fix_card_set", "all"),
     ("system", "seamanship"),
 }
 

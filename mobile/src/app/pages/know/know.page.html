@@ -61,31 +61,71 @@
     </div>
 
     <div class="loc-wrap" *ngIf="mode === 'location'">
-      <div class="loc-intro">Tap a zone to see relevant systems</div>
-      <div class="loc-grid">
-        <button
-          type="button"
-          class="loc-btn"
-          [class.sel]="selectedZone === item.id"
-          *ngFor="let item of locationLayout"
-          (click)="selectZone(item.id)"
-        >
-          {{ item.label }}
-        </button>
-      </div>
-      <div class="loc-sys-panel" *ngIf="selectedZone as zoneId">
-        <div class="loc-sys-title">Systems in: {{ zoneLabel(zoneId) }}</div>
-        <button
-          type="button"
-          class="loc-sys-item"
-          *ngFor="let topic of zoneTopics(zoneId)"
-          (click)="openTopic(topic)"
-        >
-          <span class="loc-sys-icon">{{ topicIcon(topic) }}</span>
-          <span class="loc-sys-name">{{ topicTitle(topic) }}</span>
-          <span class="loc-sys-arrow">›</span>
-        </button>
-      </div>
+      <p class="loc-intro" *ngIf="!whereIndex.items.length">
+        This guide has no equipment location list yet.
+      </p>
+      <ng-container *ngIf="whereIndex.items.length">
+        <div class="loc-toggle">
+          <button
+            type="button"
+            class="know-tog-btn"
+            [class.active]="locList === 'az'"
+            (click)="locList = 'az'"
+          >
+            A–Z
+          </button>
+          <button
+            type="button"
+            class="know-tog-btn"
+            [class.active]="locList === 'zone'"
+            (click)="locList = 'zone'"
+          >
+            By zone
+          </button>
+        </div>
+        <div class="loc-sys-panel" *ngIf="locList === 'az'">
+          <button
+            type="button"
+            class="loc-sys-item"
+            *ngFor="let item of azItems()"
+            (click)="openWhere(item)"
+          >
+            <span class="loc-sys-name">
+              {{ item.name }}
+              <span class="loc-sys-place">{{ item.location }}</span>
+            </span>
+            <span class="loc-sys-arrow">›</span>
+          </button>
+        </div>
+        <ng-container *ngIf="locList === 'zone'">
+          <div class="loc-grid">
+            <button
+              type="button"
+              class="loc-btn"
+              [class.sel]="selectedZone === zone.id"
+              *ngFor="let zone of whereIndex.zones"
+              (click)="selectZone(zone.id)"
+            >
+              {{ zone.label }}
+            </button>
+          </div>
+          <div class="loc-sys-panel" *ngIf="selectedZone as zoneId">
+            <div class="loc-sys-title">{{ zoneTitle(zoneId) }}</div>
+            <button
+              type="button"
+              class="loc-sys-item"
+              *ngFor="let item of zoneItems(zoneId)"
+              (click)="openWhere(item)"
+            >
+              <span class="loc-sys-name">
+                {{ item.name }}
+                <span class="loc-sys-place">{{ item.location }}</span>
+              </span>
+              <span class="loc-sys-arrow">›</span>
+            </button>
+          </div>
+        </ng-container>
+      </ng-container>
     </div>
   </ng-container>
 

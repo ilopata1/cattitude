@@ -412,6 +412,20 @@
   padding: 16px;
 }
 
+.loc-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.loc-sys-place {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--cattitude-text-light);
+}
+
 .loc-intro {
   font-size: 13px;
   color: var(--cattitude-text-light);

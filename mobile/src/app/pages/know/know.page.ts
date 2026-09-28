@@ -24,9 +24,9 @@ import {
   TopicGroup,
 } from '../../core/guide/power-topic';
 import { GuideSearchHit } from '../../core/search/guide-search';
+import { resolveWhereIndex, WhereItem } from '../../core/guide/where-index';
 import { scrollToElement } from '../../core/search/scroll-into-content';
 import {
-  LocationZone,
   SystemModule,
   SystemSection,
 } from '../../core/models/bootstrap-content.model';
@@ -39,6 +39,7 @@ import {
 })
 export class KnowPage implements OnInit {
   mode: 'topic' | 'location' = 'topic';
+  locList: 'az' | 'zone' = 'az';
   selected: SystemModule | null = null;
   powerOpen = false;
   selectedZone: string | null = null;
@@ -67,10 +68,6 @@ export class KnowPage implements OnInit {
     private readonly vesselRoutes: VesselRouteService,
     private readonly sanitizer: DomSanitizer,
   ) {}
-
-  get locationLayout() {
-    return this.content.bootstrap.ui.locationLayout;
-  }
 
   get searching(): boolean {
     return this.query.trim().length >= 2;
@@ -120,6 +117,41 @@ export class KnowPage implements OnInit {
   setMode(mode: 'topic' | 'location'): void {
     this.mode = mode;
     this.selectedZone = null;
+  }
+
+  get whereIndex() {
+    const ui = this.content.bootstrap.ui;
+    return resolveWhereIndex(
+      ui.whereIndex,
+      this.content.bootstrap.systems,
+      ui.systemOrder,
+      this.content.bootstrap.branding.vesselType,
+    );
+  }
+
+  azItems(): WhereItem[] {
+    return this.whereIndex.items.slice().sort((left, right) => {
+      const byName = left.name.localeCompare(right.name);
+      return byName || left.location.localeCompare(right.location);
+    });
+  }
+
+  zoneItems(zoneId: string): WhereItem[] {
+    return this.whereIndex.items.filter((item) => item.zone === zoneId);
+  }
+
+  zoneTitle(zoneId: string): string {
+    return this.whereIndex.zones.find((zone) => zone.id === zoneId)?.label || zoneId;
+  }
+
+  openWhere(item: WhereItem): void {
+    this.openHit({
+      kind: 'chapter',
+      title: item.name,
+      snippet: item.location,
+      systemId: item.systemId,
+      sectionIndex: item.sectionIndex,
+    });
   }
 
   topics(): TopicGroup<SystemModule>[] {
@@ -418,21 +450,6 @@ export class KnowPage implements OnInit {
 
   selectZone(zoneId: string): void {
     this.selectedZone = this.selectedZone === zoneId ? null : zoneId;
-  }
-
-  zoneTopics(zoneId: string): TopicGroup<SystemModule>[] {
-    const zone: LocationZone | undefined = this.content.getLocationZone(zoneId);
-    if (!zone) {
-      return [];
-    }
-    const systems = zone.sys
-      .map((id) => this.content.getSystem(id))
-      .filter((system): system is SystemModule => !!system);
-    return groupTopics(systems);
-  }
-
-  zoneLabel(zoneId: string): string {
-    return this.content.getLocationZone(zoneId)?.label ?? zoneId;
   }
 
   /** Flatten steps/list/warnings/notes items to display strings. */

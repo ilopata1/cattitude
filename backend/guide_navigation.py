@@ -7,8 +7,13 @@ from typing import Any
 from guide_module_catalog import (
     CHECKLIST_CATALOG,
     CHECKLIST_IDS,
-    SYSTEM_CATALOG,
     SYSTEM_IDS,
+)
+from location_model import (
+    HULL_SIDES,
+    generate_label,
+    sub_zones_for,
+    zones_for,
 )
 
 # Legacy guide_content rows for these keys are ignored at publish (computed instead).
@@ -21,54 +26,6 @@ NAVIGATION_MODULE_KEYS: frozenset[tuple[str, str]] = frozenset(
         ("ui", "locationLayout"),
     }
 )
-
-_CATAMARAN_LAYOUT: list[dict[str, str]] = [
-    {"id": "bow", "label": "⬆ Bow / Foredeck", "rowClass": "center"},
-    {"id": "port-hull", "label": "◀ Port Hull"},
-    {"id": "saloon", "label": "🏠 Saloon"},
-    {"id": "stbd-hull", "label": "Stbd Hull ▶"},
-    {"id": "galley", "label": "🍳 Galley"},
-    {"id": "cockpit", "label": "☀️ Cockpit"},
-    {"id": "helm", "label": "🧭 Helm Station"},
-    {"id": "swim", "label": "🏊 Swim Platform"},
-]
-
-_MONOHULL_LAYOUT: list[dict[str, str]] = [
-    {"id": "bow", "label": "⬆ Bow / Foredeck", "rowClass": "center"},
-    {"id": "saloon", "label": "🏠 Saloon"},
-    {"id": "galley", "label": "🍳 Galley"},
-    {"id": "cockpit", "label": "☀️ Cockpit"},
-    {"id": "helm", "label": "🧭 Helm Station"},
-    {"id": "swim", "label": "🏊 Swim Platform"},
-]
-
-_MOTOR_YACHT_LAYOUT: list[dict[str, str]] = [
-    {"id": "bow", "label": "⬆ Bow", "rowClass": "center"},
-    {"id": "saloon", "label": "🏠 Main Saloon"},
-    {"id": "galley", "label": "🍳 Galley"},
-    {"id": "cockpit", "label": "☀️ Cockpit / Aft Deck"},
-    {"id": "helm", "label": "🧭 Helm / Flybridge"},
-    {"id": "swim", "label": "🏊 Swim Platform"},
-]
-
-LAYOUT_PROFILES: dict[str, list[dict[str, str]]] = {
-    "sailing_catamaran": _CATAMARAN_LAYOUT,
-    "power_catamaran": _CATAMARAN_LAYOUT,
-    "cruising_monohull": _MONOHULL_LAYOUT,
-    "sailing_trimaran": _MONOHULL_LAYOUT,
-    "motor_yacht": _MOTOR_YACHT_LAYOUT,
-}
-
-_ZONE_LABELS: dict[str, str] = {
-    "bow": "Bow / Foredeck",
-    "port-hull": "Port Hull",
-    "stbd-hull": "Starboard Hull",
-    "saloon": "Saloon",
-    "galley": "Galley",
-    "cockpit": "Cockpit",
-    "helm": "Helm Station",
-    "swim": "Swim Platform",
-}
 
 _CHECKLIST_ICONS: dict[str, tuple[str, str]] = {
     "safety-brief": ("🛟", "ic-coral"),
@@ -112,7 +69,8 @@ def _vessel_name(branding: dict[str, Any]) -> str:
 
 
 def _region_label(branding: dict[str, Any]) -> str:
-    return (branding.get("location") or "").strip() or "your cruising area"
+    """Cruising-area label only. A boat name or a country is not a place to anchor."""
+    return str(branding.get("regionLabel") or "").strip()
 
 
 def _is_charter_vessel(branding: dict[str, Any]) -> bool:
@@ -130,14 +88,6 @@ def _checklist_title(
         # Catalog / unknown branding — keep the charter-facing default.
         return "End of Charter"
     return CHECKLIST_CATALOG[checklist_id]["title"].title()
-
-
-def _system_zones(system_id: str, system: dict[str, Any]) -> list[str]:
-    locs = system.get("locs")
-    if isinstance(locs, list) and locs:
-        return [str(zone) for zone in locs]
-    catalog = SYSTEM_CATALOG.get(system_id) or {}
-    return list(catalog.get("locs") or [])
 
 
 def build_system_order(systems: dict[str, Any]) -> list[str]:
@@ -183,7 +133,11 @@ def build_do_menu(
         icon, icon_class = _CHECKLIST_ICONS[key]
         subtitle = _CHECKLIST_META_SUBTITLES[key]
         if key == "anch":
-            subtitle = f"Setting the hook safely in {region}"
+            subtitle = (
+                f"Setting the hook safely in {region}"
+                if region
+                else "Setting the hook safely"
+            )
         elif key == "lu":
             subtitle = f"Going ashore — secure {vessel} first"
         elif key == "ec":
@@ -238,38 +192,143 @@ def build_learn_path(
 
 
 def build_location_layout(vessel_type: str) -> list[dict[str, str]]:
-    return list(
-        LAYOUT_PROFILES.get(vessel_type) or LAYOUT_PROFILES["sailing_catamaran"]
-    )
+    """Level-1 zones this vessel type is allowed to use."""
+    return [
+        {"id": zone["slug"], "label": zone["label"]}
+        for zone in zones_for(vessel_type)
+    ]
 
 
-def build_locations(
+def _zone_label_index(vessel_type: str) -> dict[str, set[str]]:
+    """Exact ``generate_label`` strings for this vessel type, mapped to zone slugs.
+
+    A label that two zones can produce maps to both. Callers leave that row
+    unmapped rather than pick one.
+    """
+    index: dict[str, set[str]] = {}
+    for zone in zones_for(vessel_type):
+        slug = str(zone["slug"])
+        subs = [str(item["slug"]) for item in sub_zones_for(slug, vessel_type)]
+        subs.append("")
+        hulls: list[str | None] = [None]
+        if zone.get("hull_side"):
+            hulls.extend(HULL_SIDES)
+        for sub in subs:
+            for hull in hulls:
+                label = generate_label(slug, sub or None, hull, None)
+                if not label:
+                    continue
+                index.setdefault(label, set()).add(slug)
+    return index
+
+
+def match_location_zone(location: str, labels: dict[str, set[str]]) -> str | None:
+    """Return the zone slug for a published location string, or None."""
+    raw = (location or "").strip()
+    if not raw:
+        return None
+    candidates = [raw]
+    if raw.endswith(")") and " (" in raw:
+        prefix, _, _detail = raw.rpartition(" (")
+        if prefix:
+            candidates.append(prefix)
+    for candidate in candidates:
+        zones = labels.get(candidate)
+        if not zones:
+            continue
+        if len(zones) == 1:
+            return next(iter(zones))
+        return None
+    return None
+
+
+def build_where_index(
     systems: dict[str, Any],
-    *,
     vessel_type: str,
-) -> dict[str, dict[str, Any]]:
-    layout = build_location_layout(vessel_type)
-    zone_ids = {zone["id"] for zone in layout}
-    zones: dict[str, dict[str, Any]] = {
-        zone_id: {"label": _ZONE_LABELS.get(zone_id, zone_id), "sys": []}
-        for zone_id in zone_ids
-    }
+) -> tuple[dict[str, Any], list[str]]:
+    """Equipment rows already on published chapters, grouped onto real zones.
 
-    for system_id in SYSTEM_IDS:
+    A blank equipment name continues the previous row in that table. A location
+    that is not an exact zone label for this vessel type stays off the zone
+    list and is reported for admin.
+    """
+    labels = _zone_label_index(vessel_type)
+    zone_labels = {zone["slug"]: zone["label"] for zone in zones_for(vessel_type)}
+    items: list[dict[str, Any]] = []
+    warnings: list[str] = []
+    for system_id in build_system_order(systems):
         system = systems.get(system_id)
         if not isinstance(system, dict):
             continue
-        for zone_id in _system_zones(system_id, system):
-            if zone_id not in zones:
+        title = str(system.get("title") or system_id).strip() or system_id
+        sections = system.get("sections") or []
+        if not isinstance(sections, list):
+            continue
+        for section_index, section in enumerate(sections):
+            if not isinstance(section, dict):
                 continue
-            if system_id not in zones[zone_id]["sys"]:
-                zones[zone_id]["sys"].append(system_id)
+            if section.get("type") != "equipment_locations":
+                continue
+            rows = section.get("rows") or []
+            if not isinstance(rows, list):
+                continue
+            previous = ""
+            for row in rows:
+                if not isinstance(row, dict):
+                    continue
+                name = str(row.get("name") or "").strip()
+                location = str(row.get("location") or "").strip()
+                if name:
+                    previous = name
+                elif previous:
+                    name = previous
+                if not location:
+                    continue
+                if not name:
+                    warnings.append(
+                        f"{title}: a location row has no equipment name ({location})."
+                    )
+                    continue
+                zone = match_location_zone(location, labels)
+                items.append(
+                    {
+                        "name": name,
+                        "location": location,
+                        "zone": zone,
+                        "systemId": system_id,
+                        "sectionIndex": section_index,
+                    }
+                )
+                if zone is None:
+                    warnings.append(
+                        f"{title}: “{name}” is at “{location}”, "
+                        "which is not on this boat's zone map."
+                    )
+    order = [zone["slug"] for zone in zones_for(vessel_type)]
+    present = {item["zone"] for item in items if item.get("zone")}
+    zones = [
+        {"id": slug, "label": zone_labels.get(slug, slug)}
+        for slug in order
+        if slug in present
+    ]
+    return {"items": items, "zones": zones}, warnings
 
-    return {
-        zone_id: payload
-        for zone_id, payload in zones.items()
-        if payload["sys"]
-    }
+
+def build_locations(
+    where_index: dict[str, Any],
+) -> dict[str, dict[str, Any]]:
+    zones = where_index.get("zones") or []
+    items = where_index.get("items") or []
+    locations: dict[str, dict[str, Any]] = {}
+    for zone in zones:
+        zone_id = str(zone.get("id") or "")
+        if not zone_id:
+            continue
+        locations[zone_id] = {
+            "label": zone.get("label") or zone_id,
+            "items": [item for item in items if item.get("zone") == zone_id],
+        }
+    return locations
 
 
 def enrich_navigation(bootstrap: dict[str, Any], *, vessel_type: str) -> dict[str, Any]:
@@ -292,9 +351,12 @@ def enrich_navigation(bootstrap: dict[str, Any], *, vessel_type: str) -> dict[st
     )
     ui["learnPath"] = build_learn_path(systems, published_checklists)
     ui["locationLayout"] = build_location_layout(vessel_type)
+    where_index, location_warnings = build_where_index(systems, vessel_type)
+    ui["whereIndex"] = where_index
     if home_rules is not None:
         ui["homeRuleSections"] = home_rules
 
     bootstrap["ui"] = ui
-    bootstrap["locations"] = build_locations(systems, vessel_type=vessel_type)
+    bootstrap["locations"] = build_locations(where_index)
+    bootstrap["_location_warnings"] = location_warnings
     return bootstrap

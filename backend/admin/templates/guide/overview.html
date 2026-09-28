@@ -146,6 +146,22 @@
           {% endfor %}
         </ul>
       {% endif %}
+      {% if preview.contentWarnings %}
+        <h3>Checklist and fix-card notes</h3>
+        <ul class="note-list">
+          {% for message in preview.contentWarnings %}
+          <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      {% if preview.locationWarnings %}
+        <h3>Locations not on the zone map</h3>
+        <ul class="note-list">
+          {% for message in preview.locationWarnings %}
+          <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
       {% if preview.duplicates %}
         <h3>Duplicate sections</h3>
         <ul class="note-list">

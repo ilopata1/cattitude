@@ -118,9 +118,12 @@ def load_vessel_fragments(
 
 
 def apply_fix_card_fragments(
-    cards: list[dict[str, Any]], fragment_rows: list[dict[str, Any]]
+    cards: list[dict[str, Any]],
+    fragment_rows: list[dict[str, Any]],
+    *,
+    has_generator: bool = True,
 ) -> list[dict[str, Any]]:
-    """Apply equipment fix-card overrides and extras, then strip internal keys."""
+    """Apply equipment fix-card overrides and extras. The card key stays."""
     overrides: dict[str, dict[str, Any]] = {}
     extras: list[dict[str, Any]] = []
     contact_step: str | None = None
@@ -136,7 +139,7 @@ def apply_fix_card_fragments(
     result: list[dict[str, Any]] = []
     for card in cards:
         card = dict(card)
-        card_key = card.pop("key", None)
+        card_key = card.get("key")
         if card.get("steps"):
             contact_step = contact_step or card["steps"][-1]
         override = overrides.get(card_key) if card_key else None
@@ -153,9 +156,12 @@ def apply_fix_card_fragments(
         result.append(card)
 
     for extra in extras:
+        title = str(extra.get("title") or "")
+        if not has_generator and "generator" in title.lower():
+            continue
         extra_card = {
             key: extra[key]
-            for key in ("icon", "cat", "catL", "title", "steps")
+            for key in ("key", "icon", "cat", "catL", "title", "steps")
             if key in extra
         }
         extra_card["icon"] = normalize_fix_icon(extra_card.get("icon"))

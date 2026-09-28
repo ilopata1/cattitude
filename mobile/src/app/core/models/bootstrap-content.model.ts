@@ -83,7 +83,14 @@ export interface Checklist {
 
 export interface LocationZone {
   label: string;
-  sys: string[];
+  sys?: string[];
+  items?: Array<{
+    name: string;
+    location: string;
+    zone: string | null;
+    systemId: string;
+    sectionIndex: number;
+  }>;
 }
 
 export interface FixCard {
@@ -156,6 +163,17 @@ export interface BootstrapUi {
   locationLayout: LocationLayoutItem[];
   /** Present after the next publish. Older bundles derive the same stages in the app. */
   learnPath?: LearnPathStage[];
+  /** Present after the next publish. Older bundles derive the same index from equipment rows. */
+  whereIndex?: {
+    items: Array<{
+      name: string;
+      location: string;
+      zone: string | null;
+      systemId: string;
+      sectionIndex: number;
+    }>;
+    zones: Array<{ id: string; label: string }>;
+  };
 }
 
 export interface BootstrapContent {

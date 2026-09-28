@@ -159,6 +159,7 @@ SEED_FRAGMENTS: dict[tuple[str, str], dict] = {
     ("Fischer Panda", "Panda 8000i"): {
         "extra_fix_cards": [
             {
+                "key": "generator_wont_start",
                 "icon": "⚡",
                 "cat": "electrical",
                 "catL": "Electrical",
@@ -175,6 +176,7 @@ SEED_FRAGMENTS: dict[tuple[str, str], dict] = {
                 ],
             },
             {
+                "key": "generator_alarm",
                 "icon": "⚠️",
                 "cat": "electrical",
                 "catL": "Electrical",

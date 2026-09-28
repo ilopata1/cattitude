@@ -18,6 +18,14 @@ _WATERMAKER_HINTS = (
     "desalinat",
 )
 
+# Registry identity only (manufacturer and model). Do not read description prose.
+_DIGITAL_SWITCHING_RE = re.compile(r"\bczone\b", re.I)
+_GENSET_RE = re.compile(r"\b(?:panda|genset|generator)\b", re.I)
+_WIND_RE = re.compile(r"\bwind\b", re.I)
+_ELECTRIC_HEAD_RE = re.compile(r"\b(?:tecma|electric\s+toilet)\b", re.I)
+_TENDER_LAUNCHES = frozenset({"davits", "platform", "none"})
+_HEADS_DRIVES = frozenset({"electric", "manual"})
+
 
 def equipment(snapshot: dict[str, Any]) -> list[dict[str, Any]]:
     return snapshot.get("equipment") or []
@@ -49,15 +57,8 @@ def is_sailing(snapshot: dict[str, Any]) -> bool:
 
 
 def is_twin_engine(snapshot: dict[str, Any]) -> bool:
-    propulsion = [
-        row
-        for row in equipment(snapshot)
-        if row.get("system_category") == "propulsion_and_machinery"
-    ]
-    if len(propulsion) >= 2:
-        return True
-    vessel_type = (snapshot.get("vessel") or {}).get("vessel_type") or ""
-    return "catamaran" in vessel_type
+    """Two propulsion engines on the registry. Hull type does not decide this."""
+    return engine_count(snapshot) >= 2
 
 
 def vessel_name(snapshot: dict[str, Any]) -> str:
@@ -110,6 +111,87 @@ def local_rules_joined_lower(snapshot: dict[str, Any]) -> str:
 def guest_facts(snapshot: dict[str, Any]) -> dict[str, Any]:
     raw = (snapshot.get("guide_context") or {}).get("guestFacts")
     return raw if isinstance(raw, dict) else {}
+
+
+def _row_identity(row: dict[str, Any]) -> str:
+    return f"{row.get('manufacturer') or ''} {row.get('model') or ''}"
+
+
+def _is_digital_switching(row: dict[str, Any]) -> bool:
+    return bool(_DIGITAL_SWITCHING_RE.search(_row_identity(row)))
+
+
+def _is_genset(row: dict[str, Any]) -> bool:
+    text = _row_identity(row)
+    if _WIND_RE.search(text):
+        return False
+    return bool(_GENSET_RE.search(text))
+
+
+def engine_count(snapshot: dict[str, Any]) -> int:
+    """Propulsion rows, excluding a genset filed under the same category."""
+    return sum(
+        1
+        for row in equipment(snapshot)
+        if row.get("system_category") == "propulsion_and_machinery" and not _is_genset(row)
+    )
+
+
+def has_generator(snapshot: dict[str, Any]) -> bool:
+    return any(_is_genset(row) for row in equipment(snapshot))
+
+
+def operating_mode(snapshot: dict[str, Any]) -> str:
+    """charter, private, or owner_with_crew. Never guessed from the hull."""
+    if company_name(snapshot):
+        return "charter"
+    explicit = str(guest_facts(snapshot).get("operatingMode") or "").strip()
+    if explicit == "owner_with_crew":
+        return "owner_with_crew"
+    return "private"
+
+
+def switching_system(snapshot: dict[str, Any]) -> str | None:
+    """digital, breaker, or None when the panel type is not on the registry."""
+    if any(_is_digital_switching(row) for row in equipment(snapshot)):
+        return "digital"
+    if has_category(snapshot, "electrical_dc"):
+        return "breaker"
+    return None
+
+
+def tender_launch(snapshot: dict[str, Any]) -> str | None:
+    """davits, platform, none, or None when a tender exists and the launch is unknown."""
+    raw = str(guest_facts(snapshot).get("tenderLaunch") or "").strip().lower()
+    if raw in _TENDER_LAUNCHES:
+        return raw
+    if not has_category(snapshot, "tenders_and_watersports"):
+        return "none"
+    return None
+
+
+def heads_drive(snapshot: dict[str, Any]) -> str | None:
+    """electric or manual, only from guestFacts or a sanitation model that says so."""
+    raw = str(guest_facts(snapshot).get("headsDrive") or "").strip().lower()
+    if raw in _HEADS_DRIVES:
+        return raw
+    for row in equipment(snapshot):
+        if row.get("system_category") != "sanitation":
+            continue
+        if _ELECTRIC_HEAD_RE.search(_row_identity(row)):
+            return "electric"
+    return None
+
+
+def vessel_profile(snapshot: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "operating_mode": operating_mode(snapshot),
+        "switching_system": switching_system(snapshot),
+        "engine_count": engine_count(snapshot),
+        "has_generator": has_generator(snapshot),
+        "tender_launch": tender_launch(snapshot),
+        "heads_drive": heads_drive(snapshot),
+    }
 
 
 def _vessel_type(snapshot: dict[str, Any]) -> str:

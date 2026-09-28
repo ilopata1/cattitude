@@ -313,111 +313,58 @@
     ],
     "locationLayout": [
       {
-        "id": "bow",
-        "label": "⬆ Bow / Foredeck",
-        "rowClass": "center"
+        "id": "accommodation_cabins",
+        "label": "Accommodation / Cabins"
       },
       {
-        "id": "port-hull",
-        "label": "◀ Port Hull"
-      },
-      {
-        "id": "saloon",
-        "label": "🏠 Saloon"
-      },
-      {
-        "id": "stbd-hull",
-        "label": "Stbd Hull ▶"
+        "id": "saloon_living_area",
+        "label": "Saloon / Living Area"
       },
       {
         "id": "galley",
-        "label": "🍳 Galley"
+        "label": "Galley"
+      },
+      {
+        "id": "head_bathroom",
+        "label": "Head / Bathroom"
+      },
+      {
+        "id": "helm_nav_station",
+        "label": "Helm / Navigation Station"
       },
       {
         "id": "cockpit",
-        "label": "☀️ Cockpit"
+        "label": "Cockpit"
       },
       {
-        "id": "helm",
-        "label": "🧭 Helm Station"
+        "id": "deck_bow_foredeck",
+        "label": "Deck — Bow / Foredeck"
       },
       {
-        "id": "swim",
-        "label": "🏊 Swim Platform"
+        "id": "deck_side_decks_beam",
+        "label": "Deck — Side Decks & Beam"
+      },
+      {
+        "id": "deck_stern_transom_swim_platform",
+        "label": "Deck — Stern / Transom / Swim Platform"
+      },
+      {
+        "id": "rigging_sail_handling",
+        "label": "Rigging & Sail Handling"
+      },
+      {
+        "id": "engine_machinery_space",
+        "label": "Engine / Machinery Space"
+      },
+      {
+        "id": "storage_lazarette",
+        "label": "Storage / Lazarette"
+      },
+      {
+        "id": "bilge_underfloor",
+        "label": "Bilge / Underfloor"
       }
     ]
   },
-  "locations": {
-    "bow": {
-      "label": "Bow / Foredeck",
-      "sys": [
-        "anchoring",
-        "sails",
-        "overview"
-      ]
-    },
-    "port-hull": {
-      "label": "Port Hull",
-      "sys": [
-        "engines",
-        "heads",
-        "water",
-        "ac",
-        "overview"
-      ]
-    },
-    "stbd-hull": {
-      "label": "Starboard Hull",
-      "sys": [
-        "engines",
-        "heads",
-        "batteries",
-        "water",
-        "ac",
-        "overview"
-      ]
-    },
-    "saloon": {
-      "label": "Saloon",
-      "sys": [
-        "electrical",
-        "batteries",
-        "ac",
-        "nav",
-        "overview"
-      ]
-    },
-    "galley": {
-      "label": "Galley",
-      "sys": [
-        "galley",
-        "water"
-      ]
-    },
-    "cockpit": {
-      "label": "Cockpit",
-      "sys": [
-        "sails",
-        "safety",
-        "anchoring",
-        "engines",
-        "overview"
-      ]
-    },
-    "helm": {
-      "label": "Helm Station",
-      "sys": [
-        "nav",
-        "engines",
-        "sails"
-      ]
-    },
-    "swim": {
-      "label": "Swim Platform",
-      "sys": [
-        "dinghy",
-        "safety"
-      ]
-    }
-  }
+  "locations": {}
 }

@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any, Callable
 
 from content import conditions, slots
-from content.loader import CONTENT_ROOT, load_yaml_cached
+from content.loader import CONTENT_ROOT, load_yaml, load_yaml_cached
 from guide_fix_icons import normalize_fix_icon
 from guide_section_duplicates import normalise_title
 
@@ -57,19 +57,116 @@ def _resolve_steps(steps: list[Any], snapshot: dict[str, Any]) -> list[str]:
     return resolved
 
 
+def _published_system(when: Any) -> str | None:
+    """System id this entry needs in the guest guide. Checked at publish."""
+    if not isinstance(when, dict):
+        return None
+    value = when.get("published_system")
+    if isinstance(value, str) and value.strip():
+        return value.strip()
+    for key in ("all", "any"):
+        for child in when.get(key) or []:
+            found = _published_system(child)
+            if found:
+                return found
+    return None
+
+
+def _vessel_overrides(snapshot: dict[str, Any]) -> dict[str, Any]:
+    slug = str((snapshot.get("vessel") or {}).get("slug") or "").strip()
+    if not slug or slug.startswith(".") or "/" in slug or "\\" in slug:
+        return {}
+    relative = f"vessels/{slug}.yaml"
+    if not (CONTENT_ROOT / relative).is_file():
+        return {}
+    loaded = load_yaml(relative)
+    return loaded if isinstance(loaded, dict) else {}
+
+
 def _resolve_checklist_items(
-    items: list[dict[str, Any]], snapshot: dict[str, Any]
-) -> list[dict[str, str]]:
-    resolved: list[dict[str, str]] = []
+    items: list[dict[str, Any]],
+    snapshot: dict[str, Any],
+    seen: set[str],
+) -> list[dict[str, Any]]:
+    resolved: list[dict[str, Any]] = []
     for item in items or []:
         if not conditions.matches(item.get("when"), snapshot):
             continue
-        text = slots.apply_slots(str(item.get("c") or ""), snapshot)
-        if not text.strip():
+        key = str(item.get("key") or "").strip()
+        if key and key in seen:
             continue
-        subtitle = slots.apply_slots(str(item.get("s") or ""), snapshot)
-        resolved.append({"c": text, "s": subtitle})
+        text = slots.apply_slots(str(item.get("c") or ""), snapshot).strip()
+        if not text:
+            continue
+        subtitle = slots.apply_slots(str(item.get("s") or ""), snapshot).strip()
+        entry: dict[str, Any] = {"c": text, "s": subtitle}
+        if key:
+            entry["key"] = key
+            seen.add(key)
+        system = _published_system(item.get("when"))
+        if system:
+            entry["requiresSystem"] = system
+        resolved.append(entry)
     return resolved
+
+
+def _override_item(extra: dict[str, Any], snapshot: dict[str, Any]) -> dict[str, Any] | None:
+    text = slots.apply_slots(str(extra.get("c") or ""), snapshot).strip()
+    if not text:
+        return None
+    entry: dict[str, Any] = {
+        "c": text,
+        "s": slots.apply_slots(str(extra.get("s") or ""), snapshot).strip(),
+    }
+    key = str(extra.get("key") or "").strip()
+    if key:
+        entry["key"] = key
+    system = _published_system(extra.get("when"))
+    if system:
+        entry["requiresSystem"] = system
+    return entry
+
+
+def _apply_checklist_overrides(
+    groups: list[dict[str, Any]],
+    spec: dict[str, Any],
+    snapshot: dict[str, Any],
+) -> list[dict[str, Any]]:
+    omit = {str(key) for key in (spec.get("omit") or [])}
+    replace = spec.get("replace") if isinstance(spec.get("replace"), dict) else {}
+    insert_after = (
+        spec.get("insert_after") if isinstance(spec.get("insert_after"), dict) else {}
+    )
+    result: list[dict[str, Any]] = []
+    for group in groups:
+        kept: list[dict[str, Any]] = []
+        for item in group.get("items") or []:
+            key = item.get("key")
+            if key in omit:
+                continue
+            if key in replace:
+                item = dict(item)
+                replacement = replace[key]
+                if isinstance(replacement, str):
+                    item["c"] = slots.apply_slots(replacement, snapshot).strip()
+                elif isinstance(replacement, dict):
+                    if replacement.get("c"):
+                        item["c"] = slots.apply_slots(str(replacement["c"]), snapshot).strip()
+                    if "s" in replacement:
+                        item["s"] = slots.apply_slots(
+                            str(replacement.get("s") or ""), snapshot
+                        ).strip()
+            kept.append(item)
+            extra = insert_after.get(key) if key else None
+            if isinstance(extra, dict):
+                inserted = _override_item(extra, snapshot)
+                if inserted is not None and inserted.get("key") not in omit:
+                    kept.append(inserted)
+        if kept:
+            updated = dict(group)
+            updated["items"] = kept
+            result.append(updated)
+    return result
 
 
 def build_home_rules_module(
@@ -138,15 +235,23 @@ def build_checklist_module(
 ) -> dict[str, Any]:
     del reference
     data = load_yaml_cached(f"checklists/{checklist_id}.yaml")
+    seen: set[str] = set()
     groups: list[dict[str, Any]] = []
     for group in data.get("groups") or []:
         if not conditions.matches(group.get("when"), snapshot):
             continue
-        items = _resolve_checklist_items(group.get("items") or [], snapshot)
+        items = _resolve_checklist_items(group.get("items") or [], snapshot, seen)
         if not items:
             continue
         title = slots.apply_slots(str(group.get("t") or ""), snapshot)
-        groups.append({"t": title, "items": items})
+        built: dict[str, Any] = {"t": title, "items": items}
+        group_key = str(group.get("key") or "").strip()
+        if group_key:
+            built["key"] = group_key
+        groups.append(built)
+    overrides = (_vessel_overrides(snapshot).get("checklists") or {}).get(checklist_id) or {}
+    if isinstance(overrides, dict) and overrides:
+        groups = _apply_checklist_overrides(groups, overrides, snapshot)
     return {"groups": groups}
 
 
@@ -166,8 +271,40 @@ def build_fix_cards_module(
         }
         payload["icon"] = normalize_fix_icon(payload.get("icon"))
         payload["steps"] = _resolve_steps(card.get("steps") or [], snapshot)
+        system = _published_system(card.get("when"))
+        if system:
+            payload["requiresSystem"] = system
         cards.append(payload)
+    fix_overrides = _vessel_overrides(snapshot).get("fixes") or {}
+    if isinstance(fix_overrides, dict) and fix_overrides:
+        cards = _apply_fix_overrides(cards, fix_overrides, snapshot)
     return cards
+
+
+def _apply_fix_overrides(
+    cards: list[dict[str, Any]],
+    spec: dict[str, Any],
+    snapshot: dict[str, Any],
+) -> list[dict[str, Any]]:
+    omit = {str(key) for key in (spec.get("omit") or [])}
+    replace = spec.get("replace") if isinstance(spec.get("replace"), dict) else {}
+    kept: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for card in cards:
+        key = card.get("key")
+        if key in omit or (key and key in seen):
+            continue
+        if key in replace and isinstance(replace[key], dict):
+            card = dict(card)
+            replacement = replace[key]
+            if replacement.get("title"):
+                card["title"] = slots.apply_slots(str(replacement["title"]), snapshot)
+            if replacement.get("steps"):
+                card["steps"] = _resolve_steps(replacement["steps"], snapshot)
+        if key:
+            seen.add(key)
+        kept.append(card)
+    return kept
 
 
 def _knot_cards_html() -> str:
