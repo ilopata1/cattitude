@@ -1,7 +1,7 @@
 {
-  "name": "Cattitude — Cruise Abaco",
-  "short_name": "Cattitude",
-  "description": "Charter companion guide for Cattitude, a Fountaine Pajot Tanna 47",
+  "name": "Clever Sailor",
+  "short_name": "Clever Sailor",
+  "description": "Vessel guide for charter guests, private owners, and crew",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0D2137",

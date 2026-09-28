@@ -2,7 +2,7 @@
 
 Clever Sailor consumer app for the Cattitude charter vessel. Web-first; Capacitor native builds come later.
 
-**Production:** https://ilopata1.github.io/cattitude/
+**Production:** https://app.sailsupernova.com
 
 Deploys automatically on push to `main` when `mobile/**` changes (see `.github/workflows/sync-mobile-pages-live.yml`).
 
@@ -27,9 +27,9 @@ Open http://localhost:8100
 npm run build
 ```
 
-Production builds use `baseHref: /cattitude/` for GitHub Pages. Output is written to `mobile/www/`.
+Production builds use `baseHref: /`. Output is written to `mobile/www/`.
 
-Production builds include a service worker and web app manifest for offline use and home-screen install. The service worker prefetches the app shell, bootstrap JSON, and images.
+Production builds include a service worker and web app manifest for offline use and home-screen install. The service worker prefetches the app shell and images.
 
 To test the PWA locally:
 
@@ -59,8 +59,8 @@ Images live under `src/assets/images/vessels/{slug}/systems/` (e.g. `vessels/cat
 
 The app shell is vessel-agnostic. Open a guide at:
 
-- `http://localhost:8100/cattitude/v/cattitude/tabs/home` (dev — includes `baseHref`)
-- `https://ilopata1.github.io/cattitude/v/cattitude/tabs/home` (production)
+- `http://localhost:8100/v/cattitude/tabs/home` (dev)
+- `https://app.sailsupernova.com/v/cattitude/tabs/home` (production)
 
 `/tabs/…` URLs redirect to `/v/cattitude/tabs/…` for backward compatibility. The site root redirects to the default vessel (`cattitude`). Add/switch-vessel UI is not built yet.
 

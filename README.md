@@ -6,7 +6,7 @@ This repository is the first production deployment: **Cattitude**, a Fountaine P
 
 | Environment | URL |
 |-------------|-----|
-| **Live app (PWA)** | https://ilopata1.github.io/cattitude/ |
+| **Live app (PWA)** | https://app.sailsupernova.com |
 | **Production API** | https://cattitude-production.up.railway.app |
 | **API health** | https://cattitude-production.up.railway.app/health |
 
@@ -187,7 +187,7 @@ mobile/src/
 
 **Offline / PWA:** Production builds register `@angular/service-worker`. Installed home-screen apps may lag behind browser tabs until the service worker updates; see `mobile/README.md`.
 
-**Deploy:** Push to `main` with changes under `mobile/` triggers `.github/workflows/sync-mobile-pages-live.yml`, which builds `mobile/www` and pushes to the `pages-live` branch. `baseHref` is `/cattitude/`; `utilities/patch_github_pages_assets.mjs` rewrites asset URLs for GitHub Pages.
+**Deploy:** Push to `main` with changes under `mobile/` triggers `.github/workflows/sync-mobile-pages-live.yml`, which builds `mobile/www` and deploys GitHub Pages at https://app.sailsupernova.com. `baseHref` is `/`. `utilities/patch_github_pages_assets.mjs` rewrites asset URLs for that site.
 
 ### Backend (`backend/`)
 
@@ -438,7 +438,7 @@ Seed is for initial tenancy/equipment setup — not every deploy.
 
 2. **Distinguish vessel guide from Ask.** Guide content is authored in admin (or the curated YAML library under `backend/content/`), then published to Postgres. The app downloads that publication. Changing manuals or ingest affects Ask only. Operating base or vessel `guide_context` affects generation output, not the live app until republication and client sync.
 
-3. **Cattitude is a transitional deployment.** Single `vesselSlug` in environment, bootstrap file in git, GitHub Pages path prefix `/cattitude/`. Platform work should generalize without breaking this URL.
+3. **Production is https://app.sailsupernova.com** (`baseHref` `/`). Every slug loads its guide from the published API. The site root opens the default vessel, `cattitude`.
 
 4. **Alembic is the only schema change path.** Do not hand-edit production tables. Vector tables are managed by LlamaIndex ingest.
 
