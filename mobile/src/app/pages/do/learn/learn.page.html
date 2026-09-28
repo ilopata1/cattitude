@@ -23,37 +23,37 @@
   <div class="acc-list">
     <div
       class="acc-item"
-      *ngFor="let system of systems"
-      [class.open]="openId === system.id"
+      *ngFor="let row of rows"
+      [class.open]="openId === row.id"
     >
-      <button type="button" class="acc-header" (click)="toggleOpen(system.id)">
-        <div class="acc-icon">{{ system.icon }}</div>
+      <button type="button" class="acc-header" (click)="toggleOpen(row.id)">
+        <div class="acc-icon">{{ row.icon }}</div>
         <div class="acc-text">
-          <div class="acc-title">{{ system.title }}</div>
-          <div class="acc-sub">{{ system.subtitle }}</div>
+          <div class="acc-title">{{ row.title }}</div>
+          <div class="acc-sub">{{ row.subtitle }}</div>
         </div>
         <div
           class="acc-check"
-          [class.done]="isDone(system)"
-          (click)="toggleDone(system, $event)"
+          [class.done]="isDone(row)"
+          (click)="toggleDone(row, $event)"
         >
-          {{ isDone(system) ? '✓' : '' }}
+          {{ isDone(row) ? '✓' : '' }}
         </div>
         <span class="acc-chevron">›</span>
       </button>
-      <div class="acc-body" *ngIf="openId === system.id">
-        <div class="acc-section" *ngIf="system.summary">
-          <div class="acc-prose">{{ system.summary }}</div>
+      <div class="acc-body" *ngIf="openId === row.id">
+        <div class="acc-section" *ngIf="row.summary">
+          <div class="acc-prose">{{ row.summary }}</div>
         </div>
-        <div class="acc-section" *ngIf="system.learnChecks?.length">
+        <div class="acc-section" *ngIf="row.checks.length">
           <div class="acc-sec-title">Review checklist</div>
           <ul class="li-list">
-            <li *ngFor="let check of system.learnChecks">
-              <button type="button" class="check-row" (click)="toggleCheck(system, check)">
-                <span class="acc-check" [class.done]="isCheckDone(system, check)">
-                  {{ isCheckDone(system, check) ? '✓' : '' }}
+            <li *ngFor="let item of row.checks">
+              <button type="button" class="check-row" (click)="toggleCheck(item.system, item.check)">
+                <span class="acc-check" [class.done]="isCheckDone(item.system, item.check)">
+                  {{ isCheckDone(item.system, item.check) ? '✓' : '' }}
                 </span>
-                <span>{{ checkText(check) }}</span>
+                <span>{{ checkText(item.check) }}</span>
               </button>
             </li>
           </ul>
@@ -61,7 +61,7 @@
         <button
           type="button"
           class="open-detail-btn"
-          (click)="openSystemDetail(system.id, $event)"
+          (click)="openSystemDetail(row.id, $event)"
         >
           Open full system guide →
         </button>

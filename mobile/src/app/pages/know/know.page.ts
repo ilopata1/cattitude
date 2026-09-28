@@ -10,6 +10,19 @@ import {
   classifySection,
   presentChapter,
 } from '../../core/guide/chapter-presentation';
+import {
+  groupTopics,
+  isPowerPart,
+  POWER_TOPIC_ID,
+  PowerPresentation,
+  powerScrollTarget,
+  powerSubtitle,
+  presentPower,
+  sectionDomId,
+  topicIcon as powerTopicIcon,
+  topicTitle as powerTopicTitle,
+  TopicGroup,
+} from '../../core/guide/power-topic';
 import { GuideSearchHit } from '../../core/search/guide-search';
 import { scrollToElement } from '../../core/search/scroll-into-content';
 import {
@@ -27,6 +40,7 @@ import {
 export class KnowPage implements OnInit {
   mode: 'topic' | 'location' = 'topic';
   selected: SystemModule | null = null;
+  powerOpen = false;
   selectedZone: string | null = null;
   query = '';
 
@@ -35,8 +49,15 @@ export class KnowPage implements OnInit {
   private presentedSystem: SystemModule | null = null;
   private presentedFixes: ReturnType<ContentService['getFixes']> | null = null;
   private presented: ChapterPresentation<SystemSection> | null = null;
+  private powerMembers: SystemModule[] | null = null;
+  private powerGalley: SystemModule | null = null;
+  private powerFixes: ReturnType<ContentService['getFixes']> | null = null;
+  private powerCached: PowerPresentation<SystemSection> | null = null;
+  private topicBootstrap: ContentService['bootstrap'] | null = null;
+  private topicCache: TopicGroup<SystemModule>[] | null = null;
 
   private pendingSection: number | null = null;
+  private pendingSystemId: string | null = null;
   private readonly destroyRef = inject(DestroyRef);
 
   constructor(
@@ -69,13 +90,27 @@ export class KnowPage implements OnInit {
         if (!systemId) {
           return;
         }
+        const section = params.get('section');
+        const sectionIndex = section == null || section === '' ? null : Number(section);
+        if (systemId === POWER_TOPIC_ID || isPowerPart(systemId)) {
+          if (!this.powerOpen) {
+            this.closeReference();
+          }
+          this.powerOpen = true;
+          this.selected = null;
+          this.pendingSystemId = systemId === POWER_TOPIC_ID ? null : systemId;
+          this.pendingSection = sectionIndex;
+          this.scrollToPendingSection();
+          return;
+        }
         const system = this.content.getSystem(systemId);
-        if (this.selected?.id !== system?.id) {
+        if (this.powerOpen || this.selected?.id !== system?.id) {
           this.closeReference();
         }
+        this.powerOpen = false;
         this.selected = system ?? null;
-        const section = params.get('section');
-        this.pendingSection = section == null || section === '' ? null : Number(section);
+        this.pendingSystemId = system?.id ?? null;
+        this.pendingSection = sectionIndex;
         if (this.selected) {
           this.scrollToPendingSection();
         }
@@ -87,10 +122,69 @@ export class KnowPage implements OnInit {
     this.selectedZone = null;
   }
 
+  topics(): TopicGroup<SystemModule>[] {
+    const bootstrap = this.content.bootstrap;
+    if (this.topicBootstrap === bootstrap && this.topicCache) {
+      return this.topicCache;
+    }
+    this.topicBootstrap = bootstrap;
+    this.topicCache = groupTopics(this.content.getSystemsOrdered());
+    return this.topicCache;
+  }
+
+  topicTitle(topic: TopicGroup<SystemModule>): string {
+    return powerTopicTitle(topic);
+  }
+
+  topicIcon(topic: TopicGroup<SystemModule>): string {
+    return powerTopicIcon(topic);
+  }
+
+  topicSubtitle(topic: TopicGroup<SystemModule>): string {
+    if (topic.id === POWER_TOPIC_ID) {
+      return powerSubtitle(topic.systems);
+    }
+    return topic.systems[0]?.subtitle || '';
+  }
+
+  openTopic(topic: TopicGroup<SystemModule>): void {
+    if (topic.id === POWER_TOPIC_ID) {
+      this.openPower(null, null);
+      return;
+    }
+    const system = topic.systems[0];
+    if (system) {
+      this.openSystem(system);
+    }
+  }
+
   openSystem(system: SystemModule): void {
     this.closeReference();
+    this.powerOpen = false;
     this.pendingSection = null;
+    this.pendingSystemId = system.id;
     this.selected = system;
+  }
+
+  powerView(): PowerPresentation<SystemSection> | null {
+    const members = this.content.getSystemsOrdered().filter((system) => isPowerPart(system.id));
+    if (!members.length) {
+      return null;
+    }
+    const fixes = this.content.getFixes();
+    const galley = this.content.getSystem('galley') ?? null;
+    const sameMembers =
+      !!this.powerMembers &&
+      this.powerMembers.length === members.length &&
+      this.powerMembers.every((system, index) => system === members[index]);
+    if (sameMembers && this.powerFixes === fixes && this.powerGalley === galley && this.powerCached) {
+      return this.powerCached;
+    }
+    this.powerMembers = members;
+    this.powerFixes = fixes;
+    this.powerGalley = galley;
+    this.powerCached = presentPower(members, fixes, galley);
+    return this.powerCached;
   }
 
   chapterOf(system: SystemModule): ChapterPresentation<SystemSection> {
@@ -117,13 +211,19 @@ export class KnowPage implements OnInit {
   openHit(hit: GuideSearchHit): void {
     this.query = '';
     if (hit.kind === 'chapter' && hit.systemId) {
-      const next = this.content.getSystem(hit.systemId) ?? null;
-      if (this.selected?.id !== next?.id) {
-        this.closeReference();
+      if (isPowerPart(hit.systemId)) {
+        this.openPower(hit.systemId, hit.sectionIndex ?? null);
+      } else {
+        const next = this.content.getSystem(hit.systemId) ?? null;
+        if (this.powerOpen || this.selected?.id !== next?.id) {
+          this.closeReference();
+        }
+        this.powerOpen = false;
+        this.selected = next;
+        this.pendingSystemId = next?.id ?? null;
+        this.pendingSection = hit.sectionIndex ?? null;
+        this.scrollToPendingSection();
       }
-      this.selected = next;
-      this.pendingSection = hit.sectionIndex ?? null;
-      this.scrollToPendingSection();
       void this.router.navigate([], {
         relativeTo: this.route,
         queryParams: {
@@ -149,8 +249,10 @@ export class KnowPage implements OnInit {
 
   closeDetail(): void {
     this.closeReference();
+    this.powerOpen = false;
     this.selected = null;
     this.pendingSection = null;
+    this.pendingSystemId = null;
     if (
       this.route.snapshot.queryParamMap.has('system') ||
       this.route.snapshot.queryParamMap.has('section')
@@ -164,7 +266,30 @@ export class KnowPage implements OnInit {
     }
   }
 
+  private openPower(systemId: string | null, index: number | null): void {
+    if (!this.powerOpen) {
+      this.closeReference();
+    }
+    this.powerOpen = true;
+    this.selected = null;
+    this.pendingSystemId = systemId;
+    this.pendingSection = index;
+    this.scrollToPendingSection();
+  }
+
   private scrollToPendingSection(): void {
+    if (this.powerOpen) {
+      const power = this.powerView();
+      const target = power
+        ? powerScrollTarget(power, this.pendingSystemId, this.pendingSection)
+        : { domId: 'know-sec-top', inReference: false };
+      scrollToElement(
+        this.ionContent,
+        target.domId,
+        target.inReference ? () => this.openReference() : undefined,
+      );
+      return;
+    }
     const index = this.pendingSection;
     const section =
       this.selected && index != null && !Number.isNaN(index)
@@ -172,7 +297,9 @@ export class KnowPage implements OnInit {
         : undefined;
     const inReference = !!section && classifySection(section).role === 'reference';
     const id =
-      index == null || Number.isNaN(index) ? 'know-sec-top' : `know-sec-${index}`;
+      !this.selected || index == null || Number.isNaN(index)
+        ? 'know-sec-top'
+        : sectionDomId(this.selected.id, index);
     scrollToElement(
       this.ionContent,
       id,
@@ -255,6 +382,10 @@ export class KnowPage implements OnInit {
     }
     if (token.startsWith('system:')) {
       const systemId = token.slice('system:'.length);
+      if (isPowerPart(systemId)) {
+        this.openPower(systemId, null);
+        return;
+      }
       const system = this.content.getSystem(systemId);
       if (system) {
         this.openSystem(system);
@@ -278,14 +409,15 @@ export class KnowPage implements OnInit {
     this.selectedZone = this.selectedZone === zoneId ? null : zoneId;
   }
 
-  zoneSystems(zoneId: string): SystemModule[] {
+  zoneTopics(zoneId: string): TopicGroup<SystemModule>[] {
     const zone: LocationZone | undefined = this.content.getLocationZone(zoneId);
     if (!zone) {
       return [];
     }
-    return zone.sys
+    const systems = zone.sys
       .map((id) => this.content.getSystem(id))
       .filter((system): system is SystemModule => !!system);
+    return groupTopics(systems);
   }
 
   zoneLabel(zoneId: string): string {

@@ -1,9 +1,26 @@
 import { Component } from '@angular/core';
 import { Location } from '@angular/common';
+import {
+  groupTopics,
+  POWER_TOPIC_ID,
+  powerSubtitle,
+  topicIcon,
+  topicTitle,
+} from '../../../core/guide/power-topic';
 import { ContentService } from '../../../core/services/content.service';
 import { ProgressService } from '../../../core/services/progress.service';
 import { VesselRouteService } from '../../../core/services/vessel-route.service';
 import { LearnCheck, SystemModule } from '../../../core/models/bootstrap-content.model';
+
+interface LearnRow {
+  id: string;
+  title: string;
+  subtitle: string;
+  icon: string;
+  summary: string;
+  systems: SystemModule[];
+  checks: Array<{ system: SystemModule; check: string | LearnCheck }>;
+}
 
 @Component({
   selector: 'app-learn',
@@ -21,8 +38,21 @@ export class LearnPage {
     private readonly vesselRoutes: VesselRouteService,
   ) {}
 
-  get systems(): SystemModule[] {
-    return this.content.getSystemsOrdered();
+  get rows(): LearnRow[] {
+    return groupTopics(this.content.getSystemsOrdered()).map((topic) => ({
+      id: topic.id,
+      title: topicTitle(topic),
+      subtitle: topic.id === POWER_TOPIC_ID ? powerSubtitle(topic.systems) : topic.systems[0]?.subtitle || '',
+      icon: topicIcon(topic),
+      summary: topic.id === POWER_TOPIC_ID ? '' : topic.systems[0]?.summary || '',
+      systems: topic.systems,
+      checks: topic.systems.reduce<LearnRow['checks']>((all, system) => {
+        for (const check of system.learnChecks ?? []) {
+          all.push({ system, check });
+        }
+        return all;
+      }, []),
+    }));
   }
 
   get progressState() {
@@ -33,13 +63,13 @@ export class LearnPage {
     this.openId = this.openId === id ? null : id;
   }
 
-  toggleDone(system: SystemModule, event: Event): void {
+  toggleDone(row: LearnRow, event: Event): void {
     event.stopPropagation();
-    this.progress.toggleSystem(system);
+    this.progress.toggleSystems(row.systems);
   }
 
-  isDone(system: SystemModule): boolean {
-    return this.progress.isSystemDone(system);
+  isDone(row: LearnRow): boolean {
+    return this.progress.isTopicDone(row.systems);
   }
 
   toggleCheck(system: SystemModule, check: string | LearnCheck): void {

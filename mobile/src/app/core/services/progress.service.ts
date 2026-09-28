@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { groupTopics } from '../guide/power-topic';
 import { Checklist, LearnCheck, SystemModule } from '../models/bootstrap-content.model';
 import { ContentService } from './content.service';
 import { VesselContextService } from './vessel-context.service';
@@ -123,10 +124,32 @@ export class ProgressService {
     return checks.every((check) => state[learnCheckStorageKey(system.id, check)]);
   }
 
+  toggleSystems(systems: SystemModule[]): void {
+    const state = this.getLearnDone();
+    const keys = systems.reduce<string[]>((all, system) => all.concat(this.systemKeys(system)), []);
+    const allDone = keys.length > 0 && keys.every((key) => state[key]);
+    for (const key of keys) {
+      if (allDone) {
+        delete state[key];
+      } else {
+        state[key] = true;
+      }
+    }
+    this.saveLearnDone(state);
+  }
+
+  isTopicDone(systems: SystemModule[]): boolean {
+    const state = this.getLearnDone();
+    return systems.every((system) => {
+      const keys = this.systemKeys(system);
+      return keys.every((key) => state[key]);
+    });
+  }
+
   learnProgress(): ChecklistProgress {
-    const systems = this.content.getSystemsOrdered();
-    const total = systems.length;
-    const done = systems.filter((system) => this.isSystemDone(system)).length;
+    const topics = groupTopics(this.content.getSystemsOrdered());
+    const total = topics.length;
+    const done = topics.filter((topic) => this.isTopicDone(topic.systems)).length;
     return {
       done,
       total,
@@ -140,6 +163,14 @@ export class ProgressService {
       return '✅ All systems reviewed!';
     }
     return `${done} of ${total} topics reviewed`;
+  }
+
+  private systemKeys(system: SystemModule): string[] {
+    const checks = system.learnChecks ?? [];
+    if (!checks.length) {
+      return [system.id];
+    }
+    return checks.map((check) => learnCheckStorageKey(system.id, check));
   }
 
   private readJson<T>(key: string, fallback: T): T {

@@ -25,7 +25,7 @@
   </div>
 
   <ng-template #knowBrowse>
-  <ng-container *ngIf="!selected">
+  <ng-container *ngIf="!selected && !powerOpen">
     <div class="know-toggle">
       <button
         type="button"
@@ -50,12 +50,12 @@
         <button
           class="sys-card"
           type="button"
-          *ngFor="let system of content.getSystemsOrdered()"
-          (click)="openSystem(system)"
+          *ngFor="let topic of topics()"
+          (click)="openTopic(topic)"
         >
-          <span class="sys-icon">{{ system.icon }}</span>
-          <span class="sys-title">{{ system.title }}</span>
-          <span class="sys-sub">{{ system.subtitle }}</span>
+          <span class="sys-icon">{{ topicIcon(topic) }}</span>
+          <span class="sys-title">{{ topicTitle(topic) }}</span>
+          <span class="sys-sub">{{ topicSubtitle(topic) }}</span>
         </button>
       </div>
     </div>
@@ -78,11 +78,11 @@
         <button
           type="button"
           class="loc-sys-item"
-          *ngFor="let system of zoneSystems(zoneId)"
-          (click)="openSystem(system)"
+          *ngFor="let topic of zoneTopics(zoneId)"
+          (click)="openTopic(topic)"
         >
-          <span class="loc-sys-icon">{{ system.icon }}</span>
-          <span class="loc-sys-name">{{ system.title }}</span>
+          <span class="loc-sys-icon">{{ topicIcon(topic) }}</span>
+          <span class="loc-sys-name">{{ topicTitle(topic) }}</span>
           <span class="loc-sys-arrow">›</span>
         </button>
       </div>
@@ -102,17 +102,17 @@
       <p *ngIf="chapter.oneLiner" class="summary">{{ chapter.oneLiner }}</p>
 
       <ng-container *ngFor="let placed of chapter.where">
-        <ng-container *ngTemplateOutlet="sectionCard; context: { placed: placed }"></ng-container>
+        <ng-container *ngTemplateOutlet="sectionCard; context: { placed: placed, systemId: system.id }"></ng-container>
       </ng-container>
 
       <h2 class="know-group-label" *ngIf="chapter.tasks.length">Everyday tasks</h2>
       <ng-container *ngFor="let placed of chapter.tasks">
-        <ng-container *ngTemplateOutlet="sectionCard; context: { placed: placed }"></ng-container>
+        <ng-container *ngTemplateOutlet="sectionCard; context: { placed: placed, systemId: system.id }"></ng-container>
       </ng-container>
 
       <h2 class="know-group-label" *ngIf="chapter.warnings.length">Warnings</h2>
       <ng-container *ngFor="let placed of chapter.warnings">
-        <ng-container *ngTemplateOutlet="sectionCard; context: { placed: placed }"></ng-container>
+        <ng-container *ngTemplateOutlet="sectionCard; context: { placed: placed, systemId: system.id }"></ng-container>
       </ng-container>
 
       <h2
@@ -122,7 +122,7 @@
         If something's not right
       </h2>
       <ng-container *ngFor="let placed of chapter.troubleshoot">
-        <ng-container *ngTemplateOutlet="sectionCard; context: { placed: placed }"></ng-container>
+        <ng-container *ngTemplateOutlet="sectionCard; context: { placed: placed, systemId: system.id }"></ng-container>
       </ng-container>
       <button
         type="button"
@@ -152,16 +152,111 @@
           <p class="prose">{{ chapter.referenceSummary }}</p>
         </section>
         <ng-container *ngFor="let placed of chapter.reference">
-          <ng-container *ngTemplateOutlet="sectionCard; context: { placed: placed }"></ng-container>
+          <ng-container *ngTemplateOutlet="sectionCard; context: { placed: placed, systemId: system.id }"></ng-container>
         </ng-container>
       </details>
     </div>
     </ng-container>
 
-    <ng-template #sectionCard let-placed="placed">
+  </div>
+
+  <div class="detail-screen" *ngIf="powerOpen">
+    <ng-container *ngIf="powerView() as power">
+      <div class="detail-header">
+        <button type="button" class="sub-back" (click)="closeDetail()">‹</button>
+        <div>
+          <div class="detail-title">Power</div>
+          <div class="detail-sub">{{ power.subtitle }}</div>
+        </div>
+      </div>
+      <div class="detail-body" id="know-sec-top">
+        <ng-container *ngFor="let placed of power.where">
+          <ng-container *ngTemplateOutlet="sectionCard; context: { placed: placed, systemId: placed.systemId }"></ng-container>
+        </ng-container>
+
+        <h2 class="know-group-label" *ngIf="power.switching.length">Switch circuits and lights</h2>
+        <ng-container *ngFor="let placed of power.switching">
+          <ng-container *ngTemplateOutlet="sectionCard; context: { placed: placed, systemId: placed.systemId }"></ng-container>
+        </ng-container>
+
+        <h2 class="know-group-label" *ngIf="power.battery.length">Battery level</h2>
+        <ng-container *ngFor="let placed of power.battery">
+          <ng-container *ngTemplateOutlet="sectionCard; context: { placed: placed, systemId: placed.systemId }"></ng-container>
+        </ng-container>
+
+        <h2 class="know-group-label" *ngIf="power.loads.length">Big loads</h2>
+        <ng-container *ngFor="let placed of power.loads">
+          <ng-container *ngTemplateOutlet="sectionCard; context: { placed: placed, systemId: placed.systemId }"></ng-container>
+        </ng-container>
+
+        <h2 class="know-group-label" *ngIf="power.generator.length || power.generatorButtons.length">Generator</h2>
+        <ng-container *ngFor="let placed of power.generator">
+          <ng-container *ngTemplateOutlet="sectionCard; context: { placed: placed, systemId: placed.systemId }"></ng-container>
+        </ng-container>
+        <button
+          type="button"
+          class="det-fix-btn"
+          *ngFor="let card of power.generatorButtons"
+          (click)="openFixCard(card.slug)"
+        >
+          {{ card.title }}
+        </button>
+
+        <h2 class="know-group-label" *ngIf="power.shore.length">Shore power</h2>
+        <ng-container *ngFor="let placed of power.shore">
+          <ng-container *ngTemplateOutlet="sectionCard; context: { placed: placed, systemId: placed.systemId }"></ng-container>
+        </ng-container>
+
+        <h2 class="know-group-label" *ngIf="power.warnings.length">Warnings</h2>
+        <ng-container *ngFor="let placed of power.warnings">
+          <ng-container *ngTemplateOutlet="sectionCard; context: { placed: placed, systemId: placed.systemId }"></ng-container>
+        </ng-container>
+
+        <h2 class="know-group-label" *ngIf="power.troubleshoot.length || power.fixButtons.length">
+          If something's not right
+        </h2>
+        <ng-container *ngFor="let placed of power.troubleshoot">
+          <ng-container *ngTemplateOutlet="sectionCard; context: { placed: placed, systemId: placed.systemId }"></ng-container>
+        </ng-container>
+        <button
+          type="button"
+          class="det-fix-btn"
+          *ngFor="let card of power.fixButtons"
+          (click)="openFixCard(card.slug)"
+        >
+          {{ card.title }}
+        </button>
+        <button
+          type="button"
+          class="learn-link"
+          *ngIf="power.learnLink as learn"
+          (click)="openLearn(learn.token)"
+        >
+          {{ learn.label }}
+        </button>
+
+        <details
+          id="know-reference"
+          class="know-reference"
+          *ngIf="power.reference.length || power.referenceNotes.length"
+        >
+          <summary>Reference</summary>
+          <section class="detail-section" *ngFor="let note of power.referenceNotes">
+            <h3>{{ note.heading }}</h3>
+            <p class="prose">{{ note.text }}</p>
+          </section>
+          <ng-container *ngFor="let placed of power.reference">
+            <ng-container *ngTemplateOutlet="sectionCard; context: { placed: placed, systemId: placed.systemId }"></ng-container>
+          </ng-container>
+        </details>
+      </div>
+    </ng-container>
+  </div>
+
+    <ng-template #sectionCard let-placed="placed" let-systemId="systemId">
       <section
         class="detail-section"
-        [id]="'know-sec-' + placed.index"
+        [attr.id]="placed.anchor === false ? null : 'know-sec-' + systemId + '-' + placed.index"
         [class.detail-section--warnings]="placed.role === 'warning'"
         [class.detail-section--notes]="placed.section.type === 'notes'"
       >
@@ -223,6 +318,5 @@
         </ng-template>
       </section>
     </ng-template>
-  </div>
   </ng-template>
 </ion-content>
