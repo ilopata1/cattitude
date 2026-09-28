@@ -33,9 +33,6 @@ sections:
   - c: The topping lift holds up the end of the boom. Furling lines twist a headsail away. Lazy jacks keep the mainsail from falling all over the deck.
   - c: Stays hold the mast up, including the forestay the jib is attached to. Stanchions and lifelines are the guard around the deck.
   - c: Mooring lines, or warps, attach the boat to the dock. The anchor is mostly on chain; when the chain runs out, an anchor warp follows.
-  - c: "{sails_on_this_boat}"
-    when:
-      has_sail_inventory: true
   - c: Jacklines run {jackline_phrase}. You can clip on to them in heavy weather.
     when:
       has_jacklines: true

@@ -138,6 +138,14 @@
         <dt>Content hash</dt><dd><code>{{ preview.content_hash }}</code></dd>
         <dt>Assets</dt><dd>{{ preview.asset_manifest|length }}{% if preview.missing_assets %} ({{ preview.missing_assets|length }} missing on disk){% endif %}</dd>
       </dl>
+      {% if preview.withheld %}
+        <h3>Withheld from guests</h3>
+        <ul class="note-list">
+          {% for message in preview.withheld %}
+          <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
       {% if preview.validation_messages %}
         <ul class="note-list">
           {% for message in preview.validation_messages %}

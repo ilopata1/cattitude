@@ -32,6 +32,14 @@
     {{ preview.missing_assets|length }} asset(s) missing on disk (API will 404 until files are deployed with the backend).
   </div>
   {% endif %}
+  {% if preview.withheld %}
+  <h2>Withheld from guests</h2>
+  <ul class="note-list">
+    {% for message in preview.withheld %}
+    <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
   {% if preview.validation_messages %}
   <ul class="note-list">
     {% for message in preview.validation_messages %}

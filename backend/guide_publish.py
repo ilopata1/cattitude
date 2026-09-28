@@ -9,6 +9,7 @@ from sqlalchemy import text
 from sqlalchemy.engine import Connection
 
 from guide_bootstrap import assemble_bootstrap, build_asset_manifest, canonical_json_hash
+from guide_guest_withhold import withhold_pipeline_status
 from guide_navigation import NAVIGATION_MODULE_KEYS, enrich_navigation
 from manual_titles import build_manual_titles_for_vessel
 
@@ -153,6 +154,9 @@ def assemble_publication(
         vessel_slug=vessel_slug,
         manual_titles=manual_titles,
     )
+    # Drop pipeline-status prose before navigation so a withheld system
+    # leaves system order, locations, and Learn. Drafts are unchanged.
+    withheld = withhold_pipeline_status(payload)
     enrich_navigation(payload, vessel_type=vessel_type)
     validation = validate_publication_payload(payload)
     hard_errors = [message for message in validation if not message.startswith("Warning:")]
@@ -187,6 +191,7 @@ def assemble_publication(
         "approved_module_count": approved_count,
         "published_module_count": published_count,
         "validation_messages": validation,
+        "withheld": withheld,
         "missing_assets": [asset for asset in asset_manifest if asset.get("missing")],
     }
 

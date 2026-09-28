@@ -64,7 +64,7 @@ SYSTEM_CATALOG: dict[str, dict[str, Any]] = {
         "icon": "🪢",
         "locs": ["cockpit", "bow"],
         "equipment_categories": [],
-        "focus": "Knots, fenders, and the names of lines and sails",
+        "focus": "Knots, fenders, and the names of lines",
         "review_title": "Seamanship",
         "guest_label": "Learn + Know — seamanship",
     },

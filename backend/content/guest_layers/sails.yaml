@@ -1,9 +1,15 @@
-# Purpose: Pointer from sail-handling hardware to the seamanship chapter.
+# Purpose: Sail inventory from the polar sail plan, plus a pointer to line names.
 # Used by: content.assembler.apply_guest_layers
 # Module: system / sails
 #
 
 sections:
+- t: Sails on this boat
+  type: prose
+  when:
+    is_sailing: true
+    has_sail_inventory: true
+  c: "{sails_on_this_boat}"
 - t: Names of the lines
   type: prose
   when:

@@ -249,10 +249,14 @@ def _check_handbook(failures: list[str]) -> None:
         failures.append("seamanship knots missing diagrams")
     if "along the edge of either deck" not in seam_text:
         failures.append("catamaran jackline wording missing")
-    if "Sails on this boat: Main, Self-tacking jib, Code 0, Gennaker, A2, and S4." not in seam_text:
-        failures.append("sail plan inventory missing from seamanship")
+    sail_line = "Sails on this boat: Main, Self-tacking jib, Code 0, Gennaker, A2, and S4."
+    if sail_line in seam_text:
+        failures.append("sail plan inventory still in seamanship")
     if "winch, not a sail name" in seam_text:
         failures.append("rigging equipment was used as a sail name")
+    sails = apply_guest_layers("sails", {"id": "sails", "sections": []}, catamaran)
+    if sail_line not in _texts(sails):
+        failures.append("sail plan inventory missing from sails")
     without_plan = make_snapshot(
         ["rigging_and_sail_handling"], vessel_type="sailing_catamaran"
     )
@@ -260,6 +264,11 @@ def _check_handbook(failures: list[str]) -> None:
     without_text = _texts(LIBRARY_MODULE_BUILDERS[("system", "seamanship")](without_plan))
     if "Sails on this boat" in without_text:
         failures.append("seamanship invented a sail list without a sail plan")
+    without_sails = _texts(
+        apply_guest_layers("sails", {"id": "sails", "sections": []}, without_plan)
+    )
+    if "Sails on this boat" in without_sails:
+        failures.append("sails invented a sail list without a sail plan")
     mono_seam = _texts(LIBRARY_MODULE_BUILDERS[("system", "seamanship")](monohull))
     if "along the side decks" not in mono_seam:
         failures.append("monohull jackline wording missing")
