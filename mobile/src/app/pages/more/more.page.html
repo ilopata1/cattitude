@@ -1,0 +1,20 @@
+<app-header></app-header>
+<ion-content [fullscreen]="true" class="page-content">
+  <div class="scroll-area more-menu">
+    <button
+      type="button"
+      class="more-card"
+      *ngFor="let row of rows"
+      (click)="open(row)"
+    >
+      <div class="more-card-icon">
+        <ion-icon [name]="row.icon"></ion-icon>
+      </div>
+      <div class="more-card-body">
+        <div class="more-card-title">{{ row.label }}</div>
+        <div class="more-card-sub">{{ row.subtitle }}</div>
+      </div>
+      <div class="more-card-arrow">›</div>
+    </button>
+  </div>
+</ion-content>

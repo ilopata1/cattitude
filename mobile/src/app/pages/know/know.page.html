@@ -9,7 +9,10 @@
   </div>
 
   <div class="search-results" *ngIf="searching; else knowBrowse">
-    <p class="search-empty" *ngIf="!searchGroups.length">Nothing in this guide matches that.</p>
+    <p class="search-empty" *ngIf="!searchGroups.length">
+      Nothing in this guide matches that.
+      <button type="button" class="search-ask" (click)="openAsk()">Ask the manuals</button>
+    </p>
     <section *ngFor="let group of searchGroups" class="search-group">
       <h2 class="section-label">{{ group.label }}</h2>
       <button

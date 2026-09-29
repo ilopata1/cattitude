@@ -27,7 +27,7 @@ export class SailPlanPage implements OnInit {
   ) {}
 
   get settingsHref(): string {
-    return `/v/${this.vesselContext.vesselSlug}/tabs/settings`;
+    return `/v/${this.vesselContext.vesselSlug}/tabs/more/settings`;
   }
 
   ngOnInit(): void {

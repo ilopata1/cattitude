@@ -25,8 +25,8 @@
           supported and upgraded to a secure WebSocket automatically.
         </p>
         <p class="settings-hint">
-          The Sail tab reads live instruments through this connection using the
-          instrument map below. Sign-in passwords are not stored here. Manage the
+          Live instruments read depth, speed, and wind through this connection
+          using the map below. Sign-in passwords are not stored here. Manage the
           server at its own admin page (e.g.
           <code>https://your-server/admin</code>), not inside this app.
         </p>
@@ -69,8 +69,7 @@
       </div>
     </div>
 
-    <!-- Sail plan -->
-    <div class="settings-section">
+    <div class="settings-section" *ngIf="sailing">
       <div class="settings-section-title">Sail Plan</div>
       <p class="settings-hint">
         Polar scores each 5 / 10 / 15 minute window against this matrix and
@@ -85,7 +84,7 @@
     <div class="settings-section">
       <div class="settings-section-title">Instruments</div>
       <p class="settings-hint">
-        Choose which Signal-K paths feed depth, speed, and wind on the Sail tab.
+        Choose which Signal-K paths feed depth, speed, and wind.
         Run a short scan while connected to your boat so paths match what the
         server actually publishes (e.g. depth below transducer vs below surface).
       </p>

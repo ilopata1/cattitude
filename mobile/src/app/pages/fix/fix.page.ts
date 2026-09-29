@@ -198,7 +198,7 @@ export class FixPage implements OnInit {
   }
 
   openAsk(): void {
-    void this.routes.navigateTabs('ask');
+    void this.routes.navigateTabs('more', 'ask');
   }
 
   openEmergency(): void {

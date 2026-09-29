@@ -19,6 +19,19 @@
   font-size: 14px;
 }
 
+.search-ask {
+  display: block;
+  margin-top: 12px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--cattitude-teal-dark);
+  font-weight: 700;
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
 .search-group {
   margin-bottom: 16px;
 }

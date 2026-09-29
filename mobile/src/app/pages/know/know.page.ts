@@ -241,6 +241,10 @@ export class KnowPage implements OnInit {
     return this.presented;
   }
 
+  openAsk(): void {
+    void this.vesselRoutes.navigateTabs('more', 'ask');
+  }
+
   openFixCard(slug: string): void {
     void this.vesselRoutes.navigateTabsWithExtras(['fix'], {
       queryParams: { card: slug, cat: null },

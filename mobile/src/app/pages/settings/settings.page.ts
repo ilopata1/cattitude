@@ -1,6 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { isSailingVessel } from '../../core/guide/more-menu';
+import { ContentService } from '../../core/services/content.service';
 import { SignalKService, SignalKConnectionState } from '../../core/services/signal-k.service';
 import { SignalKSettingsService } from '../../core/services/signal-k-settings.service';
 
@@ -23,7 +25,12 @@ export class SettingsPage implements OnInit, OnDestroy {
   constructor(
     private readonly sk: SignalKService,
     private readonly skSettings: SignalKSettingsService,
+    private readonly content: ContentService,
   ) {}
+
+  get sailing(): boolean {
+    return isSailingVessel(this.content.bootstrap.branding.vesselType);
+  }
 
   ngOnInit(): void {
     this.urlControl.setValue(this.skSettings.url);

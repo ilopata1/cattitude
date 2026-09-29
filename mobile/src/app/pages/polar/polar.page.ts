@@ -95,7 +95,7 @@ export class PolarPage implements OnInit, OnDestroy {
   ) {}
 
   get sailPlanLink(): string {
-    return `/v/${this.vesselContext.vesselSlug}/tabs/settings/sail-plan`;
+    return `/v/${this.vesselContext.vesselSlug}/tabs/more/settings/sail-plan`;
   }
 
   ngOnInit(): void {

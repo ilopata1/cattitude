@@ -28,30 +28,17 @@ const routes: Routes = [
           import('../pages/fix/fix.module').then((m) => m.FixPageModule),
       },
       {
-        path: 'ask',
+        path: 'more',
         loadChildren: () =>
-          import('../pages/ask/ask.module').then((m) => m.AskPageModule),
+          import('../pages/more/more.module').then((m) => m.MorePageModule),
       },
-      {
-        path: 'sail',
-        loadChildren: () =>
-          import('../pages/sail/sail.module').then((m) => m.SailPageModule),
-      },
-      {
-        path: 'anchorage',
-        loadChildren: () =>
-          import('../pages/anchorage/anchorage.module').then((m) => m.AnchorageModule),
-      },
-      {
-        path: 'polar',
-        loadChildren: () =>
-          import('../pages/polar/polar.module').then((m) => m.PolarModule),
-      },
-      {
-        path: 'settings',
-        loadChildren: () =>
-          import('../pages/settings/settings.module').then((m) => m.SettingsPageModule),
-      },
+      { path: 'ask', redirectTo: 'more/ask', pathMatch: 'full' },
+      { path: 'sail', redirectTo: 'more/sail', pathMatch: 'full' },
+      { path: 'anchorage', redirectTo: 'more/anchorage', pathMatch: 'full' },
+      { path: 'polar', redirectTo: 'more/polar', pathMatch: 'full' },
+      { path: 'settings/sail-plan', redirectTo: 'more/settings/sail-plan', pathMatch: 'full' },
+      { path: 'settings/instruments', redirectTo: 'more/settings/instruments', pathMatch: 'full' },
+      { path: 'settings', redirectTo: 'more/settings', pathMatch: 'full' },
       { path: '', redirectTo: 'home', pathMatch: 'full' },
     ],
   },

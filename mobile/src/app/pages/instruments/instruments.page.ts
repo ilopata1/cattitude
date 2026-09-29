@@ -48,7 +48,7 @@ export class InstrumentsPage implements OnInit, OnDestroy {
   ) {}
 
   get settingsHref(): string {
-    return `/v/${this.vesselContext.vesselSlug}/tabs/settings`;
+    return `/v/${this.vesselContext.vesselSlug}/tabs/more/settings`;
   }
 
   ngOnInit(): void {
