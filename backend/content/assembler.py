@@ -469,6 +469,119 @@ def apply_guest_layers(
     return merged
 
 
+_VESSEL_TYPE_WORDS = {
+    "sailing_catamaran": "sailing catamaran",
+    "cruising_monohull": "cruising monohull",
+    "sailing_trimaran": "sailing trimaran",
+    "power_catamaran": "power catamaran",
+    "motor_yacht": "motor yacht",
+    "sport_fishing": "sport-fishing boat",
+}
+
+
+def _article(phrase: str) -> str:
+    return "an" if phrase[:1].lower() in "aeiou" else "a"
+
+
+def _plain_vessel_type(snapshot: dict[str, Any]) -> str:
+    raw = str((snapshot.get("vessel") or {}).get("vessel_type") or "").strip()
+    if not raw:
+        return ""
+    return _VESSEL_TYPE_WORDS.get(raw, raw.replace("_", " "))
+
+
+def overview_sentence(snapshot: dict[str, Any]) -> tuple[str, str]:
+    """One plain sentence, and the subtitle. The model is omitted when unrecorded."""
+    name = slots.vessel_name(snapshot)
+    model = slots.hull_model_label(snapshot)
+    kind = _plain_vessel_type(snapshot)
+    if model and kind:
+        return f"{name} is {_article(model)} {model} {kind}.", model
+    if model:
+        return f"{name} is {_article(model)} {model}.", model
+    if kind:
+        return f"{name} is {_article(kind)} {kind}.", kind
+    return name, "Layout"
+
+
+def _reference_photos(reference: Any) -> list[dict[str, Any]]:
+    if not isinstance(reference, dict):
+        return []
+    photos: list[dict[str, Any]] = []
+    for section in reference.get("sections") or []:
+        if isinstance(section, dict) and section.get("type") == "photo":
+            photos.append(dict(section))
+    return photos
+
+
+def _day_one_items(snapshot: dict[str, Any]) -> list[str]:
+    items: list[str] = []
+    raft = slots.life_raft_location(snapshot)
+    if raft:
+        items.append(f"Life raft — {raft}")
+    bilge = slots.manual_bilge_location(snapshot)
+    if bilge:
+        items.append(f"Manual bilge pump — {bilge}")
+    for ladder in slots.swim_ladders(snapshot):
+        items.append(f"{ladder['label']} — {ladder['location']}")
+    return items
+
+
+def build_overview_module(
+    snapshot: dict[str, Any], reference: Any = None
+) -> dict[str, Any]:
+    """Layout from recorded facts. The layout photo is kept from the reference module."""
+    sentence, subtitle = overview_sentence(snapshot)
+    sections: list[dict[str, Any]] = _reference_photos(reference)
+    day_one = _day_one_items(snapshot)
+    if day_one:
+        sections.append({"t": "Find these on day 1", "type": "list", "items": day_one})
+    if not sections:
+        sections.append({"t": "About", "type": "prose", "c": sentence})
+    return {
+        "id": "overview",
+        "icon": "🗺️",
+        "title": "Boat overview",
+        "subtitle": subtitle,
+        "summary": sentence,
+        "locs": ["cockpit", "helm", "saloon"],
+        "sections": sections,
+    }
+
+
+def build_safety_module(
+    snapshot: dict[str, Any], reference: Any = None
+) -> dict[str, Any]:
+    """Shell for the safety guest layer. No generated gear locations."""
+    del snapshot, reference
+    return {
+        "id": "safety",
+        "icon": "🛟",
+        "title": "Safety gear",
+        "subtitle": "Life raft and man overboard",
+        "summary": "Where the life raft is, and what to do if someone falls overboard.",
+        "locs": ["cockpit", "saloon", "helm"],
+        "sections": [],
+    }
+
+
+def factual_tender_summary(snapshot: dict[str, Any]) -> str:
+    """One sentence from the tender's manufacturer and model, or empty."""
+    for row in slots.equipment(snapshot):
+        if row.get("system_category") != "tenders_and_watersports":
+            continue
+        manufacturer = str(row.get("manufacturer") or "").strip()
+        model = str(row.get("model") or "").strip()
+        if manufacturer.lower() in {"", "generic", "unknown"} or not model:
+            continue
+        if model.lower().startswith(manufacturer.lower()):
+            label = model
+        else:
+            label = f"{manufacturer} {model}"
+        return f"The tender is {_article(label)} {label}."
+    return ""
+
+
 def build_seamanship_module(
     snapshot: dict[str, Any], reference: Any = None
 ) -> dict[str, Any]:
@@ -506,6 +619,8 @@ LIBRARY_MODULE_BUILDERS: dict[
     ("ui", "homeRuleSections"): build_home_rules_module,
     ("fix_card_set", "all"): build_fix_cards_module,
     ("system", "seamanship"): build_seamanship_module,
+    ("system", "overview"): build_overview_module,
+    ("system", "safety"): build_safety_module,
     **{
         ("checklist", checklist_id): _make_checklist_builder(checklist_id)
         for checklist_id in _CHECKLIST_IDS

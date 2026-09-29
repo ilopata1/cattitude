@@ -65,6 +65,20 @@ def vessel_name(snapshot: dict[str, Any]) -> str:
     return (snapshot.get("vessel") or {}).get("name") or "the vessel"
 
 
+def hull_model_label(snapshot: dict[str, Any]) -> str:
+    """Manufacturer and model from the hull row. Empty when that row is missing."""
+    hull = snapshot.get("hull_model") or {}
+    if not isinstance(hull, dict):
+        return ""
+    manufacturer = str(hull.get("manufacturer") or "").strip()
+    display = str(hull.get("display_name") or hull.get("model_code") or "").strip()
+    if manufacturer and display:
+        if display.lower().startswith(manufacturer.lower()):
+            return display
+        return f"{manufacturer} {display}"
+    return manufacturer or display
+
+
 def company_name(snapshot: dict[str, Any]) -> str:
     return (snapshot.get("charter_company") or {}).get("name") or ""
 

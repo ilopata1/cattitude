@@ -11,7 +11,13 @@ _BACKEND = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_BACKEND))
 
 import guide_content_library_legacy as legacy
-from content.assembler import LIBRARY_MODULE_BUILDERS, apply_guest_layers
+from content.assembler import (
+    LIBRARY_MODULE_BUILDERS,
+    apply_guest_layers,
+    build_overview_module,
+    build_safety_module,
+    factual_tender_summary,
+)
 from content.loader import load_yaml
 
 ALL_CATEGORIES = [
@@ -272,6 +278,56 @@ def _check_handbook(failures: list[str]) -> None:
     )
     if any(section.get("t") == "Trampoline" for section in mono_overview["sections"]):
         failures.append("monohull overview includes a trampoline")
+
+    recorded = dict(catamaran)
+    recorded["vessel"] = {
+        "name": "Supernova",
+        "slug": "supernova",
+        "vessel_type": "sailing_catamaran",
+    }
+    recorded["hull_model"] = {"manufacturer": "Outremer", "display_name": "55"}
+    built_overview = apply_guest_layers(
+        "overview",
+        build_overview_module(
+            recorded,
+            {"sections": [{"t": "Layout", "type": "photo", "html": "<img class='layout'>"}]},
+        ),
+        recorded,
+    )
+    overview_text = _texts(built_overview)
+    if built_overview.get("summary") != "Supernova is an Outremer 55 sailing catamaran.":
+        failures.append(f"overview sentence: {built_overview.get('summary')}")
+    if built_overview.get("subtitle") != "Outremer 55":
+        failures.append(f"overview subtitle: {built_overview.get('subtitle')}")
+    overview_titles = [section.get("t") for section in built_overview["sections"]]
+    if overview_titles[0] != "Layout" or "Trampoline" not in overview_titles:
+        failures.append(f"overview photo or trampoline missing: {overview_titles}")
+    if "Life raft — under the seat at the aft of the cockpit" not in overview_text:
+        failures.append("overview day 1 missing the life raft")
+    for banned in ("not provided", "extinguisher", "engine room", "sleek", "luxury", "Cabins"):
+        if banned.lower() in overview_text.lower():
+            failures.append(f"overview invented or advertised {banned!r}")
+    built_safety = apply_guest_layers("safety", build_safety_module(recorded), recorded)
+    safety_text = _texts(built_safety)
+    if "It is kept under the seat at the aft of the cockpit." not in safety_text:
+        failures.append("safety life raft sentence missing")
+    if "from the cockpit" not in safety_text:
+        failures.append("safety manual bilge missing")
+    if "Familiarize" in safety_text or "stored in the cockpit area" in safety_text:
+        failures.append("safety still has the generic life-raft section")
+    tender = factual_tender_summary(
+        {
+            "equipment": [
+                {
+                    "manufacturer": "Highfield",
+                    "model": "Classic 360",
+                    "system_category": "tenders_and_watersports",
+                }
+            ]
+        }
+    )
+    if tender != "The tender is a Highfield Classic 360.":
+        failures.append(f"tender summary: {tender}")
 
     seamanship = LIBRARY_MODULE_BUILDERS[("system", "seamanship")](catamaran)
     seam_text = _texts(seamanship)

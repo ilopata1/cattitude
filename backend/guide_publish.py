@@ -11,6 +11,7 @@ from sqlalchemy.engine import Connection
 from guide_bootstrap import assemble_bootstrap, build_asset_manifest, canonical_json_hash
 from guide_guest_withhold import withhold_pipeline_status
 from guide_publish_consistency import apply_publish_consistency
+from guide_tone import load_tone_grounding, tone_warnings
 from guide_learn_checks import rewrite_learn_checks
 from guide_navigation import NAVIGATION_MODULE_KEYS, enrich_navigation
 from guide_section_duplicates import duplicate_warnings, fold_consecutive_sections
@@ -94,7 +95,9 @@ def load_vessel_type(conn: Connection, vessel_id: str) -> str:
     return str(row[0])
 
 
-def validate_publication_payload(payload: dict[str, Any]) -> list[str]:
+def validate_publication_payload(
+    payload: dict[str, Any], grounding: dict[str, Any] | None = None
+) -> list[str]:
     errors: list[str] = []
     warnings: list[str] = []
 
@@ -118,6 +121,7 @@ def validate_publication_payload(payload: dict[str, Any]) -> list[str]:
         warnings.append(
             "Overview has no Layout diagram. Upload one under Guide images."
         )
+    warnings.extend(tone_warnings(payload, grounding))
 
     return errors + [f"Warning: {message}" for message in warnings]
 
@@ -166,7 +170,11 @@ def assemble_publication(
     duplicates = duplicate_warnings(payload)
     enrich_navigation(payload, vessel_type=vessel_type)
     location_warnings = list(payload.pop("_location_warnings", []) or [])
-    validation = validate_publication_payload(payload)
+    try:
+        grounding = load_tone_grounding(conn, vessel_id)
+    except Exception:
+        grounding = None
+    validation = validate_publication_payload(payload, grounding)
     hard_errors = [message for message in validation if not message.startswith("Warning:")]
     if hard_errors:
         raise PublishValidationError(hard_errors)

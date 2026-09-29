@@ -1,5 +1,5 @@
 # Purpose: LLM instruction for the boat overview system module (layout, day-one orientation).
-# Used by: guide_generation._resolve_prompt_text for system/overview when no equipment fragment applies.
+# Used by: fallback only. system/overview is built by content.assembler.build_overview_module.
 # Module: system / overview
 # Composed with: guide/schemas/system__overview.txt, INPUT SNAPSHOT, optional REFERENCE MODULE
 #
@@ -19,10 +19,10 @@ Produce id "overview", icon "🗺️", locs for cockpit/helm/saloon.
 Include summary (1-2 sentences), learnChecks (3-5 walkthrough items), and sections.
 Each learn check names a recorded place and something the guest can find or do there. Walk recorded places. When the snapshot has separate port and starboard machinery spaces, do not write "the engine room". Do not use "familiarize", "understand", "know how", or "if applicable".
 - About [vessel name] (prose) — hull model facts from snapshot only; prose sections MUST use field "c" for paragraph text
-- Layout (list) — cabin/hull layout using hull model; do not invent cabin counts not supported by snapshot
-- Find These on Day 1 (steps) — safety gear and key locations (life jackets, EPIRB, fire ext, panel, fuel/water fills)
+- Layout (list) — only places and cabin counts that appear in the snapshot. If a count or a place is missing, omit that line. Do not write "not provided" or any other note that a fact is missing.
+- Find These on Day 1 (steps) — only gear whose place is recorded in the snapshot. Omit life jackets, EPIRB, flares, fire extinguishers, fuel fills, and water fills when no location is recorded.
 
-If hull_model or layout details are missing from the snapshot, say so plainly in prose — do not invent cabin counts or layout.
+Do not invent cabin counts, layout, or gear locations. Omit the unknown. Do not describe the boat as sleek, luxurious, versatile, or an experience.
 
 Do NOT include sections with type "photo" — deck plan photos are preserved from REFERENCE MODULE separately.
 If REFERENCE MODULE is provided, match its section structure and tone; update facts from snapshot.

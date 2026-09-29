@@ -1158,6 +1158,12 @@ def generate_module(
             from content.assembler import apply_guest_layers
 
             payload = apply_guest_layers(content_key, payload, snapshot_payload)
+            if content_key == "dinghy":
+                from content.assembler import factual_tender_summary
+
+                tender = factual_tender_summary(snapshot_payload)
+                if tender:
+                    payload["summary"] = tender
         _validate_module_payload(content_type, content_key, payload)
 
         reader_voice_style = None
