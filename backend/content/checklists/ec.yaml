@@ -10,7 +10,7 @@ groups:
   t: Final Day at Sea
   items:
   - key: ec/pump-out
-    c: Pump out holding tanks before returning — empty all heads
+    c: Empty holding tanks before returning in a permitted location
     s: Do not return to the marina with full or partially full holding tanks
     when:
       has_category:

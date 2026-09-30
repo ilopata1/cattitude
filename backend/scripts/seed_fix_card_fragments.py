@@ -63,7 +63,7 @@ SEED_FRAGMENTS: dict[tuple[str, str], dict] = {
                     "Confirm the control lever is in neutral",
                     "At the Nanni instrument panel: key or ON/STOP on, wait for warning lamps, then Start (preheat halfway if cold)",
                     "Confirm the panel is powered — fuses and main switch; battery voltage above 12.0V",
-                    "Never crank more than 10 seconds — if reluctant after several attempts, close the seacock before further cranking so the muffler does not fill; reopen before the next successful start",
+                    "Never crank more than 10 seconds — if reluctant after several attempts, close the seacock before further cranking so the muffler does not fill; reopen immediately after the next successful start",
                     "Once running: confirm raw water flows from the exhaust outlet",
                 ]
             },

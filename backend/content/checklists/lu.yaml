@@ -11,7 +11,7 @@ groups:
   items:
   - key: lu/nonessential
     c: Non-essential DC breakers off
-    s: 'Leave: fridge ON, bilge pumps AUTO, anchor light if night'
+    s: 'Leave: fridge ON, bilge pumps AUTO, anchor light if night and at anchor'
   - key: lu/generator-off
     c: Generator off
     s: Confirm it is shut down

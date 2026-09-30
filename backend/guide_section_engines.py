@@ -386,10 +386,9 @@ def compose_engines_section(
         )
         if "close the seacock to avoid filling the muffler with water" in by_action:
             _emit(
-                "If the engine is reluctant to start after several attempts, "
-                "close the raw-water seacock before further cranking so the "
-                "muffler does not fill with water; reopen the seacock before "
-                "the next successful start.",
+                "If the engine fails to start after several attempts, "
+                "close the raw-water seacock before continuing to crank. This helps prevent the "
+                "muffler from filling with water; reopen the seacock immediately after a successful start.",
                 f"profile.{eng_key}.operator_actions",
                 block="troubleshooting",
                 topic="reluctant_start",
