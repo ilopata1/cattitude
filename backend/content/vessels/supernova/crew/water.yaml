@@ -1,0 +1,126 @@
+# Purpose: Supernova crew notes for domestic water and the watermaker.
+# Used by: content.assembler.apply_crew_layers
+# Module: system / water
+# Audience: crew, except where a section omits the tag.
+#
+
+sections:
+- t: Domestic fresh water
+  type: list
+  audience: crew
+  photos:
+  - calorifier-starboard-engine-bay
+  items:
+  - c: The toilets and the deck washes run on fresh water or sea water.
+  - c: Open the valves and switch the pumps on before you expect water.
+  - c: CZone controls the port and starboard fresh pumps, the port and starboard sea pumps, and an extra deck-wash pump on the port side.
+  - c: A pump that is on runs only while water is being drawn.
+  - c: Leave only the fresh pumps on unless you are using sea water.
+  - c: There are two 270 L tanks, one under the bed in each aft cabin, and a 90 L hot water tank in the starboard engine compartment.
+  - c: The hot water tank heats when the starboard engine runs.
+  - c: It also heats electrically from CZone. That draws a lot of power.
+  - c: A red light under the CZone console shows when the electric heater is on.
+  - c: Leave the thermostat and the shutoff beside the tank as they are.
+  - c: The hulls have parallel cold-water systems.
+  - c: Port supplies the port hull, the galley, and the deck washes.
+  - c: Starboard supplies the starboard hull, including the deck shower.
+  - c: All hot water, on both hulls, comes from the starboard tank.
+  - c: If the starboard side runs out, there is no hot water anywhere, even when the port tank is full.
+  - c: On a passage, use the starboard tank and keep the port tank in reserve.
+
+- t: Sea water
+  type: list
+  audience: crew
+  photos:
+  - port-sea-water-valves
+  - starboard-sea-water-valves
+  items:
+  - c: Wash the decks with sea water when fresh water is short.
+  - c: At a deck-wash outlet, select fresh or sea with the valve beside it.
+  - c: Fresh water needs that side's fresh pump on. Sea water needs the sea valve open and the deck-wash pump on.
+  - c: Leave the control closed when you are not using it.
+  - c: One deck wash is next to the anchor windlass. The other is aft on the starboard hull.
+  - c: The extra sea-water pump and its valve are on the port side and feed both outlets.
+
+- t: If a fresh-water pump or filter fails
+  type: list
+  audience: crew
+  items:
+  - c: Look for a leak, a dirty filter, or a failed pump.
+  - c: Close the valve before you open anything.
+  - c: After you clean a filter, fill the bowl with water before you close it. That keeps air out of the system.
+  - c: Do not rebuild a failed pump aboard.
+  - c: Move a less important pump into a more important place.
+
+- t: Using water from the other hull
+  type: list
+  audience: crew
+  photos:
+  - starboard-water-manifolds
+  - port-water-manifolds
+  items:
+  - c: Each side has a hot manifold and a cold manifold.
+  - c: Open the Hulls Connection valve on both sides before water can cross.
+  - c: On the hot manifolds, Hulls Connection is the right-most valve on the starboard side and the left-most valve on the port side.
+  - c: Leave both hot valves open so the port hull gets hot water.
+  - c: On the cold manifolds, Hulls Connection is the left-most valve on both sides.
+  - c: Open both cold valves to share cold water. Hot water still comes only from the starboard tank.
+  - c: For normal use, open both hot Hulls Connection valves and leave both cold valves closed. Leave both fresh pumps on. Cold water stays on its own side, and hot water comes from starboard.
+  - c: For starboard to supply hot and cold water to port, open all four Hulls Connection valves. Switch the port fresh pump off and leave the starboard fresh pump on.
+  - c: For port to supply cold water to starboard, open both cold Hulls Connection valves. Switch the port fresh pump on and the starboard fresh pump off. There is no hot water in this setup.
+
+- t: Shore water
+  type: list
+  audience: crew
+  photos:
+  - port-transom-fittings
+  - starboard-transom-fittings
+  items:
+  - c: Each side has a chrome deck filler.
+  - c: Fill the tanks with the watermaker. Do not put chlorinated town water into the tanks.
+  - c: "Aft on the starboard hull, from the bottom: water filler, deck-wash connection, town-water connection, tank vent, and the fresh/sea deck-wash control."
+  - c: Aft on the port hull are the filler, the vent, the shore-power inlet, and the watermaker valve that chooses which tank fills.
+  - c: The same deck wash and control sit next to the anchor windlass.
+  - c: To use town water without filling the tanks, connect the hose, turn off both fresh pumps, and open both cold Hulls Connection valves.
+
+- t: Running the watermaker
+  type: list
+  audience: crew
+  photos:
+  - watermaker-engine-bay
+  - nav-station-panel
+  items:
+  - c: Start and stop the watermaker on the panel in the port engine compartment.
+  - c: Turn the switch from OFF to 12/24 V at sea, or to 230 V on shore power or the generator. Either selection starts the unit.
+  - c: A repeater on the right-hand panel of the nav station shows watermaker status.
+  - c: Set the valve aft on the port hull to the tank you want to fill. The label says 3-way. It is a two-way valve.
+  - c: While it clears air, the light is yellow, Poor Quality. That can last several minutes.
+  - c: The pressure rises on its own, and the silver knob turns by itself.
+  - c: When the pressure gauge is in the green and the flow is good, the light turns green, Good Quality.
+  - c: The production gauge reads litres per hour. The top of the scale is 100 L/h.
+  - c: Watch the tanks on CZone.
+  - c: Switch the unit off, or move the fill valve to the other tank, before a tank overflows.
+  - c: Switch it off on the panel in the port engine compartment.
+
+- t: If the watermaker will not produce
+  type: list
+  audience: crew
+  photos:
+  - watermaker-plumbing
+  items:
+  - c: In a very rough sea or at high speed it can refuse to produce.
+  - c: It has produced at 11 knots.
+  - c: The pumps and filters are in the starboard aft cabin.
+  - c: Open the sea inlet, the blue valve, with the handle vertical. In the photograph it is at the bottom.
+  - c: Open the grey tap.
+  - c: Clean or replace the large filter.
+  - c: Leave the filter in the foreground.
+
+- t: Flushing the watermaker
+  type: list
+  audience: crew
+  photos:
+  - watermaker-plumbing
+  items:
+  - c: The membrane rinse is a fresh-water flush. Move the top valve to fresh water and run the watermaker for about five minutes.
+  - c: Flush before a long time unused, after a long time unused, and occasionally while you are using it.

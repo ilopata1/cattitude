@@ -1,0 +1,29 @@
+# Purpose: Supernova autopilot notes. The short section is for both views.
+# Used by: content.assembler.apply_crew_layers
+# Module: system / nav
+#
+
+sections:
+- t: Autopilots
+  type: prose
+  c: There is a main autopilot and a backup. The backup control is at the starboard helm, above the main pilot.
+- t: Using the backup autopilot
+  type: list
+  audience: crew
+  photos:
+  - starboard-helm-pilots
+  - pilot-transfer-switch
+  - port-autopilot-actuator
+  items:
+  - c: The main pilot has a control beside each engine control.
+  - c: It drives the rudders with a hydraulic actuator in the port engine compartment.
+  - c: It steers a compass course, or holds a wind angle when the log is working.
+  - c: That log is under the bed in the starboard forward cabin.
+  - c: The backup has one control, at the starboard helm, above the Nemesis screen and below the kill switch.
+  - c: Its actuator is in the starboard engine compartment.
+  - c: Wind mode needs the boat-speed sensor under the bed in the port forward cabin.
+  - c: Fitting that sensor opens an underwater fitting for a moment.
+  - c: The changeover switch is under the bed in the port aft cabin.
+  - c: It is labelled Pilote 1 and Pilote 2. The main pilot is Pilote 2.
+  - c: When the main pilot fails, switch to Pilote 1.
+  - c: If the port actuator fails and the helm may jam, disconnect that actuator in the port engine compartment.

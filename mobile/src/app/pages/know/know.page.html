@@ -6,6 +6,26 @@
       placeholder="Search this boat..."
       debounce="200"
     ></ion-searchbar>
+    <div class="reader-toggle" role="group" aria-label="Reading view">
+      <button
+        type="button"
+        class="know-tog-btn"
+        [class.active]="readerView.view() === 'guest'"
+        [attr.aria-pressed]="readerView.view() === 'guest'"
+        (click)="readerView.setView('guest')"
+      >
+        Guest
+      </button>
+      <button
+        type="button"
+        class="know-tog-btn"
+        [class.active]="readerView.view() === 'crew'"
+        [attr.aria-pressed]="readerView.view() === 'crew'"
+        (click)="readerView.setView('crew')"
+      >
+        Crew
+      </button>
+    </div>
   </div>
 
   <div class="search-results" *ngIf="searching; else knowBrowse">

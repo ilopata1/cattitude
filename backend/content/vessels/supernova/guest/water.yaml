@@ -1,0 +1,36 @@
+# Purpose: Supernova corrections to the generated watermaker chapter.
+# Used by: content.assembler.apply_vessel_guest_layers
+# Module: system / water
+# The Dessalator extract names a NAVIGATOR panel. On this boat that panel is
+# in the port engine compartment. The membrane rinse is the fresh-water valve.
+# Whether the nav-station repeater can start the unit is left unstated.
+#
+
+summary: >-
+  On {vessel_name}, fresh water can be made on board with the watermaker
+  (Dessalator Duo AC & DC Navigator). Start and stop it on the panel in the
+  port engine compartment.
+sections:
+- t: How it works
+  type: prose
+  c: "The panel in the port engine compartment selects AC or DC supply and sets working pressure with its motorized pressure-regulator knob. When running on 12 V or 24 V DC for more than five minutes, an engine, shore charger, or generator must be on to support the load.\n\nBattery bank and charging context can be found in the Batteries & Energy section of this guide; DC protection and distribution can be found in the Electrical Panel section of this guide."
+  html: "<p>The panel in the port engine compartment selects AC or DC supply and sets working pressure with its motorized pressure-regulator knob. When running on 12 V or 24 V DC for more than five minutes, an engine, shore charger, or generator must be on to support the load.</p><p>Battery bank and charging context can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:batteries\">Batteries &amp; Energy section of this guide</span>; DC protection and distribution can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:electrical\">Electrical Panel section of this guide</span>.</p>"
+- t: Turning it on
+  type: prose
+  c: Start the watermaker on the panel in the port engine compartment when you need to begin fresh water production. Select 12/24 V at sea, or 230 V on shore power or the generator.
+- t: Monitoring
+  type: prose
+  c: While producing, use the panel in the port engine compartment to confirm the unit is running and to adjust voltage selection or working pressure.
+- t: Operating
+  type: prose
+  c: "Stop the watermaker on the panel in the port engine compartment when you no longer need to make water.\n\nRestart from that same panel when you are ready to produce again."
+- t: If something's not right
+  type: prose
+  c: If the watermaker will not produce, confirm the voltage selection on the panel in the port engine compartment and that an engine, shore charger, or generator is on when running on 12 V or 24 V DC — then start it again on that panel.
+- t: Care & upkeep
+  type: list
+  photos:
+  - watermaker-plumbing
+  items:
+  - c: To rinse the membranes, move the top valve on the watermaker plumbing in the starboard aft cabin to fresh water and run the watermaker for about five minutes.
+  - c: Do this before and after a long time unused, and occasionally while you are using it.

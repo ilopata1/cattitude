@@ -101,10 +101,20 @@ def run_stage4_generation(
         from guide_generation import load_vessel_generation_context
 
         snapshot_payload = load_vessel_generation_context(conn, vessel_id)
-    from content.assembler import apply_guest_layers
+    from content.assembler import (
+        apply_crew_layers,
+        apply_guest_layers,
+        apply_vessel_guest_layers,
+    )
 
     for sid in wanted:
-        modules[sid] = apply_guest_layers(sid, modules[sid], snapshot_payload)
+        modules[sid] = apply_crew_layers(
+            sid,
+            apply_vessel_guest_layers(
+                sid, apply_guest_layers(sid, modules[sid], snapshot_payload), snapshot_payload
+            ),
+            snapshot_payload,
+        )
     for sid in wanted:
         try:
             _validate_module_payload("system", sid, modules[sid])

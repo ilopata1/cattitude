@@ -4,6 +4,7 @@
  */
 
 import { fixCardSlugs } from '../search/guide-search';
+import { ReaderView, sectionVisible } from './reader-view';
 
 export type SectionRole = 'where' | 'task' | 'warning' | 'troubleshoot' | 'reference' | 'omit';
 
@@ -20,6 +21,8 @@ export interface PresentableSection {
   html?: string;
   items?: unknown[];
   rows?: Array<{ name?: string; location?: string }>;
+  /** ``crew`` is hidden in the Guest reading view. Omitted sections show in both. */
+  audience?: string;
 }
 
 export interface PresentableLink {
@@ -148,6 +151,7 @@ export function presentChapter<T extends PresentableSection>(
     sections?: T[];
   },
   fixes: PresentableFix[],
+  view: ReaderView = 'guest',
 ): ChapterPresentation<T> {
   const where: PlacedSection<T>[] = [];
   const tasks: PlacedSection<T>[] = [];
@@ -163,6 +167,9 @@ export function presentChapter<T extends PresentableSection>(
   };
 
   (system.sections ?? []).forEach((section, index) => {
+    if (!sectionVisible(section, view)) {
+      return;
+    }
     const classified = classifySection(section);
     if (classified.role === 'omit') {
       return;

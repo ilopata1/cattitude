@@ -13,7 +13,10 @@ sys.path.insert(0, str(_BACKEND))
 import guide_content_library_legacy as legacy
 from content.assembler import (
     LIBRARY_MODULE_BUILDERS,
+    _sections_from_spec,
+    apply_crew_layers,
     apply_guest_layers,
+    apply_vessel_guest_layers,
     build_overview_module,
     build_safety_module,
     factual_tender_summary,
@@ -371,6 +374,175 @@ def _check_handbook(failures: list[str]) -> None:
         failures.append("safety brief missing the primary ladder location")
 
 
+def _check_section_audience(failures: list[str]) -> None:
+    built = _sections_from_spec(
+        [
+            {"t": "Showers", "type": "list", "items": [{"c": "Short showers."}]},
+            {
+                "t": "Hull connections",
+                "type": "list",
+                "audience": "crew",
+                "items": [{"c": "Open both."}],
+            },
+            {
+                "t": "Day use",
+                "type": "prose",
+                "audience": "guest",
+                "c": "Hot water is limited.",
+            },
+        ],
+        {},
+    )
+    by_title = {section["t"]: section for section in built}
+    if "audience" in by_title["Showers"]:
+        failures.append("untagged section gained an audience")
+    if by_title["Hull connections"].get("audience") != "crew":
+        failures.append("crew audience was dropped")
+    if "audience" in by_title["Day use"]:
+        failures.append("guest audience was copied onto the section")
+    try:
+        _sections_from_spec(
+            [{"t": "Bad", "type": "list", "audience": "captain", "items": [{"c": "x"}]}],
+            {},
+        )
+    except ValueError:
+        return
+    failures.append("unknown audience was accepted")
+
+
+def _check_crew_layers(failures: list[str]) -> None:
+    supernova = {"vessel": {"slug": "supernova", "name": "Supernova"}}
+    other = {"vessel": {"slug": "other", "name": "Other"}}
+    base = {"id": "water", "sections": [{"t": "Using fresh water", "type": "list", "items": ["Short showers."]}]}
+    water = apply_crew_layers("water", base, supernova)
+    titles = [section.get("t") for section in water["sections"]]
+    if titles[0] != "Using fresh water":
+        failures.append("crew water replaced the guest section")
+    if "Running the watermaker" not in titles:
+        failures.append("supernova watermaker crew section missing")
+    body = _texts(water)
+    if "100 L/h" not in body:
+        failures.append("watermaker crew section missing 100 L/h")
+    if "100 L/min" in body or "L/min" in body:
+        failures.append("watermaker crew section still says litres per minute")
+    if "crew-watermaker-engine-bay-" not in body:
+        failures.append("watermaker crew section missing its photograph")
+    crew_sections = [section for section in water["sections"] if section.get("audience") == "crew"]
+    if len(crew_sections) < 5:
+        failures.append("water crew sections were not tagged")
+    untouched = apply_crew_layers("water", base, other)
+    if untouched["sections"] != base["sections"]:
+        failures.append("crew water leaked onto another vessel")
+
+    nav = apply_crew_layers("nav", {"id": "nav", "sections": []}, supernova)
+    nav_sections = {section.get("t"): section for section in nav["sections"]}
+    if nav_sections.get("Autopilots", {}).get("audience") == "crew":
+        failures.append("the short autopilot note was hidden from guests")
+    if "backup" not in _texts(nav_sections.get("Autopilots", {})).lower():
+        failures.append("guest autopilot sentence missing")
+    if nav_sections.get("Using the backup autopilot", {}).get("audience") != "crew":
+        failures.append("backup autopilot procedure was not tagged crew")
+    if "port aft cabin" not in _texts(nav).lower():
+        failures.append("pilot switch cabin missing")
+
+    batteries = apply_crew_layers("batteries", {"id": "batteries", "sections": []}, supernova)
+    generator = next(section for section in batteries["sections"] if section.get("t") == "Generator control")
+    if generator.get("audience") == "crew":
+        failures.append("Panda panel location was hidden from guests")
+    if "nav station" not in _texts(generator).lower():
+        failures.append("Panda panel location missing")
+
+    sails = apply_crew_layers("sails", {"id": "sails", "sections": []}, supernova)
+    if not any(section.get("audience") == "crew" for section in sails["sections"]):
+        failures.append("code zero procedure missing")
+    heads = apply_crew_layers("heads", {"id": "heads", "sections": []}, supernova)
+    if "sea water" not in _texts(heads).lower():
+        failures.append("heads fresh/sea note missing")
+
+
+def _check_vessel_guest_layers(failures: list[str]) -> None:
+    supernova = {"vessel": {"slug": "supernova", "name": "Supernova"}}
+    other = {"vessel": {"slug": "other", "name": "Other"}}
+    base = {
+        "id": "water",
+        "summary": (
+            "On Supernova, fresh water can be made on board with the watermaker "
+            "(Dessalator Duo AC & DC Navigator). It is a standalone unit operated "
+            "from its NAVIGATOR control panel."
+        ),
+        "sections": [
+            {
+                "t": "How it works",
+                "type": "prose",
+                "c": "The NAVIGATOR control panel selects AC or DC supply.",
+                "html": "<p>old</p>",
+            },
+            {"t": "Using fresh water", "type": "list", "items": ["Short showers."]},
+            {
+                "t": "Turning it on",
+                "type": "prose",
+                "c": "Start the watermaker from the NAVIGATOR control panel when you need to begin fresh water production.",
+            },
+            {
+                "t": "Monitoring",
+                "type": "prose",
+                "c": "While producing, use the NAVIGATOR control panel.",
+            },
+            {
+                "t": "Operating",
+                "type": "prose",
+                "c": "Stop the watermaker from the NAVIGATOR control panel.\n\nRestart from the same panel.",
+            },
+            {
+                "t": "If something's not right",
+                "type": "prose",
+                "c": "then retry start from the panel.",
+            },
+            {
+                "t": "Care & upkeep",
+                "type": "prose",
+                "c": "Rinse the membranes from the panel after prolonged inactivity to protect membrane quality.",
+            },
+            {"t": "Related", "type": "prose", "c": "Open the Fix It cards."},
+        ],
+    }
+    water = apply_vessel_guest_layers("water", base, supernova)
+    titles = [section.get("t") for section in water["sections"]]
+    expected = [
+        "How it works",
+        "Using fresh water",
+        "Turning it on",
+        "Monitoring",
+        "Operating",
+        "If something's not right",
+        "Care & upkeep",
+        "Related",
+    ]
+    if titles != expected:
+        failures.append("guest watermaker corrections moved the chapter")
+    body = _texts(water)
+    if "NAVIGATOR control panel" in body or "Rinse the membranes from the panel" in body:
+        failures.append("guest watermaker still sends the reader to the panel by the old instruction")
+    if "port engine compartment" not in body:
+        failures.append("guest watermaker start location missing")
+    if "about five minutes" not in body:
+        failures.append("guest flush duration missing")
+    if "repeater" in body.lower():
+        failures.append("guest watermaker states the repeater")
+    how = next(section for section in water["sections"] if section.get("t") == "How it works")
+    html = str(how.get("html") or "")
+    if "system:batteries" not in html or "system:electrical" not in html:
+        failures.append("guest how-it-works lost its section links")
+    care = next(section for section in water["sections"] if section.get("t") == "Care & upkeep")
+    if "crew-watermaker-plumbing-" not in str(care.get("html") or ""):
+        failures.append("guest flush missing its photograph")
+    if water["sections"][1].get("items") != ["Short showers."]:
+        failures.append("guest watermaker correction replaced a handbook section")
+    untouched = apply_vessel_guest_layers("water", base, other)
+    if untouched != base:
+        failures.append("watermaker corrections leaked onto another vessel")
+
+
 def main() -> int:
     failures: list[str] = []
     for fixture_name, snapshot in FIXTURES:
@@ -388,6 +560,9 @@ def main() -> int:
                 )
 
     _check_handbook(failures)
+    _check_section_audience(failures)
+    _check_crew_layers(failures)
+    _check_vessel_guest_layers(failures)
 
     if failures:
         print(f"FAILED: {len(failures)} mismatch(es)")

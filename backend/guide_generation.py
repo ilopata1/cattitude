@@ -1155,9 +1155,21 @@ def generate_module(
                     raise GuideGenerationError("system payload must be an object")
                 payload = _finalize_system_payload(content_key, payload, reference)
         if content_type == "system" and isinstance(payload, dict):
-            from content.assembler import apply_guest_layers
+            from content.assembler import (
+                apply_crew_layers,
+                apply_guest_layers,
+                apply_vessel_guest_layers,
+            )
 
-            payload = apply_guest_layers(content_key, payload, snapshot_payload)
+            payload = apply_crew_layers(
+                content_key,
+                apply_vessel_guest_layers(
+                    content_key,
+                    apply_guest_layers(content_key, payload, snapshot_payload),
+                    snapshot_payload,
+                ),
+                snapshot_payload,
+            )
             if content_key == "dinghy":
                 from content.assembler import factual_tender_summary
 

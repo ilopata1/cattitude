@@ -10,6 +10,12 @@
   border-bottom: 1px solid var(--cattitude-sand-mid);
 }
 
+.reader-toggle {
+  display: flex;
+  gap: 8px;
+  padding: 0 16px 12px;
+}
+
 .search-results {
   padding: 12px 16px 24px;
 }

@@ -366,8 +366,55 @@ def _resolve_guest_items(
     return resolved
 
 
+def _apply_section_audience(section: dict[str, Any], spec: dict[str, Any]) -> None:
+    """Copy ``audience: crew`` onto the published section. Omitted means both views."""
+    raw = spec.get("audience")
+    if raw is None:
+        return
+    if not isinstance(raw, str):
+        raise ValueError(f"section audience must be guest or crew, got {raw!r}")
+    audience = raw.strip().lower()
+    if audience == "guest":
+        return
+    if audience == "crew":
+        section["audience"] = "crew"
+        return
+    title = spec.get("t") or "section"
+    raise ValueError(f"{title!r} audience must be guest or crew, got {raw!r}")
+
+
+def _html_text(value: str) -> str:
+    return (
+        value.replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace('"', "&quot;")
+        .replace("'", "&#39;")
+    )
+
+
+def _crew_photo_html(keys: list[Any], photos: dict[str, dict[str, str]]) -> str:
+    cards: list[str] = []
+    for key in keys:
+        photo = photos.get(str(key))
+        if not photo:
+            raise ValueError(f"unknown crew photo {key!r}")
+        alt = _html_text(photo["caption"])
+        path = photo["path"]
+        cards.append(
+            '<div class="photo-card">'
+            f'<img style="max-width:384px;width:100%;" src="{path}" alt="{alt}" '
+            f"onclick=\"openPhoto(this.src,'{alt}')\">"
+            '<div class="photo-caption"><span class="photo-caption-icon">📷</span>'
+            f"<div><div class=\"photo-caption-text\">{alt}</div></div></div></div>"
+        )
+    return "".join(cards)
+
+
 def _sections_from_spec(
-    specs: list[dict[str, Any]], snapshot: dict[str, Any]
+    specs: list[dict[str, Any]],
+    snapshot: dict[str, Any],
+    photos: dict[str, dict[str, str]] | None = None,
 ) -> list[dict[str, Any]]:
     built: list[dict[str, Any]] = []
     for spec in specs or []:
@@ -394,6 +441,17 @@ def _sections_from_spec(
             if not items:
                 continue
             section["items"] = items
+        photo_keys = spec.get("photos") or []
+        if photo_keys:
+            if photos is None:
+                title = spec.get("t") or "section"
+                raise ValueError(f"{title!r} names photos but no catalog was loaded")
+            section["html"] = _crew_photo_html(photo_keys, photos)
+        elif section_type != "photo":
+            authored = spec.get("html")
+            if isinstance(authored, str) and authored.strip():
+                section["html"] = authored.strip()
+        _apply_section_audience(section, spec)
         built.append(section)
     return built
 
@@ -466,6 +524,102 @@ def apply_guest_layers(
                 current.append(check)
                 seen.add(text)
         merged["learnChecks"] = current
+    return merged
+
+
+def apply_vessel_guest_layers(
+    system_id: str, payload: dict[str, Any], snapshot: dict[str, Any]
+) -> dict[str, Any]:
+    """Replace generated sections for one vessel. Other boats are left unchanged.
+
+    Files live at ``content/vessels/{slug}/guest/{system_id}.yaml``.
+    A matching title is replaced in place. A new title is appended.
+    """
+    slug = _vessel_slug(snapshot)
+    if not slug:
+        return payload
+    relative = f"vessels/{slug}/guest/{system_id}.yaml"
+    if not (CONTENT_ROOT / relative).is_file():
+        return payload
+    data = load_yaml_cached(relative)
+    incoming = _sections_from_spec(
+        data.get("sections") or [], snapshot, _crew_photo_index(slug)
+    )
+    by_title = {
+        normalise_title(str(section.get("t") or "")): section
+        for section in incoming
+        if normalise_title(str(section.get("t") or ""))
+    }
+    merged = dict(payload)
+    used: set[str] = set()
+    sections: list[dict[str, Any]] = []
+    for section in payload.get("sections") or []:
+        if not isinstance(section, dict):
+            sections.append(section)
+            continue
+        key = normalise_title(str(section.get("t") or ""))
+        if key and key in by_title:
+            sections.append(by_title[key])
+            used.add(key)
+        else:
+            sections.append(section)
+    for section in incoming:
+        key = normalise_title(str(section.get("t") or ""))
+        if key not in used:
+            sections.append(section)
+    merged["sections"] = sections
+    summary = data.get("summary")
+    if isinstance(summary, str) and summary.strip():
+        merged["summary"] = slots.apply_slots(summary, snapshot).strip()
+    return merged
+
+
+def _vessel_slug(snapshot: dict[str, Any]) -> str:
+    vessel = snapshot.get("vessel") or {}
+    if not isinstance(vessel, dict):
+        return ""
+    return str(vessel.get("slug") or "").strip()
+
+
+def _crew_photo_index(slug: str) -> dict[str, dict[str, str]]:
+    relative = f"vessels/{slug}/crew_photos.yaml"
+    if not (CONTENT_ROOT / relative).is_file():
+        return {}
+    data = load_yaml_cached(relative)
+    index: dict[str, dict[str, str]] = {}
+    for photo in data.get("photos") or []:
+        if not isinstance(photo, dict):
+            continue
+        key = str(photo.get("key") or "").strip()
+        path = str(photo.get("path") or "").strip()
+        caption = str(photo.get("caption") or "").strip()
+        if key and path and caption:
+            index[key] = {"path": path, "caption": caption}
+    return index
+
+
+def apply_crew_layers(
+    system_id: str, payload: dict[str, Any], snapshot: dict[str, Any]
+) -> dict[str, Any]:
+    """Append vessel crew sections. Other boats are left unchanged.
+
+    Files live at ``content/vessels/{slug}/crew/{system_id}.yaml``.
+    Sections tagged ``audience: crew`` are hidden in the Guest reading view.
+    """
+    slug = _vessel_slug(snapshot)
+    if not slug:
+        return payload
+    relative = f"vessels/{slug}/crew/{system_id}.yaml"
+    if not (CONTENT_ROOT / relative).is_file():
+        return payload
+    data = load_yaml_cached(relative)
+    incoming = _sections_from_spec(
+        data.get("sections") or [], snapshot, _crew_photo_index(slug)
+    )
+    if not incoming:
+        return payload
+    merged = dict(payload)
+    merged["sections"] = list(payload.get("sections") or []) + incoming
     return merged
 
 

@@ -39,6 +39,8 @@ export interface SystemSection {
   items?: unknown[];
   /** Registry places for devices referenced in this system chapter. */
   rows?: Array<{ name: string; location: string }>;
+  /** ``crew`` is hidden in the Guest reading view. Omitted sections show in both. */
+  audience?: 'guest' | 'crew';
   [key: string]: unknown;
 }
 

@@ -30,6 +30,8 @@ import {
   SystemModule,
   SystemSection,
 } from '../../core/models/bootstrap-content.model';
+import { ReaderView } from '../../core/guide/reader-view';
+import { ReaderViewService } from '../../core/services/reader-view.service';
 
 @Component({
   selector: 'app-know',
@@ -49,10 +51,12 @@ export class KnowPage implements OnInit {
 
   private presentedSystem: SystemModule | null = null;
   private presentedFixes: ReturnType<ContentService['getFixes']> | null = null;
+  private presentedView: ReaderView | null = null;
   private presented: ChapterPresentation<SystemSection> | null = null;
   private powerMembers: SystemModule[] | null = null;
   private powerGalley: SystemModule | null = null;
   private powerFixes: ReturnType<ContentService['getFixes']> | null = null;
+  private powerViewMode: ReaderView | null = null;
   private powerCached: PowerPresentation<SystemSection> | null = null;
   private topicBootstrap: ContentService['bootstrap'] | null = null;
   private topicCache: TopicGroup<SystemModule>[] | null = null;
@@ -63,6 +67,7 @@ export class KnowPage implements OnInit {
 
   constructor(
     public readonly content: ContentService,
+    public readonly readerView: ReaderViewService,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly vesselRoutes: VesselRouteService,
@@ -216,28 +221,43 @@ export class KnowPage implements OnInit {
     }
     const fixes = this.content.getFixes();
     const galley = this.content.getSystem('galley') ?? null;
+    const view = this.readerView.view();
     const sameMembers =
       !!this.powerMembers &&
       this.powerMembers.length === members.length &&
       this.powerMembers.every((system, index) => system === members[index]);
-    if (sameMembers && this.powerFixes === fixes && this.powerGalley === galley && this.powerCached) {
+    if (
+      sameMembers &&
+      this.powerFixes === fixes &&
+      this.powerGalley === galley &&
+      this.powerViewMode === view &&
+      this.powerCached
+    ) {
       return this.powerCached;
     }
     this.powerMembers = members;
     this.powerFixes = fixes;
     this.powerGalley = galley;
-    this.powerCached = presentPower(members, fixes, galley);
+    this.powerViewMode = view;
+    this.powerCached = presentPower(members, fixes, galley, view);
     return this.powerCached;
   }
 
   chapterOf(system: SystemModule): ChapterPresentation<SystemSection> {
     const fixes = this.content.getFixes();
-    if (this.presented && this.presentedSystem === system && this.presentedFixes === fixes) {
+    const view = this.readerView.view();
+    if (
+      this.presented &&
+      this.presentedSystem === system &&
+      this.presentedFixes === fixes &&
+      this.presentedView === view
+    ) {
       return this.presented;
     }
     this.presentedSystem = system;
     this.presentedFixes = fixes;
-    this.presented = presentChapter(system, fixes);
+    this.presentedView = view;
+    this.presented = presentChapter(system, fixes, view);
     return this.presented;
   }
 

@@ -1,0 +1,12 @@
+# Purpose: Where the Fischer Panda panel is. Shown in both reading views.
+# Used by: content.assembler.apply_crew_layers
+# Module: system / batteries
+#
+
+sections:
+- t: Generator control
+  type: list
+  photos:
+  - nav-station-panel
+  items:
+  - c: The Fischer Panda iControl is on the right-hand panel of the nav station, below the kill switch. Start and stop the generator there.

@@ -1,9 +1,15 @@
 import { buildGuideIndex, fixCardSlugs, searchGuide, SearchableGuide } from './guide-search';
 
 function hits(guide: SearchableGuide, query: string): string[] {
-  return searchGuide(buildGuideIndex(guide), query).flatMap((group) =>
-    group.hits.map((hit) => `${group.label}|${hit.title}|${hit.snippet}|${hit.sectionIndex ?? ''}|${hit.item ?? ''}|${hit.card ?? ''}`),
-  );
+  const lines: string[] = [];
+  for (const group of searchGuide(buildGuideIndex(guide), query)) {
+    for (const hit of group.hits) {
+      lines.push(
+        `${group.label}|${hit.title}|${hit.snippet}|${hit.sectionIndex ?? ''}|${hit.item ?? ''}|${hit.card ?? ''}`,
+      );
+    }
+  }
+  return lines;
 }
 
 export function guideSearchFailures(): string[] {
@@ -170,6 +176,28 @@ export function guideSearchFailures(): string[] {
   );
 
   expect(searchGuide(buildGuideIndex(supernova), 'a').length === 0, 'one-letter query returned hits');
+
+  const tagged: SearchableGuide = {
+    systems: {
+      water: {
+        id: 'water',
+        title: 'Water',
+        sections: [
+          { t: 'Showers', c: 'Take short showers.' },
+          { t: 'Hull connections', c: 'Open both cold hull connections.', audience: 'crew' },
+        ],
+      },
+    },
+  };
+  expect(hits(tagged, 'hull connections').length === 0, 'guest search returned a crew section');
+  expect(hits(tagged, 'showers').length === 1, 'guest search hid an untagged section');
+  const crewHull: string[] = [];
+  for (const group of searchGuide(buildGuideIndex(tagged, 'crew'), 'hull connections')) {
+    for (const hit of group.hits) {
+      crewHull.push(String(hit.sectionIndex));
+    }
+  }
+  expect(crewHull.join(',') === '1', `crew search lost the original section index: ${crewHull.join(',')}`);
   expect(
     fixCardSlugs(['Engine will not start', 'Engine will not start']).join(',') ===
       'engine-will-not-start,engine-will-not-start-2',

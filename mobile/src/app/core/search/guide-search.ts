@@ -1,5 +1,7 @@
 /** Offline guide search. No Angular imports so it can run in Node. */
 
+import { ReaderView, sectionVisible } from '../guide/reader-view';
+
 export type GuideSearchKind = 'chapter' | 'checklist' | 'fix';
 
 export interface GuideSearchHit {
@@ -43,6 +45,7 @@ interface SearchableSection {
   html?: string;
   items?: unknown[];
   rows?: Array<{ name?: string; location?: string }>;
+  audience?: string;
 }
 
 interface SearchableChecklist {
@@ -94,7 +97,7 @@ const SYNONYMS: Record<string, string[]> = {
 
 const TAGS = /<[^>]+>/g;
 
-export function buildGuideIndex(guide: SearchableGuide): GuideIndex {
+export function buildGuideIndex(guide: SearchableGuide, view: ReaderView = 'guest'): GuideIndex {
   const entries: IndexEntry[] = [];
   for (const [id, system] of orderedSystems(guide)) {
     const systemId = (system.id || id).trim();
@@ -109,6 +112,9 @@ export function buildGuideIndex(guide: SearchableGuide): GuideIndex {
       });
     }
     (system.sections ?? []).forEach((section, sectionIndex) => {
+      if (!sectionVisible(section, view)) {
+        return;
+      }
       const fields = sectionFields(section);
       if (!fields.length) {
         return;

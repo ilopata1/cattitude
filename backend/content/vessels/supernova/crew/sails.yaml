@@ -1,0 +1,91 @@
+# Purpose: Supernova crew procedure for the code zero.
+# Used by: content.assembler.apply_crew_layers
+# Module: system / sails
+#
+
+sections:
+- t: Code zero — getting organized
+  type: list
+  audience: crew
+  photos:
+  - code-zero-overview
+  - code-zero-bag
+  - code-zero-sheet-lead
+  items:
+  - c: Put the code zero on the trampoline and shackle both ends of the bag to the trampoline, so the bag cannot go overboard once the sail is up.
+  - c: Lead each yellow code zero sheet through the block on the coachroof and tie it off on the bow.
+
+- t: Code zero — attaching
+  type: list
+  audience: crew
+  photos:
+  - code-zero-head-foot
+  - code-zero-downhaul
+  - code-zero-halyard-furler
+  - code-zero-furler-out
+  - code-zero-sheets
+  items:
+  - c: Decide which side you will hoist on. If the jib is still out, hoist on the windward side.
+  - c: Open the bag and find the head and the foot. The foot has the tighter spiral and the label.
+  - c: In the photograph the head is the lower end.
+  - c: The halyard is attached to the furler with a dyneema loop.
+  - c: The furling line is a continuous loop. The left-hand part furls and the right-hand part unfurls.
+  - c: The furler is at the end of the bowsprit.
+  - c: Ease the downhaul, the dull orange-brown line, and open its jammer so you can pull the furler in to where you can work.
+  - c: Take the halyard off the furler. Do not let go of the halyard, and do not lose the dyneema loop.
+  - c: Attach the halyard to the head and the furler to the foot.
+  - c: It is a double-purchase halyard, so it can twist.
+  - c: Hoist the sail ahead of the forestay, and above it.
+  - c: Pull the furler back out with the downhaul, jammer closed. Stop about 20 to 30 cm short.
+  - c: Tie the sheets to the clew with two bowlines. Make the loops about 10 cm.
+  - c: Lead the far sheet around the forestay and under the sail to rig for tacking. Furl the code zero, tack, then unfurl.
+  - c: Lead the sheet over the sail to rig for gybing. That suits the gennaker, and you gybe the main.
+  - c: Hang the dyneema loop on a metal ring on the mast.
+
+- t: Code zero — hoisting
+  type: list
+  audience: crew
+  photos:
+  - code-zero-hoisted
+  items:
+  - c: Furl the jib first, unless you are racing.
+  - c: Winch from the starboard helm. Keep someone on the trampoline to control the sail.
+  - c: Watch it all the way up and stop just short.
+  - c: Do not grind against the top.
+  - c: Tension the downhaul on a deck winch until the luff does not sag.
+
+- t: Code zero — unfurling
+  type: list
+  audience: crew
+  items:
+  - c: Furl the jib before you unfurl.
+  - c: The sail furls anti-clockwise when you look down on it.
+  - c: Hold one furling line in each hand. Pull the right-hand line a short way so the furler is set to unfurl.
+  - c: Open the furling-line jammer on deck near the winches.
+  - c: Take the loop of the furling line across the saloon and through a block, so it cannot snag.
+  - c: Sheet in while you pull one part of the furling line and feed the other.
+  - c: Do not let it run all at once.
+  - c: Do not pull hard enough to injure yourself.
+
+- t: Code zero — furling
+  type: list
+  audience: crew
+  photos:
+  - code-zero-sheet-clutch
+  items:
+  - c: Ease the sheet a little so the sail is not fully powered.
+  - c: Pull the part of the furling line that leads through the deck jammer, by hand or on a winch, and leave that jammer closed.
+  - c: Ease the sheet as the sail rolls up.
+
+- t: Code zero — dropping
+  type: list
+  audience: crew
+  photos:
+  - code-zero-drop
+  items:
+  - c: Lower the halyard while someone flakes the sail into the bag.
+  - c: Ease the downhaul, bring the furler in, and bring the dyneema loop from the mast.
+  - c: Take the furler off the foot and the halyard off the head. Do not let go of the halyard.
+  - c: Attach the halyard to the furler with the dyneema loop.
+  - c: Pull the furler back out to the bowsprit with the downhaul, and take up the halyard.
+  - c: Stow the sail in the bag.

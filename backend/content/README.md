@@ -38,7 +38,11 @@ when:
     - has_category: [navigation_electronics]
 ```
 
-4. After edits, run parity verification:
+4. Tag a section `audience: crew` when only the Crew reading view should show it. Leave the field off, or set `audience: guest`, for a section both views show. Crew view shows every section. Any other value is an error.
+
+   Vessel-only crew sections live in `vessels/{slug}/crew/{system}.yaml` and are appended for that slug. A same-titled correction for one boat lives in `vessels/{slug}/guest/{system}.yaml` and replaces that section in place. Name photos by key from `vessels/{slug}/crew_photos.yaml`.
+
+5. After edits, run parity verification:
 
 ```bash
 cd backend

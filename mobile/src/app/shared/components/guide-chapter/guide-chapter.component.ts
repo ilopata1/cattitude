@@ -15,6 +15,8 @@ import {
   SystemSection,
 } from '../../../core/models/bootstrap-content.model';
 import { ContentService } from '../../../core/services/content.service';
+import { ReaderViewService } from '../../../core/services/reader-view.service';
+import { ReaderView } from '../../../core/guide/reader-view';
 import { ProgressService } from '../../../core/services/progress.service';
 import { VesselRouteService } from '../../../core/services/vessel-route.service';
 
@@ -39,15 +41,18 @@ export class GuideChapterComponent {
 
   private presentedSystem: SystemModule | null = null;
   private presentedFixes: ReturnType<ContentService['getFixes']> | null = null;
+  private presentedView: ReaderView | null = null;
   private presented: ChapterPresentation<SystemSection> | null = null;
   private powerMembers: SystemModule[] | null = null;
   private powerGalley: SystemModule | null = null;
   private powerFixes: ReturnType<ContentService['getFixes']> | null = null;
+  private powerView: ReaderView | null = null;
   private powerCached: PowerPresentation<SystemSection> | null = null;
 
   constructor(
     public readonly content: ContentService,
     public readonly progress: ProgressService,
+    private readonly readerView: ReaderViewService,
     private readonly vesselRoutes: VesselRouteService,
     private readonly sanitizer: DomSanitizer,
   ) {}
@@ -58,12 +63,19 @@ export class GuideChapterComponent {
       return null;
     }
     const fixes = this.content.getFixes();
-    if (this.presented && this.presentedSystem === system && this.presentedFixes === fixes) {
+    const view = this.readerView.view();
+    if (
+      this.presented &&
+      this.presentedSystem === system &&
+      this.presentedFixes === fixes &&
+      this.presentedView === view
+    ) {
       return this.presented;
     }
     this.presentedSystem = system;
     this.presentedFixes = fixes;
-    this.presented = presentChapter(system, fixes);
+    this.presentedView = view;
+    this.presented = presentChapter(system, fixes, view);
     return this.presented;
   }
 
@@ -77,17 +89,25 @@ export class GuideChapterComponent {
     }
     const fixes = this.content.getFixes();
     const galley = this.content.getSystem('galley') ?? null;
+    const view = this.readerView.view();
     const sameMembers =
       !!this.powerMembers &&
       this.powerMembers.length === members.length &&
       this.powerMembers.every((system, index) => system === members[index]);
-    if (sameMembers && this.powerFixes === fixes && this.powerGalley === galley && this.powerCached) {
+    if (
+      sameMembers &&
+      this.powerFixes === fixes &&
+      this.powerGalley === galley &&
+      this.powerView === view &&
+      this.powerCached
+    ) {
       return this.powerCached;
     }
     this.powerMembers = members;
     this.powerFixes = fixes;
     this.powerGalley = galley;
-    this.powerCached = presentPower(members, fixes, galley);
+    this.powerView = view;
+    this.powerCached = presentPower(members, fixes, galley, view);
     return this.powerCached;
   }
 

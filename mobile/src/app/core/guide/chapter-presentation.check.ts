@@ -171,5 +171,24 @@ export function chapterPresentationFailures(): string[] {
   expect(report.includes('defaulted to task:') && report.includes('Engines — About this boat'), 'coverage names defaulted titles');
   expect(report.includes('omitted 1'), 'coverage counts related as omitted');
 
+  const tagged = {
+    id: 'water',
+    title: 'Water',
+    sections: [
+      { t: 'Showers', type: 'list', items: ['Short showers.'] },
+      { t: 'Hull connections', type: 'list', items: ['Open both.'], audience: 'crew' },
+    ],
+  };
+  const guestChapter = presentChapter(tagged, []);
+  const crewChapter = presentChapter(tagged, [], 'crew');
+  expect(
+    guestChapter.tasks.length === 1 && guestChapter.tasks[0].section.t === 'Showers',
+    'guest view showed a crew section',
+  );
+  expect(
+    crewChapter.tasks.length === 2 && crewChapter.tasks[1].index === 1,
+    'crew view dropped the section or renumbered it',
+  );
+
   return failures;
 }

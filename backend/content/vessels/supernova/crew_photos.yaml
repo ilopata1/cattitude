@@ -1,0 +1,139 @@
+# Photographs from Crew notes v2 for Supernova.
+# Crew sections reference these by key.
+# Captions are single lines. Repeated Word captions were collapsed.
+#
+photos:
+  - key: calorifier-starboard-engine-bay
+    chapter: water
+    source: media/image1.png
+    path: assets/images/vessels/supernova/systems/crew-calorifier-starboard-engine-bay-ea425871d1cd.png
+    caption: "Hot water tank in the starboard engine compartment."
+  - key: port-sea-water-valves
+    chapter: water
+    source: media/image2.png
+    path: assets/images/vessels/supernova/systems/crew-port-sea-water-valves-4b877796cfeb.png
+    caption: "Port sea water valve and filter, with separate valves and pumps for the toilet and the deck wash."
+  - key: port-sea-fresh-valve
+    chapter: water
+    source: media/image3.png
+    path: assets/images/vessels/supernova/systems/crew-port-sea-fresh-valve-9dba45f802b8.png
+    caption: "Port sea/fresh water valve next to the toilet door."
+  - key: starboard-sea-fresh-valve
+    chapter: water
+    source: media/image4.png
+    path: assets/images/vessels/supernova/systems/crew-starboard-sea-fresh-valve-fe9f0ebaca70.png
+    caption: "Starboard sea/fresh water valve, just aft of the pump."
+  - key: starboard-sea-water-valves
+    chapter: water
+    source: media/image5.png
+    path: assets/images/vessels/supernova/systems/crew-starboard-sea-water-valves-c29e8dae92ae.png
+    caption: "Starboard sea water valve, filter, and pump next to the toilet door."
+  - key: starboard-water-manifolds
+    chapter: water
+    source: media/image6.png
+    path: assets/images/vessels/supernova/systems/crew-starboard-water-manifolds-51a266c4675d.png
+    caption: "Starboard water manifolds in the aft cabin."
+  - key: port-water-manifolds
+    chapter: water
+    source: media/image7.png
+    path: assets/images/vessels/supernova/systems/crew-port-water-manifolds-6ad31f27230e.png
+    caption: "Port water manifolds near the steps."
+  - key: port-transom-fittings
+    chapter: water
+    source: media/image8.png
+    path: assets/images/vessels/supernova/systems/crew-port-transom-fittings-7ce794d20134.png
+    caption: "Aft of the port hull: water filler, shore power, and the watermaker tank selector."
+    note: "The notes attached this photo to the town-water filler sentence, and later reused the starboard photo while describing the port hull. This picture is the port transom."
+  - key: starboard-transom-fittings
+    chapter: water
+    source: media/image9.png
+    path: assets/images/vessels/supernova/systems/crew-starboard-transom-fittings-54548d29700d.png
+    caption: "Aft of the starboard hull: water filler, deck wash, town water, tank vent, and the fresh/sea deck-wash control."
+  - key: watermaker-engine-bay
+    chapter: water
+    source: media/image10.png
+    path: assets/images/vessels/supernova/systems/crew-watermaker-engine-bay-30f7bf79caac.png
+    caption: "Watermaker control in the port engine compartment. The production gauge reads litres per hour."
+  - key: nav-station-panel
+    chapter: water
+    source: media/image11.png
+    path: assets/images/vessels/supernova/systems/crew-nav-station-panel-dc37fc00bdc2.png
+    caption: "Right-hand panel of the nav station: kill switch, Fischer Panda iControl, and the watermaker repeater."
+    note: "The notes describe the production gauge as mirrored here. The gauge is on the engine-bay panel. This photo is the repeater, the generator control, and the kill switch."
+  - key: watermaker-plumbing
+    chapter: water
+    source: media/image12.png
+    path: assets/images/vessels/supernova/systems/crew-watermaker-plumbing-e1d43b483e03.png
+    caption: "Watermaker plumbing in the starboard aft cabin."
+  - key: code-zero-overview
+    chapter: sails
+    source: media/image13.png
+    path: assets/images/vessels/supernova/systems/crew-code-zero-overview-7ce6a81032f9.png
+    caption: "Code zero."
+  - key: code-zero-bag
+    chapter: sails
+    source: media/image14.png
+    path: assets/images/vessels/supernova/systems/crew-code-zero-bag-ffdc8736d27e.png
+    caption: "Code zero bag on the trampoline, ready to attach."
+  - key: code-zero-head-foot
+    chapter: sails
+    source: media/image15.png
+    path: assets/images/vessels/supernova/systems/crew-code-zero-head-foot-8de576ca3c7e.png
+    caption: "Head and foot of the code zero. In this picture the head is the lower end."
+  - key: code-zero-downhaul
+    chapter: sails
+    source: media/image16.png
+    path: assets/images/vessels/supernova/systems/crew-code-zero-downhaul-ae9f8171ad64.png
+    caption: "Code zero downhaul eased so the furler can be pulled in from the bowsprit."
+  - key: code-zero-halyard-furler
+    chapter: sails
+    source: media/image17.png
+    path: assets/images/vessels/supernova/systems/crew-code-zero-halyard-furler-f28baf081f3f.png
+    caption: "Halyard on the head and furler on the foot."
+  - key: code-zero-furler-out
+    chapter: sails
+    source: media/image18.png
+    path: assets/images/vessels/supernova/systems/crew-code-zero-furler-out-2c1dd56a7460.png
+    caption: "Code zero furler run back out along the bowsprit."
+  - key: code-zero-sheets
+    chapter: sails
+    source: media/image19.png
+    path: assets/images/vessels/supernova/systems/crew-code-zero-sheets-b2a68fb09636.png
+    caption: "Code zero sheets on the clew."
+  - key: code-zero-sheet-lead
+    chapter: sails
+    source: media/image20.png
+    path: assets/images/vessels/supernova/systems/crew-code-zero-sheet-lead-959a6fa16410.png
+    caption: "Code zero sheet led through the block on the coach roof."
+  - key: code-zero-hoisted
+    chapter: sails
+    source: media/image21.png
+    path: assets/images/vessels/supernova/systems/crew-code-zero-hoisted-9e3a70181ace.png
+    caption: "Code zero hoisted and still furled."
+  - key: code-zero-sheet-clutch
+    chapter: sails
+    source: media/image22.png
+    path: assets/images/vessels/supernova/systems/crew-code-zero-sheet-clutch-79dc1dd827b3.png
+    caption: "Code zero sheet in its clutch."
+  - key: code-zero-drop
+    chapter: sails
+    source: media/image23.png
+    path: assets/images/vessels/supernova/systems/crew-code-zero-drop-4870200f37c9.png
+    caption: "Dropping the code zero."
+  - key: starboard-helm-pilots
+    chapter: nav
+    source: media/image24.png
+    path: assets/images/vessels/supernova/systems/crew-starboard-helm-pilots-9df40e64d761.png
+    caption: "Starboard helm: main autopilot, with the backup control above it."
+  - key: pilot-transfer-switch
+    chapter: nav
+    source: media/image25.png
+    path: assets/images/vessels/supernova/systems/crew-pilot-transfer-switch-95d09dcbedf5.png
+    caption: "Pilote 1 / Pilote 2 switch under the bed in the port aft cabin. The main pilot is Pilote 2."
+    note: "The Word caption said the starboard aft bed. The switch is in the port aft cabin."
+  - key: port-autopilot-actuator
+    chapter: nav
+    source: media/image26.png
+    path: assets/images/vessels/supernova/systems/crew-port-autopilot-actuator-8665e91784be.png
+    caption: "Autopilot actuator in the port engine compartment."
+    note: "The picture was anchored on the transfer-switch paragraph. It shows the actuator."

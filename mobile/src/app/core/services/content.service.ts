@@ -7,8 +7,10 @@ import {
   LocationZone,
   SystemModule,
 } from '../models/bootstrap-content.model';
+import { ReaderView } from '../guide/reader-view';
 import { buildGuideIndex, GuideIndex, GuideSearchGroup, searchGuide } from '../search/guide-search';
 import { GuideSyncService } from './guide-sync.service';
+import { ReaderViewService } from './reader-view.service';
 import { VesselContextService } from './vessel-context.service';
 import { VesselRouteService } from './vessel-route.service';
 
@@ -16,6 +18,20 @@ export type GuideLoadFailure = 'offline' | 'missing' | 'failed';
 
 const OFFLINE_GUIDE_MESSAGE =
   "This boat's guide isn't on this phone yet. Connect to the internet once to download it.";
+
+function iconMime(href: string): string {
+  const path = href.split('?')[0].toLowerCase();
+  if (path.endsWith('.svg')) {
+    return 'image/svg+xml';
+  }
+  if (path.endsWith('.jpg') || path.endsWith('.jpeg')) {
+    return 'image/jpeg';
+  }
+  if (path.endsWith('.webp')) {
+    return 'image/webp';
+  }
+  return 'image/png';
+}
 
 export class GuideLoadError extends Error {
   constructor(
@@ -31,13 +47,14 @@ export class GuideLoadError extends Error {
 @Injectable({ providedIn: 'root' })
 export class ContentService {
   private content: BootstrapContent | null = null;
-  private guideIndex: GuideIndex | null = null;
+  private guideIndexes = new Map<ReaderView, GuideIndex>();
 
   constructor(
     private readonly vesselContext: VesselContextService,
     private readonly guideSync: GuideSyncService,
     private readonly vesselRoutes: VesselRouteService,
     private readonly title: Title,
+    private readonly readerView: ReaderViewService,
   ) {}
 
   async loadBootstrapContent(slug: string): Promise<BootstrapContent> {
@@ -117,10 +134,11 @@ export class ContentService {
   }
 
   search(query: string): GuideSearchGroup[] {
-    if (!this.guideIndex) {
+    const index = this.indexFor(this.readerView.view());
+    if (!index) {
       return [];
     }
-    return searchGuide(this.guideIndex, query);
+    return searchGuide(index, query);
   }
 
   formatManualTitle(manualId: string): string {
@@ -133,13 +151,41 @@ export class ContentService {
   private applyLoadedContent(content: BootstrapContent, slug: string): BootstrapContent {
     const prepared = this.prefixVesselRoutes(structuredClone(content) as BootstrapContent, slug);
     this.content = prepared;
-    this.guideIndex = buildGuideIndex(prepared);
+    this.guideIndexes.clear();
     this.vesselContext.applyResolvedContext({
       vesselId: prepared.vesselId,
       vesselSlug: prepared.vesselSlug,
     });
     this.applyDocumentTitle(prepared);
+    this.applyFavicon(prepared.branding.headerLogo);
     return prepared;
+  }
+
+  private indexFor(view: ReaderView): GuideIndex | null {
+    if (!this.content) {
+      return null;
+    }
+    let index = this.guideIndexes.get(view);
+    if (!index) {
+      index = buildGuideIndex(this.content, view);
+      this.guideIndexes.set(view, index);
+    }
+    return index;
+  }
+
+  private applyFavicon(logo: string | null | undefined): void {
+    if (typeof document === 'undefined') {
+      return;
+    }
+    const href = (logo || '').trim() || 'assets/icon/favicon.png';
+    for (const rel of ['icon', 'apple-touch-icon']) {
+      const link = document.querySelector<HTMLLinkElement>(`link[rel="${rel}"]`);
+      if (!link) {
+        continue;
+      }
+      link.href = href;
+      link.type = href.startsWith('blob:') ? '' : iconMime(href);
+    }
   }
 
   private applyDocumentTitle(content: BootstrapContent): void {

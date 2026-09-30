@@ -1,0 +1,18 @@
+# Purpose: Supernova crew note for fresh or sea flush.
+# Used by: content.assembler.apply_crew_layers
+# Module: system / heads
+#
+
+sections:
+- t: Fresh or sea flush
+  type: list
+  audience: crew
+  photos:
+  - port-sea-fresh-valve
+  - starboard-sea-fresh-valve
+  items:
+  - c: A red valve under the floor outside each toilet selects fresh or sea water.
+  - c: The heads are on fresh water, so every flush comes out of the tanks.
+  - c: On a long passage, select sea water. Use fresh water from time to time or the toilets start to smell.
+  - c: The sea inlet, filter, and pump are beside that valve.
+  - c: The flush only runs if that side's pump is on and the inlet valve is open.

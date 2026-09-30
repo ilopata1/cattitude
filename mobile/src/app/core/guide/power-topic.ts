@@ -4,6 +4,7 @@
  */
 
 import { classifySection, normaliseTitle, presentChapter, PresentableFix, PresentableSection } from './chapter-presentation';
+import { ReaderView, sectionVisible } from './reader-view';
 
 export const POWER_TOPIC_ID = 'power';
 export const POWER_PART_IDS = ['electrical', 'controls', 'batteries'] as const;
@@ -130,6 +131,7 @@ export function presentPower<T extends PresentableSection>(
   members: Array<PowerSystem<T> & { id: string }>,
   fixes: PresentableFix[],
   galley: PowerSystem<T> | null,
+  view: ReaderView = 'guest',
 ): PowerPresentation<T> {
   const where: PowerPlaced<T>[] = [];
   const switching: PowerPlaced<T>[] = [];
@@ -180,7 +182,7 @@ export function presentPower<T extends PresentableSection>(
   };
 
   for (const system of members) {
-    const chapter = presentChapter(system, fixes);
+    const chapter = presentChapter(system, fixes, view);
     if (!learnLink && chapter.learnLink) {
       learnLink = chapter.learnLink;
     }
@@ -195,6 +197,9 @@ export function presentPower<T extends PresentableSection>(
       notes.push({ heading: system.title || system.id, text: chapter.referenceSummary });
     }
     (system.sections ?? []).forEach((section, index) => {
+      if (!sectionVisible(section, view)) {
+        return;
+      }
       const title = (section.t || '').trim() || '(untitled)';
       const type = (section.type || '').trim() || '(none)';
       const classified = classifySection(section);
@@ -226,6 +231,9 @@ export function presentPower<T extends PresentableSection>(
 
   const galleyId = galley?.id || 'galley';
   (galley?.sections ?? []).forEach((section, index) => {
+    if (!sectionVisible(section, view)) {
+      return;
+    }
     if (!normaliseTitle(section.t).includes('generator')) {
       return;
     }
