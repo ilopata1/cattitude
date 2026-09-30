@@ -96,7 +96,7 @@ jobs:
 
       - name: Check deep link serves the app shell
         run: |
-          url="https://app.sailsupernova.com/v/cattitude/tabs/home"
+          url="https://app.sailsupernova.com/v/supernova/tabs/home"
           for i in 1 2 3 4 5 6; do
             code=$(curl -sS -o /tmp/deep.html -w "%{http_code}" "$url")
             if [ "$code" = "404" ] && grep -q '<app-root>' /tmp/deep.html && grep -q '<base href="/"' /tmp/deep.html; then
