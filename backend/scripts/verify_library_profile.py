@@ -69,6 +69,13 @@ def titles(module: dict) -> list[str]:
     return [group["t"] for group in module["groups"]]
 
 
+def group_texts(module: dict, title: str) -> list[str]:
+    for group in module["groups"]:
+        if group["t"] == title:
+            return [item["c"] for item in group["items"]]
+    return []
+
+
 def card_keys(cards: list[dict]) -> list[str]:
     return [card.get("key") for card in cards]
 
@@ -167,6 +174,16 @@ def test_supernova() -> None:
     check("Snubber or bridle attached and taking the load" in anch, "supernova snubber stays")
     check("Backed down gently in reverse for 30 seconds" in anch, "supernova backing down stays")
     check("Note any damage before you leave." in ec, "supernova private damage line")
+    check("Shut Down" in titles(payload["checklists"]["ec"]), "supernova shutdown heading")
+    check(
+        "hand back" not in "\n".join(titles(payload["checklists"]["ec"])).lower(),
+        "supernova shutdown does not say hand back",
+    )
+    shutdown = group_texts(payload["checklists"]["ec"], "Shut Down")
+    slip = group_texts(payload["checklists"]["ec"], "Returning to Slip")
+    check("Shore power connected" in shutdown, "supernova shore power is in shutdown")
+    check("Engines shut down after idling 3-5 minutes" in shutdown, "supernova engines off is in shutdown")
+    check("Shore power connected" not in slip, "supernova shore power left the slip list")
     check(not any("sign" in line.lower() for line in ec), "supernova has no charter sign-off")
     check("the charter company" not in "\n".join(ec), "supernova does not invent a charter company")
     check("Generator off" in lu, "supernova generator off")
@@ -302,6 +319,13 @@ def test_cattitude() -> None:
     check("Windlass circuit breaker confirmed ON" in pd, "cattitude windlass line stays")
     check("Windlass DC breaker ON" in anch, "cattitude anch windlass stays")
     check("Any damage noted and reported to Cruise Abaco" in ec, "cattitude damage line")
+    check("Shut Down & Hand Back" in titles(payload["checklists"]["ec"]), "cattitude hand back heading")
+    charter_shutdown = group_texts(payload["checklists"]["ec"], "Shut Down & Hand Back")
+    check("Shore power connected" in charter_shutdown, "cattitude shore power is in shutdown")
+    check(
+        "Engines shut down after idling 3-5 minutes" in charter_shutdown,
+        "cattitude engines off is in shutdown",
+    )
     check(
         "Complete and sign all charter sign-off documents with Cruise Abaco" in ec,
         "cattitude sign-off",
@@ -442,7 +466,10 @@ def test_owner_with_crew() -> None:
         [row("electrical_dc")],
         facts={"operatingMode": "owner_with_crew"},
     )
-    ec = texts(build_checklist_module("ec", snapshot))
+    module = build_checklist_module("ec", snapshot)
+    ec = texts(module)
+    check("Shut Down" in titles(module), "owner with crew shutdown heading")
+    check("hand back" not in "\n".join(titles(module)).lower(), "owner with crew does not say hand back")
     check("Note any damage before you leave." in ec, "owner with crew uses the private damage line")
     check(not any("sign-off" in line for line in ec), "owner with crew has no charter sign-off")
     chartered = boat(

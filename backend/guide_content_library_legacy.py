@@ -677,38 +677,43 @@ def _build_end_of_charter(snapshot: dict[str, Any]) -> dict[str, Any]:
             "Crew ready with lines before final approach",
         ),
     ]
+    handback_items = []
     if has_shore:
-        slip_items.append(
+        handback_items.append(
             _item("Shore power connected", "Roll the cable out fully before plugging in")
         )
     if has_engines:
-        slip_items.append(
+        handback_items.append(
             _item("Engines shut down after idling 3-5 minutes")
         )
-
-    handback_items = [
-        _item("All DC breakers off except bilge pumps (AUTO)"),
-        _item("Fresh water pump off"),
-        _item("All hatches secured"),
-        _item(
-            "Inventory checked — all gear accounted for",
-            "Life jackets, flare kit, snorkel gear, charts",
-        ),
-        _item(
-            "Boat cleaned — interior and cockpit",
-            f"Leave {vessel} as you found her",
-        ),
-        _item(
-            f"Any damage noted and reported to {company}",
-            "Report before departure — do not wait until the handover",
-        ),
-        _item(f"Complete and sign all charter sign-off documents with {company}"),
-    ]
+    handback_items.extend(
+        [
+            _item("All DC breakers off except bilge pumps (AUTO)"),
+            _item("Fresh water pump off"),
+            _item("All hatches secured"),
+            _item(
+                "Inventory checked — all gear accounted for",
+                "Life jackets, flare kit, snorkel gear, charts",
+            ),
+            _item(
+                "Boat cleaned — interior and cockpit",
+                f"Leave {vessel} as you found her",
+            ),
+            _item(
+                f"Any damage noted and reported to {company}",
+                "Report before departure — do not wait until the handover",
+            ),
+            _item(f"Complete and sign all charter sign-off documents with {company}"),
+        ]
+    )
+    shutdown_title = (
+        "Shut Down & Hand Back" if _company_name(snapshot) else "Shut Down"
+    )
 
     return _groups(
         _group("Final Day at Sea", final_day_items),
         _group("Returning to Slip", slip_items),
-        _group("Shut Down & Hand Back", handback_items),
+        _group(shutdown_title, handback_items),
     )
 
 

@@ -24,6 +24,11 @@ groups:
   - key: ec/dock-lines
     c: Dock lines prepared — bow, stern, and springs
     s: Crew ready with lines before final approach
+- key: ec/handover
+  t: Shut Down & Hand Back
+  when:
+    operating_mode: charter
+  items: &shutdown_items
   - key: ec/shore-power
     c: Shore power connected
     s: Roll the cable out fully before plugging in
@@ -35,9 +40,6 @@ groups:
     when:
       has_category:
       - propulsion_and_machinery
-- key: ec/handover
-  t: Shut Down & Hand Back
-  items:
   - key: ec/dc-off
     c: All DC breakers off except bilge pumps (AUTO)
   - key: ec/water-pump
@@ -67,3 +69,10 @@ groups:
     c: Complete and sign all charter sign-off documents with {company}
     when:
       operating_mode: charter
+- key: ec/handover
+  t: Shut Down
+  when:
+    any:
+    - operating_mode: private
+    - operating_mode: owner_with_crew
+  items: *shutdown_items
