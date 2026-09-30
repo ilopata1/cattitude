@@ -598,7 +598,7 @@ def _build_leaving_unattended(snapshot: dict[str, Any]) -> dict[str, Any]:
     power_items = [
         _item(
             "Non-essential DC breakers off",
-            "Leave: fridge ON, bilge pumps AUTO, anchor light if night",
+            "Leave: fridge ON, bilge pumps AUTO, anchor light if night and at anchor",
         ),
     ]
     if has_ac_power:
@@ -661,7 +661,7 @@ def _build_end_of_charter(snapshot: dict[str, Any]) -> dict[str, Any]:
     if has_heads:
         final_day_items = [
             _item(
-                "Pump out holding tanks before returning — empty all heads",
+                "Empty holding tanks before returning in a permitted location",
                 "Do not return to the marina with full or partially full "
                 "holding tanks",
             ),
