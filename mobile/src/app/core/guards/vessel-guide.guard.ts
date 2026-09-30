@@ -20,6 +20,14 @@ export const vesselGuideGuard: CanActivateFn = async (route) => {
   if (!slug) {
     return router.createUrlTree(['/v', environment.defaultVesselSlug, 'error']);
   }
+  if (
+    slug === 'cattitude' &&
+    typeof window !== 'undefined' &&
+    window.location.hostname === 'app.sailsupernova.com'
+  ) {
+    const rest = router.url.replace(/^\/v\/cattitude/, '');
+    return router.parseUrl(`/v/supernova${rest}`);
+  }
 
   vesselContext.setVesselSlug(slug);
 
