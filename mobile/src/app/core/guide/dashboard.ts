@@ -24,8 +24,8 @@ export interface DashboardItem {
   crewOnly: boolean;
   /** Set on Know sections and on the electrical, controls, and batteries shortcuts. */
   parentId?: string;
-  /** Grid columns occupied on a 4-column home grid. */
-  span: 1 | 2 | 4;
+  /** Columns on the 2-column home grid. Paired readings use 1. Wind and rules use the full row. */
+  span: 1 | 2;
 }
 
 export interface DashboardSystemInput {
@@ -171,12 +171,12 @@ export function buildDashboardCatalog(input: DashboardCatalogInput): DashboardIt
   }
 
   items.push(
-    widget('widget:depth', 'Depth', 'Live depth', '🌊', 2),
-    widget('widget:speed', 'Speed', 'Live speed', '🚤', 2),
-    widget('widget:wind', 'Wind', 'Live wind', '💨', 4),
+    widget('widget:depth', 'Depth', 'Live depth', '🌊', 1),
+    widget('widget:speed', 'Speed', 'Live speed', '🚤', 1),
+    widget('widget:wind', 'Wind', 'Live wind', '💨', 2),
   );
   if (input.rulesAvailable) {
-    items.push(widget('widget:rules', 'Boat rules', 'Never, always, and good habits', '📋', 4));
+    items.push(widget('widget:rules', 'Boat rules', 'Never, always, and good habits', '📋', 2));
   }
   return items;
 }
@@ -243,7 +243,7 @@ function shortcut(item: Omit<DashboardItem, 'kind' | 'span' | 'crewOnly'> & { cr
   };
 }
 
-function widget(id: string, label: string, subtitle: string, icon: string, span: 2 | 4): DashboardItem {
+function widget(id: string, label: string, subtitle: string, icon: string, span: 1 | 2): DashboardItem {
   return {
     id,
     kind: 'widget',

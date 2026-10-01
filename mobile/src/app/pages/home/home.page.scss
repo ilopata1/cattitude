@@ -70,23 +70,55 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+.persona-switch {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  margin-top: 16px;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+
+  button {
+    position: relative;
+    z-index: 1;
+    border: none;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.72);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 8px 0;
+    border-radius: 999px;
+    cursor: pointer;
+
+    &.active {
+      color: var(--cattitude-navy);
+    }
+  }
+}
+
+.persona-slider {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  width: calc(50% - 3px);
+  border-radius: 999px;
+  background: #fff;
+  transition: transform 0.22s ease;
+
+  &.crew {
+    transform: translateX(100%);
+  }
+}
+
 .dash-toolbar {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  justify-content: flex-end;
   margin-bottom: 12px;
-}
-
-.dash-persona {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--cattitude-navy);
-}
-
-.dash-persona-sub {
-  font-size: 11px;
-  color: var(--cattitude-text-light);
 }
 
 .dash-toolbar-actions {
@@ -122,12 +154,13 @@
 
 .dash-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
 
 .dash-shortcut,
 .dash-widget {
+  min-width: 0;
   border: none;
   background: #fff;
   border-radius: 14px;
@@ -153,7 +186,7 @@
 }
 
 .dash-label {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--cattitude-navy);
   text-align: center;
@@ -193,7 +226,7 @@
 .widget-value {
   display: block;
   font-family: var(--cattitude-font-display);
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 700;
   color: var(--cattitude-navy);
   line-height: 1.1;

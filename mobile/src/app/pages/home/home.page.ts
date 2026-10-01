@@ -88,10 +88,6 @@ export class HomePage {
     return this.tiles().some((tile) => tile.id === item.id);
   }
 
-  personaLabel(): string {
-    return this.readerView.view() === 'crew' ? 'Crew layout' : 'Guest layout';
-  }
-
   toggleEdit(): void {
     this.editing = !this.editing;
     if (!this.editing) {
