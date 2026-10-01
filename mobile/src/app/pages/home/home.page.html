@@ -17,6 +17,9 @@
         <span class="chip">📍 {{ content.bootstrap.branding.location }}</span>
         <span class="chip">⛵ {{ content.bootstrap.branding.marina }}</span>
       </div>
+    </div>
+
+    <div class="dash-toolbar">
       <div class="persona-switch" role="group" aria-label="Reading view">
         <span class="persona-slider" [class.crew]="readerView.view() === 'crew'"></span>
         <button
@@ -36,9 +39,6 @@
           Crew
         </button>
       </div>
-    </div>
-
-    <div class="dash-toolbar">
       <div class="dash-toolbar-actions">
         <button type="button" class="dash-text" (click)="addOpen = true">Add</button>
         <button type="button" class="dash-text" *ngIf="editing" (click)="reset()">Reset</button>

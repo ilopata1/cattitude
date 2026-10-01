@@ -70,55 +70,55 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+.dash-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
 .persona-switch {
   position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  width: 100%;
-  margin-top: 16px;
-  padding: 3px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  flex: 0 0 auto;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 1px 6px rgba(13, 33, 55, 0.07);
 
   button {
     position: relative;
     z-index: 1;
     border: none;
     background: transparent;
-    color: rgba(255, 255, 255, 0.72);
+    color: var(--cattitude-teal-dark);
     font-family: inherit;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
-    padding: 8px 0;
-    border-radius: 999px;
+    padding: 8px 14px;
+    border-radius: 20px;
     cursor: pointer;
 
     &.active {
-      color: var(--cattitude-navy);
+      color: #fff;
     }
   }
 }
 
 .persona-slider {
   position: absolute;
-  top: 3px;
-  bottom: 3px;
-  left: 3px;
-  width: calc(50% - 3px);
-  border-radius: 999px;
-  background: #fff;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 50%;
+  border-radius: 20px;
+  background: var(--cattitude-navy);
   transition: transform 0.22s ease;
 
   &.crew {
     transform: translateX(100%);
   }
-}
-
-.dash-toolbar {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 12px;
 }
 
 .dash-toolbar-actions {

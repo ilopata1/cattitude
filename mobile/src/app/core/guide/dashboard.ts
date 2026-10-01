@@ -24,7 +24,7 @@ export interface DashboardItem {
   crewOnly: boolean;
   /** Set on Know sections and on the electrical, controls, and batteries shortcuts. */
   parentId?: string;
-  /** Columns on the 2-column home grid. Paired readings use 1. Wind and rules use the full row. */
+  /** Columns on the 2-column home grid. Live readings use 1. Boat rules use the full row. */
   span: 1 | 2;
 }
 
@@ -173,7 +173,7 @@ export function buildDashboardCatalog(input: DashboardCatalogInput): DashboardIt
   items.push(
     widget('widget:depth', 'Depth', 'Live depth', '🌊', 1),
     widget('widget:speed', 'Speed', 'Live speed', '🚤', 1),
-    widget('widget:wind', 'Wind', 'Live wind', '💨', 2),
+    widget('widget:wind', 'Wind', 'Live wind', '💨', 1),
   );
   if (input.rulesAvailable) {
     items.push(widget('widget:rules', 'Boat rules', 'Never, always, and good habits', '📋', 2));
