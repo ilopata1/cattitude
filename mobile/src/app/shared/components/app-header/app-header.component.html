@@ -27,7 +27,17 @@
   <ng-template>
     <div class="modal-sheet">
       <div class="modal-pill"></div>
-      <h2 class="modal-title">Emergency Contacts</h2>
+      <h2 class="modal-title">Emergency</h2>
+      <div class="mayday-block" *ngIf="content.bootstrap.emergency.mayday.steps.length">
+        <h3>MAYDAY — {{ content.bootstrap.emergency.mayday.channel }}</h3>
+        <ol class="mayday-steps">
+          <li *ngFor="let step of content.bootstrap.emergency.mayday.steps; let i = index">
+            <span class="mayday-num">{{ i + 1 }}</span>
+            <span>{{ step }}</span>
+          </li>
+        </ol>
+      </div>
+      <h3 class="contacts-heading">Contacts</h3>
       <p class="modal-sub">{{ content.bootstrap.emergency.modalSubtitle }}</p>
 
       <div

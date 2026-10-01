@@ -63,6 +63,9 @@
   background: var(--cattitude-navy);
   border-radius: 20px 20px 0 0;
   padding: 24px 20px calc(36px + env(safe-area-inset-bottom));
+  max-height: 90vh;
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .modal-pill {
@@ -84,6 +87,55 @@
   font-size: 13px;
   color: rgba(255, 255, 255, 0.5);
   margin: 0 0 20px;
+}
+
+.mayday-block {
+  margin: 16px 0 8px;
+
+  h3 {
+    font-family: var(--cattitude-font-display);
+    color: var(--cattitude-coral);
+    font-size: 18px;
+    margin: 0 0 12px;
+  }
+}
+
+.contacts-heading {
+  font-family: var(--cattitude-font-display);
+  color: var(--cattitude-teal);
+  font-size: 16px;
+  margin: 18px 0 4px;
+}
+
+.mayday-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.4;
+  }
+}
+
+.mayday-num {
+  width: 20px;
+  height: 20px;
+  background: var(--cattitude-coral);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
 }
 
 .modal-contact {

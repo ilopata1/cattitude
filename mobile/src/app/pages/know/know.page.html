@@ -68,6 +68,11 @@
       </button>
     </div>
 
+    <button type="button" class="boat-rules-entry" *ngIf="hasBoatRules" (click)="openRules()">
+      <span class="boat-rules-title">Boat rules</span>
+      <span class="boat-rules-sub">Never, always, and good habits</span>
+    </button>
+
     <div class="scroll-area" *ngIf="mode === 'topic'">
       <div class="sys-grid">
         <button

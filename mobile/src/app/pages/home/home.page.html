@@ -19,61 +19,133 @@
       </div>
     </div>
 
-    <div class="mayday-card">
-      <div class="mayday-header">
-        <span>🚨</span>
-        <h3>MAYDAY Procedure — {{ content.bootstrap.emergency.mayday.channel }}</h3>
+    <div class="dash-toolbar">
+      <div>
+        <div class="dash-persona">{{ personaLabel() }}</div>
+        <div class="dash-persona-sub">Switch Guest and Crew on Know</div>
       </div>
-      <ol class="mayday-steps">
-        <li *ngFor="let step of content.bootstrap.emergency.mayday.steps; let i = index">
-          <span class="mayday-num">{{ i + 1 }}</span>
-          <span>{{ step }}</span>
-        </li>
-      </ol>
+      <div class="dash-toolbar-actions">
+        <button type="button" class="dash-text" (click)="addOpen = true">Add</button>
+        <button type="button" class="dash-text" *ngIf="editing" (click)="reset()">Reset</button>
+        <button type="button" class="dash-text dash-text-strong" (click)="toggleEdit()">
+          {{ editing ? 'Done' : 'Edit' }}
+        </button>
+      </div>
     </div>
 
-    <div class="emergency-card">
-      <h3>📞 Emergency Contacts</h3>
-      <div class="e-contact">
-        <div>
-          <div class="e-label">DISTRESS — Primary</div>
-          <div class="e-value">VHF Channel 16 (monitored 24/7)</div>
+    <p class="dash-empty" *ngIf="!tiles().length">
+      Nothing on this home yet. Add the shortcuts and live readings you want here.
+    </p>
+
+    <div class="dash-grid" *ngIf="!editing">
+      <ng-container *ngFor="let item of tiles()">
+        <button
+          *ngIf="item.kind === 'shortcut'"
+          type="button"
+          class="dash-shortcut"
+          [style.grid-column]="'span ' + item.span"
+          (click)="open(item)"
+        >
+          <span class="dash-icon">{{ item.icon }}</span>
+          <span class="dash-label">{{ item.label }}</span>
+        </button>
+
+        <button
+          *ngIf="item.kind === 'widget' && item.id !== 'widget:rules'"
+          type="button"
+          class="dash-widget"
+          [class.stale]="liveStale()"
+          [style.grid-column]="'span ' + item.span"
+          (click)="open(item)"
+        >
+          <span class="widget-kicker">{{ item.icon }} {{ item.label }}</span>
+          <ng-container *ngIf="liveConfigured(); else connectLive">
+            <span class="widget-value" *ngIf="item.id === 'widget:depth'">{{ depthLabel() }}</span>
+            <span class="widget-value" *ngIf="item.id === 'widget:speed'">{{ speedLabel() }}</span>
+            <ng-container *ngIf="item.id === 'widget:wind'">
+              <span class="widget-value">{{ windSpeedLabel() }}</span>
+              <span class="widget-detail">{{ windDetailLabel() }}</span>
+            </ng-container>
+          </ng-container>
+          <ng-template #connectLive>
+            <span class="widget-detail">Connect Signal K in Settings</span>
+          </ng-template>
+        </button>
+
+        <div
+          *ngIf="item.id === 'widget:rules'"
+          class="dash-widget dash-widget-rules"
+          [style.grid-column]="'span ' + item.span"
+        >
+          <app-boat-rules></app-boat-rules>
         </div>
-        <div class="vhf-badge">CH 16</div>
-      </div>
-      <div class="e-contact" *ngFor="let contact of content.bootstrap.emergency.contacts">
-        <div>
-          <div class="e-label">{{ contact.label }}</div>
-          <div class="e-value">{{ contact.value }}</div>
-        </div>
-        <a *ngIf="contact.tel" [href]="'tel:' + contact.tel">
-          <button class="e-action">Call</button>
-        </a>
-        <div *ngIf="contact.action === 'vhf'" class="vhf-badge">{{ contact.value }}</div>
-      </div>
+      </ng-container>
     </div>
 
-    <button type="button" class="learn-card" *ngIf="showLearn" (click)="openLearn()">
-      <span class="learn-card-kicker">New aboard?</span>
-      <span class="learn-card-title">Start here → Learn</span>
-      <span class="learn-card-sub">A short path through this boat's systems</span>
-    </button>
-
-    <div class="rules-section" *ngFor="let section of ruleSections">
-      <div class="rules-title" [ngClass]="section.tone">{{ section.title }}</div>
-      <div
-        class="rule-item"
-        [ngClass]="section.tone"
-        *ngFor="let rule of section.rules"
-        [class.clickable]="rule.link"
-        (click)="openRuleLink(rule.link)"
-      >
-        <span class="rule-icon">{{ rule.icon }}</span>
-        <span class="rule-text">
-          {{ rule.text }}
-          <span class="rule-link" *ngIf="rule.link"> → Tap to open</span>
-        </span>
-      </div>
-    </div>
+    <ion-list *ngIf="editing" class="dash-edit-list" lines="none">
+      <ion-reorder-group [disabled]="false" (ionReorderEnd)="reorder($event)">
+        <ion-item *ngFor="let item of tiles()">
+          <button
+            slot="start"
+            type="button"
+            class="dash-remove"
+            [attr.aria-label]="'Remove ' + item.label"
+            (click)="remove(item)"
+          >
+            ×
+          </button>
+          <ion-label>
+            <h2>{{ item.icon }} {{ item.label }}</h2>
+            <p>{{ item.subtitle }}</p>
+          </ion-label>
+          <ion-reorder slot="end"></ion-reorder>
+        </ion-item>
+      </ion-reorder-group>
+    </ion-list>
   </div>
 </ion-content>
+
+<ion-modal [isOpen]="addOpen" (didDismiss)="addOpen = false">
+  <ng-template>
+    <ion-header class="ion-no-border">
+      <ion-toolbar>
+        <ion-title>Add to home</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="addOpen = false">Done</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="add-content">
+      <section class="add-group" *ngFor="let group of addGroups()">
+        <h2 class="add-heading">{{ group.label }}</h2>
+        <ng-container *ngFor="let topic of group.topics">
+          <button
+            type="button"
+            class="add-row"
+            [disabled]="placed(topic)"
+            (click)="add(topic)"
+          >
+            <span class="add-icon">{{ topic.icon }}</span>
+            <span class="add-copy">
+              <span class="add-label">{{ topic.label }}</span>
+              <span class="add-sub">{{ placed(topic) ? 'On this home' : topic.subtitle }}</span>
+            </span>
+          </button>
+          <button
+            type="button"
+            class="add-row add-row-child"
+            *ngFor="let child of children(topic)"
+            [disabled]="placed(child)"
+            (click)="add(child)"
+          >
+            <span class="add-icon">{{ child.icon }}</span>
+            <span class="add-copy">
+              <span class="add-label">{{ child.label }}</span>
+              <span class="add-sub">{{ placed(child) ? 'On this home' : child.subtitle }}</span>
+            </span>
+          </button>
+        </ng-container>
+      </section>
+    </ion-content>
+  </ng-template>
+</ion-modal>

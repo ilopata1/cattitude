@@ -1,0 +1,17 @@
+<div class="rules-section" *ngFor="let section of sections">
+  <div class="rules-title" [ngClass]="section.tone">{{ section.title }}</div>
+  <div
+    class="rule-item"
+    [ngClass]="section.tone"
+    *ngFor="let rule of section.rules"
+    [class.clickable]="rule.link"
+    (click)="open(rule)"
+  >
+    <span class="rule-icon">{{ rule.icon }}</span>
+    <span class="rule-text">
+      {{ rule.text }}
+      <span class="rule-link" *ngIf="rule.link"> → Tap to open</span>
+    </span>
+  </div>
+</div>
+<p class="rules-empty" *ngIf="!sections.length">No boat rules are published for this boat.</p>

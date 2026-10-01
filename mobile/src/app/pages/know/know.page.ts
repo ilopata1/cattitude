@@ -78,6 +78,14 @@ export class KnowPage implements OnInit {
     return this.query.trim().length >= 2;
   }
 
+  get hasBoatRules(): boolean {
+    return (this.content.bootstrap.ui.homeRuleSections ?? []).some((section) => section.rules?.length);
+  }
+
+  openRules(): void {
+    void this.vesselRoutes.navigateTabs('home', 'rules');
+  }
+
   get searchGroups() {
     return this.searching ? this.content.search(this.query) : [];
   }
