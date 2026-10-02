@@ -12,7 +12,7 @@ import {
 } from '../../core/models/polar.model';
 import { PolarService } from '../../core/services/polar.service';
 import { SignalKService } from '../../core/services/signal-k.service';
-import { sailConfigurationOptions } from '../../core/guide/current-sail';
+import { MAIN_REEF_OPTIONS, MainReef, headsailOptions, isMainReef } from '../../core/guide/current-sail';
 import { SailAdvice, formatBand } from '../../core/models/sail-plan.model';
 import { CurrentSailService } from '../../core/services/current-sail.service';
 import { SailPlanService } from '../../core/services/sail-plan.service';
@@ -79,7 +79,7 @@ export class PolarPage implements OnInit, OnDestroy {
   readonly yTicks = [0, 50, 75, 100, 150];
 
   bars: PerfBar[] = [];
-  sailDraft = '';
+  readonly mainReefOptions = MAIN_REEF_OPTIONS;
 
   private readonly polar = inject(PolarService);
   private readonly sk = inject(SignalKService);
@@ -100,7 +100,6 @@ export class PolarPage implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.sailDraft = this.currentSails.configuration();
     this.subs.push(
       this.sk.connected$.subscribe(c => {
         this.skConnected = c;
@@ -185,27 +184,32 @@ export class PolarPage implements OnInit, OnDestroy {
     }
   }
 
-  sailOptions(): string[] {
-    return sailConfigurationOptions(this.sailPlans.plan);
+  headsailChoices(): string[] {
+    return headsailOptions(this.sailPlans.plan);
   }
 
-  selectedSailOption(): string {
-    return this.sailOptions().includes(this.sailDraft) ? this.sailDraft : '';
+  selectedMain(): MainReef | '' {
+    return this.currentSails.selection().main;
   }
 
-  chooseSail(value: string | null | undefined): void {
-    if (!value) {
+  selectedHeadsail(): string {
+    const headsail = this.currentSails.selection().headsail;
+    return this.headsailChoices().includes(headsail) ? headsail : '';
+  }
+
+  chooseMain(value: string | null | undefined): void {
+    if (!isMainReef(value) || value === this.selectedMain()) {
       return;
     }
-    this.sailDraft = value;
-    this.currentSails.set(value);
+    this.currentSails.setMain(value);
   }
 
-  saveSailDraft(value?: string | null): void {
-    if (typeof value === 'string') {
-      this.sailDraft = value;
+  chooseHeadsail(value: string | null | undefined): void {
+    const headsail = (value || '').trim();
+    if (!headsail || headsail === this.selectedHeadsail() || !this.headsailChoices().includes(headsail)) {
+      return;
     }
-    this.currentSails.set(this.sailDraft);
+    this.currentSails.setHeadsail(headsail);
   }
 
   trackWindow(_: number, w: PolarWindowAssessment): PolarWindowMinutes {

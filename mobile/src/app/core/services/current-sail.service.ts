@@ -1,28 +1,50 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Subject } from 'rxjs';
+import {
+  CurrentSailSelection,
+  EMPTY_CURRENT_SAILS,
+  MainReef,
+  formatCurrentSails,
+  isMainReef,
+} from '../guide/current-sail';
 import { VesselContextService } from './vessel-context.service';
 
-const STORAGE_KEY = 'cattitude.currentSails.v1';
+const STORAGE_KEY = 'cattitude.currentSails.v2';
 
-/** The sail configuration the crew says is up, remembered on this device. */
+/** The mainsail and headsail the crew says are up, remembered on this device. */
 @Injectable({ providedIn: 'root' })
 export class CurrentSailService {
   private readonly vesselContext = inject(VesselContextService);
-  private readonly configurationSignal = signal(this.read());
+  private readonly selectionSignal = signal(this.read());
   private readonly changedSubject = new Subject<void>();
-  readonly configuration = this.configurationSignal.asReadonly();
+  readonly selection = this.selectionSignal.asReadonly();
   readonly changed$ = this.changedSubject.asObservable();
 
-  set(value: string): void {
-    const trimmed = value.trim();
-    this.configurationSignal.set(trimmed);
+  configuration(): string {
+    return formatCurrentSails(this.selectionSignal());
+  }
+
+  setMain(main: MainReef): void {
+    this.write({ ...this.selectionSignal(), main });
+  }
+
+  setHeadsail(headsail: string): void {
+    const trimmed = headsail.trim();
+    if (!trimmed) {
+      return;
+    }
+    this.write({ ...this.selectionSignal(), headsail: trimmed });
+  }
+
+  private write(selection: CurrentSailSelection): void {
+    this.selectionSignal.set(selection);
     try {
-      localStorage.setItem(this.storageKey(), trimmed);
+      localStorage.setItem(this.storageKey(), JSON.stringify(selection));
     } catch {
       /* private mode and full storage can refuse the write */
     }
     this.changedSubject.next();
-    if (trimmed) {
+    if (selection.main || selection.headsail) {
       this.requestNotificationPermission();
     }
   }
@@ -34,11 +56,19 @@ export class CurrentSailService {
     void Notification.requestPermission();
   }
 
-  private read(): string {
+  private read(): CurrentSailSelection {
     try {
-      return localStorage.getItem(this.storageKey()) ?? '';
+      const raw = localStorage.getItem(this.storageKey());
+      if (!raw) {
+        return { ...EMPTY_CURRENT_SAILS };
+      }
+      const parsed = JSON.parse(raw) as Partial<CurrentSailSelection>;
+      return {
+        main: isMainReef(parsed.main) ? parsed.main : '',
+        headsail: typeof parsed.headsail === 'string' ? parsed.headsail.trim() : '',
+      };
     } catch {
-      return '';
+      return { ...EMPTY_CURRENT_SAILS };
     }
   }
 

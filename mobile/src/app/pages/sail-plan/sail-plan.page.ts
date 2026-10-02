@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AlertController, ToastController } from '@ionic/angular';
+import { isMainSail } from '../../core/guide/current-sail';
 import { SailPlan, SailPlanCell, bandsFromCuts, formatBand } from '../../core/models/sail-plan.model';
 import { resizeCells, resizeHeavyWeatherCells } from '../../core/services/sail-plan-advisor';
 import { clonePlan, SailPlanService } from '../../core/services/sail-plan.service';
@@ -85,9 +86,15 @@ export class SailPlanPage implements OnInit {
     this.cdr.markForCheck();
   }
 
+  canRemoveSail(sail: string): boolean {
+    return !isMainSail(sail);
+  }
+
   removeSail(index: number): void {
-    const [removed] = this.draft.sails.splice(index, 1);
-    if (removed) this.stripSail(removed);
+    const sail = this.draft.sails[index];
+    if (!sail || isMainSail(sail)) return;
+    this.draft.sails.splice(index, 1);
+    this.stripSail(sail);
     this.cdr.markForCheck();
   }
 

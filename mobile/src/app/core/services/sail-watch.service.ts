@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { normalizeSailConfiguration, sailPlansDiffer } from '../guide/current-sail';
+import { formatCurrentSails, normalizeSailConfiguration, sailPlansDiffer } from '../guide/current-sail';
 import { CurrentSailService } from './current-sail.service';
 import { NotificationBridgeService } from './notification-bridge.service';
 import { PolarService } from './polar.service';
@@ -38,8 +38,8 @@ export class SailWatchService {
     const average = this.polar.windows[15];
     const advice = this.sailPlans.advise(average.twaDeg, average.twsKnots, average.polarPct);
     const recommended = advice && !advice.empty ? advice.primary : '';
-    const current = this.currentSails.configuration();
-    if (!sailPlansDiffer(current, recommended)) {
+    const current = this.currentSails.selection();
+    if (!sailPlansDiffer(current, recommended, this.sailPlans.plan)) {
       this.lastNotified = null;
       return;
     }
@@ -51,7 +51,7 @@ export class SailWatchService {
     this.notifications.notifyAppEvent(
       'sail-plan.mismatch',
       'Sail plan',
-      `15-minute average suggests ${recommended.trim()}. You have ${current.trim()} up.`,
+      `15-minute average suggests ${recommended.trim()}. You have ${formatCurrentSails(current)} up.`,
     );
   }
 }

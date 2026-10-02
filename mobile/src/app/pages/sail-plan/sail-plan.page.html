@@ -33,7 +33,7 @@
     <div class="chips">
       <ion-chip *ngFor="let sail of draft.sails; let i = index; trackBy: trackByIndex">
         <ion-label>{{ sail }}</ion-label>
-        <ion-icon name="close-circle" (click)="removeSail(i)"></ion-icon>
+        <ion-icon *ngIf="canRemoveSail(sail)" name="close-circle" (click)="removeSail(i)"></ion-icon>
       </ion-chip>
     </div>
 

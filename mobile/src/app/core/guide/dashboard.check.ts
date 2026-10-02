@@ -34,12 +34,12 @@ export function dashboardFailures(): string[] {
   );
   expect(
     defaultTileIds('crew', sailing, true).join(',') ===
-      'widget:aws,widget:tws,widget:sog,widget:awa,widget:heading,widget:cog,widget:polar,know:engines,know:electrical,more:sail,more:anchorage,fix',
+      'widget:aws,widget:tws,widget:sog,widget:awa,widget:heading,widget:cog,widget:polar,know:engines,know:electrical,more:sail,more:anchorage,fix,more:ask',
     'crew default leads with live readings',
   );
   expect(byId.get('widget:aws')?.span === 1 && byId.get('widget:polar')?.span === 2, 'wind readings share a cell and polar uses the row');
   expect(
-    defaultTileIds('crew', sailing, false).join(',') === 'know:engines,know:electrical,more:sail,more:anchorage,fix',
+    defaultTileIds('crew', sailing, false).join(',') === 'know:engines,know:electrical,more:sail,more:anchorage,fix,more:ask',
     'crew default without Signal K omits live widgets',
   );
   expect(

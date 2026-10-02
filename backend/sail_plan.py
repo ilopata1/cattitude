@@ -200,6 +200,9 @@ def sanitize_plan(input_plan: Any) -> dict[str, Any]:
         seen_sails.add(key)
         sails.append(name)
 
+    main = next((name for name in sails if name.lower() == "main"), "Main")
+    sails = [main, *[name for name in sails if name.lower() != "main"]][:_MAX_SAILS]
+
     return {
         "name": _str(src.get("name"), _MAX_NAME) or "Sail plan",
         "sails": sails,

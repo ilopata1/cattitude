@@ -116,24 +116,26 @@
     </p>
     <ion-select
       class="current-sails-select"
-      label="From the sail plan"
+      label="Mainsail"
       label-placement="stacked"
       interface="popover"
-      placeholder="Choose a configuration"
-      [value]="selectedSailOption()"
-      (ionChange)="chooseSail($any($event).detail.value)"
+      placeholder="Choose the main"
+      [value]="selectedMain()"
+      (ionChange)="chooseMain($any($event).detail.value)"
     >
-      <ion-select-option *ngFor="let option of sailOptions()" [value]="option">{{ option }}</ion-select-option>
+      <ion-select-option *ngFor="let option of mainReefOptions" [value]="option">{{ option }}</ion-select-option>
     </ion-select>
-    <ion-input
-      class="current-sails-input"
-      label="Sails up now"
+    <ion-select
+      class="current-sails-select"
+      label="Headsail"
       label-placement="stacked"
-      fill="outline"
-      placeholder="Type the sails you have up"
-      [(ngModel)]="sailDraft"
-      (ionInput)="saveSailDraft($any($event).detail.value)"
-    ></ion-input>
+      interface="popover"
+      placeholder="Choose the headsail"
+      [value]="selectedHeadsail()"
+      (ionChange)="chooseHeadsail($any($event).detail.value)"
+    >
+      <ion-select-option *ngFor="let option of headsailChoices()" [value]="option">{{ option }}</ion-select-option>
+    </ion-select>
 
     <h2 class="section-title">Sail Plan</h2>
     <div class="window-readouts">

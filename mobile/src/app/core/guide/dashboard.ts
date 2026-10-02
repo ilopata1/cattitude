@@ -61,7 +61,7 @@ const MORE_ICONS: Record<string, string> = {
 };
 
 const GUEST_DEFAULT = ['learn', 'do:safety-brief', 'know:heads', 'more:ask'];
-const CREW_SHORTCUTS = ['know:engines', 'know:electrical', 'know:power', 'more:sail', 'more:anchorage', 'fix'];
+const CREW_SHORTCUTS = ['know:engines', 'know:electrical', 'know:power', 'more:sail', 'more:anchorage', 'fix', 'more:ask'];
 const CREW_LIVE = ['widget:aws', 'widget:tws', 'widget:sog', 'widget:awa', 'widget:heading', 'widget:cog', 'widget:polar'];
 
 export function buildDashboardCatalog(input: DashboardCatalogInput): DashboardItem[] {

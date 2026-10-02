@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { ensureMainSail } from '../guide/current-sail';
 import { SailAdvice, SailPlan, cloneCell } from '../models/sail-plan.model';
 import { adviseSailPlan, resizeCells, resizeHeavyWeatherCells } from './sail-plan-advisor';
 import { DEFAULT_SAIL_PLAN } from './sail-plan-default';
@@ -139,7 +140,7 @@ function sanitizePlan(input: SailPlan): SailPlan {
 
   return {
     name: (input.name ?? '').trim() || 'Sail plan',
-    sails: (input.sails ?? []).map(s => s.trim()).filter(Boolean),
+    sails: ensureMainSail((input.sails ?? []).map(s => s.trim()).filter(Boolean)),
     twaCuts,
     twsCuts,
     cells,
