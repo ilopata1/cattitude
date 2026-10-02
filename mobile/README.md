@@ -76,6 +76,22 @@ Regenerate PWA install icons from the hero logo (from repo root or `mobile/`):
 python ../utilities/generate_pwa_icons.py
 ```
 
+## Signal K (developers)
+
+Settings asks for a server address. It does not document simulators, tunnels, or plugins.
+
+To exercise instruments without a boat, from `signalk-sim/`:
+
+```bash
+node generator.js
+```
+
+The default scenario `sailing` streams TWA, TWS, and STW. Use `demo` for the AIS anchorage. Point the app at `http://localhost:3000`. An `https://` address is opened as `wss://`, so a Cloudflare tunnel URL works the same way as any other HTTPS Signal K server.
+
+The optional server plugin `hoeken/hoekens-anchor-alarm` publishes anchor-drag alarms on the Signal K notification stream. Its web UI is at `/hoekens-anchor-alarm/` on the boat server. The app does not install or configure that plugin.
+
+Ask suggestion chips and the sail-plan reset target come from the published guide (`ui.askSuggestions`, `ui.sailPlanTemplate`). Chips are filled from the vessel's system chapters at publish. The reset target is the sail plan stored for that vessel at publish. Older guides still derive the chips in the app; reset stays hidden until a template is published.
+
 ## Environment
 
 | File | Purpose |

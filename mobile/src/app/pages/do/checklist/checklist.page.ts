@@ -1,7 +1,8 @@
 import { Component, DestroyRef, OnInit, ViewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import { IonContent } from '@ionic/angular';
+import { AlertController, IonContent, ToastController } from '@ionic/angular';
+import { confirmChecklistReset } from './checklist-reset';
 import { Checklist } from '../../../core/models/bootstrap-content.model';
 import { ContentService } from '../../../core/services/content.service';
 import { ProgressService } from '../../../core/services/progress.service';
@@ -27,6 +28,8 @@ export class ChecklistPage implements OnInit {
     public readonly content: ContentService,
     public readonly progress: ProgressService,
     private readonly route: ActivatedRoute,
+    private readonly alerts: AlertController,
+    private readonly toasts: ToastController,
   ) {}
 
   ngOnInit(): void {
@@ -59,7 +62,7 @@ export class ChecklistPage implements OnInit {
   }
 
   reset(): void {
-    this.progress.resetChecklist(this.key);
+    void confirmChecklistReset(this.alerts, this.toasts, this.progress, this.key);
   }
 
   private scrollToPendingItem(): void {

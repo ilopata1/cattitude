@@ -144,6 +144,7 @@ export class ContentService {
       const toast = await this.toasts.create(liveToast({
         message,
         duration: 5000,
+        position: 'bottom',
         color: 'warning',
       }));
       await toast.present();
@@ -157,6 +158,7 @@ export class ContentService {
       const toast = await this.toasts.create(liveToast({
         message: 'Guide updated',
         duration: 2500,
+        position: 'bottom',
         color: 'success',
       }));
       await toast.present();

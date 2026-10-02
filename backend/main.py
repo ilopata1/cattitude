@@ -173,7 +173,7 @@ async def query_manuals(req: QueryRequest) -> QueryResponse:
         logger.exception("Ask vessel manual allow-list failed")
         raise HTTPException(
             status_code=500,
-            detail="Manual query failed. Check Railway logs for details.",
+            detail="The manual service had a problem answering that. Try again in a moment.",
         ) from exc
 
     if not manual_ids:
@@ -196,7 +196,7 @@ async def query_manuals(req: QueryRequest) -> QueryResponse:
         logger.exception("Query failed")
         raise HTTPException(
             status_code=500,
-            detail="Manual query failed. Check Railway logs for details.",
+            detail="The manual service had a problem answering that. Try again in a moment.",
         ) from exc
     elapsed_ms = int((time.perf_counter() - started) * 1000)
 

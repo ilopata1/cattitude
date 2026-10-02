@@ -33,6 +33,9 @@ export class InstrumentsPage implements OnInit, OnDestroy {
   connectionState: SignalKConnectionState = 'disconnected';
   scanning = false;
   scanProgress = 0;
+  pickerOpen = false;
+  pickerQuery = '';
+  pickerRole: InstrumentRole | 'sog' | null = null;
 
   private subs: Subscription[] = [];
   private scanSub: Subscription | null = null;
@@ -107,6 +110,44 @@ export class InstrumentsPage implements OnInit, OnDestroy {
 
   selectedSogFallback(): string {
     return this.draft.instruments.speed?.fallback?.path ?? '';
+  }
+
+  openPicker(role: InstrumentRole | 'sog'): void {
+    this.pickerRole = role;
+    this.pickerQuery = '';
+    this.pickerOpen = true;
+    this.cdr.markForCheck();
+  }
+
+  closePicker(): void {
+    this.pickerOpen = false;
+    this.cdr.markForCheck();
+  }
+
+  pickerTitle(): string {
+    if (this.pickerRole === 'sog') {
+      return 'Speed fallback';
+    }
+    return this.roles.find((cfg) => cfg.role === this.pickerRole)?.label ?? 'Path';
+  }
+
+  pickerPaths(): string[] {
+    const paths = this.pickerRole === 'sog'
+      ? this.sogOptions()
+      : this.pickerRole
+        ? this.optionsFor(this.pickerRole)
+        : [];
+    const query = this.pickerQuery.trim().toLowerCase();
+    return query ? paths.filter((path) => path.toLowerCase().includes(query)) : paths;
+  }
+
+  choosePath(path: string): void {
+    if (this.pickerRole === 'sog') {
+      this.setSogFallback(path);
+    } else if (this.pickerRole) {
+      this.setPath(this.pickerRole, path);
+    }
+    this.closePicker();
   }
 
   setPath(role: InstrumentRole, path: string): void {

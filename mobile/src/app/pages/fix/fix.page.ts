@@ -37,7 +37,7 @@ const CATEGORY_CLASSES: Record<string, string> = {
 export class FixPage implements OnInit {
   query = '';
   categoryFilter = 'all';
-  expandedIndex: number | null = null;
+  openValues: string[] = [];
   readonly categories = FIX_CATEGORIES;
 
   @ViewChild(IonContent) private ionContent?: IonContent;
@@ -64,7 +64,7 @@ export class FixPage implements OnInit {
         const cat = (params.get('cat') || '').trim().toLowerCase();
         if (cat && this.categories.some((c) => c.key === cat)) {
           this.categoryFilter = cat;
-          this.expandedIndex = null;
+          this.openValues = [];
         }
       });
   }
@@ -75,11 +75,23 @@ export class FixPage implements OnInit {
     const fixes = this.content.getFixes();
     const index = fixCardSlugs(fixes.map((fix) => fix.title)).indexOf(slug);
     const found = index >= 0 ? fixes[index] : undefined;
-    const shown = found ? this.filteredFixes().indexOf(found) : -1;
-    this.expandedIndex = shown >= 0 ? shown : null;
-    if (this.expandedIndex != null) {
-      scrollToElement(this.ionContent, `fix-card-${this.expandedIndex}`);
+    if (!found) {
+      this.openValues = [];
+      return;
     }
+    this.openValues = [slug];
+    scrollToElement(this.ionContent, `fix-card-${slug}`);
+  }
+
+  cardSlug(fix: FixCard): string {
+    const fixes = this.content.getFixes();
+    const index = fixes.indexOf(fix);
+    return fixCardSlugs(fixes.map((card) => card.title))[index] ?? fix.title;
+  }
+
+  onAccordion(event: CustomEvent<{ value?: string | string[] | null }>): void {
+    const value = event.detail?.value;
+    this.openValues = Array.isArray(value) ? value : value ? [value] : [];
   }
 
   get charterCompany(): string {
@@ -128,11 +140,7 @@ export class FixPage implements OnInit {
 
   setCategory(key: string): void {
     this.categoryFilter = key;
-    this.expandedIndex = null;
-  }
-
-  toggle(index: number): void {
-    this.expandedIndex = this.expandedIndex === index ? null : index;
+    this.openValues = [];
   }
 
   isHtmlStep(step: string): boolean {

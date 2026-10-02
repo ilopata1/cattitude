@@ -23,10 +23,9 @@
  * after the Signal-K service is ready.
  */
 import { Injectable, OnDestroy, signal } from '@angular/core';
-import { ToastController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { liveToast } from '../toast-live';
+import { AlarmBannerService } from './alarm-banner.service';
 import {
   DeviceNotificationPermission,
   fromDevicePermission,
@@ -72,7 +71,7 @@ export class NotificationBridgeService implements OnDestroy {
   constructor(
     private readonly sk: SignalKService,
     private readonly preferences: NotificationPreferenceService,
-    private readonly toasts: ToastController,
+    private readonly alarms: AlarmBannerService,
   ) {
     this.localReady = this.preload();
   }
@@ -186,13 +185,33 @@ export class NotificationBridgeService implements OnDestroy {
     }
     const title = titleOverride ?? this.titleForPath(path, value.state ?? 'alarm');
     const body  = value.message ?? `Signal-K notification on ${path}`;
+    const severity = value.state === 'emergency' ? 'emergency' : 'alarm';
+    const action = this.bannerAction(path, severity);
+    this.alarms.show({
+      title,
+      body,
+      severity,
+      actionLabel: action.label,
+      route: action.route,
+    });
     const permission = await this.readDevicePermission();
     this.devicePermissionSignal.set(permission);
     if (permission === 'granted') {
       await this.scheduleDeviceNotification(this.nextId++, title, body);
-      return;
     }
-    await this.showInApp(title, body);
+  }
+
+  private bannerAction(
+    path: string,
+    severity: 'alarm' | 'emergency',
+  ): { label: string; route: string[] } {
+    if (severity === 'emergency' || path.includes('anchor')) {
+      return { label: 'Open Anchorage', route: ['more', 'anchorage'] };
+    }
+    if (path.startsWith('sail-plan')) {
+      return { label: 'Open Polar', route: ['more', 'polar'] };
+    }
+    return { label: 'Open Anchorage', route: ['more', 'anchorage'] };
   }
 
   private async readDevicePermission(): Promise<DeviceNotificationPermission> {
@@ -228,7 +247,6 @@ export class NotificationBridgeService implements OnDestroy {
   private async scheduleDeviceNotification(id: number, title: string, body: string): Promise<void> {
     const local = this.localNotifications;
     if (!local) {
-      await this.showInApp(title, body);
       return;
     }
     try {
@@ -236,22 +254,7 @@ export class NotificationBridgeService implements OnDestroy {
         notifications: [{ id, title, body, sound: 'default' }],
       });
     } catch {
-      await this.showInApp(title, body);
-    }
-  }
-
-  private async showInApp(title: string, body: string): Promise<void> {
-    try {
-      const toast = await this.toasts.create(liveToast({
-        header: title,
-        message: body,
-        duration: 6000,
-        position: 'top',
-        color: 'warning',
-      }));
-      await toast.present();
-    } catch (error) {
-      console.warn('Could not show the in-app alert.', error);
+      /* The persistent banner is already on screen. */
     }
   }
 

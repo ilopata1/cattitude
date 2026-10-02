@@ -3,8 +3,11 @@
 <ion-content [fullscreen]="true" class="page-content">
   <div class="scroll-area settings-page">
 
-    <div class="settings-section">
-      <div class="settings-section-title">Appearance</div>
+    <ion-list inset="true" lines="none" class="settings-list">
+      <ion-list-header>
+        <ion-label>Appearance</ion-label>
+      </ion-list-header>
+      <ion-item>
       <ion-segment
         class="appearance-segment"
         [value]="theme.preference()"
@@ -28,82 +31,74 @@
         Night keeps the rest of the app dark and shifts Sail, Polar, and
         Anchorage toward red so the helm stays readable after dark.
       </p>
-    </div>
+      </ion-item>
+    </ion-list>
 
-    <!-- Signal-K Connection -->
-    <div class="settings-section">
-      <div class="settings-section-title">Signal-K Server</div>
+    <ion-list inset="true" lines="none" class="settings-list">
+      <ion-list-header>
+        <ion-label>Signal K</ion-label>
+      </ion-list-header>
+      <ion-item>
+        <div class="settings-row">
+          <ion-label class="settings-label">Server URL</ion-label>
+          <ion-input
+            [formControl]="urlControl"
+            type="url"
+            placeholder="https://signalk.example"
+            inputmode="url"
+            autocorrect="off"
+            autocapitalize="none"
+            class="settings-input"
+            (keyup.enter)="saveAndConnect()"
+          ></ion-input>
+          <p class="settings-hint">
+            Address of this boat's live-data server. Depth, speed, and wind on
+            Instruments, Sail, Polar, and Anchorage come from this connection.
+          </p>
+          <p class="field-error" *ngIf="urlError && (urlControl.dirty || urlControl.touched || !urlControl.value)">
+            {{ urlError }}
+          </p>
+          <div class="settings-actions">
+            <ion-button
+              (click)="saveAndConnect()"
+              [disabled]="urlControl.invalid || !urlControl.value"
+              expand="block"
+              color="primary"
+              class="settings-btn"
+            >
+              Save &amp; Connect
+            </ion-button>
+            <ion-button
+              *ngIf="connectionState === 'connected' || connectionState === 'connecting'"
+              (click)="disconnect()"
+              expand="block"
+              fill="outline"
+              color="dark"
+              class="settings-btn"
+            >
+              Disconnect
+            </ion-button>
+          </div>
+          <div
+            class="connection-status"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            <span class="visually-hidden">Signal K connection. </span>
+            <ion-badge [color]="stateColor" class="status-badge">{{ stateLabel }}</ion-badge>
+            <span *ngIf="selfContext" class="status-detail">{{ selfContext }}</span>
+            <span *ngIf="lastError" class="status-error">{{ lastError }}</span>
+          </div>
+        </div>
+      </ion-item>
+    </ion-list>
 
-      <div class="settings-row">
-        <ion-label class="settings-label">Server URL</ion-label>
-        <ion-input
-          [formControl]="urlControl"
-          type="url"
-          placeholder="https://sailsupernova.com"
-          inputmode="url"
-          autocorrect="off"
-          autocapitalize="none"
-          class="settings-input"
-          (keyup.enter)="saveAndConnect()"
-        ></ion-input>
-        <p class="settings-hint">
-          Enter your Signal-K server URL (for example
-          <code>https://sailsupernova.com</code>). Cloudflare tunnel URLs are
-          supported and upgraded to a secure WebSocket automatically.
-        </p>
-        <p class="settings-hint">
-          Live instruments read depth, speed, and wind through this connection
-          using the map below. Sign-in passwords are not stored here. Manage the
-          server at its own admin page (e.g.
-          <code>https://your-server/admin</code>), not inside this app.
-        </p>
-        <p class="settings-hint">
-          For local testing, run <code>node generator.js</code> in
-          <code>signalk-sim/</code> and set the URL to
-          <code>http://localhost:3000</code>. Default scenario
-          <code>sailing</code> streams TWA, TWS, and STW for Polar;
-          use <code>demo</code> for the AIS anchorage.
-        </p>
-      </div>
-
-      <div class="settings-actions">
-        <ion-button
-          (click)="saveAndConnect()"
-          [disabled]="urlControl.invalid || !urlControl.value"
-          expand="block"
-          color="primary"
-          class="settings-btn"
-        >
-          Save &amp; Connect
-        </ion-button>
-        <ion-button
-          *ngIf="connectionState === 'connected' || connectionState === 'connecting'"
-          (click)="disconnect()"
-          expand="block"
-          fill="outline"
-          color="dark"
-          class="settings-btn"
-        >
-          Disconnect
-        </ion-button>
-      </div>
-
-      <!-- Status -->
-      <div
-        class="connection-status"
-        role="status"
-        aria-live="polite"
-        aria-atomic="true"
-      >
-        <span class="visually-hidden">Signal K connection. </span>
-        <ion-badge [color]="stateColor" class="status-badge">{{ stateLabel }}</ion-badge>
-        <span *ngIf="selfContext" class="status-detail">{{ selfContext }}</span>
-        <span *ngIf="lastError" class="status-error">{{ lastError }}</span>
-      </div>
-    </div>
-
-    <div class="settings-section">
-      <div class="settings-section-title">Notifications</div>
+    <ion-list inset="true" lines="none" class="settings-list">
+      <ion-list-header>
+        <ion-label>Notifications</ion-label>
+      </ion-list-header>
+      <ion-item>
       <div class="settings-toggle-row">
         <div class="settings-toggle-copy">
           <ion-label class="settings-label">Alerts</ion-label>
@@ -127,10 +122,14 @@
       >
         Allow device notifications
       </ion-button>
-    </div>
+      </ion-item>
+    </ion-list>
 
-    <div class="settings-section" *ngIf="sailing">
-      <div class="settings-section-title">Sail Plan</div>
+    <ion-list *ngIf="sailing" inset="true" lines="none" class="settings-list">
+      <ion-list-header>
+        <ion-label>Sail plan</ion-label>
+      </ion-list-header>
+      <ion-item>
       <p class="settings-hint">
         Polar scores each 5 / 10 / 15 minute window against this matrix and
         reports which sail combination would have fit the mean TWA and TWS.
@@ -138,11 +137,14 @@
       <ion-button expand="block" routerLink="sail-plan" class="settings-btn">
         Open sail plan editor
       </ion-button>
-    </div>
+      </ion-item>
+    </ion-list>
 
-    <!-- Instruments -->
-    <div class="settings-section">
-      <div class="settings-section-title">Instruments</div>
+    <ion-list inset="true" lines="none" class="settings-list">
+      <ion-list-header>
+        <ion-label>Instruments</ion-label>
+      </ion-list-header>
+      <ion-item>
       <p class="settings-hint">
         Choose which Signal-K paths feed depth, speed, and wind.
         Run a short scan while connected to your boat so paths match what the
@@ -151,25 +153,8 @@
       <ion-button expand="block" routerLink="instruments" class="settings-btn">
         Map instruments
       </ion-button>
-    </div>
-
-    <!-- Required Plugins -->
-    <div class="settings-section">
-      <div class="settings-section-title">Signal-K Plugins</div>
-      <p class="settings-hint">
-        Optional server plugins extend anchoring and alarms. Clever Sailor does not
-        require Skip for these features.
-      </p>
-      <div class="plugin-item">
-        <span class="plugin-name">hoeken/hoekens-anchor-alarm</span>
-        <span class="plugin-purpose">
-          Anchor drag alarm — open
-          <code>/hoekens-anchor-alarm/</code> on your boat server to set the
-          watch circle; alarm/emergency notifications reach the app via
-          Signal-K (no Skip needed).
-        </span>
-      </div>
-    </div>
+      </ion-item>
+    </ion-list>
 
   </div>
 </ion-content>

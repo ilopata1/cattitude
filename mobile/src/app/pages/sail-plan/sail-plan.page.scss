@@ -73,6 +73,53 @@ ion-chip {
   }
 }
 
+.heat-grid {
+  display: grid;
+  gap: 6px;
+  margin: 8px 0 16px;
+  overflow-x: auto;
+}
+
+.heat-corner,
+.heat-col,
+.heat-row {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--cattitude-text-light);
+  display: flex;
+  align-items: center;
+}
+
+.heat-cell {
+  min-height: 44px;
+  padding: 6px;
+  border: none;
+  border-radius: 8px;
+  background: var(--cattitude-sand-mid);
+  color: var(--cattitude-text-dark);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  &.filled {
+    background: var(--cattitude-teal-light);
+  }
+}
+
+.hw-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.cell-sheet {
+  padding: 16px 16px calc(24px + env(safe-area-inset-bottom));
+  background: var(--cattitude-surface);
+}
+
 .matrix-scroll {
   overflow-x: auto;
   margin: var(--cattitude-space-xs) 0 var(--cattitude-space-md);

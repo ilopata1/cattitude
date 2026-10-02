@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { ToastController } from '@ionic/angular';
 import { Subject } from 'rxjs';
+import { AlarmBannerService } from './alarm-banner.service';
 import { DeviceNotificationPermission } from './notification-permission';
 import { NotificationBridgeService } from './notification-bridge.service';
 import { NotificationPreferenceService } from './notification-preference.service';
@@ -25,14 +25,11 @@ function flushPromises(): Promise<void> {
 describe('NotificationBridgeService', () => {
   let service: NotificationBridgeService;
   let prefs: NotificationPreferenceService;
-  let toasts: { create: jasmine.Spy };
+  let alarms: AlarmBannerService;
   let requestPermission: jasmine.Spy | null;
 
   beforeEach(() => {
     localStorage.removeItem('cattitude.notifications.enabled');
-    toasts = {
-      create: jasmine.createSpy('create').and.resolveTo({ present: () => Promise.resolve() }),
-    };
     requestPermission = typeof Notification === 'undefined'
       ? null
       : spyOn(Notification, 'requestPermission').and.resolveTo('granted');
@@ -41,31 +38,27 @@ describe('NotificationBridgeService', () => {
       providers: [
         NotificationBridgeService,
         NotificationPreferenceService,
+        AlarmBannerService,
         { provide: SignalKService, useValue: { delta$: new Subject() } },
-        { provide: ToastController, useValue: toasts },
       ],
     });
     service = TestBed.inject(NotificationBridgeService);
     prefs = TestBed.inject(NotificationPreferenceService);
+    alarms = TestBed.inject(AlarmBannerService);
+    alarms.dismiss();
   });
 
-  it('shows an in-app alert without requesting device permission', async () => {
+  it('shows a persistent in-app banner without requesting device permission', async () => {
     spyOn(access(service), 'readDevicePermission').and.resolveTo('prompt');
 
     service.notifyAppEvent('sail-plan.mismatch', 'Sail plan', 'Reef the main');
     await flushPromises();
     await flushPromises();
 
-    expect(toasts.create).toHaveBeenCalled();
-    const toast = toasts.create.calls.mostRecent().args[0] as {
-      header: string;
-      message: string;
-      htmlAttributes: { 'aria-live': string; role: string };
-    };
-    expect(toast.header).toBe('Sail plan');
-    expect(toast.message).toBe('Reef the main');
-    expect(toast.htmlAttributes['aria-live']).toBe('assertive');
-    expect(toast.htmlAttributes.role).toBe('alert');
+    const banner = alarms.current();
+    expect(banner?.title).toBe('Sail plan');
+    expect(banner?.body).toBe('Reef the main');
+    expect(banner?.actionLabel).toBe('Open Polar');
     if (requestPermission) {
       expect(requestPermission).not.toHaveBeenCalled();
     }
@@ -80,7 +73,7 @@ describe('NotificationBridgeService', () => {
     await flushPromises();
 
     expect(schedule).toHaveBeenCalled();
-    expect(toasts.create).not.toHaveBeenCalled();
+    expect(alarms.current()?.actionLabel).toBe('Open Anchorage');
     if (requestPermission) {
       expect(requestPermission).not.toHaveBeenCalled();
     }
@@ -92,7 +85,7 @@ describe('NotificationBridgeService', () => {
     service.notifyAppEvent('sail-plan.mismatch', 'Sail plan', 'Reef the main');
     await flushPromises();
 
-    expect(toasts.create).not.toHaveBeenCalled();
+    expect(alarms.current()).toBeNull();
     if (requestPermission) {
       expect(requestPermission).not.toHaveBeenCalled();
     }

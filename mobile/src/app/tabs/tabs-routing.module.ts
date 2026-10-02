@@ -33,7 +33,11 @@ const routes: Routes = [
           import('../pages/more/more.module').then((m) => m.MorePageModule),
       },
       { path: 'ask', redirectTo: 'more/ask', pathMatch: 'full' },
-      { path: 'sail', redirectTo: 'more/sail', pathMatch: 'full' },
+      {
+        path: 'sail',
+        loadChildren: () =>
+          import('../pages/sail/sail.module').then((m) => m.SailPageModule),
+      },
       { path: 'anchorage', redirectTo: 'more/anchorage', pathMatch: 'full' },
       { path: 'polar', redirectTo: 'more/polar', pathMatch: 'full' },
       { path: 'settings/sail-plan', redirectTo: 'more/settings/sail-plan', pathMatch: 'full' },

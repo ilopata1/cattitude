@@ -1,5 +1,6 @@
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 import {
   DashboardGroup,
   DashboardItem,
@@ -11,14 +12,19 @@ import {
 import { resolveLearnPath } from '../../core/guide/learn-path';
 import { EMPTY_SAIL_ESSENTIALS, EMPTY_WIND_STEER } from '../../core/models/instrument-map.model';
 import { PolarWindowAverages, PolarWindowMinutes, PolarWindowSet } from '../../core/models/polar.model';
+import { AlarmNotice, AlarmBannerService } from '../../core/services/alarm-banner.service';
 import { ContentService } from '../../core/services/content.service';
 import { DashboardLayoutService } from '../../core/services/dashboard-layout.service';
 import { InstrumentLiveService } from '../../core/services/instrument-live.service';
 import { PolarService } from '../../core/services/polar.service';
+import { ProgressService } from '../../core/services/progress.service';
 import { ReaderViewService } from '../../core/services/reader-view.service';
+import { SignalKConnectionState, SignalKService } from '../../core/services/signal-k.service';
 import { SignalKSettingsService } from '../../core/services/signal-k-settings.service';
 import { VesselContextService } from '../../core/services/vessel-context.service';
 import { VesselRouteService } from '../../core/services/vessel-route.service';
+
+const HERO_SEEN = 'cattitude.home.heroSeen';
 
 const GROUP_LABELS: Record<DashboardGroup, string> = {
   do: 'Do',
@@ -37,9 +43,11 @@ const GROUP_LABELS: Record<DashboardGroup, string> = {
 export class HomePage {
   editing = false;
   addOpen = false;
+  heroFull = true;
 
   readonly content = inject(ContentService);
   readonly readerView = inject(ReaderViewService);
+  readonly alarms = inject(AlarmBannerService);
 
   private readonly destroyRef = inject(DestroyRef);
   private readonly live = inject(InstrumentLiveService);
@@ -48,16 +56,39 @@ export class HomePage {
   private readonly routes = inject(VesselRouteService);
   private readonly vesselContext = inject(VesselContextService);
   private readonly skSettings = inject(SignalKSettingsService);
+  private readonly sk = inject(SignalKService);
+  private readonly progress = inject(ProgressService);
+  private readonly router = inject(Router);
   private readonly signalKOn = signal(false);
+  private skState: SignalKConnectionState = 'disconnected';
+  private dragIndex: number | null = null;
 
   readonly essentials = toSignal(this.live.essentials$, { initialValue: EMPTY_SAIL_ESSENTIALS });
   readonly wind = toSignal(this.live.wind$, { initialValue: EMPTY_WIND_STEER });
   readonly polarWindows = toSignal(this.polar.windows$, { initialValue: EMPTY_POLAR_WINDOWS });
 
   constructor() {
+    this.heroFull = !this.heroWasSeen();
     this.skSettings.url$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((url) => {
       this.signalKOn.set(!!url.trim());
     });
+    this.sk.state$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
+      this.skState = state;
+    });
+  }
+
+  ionViewDidEnter(): void {
+    try {
+      localStorage.setItem(HERO_SEEN, '1');
+    } catch {
+      /* next launch can show the full welcome again */
+    }
+  }
+
+  onHeroScroll(event: CustomEvent<{ scrollTop?: number }>): void {
+    if ((event.detail?.scrollTop ?? 0) > 48) {
+      this.heroFull = false;
+    }
   }
 
   tiles(): DashboardItem[] {
@@ -114,12 +145,83 @@ export class HomePage {
     this.layouts.reset(this.vesselContext.vesselSlug, this.readerView.view());
   }
 
-  reorder(event: Event): void {
-    const detail = (event as CustomEvent<{
-      complete: (data?: DashboardItem[]) => DashboardItem[];
-    }>).detail;
-    const next = detail.complete(this.tiles().slice());
+  showTile(item: DashboardItem): boolean {
+    if (item.kind === 'widget' && item.id !== 'widget:rules' && !this.liveConfigured() && !this.editing) {
+      return false;
+    }
+    return true;
+  }
+
+  showConnectCard(): boolean {
+    return !this.liveConfigured() && this.tiles().some((item) => item.kind === 'widget' && item.id !== 'widget:rules');
+  }
+
+  dragStart(index: number, event: DragEvent): void {
+    this.dragIndex = index;
+    event.dataTransfer?.setData('text/plain', String(index));
+  }
+
+  allowDrop(event: DragEvent): void {
+    event.preventDefault();
+  }
+
+  dropOn(index: number): void {
+    if (this.dragIndex == null || this.dragIndex === index) {
+      this.dragIndex = null;
+      return;
+    }
+    const next = this.tiles().slice();
+    const [moved] = next.splice(this.dragIndex, 1);
+    next.splice(index, 0, moved);
     this.persist(next.map((item) => item.id));
+    this.dragIndex = null;
+  }
+
+  connectionLabel(): string {
+    if (!this.liveConfigured()) {
+      return 'Signal K not set';
+    }
+    switch (this.skState) {
+      case 'connected':
+        return 'Signal K live';
+      case 'connecting':
+        return 'Signal K connecting';
+      case 'error':
+        return 'Signal K offline';
+      default:
+        return 'Signal K offline';
+    }
+  }
+
+  nextChecklist(): { title: string; route: string; label: string } | null {
+    for (const section of this.content.bootstrap.ui.doMenu) {
+      for (const item of section.items) {
+        if (item.progressType !== 'checklist') {
+          continue;
+        }
+        const state = this.progress.checklistProgress(item.key, this.content.getChecklist(item.key));
+        if (state.total > 0 && state.done < state.total) {
+          return {
+            title: item.title,
+            route: item.route,
+            label: `${state.done} of ${state.total}`,
+          };
+        }
+      }
+    }
+    return null;
+  }
+
+  openConnection(): void {
+    void this.routes.navigateTabs('more', this.liveConfigured() ? 'sail' : 'settings');
+  }
+
+  openAlarm(notice: AlarmNotice): void {
+    void this.routes.navigateTabs(...notice.route);
+  }
+
+  openChecklist(route: string): void {
+    void this.router.navigateByUrl(this.routes.resolveAppUrl(route));
   }
 
   open(item: DashboardItem): void {
@@ -221,6 +323,14 @@ export class HomePage {
       return;
     }
     void this.routes.navigateTabs('more', 'settings');
+  }
+
+  private heroWasSeen(): boolean {
+    try {
+      return localStorage.getItem(HERO_SEEN) === '1';
+    } catch {
+      return false;
+    }
   }
 
   private persist(ids: string[]): void {

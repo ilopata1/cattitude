@@ -8,6 +8,7 @@ from datetime import datetime
 from typing import Any
 
 from sqlalchemy import text
+from sqlalchemy.engine import Connection
 
 _MAX_NAME = 200
 _MAX_NOTE = 2000
@@ -225,6 +226,23 @@ def _iso(value: Any) -> str | None:
     if isinstance(value, datetime):
         return value.isoformat()
     return str(value)
+
+
+def read_stored_plan(conn: Connection, vessel_id: str) -> dict[str, Any] | None:
+    """Sanitized sail plan stored for this vessel, or None when it has no row."""
+    row = conn.execute(
+        text(
+            """
+            SELECT plan
+            FROM vessel_sail_plan
+            WHERE vessel_id = :vessel_id
+            """
+        ),
+        {"vessel_id": vessel_id},
+    ).fetchone()
+    if row is None or row[0] is None:
+        return None
+    return sanitize_plan(_coerce_jsonb(row[0]))
 
 
 def fetch_sail_plan(slug: str) -> dict[str, Any] | None:

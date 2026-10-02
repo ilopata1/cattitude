@@ -1,46 +1,46 @@
 <app-header></app-header>
-<ion-content [fullscreen]="true" class="page-content">
+<ion-content
+  [fullscreen]="true"
+  class="page-content"
+  [scrollEvents]="true"
+  (ionScroll)="onHeroScroll($event)"
+>
   <div class="scroll-area">
-    <div class="hero-banner">
-      <div class="hero-greeting">Welcome Aboard</div>
-      <div class="hero-title">
-        <span>{{ content.bootstrap.branding.vesselName }}</span>
-        <img
-          *ngIf="content.bootstrap.branding.heroLogo as logo"
-          [src]="logo"
-          alt=""
-          class="hero-logo"
-        />
-      </div>
-      <div class="hero-tagline">{{ content.bootstrap.branding.tagline }}</div>
-      <div class="hero-chips">
-        <span class="chip"><ion-icon name="location-outline" aria-hidden="true"></ion-icon> {{ content.bootstrap.branding.location }}</span>
-        <span class="chip"><ion-icon name="boat-outline" aria-hidden="true"></ion-icon> {{ content.bootstrap.branding.marina }}</span>
+    <div class="hero-banner" [class.compact]="!heroFull">
+      <ng-container *ngIf="heroFull">
+        <div class="hero-greeting">Welcome Aboard</div>
+        <div class="hero-title">
+          <span>{{ content.bootstrap.branding.vesselName }}</span>
+          <img
+            *ngIf="content.bootstrap.branding.heroLogo as logo"
+            [src]="logo"
+            alt=""
+            class="hero-logo"
+          />
+        </div>
+        <div class="hero-tagline">{{ content.bootstrap.branding.tagline }}</div>
+        <div class="hero-chips">
+          <span class="chip"><ion-icon name="location-outline" aria-hidden="true"></ion-icon> {{ content.bootstrap.branding.location }}</span>
+          <span class="chip"><ion-icon name="boat-outline" aria-hidden="true"></ion-icon> {{ content.bootstrap.branding.marina }}</span>
+        </div>
+      </ng-container>
+      <div class="status-strip" *ngIf="!heroFull">
+        <span class="status-name">{{ content.bootstrap.branding.vesselName }}</span>
+        <button type="button" class="status-chip" (click)="openConnection()">
+          {{ connectionLabel() }}
+        </button>
+        <button type="button" class="status-chip status-alarm" *ngIf="alarms.current() as notice" (click)="openAlarm(notice)">
+          {{ notice.title }}
+        </button>
+        <button type="button" class="status-chip" *ngIf="nextChecklist() as next" (click)="openChecklist(next.route)">
+          {{ next.title }} · {{ next.label }}
+        </button>
       </div>
     </div>
 
     <div class="dash-toolbar">
-      <div class="persona-switch" role="group" aria-label="Reading view">
-        <span class="persona-slider" [class.crew]="readerView.view() === 'crew'"></span>
-        <button
-          type="button"
-          [class.active]="readerView.view() === 'guest'"
-          [attr.aria-pressed]="readerView.view() === 'guest'"
-          (click)="readerView.setView('guest')"
-        >
-          Guest
-        </button>
-        <button
-          type="button"
-          [class.active]="readerView.view() === 'crew'"
-          [attr.aria-pressed]="readerView.view() === 'crew'"
-          (click)="readerView.setView('crew')"
-        >
-          Crew
-        </button>
-      </div>
       <div class="dash-toolbar-actions">
-        <button type="button" class="dash-text" (click)="addOpen = true">Add</button>
+        <button type="button" class="dash-text" *ngIf="editing" (click)="addOpen = true">Add</button>
         <button type="button" class="dash-text" *ngIf="editing" (click)="reset()">Reset</button>
         <button type="button" class="dash-text dash-text-strong" (click)="toggleEdit()">
           {{ editing ? 'Done' : 'Edit' }}
@@ -48,33 +48,64 @@
       </div>
     </div>
 
+    <button type="button" class="connect-card" *ngIf="showConnectCard()" (click)="openConnection()">
+      <span class="connect-title">Connect Signal K</span>
+      <span class="connect-sub">One connection feeds depth, wind, and speed on this home.</span>
+    </button>
+
     <p class="dash-empty" *ngIf="!tiles().length">
       Nothing on this home yet. Add the shortcuts and live readings you want here.
     </p>
 
-    <div class="dash-grid" *ngIf="!editing">
-      <ng-container *ngFor="let item of tiles()">
-        <button
-          *ngIf="item.kind === 'shortcut'"
-          type="button"
-          class="dash-shortcut"
+    <div class="dash-grid">
+      <ng-container *ngFor="let item of tiles(); let i = index">
+        <div
+          *ngIf="showTile(item)"
+          class="dash-cell"
           [class.tile-wide]="item.span === 2"
-          (click)="open(item)"
+          [class.editing]="editing"
+          (dragover)="allowDrop($event)"
+          (drop)="dropOn(i)"
         >
-          <span class="dash-icon"><app-ui-icon [icon]="item.icon" fallback="ellipse-outline"></app-ui-icon></span>
-          <span class="dash-label">{{ item.label }}</span>
-        </button>
+          <button
+            *ngIf="editing"
+            type="button"
+            class="dash-remove"
+            [attr.aria-label]="'Remove ' + item.label"
+            (click)="remove(item)"
+          >
+            <ion-icon name="close" aria-hidden="true"></ion-icon>
+          </button>
+          <button
+            *ngIf="editing"
+            type="button"
+            class="dash-handle"
+            draggable="true"
+            aria-label="Drag to reorder"
+            (dragstart)="dragStart(i, $event)"
+          >
+            <ion-icon name="reorder-three" aria-hidden="true"></ion-icon>
+          </button>
 
-        <button
-          *ngIf="item.kind === 'widget' && item.id !== 'widget:rules'"
-          type="button"
-          class="dash-widget"
-          [class.stale]="liveStale()"
-          [class.tile-wide]="item.span === 2"
-          (click)="open(item)"
-        >
-          <span class="widget-kicker"><app-ui-icon [icon]="item.icon" fallback="ellipse-outline"></app-ui-icon> {{ item.label }}</span>
-          <ng-container *ngIf="liveConfigured(); else connectLive">
+          <button
+            *ngIf="item.kind === 'shortcut'"
+            type="button"
+            class="dash-shortcut"
+            (click)="open(item)"
+          >
+            <span class="dash-icon"><app-ui-icon [icon]="item.icon" fallback="ellipse-outline"></app-ui-icon></span>
+            <span class="dash-label">{{ item.label }}</span>
+          </button>
+
+          <button
+            *ngIf="item.kind === 'widget' && item.id !== 'widget:rules' && (liveConfigured() || editing)"
+            type="button"
+            class="dash-widget"
+            [class.stale]="liveStale()"
+            (click)="open(item)"
+          >
+            <span class="widget-kicker"><app-ui-icon [icon]="item.icon" fallback="ellipse-outline"></app-ui-icon> {{ item.label }}</span>
+            <ng-container *ngIf="liveConfigured()">
             <span class="widget-value" *ngIf="reading(item.id) as value">{{ value }}</span>
             <ng-container *ngIf="item.id === 'widget:wind'">
               <span class="widget-value">{{ windSpeedLabel() }}</span>
@@ -86,42 +117,19 @@
                 <span class="polar-pct">{{ row.pct }}</span>
               </span>
             </span>
-          </ng-container>
-          <ng-template #connectLive>
-            <span class="widget-detail">Connect Signal K in Settings</span>
-          </ng-template>
-        </button>
+            <span class="widget-open">{{ item.id === 'widget:polar' ? 'Open Polar' : 'Open Sail' }} <ion-icon name="chevron-forward" aria-hidden="true"></ion-icon></span>
+            </ng-container>
+          </button>
 
-        <div
-          *ngIf="item.id === 'widget:rules'"
-          class="dash-widget dash-widget-rules"
-          [class.tile-wide]="item.span === 2"
-        >
-          <app-boat-rules></app-boat-rules>
+          <div
+            *ngIf="item.id === 'widget:rules'"
+            class="dash-widget dash-widget-rules"
+          >
+            <app-boat-rules></app-boat-rules>
+          </div>
         </div>
       </ng-container>
     </div>
-
-    <ion-list *ngIf="editing" class="dash-edit-list" lines="none">
-      <ion-reorder-group [disabled]="false" (ionReorderEnd)="reorder($event)">
-        <ion-item *ngFor="let item of tiles()">
-          <button
-            slot="start"
-            type="button"
-            class="dash-remove"
-            [attr.aria-label]="'Remove ' + item.label"
-            (click)="remove(item)"
-          >
-            <ion-icon name="close" aria-hidden="true"></ion-icon>
-          </button>
-          <ion-label>
-            <h2><app-ui-icon [icon]="item.icon" fallback="ellipse-outline"></app-ui-icon> {{ item.label }}</h2>
-            <p>{{ item.subtitle }}</p>
-          </ion-label>
-          <ion-reorder slot="end"></ion-reorder>
-        </ion-item>
-      </ion-reorder-group>
-    </ion-list>
   </div>
 </ion-content>
 

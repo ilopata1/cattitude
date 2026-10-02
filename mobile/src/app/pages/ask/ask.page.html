@@ -1,4 +1,8 @@
-<app-header title="Ask" [showBack]="true" backTo="more"></app-header>
+<app-header title="Ask" [showBack]="true" backTo="more">
+  <ion-button headerActions fill="clear" color="dark" (click)="clear()" [disabled]="!chat.messages.length">
+    Clear
+  </ion-button>
+</app-header>
 <ion-content [fullscreen]="true" class="page-content">
   <div class="chat-messages">
     <div *ngIf="chat.messages.length === 0" class="chat-welcome">
@@ -7,7 +11,7 @@
       <div class="chat-welcome-sub">
         Questions are answered from the ingested vessel manuals.
       </div>
-      <div class="chat-suggestions">
+      <div class="chat-suggestions" *ngIf="suggestions.length">
         <button
           type="button"
           class="suggestion-chip"
@@ -25,9 +29,14 @@
       [class.user]="message.role === 'user'"
       [class.assistant]="message.role === 'assistant'"
     >
-      <div class="chat-bubble" [class.user]="message.role === 'user'">
+      <div class="chat-bubble" *ngIf="message.role === 'user'" [class.user]="true">
         {{ message.content }}
       </div>
+      <div
+        class="chat-bubble chat-markdown"
+        *ngIf="message.role === 'assistant'"
+        [innerHTML]="markdown(message.content)"
+      ></div>
       <div *ngIf="message.sources?.length" class="chat-sources">
         <div class="chat-sources-label">Sources</div>
         <div
@@ -97,7 +106,7 @@
         [(ngModel)]="draft"
         rows="1"
         placeholder="Ask a question..."
-        (keydown.enter)="$event.preventDefault(); send()"
+        (keydown)="onDraftKey($event)"
       ></textarea>
       <button
         type="button"

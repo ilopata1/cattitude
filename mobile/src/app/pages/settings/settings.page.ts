@@ -62,6 +62,21 @@ export class SettingsPage implements OnInit, OnDestroy {
     this.subs.forEach(s => s.unsubscribe());
   }
 
+  get saveDisabled(): boolean {
+    return this.urlControl.invalid || !this.urlControl.value;
+  }
+
+  get urlError(): string {
+    const value = (this.urlControl.value ?? '').trim();
+    if (!value) {
+      return 'Enter this boat’s Signal K address to connect.';
+    }
+    if (this.urlControl.invalid) {
+      return 'Use an address like https://signalk.example or boat.local:3000.';
+    }
+    return '';
+  }
+
   get stateLabel(): string {
     switch (this.connectionState) {
       case 'connected':    return 'Connected';

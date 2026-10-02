@@ -6,7 +6,6 @@
     color="dark"
     (click)="toggleLabels()"
     [attr.aria-label]="showLabels ? 'Hide vessel names' : 'Show vessel names'"
-    [title]="showLabels ? 'Hide vessel names' : 'Show vessel names'"
   >
     <ion-icon [name]="showLabels ? 'pricetag' : 'pricetag-outline'" slot="icon-only"></ion-icon>
   </ion-button>
@@ -14,11 +13,10 @@
     headerActions
     fill="clear"
     color="dark"
-    (click)="clearAll()"
-    aria-label="Clear all vessels"
-    title="Clear all vessels"
+    (click)="openOverflow()"
+    aria-label="More anchorage actions"
   >
-    <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+    <ion-icon name="ellipsis-horizontal" slot="icon-only"></ion-icon>
   </ion-button>
   <ion-toolbar headerExtra class="anchorage-modes">
     <ion-segment
@@ -36,14 +34,8 @@
   </ion-toolbar>
 </app-header>
 
-<ion-content>
-
-  <ion-card *ngIf="!skConnected" color="warning" class="status-card">
-    <ion-card-content>
-      <ion-icon name="warning-outline"></ion-icon>
-      Signal-K not connected. Configure the server URL in Settings.
-    </ion-card-content>
-  </ion-card>
+<ion-content [scrollY]="false" class="anchorage-content">
+  <div class="anchorage-stage">
 
   <div class="map-wrapper">
     <app-anchorage-alert-banner
@@ -60,7 +52,7 @@
       color="light"
       (click)="recenterOnBoat()"
       [disabled]="!skConnected"
-      title="Center on boat"
+      aria-label="Center on boat"
     >
       <ion-icon name="locate-outline" slot="icon-only"></ion-icon>
     </ion-button>
@@ -72,15 +64,32 @@
     ></app-anchorage-vessel-detail>
   </div>
 
+  <div class="anchor-sheet" [style.--sheet-shift]="sheetShift + '%'">
+    <div
+      class="sheet-handle"
+      (pointerdown)="onSheetDown($event)"
+      (pointermove)="onSheetMove($event)"
+      (pointerup)="onSheetUp()"
+      (pointercancel)="onSheetUp()"
+    >
+      <span class="sheet-pill"></span>
+    </div>
+    <div class="sheet-body">
+  <ion-card *ngIf="!skConnected" color="warning" class="status-card">
+    <ion-card-content>
+      <ion-icon name="warning-outline"></ion-icon>
+      Signal-K not connected. Configure the server URL in Settings.
+    </ion-card-content>
+  </ion-card>
+
   <div class="controls-strip">
     <ion-button
       [color]="isRecording ? 'danger' : 'success'"
       (click)="isRecording ? stopRecording() : startRecording()"
       [disabled]="!skConnected"
-      size="small"
     >
       <ion-icon [name]="isRecording ? 'stop-circle-outline' : 'radio-button-on-outline'" slot="start"></ion-icon>
-      {{ isRecording ? 'Stop Recording' : 'Start Recording' }}
+      {{ isRecording ? 'Stop anchor watch' : 'Start anchor watch' }}
     </ion-button>
     <ion-note *ngIf="isRecording" class="recording-note">
       Recording AIS — building swing circles…
@@ -121,5 +130,7 @@
     <ion-icon name="boat-outline" class="empty-icon"></ion-icon>
     <p>Waiting for AIS data from Signal-K…</p>
   </div>
-
+    </div>
+  </div>
+  </div>
 </ion-content>

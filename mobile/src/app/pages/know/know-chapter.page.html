@@ -1,0 +1,22 @@
+<app-header
+  [title]="title"
+  [subtitle]="subtitle"
+  [showBack]="true"
+  backTo="know"
+></app-header>
+<ion-content [fullscreen]="true" class="page-content">
+  <p class="search-empty" *ngIf="missing">This chapter is not in the guide.</p>
+  <app-guide-chapter
+    *ngIf="system"
+    mode="chapter"
+    [system]="system"
+    [showFixes]="true"
+    (systemLink)="openLinked($event)"
+  ></app-guide-chapter>
+  <app-guide-chapter
+    *ngIf="power"
+    mode="power"
+    [showFixes]="true"
+    (systemLink)="openLinked($event)"
+  ></app-guide-chapter>
+</ion-content>

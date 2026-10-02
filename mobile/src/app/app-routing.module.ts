@@ -32,7 +32,7 @@ export const routes: Routes = [
   { path: 'tabs/know', redirectTo: () => withDefaultVessel('/tabs/know'), pathMatch: 'full' },
   { path: 'tabs/fix', redirectTo: () => withDefaultVessel('/tabs/fix'), pathMatch: 'full' },
   { path: 'tabs/ask', redirectTo: () => withDefaultVessel('/tabs/more/ask'), pathMatch: 'full' },
-  { path: 'tabs/sail', redirectTo: () => withDefaultVessel('/tabs/more/sail'), pathMatch: 'full' },
+  { path: 'tabs/sail', redirectTo: () => withDefaultVessel('/tabs/sail'), pathMatch: 'full' },
   { path: 'tabs/anchorage', redirectTo: () => withDefaultVessel('/tabs/more/anchorage'), pathMatch: 'full' },
   { path: 'tabs/polar', redirectTo: () => withDefaultVessel('/tabs/more/polar'), pathMatch: 'full' },
   {

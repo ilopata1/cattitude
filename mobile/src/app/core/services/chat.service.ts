@@ -190,10 +190,7 @@ export class ChatService {
         return 'That question took too long for the manual service. Try a shorter or more specific question.';
       }
       if (err.status === 500) {
-        return (
-          detail ||
-          'The manual service returned an error. Check Railway logs for the backend.'
-        );
+        return 'The manual service had a problem answering that. Try again in a moment.';
       }
       if (err.status === 0) {
         return 'Sorry — something went wrong reaching the manual service. Try again in a moment.';

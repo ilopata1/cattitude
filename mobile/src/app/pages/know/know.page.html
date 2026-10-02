@@ -1,9 +1,4 @@
-<app-header
-  [title]="detailTitle"
-  [subtitle]="detailSubtitle"
-  [showBack]="detailOpen"
-  (back)="closeDetail()"
-></app-header>
+<app-header></app-header>
 <ion-content [fullscreen]="true" class="page-content">
   <div class="know-search">
     <ion-searchbar
@@ -33,24 +28,29 @@
   </div>
 
   <ng-template #knowBrowse>
-  <ng-container *ngIf="!selected && !powerOpen">
-    <div class="know-toggle">
-      <button
-        type="button"
-        class="know-tog-btn"
-        [class.active]="mode === 'topic'"
-        (click)="setMode('topic')"
+  <ng-container>
+    <div class="know-filters">
+      <ion-segment [value]="mode" (ionChange)="setMode($any($event).detail.value)" aria-label="Browse the guide">
+        <ion-segment-button value="topic">
+          <ion-label>By Topic</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="location">
+          <ion-label>By Location</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+      <ion-segment
+        *ngIf="mode === 'location'"
+        [value]="locList"
+        (ionChange)="locList = $any($event).detail.value"
+        aria-label="Location list"
       >
-        By Topic
-      </button>
-      <button
-        type="button"
-        class="know-tog-btn"
-        [class.active]="mode === 'location'"
-        (click)="setMode('location')"
-      >
-        By Location
-      </button>
+        <ion-segment-button value="az">
+          <ion-label>A–Z</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="zone">
+          <ion-label>By zone</ion-label>
+        </ion-segment-button>
+      </ion-segment>
     </div>
 
     <button type="button" class="boat-rules-entry" *ngIf="hasBoatRules" (click)="openRules()">
@@ -78,24 +78,6 @@
         This guide has no equipment location list yet.
       </p>
       <ng-container *ngIf="whereIndex.items.length">
-        <div class="loc-toggle">
-          <button
-            type="button"
-            class="know-tog-btn"
-            [class.active]="locList === 'az'"
-            (click)="locList = 'az'"
-          >
-            A–Z
-          </button>
-          <button
-            type="button"
-            class="know-tog-btn"
-            [class.active]="locList === 'zone'"
-            (click)="locList = 'zone'"
-          >
-            By zone
-          </button>
-        </div>
         <div class="loc-sys-panel" *ngIf="locList === 'az'">
           <button
             type="button"
@@ -141,22 +123,5 @@
       </ng-container>
     </div>
   </ng-container>
-
-  <div class="detail-screen" *ngIf="selected as system">
-    <app-guide-chapter
-      mode="chapter"
-      [system]="system"
-      [showFixes]="true"
-      (systemLink)="openLinkedSystem($event)"
-    ></app-guide-chapter>
-  </div>
-
-  <div class="detail-screen" *ngIf="powerOpen">
-    <app-guide-chapter
-      mode="power"
-      [showFixes]="true"
-      (systemLink)="openLinkedSystem($event)"
-    ></app-guide-chapter>
-  </div>
   </ng-template>
 </ion-content>

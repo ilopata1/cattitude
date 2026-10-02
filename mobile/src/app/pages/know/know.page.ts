@@ -101,33 +101,20 @@ export class KnowPage implements OnInit {
           return;
         }
         const section = params.get('section');
-        const sectionIndex = section == null || section === '' ? null : Number(section);
-        if (systemId === POWER_TOPIC_ID || isPowerPart(systemId)) {
-          if (!this.powerOpen) {
-            this.closeReference();
-          }
-          this.powerOpen = true;
-          this.selected = null;
-          this.pendingSystemId = systemId === POWER_TOPIC_ID ? null : systemId;
-          this.pendingSection = sectionIndex;
-          this.scrollToPendingSection();
-          return;
-        }
-        const system = this.content.getSystem(systemId);
-        if (this.powerOpen || this.selected?.id !== system?.id) {
-          this.closeReference();
-        }
-        this.powerOpen = false;
-        this.selected = system ?? null;
-        this.pendingSystemId = system?.id ?? null;
-        this.pendingSection = sectionIndex;
-        if (this.selected) {
-          this.scrollToPendingSection();
-        }
+        void this.vesselRoutes.navigateTabsWithExtras(
+          ['know', systemId],
+          {
+            queryParams: section ? { section } : {},
+            replaceUrl: true,
+          },
+        );
       });
   }
 
-  setMode(mode: 'topic' | 'location'): void {
+  setMode(mode: 'topic' | 'location' | undefined): void {
+    if (mode !== 'topic' && mode !== 'location') {
+      return;
+    }
     this.mode = mode;
     this.selectedZone = null;
   }
@@ -215,11 +202,7 @@ export class KnowPage implements OnInit {
   }
 
   openSystem(system: SystemModule): void {
-    this.closeReference();
-    this.powerOpen = false;
-    this.pendingSection = null;
-    this.pendingSystemId = system.id;
-    this.selected = system;
+    void this.vesselRoutes.navigateTabs('know', system.id);
   }
 
   powerView(): PowerPresentation<SystemSection> | null {
@@ -286,27 +269,11 @@ export class KnowPage implements OnInit {
   openHit(hit: GuideSearchHit): void {
     this.query = '';
     if (hit.kind === 'chapter' && hit.systemId) {
-      if (isPowerPart(hit.systemId)) {
-        this.openPower(hit.systemId, hit.sectionIndex ?? null);
-      } else {
-        const next = this.content.getSystem(hit.systemId) ?? null;
-        if (this.powerOpen || this.selected?.id !== next?.id) {
-          this.closeReference();
-        }
-        this.powerOpen = false;
-        this.selected = next;
-        this.pendingSystemId = next?.id ?? null;
-        this.pendingSection = hit.sectionIndex ?? null;
-        this.scrollToPendingSection();
-      }
-      void this.router.navigate([], {
-        relativeTo: this.route,
-        queryParams: {
-          system: hit.systemId,
-          section: hit.sectionIndex == null ? null : String(hit.sectionIndex),
-        },
-        queryParamsHandling: 'merge',
-      });
+      const section = hit.sectionIndex == null ? null : String(hit.sectionIndex);
+      void this.vesselRoutes.navigateTabsWithExtras(
+        ['know', hit.systemId],
+        section ? { queryParams: { section } } : undefined,
+      );
       return;
     }
     if (hit.kind === 'checklist' && hit.checklistKey) {
@@ -360,14 +327,10 @@ export class KnowPage implements OnInit {
   }
 
   private openPower(systemId: string | null, index: number | null): void {
-    if (!this.powerOpen) {
-      this.closeReference();
-    }
-    this.powerOpen = true;
-    this.selected = null;
-    this.pendingSystemId = systemId;
-    this.pendingSection = index;
-    this.scrollToPendingSection();
+    void this.vesselRoutes.navigateTabsWithExtras(
+      ['know', systemId || POWER_TOPIC_ID],
+      index == null ? undefined : { queryParams: { section: String(index) } },
+    );
   }
 
   private scrollToPendingSection(): void {

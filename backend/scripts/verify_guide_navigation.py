@@ -14,6 +14,7 @@ from pathlib import Path
 _BACKEND = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_BACKEND))
 
+from guide_ask import build_ask_suggestions  # noqa: E402
 from guide_navigation import enrich_navigation  # noqa: E402
 
 CATTITUDE_JSON = _BACKEND / "tests" / "fixtures" / "guide_navigation_cattitude.json"
@@ -62,6 +63,15 @@ def main() -> int:
 
     if set(bootstrap.get("locations") or {}) != set(golden.get("locations") or {}):
         failures.append("locations zone keys mismatch")
+
+    suggestions = ui.get("askSuggestions") or []
+    expected_suggestions = build_ask_suggestions(bootstrap.get("systems"))
+    if suggestions != expected_suggestions:
+        failures.append(f"askSuggestions mismatch: {suggestions}")
+    suggestion_text = " ".join(suggestions).lower()
+    for phrase in ("port engine", "watermaker", "outremer"):
+        if phrase in suggestion_text:
+            failures.append(f"askSuggestions names a specific boat ({phrase})")
 
     if failures:
         print("FAILED:")

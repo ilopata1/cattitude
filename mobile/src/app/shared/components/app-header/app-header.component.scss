@@ -7,7 +7,12 @@
     --color: var(--cattitude-on-navy);
     --padding-start: 18px;
     --padding-end: 18px;
-    --min-height: 64px;
+    --min-height: 52px;
+
+    @media (max-width: 480px) {
+      --padding-start: 8px;
+      --padding-end: 8px;
+    }
 
     /* Teal-dark is too dim on navy. Use white for the keyboard ring here. */
     :focus-visible {
@@ -88,6 +93,14 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
+  max-width: calc(100vw - 13.25rem);
+  overflow: hidden;
+
+  > div {
+    min-width: 0;
+    overflow: hidden;
+  }
 }
 
 .header-logo-btn {
@@ -106,9 +119,38 @@
   flex-shrink: 0;
 }
 
+.header-end {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.persona-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--cattitude-touch-min);
+  padding: 0 12px;
+  border: 1px solid var(--cattitude-on-navy-line);
+  border-radius: 20px;
+  background: transparent;
+  color: var(--cattitude-on-navy);
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+
+  @media (max-width: 480px) {
+    padding: 0 8px;
+  }
+}
+
 .header-logo {
-  width: 36px;
-  height: 36px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   object-fit: cover;
   display: block;
@@ -116,9 +158,12 @@
 
 .header-title {
   font-family: var(--cattitude-font-display);
-  font-size: 1rem;
+  font-size: 0.9375rem;
   font-weight: 700;
   line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .header-sub {
@@ -127,6 +172,9 @@
   font-weight: 500;
   letter-spacing: 0.05em;
   text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .emergency-btn {
@@ -138,6 +186,11 @@
   font-size: var(--cattitude-text-sm);
   font-weight: 600;
   text-transform: none;
+
+  @media (max-width: 480px) {
+    --padding-start: 10px;
+    --padding-end: 10px;
+  }
 }
 
 .modal-sheet {
@@ -147,14 +200,6 @@
   max-height: 90vh;
   overflow-y: auto;
   box-sizing: border-box;
-}
-
-.modal-pill {
-  width: 40px;
-  height: 4px;
-  background: var(--cattitude-on-navy-fill-strong);
-  border-radius: 2px;
-  margin: 0 auto 20px;
 }
 
 .modal-title {
@@ -252,12 +297,15 @@
 .mc-call {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
+  min-width: 44px;
+  min-height: 44px;
   background: var(--cattitude-coral);
   color: var(--cattitude-text-on-fill);
   border: none;
   border-radius: 8px;
-  padding: 10px 16px;
+  padding: 0 16px;
   font-size: var(--cattitude-text-sm);
   font-weight: 700;
 }

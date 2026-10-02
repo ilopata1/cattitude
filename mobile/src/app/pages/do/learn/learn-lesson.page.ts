@@ -1,6 +1,8 @@
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
+import { AlertController, ToastController } from '@ionic/angular';
+import { confirmChecklistReset } from '../checklist/checklist-reset';
 import { LearnLesson, LearnStage, resolveLearnPath } from '../../../core/guide/learn-path';
 import { isPowerPart, POWER_TOPIC_ID, powerSubtitle } from '../../../core/guide/power-topic';
 import { Checklist, SystemModule } from '../../../core/models/bootstrap-content.model';
@@ -27,6 +29,8 @@ export class LearnLessonPage implements OnInit {
     public readonly progress: ProgressService,
     private readonly route: ActivatedRoute,
     private readonly vesselRoutes: VesselRouteService,
+    private readonly alerts: AlertController,
+    private readonly toasts: ToastController,
   ) {}
 
   ngOnInit(): void {
@@ -35,7 +39,7 @@ export class LearnLessonPage implements OnInit {
 
   reset(): void {
     if (this.lesson?.kind === 'checklist') {
-      this.progress.resetChecklist(this.lesson.id);
+      void confirmChecklistReset(this.alerts, this.toasts, this.progress, this.lesson.id);
     }
   }
 
@@ -111,9 +115,7 @@ export class LearnLessonPage implements OnInit {
         return;
       }
     }
-    void this.vesselRoutes.navigateTabsWithExtras(['know'], {
-      queryParams: { system: targetId },
-    });
+    void this.vesselRoutes.navigateTabs('know', targetId);
   }
 
   back(): void {

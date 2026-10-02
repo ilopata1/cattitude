@@ -14,7 +14,9 @@ node generator.js
 Default scenario is **`sailing`**: own vessel (MMSI `123456789`) steaming a
 TWA sweep with TWS and STW derived from the Outremer 55 polar.
 
-Point Cattitude **Settings → Signal-K Server URL** at `http://localhost:3000`.
+Point the app's Signal K server address at `http://localhost:3000`.
+The Settings screen does not repeat these steps. An `https://` address,
+including a Cloudflare tunnel, is opened as a secure WebSocket.
 
 ## Usage
 

@@ -2,6 +2,17 @@
   --background: var(--cattitude-sand);
 }
 
+.know-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 16px 0;
+}
+
+.know-filters ion-segment {
+  flex: 1 1 160px;
+}
+
 .know-search {
   position: sticky;
   top: 0;

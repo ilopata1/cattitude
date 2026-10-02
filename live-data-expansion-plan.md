@@ -169,8 +169,8 @@ UI directly into a Skip dashboard tile. No client-side alarm logic is needed.
 
 **What Cattitude provides:**
 - A second dashboard entry in the KipConfig seed: a full-screen Hoeken's anchor alarm widget
-- The Settings page documents that `hoeken/hoekens-anchor-alarm` must be installed on the
-  vessel's Signal K server
+- Developers install `hoeken/hoekens-anchor-alarm` on the vessel's Signal K server
+  (see [`mobile/README.md`](mobile/README.md)); the app does not document the plugin
 
 **Features from the plugin (free, no client work):**
 - Drag-to-set anchor position on a Leaflet map

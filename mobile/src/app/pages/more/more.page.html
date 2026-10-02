@@ -11,7 +11,10 @@
         <ion-icon [name]="row.icon"></ion-icon>
       </div>
       <div class="more-card-body">
-        <div class="more-card-title">{{ row.label }}</div>
+        <div class="more-card-title">
+          {{ row.label }}
+          <span class="more-live" *ngIf="liveStatus(row) as status" [class.live]="status === 'Live'">{{ status }}</span>
+        </div>
         <div class="more-card-sub">{{ row.subtitle }}</div>
       </div>
       <div class="more-card-arrow" aria-hidden="true"><ion-icon name="chevron-forward"></ion-icon></div>

@@ -32,6 +32,16 @@
   margin: 6px 0 10px;
 }
 
+.learn-stage {
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: var(--cattitude-text-light);
+}
+
+.learn-card {
+  align-items: flex-start;
+}
+
 .do-card {
   background: var(--cattitude-surface);
   border-radius: 14px;

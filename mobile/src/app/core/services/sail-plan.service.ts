@@ -4,8 +4,8 @@ import { BehaviorSubject, Observable, firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ensureMainSail } from '../guide/current-sail';
 import { SailAdvice, SailPlan, cloneCell } from '../models/sail-plan.model';
+import { ContentService } from './content.service';
 import { adviseSailPlan, resizeCells, resizeHeavyWeatherCells } from './sail-plan-advisor';
-import { DEFAULT_SAIL_PLAN } from './sail-plan-default';
 import { VesselContextService } from './vessel-context.service';
 
 const STORAGE_KEY = 'cattitude.sailPlan.v1';
@@ -25,12 +25,17 @@ export class SailPlanService {
 
   private hydratePromise: Promise<void> | null = null;
   private hydrateSlug: string | null = null;
+  /** True once a saved plan (this device or the server) is the active plan. */
+  private usingStored = false;
 
   constructor(
     private readonly http: HttpClient,
     private readonly vesselContext: VesselContextService,
+    private readonly content: ContentService,
   ) {
-    const initial = this.readCache(this.vesselContext.vesselSlug) ?? structuredClone(DEFAULT_SAIL_PLAN);
+    const cached = this.readCache(this.vesselContext.vesselSlug);
+    this.usingStored = cached != null;
+    const initial = cached ?? blankSailPlan('Sail plan');
     this.planSubject = new BehaviorSubject<SailPlan>(initial);
     this.plan$ = this.planSubject.asObservable();
   }
@@ -58,6 +63,7 @@ export class SailPlanService {
   async save(plan: SailPlan): Promise<boolean> {
     const slug = this.vesselContext.vesselSlug;
     const next = sanitizePlan(plan);
+    this.usingStored = true;
     this.apply(next, slug);
     try {
       await this.push(next, slug);
@@ -67,24 +73,79 @@ export class SailPlanService {
     }
   }
 
+  /** Published reset target, once the guide is loaded and includes one. */
+  publishedTemplate(): SailPlan | null {
+    if (!this.content.loaded) {
+      return null;
+    }
+    const plan = this.content.bootstrap.ui.sailPlanTemplate;
+    if (!plan || !Array.isArray(plan.sails) || !Array.isArray(plan.twaCuts)) {
+      return null;
+    }
+    return sanitizePlan(plan);
+  }
+
+  /**
+   * Use the published template when this vessel has no saved plan yet.
+   * Safe to call after the guide loads; a saved plan is left alone.
+   */
+  adoptPublishedTemplate(): void {
+    if (this.usingStored) {
+      return;
+    }
+    this.applyFallback(this.vesselContext.vesselSlug);
+  }
+
   async resetToTemplate(): Promise<boolean> {
-    return this.save(structuredClone(DEFAULT_SAIL_PLAN));
+    const template = this.publishedTemplate();
+    if (!template) {
+      return false;
+    }
+    this.usingStored = true;
+    return this.save(structuredClone(template));
   }
 
   private async hydrate(slug: string): Promise<void> {
     const cached = this.readCache(slug);
+    this.usingStored = cached != null;
     try {
       const res = await firstValueFrom(this.http.get<SailPlanResponse>(this.url(slug)));
       if (res.plan) {
+        this.usingStored = true;
         this.apply(sanitizePlan(res.plan), slug);
         return;
       }
       if (cached) {
+        this.usingStored = true;
         await this.push(cached, slug);
+        return;
       }
     } catch {
-      if (cached) this.apply(cached, slug, false);
+      if (cached) {
+        this.usingStored = true;
+        this.apply(cached, slug, false);
+        return;
+      }
     }
+    this.usingStored = false;
+    this.applyFallback(slug);
+  }
+
+  private applyFallback(slug: string): void {
+    if (this.usingStored) {
+      return;
+    }
+    const template = this.publishedTemplate();
+    const next = template ?? blankSailPlan(this.planNameFromGuide());
+    this.apply(next, slug, false);
+  }
+
+  private planNameFromGuide(): string {
+    if (!this.content.loaded) {
+      return 'Sail plan';
+    }
+    const branding = this.content.bootstrap.branding;
+    return (branding.model || branding.vesselName || 'Sail plan').trim() || 'Sail plan';
   }
 
   private async push(plan: SailPlan, slug: string): Promise<void> {
@@ -165,6 +226,23 @@ function normalizeCuts(cuts: number[] | undefined, min: number, max: number, fal
 function clampNum(n: number, min: number, max: number): number {
   if (!Number.isFinite(n)) return min;
   return Math.min(max, Math.max(min, n));
+}
+
+export function blankSailPlan(name: string): SailPlan {
+  return {
+    name: name.trim() || 'Sail plan',
+    sails: ['Main'],
+    twaCuts: [0, 180],
+    twsCuts: [0, 30],
+    cells: [[{ primary: 'Main', alternatives: [] }]],
+    heavyWeather: {
+      enabled: false,
+      twsFrom: 30,
+      twaCuts: [0, 180],
+      cells: [{ primary: '', alternatives: [] }],
+    },
+    notes: '',
+  };
 }
 
 export function clonePlan(plan: SailPlan): SailPlan {

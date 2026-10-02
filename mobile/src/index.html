@@ -31,7 +31,16 @@
       if (bar) bar.setAttribute('content', theme === 'night' ? '#240808' : '#0D2137');
     })();
   </script>
-  <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0" />
+  <link rel="preload" href="assets/fonts/dm-sans-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/dm-sans-600.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/playfair-display-700.woff2" as="font" type="font/woff2" crossorigin />
+  <script>
+    try {
+      var open = new URLSearchParams(location.search).get('open');
+      if (open) sessionStorage.setItem('cattitude.open', open);
+    } catch (e) {}
+  </script>
   <meta name="format-detection" content="telephone=no" />
   <meta name="msapplication-tap-highlight" content="no" />
 

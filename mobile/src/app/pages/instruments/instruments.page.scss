@@ -11,6 +11,20 @@
   margin-bottom: 16px;
 }
 
+.path-picker {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  margin: 4px 0 8px;
+  padding: 8px 0;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font: inherit;
+  color: var(--cattitude-text-accent);
+  cursor: pointer;
+}
+
 .scan-row {
   margin-bottom: 20px;
 }

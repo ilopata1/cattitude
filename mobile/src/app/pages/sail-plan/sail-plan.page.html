@@ -14,7 +14,7 @@
 
     <ion-item>
       <ion-label position="stacked">Plan name</ion-label>
-      <ion-input [(ngModel)]="draft.name" placeholder="e.g. Outremer 55"></ion-input>
+      <ion-input [(ngModel)]="draft.name" placeholder="Name this plan"></ion-input>
     </ion-item>
 
     <ion-item>
@@ -54,24 +54,25 @@
     </div>
 
     <h2 class="section-title">Crossover matrix</h2>
-    <p class="hint">Primary, alternatives, and avoid pick from inventory. Select more than one sail for a combination.</p>
-    <div class="matrix-scroll">
-      <table class="matrix">
-        <thead>
-          <tr>
-            <th>TWA \ TWS</th>
-            <th *ngFor="let band of twsBands(); let ci = index; trackBy: trackByIndex">{{ formatTws(ci) }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let row of draft.cells; let ri = index; trackBy: trackByIndex">
-            <th>{{ formatTwa(ri) }}</th>
-            <td *ngFor="let cell of row; let ci = index; trackBy: trackByIndex">
-              <ng-container *ngTemplateOutlet="cellFields; context: { $implicit: cell }"></ng-container>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <p class="hint">Tap a cell to set the sails for that wind angle and strength.</p>
+    <div
+      class="heat-grid"
+      [style.grid-template-columns]="'4.75rem repeat(' + twsBands().length + ', minmax(4.5rem, 1fr))'"
+    >
+      <div class="heat-corner"></div>
+      <div class="heat-col" *ngFor="let band of twsBands(); let ci = index; trackBy: trackByIndex">{{ formatTws(ci) }}</div>
+      <ng-container *ngFor="let row of draft.cells; let ri = index; trackBy: trackByIndex">
+        <div class="heat-row">{{ formatTwa(ri) }}</div>
+        <button
+          type="button"
+          class="heat-cell"
+          *ngFor="let cell of row; let ci = index; trackBy: trackByIndex"
+          [class.filled]="!!cell.primary"
+          (click)="editCell(cell, formatTwa(ri) + ' · ' + formatTws(ci))"
+        >
+          {{ cellLabel(cell) }}
+        </button>
+      </ng-container>
     </div>
 
     <h2 class="section-title">Heavy weather</h2>
@@ -95,10 +96,16 @@
         <ion-button size="small" fill="outline" (click)="addCut('hw')">Add TWA</ion-button>
       </div>
       <div class="hw-rows">
-        <div class="hw-row" *ngFor="let cell of draft.heavyWeather.cells; let i = index; trackBy: trackByIndex">
-          <div class="hw-band">{{ formatHw(i) }}</div>
-          <ng-container *ngTemplateOutlet="cellFields; context: { $implicit: cell }"></ng-container>
-        </div>
+        <button
+          type="button"
+          class="heat-cell hw-cell"
+          *ngFor="let cell of draft.heavyWeather.cells; let i = index; trackBy: trackByIndex"
+          [class.filled]="!!cell.primary"
+          (click)="editCell(cell, 'Heavy weather · ' + formatHw(i))"
+        >
+          <span class="hw-band">{{ formatHw(i) }}</span>
+          {{ cellLabel(cell) }}
+        </button>
       </div>
     </ng-container>
 
@@ -109,11 +116,26 @@
 
     <div class="actions">
       <ion-button expand="block" (click)="save()">Save sail plan</ion-button>
-      <ion-button expand="block" fill="outline" color="dark" (click)="resetTemplate()">
-        Reset to Outremer 55 template
+      <ion-button *ngIf="hasTemplate" expand="block" fill="outline" color="dark" (click)="resetTemplate()">
+        Reset to template
       </ion-button>
     </div>
   </div>
+
+  <ion-modal
+    [isOpen]="!!editingCell"
+    [breakpoints]="[0, 0.85]"
+    [initialBreakpoint]="0.85"
+    (didDismiss)="closeCell()"
+  >
+    <ng-template>
+      <div class="cell-sheet" *ngIf="editingCell as cell">
+        <h2 class="section-title">{{ editingTitle }}</h2>
+        <ng-container *ngTemplateOutlet="cellFields; context: { $implicit: cell }"></ng-container>
+        <ion-button expand="block" (click)="closeCell()">Done</ion-button>
+      </div>
+    </ng-template>
+  </ion-modal>
 
   <ng-template #cellFields let-cell>
     <label class="field-label">Primary</label>

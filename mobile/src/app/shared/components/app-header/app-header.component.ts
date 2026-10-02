@@ -1,10 +1,14 @@
 import { Location } from '@angular/common';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { ContentService } from '../../../core/services/content.service';
 import { EmergencyService } from '../../../core/services/emergency.service';
+import { ReaderViewService } from '../../../core/services/reader-view.service';
 import { VesselRouteService } from '../../../core/services/vessel-route.service';
+
+const PERSONA_EXPLAINED = 'cattitude.readerView.explained';
 
 @Component({
   selector: 'app-header',
@@ -27,14 +31,18 @@ export class AppHeaderComponent implements OnInit, OnDestroy {
   @Output() back = new EventEmitter<void>();
 
   emergencyOpen = false;
+  readonly emergencyBreakpoints = [0, 0.9];
+  readonly emergencyInitial = 0.9;
   private emergencySub?: Subscription;
 
   constructor(
     public readonly content: ContentService,
+    public readonly readerView: ReaderViewService,
     private readonly emergency: EmergencyService,
     private readonly vesselRoutes: VesselRouteService,
     private readonly location: Location,
     private readonly router: Router,
+    private readonly alerts: AlertController,
   ) {}
 
   ngOnInit(): void {
@@ -55,8 +63,20 @@ export class AppHeaderComponent implements OnInit, OnDestroy {
     return this.showBack || !!this.backTo;
   }
 
+  get readerLabel(): string {
+    return this.readerView.view() === 'crew' ? 'Crew' : 'Guest';
+  }
+
   goHome(): void {
     void this.vesselRoutes.navigateTabs('home');
+  }
+
+  async onPersona(): Promise<void> {
+    if (!this.personaExplained()) {
+      await this.explainPersona();
+      return;
+    }
+    this.readerView.setView(this.readerView.view() === 'guest' ? 'crew' : 'guest');
   }
 
   onBack(): void {
@@ -84,5 +104,35 @@ export class AppHeaderComponent implements OnInit, OnDestroy {
 
   closeEmergency(): void {
     this.emergencyOpen = false;
+  }
+
+  private personaExplained(): boolean {
+    try {
+      return localStorage.getItem(PERSONA_EXPLAINED) === '1';
+    } catch {
+      return true;
+    }
+  }
+
+  private async explainPersona(): Promise<void> {
+    const alert = await this.alerts.create({
+      header: 'Guest or Crew',
+      message:
+        'Guest is the charter briefing. Crew adds owner notes, extra checks, and the fuller manual. The choice stays on this phone and changes Home, Know, and search.',
+      buttons: [
+        { text: 'Guest', handler: () => this.choosePersona('guest') },
+        { text: 'Crew', handler: () => this.choosePersona('crew') },
+      ],
+    });
+    await alert.present();
+  }
+
+  private choosePersona(view: 'guest' | 'crew'): void {
+    this.readerView.setView(view);
+    try {
+      localStorage.setItem(PERSONA_EXPLAINED, '1');
+    } catch {
+      /* the explanation can show again if storage is blocked */
+    }
   }
 }

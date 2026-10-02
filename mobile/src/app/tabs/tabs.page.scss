@@ -7,7 +7,21 @@
 ion-tab-button {
   --color: var(--cattitude-text-light);
   --color-selected: var(--cattitude-text-accent);
-  font-size: var(--cattitude-text-caption);
+  font-size: 0.75rem;
+
+  ion-icon:not([name$="-outline"]) {
+    display: none;
+  }
+}
+
+ion-tab-button.tab-selected {
+  ion-icon[name$="-outline"] {
+    display: none;
+  }
+
+  ion-icon:not([name$="-outline"]) {
+    display: inline-block;
+  }
 }
 
 /* Desktop keeps the same five destinations, in a rail beside the page

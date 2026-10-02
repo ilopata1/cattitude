@@ -106,8 +106,7 @@ export function buildDashboardCatalog(input: DashboardCatalogInput): DashboardIt
       label: topicTitle(topic),
       subtitle: topic.id === POWER_TOPIC_ID ? 'Electrical, controls, and batteries' : (topic.systems[0]?.subtitle || ''),
       icon: topicIcon(topic) || 'book-outline',
-      segments: ['know'],
-      query: { system: topic.id },
+      segments: ['know', topic.id],
     }));
     for (const system of topic.systems) {
       if (isPowerPart(system.id)) {
@@ -117,8 +116,7 @@ export function buildDashboardCatalog(input: DashboardCatalogInput): DashboardIt
           label: system.title || system.id,
           subtitle: 'Power',
           icon: system.icon || 'flash-outline',
-          segments: ['know'],
-          query: { system: system.id },
+          segments: ['know', system.id],
           parentId: id,
         }));
       }
@@ -133,8 +131,8 @@ export function buildDashboardCatalog(input: DashboardCatalogInput): DashboardIt
           label,
           subtitle: system.title || topicTitle(topic),
           icon: system.icon || topicIcon(topic) || 'book-outline',
-          segments: ['know'],
-          query: { system: system.id, section: String(index) },
+          segments: ['know', system.id],
+          query: { section: String(index) },
           crewOnly: section.audience === 'crew',
           parentId: id,
         }));

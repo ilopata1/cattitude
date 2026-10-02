@@ -1,140 +1,77 @@
 <app-header></app-header>
 
 <ion-content [fullscreen]="true" class="page-content">
-
   <ion-searchbar
-
     [(ngModel)]="query"
-
     placeholder="Search troubleshooting..."
-
     debounce="200"
-
-    (ionInput)="expandedIndex = null"
-
+    (ionInput)="openValues = []"
   ></ion-searchbar>
 
-
-
-  <div class="filter-chips">
-
-    <button
-
-      type="button"
-
-      class="filter-chip"
-
-      *ngFor="let category of categories"
-
-      [class.active]="categoryFilter === category.key"
-
-      (click)="setCategory(category.key)"
-
-    >
-
-      {{ category.label }}
-
-    </button>
-
+  <div class="filter-chips-wrap">
+    <div class="filter-chips">
+      <button
+        type="button"
+        class="filter-chip"
+        *ngFor="let category of categories"
+        [class.active]="categoryFilter === category.key"
+        (click)="setCategory(category.key)"
+      >
+        {{ category.label }}
+      </button>
+    </div>
   </div>
-
-
 
   <div class="scroll-area">
-
-    <div
-
-      class="fix-card"
-      [id]="'fix-card-' + i"
-
-      *ngFor="let fix of filteredFixes(); let i = index"
-
-      [class.open]="expandedIndex === i"
-
-    >
-
-      <button type="button" class="fix-header" (click)="toggle(i)">
-
-        <span class="fix-icon"><app-ui-icon [icon]="fix.icon" fallback="build-outline"></app-ui-icon></span>
-
-        <div class="fix-meta">
-
-          <span class="fix-cat" [ngClass]="categoryClass(fix.cat)">{{
-
-            fix.catL
-
-          }}</span>
-
-          <span class="fix-title">{{ fix.title }}</span>
-
-        </div>
-
-        <span class="fix-chevron" aria-hidden="true">
-          <ion-icon [name]="expandedIndex === i ? 'chevron-down' : 'chevron-forward'"></ion-icon>
-        </span>
-
-      </button>
-
-      <div *ngIf="expandedIndex === i" class="fix-body">
-
-        <ol class="fix-steps">
-
-          <li *ngFor="let step of fix.steps; let si = index">
-
-            <div class="step-num">{{ si + 1 }}</div>
-
-            <div class="step-content">
-
-              <div
-
-                *ngIf="isHtmlStep(step)"
-
-                [innerHTML]="step"
-
-                appRichHtml
-
-              ></div>
-
-              <span *ngIf="!isHtmlStep(step)">{{ step }}</span>
-
+    <ion-accordion-group [multiple]="true" [value]="openValues" (ionChange)="onAccordion($event)">
+      <ion-accordion
+        *ngFor="let fix of filteredFixes()"
+        [value]="cardSlug(fix)"
+        [id]="'fix-card-' + cardSlug(fix)"
+        toggleIcon="chevron-down"
+        class="fix-card"
+      >
+        <ion-item slot="header" lines="none" class="fix-header" button>
+          <span class="fix-icon" slot="start"><app-ui-icon [icon]="fix.icon" fallback="build-outline"></app-ui-icon></span>
+          <ion-label class="fix-meta">
+            <span class="fix-cat" [ngClass]="categoryClass(fix.cat)">{{ fix.catL }}</span>
+            <span class="fix-title">{{ fix.title }}</span>
+          </ion-label>
+        </ion-item>
+        <div slot="content" class="fix-body">
+          <ol class="fix-steps">
+            <li *ngFor="let step of fix.steps; let si = index">
+              <div class="step-num">{{ si + 1 }}</div>
+              <div class="step-content">
+                <div *ngIf="isHtmlStep(step)" [innerHTML]="step" appRichHtml></div>
+                <span *ngIf="!isHtmlStep(step)">{{ step }}</span>
+              </div>
+            </li>
+          </ol>
+          <div class="fix-escalation">
+            <p class="fix-escalation-label">Still stuck?</p>
+            <div class="fix-escalation-actions">
+              <button type="button" class="fix-escalation-btn" (click)="openAsk()">
+                <ion-icon name="book-outline" aria-hidden="true"></ion-icon>
+                Try Ask
+              </button>
+              <button
+                *ngIf="isCharterVessel"
+                type="button"
+                class="fix-escalation-btn"
+                (click)="openEmergency()"
+              >
+                <ion-icon name="radio-outline" aria-hidden="true"></ion-icon>
+                Contact {{ charterCompany }}
+              </button>
             </div>
-
-          </li>
-
-        </ol>
-
-        <div class="fix-escalation">
-          <p class="fix-escalation-label">Still stuck?</p>
-          <div class="fix-escalation-actions">
-            <button type="button" class="fix-escalation-btn" (click)="openAsk()">
-              <ion-icon name="book-outline" aria-hidden="true"></ion-icon>
-              Try Ask
-            </button>
-            <button
-              *ngIf="isCharterVessel"
-              type="button"
-              class="fix-escalation-btn"
-              (click)="openEmergency()"
-            >
-              <ion-icon name="radio-outline" aria-hidden="true"></ion-icon>
-              Contact {{ charterCompany }}
-            </button>
           </div>
         </div>
-
-      </div>
-
-    </div>
-
-
+      </ion-accordion>
+    </ion-accordion-group>
 
     <div *ngIf="filteredFixes().length === 0" class="fix-empty">
-
       No results found
-
     </div>
-
   </div>
-
 </ion-content>
-

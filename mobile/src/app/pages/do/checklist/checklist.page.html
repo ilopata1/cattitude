@@ -26,6 +26,8 @@
       <button
         type="button"
         class="cl-item"
+        role="checkbox"
+        [attr.aria-checked]="isDone(gi, ii)"
         [id]="'cl-' + gi + '-' + ii"
         [class.chk]="isDone(gi, ii)"
         [class.cl-target]="pendingItem === gi + '-' + ii"

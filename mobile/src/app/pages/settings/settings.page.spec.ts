@@ -56,6 +56,16 @@ describe('SettingsPage notifications', () => {
     fixture.detectChanges();
   });
 
+  it('does not explain simulators, tunnels, or plugin repositories', () => {
+    const text = fixture.nativeElement.textContent as string;
+    expect(text).not.toContain('generator.js');
+    expect(text).not.toContain('signalk-sim');
+    expect(text).not.toContain('Cloudflare');
+    expect(text).not.toContain('hoeken');
+    expect(text).not.toContain('Railway');
+    expect(text).not.toContain('Skip');
+  });
+
   it('announces Signal K connection changes', () => {
     const status = fixture.nativeElement.querySelector('.connection-status') as HTMLElement;
     expect(status.getAttribute('aria-live')).toBe('polite');

@@ -71,6 +71,21 @@
   }
 }
 
+.chat-markdown {
+  :is(p, ul, pre) {
+    margin: 0 0 0.5em;
+  }
+
+  :is(p, ul):last-child {
+    margin-bottom: 0;
+  }
+
+  code {
+    font-family: ui-monospace, monospace;
+    font-size: 0.9em;
+  }
+}
+
 .chat-bubble {
   max-width: 85%;
   padding: 11px 14px;

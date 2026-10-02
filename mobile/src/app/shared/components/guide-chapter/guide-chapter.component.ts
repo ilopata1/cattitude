@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { IonAccordionGroup } from '@ionic/angular';
 import {
   ChapterPresentation,
   presentChapter,
@@ -38,6 +39,7 @@ export class GuideChapterComponent {
   @Input() showFixes = false;
   @Input() showChecks = false;
   @Output() systemLink = new EventEmitter<string>();
+  @ViewChild(IonAccordionGroup) private referenceGroup?: IonAccordionGroup;
 
   private presentedSystem: SystemModule | null = null;
   private presentedFixes: ReturnType<ContentService['getFixes']> | null = null;
@@ -48,6 +50,12 @@ export class GuideChapterComponent {
   private powerFixes: ReturnType<ContentService['getFixes']> | null = null;
   private powerView: ReaderView | null = null;
   private powerCached: PowerPresentation<SystemSection> | null = null;
+
+  expandReference(): void {
+    if (this.referenceGroup) {
+      this.referenceGroup.value = 'reference';
+    }
+  }
 
   constructor(
     public readonly content: ContentService,

@@ -51,7 +51,10 @@ describe('vesselGuideGuard', () => {
     vesselContext = jasmine.createSpyObj<VesselContextService>('VesselContextService', [
       'setVesselSlug',
     ]);
-    sailPlans = jasmine.createSpyObj<SailPlanService>('SailPlanService', ['ensureLoaded']);
+    sailPlans = jasmine.createSpyObj<SailPlanService>('SailPlanService', [
+      'ensureLoaded',
+      'adoptPublishedTemplate',
+    ]);
     sailPlans.ensureLoaded.and.resolveTo();
     instrumentMaps = jasmine.createSpyObj<InstrumentMapService>('InstrumentMapService', [
       'ensureLoaded',

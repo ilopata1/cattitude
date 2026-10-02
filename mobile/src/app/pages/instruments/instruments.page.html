@@ -32,16 +32,9 @@
     <div class="role-block" *ngFor="let cfg of roles; trackBy: trackByRole">
       <ion-item lines="full">
         <ion-label position="stacked">{{ cfg.label }}</ion-label>
-        <ion-select
-          [value]="selectedPath(cfg.role)"
-          (ionChange)="setPath(cfg.role, $event.detail.value)"
-          placeholder="Choose path"
-          interface="action-sheet"
-        >
-          <ion-select-option *ngFor="let path of optionsFor(cfg.role)" [value]="path">
-            {{ path }}
-          </ion-select-option>
-        </ion-select>
+        <button type="button" class="path-picker" (click)="openPicker(cfg.role)">
+          {{ selectedPath(cfg.role) || 'Choose path' }}
+        </button>
       </ion-item>
       <p class="role-hint">{{ cfg.hint }}</p>
       <p class="live-hint" [class.attention]="needsAttention(selectedPath(cfg.role))">
@@ -53,16 +46,9 @@
     <div class="role-block">
       <ion-item lines="full">
         <ion-label position="stacked">Speed fallback (SOG)</ion-label>
-        <ion-select
-          [value]="selectedSogFallback()"
-          (ionChange)="setSogFallback($event.detail.value)"
-          placeholder="Optional SOG path"
-          interface="action-sheet"
-        >
-          <ion-select-option *ngFor="let path of sogOptions()" [value]="path">
-            {{ path }}
-          </ion-select-option>
-        </ion-select>
+        <button type="button" class="path-picker" (click)="openPicker('sog')">
+          {{ selectedSogFallback() || 'Choose path' }}
+        </button>
       </ion-item>
       <p class="role-hint">Used when STW is missing or near zero (common under motor).</p>
       <p class="live-hint" [class.attention]="needsAttention(selectedSogFallback())">
@@ -75,3 +61,39 @@
     </ion-button>
   </div>
 </ion-content>
+
+<ion-modal
+  [isOpen]="pickerOpen"
+  [breakpoints]="[0, 0.9]"
+  [initialBreakpoint]="0.9"
+  (didDismiss)="closePicker()"
+>
+  <ng-template>
+    <ion-header class="ion-no-border">
+      <ion-toolbar>
+        <ion-title>{{ pickerTitle() }}</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="closePicker()">Done</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+      <ion-toolbar>
+        <ion-searchbar
+          [(ngModel)]="pickerQuery"
+          placeholder="Filter paths"
+          debounce="100"
+        ></ion-searchbar>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <ion-list>
+        <ion-item button (click)="choosePath('')">
+          <ion-label>None</ion-label>
+        </ion-item>
+        <ion-item button *ngFor="let path of pickerPaths()" (click)="choosePath(path)">
+          <ion-label>{{ path }}</ion-label>
+        </ion-item>
+      </ion-list>
+      <p class="hint" *ngIf="!pickerPaths().length">No paths match that filter.</p>
+    </ion-content>
+  </ng-template>
+</ion-modal>

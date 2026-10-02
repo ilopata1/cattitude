@@ -1,4 +1,23 @@
 <ion-app>
+  <div
+    class="alarm-banner"
+    *ngIf="alarms.current() as notice"
+    role="alert"
+    aria-live="assertive"
+    aria-atomic="true"
+    [class.emergency]="notice.severity === 'emergency'"
+  >
+    <div class="alarm-copy">
+      <strong>{{ notice.title }}</strong>
+      <p>{{ notice.body }}</p>
+    </div>
+    <button type="button" class="alarm-action" (click)="openAlarm(notice)">
+      {{ notice.actionLabel }}
+    </button>
+    <button type="button" class="alarm-dismiss" (click)="alarms.dismiss()" aria-label="Dismiss alert">
+      Close
+    </button>
+  </div>
   <ion-router-outlet></ion-router-outlet>
   <app-photo-overlay></app-photo-overlay>
 </ion-app>

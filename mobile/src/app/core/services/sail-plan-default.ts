@@ -5,11 +5,11 @@ function cell(primary: string, alternatives: string[] = [], notes?: string, avoi
 }
 
 /**
- * Seeded from the Outremer 55 Incidence crossover chart (Supernova).
- * Owners should treat this as a starting template and edit bands/sails for their vessel.
+ * Fixture for sail-matching checks. The editor's reset target is
+ * `ui.sailPlanTemplate` on the published guide, not this chart.
  */
 export const DEFAULT_SAIL_PLAN: SailPlan = {
-  name: 'Outremer 55 (template)',
+  name: 'Vessel template',
   sails: [
     'Main',
     'Self-tacking jib',

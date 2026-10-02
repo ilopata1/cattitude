@@ -20,6 +20,7 @@ from guide_publish_consistency import apply_publish_consistency
 from guide_tone import load_tone_grounding, tone_warnings
 from guide_learn_checks import rewrite_learn_checks
 from guide_navigation import NAVIGATION_MODULE_KEYS, enrich_navigation
+from sail_plan import read_stored_plan
 from guide_section_duplicates import duplicate_warnings, fold_consecutive_sections
 from manual_titles import build_manual_titles_for_vessel
 
@@ -134,6 +135,24 @@ def validate_publication_payload(
     return errors + [f"Warning: {message}" for message in warnings]
 
 
+def _attach_sail_plan_template(
+    conn: Connection, vessel_id: str, payload: dict[str, Any]
+) -> None:
+    """Publish the vessel's stored sail plan as the reset template.
+
+    The live editor keeps its own copy. Reset restores this published one.
+    """
+    ui = payload.get("ui")
+    if not isinstance(ui, dict):
+        return
+    existing = ui.get("sailPlanTemplate")
+    if isinstance(existing, dict) and existing.get("sails"):
+        return
+    stored = read_stored_plan(conn, vessel_id)
+    if stored:
+        ui["sailPlanTemplate"] = stored
+
+
 def overview_has_layout_photo(systems: dict[str, Any] | None) -> bool:
     overview = (systems or {}).get("overview") or {}
     for section in overview.get("sections") or []:
@@ -177,6 +196,7 @@ def assemble_publication(
     rewrite_learn_checks(payload)
     duplicates = duplicate_warnings(payload)
     enrich_navigation(payload, vessel_type=vessel_type)
+    _attach_sail_plan_template(conn, vessel_id, payload)
     location_warnings = list(payload.pop("_location_warnings", []) or [])
     try:
         grounding = load_tone_grounding(conn, vessel_id)

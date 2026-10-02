@@ -13,12 +13,28 @@
   background: var(--ion-background-color, var(--cattitude-sand, #f5f0e8));
 }
 
+.sail-content {
+  --background: var(--cattitude-sand);
+}
+
 .instruments {
   flex: 1;
   display: flex;
   flex-direction: column;
   padding-top: 8px;
   overflow-y: auto;
+}
+
+@media (orientation: landscape), (min-width: 768px) {
+  .instruments {
+    flex-direction: row;
+    align-items: stretch;
+
+    > * {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+  }
 }
 
 .no-connection {

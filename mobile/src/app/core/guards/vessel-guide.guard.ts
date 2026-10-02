@@ -48,5 +48,6 @@ export const vesselGuideGuard: CanActivateFn = async (route) => {
     return router.createUrlTree(['/v', slug, 'error']);
   }
 
+  sailPlans.adoptPublishedTemplate();
   return true;
 };

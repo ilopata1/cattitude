@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from guide_ask import build_ask_suggestions
 from guide_module_catalog import (
     CHECKLIST_CATALOG,
     CHECKLIST_IDS,
@@ -355,6 +356,12 @@ def enrich_navigation(bootstrap: dict[str, Any], *, vessel_type: str) -> dict[st
     ui["whereIndex"] = where_index
     if home_rules is not None:
         ui["homeRuleSections"] = home_rules
+    authored = ui.get("askSuggestions")
+    if not (
+        isinstance(authored, list)
+        and any(isinstance(item, str) and item.strip() for item in authored)
+    ):
+        ui["askSuggestions"] = build_ask_suggestions(systems)
 
     bootstrap["ui"] = ui
     bootstrap["locations"] = build_locations(where_index)

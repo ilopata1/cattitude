@@ -1,5 +1,10 @@
-<app-header [title]="pageTitle" [showBack]="true" backTo="more"></app-header>
+<app-header
+  [title]="pageTitle"
+  [showBack]="openedFromMore"
+  [backTo]="openedFromMore ? 'more' : null"
+></app-header>
 
+<ion-content [fullscreen]="true" [scrollY]="false" class="sail-content">
 <div class="sail-page">
 
   <div *ngIf="!hasSignalKUrl" class="no-connection">
@@ -20,3 +25,4 @@
   </div>
 
 </div>
+</ion-content>

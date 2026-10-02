@@ -1,5 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { AlertController, IonContent } from '@ionic/angular';
+import { resolveAskSuggestions } from '../../core/guide/ask-suggestions';
+import { chatMarkdownHtml } from '../../core/guide/chat-markdown';
 import { ChatService } from '../../core/services/chat.service';
+import { ContentService } from '../../core/services/content.service';
 import {
   ChatMessage,
   ChatSource,
@@ -14,21 +19,73 @@ import {
 })
 export class AskPage {
   draft = '';
-  suggestions = [
-    'How do I start the port engine?',
-    'Where is the main DC panel?',
-    'How does the watermaker work?',
-  ];
 
   expandedSourceKey: string | null = null;
 
-  constructor(public readonly chat: ChatService) {}
+  @ViewChild(IonContent) private ionContent?: IonContent;
+
+  constructor(
+    public readonly chat: ChatService,
+    private readonly content: ContentService,
+    private readonly sanitizer: DomSanitizer,
+    private readonly alerts: AlertController,
+  ) {}
+
+  ionViewDidEnter(): void {
+    void this.scrollToLatest();
+  }
+
+  get suggestions(): string[] {
+    const bootstrap = this.content.bootstrap;
+    return resolveAskSuggestions(bootstrap.ui.askSuggestions, bootstrap.systems);
+  }
 
   async send(): Promise<void> {
     const question = this.draft;
     this.draft = '';
     this.expandedSourceKey = null;
+    await this.scrollToLatest();
     await this.chat.send(question);
+    await this.scrollToLatest();
+  }
+
+  onDraftKey(event: KeyboardEvent): void {
+    if (event.key !== 'Enter' || event.isComposing) {
+      return;
+    }
+    const touch = window.matchMedia('(pointer: coarse)').matches;
+    if (touch || event.shiftKey) {
+      return;
+    }
+    event.preventDefault();
+    void this.send();
+  }
+
+  markdown(source: string): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(chatMarkdownHtml(source));
+  }
+
+  async clear(): Promise<void> {
+    const alert = await this.alerts.create({
+      header: 'Clear this conversation?',
+      message: 'The questions and answers on this screen will be removed.',
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Clear',
+          role: 'destructive',
+          handler: () => {
+            this.chat.clearHistory();
+            this.expandedSourceKey = null;
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  private async scrollToLatest(): Promise<void> {
+    await this.ionContent?.scrollToBottom(200);
   }
 
   useSuggestion(text: string): void {

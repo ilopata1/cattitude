@@ -2,7 +2,7 @@ import {
   Component, OnInit, OnDestroy, AfterViewInit,
   ElementRef, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
-import { ViewWillEnter } from '@ionic/angular';
+import { ActionSheetController, AlertController, ViewWillEnter } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { AnchorageVesselStoreService } from './core/services/anchorage-vessel-store.service';
 import { AnchorageAlertService } from './core/services/anchorage-alert.service';
@@ -151,11 +151,17 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
   /** When the user last moved the map, so following does not fight them. */
   private lastUserMapMove = 0;
 
+  sheetShift = 62;
+  private dragStartY: number | null = null;
+  private dragStartShift = 62;
+
   constructor(
     private readonly vesselStore: AnchorageVesselStoreService,
     private readonly alertService: AnchorageAlertService,
     private readonly sk: SignalKService,
     private readonly cdr: ChangeDetectorRef,
+    private readonly actionSheet: ActionSheetController,
+    private readonly alerts: AlertController,
   ) {}
 
   ngOnInit(): void {
@@ -284,11 +290,71 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
     this.cdr.markForCheck();
   }
 
+  async openOverflow(): Promise<void> {
+    const sheet = await this.actionSheet.create({
+      header: 'Anchorage',
+      buttons: [
+        {
+          text: 'Clear all vessels',
+          role: 'destructive',
+          handler: () => {
+            void this.confirmClear();
+          },
+        },
+        { text: 'Cancel', role: 'cancel' },
+      ],
+    });
+    await sheet.present();
+  }
+
+  onSheetDown(event: PointerEvent): void {
+    (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+    this.dragStartY = event.clientY;
+    this.dragStartShift = this.sheetShift;
+  }
+
+  onSheetMove(event: PointerEvent): void {
+    if (this.dragStartY == null) {
+      return;
+    }
+    const sheet = (event.currentTarget as HTMLElement).parentElement;
+    const height = sheet?.getBoundingClientRect().height || 1;
+    const next = this.dragStartShift + ((event.clientY - this.dragStartY) / height) * 100;
+    this.sheetShift = Math.min(78, Math.max(8, next));
+  }
+
+  onSheetUp(): void {
+    if (this.dragStartY == null) {
+      return;
+    }
+    this.dragStartY = null;
+    this.sheetShift = this.sheetShift > 45 ? 72 : 12;
+    const map = this.map as { invalidateSize?: () => void } | null;
+    map?.invalidateSize?.();
+    this.cdr.markForCheck();
+  }
+
   clearAll(): void {
     this.stopRecording();
     this.vesselStore.clear();
     this.selectedVessel = null;
     this.clearMapLayers();
+  }
+
+  private async confirmClear(): Promise<void> {
+    const alert = await this.alerts.create({
+      header: 'Clear all vessels?',
+      message: 'This deletes the AIS history recorded on this phone.',
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Clear',
+          role: 'destructive',
+          handler: () => this.clearAll(),
+        },
+      ],
+    });
+    await alert.present();
   }
 
   get listVessels(): Vessel[] {

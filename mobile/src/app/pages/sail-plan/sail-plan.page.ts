@@ -17,6 +17,8 @@ export class SailPlanPage implements OnInit {
 
   draft!: SailPlan;
   newSail = '';
+  editingCell: SailPlanCell | null = null;
+  editingTitle = '';
   private readonly comboCache = new WeakMap<SailPlanCell, Record<string, { raw: string; sails: string[] }>>();
 
   constructor(
@@ -37,6 +39,22 @@ export class SailPlanPage implements OnInit {
   formatTwa(i: number) { return formatBand(this.twaBands()[i], '°'); }
   formatTws(i: number) { return formatBand(this.twsBands()[i], 'kn'); }
   formatHw(i: number) { return formatBand(this.hwBands()[i], '°'); }
+
+  cellLabel(cell: SailPlanCell): string {
+    const primary = cell.primary?.trim();
+    return primary || 'Set';
+  }
+
+  editCell(cell: SailPlanCell, title: string): void {
+    this.editingCell = cell;
+    this.editingTitle = title;
+    this.cdr.markForCheck();
+  }
+
+  closeCell(): void {
+    this.editingCell = null;
+    this.cdr.markForCheck();
+  }
 
   primarySails(cell: SailPlanCell): string[] {
     return this.cachedCombo(cell, 'p', cell.primary);
@@ -152,8 +170,8 @@ export class SailPlanPage implements OnInit {
 
   async resetTemplate(): Promise<void> {
     const alert = await this.alerts.create({
-      header: 'Reset to Outremer 55 template?',
-      message: 'This replaces your current bands and cell text with the Incidence crossover chart.',
+      header: 'Reset to template?',
+      message: 'This replaces your current bands and sail combinations with the template for this boat.',
       buttons: [
         { text: 'Cancel', role: 'cancel' },
         {
@@ -166,6 +184,14 @@ export class SailPlanPage implements OnInit {
       ],
     });
     await alert.present();
+  }
+
+  get hasTemplate(): boolean {
+    return this.sailPlans.publishedTemplate() != null;
+  }
+
+  templateName(): string {
+    return this.sailPlans.publishedTemplate()?.name || 'the template for this vessel';
   }
 
   trackByIndex(index: number): number { return index; }
@@ -241,6 +267,7 @@ export class SailPlanPage implements OnInit {
 
   private async refreshDraft(): Promise<void> {
     await this.sailPlans.ensureLoaded();
+    this.sailPlans.adoptPublishedTemplate();
     this.draft = clonePlan(this.sailPlans.plan);
     this.cdr.markForCheck();
   }

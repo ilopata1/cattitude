@@ -1,4 +1,5 @@
 import { VesselType } from './schema-enums';
+import { SailPlan } from './sail-plan.model';
 
 export interface BootstrapBranding {
   vesselName: string;
@@ -176,6 +177,16 @@ export interface BootstrapUi {
     }>;
     zones: Array<{ id: string; label: string }>;
   };
+  /**
+   * Present after the next publish. Older bundles derive the same chips
+   * from system chapters.
+   */
+  askSuggestions?: string[];
+  /**
+   * Sail-plan reset target published with this vessel. Absent until a plan
+   * has been saved and the guide published again.
+   */
+  sailPlanTemplate?: SailPlan;
 }
 
 export interface BootstrapContent {

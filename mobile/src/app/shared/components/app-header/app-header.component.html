@@ -17,10 +17,20 @@
         </div>
       </div>
     </div>
-    <ion-button slot="end" class="emergency-btn" (click)="openEmergency()">
-      <ion-icon name="help-buoy-outline" slot="start" aria-hidden="true"></ion-icon>
-      Emergency
-    </ion-button>
+    <div slot="end" class="header-end">
+      <button
+        type="button"
+        class="persona-chip"
+        (click)="onPersona()"
+        [attr.aria-label]="'Reading view, ' + readerLabel + '. Switch between Guest and Crew.'"
+      >
+        {{ readerLabel }}
+      </button>
+      <ion-button class="emergency-btn" (click)="openEmergency()">
+        <ion-icon name="help-buoy-outline" slot="start" aria-hidden="true"></ion-icon>
+        Emergency
+      </ion-button>
+    </div>
   </ion-toolbar>
 
   <div class="app-subheader" *ngIf="hasSubheader">
@@ -46,10 +56,15 @@
   <ng-content select="[headerExtra]"></ng-content>
 </ion-header>
 
-<ion-modal [isOpen]="emergencyOpen" (didDismiss)="closeEmergency()">
+<ion-modal
+  [isOpen]="emergencyOpen"
+  [breakpoints]="emergencyBreakpoints"
+  [initialBreakpoint]="emergencyInitial"
+  [handle]="true"
+  (didDismiss)="closeEmergency()"
+>
   <ng-template>
     <div class="modal-sheet">
-      <div class="modal-pill"></div>
       <h2 class="modal-title">Emergency</h2>
       <div class="mayday-block" *ngIf="content.bootstrap.emergency.mayday.steps.length">
         <h3>MAYDAY — {{ content.bootstrap.emergency.mayday.channel }}</h3>

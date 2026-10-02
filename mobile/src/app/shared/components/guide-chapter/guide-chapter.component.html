@@ -44,20 +44,25 @@
       </button>
     </ng-container>
 
-    <details
-      id="know-reference"
+    <ion-accordion-group
       class="know-reference"
       *ngIf="chapter.reference.length || chapter.referenceSummary"
     >
-      <summary>Reference</summary>
-      <section class="detail-section" *ngIf="chapter.referenceSummary">
-        <h3>About this system</h3>
-        <p class="prose">{{ chapter.referenceSummary }}</p>
-      </section>
-      <ng-container *ngFor="let placed of chapter.reference">
-        <ng-container *ngTemplateOutlet="sectionCard; context: { placed: placed, systemId: system?.id }"></ng-container>
-      </ng-container>
-    </details>
+      <ion-accordion value="reference" toggleIcon="chevron-down">
+        <ion-item slot="header" lines="none" class="ref-header">
+          <ion-label>Reference</ion-label>
+        </ion-item>
+        <div slot="content" id="know-reference">
+          <section class="detail-section" *ngIf="chapter.referenceSummary">
+            <h3>About this system</h3>
+            <p class="prose">{{ chapter.referenceSummary }}</p>
+          </section>
+          <ng-container *ngFor="let placed of chapter.reference">
+            <ng-container *ngTemplateOutlet="sectionCard; context: { placed: placed, systemId: system?.id }"></ng-container>
+          </ng-container>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
 
     <ng-container *ngTemplateOutlet="checks"></ng-container>
   </div>
@@ -136,20 +141,25 @@
       </button>
     </ng-container>
 
-    <details
-      id="know-reference"
+    <ion-accordion-group
       class="know-reference"
       *ngIf="power.reference.length || power.referenceNotes.length"
     >
-      <summary>Reference</summary>
-      <section class="detail-section" *ngFor="let note of power.referenceNotes">
-        <h3>{{ note.heading }}</h3>
-        <p class="prose">{{ note.text }}</p>
-      </section>
-      <ng-container *ngFor="let placed of power.reference">
-        <ng-container *ngTemplateOutlet="sectionCard; context: { placed: placed, systemId: placed.systemId }"></ng-container>
-      </ng-container>
-    </details>
+      <ion-accordion value="reference" toggleIcon="chevron-down">
+        <ion-item slot="header" lines="none" class="ref-header">
+          <ion-label>Reference</ion-label>
+        </ion-item>
+        <div slot="content" id="know-reference">
+          <section class="detail-section" *ngFor="let note of power.referenceNotes">
+            <h3>{{ note.heading }}</h3>
+            <p class="prose">{{ note.text }}</p>
+          </section>
+          <ng-container *ngFor="let placed of power.reference">
+            <ng-container *ngTemplateOutlet="sectionCard; context: { placed: placed, systemId: placed.systemId }"></ng-container>
+          </ng-container>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
 
     <ng-container *ngTemplateOutlet="checks"></ng-container>
   </div>

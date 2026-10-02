@@ -1,6 +1,23 @@
 <app-header></app-header>
 <ion-content [fullscreen]="true" class="page-content">
   <div class="scroll-area do-menu">
+    <section class="do-section" *ngIf="learnCard as learn">
+      <div class="section-label">Learn</div>
+      <button type="button" class="do-card learn-card" (click)="open(learn.route)">
+        <div class="do-card-icon" [ngClass]="learn.iconClass">
+          <app-ui-icon [icon]="learn.icon" fallback="school-outline"></app-ui-icon>
+        </div>
+        <div class="do-card-body">
+          <div class="do-card-title">{{ learn.title }}</div>
+          <div class="do-card-sub">{{ learn.subtitle }}</div>
+          <div class="do-card-prog">{{ progressLabel(learn.key, 'learn') }}</div>
+          <div class="learn-stage" *ngFor="let stage of learnStages">
+            {{ stage.title }}<span *ngIf="stage.progress"> · {{ stage.progress }}</span>
+          </div>
+        </div>
+        <div class="do-card-arrow" aria-hidden="true"><ion-icon name="chevron-forward"></ion-icon></div>
+      </button>
+    </section>
     <section class="do-section" *ngFor="let section of menu">
       <div class="section-label" *ngIf="section.label">{{ section.label }}</div>
       <div class="do-cards">
