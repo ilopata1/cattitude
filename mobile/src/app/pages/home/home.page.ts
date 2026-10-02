@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, DestroyRef, HostListener, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import {
@@ -44,6 +44,8 @@ export class HomePage {
   editing = false;
   addOpen = false;
   heroFull = true;
+  reordering = false;
+  dragId: string | null = null;
 
   readonly content = inject(ContentService);
   readonly readerView = inject(ReaderViewService);
@@ -61,7 +63,7 @@ export class HomePage {
   private readonly router = inject(Router);
   private readonly signalKOn = signal(false);
   private skState: SignalKConnectionState = 'disconnected';
-  private dragIndex: number | null = null;
+  private dragPointerId: number | null = null;
 
   readonly essentials = toSignal(this.live.essentials$, { initialValue: EMPTY_SAIL_ESSENTIALS });
   readonly wind = toSignal(this.live.wind$, { initialValue: EMPTY_WIND_STEER });
@@ -127,7 +129,12 @@ export class HomePage {
     this.editing = !this.editing;
     if (!this.editing) {
       this.addOpen = false;
+      this.clearReorder();
     }
+  }
+
+  trackTile(_index: number, item: DashboardItem): string {
+    return item.id;
   }
 
   add(item: DashboardItem): void {
@@ -156,25 +163,40 @@ export class HomePage {
     return !this.liveConfigured() && this.tiles().some((item) => item.kind === 'widget' && item.id !== 'widget:rules');
   }
 
-  dragStart(index: number, event: DragEvent): void {
-    this.dragIndex = index;
-    event.dataTransfer?.setData('text/plain', String(index));
-  }
-
-  allowDrop(event: DragEvent): void {
-    event.preventDefault();
-  }
-
-  dropOn(index: number): void {
-    if (this.dragIndex == null || this.dragIndex === index) {
-      this.dragIndex = null;
+  reorderStart(index: number, event: PointerEvent): void {
+    if (!this.editing || event.button !== 0) {
       return;
     }
-    const next = this.tiles().slice();
-    const [moved] = next.splice(this.dragIndex, 1);
-    next.splice(index, 0, moved);
-    this.persist(next.map((item) => item.id));
-    this.dragIndex = null;
+    const id = this.tiles()[index]?.id;
+    if (!id) {
+      return;
+    }
+    event.preventDefault();
+    event.stopPropagation();
+    this.dragId = id;
+    this.dragPointerId = event.pointerId;
+    this.reordering = true;
+  }
+
+  @HostListener('document:pointermove', ['$event'])
+  onReorderMove(event: PointerEvent): void {
+    if (!this.reordering || event.pointerId !== this.dragPointerId || !this.dragId) {
+      return;
+    }
+    const target = this.tileIndexAt(event.clientX, event.clientY);
+    if (target == null) {
+      return;
+    }
+    this.moveDragTo(target);
+  }
+
+  @HostListener('document:pointerup', ['$event'])
+  @HostListener('document:pointercancel', ['$event'])
+  onReorderEnd(event: PointerEvent): void {
+    if (!this.reordering || event.pointerId !== this.dragPointerId) {
+      return;
+    }
+    this.clearReorder();
   }
 
   connectionLabel(): string {
@@ -335,6 +357,41 @@ export class HomePage {
 
   private persist(ids: string[]): void {
     this.layouts.save(this.vesselContext.vesselSlug, this.readerView.view(), ids);
+  }
+
+  private moveDragTo(target: number): void {
+    const items = this.tiles();
+    const from = items.findIndex((item) => item.id === this.dragId);
+    if (from < 0 || from === target) {
+      return;
+    }
+    const next = items.slice();
+    const [moved] = next.splice(from, 1);
+    next.splice(target, 0, moved);
+    this.persist(next.map((item) => item.id));
+  }
+
+  private tileIndexAt(x: number, y: number): number | null {
+    // Ionic's shadow hosts swallow elementFromPoint, so use the chip boxes.
+    const cells = document.querySelectorAll<HTMLElement>('.dash-cell[data-tile-index]');
+    for (let i = 0; i < cells.length; i += 1) {
+      const cell = cells[i];
+      const rect = cell.getBoundingClientRect();
+      if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+        continue;
+      }
+      const index = cell.getAttribute('data-tile-index');
+      if (index != null && /^\d+$/.test(index)) {
+        return Number(index);
+      }
+    }
+    return null;
+  }
+
+  private clearReorder(): void {
+    this.reordering = false;
+    this.dragId = null;
+    this.dragPointerId = null;
   }
 
   private catalog(): DashboardItem[] {

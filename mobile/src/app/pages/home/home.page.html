@@ -57,15 +57,15 @@
       Nothing on this home yet. Add the shortcuts and live readings you want here.
     </p>
 
-    <div class="dash-grid">
-      <ng-container *ngFor="let item of tiles(); let i = index">
+    <div class="dash-grid" [class.is-reordering]="reordering">
+      <ng-container *ngFor="let item of tiles(); let i = index; trackBy: trackTile">
         <div
           *ngIf="showTile(item)"
           class="dash-cell"
           [class.tile-wide]="item.span === 2"
           [class.editing]="editing"
-          (dragover)="allowDrop($event)"
-          (drop)="dropOn(i)"
+          [class.is-source]="dragId === item.id"
+          [attr.data-tile-index]="i"
         >
           <button
             *ngIf="editing"
@@ -80,9 +80,9 @@
             *ngIf="editing"
             type="button"
             class="dash-handle"
-            draggable="true"
             aria-label="Drag to reorder"
-            (dragstart)="dragStart(i, $event)"
+            (pointerdown)="reorderStart(i, $event)"
+            (click)="$event.preventDefault()"
           >
             <ion-icon name="reorder-three" aria-hidden="true"></ion-icon>
           </button>
