@@ -5,6 +5,7 @@ import { AlarmBannerService, AlarmNotice } from './core/services/alarm-banner.se
 import { AppUpdateService } from './core/services/app-update.service';
 import { EmergencyService } from './core/services/emergency.service';
 import { NotificationBridgeService } from './core/services/notification-bridge.service';
+import { LogbookTriggerService } from './core/services/logbook-trigger.service';
 import { SailWatchService } from './core/services/sail-watch.service';
 import { ThemeService } from './core/services/theme.service';
 import { VesselRouteService } from './core/services/vessel-route.service';
@@ -19,6 +20,7 @@ export class AppComponent {
   readonly alarms = inject(AlarmBannerService);
   private readonly notificationBridge = inject(NotificationBridgeService);
   private readonly sailWatch = inject(SailWatchService);
+  private readonly logbook = inject(LogbookTriggerService);
   private readonly appUpdate = inject(AppUpdateService);
   private readonly theme = inject(ThemeService);
   private readonly router = inject(Router);
@@ -29,6 +31,7 @@ export class AppComponent {
     this.theme.resolved();
     this.notificationBridge.start();
     this.sailWatch.ensureRunning();
+    this.logbook.ensureRunning();
     this.appUpdate.start();
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),

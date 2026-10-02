@@ -4,6 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import { AppUpdateService } from './core/services/app-update.service';
 import { NotificationBridgeService } from './core/services/notification-bridge.service';
+import { LogbookTriggerService } from './core/services/logbook-trigger.service';
 import { SailWatchService } from './core/services/sail-watch.service';
 
 describe('AppComponent', () => {
@@ -15,6 +16,7 @@ describe('AppComponent', () => {
       providers: [
         { provide: NotificationBridgeService, useValue: { start: () => undefined } },
         { provide: SailWatchService, useValue: { ensureRunning: () => undefined } },
+        { provide: LogbookTriggerService, useValue: { ensureRunning: () => undefined } },
         { provide: AppUpdateService, useValue: { start: () => undefined } },
       ],
     }).compileComponents();

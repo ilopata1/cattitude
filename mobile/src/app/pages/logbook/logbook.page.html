@@ -1,0 +1,190 @@
+<app-header title="Logbook" [showBack]="true" backTo="more"></app-header>
+
+<ion-content [fullscreen]="true" class="page-content">
+  <div class="scroll-area logbook">
+
+    <section class="log-card log-now">
+      <div class="log-kicker">{{ propulsion() || 'No live data' }}</div>
+      <div class="log-position">{{ positionText() }}</div>
+      <p class="log-meta">
+        {{ sailNow() }}
+        <span *ngIf="reading.twsKn != null"> · TWS {{ num(reading.twsKn) }} kn</span>
+        <span *ngIf="reading.pressureHpa != null"> · {{ num(reading.pressureHpa) }} hPa</span>
+      </p>
+      <p class="log-meta" *ngIf="passage">
+        {{ passage.name || passage.destinationName || 'Passage' }}
+        <span *ngIf="liveDtg()"> · {{ liveDtg() }}</span>
+      </p>
+      <p class="log-meta">Next interval {{ nextLog() }} · every {{ settings.intervalHours }} h</p>
+      <p class="log-warn" *ngIf="sync.error() as syncError">{{ syncError }}</p>
+      <ion-button expand="block" (click)="logNow()">Log now</ion-button>
+    </section>
+
+    <section class="log-card">
+      <button type="button" class="log-disclosure" (click)="passageOpen = !passageOpen">
+        <span>Passage</span>
+        <span>{{ passageOpen ? 'Hide' : 'Edit' }}</span>
+      </button>
+      <div *ngIf="passageOpen" class="log-form">
+        <label>Name</label>
+        <ion-input [(ngModel)]="draft.name" (ngModelChange)="markDraftDirty()" placeholder="Antigua to Bermuda"></ion-input>
+        <label>Destination</label>
+        <ion-input [(ngModel)]="draft.destinationName" (ngModelChange)="markDraftDirty()" placeholder="St George's"></ion-input>
+        <div class="log-pair">
+          <div>
+            <label>Latitude</label>
+            <ion-input [(ngModel)]="draft.lat" (ngModelChange)="markDraftDirty()" inputmode="decimal" placeholder="32.307"></ion-input>
+          </div>
+          <div>
+            <label>Longitude</label>
+            <ion-input [(ngModel)]="draft.lon" (ngModelChange)="markDraftDirty()" inputmode="decimal" placeholder="-64.852"></ion-input>
+          </div>
+        </div>
+        <label>Arrival radius (nm)</label>
+        <ion-input [(ngModel)]="draft.radius" (ngModelChange)="markDraftDirty()" inputmode="decimal"></ion-input>
+        <label>On watch</label>
+        <ion-input [(ngModel)]="draft.watch" (ngModelChange)="markDraftDirty()" placeholder="Name carried onto each entry"></ion-input>
+
+        <div class="log-waypoints">
+          <div class="log-waypoint" *ngFor="let waypoint of draft.waypoints">
+            <ion-input [(ngModel)]="waypoint.name" (ngModelChange)="markDraftDirty()" placeholder="Waypoint"></ion-input>
+            <div class="log-pair">
+              <ion-input [(ngModel)]="waypoint.lat" (ngModelChange)="markDraftDirty()" inputmode="decimal" placeholder="Lat"></ion-input>
+              <ion-input [(ngModel)]="waypoint.lon" (ngModelChange)="markDraftDirty()" inputmode="decimal" placeholder="Lon"></ion-input>
+            </div>
+            <div class="log-waypoint-actions">
+              <span *ngIf="waypoint.passedAt">Passed {{ formatLogClock(waypoint.passedAt) }}</span>
+              <button type="button" *ngIf="!waypoint.passedAt" (click)="markWaypoint(waypoint.id)">Mark passed</button>
+              <button type="button" (click)="removeWaypoint(waypoint.id)">Remove</button>
+            </div>
+          </div>
+          <button type="button" class="log-text-btn" (click)="addWaypoint()">Add waypoint</button>
+        </div>
+
+        <p class="log-meta" *ngIf="draft.departedAt">Departed {{ formatLogClock(draft.departedAt) }}</p>
+        <p class="log-meta" *ngIf="draft.arrivedAt">Arrived {{ formatLogClock(draft.arrivedAt) }}</p>
+        <ion-button expand="block" (click)="savePassage()" [disabled]="saving">Save passage</ion-button>
+        <div class="log-pair-buttons">
+          <ion-button fill="outline" (click)="depart()" [disabled]="!!draft.departedAt">Depart</ion-button>
+          <ion-button fill="outline" (click)="arrive()" [disabled]="!!draft.arrivedAt">Arrive</ion-button>
+        </div>
+      </div>
+    </section>
+
+    <section class="log-card">
+      <button type="button" class="log-disclosure" (click)="settingsOpen = !settingsOpen">
+        <span>Logging</span>
+        <span>{{ settingsOpen ? 'Hide' : 'Change' }}</span>
+      </button>
+      <div *ngIf="settingsOpen" class="log-form">
+        <label>Interval</label>
+        <div class="interval-row">
+          <button
+            type="button"
+            *ngFor="let hours of intervals"
+            [class.on]="settings.intervalHours === hours"
+            (click)="setInterval(hours)"
+          >{{ hours }}h</button>
+        </div>
+        <label>First slot, minutes after 00:00 UTC</label>
+        <ion-input
+          type="number"
+          [(ngModel)]="settings.offsetMinutes"
+          (ionBlur)="saveSettings()"
+        ></ion-input>
+        <p class="log-meta">120 with a 3-hour interval logs at 02:00, 05:00, 08:00…</p>
+        <ion-item lines="none" class="log-toggle">
+          <ion-toggle
+            [(ngModel)]="settings.pauseWhenAnchored"
+            (ngModelChange)="saveSettings()"
+          >Pause when anchored or stopped</ion-toggle>
+        </ion-item>
+        <ion-item lines="none" class="log-toggle">
+          <ion-toggle
+            [(ngModel)]="settings.syncEnabled"
+            (ngModelChange)="saveSettings()"
+          >Sync to the boat server</ion-toggle>
+        </ion-item>
+        <label>Engine or anchor change holds steady (minutes)</label>
+        <ion-input type="number" [(ngModel)]="settings.propulsionDebounceMin" (ionBlur)="saveSettings()"></ion-input>
+        <label>Sail change holds steady (minutes)</label>
+        <ion-input type="number" [(ngModel)]="settings.sailDebounceMin" (ionBlur)="saveSettings()"></ion-input>
+        <p class="log-meta">
+          Interval entries are written while this app is open. Opening it again after a locked
+          phone writes the conditions then, not a reconstructed hour from the gap.
+        </p>
+      </div>
+    </section>
+
+    <div class="log-toolbar">
+      <button type="button" [class.on]="!showAll" (click)="showAll = false">This passage</button>
+      <button type="button" [class.on]="showAll" (click)="showAll = true">All entries</button>
+      <button type="button" (click)="exportCsv()">CSV</button>
+      <button type="button" (click)="exportGpx()">GPX</button>
+      <button type="button" (click)="printLog()">Print</button>
+    </div>
+
+    <p class="log-empty" *ngIf="visible().length === 0">No entries yet. Log now, or leave the app open and the interval will write the next one.</p>
+
+    <section *ngFor="let day of days()" class="log-day">
+      <h2>{{ day.label }}</h2>
+      <article class="log-entry" *ngFor="let entry of day.entries" (click)="toggleEntry(entry)">
+        <header>
+          <strong>{{ formatLogClock(entry.at) }}</strong>
+          <span>{{ triggerLabel(entry.trigger) }}</span>
+          <span class="log-state">{{ entry.propulsion.state }}</span>
+        </header>
+        <p>{{ entryPosition(entry) }}</p>
+        <p>
+          HDG {{ num(entry.headingTrueDeg, 0) }}°
+          · COG {{ num(entry.cogDeg, 0) }}°
+          · SOG {{ num(entry.sogKn) }}
+          · STW {{ num(entry.stwKn) }}
+        </p>
+        <p>
+          TWS {{ num(entry.wind.twsKn) }}
+          <span *ngIf="entry.wind.meanTwsSinceLastKn != null"> (avg {{ num(entry.wind.meanTwsSinceLastKn) }}</span>
+          <span *ngIf="entry.wind.gustSinceLastKn != null">, gust {{ num(entry.wind.gustSinceLastKn) }}</span>
+          <span *ngIf="entry.wind.meanTwsSinceLastKn != null">)</span>
+          <span *ngIf="entry.wind.twdDeg != null"> · TWD {{ num(entry.wind.twdDeg, 0) }}°</span>
+        </p>
+        <p>
+          {{ num(entry.pressureHpa) }} hPa
+          <span *ngIf="entry.pressureTrend3hHpa != null"> · {{ trend(entry) }} / 3h</span>
+          <span *ngIf="entry.depthM != null"> · depth {{ num(entry.depthM) }} m</span>
+        </p>
+        <p *ngIf="entry.sails.label">{{ entry.sails.label }}<span *ngIf="entry.sails.recommended"> · plan {{ entry.sails.recommended }}</span></p>
+        <p>
+          <span *ngIf="entry.distances.sinceLastEntryGroundNm != null">{{ num(entry.distances.sinceLastEntryGroundNm) }} nm since last</span>
+          <span *ngIf="entry.distances.sinceLastWaypointNm != null"> · {{ num(entry.distances.sinceLastWaypointNm) }} nm since waypoint</span>
+          <span *ngIf="entry.distances.toDestinationNm != null"> · {{ num(entry.distances.toDestinationNm) }} nm to go</span>
+        </p>
+        <p *ngIf="entry.watch || entry.remarks">
+          <span *ngIf="entry.watch">Watch {{ entry.watch }}</span>
+          <span *ngIf="entry.watch && entry.remarks"> · </span>
+          {{ entry.remarks }}
+        </p>
+        <p class="log-stale" *ngIf="entry.staleFields.length">Missing or old: {{ entry.staleFields.join(', ') }}</p>
+
+        <div class="log-edit" *ngIf="openId === entry.id" (click)="$event.stopPropagation()">
+          <label>Remarks</label>
+          <ion-textarea [(ngModel)]="entryDraft.remarks" autoGrow="true"></ion-textarea>
+          <div class="log-pair">
+            <div>
+              <label>Sea state 0–9</label>
+              <ion-input [(ngModel)]="entryDraft.seaState" inputmode="numeric"></ion-input>
+            </div>
+            <div>
+              <label>Cloud oktas 0–8</label>
+              <ion-input [(ngModel)]="entryDraft.cloudOktas" inputmode="numeric"></ion-input>
+            </div>
+          </div>
+          <label>Visibility (nm)</label>
+          <ion-input [(ngModel)]="entryDraft.visibilityNm" inputmode="decimal"></ion-input>
+          <ion-button expand="block" fill="outline" (click)="saveEntryEdits(entry)">Save notes</ion-button>
+          <p class="log-meta" *ngIf="entry.corrections.length">{{ entry.corrections.length }} correction{{ entry.corrections.length === 1 ? '' : 's' }} kept with the original.</p>
+        </div>
+      </article>
+    </section>
+  </div>
+</ion-content>

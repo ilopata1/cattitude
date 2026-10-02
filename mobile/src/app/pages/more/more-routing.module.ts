@@ -22,6 +22,10 @@ const routes: Routes = [
     loadChildren: () => import('../polar/polar.module').then((m) => m.PolarModule),
   },
   {
+    path: 'logbook',
+    loadChildren: () => import('../logbook/logbook.module').then((m) => m.LogbookModule),
+  },
+  {
     path: 'settings',
     loadChildren: () =>
       import('../settings/settings.module').then((m) => m.SettingsPageModule),

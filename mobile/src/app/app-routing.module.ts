@@ -35,6 +35,7 @@ export const routes: Routes = [
   { path: 'tabs/sail', redirectTo: () => withDefaultVessel('/tabs/sail'), pathMatch: 'full' },
   { path: 'tabs/anchorage', redirectTo: () => withDefaultVessel('/tabs/more/anchorage'), pathMatch: 'full' },
   { path: 'tabs/polar', redirectTo: () => withDefaultVessel('/tabs/more/polar'), pathMatch: 'full' },
+  { path: 'tabs/logbook', redirectTo: () => withDefaultVessel('/tabs/more/logbook'), pathMatch: 'full' },
   {
     path: 'tabs/settings/sail-plan',
     redirectTo: () => withDefaultVessel('/tabs/more/settings/sail-plan'),

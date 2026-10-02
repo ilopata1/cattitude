@@ -53,7 +53,7 @@
           ></ion-input>
           <p class="settings-hint">
             Address of this boat's live-data server. Depth, speed, and wind on
-            Instruments, Sail, Polar, and Anchorage come from this connection.
+            Instruments, Sail, Polar, Anchorage, and the logbook come from this connection.
           </p>
           <p class="field-error" *ngIf="urlError && (urlControl.dirty || urlControl.touched || !urlControl.value)">
             {{ urlError }}

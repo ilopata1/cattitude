@@ -18,6 +18,7 @@ from db import postgres_connection_strings
 from english_text import extract_english
 from guide_api import router as guide_router
 from instrument_map_api import router as instrument_map_router
+from logbook_api import router as logbook_router
 from sail_plan_api import router as sail_plan_router
 from manual_titles import list_manual_ids_for_vessel, lookup_manual_title
 from query import ContentFilterError, run_query
@@ -41,6 +42,7 @@ app = FastAPI(title="Clever Sailor API", lifespan=_app_lifespan)
 app.include_router(guide_router)
 app.include_router(sail_plan_router)
 app.include_router(instrument_map_router)
+app.include_router(logbook_router)
 app.include_router(admin_router)
 
 _admin_static = Path(__file__).resolve().parent / "admin" / "static"

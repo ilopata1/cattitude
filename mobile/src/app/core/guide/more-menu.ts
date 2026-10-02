@@ -7,7 +7,7 @@ export const SAILING_VESSEL_TYPES = [
 ] as const;
 
 export interface MoreRow {
-  id: 'ask' | 'sail' | 'polar' | 'anchorage' | 'settings';
+  id: 'ask' | 'sail' | 'polar' | 'logbook' | 'anchorage' | 'settings';
   label: string;
   subtitle: string;
   icon: string;
@@ -49,6 +49,13 @@ export function moreMenu(vesselType: string | null | undefined): MoreRow[] {
     });
   }
   rows.push(
+    {
+      id: 'logbook',
+      label: 'Logbook',
+      subtitle: 'Passage log from Signal K',
+      icon: 'book-outline',
+      route: ['logbook'],
+    },
     {
       id: 'anchorage',
       label: 'Anchorage',

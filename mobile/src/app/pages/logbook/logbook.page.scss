@@ -1,0 +1,179 @@
+ion-content {
+  --background: var(--cattitude-sand);
+  --color: var(--cattitude-text-dark);
+}
+
+.logbook {
+  padding: var(--cattitude-space-md);
+}
+
+.log-card,
+.log-entry {
+  background: var(--cattitude-surface);
+  border-radius: var(--cattitude-radius-md);
+  box-shadow: var(--cattitude-shadow-md);
+  padding: var(--cattitude-space-md);
+  margin-bottom: var(--cattitude-space-md);
+}
+
+.log-kicker {
+  font-size: var(--cattitude-text-sm);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.log-position {
+  font-size: 1.25rem;
+  font-weight: 650;
+  margin: 4px 0;
+}
+
+.log-meta,
+.log-stale,
+.log-entry p {
+  margin: 0 0 4px;
+  color: var(--cattitude-text-light);
+  font-size: var(--cattitude-text-sm);
+}
+
+.log-warn {
+  color: var(--cattitude-coral);
+  font-size: var(--cattitude-text-sm);
+  font-weight: 600;
+}
+
+.log-disclosure,
+.log-toolbar button,
+.interval-row button,
+.log-text-btn,
+.log-waypoint-actions button {
+  background: none;
+  border: 0;
+  color: var(--cattitude-text-dark);
+  font: inherit;
+  cursor: pointer;
+}
+
+.log-disclosure {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-weight: 700;
+  padding: 0;
+}
+
+.log-form {
+  margin-top: var(--cattitude-space-md);
+}
+
+.log-form label {
+  display: block;
+  font-size: var(--cattitude-text-sm);
+  font-weight: 650;
+  margin: 10px 0 4px;
+}
+
+.log-form ion-input,
+.log-edit ion-input,
+.log-edit ion-textarea {
+  --background: var(--cattitude-sand);
+  --padding-start: 8px;
+  --padding-end: 8px;
+  border: 1px solid var(--cattitude-sand-mid);
+  border-radius: var(--cattitude-radius-sm);
+}
+
+.log-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.log-pair-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.log-toggle {
+  --background: transparent;
+  --inner-padding-end: 0;
+  margin-top: 8px;
+}
+
+.interval-row,
+.log-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0;
+}
+
+.interval-row button,
+.log-toolbar button {
+  border: 1px solid var(--cattitude-sand-mid);
+  border-radius: 999px;
+  padding: 4px 10px;
+  background: var(--cattitude-sand);
+}
+
+.interval-row button.on,
+.log-toolbar button.on {
+  background: var(--cattitude-text-dark);
+  color: var(--cattitude-sand);
+}
+
+.log-day h2 {
+  font-size: var(--cattitude-text-sm);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin: 0 0 8px;
+}
+
+.log-entry header {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+
+.log-entry header span,
+.log-state {
+  color: var(--cattitude-text-light);
+  font-size: var(--cattitude-text-sm);
+}
+
+.log-state {
+  margin-left: auto;
+  text-transform: capitalize;
+}
+
+.log-entry p {
+  color: var(--cattitude-text-dark);
+}
+
+.log-stale {
+  color: var(--cattitude-text-light);
+}
+
+.log-edit {
+  margin-top: 8px;
+}
+
+.log-waypoint {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--cattitude-sand-mid);
+}
+
+.log-waypoint-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+  font-size: var(--cattitude-text-sm);
+}
+
+.log-empty {
+  color: var(--cattitude-text-light);
+}
