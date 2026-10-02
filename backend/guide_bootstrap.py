@@ -13,9 +13,25 @@ ASSET_PATH_RE = re.compile(r"assets/images/[^\s\"'<>]+")
 LEGACY_SYSTEMS_PREFIX = "assets/images/systems/"
 VESSEL_SYSTEMS_PREFIX = "assets/images/vessels/{slug}/systems/"
 
+# Published bootstrap contract generation. Keep equal to BOOTSTRAP_SCHEMA_VERSION
+# in mobile/src/app/core/models/bootstrap-schema.ts. Guides assembled before this
+# field existed are schema 1.
+BOOTSTRAP_SCHEMA_VERSION = 1
+
 
 def vessel_systems_prefix(vessel_slug: str) -> str:
     return VESSEL_SYSTEMS_PREFIX.format(slug=vessel_slug)
+
+
+def read_schema_version(payload: Any) -> int | None:
+    """Return a bundle's schemaVersion, or None when the field is absent or not a version."""
+    if not isinstance(payload, dict):
+        return None
+    value = payload.get("schemaVersion")
+    # bool is a subclass of int; reject it so True is not schema 1.
+    if type(value) is int and value >= 1:
+        return value
+    return None
 
 
 def normalize_vessel_asset_paths(data: Any, vessel_slug: str) -> Any:
@@ -30,40 +46,15 @@ def normalize_vessel_asset_paths(data: Any, vessel_slug: str) -> Any:
     return data
 
 
-BACKEND_DIR = Path(__file__).resolve().parent
-REPO_ROOT = BACKEND_DIR.parent
-MOBILE_SRC = REPO_ROOT / "mobile" / "src"
-
-
 def asset_file_path(logical_path: str, *, vessel_slug: str | None = None) -> Path:
+    """Resolve a logical guide path inside the API asset store.
+
+    Callers may still pass vessel_slug. Images are not read from the mobile app.
+    """
+    del vessel_slug
     from guide_assets_service import get_guide_assets_root
 
-    uploaded = get_guide_assets_root() / logical_path
-    if uploaded.is_file():
-        return uploaded
-
-    if logical_path.startswith("assets/"):
-        primary = MOBILE_SRC / logical_path
-    else:
-        primary = MOBILE_SRC / "assets" / logical_path
-
-    if primary.is_file():
-        return primary
-
-    if vessel_slug and LEGACY_SYSTEMS_PREFIX in logical_path:
-        legacy = MOBILE_SRC / logical_path.replace(
-            vessel_systems_prefix(vessel_slug),
-            LEGACY_SYSTEMS_PREFIX,
-        )
-        if legacy.is_file():
-            return legacy
-
-    if LEGACY_SYSTEMS_PREFIX in logical_path:
-        legacy = MOBILE_SRC / logical_path
-        if legacy.is_file():
-            return legacy
-
-    return primary
+    return get_guide_assets_root() / logical_path
 
 
 def canonical_json_hash(data: Any) -> str:
@@ -181,6 +172,7 @@ def assemble_bootstrap(
     manual_titles: dict[str, str] | None = None,
 ) -> dict[str, Any]:
     bootstrap: dict[str, Any] = {
+        "schemaVersion": BOOTSTRAP_SCHEMA_VERSION,
         "vesselId": vessel_id,
         "vesselSlug": vessel_slug,
         "branding": {},

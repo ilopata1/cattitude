@@ -1,16 +1,20 @@
 import { Injectable } from '@angular/core';
 import { VesselContext } from '../models/bootstrap-content.model';
-import { environment } from '../../../environments/environment';
+import { VesselResolverService } from './vessel-resolver.service';
 
 @Injectable({ providedIn: 'root' })
 export class VesselContextService {
-  private context: VesselContext = {
-    vesselId: null,
-    vesselSlug: environment.defaultVesselSlug,
-    charterCompanyId: null,
-    charterId: null,
-    guestToken: this.readGuestTokenFromUrl(),
-  };
+  private context: VesselContext;
+
+  constructor(resolver: VesselResolverService) {
+    this.context = {
+      vesselId: null,
+      vesselSlug: resolver.resolveSlugFromLocation(),
+      charterCompanyId: null,
+      charterId: null,
+      guestToken: this.readGuestTokenFromUrl(),
+    };
+  }
 
   get snapshot(): VesselContext {
     return { ...this.context };

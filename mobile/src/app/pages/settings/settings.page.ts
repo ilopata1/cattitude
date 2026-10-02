@@ -3,6 +3,11 @@ import { FormControl, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { isSailingVessel } from '../../core/guide/more-menu';
 import { ContentService } from '../../core/services/content.service';
+import {
+  DeviceNotificationPermission,
+  NotificationBridgeService,
+} from '../../core/services/notification-bridge.service';
+import { NotificationPreferenceService } from '../../core/services/notification-preference.service';
 import { SignalKService, SignalKConnectionState } from '../../core/services/signal-k.service';
 import { SignalKSettingsService } from '../../core/services/signal-k-settings.service';
 
@@ -19,6 +24,8 @@ export class SettingsPage implements OnInit, OnDestroy {
   connectionState: SignalKConnectionState = 'disconnected';
   selfContext = '';
   lastError = '';
+  alertsEnabled = true;
+  devicePermission: DeviceNotificationPermission = 'prompt';
 
   private subs: Subscription[] = [];
 
@@ -26,7 +33,11 @@ export class SettingsPage implements OnInit, OnDestroy {
     private readonly sk: SignalKService,
     private readonly skSettings: SignalKSettingsService,
     private readonly content: ContentService,
-  ) {}
+    private readonly notificationPrefs: NotificationPreferenceService,
+    private readonly notifications: NotificationBridgeService,
+  ) {
+    this.alertsEnabled = this.notificationPrefs.enabled();
+  }
 
   get sailing(): boolean {
     return isSailingVessel(this.content.bootstrap.branding.vesselType);
@@ -80,5 +91,39 @@ export class SettingsPage implements OnInit, OnDestroy {
 
   disconnect(): void {
     this.sk.disconnect();
+  }
+
+  ionViewWillEnter(): void {
+    this.alertsEnabled = this.notificationPrefs.enabled();
+    void this.notifications.refreshDevicePermission().then(permission => {
+      this.devicePermission = permission;
+    });
+  }
+
+  onAlertsToggle(on: boolean): void {
+    if (on === this.alertsEnabled) {
+      return;
+    }
+    this.alertsEnabled = on;
+    this.notificationPrefs.setEnabled(on);
+  }
+
+  allowDeviceNotifications(): void {
+    void this.notifications.allowFromUserGesture().then(permission => {
+      this.devicePermission = permission;
+    });
+  }
+
+  get devicePermissionHint(): string {
+    switch (this.devicePermission) {
+      case 'granted':
+        return 'Device notifications are allowed, including when the app is in the background.';
+      case 'denied':
+        return 'Device notifications are blocked. Allow them for this site in the browser or system settings. Alerts still show in the app.';
+      case 'unsupported':
+        return 'This browser cannot show device notifications. Alerts still show in the app.';
+      default:
+        return 'Allow device notifications to hear alerts when the app is in the background. The browser only asks from the button below.';
+    }
   }
 }

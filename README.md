@@ -177,7 +177,6 @@ mobile/src/
     pages/              # home, do, know, fix, ask, vessel-error
     shared/             # Header, emergency modal, photo lightbox, rich HTML
     tabs/               # Tab shell + routing
-  assets/images/vessels/{slug}/systems/
   environments/         # apiUrl, defaultVesselSlug
 ```
 
@@ -434,7 +433,7 @@ Seed is for initial tenancy/equipment setup — not every deploy.
 
 ## Handoff notes for new developers
 
-1. **Read `clever-sailor-data-model.md` first** if you touch the database, guide generation, or API contracts. The mobile bootstrap JSON shape is the published output contract — TypeScript types in `mobile/src/app/core/models/bootstrap-content.model.ts` must stay aligned.
+1. **Read `clever-sailor-data-model.md` first** if you touch the database, guide generation, or API contracts. The mobile bootstrap JSON shape is the published output contract — TypeScript types in `mobile/src/app/core/models/bootstrap-content.model.ts` must stay aligned, and `schemaVersion` (`backend/guide_bootstrap.py` and `mobile/src/app/core/models/bootstrap-schema.ts`) must stay the same number.
 
 2. **Distinguish vessel guide from Ask.** Guide content is authored in admin (or the curated YAML library under `backend/content/`), then published to Postgres. The app downloads that publication. Changing manuals or ingest affects Ask only. Operating base or vessel `guide_context` affects generation output, not the live app until republication and client sync.
 

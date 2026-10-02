@@ -2,33 +2,45 @@
  * NotificationBridgeService
  *
  * Subscribes to the Signal-K delta stream and forwards alarm-level
- * notifications to the device via Capacitor's LocalNotifications API.
+ * notifications. Sail-plan mismatches and anchorage conflicts use the same path.
  *
  * Signal-K notification paths follow the pattern:
  *   notifications.<domain>.<subject>
  * Each value has the shape:
  *   { state: 'nominal'|'normal'|'alert'|'warn'|'alarm'|'emergency', message: string }
  *
- * Only 'alarm' and 'emergency' states fire a device notification.
- * 'alert' and 'warn' are available but suppressed by default (user-configurable
- * in the Settings page in a future iteration).
+ * Only 'alarm' and 'emergency' states fire. 'alert' and 'warn' stay suppressed.
  *
- * The service uses lazy-loaded Capacitor to avoid breaking the web PWA build
- * (Capacitor APIs are no-ops in the browser and must be imported dynamically
- * to avoid tree-shaking errors when the Capacitor plugin is not available).
+ * The alerts preference defaults to on and only controls delivery. The browser
+ * or OS permission prompt is requested from Settings, in the tap handler.
+ * Alarm delivery never calls requestPermission: granted posts a device
+ * notification, and anything else shows an in-app notice.
  *
- * Must be initialised by calling start() — typically from AppModule or a root
- * component — after the Signal-K service is ready.
+ * Capacitor is imported dynamically so the web build still runs when the
+ * native plugin cannot be loaded.
+ *
+ * Must be initialised by calling start() — typically from the root component —
+ * after the Signal-K service is ready.
  */
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy, signal } from '@angular/core';
+import { ToastController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import {
+  DeviceNotificationPermission,
+  fromDevicePermission,
+  readWebNotificationPermission,
+  requestWebNotificationPermission,
+  WebNotificationPermissionSource,
+} from './notification-permission';
+import { NotificationPreferenceService } from './notification-preference.service';
 import { SignalKService, SignalKDelta } from './signal-k.service';
 
+export type { DeviceNotificationPermission } from './notification-permission';
 export type NotificationSeverity = 'nominal' | 'normal' | 'alert' | 'warn' | 'alarm' | 'emergency';
 
 const NOTIFIED_STATES: NotificationSeverity[] = ['alarm', 'emergency'];
-const NOTIFICATION_COOLDOWN_MS = 60_000; // suppress repeat notifications per path for 1 minute
+const NOTIFICATION_COOLDOWN_MS = 60_000;
 
 interface SkNotificationValue {
   state?: NotificationSeverity;
@@ -36,14 +48,33 @@ interface SkNotificationValue {
   method?: string[];
 }
 
+interface DeviceNotifications {
+  checkPermissions(): Promise<{ display: string }>;
+  requestPermissions(): Promise<{ display: string }>;
+  schedule(options: {
+    notifications: { id: number; title: string; body: string; sound?: string }[];
+  }): Promise<unknown>;
+}
+
 @Injectable({ providedIn: 'root' })
 export class NotificationBridgeService implements OnDestroy {
 
   private sub: Subscription | null = null;
-  private notifiedAt = new Map<string, number>(); // path → timestamp of last notification
-  private nextId = 1_000; // Capacitor notification IDs
+  private notifiedAt = new Map<string, number>();
+  private nextId = 1_000;
+  private localNotifications: DeviceNotifications | null = null;
+  private native = false;
+  private readonly localReady: Promise<void>;
+  private readonly devicePermissionSignal = signal<DeviceNotificationPermission>('prompt');
+  readonly devicePermission = this.devicePermissionSignal.asReadonly();
 
-  constructor(private readonly sk: SignalKService) {}
+  constructor(
+    private readonly sk: SignalKService,
+    private readonly preferences: NotificationPreferenceService,
+    private readonly toasts: ToastController,
+  ) {
+    this.localReady = this.preload();
+  }
 
   /** Begin listening. Safe to call multiple times — stops the previous listener first. */
   start(): void {
@@ -55,14 +86,44 @@ export class NotificationBridgeService implements OnDestroy {
 
   /**
    * Fire a local/device notification from app logic (e.g. anchorage conflict).
-   * Uses the same Capacitor / browser path as Signal-K alarms, with cooldown per key.
+   * Uses the same delivery path as Signal-K alarms, with cooldown per key.
    */
   notifyAppEvent(key: string, title: string, body: string): void {
-    const now = Date.now();
-    const lastFired = this.notifiedAt.get(key) ?? 0;
-    if (now - lastFired < NOTIFICATION_COOLDOWN_MS) return;
-    this.notifiedAt.set(key, now);
+    if (!this.preferences.enabled()) {
+      return;
+    }
+    if (this.coolingDown(key)) {
+      return;
+    }
+    this.notifiedAt.set(key, Date.now());
     void this.fireNotification(key, { state: 'alarm', message: body }, title);
+  }
+
+  /** Read the current device permission. Does not show a prompt. */
+  refreshDevicePermission(): Promise<DeviceNotificationPermission> {
+    return this.readDevicePermission().then(permission => {
+      this.devicePermissionSignal.set(permission);
+      return permission;
+    });
+  }
+
+  /**
+   * Ask for device notification permission. Call this directly from a tap handler
+   * so the browser still has a user gesture.
+   */
+  allowFromUserGesture(): Promise<DeviceNotificationPermission> {
+    if (this.native && this.localNotifications) {
+      return this.publish(this.fromRequest(this.localNotifications.requestPermissions()));
+    }
+    if (this.native) {
+      return this.publish(this.localReady.then(() => {
+        if (!this.localNotifications) {
+          return 'unsupported' as const;
+        }
+        return this.fromRequest(this.localNotifications.requestPermissions());
+      }));
+    }
+    return this.publish(requestWebNotificationPermission(this.webNotification()));
   }
 
   stop(): void {
@@ -76,7 +137,23 @@ export class NotificationBridgeService implements OnDestroy {
 
   // ---------------------------------------------------------------------------
 
+  private preload(): Promise<void> {
+    return Promise.all([
+      import('@capacitor/core'),
+      import('@capacitor/local-notifications'),
+    ]).then(([core, plugin]) => {
+      this.native = core.Capacitor.isNativePlatform();
+      this.localNotifications = plugin.LocalNotifications;
+    }).catch(() => {
+      this.native = false;
+      this.localNotifications = null;
+    });
+  }
+
   private handleDelta(delta: SignalKDelta): void {
+    if (!this.preferences.enabled()) {
+      return;
+    }
     for (const update of delta.updates) {
       for (const kv of update.values) {
         if (!kv.path.startsWith('notifications.')) continue;
@@ -85,14 +162,17 @@ export class NotificationBridgeService implements OnDestroy {
         if (!NOTIFIED_STATES.includes(value.state)) continue;
 
         const path = kv.path;
-        const now = Date.now();
-        const lastFired = this.notifiedAt.get(path) ?? 0;
-        if (now - lastFired < NOTIFICATION_COOLDOWN_MS) continue;
+        if (this.coolingDown(path)) continue;
 
-        this.notifiedAt.set(path, now);
+        this.notifiedAt.set(path, Date.now());
         void this.fireNotification(path, value);
       }
     }
+  }
+
+  private coolingDown(key: string): boolean {
+    const lastFired = this.notifiedAt.get(key) ?? 0;
+    return Date.now() - lastFired < NOTIFICATION_COOLDOWN_MS;
   }
 
   private async fireNotification(
@@ -100,35 +180,85 @@ export class NotificationBridgeService implements OnDestroy {
     value: SkNotificationValue,
     titleOverride?: string,
   ): Promise<void> {
+    if (!this.preferences.enabled()) {
+      return;
+    }
     const title = titleOverride ?? this.titleForPath(path, value.state ?? 'alarm');
     const body  = value.message ?? `Signal-K notification on ${path}`;
-    const id    = this.nextId++;
+    const permission = await this.readDevicePermission();
+    this.devicePermissionSignal.set(permission);
+    if (permission === 'granted') {
+      await this.scheduleDeviceNotification(this.nextId++, title, body);
+      return;
+    }
+    await this.showInApp(title, body);
+  }
 
+  private async readDevicePermission(): Promise<DeviceNotificationPermission> {
+    const local = this.localNotifications;
+    if (local) {
+      try {
+        const perm = await local.checkPermissions();
+        return fromDevicePermission(perm.display);
+      } catch {
+        return readWebNotificationPermission(this.webNotification());
+      }
+    }
+    return readWebNotificationPermission(this.webNotification());
+  }
+
+  private fromRequest(
+    pending: Promise<{ display: string }>,
+  ): Promise<DeviceNotificationPermission> {
+    return pending
+      .then(result => fromDevicePermission(result.display))
+      .catch(() => readWebNotificationPermission(this.webNotification()));
+  }
+
+  private publish(
+    pending: Promise<DeviceNotificationPermission>,
+  ): Promise<DeviceNotificationPermission> {
+    return pending.then(permission => {
+      this.devicePermissionSignal.set(permission);
+      return permission;
+    });
+  }
+
+  private async scheduleDeviceNotification(id: number, title: string, body: string): Promise<void> {
+    const local = this.localNotifications;
+    if (!local) {
+      await this.showInApp(title, body);
+      return;
+    }
     try {
-      // Dynamic import keeps the web PWA build clean when the Capacitor plugin
-      // is not installed; in a native Capacitor build this resolves normally.
-      const { LocalNotifications } = await import('@capacitor/local-notifications');
-      const perm = await LocalNotifications.requestPermissions();
-      if (perm.display !== 'granted') return;
-
-      await LocalNotifications.schedule({
+      await local.schedule({
         notifications: [{ id, title, body, sound: 'default' }],
       });
     } catch {
-      // Capacitor not available (browser PWA) — fall back to the Web Notifications API.
-      this.fireBrowserNotification(title, body);
+      await this.showInApp(title, body);
     }
   }
 
-  private fireBrowserNotification(title: string, body: string): void {
-    if (typeof Notification === 'undefined') return;
-    if (Notification.permission === 'granted') {
-      new Notification(title, { body });
-    } else if (Notification.permission !== 'denied') {
-      void Notification.requestPermission().then(perm => {
-        if (perm === 'granted') new Notification(title, { body });
+  private async showInApp(title: string, body: string): Promise<void> {
+    try {
+      const toast = await this.toasts.create({
+        header: title,
+        message: body,
+        duration: 6000,
+        position: 'top',
+        color: 'warning',
       });
+      await toast.present();
+    } catch (error) {
+      console.warn('Could not show the in-app alert.', error);
     }
+  }
+
+  private webNotification(): WebNotificationPermissionSource | undefined {
+    if (typeof Notification === 'undefined') {
+      return undefined;
+    }
+    return Notification;
   }
 
   private titleForPath(path: string, state: NotificationSeverity): string {

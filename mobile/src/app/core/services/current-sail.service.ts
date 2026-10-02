@@ -44,16 +44,6 @@ export class CurrentSailService {
       /* private mode and full storage can refuse the write */
     }
     this.changedSubject.next();
-    if (selection.main || selection.headsail) {
-      this.requestNotificationPermission();
-    }
-  }
-
-  private requestNotificationPermission(): void {
-    if (typeof Notification === 'undefined' || Notification.permission !== 'default') {
-      return;
-    }
-    void Notification.requestPermission();
   }
 
   private read(): CurrentSailSelection {

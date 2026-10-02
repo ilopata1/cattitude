@@ -12,7 +12,7 @@ from sqlalchemy.engine import Engine
 
 from config import settings
 from db import postgres_connection_strings
-from guide_bootstrap import asset_file_path, canonical_json_hash
+from guide_bootstrap import asset_file_path, canonical_json_hash, read_schema_version
 
 _engine: Engine | None = None
 
@@ -97,6 +97,7 @@ def build_manifest(
         "publicationVersion": publication["version"],
         "contentHash": content_hash,
         "publishedAt": publication["published_at"],
+        "schemaVersion": read_schema_version(payload),
         "guide": {
             "url": guide_url,
             "hash": content_hash,

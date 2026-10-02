@@ -2,7 +2,7 @@
  * Shared Signal-K WebSocket service.
  *
  * Opens a single connection to the configured Signal-K server and distributes
- * the delta stream to all live-data consumers (Skip adapter, anchorage page,
+ * the delta stream to all live-data consumers (instrument pages, anchorage page,
  * polar service, notification bridge).
  *
  * Connection lifecycle:

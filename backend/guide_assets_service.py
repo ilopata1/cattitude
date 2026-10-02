@@ -15,8 +15,6 @@ from config import settings
 from guide_bootstrap import vessel_systems_prefix
 
 _BACKEND_DIR = Path(__file__).resolve().parent
-_REPO_ROOT = _BACKEND_DIR.parent
-_MOBILE_SRC = _REPO_ROOT / "mobile" / "src"
 
 _ALLOWED_SUFFIXES = {".png", ".jpg", ".jpeg", ".webp", ".gif"}
 _MAX_IMAGE_BYTES = 8 * 1024 * 1024
@@ -95,10 +93,9 @@ def _write_image_bytes(
     filename = f"{name_prefix}-{_sanitize_stem(original_name)}-{digest}{suffix}"
     logical_path = f"{vessel_systems_prefix(vessel_slug)}{filename}"
 
-    for root in (get_guide_assets_root(), _MOBILE_SRC):
-        dest = root / logical_path
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        dest.write_bytes(data)
+    dest = get_guide_assets_root() / logical_path
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_bytes(data)
 
     return logical_path
 
@@ -107,10 +104,8 @@ def list_vessel_guide_images(vessel_slug: str) -> list[dict[str, Any]]:
     prefix = vessel_systems_prefix(vessel_slug)
     found: dict[str, Path] = {}
 
-    for root in (get_guide_assets_root(), _MOBILE_SRC):
-        directory = root / prefix
-        if not directory.is_dir():
-            continue
+    directory = get_guide_assets_root() / prefix
+    if directory.is_dir():
         for path in sorted(directory.iterdir()):
             if path.suffix.lower() in _ALLOWED_SUFFIXES and path.is_file():
                 logical = f"{prefix}{path.name}"

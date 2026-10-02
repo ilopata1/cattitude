@@ -46,6 +46,22 @@
   line-height: 1.4;
 }
 
+.settings-toggle-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.settings-toggle-copy {
+  flex: 1;
+  min-width: 0;
+
+  .settings-hint {
+    margin-bottom: 0;
+  }
+}
+
 .settings-actions {
   display: flex;
   flex-direction: column;

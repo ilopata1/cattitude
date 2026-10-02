@@ -1,12 +1,32 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { Observable, Subject, firstValueFrom, takeUntil, timeout } from 'rxjs';
 import { BootstrapContent } from '../models/bootstrap-content.model';
+import {
+  BOOTSTRAP_SCHEMA_VERSION,
+  BootstrapSchemaError,
+  assertBootstrapSchema,
+} from '../models/bootstrap-schema';
 import { GuideManifest } from '../models/guide-manifest.model';
 import { environment } from '../../../environments/environment';
 import { GuideStoreService } from './guide-store.service';
 
 const ASSET_PATH_RE = /assets\/images\/[^\s"'<>]+/g;
+
+/** Bound for a background publication check. A hung marina link must not outlive this. */
+export const GUIDE_REVALIDATE_TIMEOUT_MS = 5000;
+
+export interface CachedGuide {
+  content: BootstrapContent;
+  contentHash: string;
+}
+
+export interface EnsuredGuide {
+  content: BootstrapContent;
+  contentHash: string;
+  /** False when the phone already has this publication. */
+  updated: boolean;
+}
 
 @Injectable({ providedIn: 'root' })
 export class GuideSyncService {
@@ -15,13 +35,14 @@ export class GuideSyncService {
     private readonly store: GuideStoreService,
   ) {}
 
-  async loadFromCache(vesselSlug: string): Promise<BootstrapContent | null> {
+  async loadFromCache(vesselSlug: string): Promise<CachedGuide | null> {
     try {
       const stored = await this.store.getStoredGuide(vesselSlug);
       if (!stored?.guide) {
         return null;
       }
-      return this.rewriteAssetUrls(vesselSlug, stored.guide as BootstrapContent);
+      const content = await this.rewriteAssetUrls(vesselSlug, stored.guide as BootstrapContent);
+      return { content, contentHash: stored.contentHash };
     } catch (error) {
       console.warn('Guide cache read failed.', error);
       return null;
@@ -30,31 +51,80 @@ export class GuideSyncService {
 
   async fetchBundleFromApi(vesselSlug: string): Promise<BootstrapContent> {
     // No manifest hash available here; bust caches with a timestamp instead.
-    const guide = await this.fetchBundle(vesselSlug, `${Date.now()}`);
+    const guide = await this.fetchBundle(vesselSlug, `${Date.now()}`, new AbortController().signal);
+    assertBootstrapSchema(guide);
     return this.rewriteAssetUrls(vesselSlug, guide);
   }
 
-  async ensureGuide(vesselSlug: string): Promise<BootstrapContent> {
-    const manifest = await this.fetchManifest(vesselSlug);
+  /**
+   * Network revalidation. Resolves with the publication, or rejects at
+   * {@link GUIDE_REVALIDATE_TIMEOUT_MS} and aborts the in-flight request.
+   * Callers that already painted a cached guide should not await this.
+   */
+  async ensureGuide(vesselSlug: string): Promise<EnsuredGuide> {
+    const abort = new AbortController();
+    const run = new Observable<EnsuredGuide>((subscriber) => {
+      void this.syncGuide(vesselSlug, abort.signal).then(
+        (value) => {
+          if (!subscriber.closed) {
+            subscriber.next(value);
+            subscriber.complete();
+          }
+        },
+        (error: unknown) => {
+          if (!subscriber.closed) {
+            subscriber.error(error);
+          }
+        },
+      );
+      return () => abort.abort();
+    });
+    return firstValueFrom(run.pipe(timeout(GUIDE_REVALIDATE_TIMEOUT_MS)));
+  }
+
+  private async syncGuide(vesselSlug: string, signal: AbortSignal): Promise<EnsuredGuide> {
+    const manifest = await this.fetchManifest(vesselSlug, signal);
+    if (
+      typeof manifest.schemaVersion === 'number' &&
+      manifest.schemaVersion !== BOOTSTRAP_SCHEMA_VERSION
+    ) {
+      throw new BootstrapSchemaError(manifest.schemaVersion);
+    }
     let stored = null;
     try {
       stored = await this.store.getStoredGuide(vesselSlug);
     } catch (error) {
       console.warn('Guide cache read failed.', error);
     }
+    this.throwIfAborted(signal);
 
-    if (stored?.contentHash === manifest.contentHash) {
-      return this.rewriteAssetUrls(vesselSlug, stored.guide as BootstrapContent);
+    if (stored?.guide && stored.contentHash === manifest.contentHash) {
+      assertBootstrapSchema(stored.guide);
+      return {
+        content: await this.rewriteAssetUrls(vesselSlug, stored.guide as BootstrapContent),
+        contentHash: manifest.contentHash,
+        updated: false,
+      };
     }
 
-    const guide = await this.fetchBundle(vesselSlug, manifest.contentHash);
+    const guide = await this.fetchBundle(vesselSlug, manifest.contentHash, signal);
+    this.throwIfAborted(signal);
+    assertBootstrapSchema(guide);
     try {
-      await this.syncAssets(vesselSlug, manifest, stored?.manifest ?? null);
+      await this.syncAssets(vesselSlug, manifest, stored?.manifest ?? null, signal);
+      this.throwIfAborted(signal);
       await this.store.saveGuide(vesselSlug, manifest, guide);
     } catch (error) {
+      if (signal.aborted) {
+        throw error;
+      }
       console.warn('Guide cache write failed; continuing with network bundle.', error);
     }
-    return this.rewriteAssetUrls(vesselSlug, guide);
+    return {
+      content: await this.rewriteAssetUrls(vesselSlug, guide),
+      contentHash: manifest.contentHash,
+      updated: true,
+    };
   }
 
   private manifestUrl(vesselSlug: string): string {
@@ -80,23 +150,23 @@ export class GuideSyncService {
     return `${environment.apiUrl}/api/v1/vessels/${vesselSlug}/guide/assets/${encoded}`;
   }
 
-  private async fetchManifest(vesselSlug: string): Promise<GuideManifest> {
-    return firstValueFrom(this.http.get<GuideManifest>(this.manifestUrl(vesselSlug)));
+  private async fetchManifest(vesselSlug: string, signal: AbortSignal): Promise<GuideManifest> {
+    return this.getJson<GuideManifest>(this.manifestUrl(vesselSlug), signal);
   }
 
   private async fetchBundle(
     vesselSlug: string,
     cacheKey: string,
+    signal: AbortSignal,
   ): Promise<BootstrapContent> {
-    return firstValueFrom(
-      this.http.get<BootstrapContent>(this.bundleUrl(vesselSlug, cacheKey)),
-    );
+    return this.getJson<BootstrapContent>(this.bundleUrl(vesselSlug, cacheKey), signal);
   }
 
   private async syncAssets(
     vesselSlug: string,
     manifest: GuideManifest,
     previous: GuideManifest | null,
+    signal: AbortSignal,
   ): Promise<void> {
     const previousHashes = new Map(
       (previous?.assets ?? []).map((asset) => [asset.path, asset.hash]),
@@ -110,10 +180,41 @@ export class GuideSyncService {
         continue;
       }
 
-      const blob = await firstValueFrom(
-        this.http.get(this.assetUrl(vesselSlug, asset.path), { responseType: 'blob' }),
-      );
+      const blob = await this.getBlob(this.assetUrl(vesselSlug, asset.path), signal);
       await this.store.saveAsset(vesselSlug, asset.path, blob);
+    }
+  }
+
+  private throwIfAborted(signal: AbortSignal): void {
+    if (signal.aborted) {
+      throw new DOMException('Guide revalidation aborted.', 'AbortError');
+    }
+  }
+
+  private async getJson<T>(url: string, signal: AbortSignal): Promise<T> {
+    return this.request(this.http.get<T>(url), signal);
+  }
+
+  private async getBlob(url: string, signal: AbortSignal): Promise<Blob> {
+    return this.request(this.http.get(url, { responseType: 'blob' }), signal);
+  }
+
+  /** Unsubscribing aborts the HttpClient request, which is what a hung TCP call needs. */
+  private async request<T>(source: Observable<T>, signal: AbortSignal): Promise<T> {
+    this.throwIfAborted(signal);
+    const stop = new Subject<void>();
+    const onAbort = () => stop.next();
+    signal.addEventListener('abort', onAbort, { once: true });
+    try {
+      return await firstValueFrom(source.pipe(takeUntil(stop)));
+    } catch (error) {
+      if (signal.aborted) {
+        throw new DOMException('Guide revalidation aborted.', 'AbortError');
+      }
+      throw error;
+    } finally {
+      signal.removeEventListener('abort', onAbort);
+      stop.complete();
     }
   }
 

@@ -1,8 +1,12 @@
+import { HOST_DEFAULT_SLUGS } from './host-defaults';
+
 export const environment = {
   production: false,
   apiUrl: 'http://localhost:8000',
-  /** Site root and legacy /tabs redirects. Every slug loads its guide from the API. */
+  /**
+   * Fallback when this hostname is not in hostDefaultSlugs.
+   * Site root and legacy /tabs URLs ask VesselResolverService, which reads the map.
+   */
   defaultVesselSlug: 'cattitude',
-  /** Base URL where the Skip instrument panel is served. Dev: ng serve on port 4201. */
-  skipUrl: 'http://localhost:4201/@halos-org/skip/',
+  hostDefaultSlugs: HOST_DEFAULT_SLUGS,
 };

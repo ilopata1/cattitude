@@ -1,11 +1,13 @@
-import { NgModule } from '@angular/core';
+import { inject, NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { environment } from '../environments/environment';
 import { vesselGuideGuard } from './core/guards/vessel-guide.guard';
+import { VesselResolverService } from './core/services/vessel-resolver.service';
 
-const defaultVessel = environment.defaultVesselSlug;
+/** Legacy `/` and `/tabs/…` URLs follow the host's default vessel. */
+const withDefaultVessel = (path: string): string =>
+  `/v/${inject(VesselResolverService).defaultSlug()}${path}`;
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: 'v/:vesselSlug',
     children: [
@@ -25,42 +27,42 @@ const routes: Routes = [
       { path: '', redirectTo: 'tabs/home', pathMatch: 'full' },
     ],
   },
-  { path: 'tabs/home', redirectTo: () => `/v/${defaultVessel}/tabs/home`, pathMatch: 'full' },
-  { path: 'tabs/do', redirectTo: () => `/v/${defaultVessel}/tabs/do`, pathMatch: 'full' },
-  { path: 'tabs/know', redirectTo: () => `/v/${defaultVessel}/tabs/know`, pathMatch: 'full' },
-  { path: 'tabs/fix', redirectTo: () => `/v/${defaultVessel}/tabs/fix`, pathMatch: 'full' },
-  { path: 'tabs/ask', redirectTo: () => `/v/${defaultVessel}/tabs/more/ask`, pathMatch: 'full' },
-  { path: 'tabs/sail', redirectTo: () => `/v/${defaultVessel}/tabs/more/sail`, pathMatch: 'full' },
-  { path: 'tabs/anchorage', redirectTo: () => `/v/${defaultVessel}/tabs/more/anchorage`, pathMatch: 'full' },
-  { path: 'tabs/polar', redirectTo: () => `/v/${defaultVessel}/tabs/more/polar`, pathMatch: 'full' },
+  { path: 'tabs/home', redirectTo: () => withDefaultVessel('/tabs/home'), pathMatch: 'full' },
+  { path: 'tabs/do', redirectTo: () => withDefaultVessel('/tabs/do'), pathMatch: 'full' },
+  { path: 'tabs/know', redirectTo: () => withDefaultVessel('/tabs/know'), pathMatch: 'full' },
+  { path: 'tabs/fix', redirectTo: () => withDefaultVessel('/tabs/fix'), pathMatch: 'full' },
+  { path: 'tabs/ask', redirectTo: () => withDefaultVessel('/tabs/more/ask'), pathMatch: 'full' },
+  { path: 'tabs/sail', redirectTo: () => withDefaultVessel('/tabs/more/sail'), pathMatch: 'full' },
+  { path: 'tabs/anchorage', redirectTo: () => withDefaultVessel('/tabs/more/anchorage'), pathMatch: 'full' },
+  { path: 'tabs/polar', redirectTo: () => withDefaultVessel('/tabs/more/polar'), pathMatch: 'full' },
   {
     path: 'tabs/settings/sail-plan',
-    redirectTo: () => `/v/${defaultVessel}/tabs/more/settings/sail-plan`,
+    redirectTo: () => withDefaultVessel('/tabs/more/settings/sail-plan'),
     pathMatch: 'full',
   },
   {
     path: 'tabs/settings/instruments',
-    redirectTo: () => `/v/${defaultVessel}/tabs/more/settings/instruments`,
+    redirectTo: () => withDefaultVessel('/tabs/more/settings/instruments'),
     pathMatch: 'full',
   },
-  { path: 'tabs/settings', redirectTo: () => `/v/${defaultVessel}/tabs/more/settings`, pathMatch: 'full' },
-  { path: 'tabs/do/learn', redirectTo: () => `/v/${defaultVessel}/tabs/do/learn`, pathMatch: 'full' },
+  { path: 'tabs/settings', redirectTo: () => withDefaultVessel('/tabs/more/settings'), pathMatch: 'full' },
+  { path: 'tabs/do/learn', redirectTo: () => withDefaultVessel('/tabs/do/learn'), pathMatch: 'full' },
   {
     path: 'tabs/do/learn/:stageId/:lessonId',
     redirectTo: ({ params }) =>
-      `/v/${defaultVessel}/tabs/do/learn/${params['stageId']}/${params['lessonId']}`,
+      withDefaultVessel(`/tabs/do/learn/${params['stageId']}/${params['lessonId']}`),
   },
   {
     path: 'tabs/do/learn/:stageId',
-    redirectTo: ({ params }) => `/v/${defaultVessel}/tabs/do/learn/${params['stageId']}`,
+    redirectTo: ({ params }) => withDefaultVessel(`/tabs/do/learn/${params['stageId']}`),
   },
   {
     path: 'tabs/do/checklist/:key',
-    redirectTo: ({ params }) => `/v/${defaultVessel}/tabs/do/checklist/${params['key']}`,
+    redirectTo: ({ params }) => withDefaultVessel(`/tabs/do/checklist/${params['key']}`),
     pathMatch: 'full',
   },
-  { path: 'tabs', redirectTo: () => `/v/${defaultVessel}/tabs/home`, pathMatch: 'full' },
-  { path: '', redirectTo: () => `/v/${defaultVessel}/tabs/home`, pathMatch: 'full' },
+  { path: 'tabs', redirectTo: () => withDefaultVessel('/tabs/home'), pathMatch: 'full' },
+  { path: '', redirectTo: () => withDefaultVessel('/tabs/home'), pathMatch: 'full' },
 ];
 
 @NgModule({

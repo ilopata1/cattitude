@@ -9,5 +9,7 @@ Visual instrument components ported from [halos-org/skip](https://github.com/hal
 | `svg-animate.util.ts` | `skip/src/app/core/utils/svg-animate.util.ts` |
 | `wind-steer.util.ts` | `skip/src/app/widgets/widget-windsteer/` (helpers) |
 
-Cattitude wraps these with `InstrumentLiveService` and vessel path mappings —
-no Skip dashboard shell or iframe.
+Cattitude wraps these with `InstrumentLiveService` and vessel path mappings.
+The Skip dashboard is not built or shipped with the PWA. If the full Skip app
+is needed again, maintain a fork with patches committed. Do not regex-patch
+upstream sources at deploy time.

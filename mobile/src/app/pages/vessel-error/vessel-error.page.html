@@ -1,18 +1,24 @@
 <ion-content class="vessel-error">
   <div class="vessel-error__card">
-    <ng-container *ngIf="guideLoad.failure === 'offline'; else unavailable">
-      <h1>Guide not downloaded</h1>
-      <p>{{ guideLoad.message }}</p>
+    <ng-container [ngSwitch]="guideLoad.failure">
+      <ng-container *ngSwitchCase="'offline'">
+        <h1>Guide not downloaded</h1>
+        <p>{{ guideLoad.message }}</p>
+      </ng-container>
+      <ng-container *ngSwitchCase="'schema'">
+        <h1>App update required</h1>
+        <p>{{ guideLoad.message }}</p>
+      </ng-container>
+      <ng-container *ngSwitchDefault>
+        <h1>Guide not available</h1>
+        <p>
+          We could not load the guide for <strong>{{ slug }}</strong>.
+        </p>
+        <p class="vessel-error__detail" *ngIf="guideLoad.message">{{ guideLoad.message }}</p>
+        <p class="vessel-error__hint">
+          Check the link, confirm the guide has been published, and try again when you have a connection.
+        </p>
+      </ng-container>
     </ng-container>
-    <ng-template #unavailable>
-      <h1>Guide not available</h1>
-      <p>
-        We could not load the guide for <strong>{{ slug }}</strong>.
-      </p>
-      <p class="vessel-error__detail" *ngIf="guideLoad.message">{{ guideLoad.message }}</p>
-      <p class="vessel-error__hint">
-        Check the link, confirm the guide has been published, and try again when you have a connection.
-      </p>
-    </ng-template>
   </div>
 </ion-content>

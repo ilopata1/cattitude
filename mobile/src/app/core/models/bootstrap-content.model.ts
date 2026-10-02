@@ -179,6 +179,11 @@ export interface BootstrapUi {
 }
 
 export interface BootstrapContent {
+  /**
+   * Published contract generation. Absent on guides assembled before the field
+   * existed; those are schema 1. See bootstrap-schema.ts.
+   */
+  schemaVersion?: number;
   vesselId: string | null;
   vesselSlug: string;
   branding: BootstrapBranding;

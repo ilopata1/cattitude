@@ -6,21 +6,6 @@
   <title>Clever Sailor</title>
 
   <base href="/">
-  <script>
-    (function () {
-      if (location.hostname !== "app.sailsupernova.com") return;
-      var path = location.pathname;
-      var next = path;
-      if (path === "/" || path === "") {
-        next = "/v/supernova/tabs/home";
-      } else if (path === "/tabs" || path.indexOf("/tabs/") === 0) {
-        next = "/v/supernova" + path;
-      } else if (path === "/v/cattitude" || path.indexOf("/v/cattitude/") === 0) {
-        next = "/v/supernova" + path.slice("/v/cattitude".length);
-      }
-      if (next !== path) location.replace(next + location.search + location.hash);
-    })();
-  </script>
 
   <meta name="color-scheme" content="light dark" />
   <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />

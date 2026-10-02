@@ -8,7 +8,13 @@ from typing import Any
 from sqlalchemy import text
 from sqlalchemy.engine import Connection
 
-from guide_bootstrap import assemble_bootstrap, build_asset_manifest, canonical_json_hash
+from guide_bootstrap import (
+    BOOTSTRAP_SCHEMA_VERSION,
+    assemble_bootstrap,
+    build_asset_manifest,
+    canonical_json_hash,
+    read_schema_version,
+)
 from guide_guest_withhold import withhold_pipeline_status
 from guide_publish_consistency import apply_publish_consistency
 from guide_tone import load_tone_grounding, tone_warnings
@@ -103,6 +109,8 @@ def validate_publication_payload(
 
     if not payload.get("branding"):
         errors.append("Missing branding module.")
+    if read_schema_version(payload) != BOOTSTRAP_SCHEMA_VERSION:
+        errors.append(f"schemaVersion must be {BOOTSTRAP_SCHEMA_VERSION}.")
     if not payload.get("emergency"):
         errors.append("Missing emergency module.")
     if not payload.get("systems"):

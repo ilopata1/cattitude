@@ -69,6 +69,33 @@
       </div>
     </div>
 
+    <div class="settings-section">
+      <div class="settings-section-title">Notifications</div>
+      <div class="settings-toggle-row">
+        <div class="settings-toggle-copy">
+          <ion-label class="settings-label">Alerts</ion-label>
+          <p class="settings-hint">
+            Sail-plan changes, anchorage conflicts, and Signal-K alarms.
+            On by default. Notices show in the app without asking the browser.
+          </p>
+        </div>
+        <ion-toggle
+          [checked]="alertsEnabled"
+          (ionChange)="onAlertsToggle($any($event).detail.checked)"
+          aria-label="Alerts"
+        ></ion-toggle>
+      </div>
+      <p class="settings-hint" *ngIf="alertsEnabled">{{ devicePermissionHint }}</p>
+      <ion-button
+        *ngIf="alertsEnabled && devicePermission === 'prompt'"
+        (click)="allowDeviceNotifications()"
+        expand="block"
+        class="settings-btn"
+      >
+        Allow device notifications
+      </ion-button>
+    </div>
+
     <div class="settings-section" *ngIf="sailing">
       <div class="settings-section-title">Sail Plan</div>
       <p class="settings-hint">

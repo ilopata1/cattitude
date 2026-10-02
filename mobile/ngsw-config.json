@@ -2,10 +2,14 @@
   "$schema": "./node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "navigationUrls": [
-    "/**",
+    "/v/**",
+    "/tabs",
+    "/tabs/**",
+    "/",
     "!/**/*.*",
     "!/**/*__*",
-    "!/**/*__*/**"
+    "!/**/*__*/**",
+    "!/@halos-org/**"
   ],
   "assetGroups": [
     {
@@ -25,8 +29,8 @@
     },
     {
       "name": "content",
-      "installMode": "prefetch",
-      "updateMode": "prefetch",
+      "installMode": "lazy",
+      "updateMode": "lazy",
       "resources": {
         "files": [
           "/assets/**",
