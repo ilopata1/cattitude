@@ -1,7 +1,34 @@
-<app-header></app-header>
+<app-header title="Settings" [showBack]="true" backTo="more"></app-header>
 
 <ion-content [fullscreen]="true" class="page-content">
   <div class="scroll-area settings-page">
+
+    <div class="settings-section">
+      <div class="settings-section-title">Appearance</div>
+      <ion-segment
+        class="appearance-segment"
+        [value]="theme.preference()"
+        (ionChange)="onThemeChange($any($event).detail.value)"
+        aria-label="Appearance"
+      >
+        <ion-segment-button value="system">
+          <ion-label>System</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="light">
+          <ion-label>Light</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="dark">
+          <ion-label>Dark</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="night">
+          <ion-label>Night</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+      <p class="settings-hint">
+        Night keeps the rest of the app dark and shifts Sail, Polar, and
+        Anchorage toward red so the helm stays readable after dark.
+      </p>
+    </div>
 
     <!-- Signal-K Connection -->
     <div class="settings-section">
@@ -54,7 +81,7 @@
           (click)="disconnect()"
           expand="block"
           fill="outline"
-          color="medium"
+          color="dark"
           class="settings-btn"
         >
           Disconnect
@@ -62,7 +89,13 @@
       </div>
 
       <!-- Status -->
-      <div class="connection-status">
+      <div
+        class="connection-status"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        <span class="visually-hidden">Signal K connection. </span>
         <ion-badge [color]="stateColor" class="status-badge">{{ stateLabel }}</ion-badge>
         <span *ngIf="selfContext" class="status-detail">{{ selfContext }}</span>
         <span *ngIf="lastError" class="status-error">{{ lastError }}</span>

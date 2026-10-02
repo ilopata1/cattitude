@@ -322,6 +322,24 @@ export class KnowPage implements OnInit {
     }
   }
 
+  get detailOpen(): boolean {
+    return this.powerOpen || this.selected != null;
+  }
+
+  get detailTitle(): string {
+    if (this.powerOpen) {
+      return 'Power';
+    }
+    return this.selected?.title ?? '';
+  }
+
+  get detailSubtitle(): string {
+    if (this.powerOpen) {
+      return this.powerView()?.subtitle ?? '';
+    }
+    return this.selected?.subtitle ?? '';
+  }
+
   closeDetail(): void {
     this.closeReference();
     this.powerOpen = false;

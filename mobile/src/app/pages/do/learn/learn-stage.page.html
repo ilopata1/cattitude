@@ -1,12 +1,9 @@
-<app-header></app-header>
+<app-header
+  [title]="stage?.title || 'Learn the boat'"
+  [showBack]="true"
+  (back)="back()"
+></app-header>
 <ion-content [fullscreen]="true" class="page-content">
-  <div class="sub-header">
-    <button type="button" class="sub-back" (click)="back()">‹</button>
-    <div>
-      <div class="sub-header-title">{{ stage?.title || 'Learn the boat' }}</div>
-    </div>
-  </div>
-
   <div class="acc-list" *ngIf="stage as current">
     <button
       type="button"
@@ -19,7 +16,7 @@
         <div class="acc-sub">{{ lessonSubtitle(lesson) }}</div>
         <div class="acc-sub" *ngIf="label(lesson)">{{ label(lesson) }}</div>
       </div>
-      <div class="acc-chevron">›</div>
+      <div class="acc-chevron" aria-hidden="true"><ion-icon name="chevron-forward"></ion-icon></div>
     </button>
   </div>
 </ion-content>

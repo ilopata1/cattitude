@@ -15,6 +15,10 @@
   object-fit: contain;
 }
 
+.photo-overlay :focus-visible {
+  outline-color: #fff;
+}
+
 .photo-overlay-close {
   position: absolute;
   top: 16px;
@@ -22,9 +26,9 @@
   background: rgba(255, 255, 255, 0.15);
   border: none;
   color: #fff;
-  font-size: 24px;
-  width: 44px;
-  height: 44px;
+  font-size: 1.5rem;
+  width: var(--cattitude-touch-min);
+  height: var(--cattitude-touch-min);
   border-radius: 50%;
   cursor: pointer;
   display: flex;
@@ -34,7 +38,7 @@
 
 .photo-overlay-caption {
   color: #fff;
-  font-size: 14px;
+  font-size: var(--cattitude-text-body);
   font-weight: 600;
   margin-top: 12px;
   text-align: center;

@@ -1,11 +1,80 @@
 .bottom-nav {
-  --background: #fff;
+  --background: var(--cattitude-surface);
   padding-bottom: env(safe-area-inset-bottom);
-  border-top: 1px solid rgba(13, 33, 55, 0.1);
+  border-top: 1px solid var(--cattitude-line);
 }
 
 ion-tab-button {
   --color: var(--cattitude-text-light);
-  --color-selected: var(--cattitude-teal-dark);
-  font-size: 10px;
+  --color-selected: var(--cattitude-text-accent);
+  font-size: var(--cattitude-text-caption);
+}
+
+/* Desktop keeps the same five destinations, in a rail beside the page
+   instead of a bar under it. The content inset lives in global.scss. */
+@media (min-width: 1024px) {
+  ion-tab-bar.bottom-nav {
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: var(--cattitude-rail-width);
+    height: auto;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 4px;
+    /* The tab bar forces content-box, so horizontal padding would spill
+       past the rail width and cover the page. Inset the buttons instead. */
+    contain: none !important;
+    padding: 12px 0;
+    border-top: none;
+    border-right: 1px solid var(--cattitude-line);
+    text-align: start;
+  }
+
+  ion-tab-button {
+    flex: 0 0 auto;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    width: calc(100% - 20px);
+    max-width: none;
+    height: 48px;
+    margin: 0 10px;
+    border-radius: 12px;
+    font-size: var(--cattitude-text-body);
+    font-weight: 600;
+    letter-spacing: 0;
+    --padding-start: 14px;
+    --padding-end: 14px;
+    --padding-top: 0;
+    --padding-bottom: 0;
+    --background: transparent;
+
+    ion-icon {
+      margin: 0 12px 0 0;
+      font-size: 1.35rem;
+    }
+
+    ion-label {
+      margin: 0;
+    }
+  }
+
+  ion-tab-button.tab-selected {
+    --background: var(--cattitude-teal-light);
+    --color: var(--cattitude-text-accent);
+  }
+
+  @media (hover: hover) {
+    ion-tab-button:not(.tab-selected):hover {
+      --background: var(--cattitude-sand-mid);
+    }
+  }
+
+  ion-tab-button:active {
+    --background: var(--cattitude-sand-mid);
+  }
 }

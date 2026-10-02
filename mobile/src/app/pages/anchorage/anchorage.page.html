@@ -1,20 +1,26 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>Anchorage</ion-title>
-    <ion-buttons slot="end">
-      <app-wind-rose-popover [mapCentre]="windMapCentre"></app-wind-rose-popover>
-      <ion-button
-        (click)="toggleLabels()"
-        [title]="showLabels ? 'Hide vessel names' : 'Show vessel names'"
-      >
-        <ion-icon [name]="showLabels ? 'pricetag' : 'pricetag-outline'" slot="icon-only"></ion-icon>
-      </ion-button>
-      <ion-button (click)="clearAll()" title="Clear all vessels">
-        <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-  <ion-toolbar color="primary">
+<app-header title="Anchorage" [showBack]="true" backTo="more">
+  <app-wind-rose-popover headerActions [mapCentre]="windMapCentre"></app-wind-rose-popover>
+  <ion-button
+    headerActions
+    fill="clear"
+    color="dark"
+    (click)="toggleLabels()"
+    [attr.aria-label]="showLabels ? 'Hide vessel names' : 'Show vessel names'"
+    [title]="showLabels ? 'Hide vessel names' : 'Show vessel names'"
+  >
+    <ion-icon [name]="showLabels ? 'pricetag' : 'pricetag-outline'" slot="icon-only"></ion-icon>
+  </ion-button>
+  <ion-button
+    headerActions
+    fill="clear"
+    color="dark"
+    (click)="clearAll()"
+    aria-label="Clear all vessels"
+    title="Clear all vessels"
+  >
+    <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+  </ion-button>
+  <ion-toolbar headerExtra class="anchorage-modes">
     <ion-segment
       [value]="viewMode"
       (ionChange)="onViewModeChange($any($event).detail.value)"
@@ -28,7 +34,7 @@
       </ion-segment-button>
     </ion-segment>
   </ion-toolbar>
-</ion-header>
+</app-header>
 
 <ion-content>
 
@@ -99,7 +105,13 @@
           · confidence {{ v.confidence }}
         </p>
       </ion-label>
-      <ion-badge slot="end" [style.background]="stateBadgeColour(v.state)">
+      <ion-badge
+        slot="end"
+        [ngStyle]="{
+          '--background': stateBadgeColour(v.state),
+          '--color': stateBadgeText(v.state)
+        }"
+      >
         {{ stateLabel(v.state) }}
       </ion-badge>
     </ion-item>

@@ -1,7 +1,9 @@
+<app-header [title]="pageTitle" [showBack]="true" backTo="more"></app-header>
+
 <div class="sail-page">
 
   <div *ngIf="!hasSignalKUrl" class="no-connection">
-    <div class="no-connection-icon">⛵</div>
+    <div class="no-connection-icon"><ion-icon name="boat-outline" aria-hidden="true"></ion-icon></div>
     <h2 class="no-connection-title">Connect to Signal-K</h2>
     <p class="no-connection-body">
       Configure your vessel's Signal-K server URL in Settings to see live

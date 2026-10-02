@@ -23,9 +23,6 @@ const ESRI_TILE_URL =
   'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
 const ESRI_ATTRIBUTION = 'Tiles © Esri';
 const MIN_VESSEL_VIEWPORT_FRACTION = 0.015;
-const VESSEL_FILL_OWN = '#ADFF2F';
-const VESSEL_FILL_OTHER = '#FF007F';
-const VESSEL_STROKE_COLOR = '#111111';
 /** Hull outline stretched to the vessel's real length and beam. */
 const HULL_PATH = 'M 20,2 L 38,50 L 20,38 L 2,50 Z';
 /** Tight around the hull path so it fills the icon box exactly. */
@@ -92,11 +89,19 @@ function hullBeamMetres(vessel: Vessel): number {
 }
 
 const STATE_COLOUR: Record<VesselState, string> = {
-  green:   '#2ecc71',
-  amber:   '#f39c12',
-  red:     '#e74c3c',
-  moving:  '#3498db',
-  unknown: '#95a5a6',
+  green:   'var(--cattitude-success)',
+  amber:   'var(--cattitude-warning)',
+  red:     'var(--cattitude-danger)',
+  moving:  'var(--cattitude-info)',
+  unknown: 'var(--cattitude-text-light)',
+};
+
+const STATE_TEXT: Record<VesselState, string> = {
+  green:   'var(--cattitude-text-on-fill)',
+  amber:   'var(--cattitude-text-on-warning)',
+  red:     'var(--cattitude-text-on-fill)',
+  moving:  'var(--cattitude-text-on-warning)',
+  unknown: 'var(--cattitude-text-on-warning)',
 };
 
 @Component({
@@ -104,6 +109,7 @@ const STATE_COLOUR: Record<VesselState, string> = {
   templateUrl: './anchorage.page.html',
   styleUrls: ['./anchorage.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'helm-screen' },
   standalone: false,
 })
 export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWillEnter {
@@ -328,6 +334,10 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
     return STATE_COLOUR[state] ?? STATE_COLOUR.unknown;
   }
 
+  stateBadgeText(state: VesselState): string {
+    return STATE_TEXT[state] ?? STATE_TEXT.unknown;
+  }
+
   stateLabel(state: VesselState): string {
     const labels: Record<VesselState, string> = {
       green: 'Clear', amber: 'Caution', red: 'Conflict',
@@ -522,7 +532,7 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
               [vessel.anchorPoint.lat, vessel.anchorPoint.lon],
               {
                 radius: 3,
-                color: '#ffffff',
+                color: 'var(--cattitude-surface)',
                 fillColor: colour,
                 fillOpacity: 1,
                 weight: 1,
@@ -649,7 +659,6 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
     const shadowId = `vessel-shadow-${mmsi.replace(/\W/g, '')}`;
     const opacity = isStale ? 0.4 : 1;
     const strokeWidth = isOwn ? 4 : 3;
-    const fillColor = isOwn ? VESSEL_FILL_OWN : VESSEL_FILL_OTHER;
     const originX = `${acrossFrac * 100}%`;
     const originY = `${alongFrac * 100}%`;
 
@@ -663,9 +672,7 @@ export class AnchoragePage implements OnInit, AfterViewInit, OnDestroy, ViewWill
                 <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.6"/>
               </filter>
             </defs>
-            <path d="${HULL_PATH}"
-                  fill="${fillColor}"
-                  stroke="${VESSEL_STROKE_COLOR}"
+            <path class="vessel-hull ${isOwn ? 'vessel-hull-own' : 'vessel-hull-other'}" d="${HULL_PATH}"
                   stroke-width="${strokeWidth}"
                   stroke-linejoin="round"
                   vector-effect="non-scaling-stroke"

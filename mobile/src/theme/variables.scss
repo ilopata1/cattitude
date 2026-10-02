@@ -1,27 +1,374 @@
 :root {
+  color-scheme: light;
+
+  /* Brand */
   --cattitude-navy: #0d2137;
+  --cattitude-navy-rgb: 13, 33, 55;
   --cattitude-navy-mid: #1a3a56;
+  /* Brand teal is for fills and type on navy. It is ~2.5:1 on white — not for text. */
   --cattitude-teal: #00b4c8;
   --cattitude-teal-light: #e0f7fa;
   --cattitude-teal-dark: #007a8c;
   --cattitude-sand: #f5f0e8;
   --cattitude-sand-mid: #ede6d6;
   --cattitude-coral: #e8453c;
+  --cattitude-coral-rgb: 232, 69, 60;
   --cattitude-coral-light: #fdecea;
   --cattitude-amber: #f4a020;
+  --cattitude-amber-rgb: 244, 160, 32;
+  --cattitude-amber-light: #fef3e0;
   --cattitude-green: #1da462;
+  --cattitude-green-rgb: 29, 164, 98;
   --cattitude-green-light: #e6f7ee;
   --cattitude-text-dark: #0d2137;
   --cattitude-text-mid: #3a5570;
-  --cattitude-text-light: #7a95a8;
+  /* Secondary copy on white (~5.8:1) and sand (~5.1:1). Was #7a95a8 at ~3.1:1. */
+  --cattitude-text-light: #556875;
+  /* Teal used as text on white/sand (~6.2:1). Settings titles and links use this. */
+  --cattitude-text-accent: #006c78;
+  --cattitude-text-on-fill: #ffffff;
+  /* Text on amber and other mid fills. Stays dark so the label does not wash out. */
+  --cattitude-text-on-warning: #0d2137;
+  /* Warning copy on a surface. Darker than coral so it holds on white. */
+  --cattitude-danger-text: #7a1f1a;
+  /* Type and icons that sit on the navy header, hero, and emergency sheet. */
+  --cattitude-on-navy: #ffffff;
+  --cattitude-on-navy-muted: rgba(255, 255, 255, 0.65);
+  --cattitude-on-navy-soft: rgba(255, 255, 255, 0.5);
+  --cattitude-on-navy-faint: rgba(255, 255, 255, 0.45);
+  --cattitude-on-navy-line: rgba(255, 255, 255, 0.12);
+  --cattitude-on-navy-fill: rgba(255, 255, 255, 0.08);
+  --cattitude-on-navy-fill-strong: rgba(255, 255, 255, 0.2);
+  --cattitude-fill-muted: rgba(13, 33, 55, 0.08);
+  /* Fix-list category chips */
+  --cattitude-chip-engine-bg: #fee8e7;
+  --cattitude-chip-engine-fg: #9b2c24;
+  --cattitude-chip-electrical-bg: #fef3e0;
+  --cattitude-chip-electrical-fg: #8a5a08;
+  --cattitude-chip-plumbing-bg: #e0f0ff;
+  --cattitude-chip-plumbing-fg: #155a8a;
+  --cattitude-chip-sails-fg: #0f6b32;
+  --cattitude-chip-nav-bg: #ede8fe;
+  --cattitude-chip-nav-fg: #5b21b6;
+  /* Wind-steer dial. Night helm shifts these off blue and green. */
+  --cattitude-starboard: #2d8a4e;
+  --cattitude-port: #c0392b;
+  --cattitude-instrument-yellow: #c4920f;
+  --cattitude-instrument-yellow-dim: #8a6a10;
+  --cattitude-instrument-orange: #d35400;
+  --cattitude-instrument-orange-dim: #a04000;
+  --cattitude-instrument-pink: #c039db;
+  --cattitude-instrument-green: #27ae60;
+  --cattitude-instrument-blue: #2980b9;
   --cattitude-font-display: 'Playfair Display', Georgia, serif;
   --cattitude-font-body: 'DM Sans', system-ui, sans-serif;
 
+  /* Surfaces — stand in for Ionic step greys */
+  --cattitude-surface: #ffffff;
+  --cattitude-surface-muted: var(--cattitude-sand-mid);
+  --cattitude-line: rgba(var(--cattitude-navy-rgb), 0.12);
+  --cattitude-line-strong: rgba(var(--cattitude-navy-rgb), 0.28);
+
+  /* Status — one name for the coral / amber / green already in the palette */
+  --cattitude-danger: var(--cattitude-coral);
+  --cattitude-warning: var(--cattitude-amber);
+  --cattitude-success: var(--cattitude-green);
+  --cattitude-info: var(--cattitude-teal);
+
+  /* Space — 4px grid. Layout padding and gaps use these steps. */
+  --cattitude-space-2xs: 4px;
+  --cattitude-space-xs: 8px;
+  --cattitude-space-sm: 12px;
+  --cattitude-space-md: 16px;
+  --cattitude-space-lg: 20px;
+  --cattitude-space-xl: 24px;
+  --cattitude-space-2xl: 32px;
+
+  /* Radius — sm controls, md cards (Home/Know), lg pills and sheets */
+  --cattitude-radius-sm: 8px;
+  --cattitude-radius-md: 14px;
+  --cattitude-radius-lg: 20px;
+  --cattitude-radius-full: 999px;
+
+  /* Hit area and keyboard focus. 44px is the minimum control size.
+     The ring is what keyboard users see; the tap flash stays off. */
+  --cattitude-touch-min: 44px;
+  --cattitude-focus-ring: 2px solid var(--cattitude-teal-dark);
+  --cattitude-focus-offset: 2px;
+
+  /* Elevation — resting cards, and cards that lift off the page */
+  --cattitude-shadow-sm: 0 1px 6px rgba(var(--cattitude-navy-rgb), 0.07);
+  --cattitude-shadow-md: 0 2px 16px rgba(var(--cattitude-navy-rgb), 0.1);
+  --cattitude-shadow-hover: 0 6px 20px rgba(var(--cattitude-navy-rgb), 0.16);
+
+  /* Wide layout. Reading and card pages stay in this column; Polar and
+     Instruments keep their own narrower measures. The rail replaces the
+     bottom tab bar from 1024px. */
+  --cattitude-content-max: 960px;
+  --cattitude-rail-width: 220px;
+
+  /* Type. rem inside clamp() follows the OS/browser text size — do not set a px
+     font-size on html. Min and max are both rem so they grow when the user does. */
+  --cattitude-text-caption: clamp(0.75rem, 0.72rem + 0.15vw, 0.8125rem); /* 12–13px kickers */
+  --cattitude-text-sm: clamp(0.8125rem, 0.78rem + 0.2vw, 0.875rem);       /* 13–14px hints */
+  --cattitude-text-body: clamp(0.9375rem, 0.875rem + 0.35vw, 1rem);        /* 15–16px reading */
+  --cattitude-text-md: 1rem;           /* 16px */
+  --cattitude-text-lg: 1.125rem;       /* 18px values */
+  --cattitude-text-xl: 1.375rem;       /* 22px */
+  --cattitude-text-display: 1.75rem;   /* 28px */
+
   --ion-background-color: var(--cattitude-sand);
+  --ion-text-color: var(--cattitude-text-dark);
   --ion-font-family: var(--cattitude-font-body);
+  --ion-item-background: var(--cattitude-surface);
+  --ion-card-background: var(--cattitude-surface);
+
   --ion-color-primary: var(--cattitude-teal-dark);
   --ion-color-primary-rgb: 0, 122, 140;
-  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast: var(--cattitude-text-on-fill);
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
   --ion-color-primary-shade: #006b7b;
   --ion-color-primary-tint: #1a8798;
+
+  --ion-color-success: var(--cattitude-success);
+  --ion-color-success-rgb: var(--cattitude-green-rgb);
+  --ion-color-success-contrast: var(--cattitude-text-on-fill);
+  --ion-color-success-contrast-rgb: 255, 255, 255;
+  --ion-color-success-shade: #1a9056;
+  --ion-color-success-tint: #34ad72;
+
+  --ion-color-warning: var(--cattitude-warning);
+  --ion-color-warning-rgb: var(--cattitude-amber-rgb);
+  --ion-color-warning-contrast: var(--cattitude-navy);
+  --ion-color-warning-contrast-rgb: var(--cattitude-navy-rgb);
+  --ion-color-warning-shade: #d78d1c;
+  --ion-color-warning-tint: #f5aa36;
+
+  --ion-color-danger: var(--cattitude-danger);
+  --ion-color-danger-rgb: var(--cattitude-coral-rgb);
+  --ion-color-danger-contrast: var(--cattitude-text-on-fill);
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #cc3d35;
+  --ion-color-danger-tint: #ea584f;
+
+  --ion-color-dark: var(--cattitude-navy);
+  --ion-color-dark-rgb: var(--cattitude-navy-rgb);
+  --ion-color-dark-contrast: var(--cattitude-text-on-fill);
+  --ion-color-dark-contrast-rgb: 255, 255, 255;
+  --ion-color-dark-shade: #0b1d31;
+  --ion-color-dark-tint: #25374b;
+
+  --ion-toolbar-background: var(--cattitude-surface);
+  --ion-toolbar-color: var(--cattitude-text-dark);
+  --ion-tab-bar-background: var(--cattitude-surface);
+  --ion-tab-bar-color: var(--cattitude-text-light);
+  --ion-tab-bar-color-selected: var(--cattitude-text-accent);
+}
+
+/* Dark is the neutral night-readable app. Night keeps that palette everywhere
+   except Sail, Polar, and Anchorage, which shift to red for the helm. */
+html[data-theme="dark"],
+html[data-theme="night"] {
+  color-scheme: dark;
+
+  --cattitude-sand: #0c1824;
+  --cattitude-sand-mid: #243648;
+  --cattitude-surface: #162838;
+  --cattitude-surface-muted: #1e3348;
+
+  --cattitude-text-dark: #f4f0e8;
+  --cattitude-text-mid: #d5dde6;
+  --cattitude-text-light: #a9b8c6;
+  --cattitude-text-accent: #7ad4e0;
+
+  --cattitude-teal-light: #12383f;
+  --cattitude-coral-light: #3d2220;
+  --cattitude-amber-light: #3a2c16;
+  --cattitude-green-light: #143528;
+
+  --cattitude-danger-text: #ffb4ab;
+  --cattitude-fill-muted: rgba(244, 240, 232, 0.08);
+
+  --cattitude-line: rgba(244, 240, 232, 0.14);
+  --cattitude-line-strong: rgba(244, 240, 232, 0.32);
+  --cattitude-shadow-sm: 0 1px 6px rgba(0, 0, 0, 0.35);
+  --cattitude-shadow-md: 0 2px 16px rgba(0, 0, 0, 0.45);
+  --cattitude-shadow-hover: 0 6px 20px rgba(0, 0, 0, 0.55);
+  --cattitude-focus-ring: 2px solid #7ad4e0;
+
+  --cattitude-chip-engine-bg: #3d2220;
+  --cattitude-chip-engine-fg: #ffb4ab;
+  --cattitude-chip-electrical-bg: #3a2c16;
+  --cattitude-chip-electrical-fg: #ffd08a;
+  --cattitude-chip-plumbing-bg: #1a3348;
+  --cattitude-chip-plumbing-fg: #9fd4ff;
+  --cattitude-chip-sails-fg: #8ee0b0;
+  --cattitude-chip-nav-bg: #2c2444;
+  --cattitude-chip-nav-fg: #d4c4ff;
+
+  --ion-background-color: var(--cattitude-sand);
+  --ion-background-color-rgb: 12, 24, 36;
+  --ion-text-color: var(--cattitude-text-dark);
+  --ion-text-color-rgb: 244, 240, 232;
+  --ion-item-background: var(--cattitude-surface);
+  --ion-card-background: var(--cattitude-surface);
+  --ion-toolbar-background: var(--cattitude-surface);
+  --ion-toolbar-color: var(--cattitude-text-dark);
+  --ion-tab-bar-background: var(--cattitude-surface);
+  --ion-tab-bar-color: var(--cattitude-text-light);
+  --ion-tab-bar-color-selected: var(--cattitude-text-accent);
+  --ion-placeholder-color: var(--cattitude-text-light);
+
+  --ion-color-primary: #1aa3b5;
+  --ion-color-primary-rgb: 26, 163, 181;
+  --ion-color-primary-contrast: #042126;
+  --ion-color-primary-contrast-rgb: 4, 33, 38;
+  --ion-color-primary-shade: #168fa0;
+  --ion-color-primary-tint: #31acbd;
+
+  --ion-color-success-shade: #3dce86;
+  --ion-color-warning-shade: #ffc14d;
+  --ion-color-danger-shade: #ff8a80;
+
+  --ion-color-dark: #f4f0e8;
+  --ion-color-dark-rgb: 244, 240, 232;
+  --ion-color-dark-contrast: #0d2137;
+  --ion-color-dark-contrast-rgb: 13, 33, 55;
+  --ion-color-dark-shade: #d7d3cc;
+  --ion-color-dark-tint: #f5f2ec;
+
+  --ion-color-step-50: #132433;
+  --ion-color-step-100: #1a2d3e;
+  --ion-color-step-150: #213649;
+  --ion-color-step-200: #283f54;
+  --ion-color-step-250: #30485f;
+  --ion-color-step-300: #38516a;
+  --ion-color-step-350: #4a6178;
+  --ion-color-step-400: #5c7388;
+  --ion-color-step-450: #708498;
+  --ion-color-step-500: #8496a8;
+  --ion-color-step-550: #96a6b6;
+  --ion-color-step-600: #a8b6c4;
+  --ion-color-step-650: #bac6d2;
+  --ion-color-step-700: #ccd6e0;
+  --ion-color-step-750: #d8e0e8;
+  --ion-color-step-800: #e4eaf0;
+  --ion-color-step-850: #eef2f6;
+  --ion-color-step-900: #f4f7fa;
+  --ion-color-step-950: #fafbfc;
+}
+
+html[data-theme="night"].helm-route {
+  --cattitude-sand: #120404;
+  --cattitude-sand-mid: #3a1816;
+  --cattitude-surface: #1c0909;
+  --cattitude-surface-muted: #2a100e;
+  --cattitude-navy: #240808;
+  --cattitude-navy-mid: #3a1210;
+  --cattitude-navy-rgb: 36, 8, 8;
+
+  --cattitude-text-dark: #ff5148;
+  --cattitude-text-mid: #f0453c;
+  --cattitude-text-light: #e03c34;
+  --cattitude-text-accent: #ff6a55;
+  --cattitude-text-on-fill: #ff8d84;
+  --cattitude-on-navy: #ff5148;
+  --cattitude-on-navy-muted: rgba(255, 81, 72, 0.72);
+  --cattitude-on-navy-soft: rgba(255, 81, 72, 0.55);
+  --cattitude-on-navy-faint: rgba(255, 81, 72, 0.42);
+  --cattitude-on-navy-line: rgba(255, 70, 60, 0.18);
+  --cattitude-on-navy-fill: rgba(255, 60, 50, 0.1);
+  --cattitude-on-navy-fill-strong: rgba(255, 60, 50, 0.2);
+
+  --cattitude-teal: #e06050;
+  --cattitude-teal-dark: #c04838;
+  --cattitude-teal-light: #3a1412;
+  --cattitude-coral: #a03830;
+  --cattitude-coral-rgb: 160, 56, 48;
+  --cattitude-coral-light: #3a1412;
+  --cattitude-amber: #c46a38;
+  --cattitude-amber-rgb: 196, 106, 56;
+  --cattitude-amber-light: #3a1c12;
+  --cattitude-green: #c45a48;
+  --cattitude-green-rgb: 196, 90, 72;
+  --cattitude-green-light: #3a1612;
+  --cattitude-danger-text: #ff6a55;
+
+  --cattitude-line: rgba(255, 80, 64, 0.2);
+  --cattitude-line-strong: rgba(255, 80, 64, 0.38);
+  --cattitude-focus-ring: 2px solid #ff6a55;
+
+  --cattitude-starboard: #d06040;
+  --cattitude-port: #ff4040;
+  --cattitude-instrument-yellow: #e07030;
+  --cattitude-instrument-yellow-dim: #a85028;
+  --cattitude-instrument-orange: #d05830;
+  --cattitude-instrument-orange-dim: #a04028;
+  --cattitude-instrument-pink: #d04848;
+  --cattitude-instrument-green: #d06048;
+  --cattitude-instrument-blue: #c04838;
+
+  --ion-background-color: var(--cattitude-sand);
+  --ion-background-color-rgb: 18, 4, 4;
+  --ion-text-color: var(--cattitude-text-dark);
+  --ion-text-color-rgb: 255, 81, 72;
+  --ion-item-background: var(--cattitude-surface);
+  --ion-card-background: var(--cattitude-surface);
+  --ion-toolbar-background: var(--cattitude-surface);
+  --ion-toolbar-color: var(--cattitude-text-dark);
+  --ion-tab-bar-background: var(--cattitude-surface);
+  --ion-tab-bar-color: var(--cattitude-text-light);
+  --ion-tab-bar-color-selected: var(--cattitude-text-accent);
+  --ion-placeholder-color: var(--cattitude-text-light);
+
+  --ion-color-primary: #8a3028;
+  --ion-color-primary-rgb: 138, 48, 40;
+  --ion-color-primary-contrast: #ff8d84;
+  --ion-color-primary-contrast-rgb: 255, 141, 132;
+  --ion-color-primary-shade: #7a2a24;
+  --ion-color-primary-tint: #96453c;
+
+  --ion-color-warning: #8a4a28;
+  --ion-color-warning-rgb: 138, 74, 40;
+  --ion-color-warning-contrast: #ff8d84;
+  --ion-color-warning-contrast-rgb: 255, 141, 132;
+  --ion-color-warning-shade: #7a4022;
+  --ion-color-warning-tint: #965c3e;
+
+  --ion-color-success: #7a3830;
+  --ion-color-success-rgb: 122, 56, 48;
+  --ion-color-success-contrast: #ff8d84;
+  --ion-color-success-contrast-rgb: 255, 141, 132;
+
+  --ion-color-danger: #a03028;
+  --ion-color-danger-rgb: 160, 48, 40;
+  --ion-color-danger-contrast: #ff8d84;
+  --ion-color-danger-contrast-rgb: 255, 141, 132;
+
+  --ion-color-dark: #ff5148;
+  --ion-color-dark-rgb: 255, 81, 72;
+  --ion-color-dark-contrast: #240808;
+  --ion-color-dark-contrast-rgb: 36, 8, 8;
+  --ion-color-dark-shade: #e04840;
+  --ion-color-dark-tint: #ff625a;
+
+  --ion-color-step-50: #1c0909;
+  --ion-color-step-100: #2a100e;
+  --ion-color-step-150: #381614;
+  --ion-color-step-200: #461c1a;
+  --ion-color-step-250: #542422;
+  --ion-color-step-300: #622c28;
+  --ion-color-step-350: #7a3a34;
+  --ion-color-step-400: #924840;
+  --ion-color-step-450: #a4564e;
+  --ion-color-step-500: #b6645c;
+  --ion-color-step-550: #c4726a;
+  --ion-color-step-600: #d08078;
+  --ion-color-step-650: #dc9088;
+  --ion-color-step-700: #e4a098;
+  --ion-color-step-750: #ecb0a8;
+  --ion-color-step-800: #f0c0b8;
+  --ion-color-step-850: #f4d0c8;
+  --ion-color-step-900: #f8e0d8;
+  --ion-color-step-950: #fceeea;
 }

@@ -1,7 +1,6 @@
 import { Component, DestroyRef, OnInit, ViewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import { Location } from '@angular/common';
 import { IonContent } from '@ionic/angular';
 import { Checklist } from '../../../core/models/bootstrap-content.model';
 import { ContentService } from '../../../core/services/content.service';
@@ -17,7 +16,7 @@ import { scrollToElement } from '../../../core/search/scroll-into-content';
 export class ChecklistPage implements OnInit {
   key = '';
   checklist: Checklist | undefined;
-  meta = { title: '', subtitle: '', icon: '📋' };
+  meta = { title: '', subtitle: '', icon: 'clipboard-outline' };
   pendingItem: string | null = null;
 
   @ViewChild(IonContent) private ionContent?: IonContent;
@@ -28,7 +27,6 @@ export class ChecklistPage implements OnInit {
     public readonly content: ContentService,
     public readonly progress: ProgressService,
     private readonly route: ActivatedRoute,
-    private readonly location: Location,
   ) {}
 
   ngOnInit(): void {
@@ -38,7 +36,7 @@ export class ChecklistPage implements OnInit {
       this.meta = this.content.bootstrap.ui.checklistMeta[this.key] ?? {
         title: '',
         subtitle: '',
-        icon: '📋',
+        icon: 'clipboard-outline',
       };
       this.scrollToPendingItem();
     });
@@ -62,10 +60,6 @@ export class ChecklistPage implements OnInit {
 
   reset(): void {
     this.progress.resetChecklist(this.key);
-  }
-
-  back(): void {
-    this.location.back();
   }
 
   private scrollToPendingItem(): void {

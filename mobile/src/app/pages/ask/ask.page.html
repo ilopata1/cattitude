@@ -1,8 +1,8 @@
-<app-header></app-header>
+<app-header title="Ask" [showBack]="true" backTo="more"></app-header>
 <ion-content [fullscreen]="true" class="page-content">
   <div class="chat-messages">
     <div *ngIf="chat.messages.length === 0" class="chat-welcome">
-      <div class="chat-welcome-icon">📖</div>
+      <div class="chat-welcome-icon"><ion-icon name="book-outline" aria-hidden="true"></ion-icon></div>
       <div class="chat-welcome-title">Ask about the boat</div>
       <div class="chat-welcome-sub">
         Questions are answered from the ingested vessel manuals.
@@ -80,7 +80,10 @@
       </div>
     </div>
 
-    <div *ngIf="chat.isBusy" class="chat-typing">
+    <div class="visually-hidden" aria-live="polite" aria-atomic="true">
+      {{ chat.isBusy ? 'Answering' : '' }}
+    </div>
+    <div *ngIf="chat.isBusy" class="chat-typing" aria-hidden="true">
       <span></span><span></span><span></span>
     </div>
   </div>
@@ -103,7 +106,7 @@
         (click)="send()"
         aria-label="Send question"
       >
-        ➤
+        <ion-icon name="send" aria-hidden="true"></ion-icon>
       </button>
     </div>
     <p class="chat-ai-disclaimer">

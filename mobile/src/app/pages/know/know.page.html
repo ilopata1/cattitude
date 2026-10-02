@@ -1,4 +1,9 @@
-<app-header></app-header>
+<app-header
+  [title]="detailTitle"
+  [subtitle]="detailSubtitle"
+  [showBack]="detailOpen"
+  (back)="closeDetail()"
+></app-header>
 <ion-content [fullscreen]="true" class="page-content">
   <div class="know-search">
     <ion-searchbar
@@ -61,7 +66,7 @@
           *ngFor="let topic of topics()"
           (click)="openTopic(topic)"
         >
-          <span class="sys-icon">{{ topicIcon(topic) }}</span>
+          <span class="sys-icon"><app-ui-icon [icon]="topicIcon(topic)" fallback="book-outline"></app-ui-icon></span>
           <span class="sys-title">{{ topicTitle(topic) }}</span>
           <span class="sys-sub">{{ topicSubtitle(topic) }}</span>
         </button>
@@ -102,7 +107,7 @@
               {{ item.name }}
               <span class="loc-sys-place">{{ item.location }}</span>
             </span>
-            <span class="loc-sys-arrow">›</span>
+            <span class="loc-sys-arrow" aria-hidden="true"><ion-icon name="chevron-forward"></ion-icon></span>
           </button>
         </div>
         <ng-container *ngIf="locList === 'zone'">
@@ -129,7 +134,7 @@
                 {{ item.name }}
                 <span class="loc-sys-place">{{ item.location }}</span>
               </span>
-              <span class="loc-sys-arrow">›</span>
+              <span class="loc-sys-arrow" aria-hidden="true"><ion-icon name="chevron-forward"></ion-icon></span>
             </button>
           </div>
         </ng-container>
@@ -138,13 +143,6 @@
   </ng-container>
 
   <div class="detail-screen" *ngIf="selected as system">
-    <div class="detail-header">
-      <button type="button" class="sub-back" (click)="closeDetail()">‹</button>
-      <div>
-        <div class="detail-title">{{ system.title }}</div>
-        <div class="detail-sub">{{ system.subtitle }}</div>
-      </div>
-    </div>
     <app-guide-chapter
       mode="chapter"
       [system]="system"
@@ -154,13 +152,6 @@
   </div>
 
   <div class="detail-screen" *ngIf="powerOpen">
-    <div class="detail-header">
-      <button type="button" class="sub-back" (click)="closeDetail()">‹</button>
-      <div>
-        <div class="detail-title">Power</div>
-        <div class="detail-sub">{{ powerView()?.subtitle }}</div>
-      </div>
-    </div>
     <app-guide-chapter
       mode="power"
       [showFixes]="true"

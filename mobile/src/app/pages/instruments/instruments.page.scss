@@ -5,9 +5,9 @@
 }
 
 .intro {
-  font-size: 0.9rem;
+  font-size: var(--cattitude-text-body);
   line-height: 1.45;
-  color: var(--ion-color-medium-shade);
+  color: var(--cattitude-text-mid);
   margin-bottom: 16px;
 }
 
@@ -17,13 +17,13 @@
 
 .hint,
 .role-hint {
-  font-size: 0.8rem;
-  color: var(--ion-color-medium);
+  font-size: var(--cattitude-text-sm);
+  color: var(--cattitude-text-light);
   margin: 4px 0 0;
 }
 
 .live-hint {
-  font-size: 0.78rem;
+  font-size: var(--cattitude-text-sm);
   color: var(--ion-color-success-shade, #2dd36f);
   margin: 0 0 12px 12px;
 

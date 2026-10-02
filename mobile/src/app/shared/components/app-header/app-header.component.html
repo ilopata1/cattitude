@@ -1,5 +1,5 @@
 <ion-header class="app-header ion-no-border">
-  <ion-toolbar>
+  <ion-toolbar class="brand-toolbar">
     <div class="header-brand" slot="start">
       <button
         *ngIf="content.bootstrap.branding.headerLogo as logo"
@@ -18,9 +18,32 @@
       </div>
     </div>
     <ion-button slot="end" class="emergency-btn" (click)="openEmergency()">
-      🆘 Emergency
+      <ion-icon name="help-buoy-outline" slot="start" aria-hidden="true"></ion-icon>
+      Emergency
     </ion-button>
   </ion-toolbar>
+
+  <div class="app-subheader" *ngIf="hasSubheader">
+    <div class="sub-row">
+      <button
+        *ngIf="showBackControl"
+        type="button"
+        class="sub-back"
+        (click)="onBack()"
+        aria-label="Back"
+      >
+        <ion-icon name="chevron-back" aria-hidden="true"></ion-icon>
+      </button>
+      <div class="sub-copy">
+        <div class="sub-title" *ngIf="title">{{ title }}</div>
+        <div class="sub-sub" *ngIf="subtitle">{{ subtitle }}</div>
+      </div>
+      <div class="sub-actions">
+        <ng-content select="[headerActions]"></ng-content>
+      </div>
+    </div>
+  </div>
+  <ng-content select="[headerExtra]"></ng-content>
 </ion-header>
 
 <ion-modal [isOpen]="emergencyOpen" (didDismiss)="closeEmergency()">
@@ -50,7 +73,7 @@
           <div class="mc-val">{{ contact.value }}</div>
         </div>
         <a *ngIf="contact.tel" [href]="'tel:' + contact.tel">
-          <button class="mc-call">📞 Call</button>
+          <button class="mc-call" type="button"><ion-icon name="call" aria-hidden="true"></ion-icon> Call</button>
         </a>
         <div *ngIf="contact.action === 'vhf'" class="mc-vhf">{{ contact.value }}</div>
       </div>

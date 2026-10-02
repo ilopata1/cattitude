@@ -10,8 +10,8 @@
 }
 
 .card {
-  background: #fff;
-  border: 1px solid rgba(13, 33, 55, 0.1);
+  background: var(--cattitude-surface);
+  border: 1px solid var(--cattitude-line);
   border-radius: 10px;
   padding: 12px 14px;
   display: flex;
@@ -20,16 +20,16 @@
 }
 
 .label {
-  font-size: 11px;
+  font-size: var(--cattitude-text-caption);
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--cattitude-text-light, #7a95a8);
+  color: var(--cattitude-text-light);
 }
 
 .value {
   font-size: 1.35rem;
   font-weight: 700;
-  color: var(--cattitude-navy, #0d2137);
+  color: var(--cattitude-text-dark);
   line-height: 1.1;
 }

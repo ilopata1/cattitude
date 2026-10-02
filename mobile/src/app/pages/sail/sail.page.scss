@@ -7,7 +7,8 @@
 .sail-page {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
   width: 100%;
   background: var(--ion-background-color, var(--cattitude-sand, #f5f0e8));
 }
@@ -34,6 +35,7 @@
 .no-connection-icon {
   font-size: 3.5rem;
   margin-bottom: 16px;
+  color: var(--cattitude-text-dark);
 }
 
 .no-connection-title {
@@ -44,7 +46,7 @@
 }
 
 .no-connection-body {
-  font-size: 0.9rem;
+  font-size: var(--cattitude-text-body);
   line-height: 1.5;
   max-width: 300px;
   margin: 0 0 24px;

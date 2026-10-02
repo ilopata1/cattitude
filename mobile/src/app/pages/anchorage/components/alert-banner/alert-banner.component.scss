@@ -1,12 +1,17 @@
 .alert-banner-container {
   display: flex;
   align-items: center;
-  padding: 10px 16px;
-  color: #fff;
-  font-size: 13px;
+  width: 100%;
+  min-height: var(--cattitude-touch-min);
+  border: none;
+  font: inherit;
+  text-align: left;
+  padding: var(--cattitude-space-sm) var(--cattitude-space-md);
+  color: var(--cattitude-text-on-fill);
+  font-size: var(--cattitude-text-body);
   font-weight: 600;
   cursor: pointer;
-  gap: 8px;
+  gap: var(--cattitude-space-xs);
   position: absolute;
   top: 0;
   left: 0;
@@ -14,7 +19,7 @@
   z-index: 600;
 
   ion-icon {
-    font-size: 18px;
+    font-size: var(--cattitude-text-lg);
     flex-shrink: 0;
   }
 
@@ -23,9 +28,9 @@
   }
 
   .count {
-    background: rgba(0, 0, 0, 0.2);
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 11px;
+    background: rgba(var(--cattitude-navy-rgb), 0.12);
+    padding: 2px var(--cattitude-space-xs);
+    border-radius: var(--cattitude-radius-full);
+    font-size: var(--cattitude-text-caption);
   }
 }

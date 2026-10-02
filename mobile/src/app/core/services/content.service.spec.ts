@@ -115,7 +115,10 @@ describe('ContentService boot', () => {
 
     expect(service.bootstrap.branding.vesselName).toBe('Fresh');
     expect(toasts.create).toHaveBeenCalledWith(
-      jasmine.objectContaining({ message: 'Guide updated' }),
+      jasmine.objectContaining({
+        message: 'Guide updated',
+        htmlAttributes: jasmine.objectContaining({ 'aria-live': 'polite', role: 'status' }),
+      }),
     );
   });
 
@@ -204,6 +207,7 @@ describe('ContentService boot', () => {
       jasmine.objectContaining({
         color: 'warning',
         message: jasmine.stringMatching(/schema 2/),
+        htmlAttributes: jasmine.objectContaining({ 'aria-live': 'assertive', role: 'alert' }),
       }),
     );
     expect(appUpdate.checkForUpdate).toHaveBeenCalled();

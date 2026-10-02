@@ -1,20 +1,21 @@
 /**
- * Skip instrument CSS variables mapped for Cattitude's light (sand) surfaces.
- * Compass tick/heading text use navy contrast; dial gaps match the page background.
+ * Skip instrument CSS variables mapped onto Cattitude surfaces.
+ * Compass tick/heading text follow the active theme; dial gaps match the page.
+ * Night helm redefines the hue tokens so the dial stays red.
  * Source widgets: skip/src/app/widgets/svg-windsteer (MIT).
  */
 :host {
-  --skip-grey-color: rgba(13, 33, 55, 0.38);
-  --skip-widget-card-background-color: #ffffff;
-  --skip-contrast-color: var(--cattitude-navy, #0d2137);
-  --skip-starboard-color: #2d8a4e;
-  --skip-port-color: #c0392b;
-  --skip-yellow-color: #c4920f;
-  --skip-yellow-dim-color: #8a6a10;
-  --skip-orange-color: #d35400;
-  --skip-orange-dim-color: #a04000;
-  --skip-pink-color: #c039db;
-  --skip-green-color: #27ae60;
-  --skip-blue-color: #2980b9;
-  --mat-sys-background: var(--cattitude-sand, #f5f0e8);
+  --skip-grey-color: var(--cattitude-line-strong);
+  --skip-widget-card-background-color: var(--cattitude-surface);
+  --skip-contrast-color: var(--cattitude-text-dark);
+  --skip-starboard-color: var(--cattitude-starboard);
+  --skip-port-color: var(--cattitude-port);
+  --skip-yellow-color: var(--cattitude-instrument-yellow);
+  --skip-yellow-dim-color: var(--cattitude-instrument-yellow-dim);
+  --skip-orange-color: var(--cattitude-instrument-orange);
+  --skip-orange-dim-color: var(--cattitude-instrument-orange-dim);
+  --skip-pink-color: var(--cattitude-instrument-pink);
+  --skip-green-color: var(--cattitude-instrument-green);
+  --skip-blue-color: var(--cattitude-instrument-blue);
+  --mat-sys-background: var(--cattitude-sand);
 }

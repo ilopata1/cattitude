@@ -55,7 +55,7 @@
 
       <button type="button" class="fix-header" (click)="toggle(i)">
 
-        <span class="fix-icon">{{ displayIcon(fix.icon) }}</span>
+        <span class="fix-icon"><app-ui-icon [icon]="fix.icon" fallback="build-outline"></app-ui-icon></span>
 
         <div class="fix-meta">
 
@@ -69,7 +69,9 @@
 
         </div>
 
-        <span class="fix-chevron">{{ expandedIndex === i ? '▾' : '›' }}</span>
+        <span class="fix-chevron" aria-hidden="true">
+          <ion-icon [name]="expandedIndex === i ? 'chevron-down' : 'chevron-forward'"></ion-icon>
+        </span>
 
       </button>
 
@@ -105,7 +107,8 @@
           <p class="fix-escalation-label">Still stuck?</p>
           <div class="fix-escalation-actions">
             <button type="button" class="fix-escalation-btn" (click)="openAsk()">
-              📖 Try Ask
+              <ion-icon name="book-outline" aria-hidden="true"></ion-icon>
+              Try Ask
             </button>
             <button
               *ngIf="isCharterVessel"
@@ -113,7 +116,8 @@
               class="fix-escalation-btn"
               (click)="openEmergency()"
             >
-              📻 Contact {{ charterCompany }}
+              <ion-icon name="radio-outline" aria-hidden="true"></ion-icon>
+              Contact {{ charterCompany }}
             </button>
           </div>
         </div>

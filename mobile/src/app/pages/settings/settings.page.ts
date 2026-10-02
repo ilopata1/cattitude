@@ -10,6 +10,7 @@ import {
 import { NotificationPreferenceService } from '../../core/services/notification-preference.service';
 import { SignalKService, SignalKConnectionState } from '../../core/services/signal-k.service';
 import { SignalKSettingsService } from '../../core/services/signal-k-settings.service';
+import { ThemePreference, ThemeService } from '../../core/services/theme.service';
 
 @Component({
   selector: 'app-settings',
@@ -35,6 +36,7 @@ export class SettingsPage implements OnInit, OnDestroy {
     private readonly content: ContentService,
     private readonly notificationPrefs: NotificationPreferenceService,
     private readonly notifications: NotificationBridgeService,
+    readonly theme: ThemeService,
   ) {
     this.alertsEnabled = this.notificationPrefs.enabled();
   }
@@ -74,7 +76,7 @@ export class SettingsPage implements OnInit, OnDestroy {
       case 'connected':    return 'success';
       case 'connecting':   return 'warning';
       case 'error':        return 'danger';
-      case 'disconnected': return 'medium';
+      case 'disconnected': return 'dark';
     }
   }
 
@@ -98,6 +100,17 @@ export class SettingsPage implements OnInit, OnDestroy {
     void this.notifications.refreshDevicePermission().then(permission => {
       this.devicePermission = permission;
     });
+  }
+
+  onThemeChange(value: string | undefined): void {
+    if (value !== 'system' && value !== 'light' && value !== 'dark' && value !== 'night') {
+      return;
+    }
+    const preference: ThemePreference = value;
+    if (preference === this.theme.preference()) {
+      return;
+    }
+    this.theme.setPreference(preference);
   }
 
   onAlertsToggle(on: boolean): void {

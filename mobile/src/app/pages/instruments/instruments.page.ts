@@ -12,7 +12,7 @@ import { InstrumentBinding, InstrumentMap, InstrumentRole } from '../../core/mod
 import { DiscoveredPath, InstrumentDiscoveryService } from '../../core/services/instrument-discovery.service';
 import { InstrumentMapService } from '../../core/services/instrument-map.service';
 import { SignalKConnectionState, SignalKService } from '../../core/services/signal-k.service';
-import { VesselContextService } from '../../core/services/vessel-context.service';
+import { liveToast } from '../../core/toast-live';
 
 const MPS_TO_KNOTS = 1.94384;
 const STALE_AFTER_MS = 60_000;
@@ -44,12 +44,7 @@ export class InstrumentsPage implements OnInit, OnDestroy {
     private readonly sk: SignalKService,
     private readonly toasts: ToastController,
     private readonly cdr: ChangeDetectorRef,
-    private readonly vesselContext: VesselContextService,
   ) {}
-
-  get settingsHref(): string {
-    return `/v/${this.vesselContext.vesselSlug}/tabs/more/settings`;
-  }
 
   ngOnInit(): void {
     this.draft = cloneMap(this.maps.map);
@@ -157,11 +152,11 @@ export class InstrumentsPage implements OnInit, OnDestroy {
 
   async save(): Promise<void> {
     const ok = await this.maps.save(this.draft);
-    const toast = await this.toasts.create({
+    const toast = await this.toasts.create(liveToast({
       message: ok ? 'Instrument map saved' : 'Saved locally — server sync failed',
       duration: 2500,
       color: ok ? 'success' : 'warning',
-    });
+    }));
     await toast.present();
     if (ok) this.draft = cloneMap(this.maps.map);
     this.cdr.markForCheck();

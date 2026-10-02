@@ -8,7 +8,7 @@
       <h2>{{ displayName }}</h2>
       <span class="mmsi" *ngIf="vessel.name && vessel.name !== vessel.mmsi">MMSI {{ vessel.mmsi }}</span>
     </div>
-    <div class="state-badge" [style.background]="stateColor">{{ stateLabel }}</div>
+    <div class="state-badge" [style.background]="stateColor" [style.color]="stateTextColor">{{ stateLabel }}</div>
   </div>
 
   <div class="detail-grid">

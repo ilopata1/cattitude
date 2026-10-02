@@ -26,6 +26,7 @@ import { Injectable, OnDestroy, signal } from '@angular/core';
 import { ToastController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { liveToast } from '../toast-live';
 import {
   DeviceNotificationPermission,
   fromDevicePermission,
@@ -241,13 +242,13 @@ export class NotificationBridgeService implements OnDestroy {
 
   private async showInApp(title: string, body: string): Promise<void> {
     try {
-      const toast = await this.toasts.create({
+      const toast = await this.toasts.create(liveToast({
         header: title,
         message: body,
         duration: 6000,
         position: 'top',
         color: 'warning',
-      });
+      }));
       await toast.present();
     } catch (error) {
       console.warn('Could not show the in-app alert.', error);
@@ -266,7 +267,7 @@ export class NotificationBridgeService implements OnDestroy {
       .replace('notifications.', '')
       .replace(/\./g, ' ')
       .replace(/\b\w/g, c => c.toUpperCase());
-    const label = state === 'emergency' ? '🚨 EMERGENCY' : '⚠️ ALARM';
+    const label = state === 'emergency' ? 'EMERGENCY' : 'ALARM';
     return `${label} — ${subject}`;
   }
 }

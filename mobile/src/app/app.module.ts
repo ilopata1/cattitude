@@ -12,6 +12,7 @@ import { InstrumentMapService } from './core/services/instrument-map.service';
 import { SailPlanService } from './core/services/sail-plan.service';
 import { appInitializer } from './core/initializers/app.initializer';
 import { SharedModule } from './shared/shared.module';
+import './shared/icons/ui-icons';
 
 @NgModule({
   declarations: [AppComponent],

@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Location } from '@angular/common';
 import { LearnStage, resolveLearnPath } from '../../../core/guide/learn-path';
 import { ContentService } from '../../../core/services/content.service';
 import { ProgressService } from '../../../core/services/progress.service';
@@ -16,7 +15,6 @@ export class LearnPage {
   constructor(
     public readonly content: ContentService,
     public readonly progress: ProgressService,
-    private readonly location: Location,
     private readonly vesselRoutes: VesselRouteService,
   ) {}
 
@@ -35,9 +33,5 @@ export class LearnPage {
 
   open(stage: LearnStage): void {
     void this.vesselRoutes.navigateTabs('do', 'learn', stage.id);
-  }
-
-  back(): void {
-    this.location.back();
   }
 }

@@ -46,6 +46,7 @@ export interface PolarWindowAssessment {
   templateUrl: './polar.page.html',
   styleUrls: ['./polar.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'helm-screen' },
   standalone: false,
 })
 export class PolarPage implements OnInit, OnDestroy {
@@ -265,8 +266,8 @@ export class PolarPage implements OnInit, OnDestroy {
   }
 
   private colorForPct(pct: number): string {
-    if (pct < 50) return 'var(--polar-perf-low, #c0392b)';
-    if (pct < 75) return 'var(--polar-perf-mid, #d4a017)';
-    return 'var(--polar-perf-high, #1e9e5a)';
+    if (pct < 50) return 'var(--cattitude-danger)';
+    if (pct < 75) return 'var(--cattitude-warning)';
+    return 'var(--cattitude-success)';
   }
 }

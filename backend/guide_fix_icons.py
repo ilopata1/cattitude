@@ -1,8 +1,8 @@
-"""Normalize Fix It card icons to guest-visible emoji.
+"""Normalize Fix It card icons before they are published.
 
-Some LLM or fragment drafts store Material-style names (Warning, Battery_Alert)
-instead of emoji. The mobile app renders icons as plain text, so those names
-appear blank or as broken glyphs depending on the font.
+The mobile app draws these with Ionicons. Material names become icon names.
+Emoji already stored on a card are left for the app to map, except the
+thermometer pictograph, which is stored as thermometer-outline.
 """
 
 from __future__ import annotations
@@ -19,8 +19,8 @@ _ICON_NAME_MAP: dict[str, str] = {
     "battery_full": "🔋",
     "battery_charging_full": "🔋",
     "battery_std": "🔋",
-    "thermostat": "⚠️",
-    "device_thermostat": "⚠️",
+    "thermostat": "thermometer-outline",
+    "device_thermostat": "thermometer-outline",
     "water_drop": "💧",
     "bolt": "⚡",
     "electrical_services": "⚡",
@@ -37,19 +37,17 @@ _ICON_NAME_MAP: dict[str, str] = {
 }
 
 
-def normalize_fix_icon(icon: Any, *, fallback: str = "🔧") -> str:
-    """Return an emoji suitable for `<span>{{ icon }}</span>` rendering."""
+def normalize_fix_icon(icon: Any, *, fallback: str = "build-outline") -> str:
+    """Return an Ionicons name, or a legacy emoji the app maps to one."""
     if not isinstance(icon, str):
         return fallback
     raw = icon.strip()
     if not raw:
         return fallback
 
-    # Already an emoji / symbol (non-ASCII or common pictographs)
     if any(ord(ch) > 127 for ch in raw):
-        # Prefer widely supported warning glyph over thermometer (poor Windows coverage)
         if raw.startswith("🌡"):
-            return "⚠️"
+            return "thermometer-outline"
         return raw
 
     key = raw.lower().replace("-", "_").replace(" ", "_")
@@ -66,7 +64,11 @@ def normalize_fix_icon(icon: Any, *, fallback: str = "🔧") -> str:
     if mapped:
         return mapped
 
-    # ASCII identifier with no mapping — do not show the name as the "icon"
+    # Already an Ionicons name (book-outline, thermometer-outline).
+    if raw == raw.lower() and "-" in raw and raw.replace("-", "").isalnum():
+        return raw
+
+    # ASCII identifier with no mapping — do not show the name as the icon.
     if raw.replace("_", "").replace("-", "").isalnum():
         return fallback
     return raw

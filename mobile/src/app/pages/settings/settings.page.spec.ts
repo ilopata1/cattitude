@@ -56,6 +56,13 @@ describe('SettingsPage notifications', () => {
     fixture.detectChanges();
   });
 
+  it('announces Signal K connection changes', () => {
+    const status = fixture.nativeElement.querySelector('.connection-status') as HTMLElement;
+    expect(status.getAttribute('aria-live')).toBe('polite');
+    expect(status.getAttribute('aria-atomic')).toBe('true');
+    expect(status.textContent).toContain('Disconnected');
+  });
+
   it('defaults alerts on and asks for device permission only from the button', async () => {
     expect(prefs.enabled()).toBeTrue();
     expect(fixture.nativeElement.textContent).toContain('Allow device notifications');

@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
+import { SharedModule } from '../../shared/shared.module';
 import { AnchorageRoutingModule } from './anchorage-routing.module';
 import { AnchoragePage } from './anchorage.page';
 import { WindRosePopoverComponent } from './components/wind-rose-popover/wind-rose-popover.component';
@@ -11,7 +12,7 @@ import { MetresPipe } from './pipes/metres.pipe';
 import { AgePipe } from './pipes/age.pipe';
 
 @NgModule({
-  imports: [CommonModule, FormsModule, IonicModule, AnchorageRoutingModule],
+  imports: [CommonModule, FormsModule, IonicModule, SharedModule, AnchorageRoutingModule],
   declarations: [
     AnchoragePage,
     WindRosePopoverComponent,

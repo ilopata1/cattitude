@@ -7,7 +7,30 @@
 
   <base href="/">
 
-  <meta name="color-scheme" content="light dark" />
+  <meta name="color-scheme" content="light" />
+  <script>
+    /* Applies the stored theme before first paint. Keep in sync with ThemeService. */
+    (function () {
+      var key = 'cattitude.theme';
+      var pref = 'system';
+      try {
+        var stored = localStorage.getItem(key);
+        if (stored === 'light' || stored === 'dark' || stored === 'night' || stored === 'system') {
+          pref = stored;
+        }
+      } catch (e) {}
+      var dark = false;
+      try { dark = window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) {}
+      var theme = pref === 'system' ? (dark ? 'dark' : 'light') : pref;
+      var root = document.documentElement;
+      root.setAttribute('data-theme', theme);
+      root.style.colorScheme = theme === 'light' ? 'light' : 'dark';
+      var scheme = document.querySelector('meta[name="color-scheme"]');
+      if (scheme) scheme.setAttribute('content', theme === 'light' ? 'light' : 'dark');
+      var bar = document.querySelector('meta[name="theme-color"]');
+      if (bar) bar.setAttribute('content', theme === 'night' ? '#240808' : '#0D2137');
+    })();
+  </script>
   <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="format-detection" content="telephone=no" />
   <meta name="msapplication-tap-highlight" content="no" />

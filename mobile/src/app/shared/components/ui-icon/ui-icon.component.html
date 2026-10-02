@@ -1,0 +1,2 @@
+<ion-icon *ngIf="resolved.kind === 'ion'" [name]="resolved.name"></ion-icon>
+<span *ngIf="resolved.kind === 'emoji'" class="ui-icon-emoji">{{ resolved.text }}</span>

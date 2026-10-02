@@ -1,12 +1,10 @@
-<app-header></app-header>
+<app-header
+  title="Boat rules"
+  subtitle="Never, always, and good habits"
+  [showBack]="true"
+  (back)="back()"
+></app-header>
 <ion-content [fullscreen]="true" class="page-content">
-  <div class="sub-header">
-    <button type="button" class="sub-back" (click)="back()">‹</button>
-    <div>
-      <div class="sub-header-title">Boat rules</div>
-      <div class="sub-header-sub">Never, always, and good habits</div>
-    </div>
-  </div>
   <div class="scroll-area">
     <app-boat-rules></app-boat-rules>
   </div>

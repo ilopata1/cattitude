@@ -57,9 +57,15 @@ describe('NotificationBridgeService', () => {
     await flushPromises();
 
     expect(toasts.create).toHaveBeenCalled();
-    const toast = toasts.create.calls.mostRecent().args[0] as { header: string; message: string };
+    const toast = toasts.create.calls.mostRecent().args[0] as {
+      header: string;
+      message: string;
+      htmlAttributes: { 'aria-live': string; role: string };
+    };
     expect(toast.header).toBe('Sail plan');
     expect(toast.message).toBe('Reef the main');
+    expect(toast.htmlAttributes['aria-live']).toBe('assertive');
+    expect(toast.htmlAttributes.role).toBe('alert');
     if (requestPermission) {
       expect(requestPermission).not.toHaveBeenCalled();
     }

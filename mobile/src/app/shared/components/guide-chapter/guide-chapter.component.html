@@ -165,7 +165,9 @@
       [class.done]="isRowDone(row)"
       (click)="toggleRow(row)"
     >
-      <span class="chapter-check-box">{{ isRowDone(row) ? '✓' : '' }}</span>
+      <span class="chapter-check-box">
+        <ion-icon *ngIf="isRowDone(row)" name="checkmark" aria-hidden="true"></ion-icon>
+      </span>
       <span>{{ row.text }}</span>
     </button>
   </section>
@@ -226,9 +228,12 @@
           [class.section-items--warnings]="placed.section.type === 'warnings'"
         >
           <li *ngFor="let item of items">
-            <span class="section-item-mark" aria-hidden="true">{{
-              placed.section.type === 'warnings' ? '⚠' : '•'
-            }}</span>
+            <span class="section-item-mark" aria-hidden="true">
+              <ion-icon
+                [name]="placed.section.type === 'warnings' ? 'warning-outline' : 'ellipse'"
+                [class.section-item-bullet]="placed.section.type !== 'warnings'"
+              ></ion-icon>
+            </span>
             <span>{{ item }}</span>
           </li>
         </ul>

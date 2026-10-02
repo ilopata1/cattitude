@@ -6,12 +6,26 @@
   padding: 16px;
 }
 
+@media (min-width: 768px) {
+  .more-menu {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .more-card {
+    margin-bottom: 0;
+    height: 100%;
+  }
+}
+
 .more-card {
-  background: #fff;
+  background: var(--cattitude-surface);
   border-radius: 14px;
   padding: 16px;
   margin-bottom: 10px;
-  box-shadow: 0 2px 16px rgba(13, 33, 55, 0.1);
+  box-shadow: var(--cattitude-shadow-md);
   display: flex;
   align-items: center;
   gap: 14px;
@@ -29,10 +43,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
+  font-size: 1.375rem;
   flex-shrink: 0;
   background: var(--cattitude-teal-light);
-  color: var(--cattitude-navy);
+  color: var(--cattitude-text-dark);
 }
 
 .more-card-body {
@@ -40,18 +54,20 @@
 }
 
 .more-card-title {
-  font-size: 15px;
+  font-size: var(--cattitude-text-body);
   font-weight: 600;
-  color: var(--cattitude-navy);
+  color: var(--cattitude-text-dark);
 }
 
 .more-card-sub {
-  font-size: 12px;
+  font-size: var(--cattitude-text-sm);
   color: var(--cattitude-text-light);
   margin-top: 2px;
 }
 
 .more-card-arrow {
+  display: flex;
+  align-items: center;
   color: var(--cattitude-text-light);
-  font-size: 18px;
+  font-size: 1.25rem;
 }

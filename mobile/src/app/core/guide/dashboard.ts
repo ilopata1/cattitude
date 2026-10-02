@@ -52,14 +52,6 @@ export interface DashboardCatalogInput {
   rulesAvailable: boolean;
 }
 
-const MORE_ICONS: Record<string, string> = {
-  ask: '💬',
-  sail: '⛵',
-  polar: '📈',
-  anchorage: '⚓',
-  settings: '⚙️',
-};
-
 const GUEST_DEFAULT = ['learn', 'do:safety-brief', 'know:heads', 'more:ask'];
 const CREW_SHORTCUTS = ['know:engines', 'know:electrical', 'know:power', 'more:sail', 'more:anchorage', 'fix', 'more:ask'];
 const CREW_LIVE = ['widget:aws', 'widget:tws', 'widget:sog', 'widget:awa', 'widget:heading', 'widget:cog', 'widget:polar'];
@@ -72,7 +64,7 @@ export function buildDashboardCatalog(input: DashboardCatalogInput): DashboardIt
       group: 'do',
       label: 'Learn the boat',
       subtitle: 'A short path through this boat',
-      icon: '📘',
+      icon: 'book-outline',
       segments: ['do', 'learn'],
     }));
   }
@@ -88,7 +80,7 @@ export function buildDashboardCatalog(input: DashboardCatalogInput): DashboardIt
         group: 'do',
         label: item.title,
         subtitle: item.subtitle || '',
-        icon: item.icon || '✅',
+        icon: item.icon || 'checkmark-circle-outline',
         segments: ['do', 'checklist', item.key],
       }));
     }
@@ -100,7 +92,7 @@ export function buildDashboardCatalog(input: DashboardCatalogInput): DashboardIt
       group: 'know',
       label: 'Boat rules',
       subtitle: 'Never, always, and good habits',
-      icon: '📋',
+      icon: 'clipboard-outline',
       segments: ['home', 'rules'],
     }));
   }
@@ -113,7 +105,7 @@ export function buildDashboardCatalog(input: DashboardCatalogInput): DashboardIt
       group: 'know',
       label: topicTitle(topic),
       subtitle: topic.id === POWER_TOPIC_ID ? 'Electrical, controls, and batteries' : (topic.systems[0]?.subtitle || ''),
-      icon: topicIcon(topic) || '📘',
+      icon: topicIcon(topic) || 'book-outline',
       segments: ['know'],
       query: { system: topic.id },
     }));
@@ -124,7 +116,7 @@ export function buildDashboardCatalog(input: DashboardCatalogInput): DashboardIt
           group: 'know',
           label: system.title || system.id,
           subtitle: 'Power',
-          icon: system.icon || '⚡',
+          icon: system.icon || 'flash-outline',
           segments: ['know'],
           query: { system: system.id },
           parentId: id,
@@ -140,7 +132,7 @@ export function buildDashboardCatalog(input: DashboardCatalogInput): DashboardIt
           group: 'know',
           label,
           subtitle: system.title || topicTitle(topic),
-          icon: system.icon || topicIcon(topic) || '📘',
+          icon: system.icon || topicIcon(topic) || 'book-outline',
           segments: ['know'],
           query: { system: system.id, section: String(index) },
           crewOnly: section.audience === 'crew',
@@ -155,7 +147,7 @@ export function buildDashboardCatalog(input: DashboardCatalogInput): DashboardIt
     group: 'fix',
     label: 'Fix It',
     subtitle: 'When something is not working',
-    icon: '🔧',
+    icon: 'build-outline',
     segments: ['fix'],
   }));
 
@@ -165,27 +157,27 @@ export function buildDashboardCatalog(input: DashboardCatalogInput): DashboardIt
       group: 'more',
       label: row.label,
       subtitle: row.subtitle,
-      icon: MORE_ICONS[row.id] || '•',
+      icon: row.icon || 'ellipse-outline',
       segments: ['more', ...row.route],
     }));
   }
 
   items.push(
-    widget('widget:aws', 'AWS', 'Apparent wind speed', '💨', 1),
-    widget('widget:tws', 'TWS', 'True wind speed', '💨', 1),
-    widget('widget:sog', 'SOG', 'Speed over ground', '🚤', 1),
-    widget('widget:awa', 'AWA', 'Apparent wind angle', '🧭', 1),
-    widget('widget:heading', 'HDG', 'Compass heading', '🧭', 1),
-    widget('widget:cog', 'COG', 'Course over ground', '🧭', 1),
-    widget('widget:depth', 'Depth', 'Live depth', '🌊', 1),
-    widget('widget:speed', 'Speed', 'Live speed', '🚤', 1),
-    widget('widget:wind', 'Wind', 'Live wind', '💨', 1),
+    widget('widget:aws', 'AWS', 'Apparent wind speed', 'wind-outline', 1),
+    widget('widget:tws', 'TWS', 'True wind speed', 'wind-outline', 1),
+    widget('widget:sog', 'SOG', 'Speed over ground', 'boat', 1),
+    widget('widget:awa', 'AWA', 'Apparent wind angle', 'compass-outline', 1),
+    widget('widget:heading', 'HDG', 'Compass heading', 'compass-outline', 1),
+    widget('widget:cog', 'COG', 'Course over ground', 'navigate-outline', 1),
+    widget('widget:depth', 'Depth', 'Live depth', 'water-outline', 1),
+    widget('widget:speed', 'Speed', 'Live speed', 'speedometer-outline', 1),
+    widget('widget:wind', 'Wind', 'Live wind', 'wind-outline', 1),
   );
   if (isSailingVessel(input.vesselType)) {
-    items.push(widget('widget:polar', 'Polar', '5, 10, and 15 minute average', '📈', 2));
+    items.push(widget('widget:polar', 'Polar', '5, 10, and 15 minute average', 'trending-up-outline', 2));
   }
   if (input.rulesAvailable) {
-    items.push(widget('widget:rules', 'Boat rules', 'Never, always, and good habits', '📋', 2));
+    items.push(widget('widget:rules', 'Boat rules', 'Never, always, and good habits', 'clipboard-outline', 2));
   }
   return items;
 }

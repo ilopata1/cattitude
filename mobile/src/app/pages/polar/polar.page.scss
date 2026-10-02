@@ -1,5 +1,10 @@
+ion-content {
+  --background: var(--cattitude-sand);
+  --color: var(--cattitude-text-dark);
+}
+
 .panel {
-  padding: 12px 16px 0;
+  padding: var(--cattitude-space-sm) var(--cattitude-space-md) 0;
 
   &.stale {
     opacity: 0.45;
@@ -8,59 +13,62 @@
 }
 
 .section-title {
-  font-size: 13px;
+  font-size: var(--cattitude-text-caption);
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--ion-color-primary);
-  margin: 0 0 10px;
+  color: var(--cattitude-text-accent);
+  margin: 0 0 var(--cattitude-space-xs);
 }
 
 .live-readouts {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+  gap: var(--cattitude-space-xs);
 }
 
 .live-item {
-  background: var(--ion-color-step-50);
-  border: 1px solid var(--ion-color-step-250, #c8c8c8);
-  border-radius: 8px;
-  padding: 10px 8px;
+  background: var(--cattitude-surface);
+  border: 1px solid var(--cattitude-sand-mid);
+  border-radius: var(--cattitude-radius-md);
+  box-shadow: var(--cattitude-shadow-sm);
+  padding: var(--cattitude-space-xs);
   text-align: center;
 
   .label {
     display: block;
-    font-size: 11px;
-    color: var(--ion-color-medium);
+    font-size: var(--cattitude-text-caption);
+    color: var(--cattitude-text-light);
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
 
   .value {
     display: block;
-    font-size: 18px;
+    font-size: var(--cattitude-text-lg);
     font-weight: 600;
-    margin-top: 4px;
+    color: var(--cattitude-text-dark);
+    margin-top: var(--cattitude-space-2xs);
   }
 }
 
 .source-note {
-  margin: 8px 0 0;
-  font-size: 12px;
-  color: var(--ion-color-medium);
+  margin: var(--cattitude-space-xs) 0 0;
+  font-size: var(--cattitude-text-sm);
+  color: var(--cattitude-text-light);
 }
 
 .perf-panel {
-  padding-bottom: 4px;
+  padding-bottom: var(--cattitude-space-2xs);
 }
 
 .perf-chart-wrap {
-  background: var(--ion-color-step-50);
-  border-radius: 10px;
-  padding: 10px 8px 8px;
-  margin: 0 auto 12px;
-  /* Cap width so height:auto (from viewBox) stays reasonable on desktop */
+  background: var(--cattitude-surface);
+  border: 1px solid var(--cattitude-sand-mid);
+  border-radius: var(--cattitude-radius-md);
+  box-shadow: var(--cattitude-shadow-sm);
+  padding: var(--cattitude-space-xs);
+  margin: 0 auto var(--cattitude-space-sm);
   max-width: 480px;
 }
 
@@ -71,30 +79,29 @@
 }
 
 .plot-bg {
-  fill: var(--ion-background-color, #fff);
-  opacity: 0.55;
+  fill: var(--cattitude-sand);
 }
 
 .grid-line {
-  stroke: var(--ion-color-step-200, #ccc);
+  stroke: var(--cattitude-line);
   stroke-width: 1;
   stroke-dasharray: 3 3;
 }
 
 .grid-line-strong {
-  stroke: var(--ion-color-step-350, #aaa);
+  stroke: var(--cattitude-line-strong);
   stroke-dasharray: none;
 }
 
 .axis {
-  stroke: var(--ion-color-step-400, #999);
+  stroke: var(--cattitude-line-strong);
   stroke-width: 1;
 }
 
 .y-label,
 .x-label {
-  fill: var(--ion-color-medium);
-  font-size: 9px;
+  fill: var(--cattitude-text-light);
+  font-size: var(--cattitude-text-caption);
 }
 
 .perf-bar {
@@ -103,44 +110,45 @@
 
 .perf-hint {
   display: block;
-  font-size: 12px;
-  color: var(--ion-color-medium);
+  font-size: var(--cattitude-text-sm);
+  color: var(--cattitude-text-light);
   text-align: center;
-  margin: 6px 0 4px;
+  margin: var(--cattitude-space-xs) 0 var(--cattitude-space-2xs);
 }
 
 .perf-legend {
   display: flex;
   justify-content: center;
-  gap: 12px;
-  margin-bottom: 4px;
+  gap: var(--cattitude-space-sm);
+  margin-bottom: var(--cattitude-space-2xs);
 }
 
 .leg {
-  font-size: 11px;
+  font-size: var(--cattitude-text-caption);
   font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 999px;
-  color: #fff;
+  padding: 2px var(--cattitude-space-xs);
+  border-radius: var(--cattitude-radius-full);
+  color: var(--cattitude-text-on-fill);
 
   &.low {
-    background: var(--polar-perf-low, #c0392b);
+    background: var(--cattitude-danger);
   }
 
   &.mid {
-    background: var(--polar-perf-mid, #d4a017);
+    background: var(--cattitude-warning);
+    color: var(--cattitude-text-on-warning);
   }
 
   &.high {
-    background: var(--polar-perf-high, #1e9e5a);
+    background: var(--cattitude-success);
   }
 }
 
 .window-readouts {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 10px;
-  padding-bottom: 16px;
+  gap: var(--cattitude-space-sm);
+  padding-bottom: var(--cattitude-space-md);
 }
 
 @media (min-width: 720px) {
@@ -150,10 +158,10 @@
 }
 
 .window-card {
-  background: var(--ion-color-step-100);
-  border: 1px solid var(--ion-color-step-250, #c8c8c8);
-  border-radius: 10px;
-  padding: 14px 14px 12px;
+  background: var(--cattitude-surface);
+  border-radius: var(--cattitude-radius-md);
+  box-shadow: var(--cattitude-shadow-md);
+  padding: var(--cattitude-space-md) var(--cattitude-space-md) var(--cattitude-space-sm);
   text-align: left;
 }
 
@@ -161,23 +169,23 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
+  gap: var(--cattitude-space-sm);
 }
 
 .window-label {
   display: block;
-  font-size: 12px;
+  font-size: var(--cattitude-text-sm);
   font-weight: 700;
-  color: var(--ion-color-primary);
+  color: var(--cattitude-text-accent);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
 .window-sublabel {
   display: block;
-  font-size: 10px;
+  font-size: var(--cattitude-text-caption);
   font-weight: 600;
-  color: var(--ion-color-medium);
+  color: var(--cattitude-text-light);
   text-transform: uppercase;
   letter-spacing: 0.03em;
   margin-top: 2px;
@@ -185,75 +193,77 @@
 
 .window-value {
   display: block;
-  font-size: 26px;
+  font-size: var(--cattitude-text-display);
   font-weight: 700;
   line-height: 1.1;
+  color: var(--cattitude-text-dark);
   flex-shrink: 0;
 }
 
 .window-means,
 .window-band {
-  font-size: 12px;
-  color: var(--ion-color-medium);
-  margin: 8px 0 0;
+  font-size: var(--cattitude-text-sm);
+  color: var(--cattitude-text-light);
+  margin: var(--cattitude-space-xs) 0 0;
 }
 
 .current-sails-lead {
-  margin: 0 0 12px;
-  font-size: 13px;
+  margin: 0 0 var(--cattitude-space-sm);
+  font-size: var(--cattitude-text-body);
   line-height: 1.4;
-  color: var(--ion-color-medium-shade, #6d6d6d);
+  color: var(--cattitude-text-mid);
 }
 
 .current-sails-select,
 .current-sails-input {
-  margin-bottom: 12px;
+  margin-bottom: var(--cattitude-space-sm);
 }
 
 .window-would {
-  margin: 12px 0 4px;
-  font-size: 12px;
+  margin: var(--cattitude-space-sm) 0 var(--cattitude-space-2xs);
+  font-size: var(--cattitude-text-sm);
   line-height: 1.35;
-  color: var(--ion-color-medium-shade, #6d6d6d);
+  color: var(--cattitude-text-mid);
 }
 
 .window-plan {
   margin: 0;
-  font-size: 18px;
+  font-size: var(--cattitude-text-lg);
   font-weight: 700;
   line-height: 1.25;
+  color: var(--cattitude-text-dark);
 }
 
 .window-waiting {
-  margin: 12px 0 0;
-  font-size: 13px;
-  color: var(--ion-color-medium);
+  margin: var(--cattitude-space-sm) 0 0;
+  font-size: var(--cattitude-text-body);
+  color: var(--cattitude-text-light);
 }
 
 .advice-note {
-  font-size: 13px;
+  font-size: var(--cattitude-text-body);
   line-height: 1.4;
-  margin: 8px 0 0;
+  margin: var(--cattitude-space-xs) 0 0;
 
   &.avoid {
-    color: var(--ion-color-danger);
+    color: var(--cattitude-danger);
   }
 }
 
 .status-card {
-  margin: 12px;
+  margin: var(--cattitude-space-sm);
 
   ion-card-content {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--cattitude-space-xs);
     font-weight: 500;
   }
 }
 
 .stale-note {
   text-align: center;
-  font-size: 13px;
-  color: var(--ion-color-medium);
-  padding: 0 16px 16px;
+  font-size: var(--cattitude-text-body);
+  color: var(--cattitude-text-light);
+  padding: 0 var(--cattitude-space-md) var(--cattitude-space-md);
 }

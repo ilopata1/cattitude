@@ -3,13 +3,13 @@
 }
 
 .summary {
-  font-size: 14px;
+  font-size: var(--cattitude-text-body);
   line-height: 1.5;
   margin-bottom: 16px;
 }
 
 .know-group-label {
-  font-size: 11px;
+  font-size: var(--cattitude-text-caption);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -19,13 +19,13 @@
 
 .know-reference {
   margin: 18px 0 10px;
-  background: #fff;
+  background: var(--cattitude-surface);
   border-radius: 14px;
-  box-shadow: 0 1px 6px rgba(13, 33, 55, 0.07);
+  box-shadow: var(--cattitude-shadow-sm);
 
   > summary {
     padding: 14px 16px;
-    font-size: 12px;
+    font-size: var(--cattitude-text-sm);
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -40,29 +40,31 @@
 }
 
 .learn-link {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--cattitude-touch-min);
   margin: 12px 0 4px;
-  padding: 0;
+  padding: 0 var(--cattitude-space-2xs);
   border: none;
   background: none;
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--cattitude-text-body);
   font-weight: 600;
-  color: var(--cattitude-teal, #0d7377);
+  color: var(--cattitude-text-accent);
   text-decoration: underline;
   text-underline-offset: 2px;
   cursor: pointer;
 }
 
 .detail-section {
-  background: #fff;
+  background: var(--cattitude-surface);
   border-radius: 14px;
   padding: 14px 16px;
   margin-bottom: 10px;
-  box-shadow: 0 1px 6px rgba(13, 33, 55, 0.07);
+  box-shadow: var(--cattitude-shadow-sm);
 
   h3 {
-    font-size: 12px;
+    font-size: var(--cattitude-text-sm);
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--cattitude-text-light);
@@ -71,7 +73,7 @@
 }
 
 .prose {
-  font-size: 14px;
+  font-size: var(--cattitude-text-body);
   line-height: 1.6;
   margin: 0;
   // Stage 4 modules join block paragraphs with newlines and may embed simple
@@ -96,7 +98,7 @@
   a.guide-link,
   span.guide-link,
   [data-guide-link].guide-link {
-    color: var(--cattitude-teal, #0d7377);
+    color: var(--cattitude-text-accent);
     text-decoration: underline;
     text-underline-offset: 2px;
     cursor: pointer;
@@ -104,7 +106,7 @@
 }
 
 .detail-section--warnings {
-  border-left: 3px solid #c0392b;
+  border-left: 3px solid var(--cattitude-danger);
 }
 
 .detail-section--notes {
@@ -112,7 +114,7 @@
 }
 
 .equipment-locations {
-  background: #fff;
+  background: var(--cattitude-surface);
   border: 1px solid var(--cattitude-sand-mid);
   border-radius: 12px;
   overflow: hidden;
@@ -121,7 +123,7 @@
 .equipment-locations-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  font-size: var(--cattitude-text-sm);
   line-height: 1.4;
 
   th,
@@ -132,18 +134,18 @@
   }
 
   thead th {
-    font-size: 11px;
+    font-size: var(--cattitude-text-caption);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--cattitude-text-light);
-    background: rgba(237, 230, 214, 0.45);
+    background: var(--cattitude-surface-muted);
     border-bottom: 1px solid var(--cattitude-sand-mid);
   }
 
   tbody td {
-    color: var(--cattitude-navy);
-    border-bottom: 1px solid rgba(237, 230, 214, 0.55);
+    color: var(--cattitude-text-dark);
+    border-bottom: 1px solid var(--cattitude-line);
   }
 
   tbody tr:last-child td {
@@ -169,10 +171,10 @@
     display: flex;
     gap: 10px;
     padding: 8px 0;
-    border-bottom: 1px solid rgba(237, 230, 214, 0.5);
-    font-size: 14px;
+    border-bottom: 1px solid var(--cattitude-line);
+    font-size: var(--cattitude-text-body);
     line-height: 1.45;
-    color: var(--cattitude-navy);
+    color: var(--cattitude-text-dark);
 
     &:last-child {
       border-bottom: none;
@@ -196,26 +198,34 @@
 }
 
 .section-items--warnings li {
-  color: #7a1f1a;
+  color: var(--cattitude-danger-text);
 }
 
 .section-item-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
   flex-shrink: 0;
   width: 1.1em;
-  text-align: center;
+  margin-top: 0.15em;
   color: var(--cattitude-text-light);
 }
 
+.section-item-bullet {
+  font-size: 0.4em;
+}
+
 .section-items--warnings .section-item-mark {
-  color: #c0392b;
+  color: var(--cattitude-danger);
 }
 
 :host ::ng-deep .photo-card {
-  background: #fff;
+  background: var(--cattitude-surface);
   border-radius: 14px;
   overflow: hidden;
   margin-bottom: 10px;
-  box-shadow: 0 2px 16px rgba(13, 33, 55, 0.1);
+  box-shadow: var(--cattitude-shadow-md);
 
   img {
     width: 100%;
@@ -235,9 +245,9 @@
   align-items: center;
   gap: 8px;
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--cattitude-text-body);
   font-weight: 600;
-  color: var(--cattitude-teal-dark);
+  color: var(--cattitude-text-accent);
   cursor: pointer;
 }
 
@@ -249,13 +259,13 @@
   margin: 0;
   padding: 10px 0;
   border: none;
-  border-bottom: 1px solid rgba(237, 230, 214, 0.6);
+  border-bottom: 1px solid var(--cattitude-line);
   background: none;
   text-align: left;
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--cattitude-text-body);
   line-height: 1.45;
-  color: var(--cattitude-navy);
+  color: var(--cattitude-text-dark);
   cursor: pointer;
 }
 
@@ -273,7 +283,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
+  font-size: 16px;
   color: #fff;
 }
 

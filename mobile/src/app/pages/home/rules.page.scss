@@ -2,35 +2,6 @@
   --background: var(--cattitude-sand);
 }
 
-.sub-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  background: #fff;
-  border-bottom: 1px solid var(--cattitude-sand-mid);
-}
-
-.sub-back {
-  background: none;
-  border: none;
-  font-size: 26px;
-  color: var(--cattitude-navy);
-  cursor: pointer;
-}
-
-.sub-header-title {
-  font-family: var(--cattitude-font-display);
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--cattitude-navy);
-}
-
-.sub-header-sub {
-  font-size: 12px;
-  color: var(--cattitude-text-light);
-}
-
 .scroll-area {
   padding: 16px 16px 24px;
 }

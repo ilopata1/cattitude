@@ -1,15 +1,18 @@
 <app-header></app-header>
 <ion-content [fullscreen]="true" class="page-content">
   <div class="scroll-area do-menu">
-    <ng-container *ngFor="let section of menu">
+    <section class="do-section" *ngFor="let section of menu">
       <div class="section-label" *ngIf="section.label">{{ section.label }}</div>
+      <div class="do-cards">
       <button
         type="button"
         class="do-card"
         *ngFor="let item of section.items"
         (click)="open(item.route)"
       >
-        <div class="do-card-icon" [ngClass]="item.iconClass">{{ item.icon }}</div>
+        <div class="do-card-icon" [ngClass]="item.iconClass">
+          <app-ui-icon [icon]="item.icon" fallback="checkmark-circle-outline"></app-ui-icon>
+        </div>
         <div class="do-card-body">
           <div class="do-card-title">{{ item.title }}</div>
           <div class="do-card-sub">{{ item.subtitle }}</div>
@@ -17,8 +20,9 @@
             {{ label }}
           </div>
         </div>
-        <div class="do-card-arrow">›</div>
+        <div class="do-card-arrow" aria-hidden="true"><ion-icon name="chevron-forward"></ion-icon></div>
       </button>
-    </ng-container>
+      </div>
+    </section>
   </div>
 </ion-content>

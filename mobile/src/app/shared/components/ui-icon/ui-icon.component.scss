@@ -1,0 +1,18 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  vertical-align: middle;
+  color: inherit;
+}
+
+ion-icon {
+  font-size: 1em;
+}
+
+.ui-icon-emoji {
+  font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+  font-size: 1em;
+  line-height: 1;
+}

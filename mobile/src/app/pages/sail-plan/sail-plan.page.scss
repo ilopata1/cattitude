@@ -1,54 +1,81 @@
+ion-content {
+  --background: var(--cattitude-sand);
+  --color: var(--cattitude-text-dark);
+}
+
 .editor {
-  padding: 12px 12px 32px;
+  padding: var(--cattitude-space-sm) var(--cattitude-space-sm) var(--cattitude-space-2xl);
 }
 
 .intro,
 .hint {
-  font-size: 13px;
-  color: var(--ion-color-medium);
-  line-height: 1.4;
-  margin: 8px 4px 12px;
+  font-size: var(--cattitude-text-body);
+  color: var(--cattitude-text-mid);
+  line-height: 1.45;
+  margin: var(--cattitude-space-xs) var(--cattitude-space-2xs) var(--cattitude-space-sm);
+}
+
+.hint {
+  font-size: var(--cattitude-text-sm);
+  color: var(--cattitude-text-light);
 }
 
 .section-title {
-  font-size: 13px;
+  font-size: var(--cattitude-text-caption);
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--ion-color-primary);
-  margin: 20px 4px 4px;
+  color: var(--cattitude-text-accent);
+  margin: var(--cattitude-space-lg) var(--cattitude-space-2xs) var(--cattitude-space-2xs);
+}
+
+ion-item {
+  --background: var(--cattitude-surface);
+  --color: var(--cattitude-text-dark);
+  --border-color: transparent;
+  --border-radius: var(--cattitude-radius-md);
+  border-radius: var(--cattitude-radius-md);
+  box-shadow: var(--cattitude-shadow-sm);
+  margin: var(--cattitude-space-xs) 0;
+}
+
+ion-chip {
+  --background: var(--cattitude-teal-light);
+  --color: var(--cattitude-text-dark);
 }
 
 .chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
-  padding: 4px 8px 8px;
+  gap: var(--cattitude-space-2xs);
+  padding: var(--cattitude-space-2xs) var(--cattitude-space-xs) var(--cattitude-space-xs);
 }
 
 .cuts {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
-  padding: 4px 0 8px;
+  gap: var(--cattitude-space-xs);
+  padding: var(--cattitude-space-2xs) 0 var(--cattitude-space-xs);
 }
 
 .cut {
   display: flex;
   align-items: center;
-  width: 88px;
+  gap: var(--cattitude-space-2xs);
 
   ion-input {
-    --padding-start: 8px;
-    border: 1px solid var(--ion-color-step-150, #ddd);
-    border-radius: 8px;
+    width: 72px;
+    --padding-start: var(--cattitude-space-xs);
+    --background: var(--cattitude-surface);
+    border: 1px solid var(--cattitude-sand-mid);
+    border-radius: var(--cattitude-radius-sm);
   }
 }
 
 .matrix-scroll {
   overflow-x: auto;
-  margin: 8px 0 16px;
+  margin: var(--cattitude-space-xs) 0 var(--cattitude-space-md);
 }
 
 .matrix {
@@ -56,77 +83,83 @@
   min-width: 720px;
 
   th, td {
-    border: 1px solid var(--ion-color-step-150, #ddd);
+    border: 1px solid var(--cattitude-sand-mid);
     vertical-align: top;
     padding: 6px;
     min-width: 160px;
+    background: var(--cattitude-surface);
   }
 
   th {
-    background: var(--ion-color-step-50, #f6f6f6);
-    font-size: 12px;
+    background: var(--cattitude-surface-muted);
+    font-size: var(--cattitude-text-sm);
     font-weight: 600;
+    color: var(--cattitude-text-dark);
   }
 
   ion-input,
   ion-select {
-    margin-bottom: 4px;
+    margin-bottom: var(--cattitude-space-2xs);
     --padding-start: 6px;
-    font-size: 13px;
+    font-size: var(--cattitude-text-body);
   }
 
   ion-select {
-    min-height: 38px;
-    border: 1px solid var(--ion-color-step-150, #ddd);
-    border-radius: 8px;
+    min-height: var(--cattitude-touch-min);
+    border: 1px solid var(--cattitude-sand-mid);
+    border-radius: var(--cattitude-radius-sm);
+    background: var(--cattitude-surface);
   }
 }
 
 .field-label {
   display: block;
-  font-size: 10px;
+  font-size: var(--cattitude-text-caption);
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--ion-color-medium);
+  color: var(--cattitude-text-light);
   margin: 6px 0 2px;
 }
 
 .hw-rows {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 8px;
+  gap: var(--cattitude-space-sm);
+  margin-top: var(--cattitude-space-xs);
 }
 
 .hw-row {
-  border: 1px solid var(--ion-color-step-150, #ddd);
-  border-radius: 8px;
-  padding: 8px;
+  background: var(--cattitude-surface);
+  border: 1px solid var(--cattitude-sand-mid);
+  border-radius: var(--cattitude-radius-md);
+  box-shadow: var(--cattitude-shadow-sm);
+  padding: var(--cattitude-space-xs);
 
   ion-input,
   ion-select {
-    margin-bottom: 4px;
+    margin-bottom: var(--cattitude-space-2xs);
     --padding-start: 6px;
-    font-size: 13px;
+    font-size: var(--cattitude-text-body);
   }
 
   ion-select {
-    min-height: 38px;
-    border: 1px solid var(--ion-color-step-150, #ddd);
-    border-radius: 8px;
+    min-height: var(--cattitude-touch-min);
+    border: 1px solid var(--cattitude-sand-mid);
+    border-radius: var(--cattitude-radius-sm);
   }
 }
 
 .hw-band {
-  font-size: 12px;
+  font-size: var(--cattitude-text-sm);
   font-weight: 600;
+  color: var(--cattitude-text-dark);
   margin-bottom: 6px;
 }
 
 .actions {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin: 20px 0 8px;
+  gap: var(--cattitude-space-xs);
+  margin: var(--cattitude-space-lg) 0 var(--cattitude-space-xs);
 }

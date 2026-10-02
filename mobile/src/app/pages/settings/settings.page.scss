@@ -1,48 +1,59 @@
+ion-content {
+  --background: var(--cattitude-sand);
+  --color: var(--cattitude-text-dark);
+}
+
 .settings-page {
-  padding: 16px;
+  padding: var(--cattitude-space-md);
 }
 
 .settings-section {
-  background: var(--ion-card-background, #fff);
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  background: var(--cattitude-surface);
+  border-radius: var(--cattitude-radius-md);
+  box-shadow: var(--cattitude-shadow-md);
+  padding: var(--cattitude-space-lg);
+  margin-bottom: var(--cattitude-space-lg);
+}
+
+.appearance-segment {
+  --background: var(--cattitude-sand);
+  margin-bottom: var(--cattitude-space-sm);
 }
 
 .settings-section-title {
-  font-size: 0.75rem;
+  font-size: var(--cattitude-text-sm);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--cattitude-teal, #00b4c8);
-  margin-bottom: 16px;
+  color: var(--cattitude-text-accent);
+  margin-bottom: var(--cattitude-space-md);
 }
 
 .settings-label {
   display: block;
-  font-size: 0.85rem;
+  font-size: var(--cattitude-text-body);
   font-weight: 600;
-  margin-bottom: 8px;
-  color: var(--ion-text-color);
+  margin-bottom: var(--cattitude-space-xs);
+  color: var(--cattitude-text-dark);
 }
 
 .settings-input {
-  --background: var(--ion-item-background, #f8f8f8);
-  --border-radius: 8px;
-  --padding-start: 12px;
-  --padding-end: 12px;
-  border: 1px solid var(--ion-color-medium-tint, #d9d9d9);
-  border-radius: 8px;
-  font-size: 0.9rem;
+  --background: var(--cattitude-sand);
+  --border-radius: var(--cattitude-radius-sm);
+  --padding-start: var(--cattitude-space-sm);
+  --padding-end: var(--cattitude-space-sm);
+  --color: var(--cattitude-text-dark);
+  border: 1px solid var(--cattitude-sand-mid);
+  border-radius: var(--cattitude-radius-sm);
+  font-size: var(--cattitude-text-body);
   width: 100%;
-  margin-bottom: 8px;
+  margin-bottom: var(--cattitude-space-xs);
 }
 
 .settings-hint {
-  font-size: 0.78rem;
-  color: var(--ion-color-medium, #888);
-  margin: 0 0 12px;
+  font-size: var(--cattitude-text-sm);
+  color: var(--cattitude-text-light);
+  margin: 0 0 var(--cattitude-space-sm);
   line-height: 1.4;
 }
 
@@ -50,7 +61,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
+  gap: var(--cattitude-space-sm);
 }
 
 .settings-toggle-copy {
@@ -65,8 +76,8 @@
 .settings-actions {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 4px;
+  gap: var(--cattitude-space-sm);
+  margin-top: var(--cattitude-space-2xs);
 }
 
 .settings-btn {
@@ -74,28 +85,29 @@
 }
 
 .connection-status {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-top: 16px;
+  gap: var(--cattitude-space-sm);
+  margin-top: var(--cattitude-space-md);
   flex-wrap: wrap;
 }
 
 .status-badge {
-  font-size: 0.8rem;
-  padding: 4px 10px;
-  border-radius: 20px;
+  font-size: var(--cattitude-text-sm);
+  padding: var(--cattitude-space-2xs) var(--cattitude-space-sm);
+  border-radius: var(--cattitude-radius-lg);
 }
 
 .status-detail {
-  font-size: 0.78rem;
-  color: var(--ion-color-medium);
+  font-size: var(--cattitude-text-sm);
+  color: var(--cattitude-text-light);
   word-break: break-all;
 }
 
 .status-error {
-  font-size: 0.78rem;
-  color: var(--ion-color-danger);
+  font-size: var(--cattitude-text-sm);
+  color: var(--cattitude-danger);
   word-break: break-all;
 }
 
@@ -103,8 +115,8 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding: 10px 0;
-  border-top: 1px solid var(--ion-color-light-shade, #eee);
+  padding: var(--cattitude-space-sm) 0;
+  border-top: 1px solid var(--cattitude-sand-mid);
 
   &:first-of-type {
     border-top: none;
@@ -112,13 +124,13 @@
 }
 
 .plugin-name {
-  font-size: 0.85rem;
+  font-size: var(--cattitude-text-body);
   font-weight: 600;
   font-family: monospace;
-  color: var(--ion-text-color);
+  color: var(--cattitude-text-dark);
 }
 
 .plugin-purpose {
-  font-size: 0.78rem;
-  color: var(--ion-color-medium);
+  font-size: var(--cattitude-text-sm);
+  color: var(--cattitude-text-light);
 }

@@ -6,7 +6,7 @@
   position: sticky;
   top: 0;
   z-index: 20;
-  background: #fff;
+  background: var(--cattitude-surface);
   border-bottom: 1px solid var(--cattitude-sand-mid);
   padding-bottom: 8px;
 }
@@ -17,18 +17,20 @@
 
 .search-empty {
   color: var(--cattitude-text-light);
-  font-size: 14px;
+  font-size: var(--cattitude-text-body);
 }
 
 .search-ask {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--cattitude-touch-min);
   margin-top: 12px;
-  padding: 0;
+  padding: 0 var(--cattitude-space-2xs);
   border: none;
   background: none;
-  color: var(--cattitude-teal-dark);
+  color: var(--cattitude-text-accent);
   font-weight: 700;
-  font-size: 14px;
+  font-size: var(--cattitude-text-body);
   font-family: inherit;
   cursor: pointer;
 }
@@ -44,8 +46,8 @@
   padding: 12px 14px;
   border: none;
   border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 2px 16px rgba(13, 33, 55, 0.1);
+  background: var(--cattitude-surface);
+  box-shadow: var(--cattitude-shadow-md);
   text-align: left;
   font-family: inherit;
   cursor: pointer;
@@ -53,15 +55,15 @@
 
 .search-hit-title {
   display: block;
-  font-size: 14px;
+  font-size: var(--cattitude-text-body);
   font-weight: 600;
-  color: var(--cattitude-navy);
+  color: var(--cattitude-text-dark);
 }
 
 .search-hit-snippet {
   display: block;
   margin-top: 4px;
-  font-size: 13px;
+  font-size: var(--cattitude-text-sm);
   line-height: 1.4;
   color: var(--cattitude-text-light);
 }
@@ -73,8 +75,8 @@
   padding: 14px 16px;
   border: none;
   border-radius: 14px;
-  background: #fff;
-  box-shadow: 0 2px 16px rgba(13, 33, 55, 0.1);
+  background: var(--cattitude-surface);
+  box-shadow: var(--cattitude-shadow-md);
   text-align: left;
   font-family: inherit;
   cursor: pointer;
@@ -82,15 +84,15 @@
 
 .boat-rules-title {
   display: block;
-  font-size: 14px;
+  font-size: var(--cattitude-text-body);
   font-weight: 600;
-  color: var(--cattitude-navy);
+  color: var(--cattitude-text-dark);
 }
 
 .boat-rules-sub {
   display: block;
   margin-top: 2px;
-  font-size: 12px;
+  font-size: var(--cattitude-text-sm);
   color: var(--cattitude-text-light);
 }
 
@@ -99,7 +101,7 @@
 }
 
 .section-label {
-  font-size: 11px;
+  font-size: var(--cattitude-text-caption);
   font-weight: 700;
   color: var(--cattitude-text-light);
   text-transform: uppercase;
@@ -113,32 +115,48 @@
   gap: 10px;
 }
 
+@media (min-width: 768px) {
+  .sys-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .sys-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
 .sys-card {
-  background: #fff;
+  background: var(--cattitude-surface);
   border: none;
   border-radius: 14px;
   padding: 16px 12px;
   text-align: left;
-  box-shadow: 0 2px 16px rgba(13, 33, 55, 0.1);
+  box-shadow: var(--cattitude-shadow-md);
   font-family: inherit;
+  cursor: pointer;
 }
 
 .sys-icon {
-  font-size: 24px;
-  display: block;
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
   margin-bottom: 8px;
+  color: var(--cattitude-text-dark);
 }
 
 .sys-title {
   display: block;
-  font-size: 14px;
+  font-size: var(--cattitude-text-body);
   font-weight: 600;
-  color: var(--cattitude-navy);
+  color: var(--cattitude-text-dark);
 }
 
 .sys-sub {
   display: block;
-  font-size: 11px;
+  font-size: var(--cattitude-text-caption);
   color: var(--cattitude-text-light);
   margin-top: 4px;
   line-height: 1.3;
@@ -149,50 +167,18 @@
   background: var(--cattitude-sand);
 }
 
-.detail-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: #fff;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--cattitude-sand-mid);
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.sub-back {
-  background: none;
-  border: none;
-  font-size: 26px;
-  color: var(--cattitude-navy);
-  line-height: 1;
-}
-
-.detail-title {
-  font-family: var(--cattitude-font-display);
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--cattitude-navy);
-}
-
-.detail-sub {
-  font-size: 12px;
-  color: var(--cattitude-text-light);
-}
-
 .detail-body {
   padding: 16px;
 }
 
 .summary {
-  font-size: 14px;
+  font-size: var(--cattitude-text-body);
   line-height: 1.5;
   margin-bottom: 16px;
 }
 
 .know-group-label {
-  font-size: 11px;
+  font-size: var(--cattitude-text-caption);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -202,13 +188,13 @@
 
 .know-reference {
   margin: 18px 0 10px;
-  background: #fff;
+  background: var(--cattitude-surface);
   border-radius: 14px;
-  box-shadow: 0 1px 6px rgba(13, 33, 55, 0.07);
+  box-shadow: var(--cattitude-shadow-sm);
 
   > summary {
     padding: 14px 16px;
-    font-size: 12px;
+    font-size: var(--cattitude-text-sm);
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -223,29 +209,31 @@
 }
 
 .learn-link {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--cattitude-touch-min);
   margin: 12px 0 4px;
-  padding: 0;
+  padding: 0 var(--cattitude-space-2xs);
   border: none;
   background: none;
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--cattitude-text-body);
   font-weight: 600;
-  color: var(--cattitude-teal, #0d7377);
+  color: var(--cattitude-text-accent);
   text-decoration: underline;
   text-underline-offset: 2px;
   cursor: pointer;
 }
 
 .detail-section {
-  background: #fff;
+  background: var(--cattitude-surface);
   border-radius: 14px;
   padding: 14px 16px;
   margin-bottom: 10px;
-  box-shadow: 0 1px 6px rgba(13, 33, 55, 0.07);
+  box-shadow: var(--cattitude-shadow-sm);
 
   h3 {
-    font-size: 12px;
+    font-size: var(--cattitude-text-sm);
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--cattitude-text-light);
@@ -254,7 +242,7 @@
 }
 
 .prose {
-  font-size: 14px;
+  font-size: var(--cattitude-text-body);
   line-height: 1.6;
   margin: 0;
   // Stage 4 modules join block paragraphs with newlines and may embed simple
@@ -279,7 +267,7 @@
   a.guide-link,
   span.guide-link,
   [data-guide-link].guide-link {
-    color: var(--cattitude-teal, #0d7377);
+    color: var(--cattitude-text-accent);
     text-decoration: underline;
     text-underline-offset: 2px;
     cursor: pointer;
@@ -287,7 +275,7 @@
 }
 
 .detail-section--warnings {
-  border-left: 3px solid #c0392b;
+  border-left: 3px solid var(--cattitude-danger);
 }
 
 .detail-section--notes {
@@ -295,7 +283,7 @@
 }
 
 .equipment-locations {
-  background: #fff;
+  background: var(--cattitude-surface);
   border: 1px solid var(--cattitude-sand-mid);
   border-radius: 12px;
   overflow: hidden;
@@ -304,7 +292,7 @@
 .equipment-locations-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  font-size: var(--cattitude-text-sm);
   line-height: 1.4;
 
   th,
@@ -315,18 +303,18 @@
   }
 
   thead th {
-    font-size: 11px;
+    font-size: var(--cattitude-text-caption);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--cattitude-text-light);
-    background: rgba(237, 230, 214, 0.45);
+    background: var(--cattitude-surface-muted);
     border-bottom: 1px solid var(--cattitude-sand-mid);
   }
 
   tbody td {
-    color: var(--cattitude-navy);
-    border-bottom: 1px solid rgba(237, 230, 214, 0.55);
+    color: var(--cattitude-text-dark);
+    border-bottom: 1px solid var(--cattitude-line);
   }
 
   tbody tr:last-child td {
@@ -352,10 +340,10 @@
     display: flex;
     gap: 10px;
     padding: 8px 0;
-    border-bottom: 1px solid rgba(237, 230, 214, 0.5);
-    font-size: 14px;
+    border-bottom: 1px solid var(--cattitude-line);
+    font-size: var(--cattitude-text-body);
     line-height: 1.45;
-    color: var(--cattitude-navy);
+    color: var(--cattitude-text-dark);
 
     &:last-child {
       border-bottom: none;
@@ -379,7 +367,7 @@
 }
 
 .section-items--warnings li {
-  color: #7a1f1a;
+  color: var(--cattitude-danger-text);
 }
 
 .section-item-mark {
@@ -390,15 +378,15 @@
 }
 
 .section-items--warnings .section-item-mark {
-  color: #c0392b;
+  color: var(--cattitude-danger);
 }
 
 :host ::ng-deep .photo-card {
-  background: #fff;
+  background: var(--cattitude-surface);
   border-radius: 14px;
   overflow: hidden;
   margin-bottom: 10px;
-  box-shadow: 0 2px 16px rgba(13, 33, 55, 0.1);
+  box-shadow: var(--cattitude-shadow-md);
 
   img {
     width: 100%;
@@ -418,9 +406,9 @@
   align-items: center;
   gap: 8px;
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--cattitude-text-body);
   font-weight: 600;
-  color: var(--cattitude-teal-dark);
+  color: var(--cattitude-text-accent);
   cursor: pointer;
 }
 
@@ -428,25 +416,29 @@
   display: flex;
   gap: 8px;
   padding: 12px 16px;
-  background: #fff;
+  background: var(--cattitude-surface);
   border-bottom: 1px solid var(--cattitude-sand-mid);
 }
 
 .know-tog-btn {
   flex: 1;
-  padding: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--cattitude-touch-min);
+  padding: 0 10px;
   border: 1.5px solid var(--cattitude-sand-mid);
   border-radius: 10px;
-  background: #fff;
+  background: var(--cattitude-surface);
   font-family: inherit;
-  font-size: 13px;
+  font-size: var(--cattitude-text-sm);
   font-weight: 600;
   color: var(--cattitude-text-mid);
 
   &.active {
     background: var(--cattitude-navy);
     border-color: var(--cattitude-navy);
-    color: #fff;
+    color: var(--cattitude-text-on-fill);
   }
 }
 
@@ -463,13 +455,13 @@
 .loc-sys-place {
   display: block;
   margin-top: 2px;
-  font-size: 12px;
+  font-size: var(--cattitude-text-sm);
   font-weight: 500;
   color: var(--cattitude-text-light);
 }
 
 .loc-intro {
-  font-size: 13px;
+  font-size: var(--cattitude-text-sm);
   color: var(--cattitude-text-light);
   text-align: center;
   margin-bottom: 14px;
@@ -481,15 +473,31 @@
   gap: 8px;
 }
 
+@media (min-width: 768px) {
+  .loc-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .loc-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
 .loc-btn {
-  padding: 12px 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--cattitude-touch-min);
+  padding: 0 10px;
   border: 1.5px solid var(--cattitude-sand-mid);
   border-radius: 10px;
-  background: #fff;
+  background: var(--cattitude-surface);
   font-family: inherit;
-  font-size: 12px;
+  font-size: var(--cattitude-text-sm);
   font-weight: 600;
-  color: var(--cattitude-navy);
+  color: var(--cattitude-text-dark);
 
   &.sel {
     border-color: var(--cattitude-teal);
@@ -499,14 +507,14 @@
 
 .loc-sys-panel {
   margin-top: 14px;
-  background: #fff;
+  background: var(--cattitude-surface);
   border-radius: 14px;
   padding: 12px;
-  box-shadow: 0 2px 16px rgba(13, 33, 55, 0.1);
+  box-shadow: var(--cattitude-shadow-md);
 }
 
 .loc-sys-title {
-  font-size: 12px;
+  font-size: var(--cattitude-text-sm);
   font-weight: 700;
   color: var(--cattitude-text-light);
   text-transform: uppercase;
@@ -531,16 +539,19 @@
 }
 
 .loc-sys-icon {
-  font-size: 18px;
+  font-size: 1.125rem;
 }
 
 .loc-sys-name {
   flex: 1;
-  font-size: 14px;
+  font-size: var(--cattitude-text-body);
   font-weight: 600;
-  color: var(--cattitude-navy);
+  color: var(--cattitude-text-dark);
 }
 
 .loc-sys-arrow {
+  display: flex;
+  align-items: center;
   color: var(--cattitude-text-light);
+  font-size: 1.25rem;
 }

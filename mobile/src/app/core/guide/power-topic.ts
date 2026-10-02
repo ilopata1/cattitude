@@ -122,7 +122,7 @@ export function topicTitle<T extends { id: string; title?: string }>(topic: Topi
 
 export function topicIcon<T extends { id: string; icon?: string }>(topic: TopicGroup<T>): string {
   if (topic.id === POWER_TOPIC_ID) {
-    return '⚡';
+    return 'flash-outline';
   }
   return topic.systems[0]?.icon || '';
 }

@@ -1,14 +1,8 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <ion-back-button [defaultHref]="settingsHref"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Instruments</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="save()" [disabled]="scanning">Save</ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+<app-header title="Instruments" [showBack]="true" backTo="more/settings">
+  <ion-button headerActions fill="clear" color="dark" (click)="save()" [disabled]="scanning">
+    Save
+  </ion-button>
+</app-header>
 
 <ion-content>
   <div class="editor" *ngIf="draft">

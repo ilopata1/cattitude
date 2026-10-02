@@ -4,7 +4,9 @@
     *ngIf="state.open"
     (click)="onBackdropClick($event)"
   >
-    <button type="button" class="photo-overlay-close" (click)="close()">×</button>
+    <button type="button" class="photo-overlay-close" (click)="close()" aria-label="Close">
+      <ion-icon name="close" aria-hidden="true"></ion-icon>
+    </button>
     <img [src]="state.src" alt="" />
     <div class="photo-overlay-caption">{{ state.caption }}</div>
   </div>

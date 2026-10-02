@@ -25,7 +25,13 @@ export class AnchorageAlertBannerComponent {
   }
 
   get alertColor(): string {
-    return this.topAlert?.state === 'red' ? '#e74c3c' : '#f39c12';
+    return this.topAlert?.state === 'red' ? 'var(--cattitude-danger)' : 'var(--cattitude-warning)';
+  }
+
+  get alertTextColor(): string {
+    return this.topAlert?.state === 'red'
+      ? 'var(--cattitude-text-on-fill)'
+      : 'var(--cattitude-text-on-warning)';
   }
 
   onTap(): void {

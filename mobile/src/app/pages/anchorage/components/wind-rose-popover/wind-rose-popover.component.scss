@@ -5,6 +5,8 @@
 
 .wind-toolbar-btn {
   margin: 0;
-  --padding-start: 4px;
-  --padding-end: 4px;
+  min-width: var(--cattitude-touch-min);
+  min-height: var(--cattitude-touch-min);
+  --padding-start: 0;
+  --padding-end: 0;
 }

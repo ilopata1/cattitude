@@ -3,7 +3,7 @@
 }
 
 .rules-title {
-  font-size: 11px;
+  font-size: var(--cattitude-text-caption);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -27,11 +27,12 @@
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  background: #fff;
+  min-height: var(--cattitude-touch-min);
+  background: var(--cattitude-surface);
   border-radius: 8px;
   padding: 12px 14px;
   margin-bottom: 7px;
-  box-shadow: 0 1px 6px rgba(13, 33, 55, 0.07);
+  box-shadow: var(--cattitude-shadow-sm);
 
   &.danger {
     border-left: 3px solid var(--cattitude-coral);
@@ -51,22 +52,28 @@
 }
 
 .rule-icon {
-  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  font-size: 1.125rem;
   flex-shrink: 0;
+  color: var(--cattitude-text-dark);
 }
 
 .rule-text {
-  font-size: 14px;
+  font-size: var(--cattitude-text-body);
   line-height: 1.45;
   font-weight: 500;
 }
 
 .rule-link {
-  color: var(--cattitude-teal-dark);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--cattitude-text-accent);
   font-weight: 700;
 }
 
 .rules-empty {
   color: var(--cattitude-text-light);
-  font-size: 14px;
+  font-size: var(--cattitude-text-body);
 }

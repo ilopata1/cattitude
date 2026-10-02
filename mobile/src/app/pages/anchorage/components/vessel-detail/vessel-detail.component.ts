@@ -36,12 +36,18 @@ export class AnchorageVesselDetailComponent {
 
   get stateColor(): string {
     switch (this.vessel?.state) {
-      case 'green': return '#2ecc71';
-      case 'amber': return '#f39c12';
-      case 'red': return '#e74c3c';
-      case 'moving': return '#3498db';
-      default: return '#95a5a6';
+      case 'green': return 'var(--cattitude-success)';
+      case 'amber': return 'var(--cattitude-warning)';
+      case 'red': return 'var(--cattitude-danger)';
+      case 'moving': return 'var(--cattitude-info)';
+      default: return 'var(--cattitude-text-light)';
     }
+  }
+
+  get stateTextColor(): string {
+    const state = this.vessel?.state;
+    if (state === 'green' || state === 'red') return 'var(--cattitude-text-on-fill)';
+    return 'var(--cattitude-text-on-warning)';
   }
 
   get displayName(): string {

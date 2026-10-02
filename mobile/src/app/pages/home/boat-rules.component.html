@@ -5,12 +5,16 @@
     [ngClass]="section.tone"
     *ngFor="let rule of section.rules"
     [class.clickable]="rule.link"
+    [attr.role]="rule.link ? 'button' : null"
+    [attr.tabindex]="rule.link ? 0 : null"
     (click)="open(rule)"
+    (keydown.enter)="open(rule)"
+    (keydown.space)="$event.preventDefault(); open(rule)"
   >
-    <span class="rule-icon">{{ rule.icon }}</span>
+    <span class="rule-icon"><app-ui-icon [icon]="rule.icon" fallback="pin-outline"></app-ui-icon></span>
     <span class="rule-text">
       {{ rule.text }}
-      <span class="rule-link" *ngIf="rule.link"> → Tap to open</span>
+      <span class="rule-link" *ngIf="rule.link"><ion-icon name="arrow-forward" aria-hidden="true"></ion-icon> Tap to open</span>
     </span>
   </div>
 </div>

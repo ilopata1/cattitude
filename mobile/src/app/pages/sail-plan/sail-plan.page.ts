@@ -4,7 +4,7 @@ import { isMainSail } from '../../core/guide/current-sail';
 import { SailPlan, SailPlanCell, bandsFromCuts, formatBand } from '../../core/models/sail-plan.model';
 import { resizeCells, resizeHeavyWeatherCells } from '../../core/services/sail-plan-advisor';
 import { clonePlan, SailPlanService } from '../../core/services/sail-plan.service';
-import { VesselContextService } from '../../core/services/vessel-context.service';
+import { liveToast } from '../../core/toast-live';
 
 @Component({
   selector: 'app-sail-plan',
@@ -24,12 +24,7 @@ export class SailPlanPage implements OnInit {
     private readonly alerts: AlertController,
     private readonly toasts: ToastController,
     private readonly cdr: ChangeDetectorRef,
-    private readonly vesselContext: VesselContextService,
   ) {}
-
-  get settingsHref(): string {
-    return `/v/${this.vesselContext.vesselSlug}/tabs/more/settings`;
-  }
 
   ngOnInit(): void {
     this.draft = clonePlan(this.sailPlans.plan);
@@ -144,13 +139,13 @@ export class SailPlanPage implements OnInit {
   async save(): Promise<void> {
     const remote = await this.sailPlans.save(this.draft);
     this.draft = clonePlan(this.sailPlans.plan);
-    const toast = await this.toasts.create({
+    const toast = await this.toasts.create(liveToast({
       message: remote
         ? 'Sail plan saved for this vessel — Polar will use these cutovers for live advice.'
         : 'Saved on this device, but the server could not be reached. Try Save again when you are online.',
       duration: 2200,
       color: remote ? 'success' : 'warning',
-    });
+    }));
     await toast.present();
     this.cdr.markForCheck();
   }

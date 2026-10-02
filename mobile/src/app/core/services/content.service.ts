@@ -17,6 +17,7 @@ import {
   declaredBootstrapSchemaVersion,
 } from '../models/bootstrap-schema';
 import { buildGuideIndex, GuideIndex, GuideSearchGroup, searchGuide } from '../search/guide-search';
+import { liveToast } from '../toast-live';
 import { AppUpdateService } from './app-update.service';
 import { GuideSyncService } from './guide-sync.service';
 import { ReaderViewService } from './reader-view.service';
@@ -140,11 +141,11 @@ export class ContentService {
       ? `${error.message} The guide already on this phone is unchanged.`
       : error.message;
     try {
-      const toast = await this.toasts.create({
+      const toast = await this.toasts.create(liveToast({
         message,
         duration: 5000,
         color: 'warning',
-      });
+      }));
       await toast.present();
     } catch (toastError) {
       console.warn('Could not show the guide schema notice.', toastError);
@@ -153,11 +154,11 @@ export class ContentService {
 
   private async announceGuideUpdated(): Promise<void> {
     try {
-      const toast = await this.toasts.create({
+      const toast = await this.toasts.create(liveToast({
         message: 'Guide updated',
         duration: 2500,
         color: 'success',
-      });
+      }));
       await toast.present();
     } catch (error) {
       console.warn('Could not show the guide update notice.', error);
