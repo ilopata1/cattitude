@@ -10,9 +10,11 @@ import {
 } from '../../core/guide/dashboard';
 import { resolveLearnPath } from '../../core/guide/learn-path';
 import { EMPTY_SAIL_ESSENTIALS, EMPTY_WIND_STEER } from '../../core/models/instrument-map.model';
+import { PolarWindowAverages, PolarWindowMinutes, PolarWindowSet } from '../../core/models/polar.model';
 import { ContentService } from '../../core/services/content.service';
 import { DashboardLayoutService } from '../../core/services/dashboard-layout.service';
 import { InstrumentLiveService } from '../../core/services/instrument-live.service';
+import { PolarService } from '../../core/services/polar.service';
 import { ReaderViewService } from '../../core/services/reader-view.service';
 import { SignalKSettingsService } from '../../core/services/signal-k-settings.service';
 import { VesselContextService } from '../../core/services/vessel-context.service';
@@ -41,6 +43,7 @@ export class HomePage {
 
   private readonly destroyRef = inject(DestroyRef);
   private readonly live = inject(InstrumentLiveService);
+  private readonly polar = inject(PolarService);
   private readonly layouts = inject(DashboardLayoutService);
   private readonly routes = inject(VesselRouteService);
   private readonly vesselContext = inject(VesselContextService);
@@ -49,6 +52,7 @@ export class HomePage {
 
   readonly essentials = toSignal(this.live.essentials$, { initialValue: EMPTY_SAIL_ESSENTIALS });
   readonly wind = toSignal(this.live.wind$, { initialValue: EMPTY_WIND_STEER });
+  readonly polarWindows = toSignal(this.polar.windows$, { initialValue: EMPTY_POLAR_WINDOWS });
 
   constructor() {
     this.skSettings.url$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((url) => {
@@ -122,11 +126,49 @@ export class HomePage {
     if (this.editing) {
       return;
     }
+    if (item.id === 'widget:polar') {
+      void this.routes.navigateTabs('more', 'polar');
+      return;
+    }
     if (item.kind === 'widget' && item.id !== 'widget:rules') {
       this.openLive();
       return;
     }
     void this.routes.navigateTabsWithExtras(item.segments, item.query ? { queryParams: item.query } : undefined);
+  }
+
+  reading(id: string): string | null {
+    const wind = this.wind();
+    switch (id) {
+      case 'widget:depth':
+        return this.depthLabel();
+      case 'widget:speed':
+        return this.speedLabel();
+      case 'widget:aws':
+        return freshKnots(wind.aws, wind.awsFresh);
+      case 'widget:tws':
+        return freshKnots(wind.tws, wind.twsFresh);
+      case 'widget:awa':
+        return freshDegrees(wind.awa, wind.awaFresh);
+      case 'widget:heading':
+        return freshDegrees(wind.heading, wind.headingFresh);
+      case 'widget:cog':
+        return freshDegrees(wind.cog, wind.cogFresh);
+      case 'widget:sog': {
+        const sog = this.essentials().sogKnots;
+        return sog === null ? '—' : `${sog.toFixed(1)} kn`;
+      }
+      default:
+        return null;
+    }
+  }
+
+  polarRows(): Array<{ minutes: PolarWindowMinutes; pct: string }> {
+    const windows = this.polarWindows();
+    return ([5, 10, 15] as const).map((minutes) => {
+      const pct = windows[minutes].polarPct;
+      return { minutes, pct: pct === null ? '—' : `${pct.toFixed(0)}%` };
+    });
   }
 
   depthLabel(): string {
@@ -206,6 +248,27 @@ export class HomePage {
       rulesAvailable: (ui.homeRuleSections ?? []).some((section) => section.rules?.length),
     });
   }
+}
+
+const EMPTY_POLAR_WINDOW: PolarWindowAverages = {
+  twaDeg: null,
+  twsKnots: null,
+  polarPct: null,
+  sampleCount: 0,
+};
+
+const EMPTY_POLAR_WINDOWS: PolarWindowSet = {
+  5: EMPTY_POLAR_WINDOW,
+  10: EMPTY_POLAR_WINDOW,
+  15: EMPTY_POLAR_WINDOW,
+};
+
+function freshKnots(knots: number, fresh: boolean): string {
+  return fresh ? `${knots.toFixed(1)} kn` : '—';
+}
+
+function freshDegrees(degrees: number, fresh: boolean): string {
+  return fresh ? `${Math.round(degrees)}°` : '—';
 }
 
 function windParts(speedName: string, speedFresh: boolean, angleName: string, angle: number | null): string {

@@ -33,6 +33,7 @@ export interface SailEssentialsLive {
   depthM: number | null;
   speedKn: number | null;
   speedSource: 'stw' | 'sog' | null;
+  sogKnots: number | null;
   stale: boolean;
 }
 
@@ -72,5 +73,6 @@ export const EMPTY_SAIL_ESSENTIALS: SailEssentialsLive = {
   depthM: null,
   speedKn: null,
   speedSource: null,
+  sogKnots: null,
   stale: true,
 };

@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, OnDestroy, OnInit,
+  Component, OnDestroy, OnInit, inject,
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import {
@@ -12,7 +12,9 @@ import {
 } from '../../core/models/polar.model';
 import { PolarService } from '../../core/services/polar.service';
 import { SignalKService } from '../../core/services/signal-k.service';
+import { sailConfigurationOptions } from '../../core/guide/current-sail';
 import { SailAdvice, formatBand } from '../../core/models/sail-plan.model';
+import { CurrentSailService } from '../../core/services/current-sail.service';
 import { SailPlanService } from '../../core/services/sail-plan.service';
 import { VesselContextService } from '../../core/services/vessel-context.service';
 
@@ -77,7 +79,14 @@ export class PolarPage implements OnInit, OnDestroy {
   readonly yTicks = [0, 50, 75, 100, 150];
 
   bars: PerfBar[] = [];
+  sailDraft = '';
 
+  private readonly polar = inject(PolarService);
+  private readonly sk = inject(SignalKService);
+  private readonly sailPlans = inject(SailPlanService);
+  private readonly currentSails = inject(CurrentSailService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly vesselContext = inject(VesselContextService);
   private samples: PolarSample[] = [];
   private windowSet: PolarWindowSet = {
     5: EMPTY_WINDOW,
@@ -86,19 +95,12 @@ export class PolarPage implements OnInit, OnDestroy {
   };
   private subs: Subscription[] = [];
 
-  constructor(
-    private readonly polar: PolarService,
-    private readonly sk: SignalKService,
-    private readonly sailPlans: SailPlanService,
-    private readonly cdr: ChangeDetectorRef,
-    private readonly vesselContext: VesselContextService,
-  ) {}
-
   get sailPlanLink(): string {
     return `/v/${this.vesselContext.vesselSlug}/tabs/more/settings/sail-plan`;
   }
 
   ngOnInit(): void {
+    this.sailDraft = this.currentSails.configuration();
     this.subs.push(
       this.sk.connected$.subscribe(c => {
         this.skConnected = c;
@@ -181,6 +183,29 @@ export class PolarPage implements OnInit, OnDestroy {
       default:
         return 'Speed';
     }
+  }
+
+  sailOptions(): string[] {
+    return sailConfigurationOptions(this.sailPlans.plan);
+  }
+
+  selectedSailOption(): string {
+    return this.sailOptions().includes(this.sailDraft) ? this.sailDraft : '';
+  }
+
+  chooseSail(value: string | null | undefined): void {
+    if (!value) {
+      return;
+    }
+    this.sailDraft = value;
+    this.currentSails.set(value);
+  }
+
+  saveSailDraft(value?: string | null): void {
+    if (typeof value === 'string') {
+      this.sailDraft = value;
+    }
+    this.currentSails.set(this.sailDraft);
   }
 
   trackWindow(_: number, w: PolarWindowAssessment): PolarWindowMinutes {

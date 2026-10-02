@@ -220,6 +220,7 @@ export class InstrumentLiveService implements OnDestroy {
       depthM: this.depthM,
       speedKn: speed.knots,
       speedSource: speed.source,
+      sogKnots: this.sogMps === null ? null : this.sogMps * MPS_TO_KNOTS,
       stale: isStale,
     });
   }

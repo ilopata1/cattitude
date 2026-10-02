@@ -198,6 +198,18 @@
   margin: 8px 0 0;
 }
 
+.current-sails-lead {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ion-color-medium-shade, #6d6d6d);
+}
+
+.current-sails-select,
+.current-sails-input {
+  margin-bottom: 12px;
+}
+
 .window-would {
   margin: 12px 0 4px;
   font-size: 12px;

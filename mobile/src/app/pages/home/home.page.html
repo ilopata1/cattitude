@@ -75,12 +75,17 @@
         >
           <span class="widget-kicker">{{ item.icon }} {{ item.label }}</span>
           <ng-container *ngIf="liveConfigured(); else connectLive">
-            <span class="widget-value" *ngIf="item.id === 'widget:depth'">{{ depthLabel() }}</span>
-            <span class="widget-value" *ngIf="item.id === 'widget:speed'">{{ speedLabel() }}</span>
+            <span class="widget-value" *ngIf="reading(item.id) as value">{{ value }}</span>
             <ng-container *ngIf="item.id === 'widget:wind'">
               <span class="widget-value">{{ windSpeedLabel() }}</span>
               <span class="widget-detail">{{ windDetailLabel() }}</span>
             </ng-container>
+            <span class="polar-averages" *ngIf="item.id === 'widget:polar'">
+              <span class="polar-stat" *ngFor="let row of polarRows()">
+                <span class="polar-min">{{ row.minutes }} min</span>
+                <span class="polar-pct">{{ row.pct }}</span>
+              </span>
+            </span>
           </ng-container>
           <ng-template #connectLive>
             <span class="widget-detail">Connect Signal K in Settings</span>

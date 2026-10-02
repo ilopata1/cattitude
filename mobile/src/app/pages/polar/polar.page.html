@@ -110,6 +110,31 @@
       </div>
     </div>
 
+    <h2 class="section-title">Current sails</h2>
+    <p class="current-sails-lead">
+      What you have up now. If the 15-minute recommendation is different, the app notifies you.
+    </p>
+    <ion-select
+      class="current-sails-select"
+      label="From the sail plan"
+      label-placement="stacked"
+      interface="popover"
+      placeholder="Choose a configuration"
+      [value]="selectedSailOption()"
+      (ionChange)="chooseSail($any($event).detail.value)"
+    >
+      <ion-select-option *ngFor="let option of sailOptions()" [value]="option">{{ option }}</ion-select-option>
+    </ion-select>
+    <ion-input
+      class="current-sails-input"
+      label="Sails up now"
+      label-placement="stacked"
+      fill="outline"
+      placeholder="Type the sails you have up"
+      [(ngModel)]="sailDraft"
+      (ionInput)="saveSailDraft($any($event).detail.value)"
+    ></ion-input>
+
     <h2 class="section-title">Sail Plan</h2>
     <div class="window-readouts">
       <article class="window-card" *ngFor="let w of windows; trackBy: trackWindow">

@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { NotificationBridgeService } from './core/services/notification-bridge.service';
+import { SailWatchService } from './core/services/sail-watch.service';
 
 @Component({
   selector: 'app-root',
@@ -8,7 +9,11 @@ import { NotificationBridgeService } from './core/services/notification-bridge.s
   standalone: false,
 })
 export class AppComponent {
-  constructor(notificationBridge: NotificationBridgeService) {
-    notificationBridge.start();
+  private readonly notificationBridge = inject(NotificationBridgeService);
+  private readonly sailWatch = inject(SailWatchService);
+
+  constructor() {
+    this.notificationBridge.start();
+    this.sailWatch.ensureRunning();
   }
 }

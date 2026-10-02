@@ -4,7 +4,7 @@
  */
 
 import { classifySection } from './chapter-presentation';
-import { moreMenu } from './more-menu';
+import { isSailingVessel, moreMenu } from './more-menu';
 import { groupTopics, isPowerPart, POWER_TOPIC_ID, topicIcon, topicTitle } from './power-topic';
 import { ReaderView } from './reader-view';
 
@@ -62,7 +62,7 @@ const MORE_ICONS: Record<string, string> = {
 
 const GUEST_DEFAULT = ['learn', 'do:safety-brief', 'know:heads', 'more:ask'];
 const CREW_SHORTCUTS = ['know:engines', 'know:electrical', 'know:power', 'more:sail', 'more:anchorage', 'fix'];
-const CREW_LIVE = ['widget:depth', 'widget:speed', 'widget:wind'];
+const CREW_LIVE = ['widget:aws', 'widget:tws', 'widget:sog', 'widget:awa', 'widget:heading', 'widget:cog', 'widget:polar'];
 
 export function buildDashboardCatalog(input: DashboardCatalogInput): DashboardItem[] {
   const items: DashboardItem[] = [];
@@ -171,10 +171,19 @@ export function buildDashboardCatalog(input: DashboardCatalogInput): DashboardIt
   }
 
   items.push(
+    widget('widget:aws', 'AWS', 'Apparent wind speed', '💨', 1),
+    widget('widget:tws', 'TWS', 'True wind speed', '💨', 1),
+    widget('widget:sog', 'SOG', 'Speed over ground', '🚤', 1),
+    widget('widget:awa', 'AWA', 'Apparent wind angle', '🧭', 1),
+    widget('widget:heading', 'HDG', 'Compass heading', '🧭', 1),
+    widget('widget:cog', 'COG', 'Course over ground', '🧭', 1),
     widget('widget:depth', 'Depth', 'Live depth', '🌊', 1),
     widget('widget:speed', 'Speed', 'Live speed', '🚤', 1),
     widget('widget:wind', 'Wind', 'Live wind', '💨', 1),
   );
+  if (isSailingVessel(input.vesselType)) {
+    items.push(widget('widget:polar', 'Polar', '5, 10, and 15 minute average', '📈', 2));
+  }
   if (input.rulesAvailable) {
     items.push(widget('widget:rules', 'Boat rules', 'Never, always, and good habits', '📋', 2));
   }
@@ -197,7 +206,7 @@ export function defaultTileIds(
     return ids.has(id);
   });
   const live = signalK ? CREW_LIVE.filter((id) => ids.has(id)) : [];
-  return [...shortcuts, ...live];
+  return [...live, ...shortcuts];
 }
 
 /** Saved `undefined` means the persona default. An empty list is a cleared home. */

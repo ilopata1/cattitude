@@ -34,9 +34,10 @@ export function dashboardFailures(): string[] {
   );
   expect(
     defaultTileIds('crew', sailing, true).join(',') ===
-      'know:engines,know:electrical,more:sail,more:anchorage,fix,widget:depth,widget:speed,widget:wind',
-    'crew default with live data',
+      'widget:aws,widget:tws,widget:sog,widget:awa,widget:heading,widget:cog,widget:polar,know:engines,know:electrical,more:sail,more:anchorage,fix',
+    'crew default leads with live readings',
   );
+  expect(byId.get('widget:aws')?.span === 1 && byId.get('widget:polar')?.span === 2, 'wind readings share a cell and polar uses the row');
   expect(
     defaultTileIds('crew', sailing, false).join(',') === 'know:engines,know:electrical,more:sail,more:anchorage,fix',
     'crew default without Signal K omits live widgets',
@@ -54,6 +55,7 @@ export function dashboardFailures(): string[] {
   const power = buildDashboardCatalog(sample('power_catamaran'));
   const powerIds = power.map((item) => item.id);
   expect(!powerIds.includes('more:polar'), 'power boats hide polar');
+  expect(!powerIds.includes('widget:polar'), 'power boats hide the polar widget');
   expect(power.find((item) => item.id === 'more:sail')?.label === 'Instruments', 'power sail row is Instruments');
 
   const withoutElectrical = buildDashboardCatalog({
