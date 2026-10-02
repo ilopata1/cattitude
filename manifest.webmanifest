@@ -2,12 +2,33 @@
   "name": "Clever Sailor",
   "short_name": "Clever Sailor",
   "description": "Vessel guide for charter guests, private owners, and crew",
+  "id": "/",
   "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#0D2137",
+  "orientation": "any",
+  "background_color": "#f5f0e8",
   "theme_color": "#0D2137",
   "start_url": "/",
   "scope": "/",
+  "shortcuts": [
+    {
+      "name": "Emergency",
+      "short_name": "Emergency",
+      "url": "/?open=emergency",
+      "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Fix It",
+      "short_name": "Fix",
+      "url": "/tabs/fix",
+      "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Sail",
+      "short_name": "Sail",
+      "url": "/tabs/sail",
+      "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ],
   "icons": [
     {
       "src": "assets/icons/icon-192.png",
