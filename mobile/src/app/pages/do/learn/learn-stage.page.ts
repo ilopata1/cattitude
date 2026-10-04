@@ -78,4 +78,8 @@ export class LearnStagePage implements OnInit {
   back(): void {
     void this.vesselRoutes.navigateTabs('do', 'learn');
   }
+
+  trackLesson(_: number, lesson: LearnLesson): string {
+    return lesson.id;
+  }
 }

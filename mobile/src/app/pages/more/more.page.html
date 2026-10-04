@@ -4,7 +4,7 @@
     <button
       type="button"
       class="more-card"
-      *ngFor="let row of rows"
+      *ngFor="let row of rows; trackBy: trackRow"
       (click)="open(row)"
     >
       <div class="more-card-icon">

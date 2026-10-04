@@ -200,17 +200,41 @@ html[data-theme="night"] .wind-rose-popover-panel .forecast-hint a { color: #ff6
 
 /* Pages that use .page-content share one reading column. Below 960px the
    column is the screen; above it, the extra space stays in the gutters.
-   Polar, Instruments, Sail, and Anchorage do not use this class. */
+   Polar, Instruments, Sail, and Anchorage do not use this class.
+
+   Center the slotted page, not ion-content padding. Percentage padding on
+   .inner-scroll (contain:size + will-change) can leave the painted cards
+   offset from the mouse hit target on desktop Chrome. */
+ion-content.page-content {
+  contain: none;
+}
+
+ion-content.page-content::part(background) {
+  pointer-events: none;
+}
+
+ion-content.page-content::part(scroll) {
+  z-index: 1;
+}
+
 @media (min-width: 768px) {
-  ion-content.page-content {
-    --padding-start: max(0px, calc((100% - var(--cattitude-content-max)) / 2));
-    --padding-end: max(0px, calc((100% - var(--cattitude-content-max)) / 2));
+  ion-content.page-content::part(scroll) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  ion-content.page-content > * {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: var(--cattitude-content-max);
   }
 }
 
 @media (min-width: 1024px) {
   ion-tabs .tabs-inner {
     margin-inline-start: calc(var(--cattitude-rail-width) + 1px);
+    contain: none;
   }
 }
 

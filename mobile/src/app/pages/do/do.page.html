@@ -11,20 +11,20 @@
           <div class="do-card-title">{{ learn.title }}</div>
           <div class="do-card-sub">{{ learn.subtitle }}</div>
           <div class="do-card-prog">{{ progressLabel(learn.key, 'learn') }}</div>
-          <div class="learn-stage" *ngFor="let stage of learnStages">
+          <div class="learn-stage" *ngFor="let stage of learnStages; trackBy: trackStage">
             {{ stage.title }}<span *ngIf="stage.progress"> · {{ stage.progress }}</span>
           </div>
         </div>
         <div class="do-card-arrow" aria-hidden="true"><ion-icon name="chevron-forward"></ion-icon></div>
       </button>
     </section>
-    <section class="do-section" *ngFor="let section of menu">
+    <section class="do-section" *ngFor="let section of menu; trackBy: trackSection">
       <div class="section-label" *ngIf="section.label">{{ section.label }}</div>
       <div class="do-cards">
       <button
         type="button"
         class="do-card"
-        *ngFor="let item of section.items"
+        *ngFor="let item of section.items; trackBy: trackItem"
         (click)="open(item.route)"
       >
         <div class="do-card-icon" [ngClass]="item.iconClass">

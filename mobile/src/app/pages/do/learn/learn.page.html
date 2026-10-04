@@ -6,7 +6,7 @@
 ></app-header>
 <ion-content [fullscreen]="true" class="page-content">
   <div class="acc-list">
-    <button type="button" class="acc-header acc-item" *ngFor="let stage of stages" (click)="open(stage)">
+    <button type="button" class="acc-header acc-item" *ngFor="let stage of stages; trackBy: trackStage" (click)="open(stage)">
       <div class="acc-text">
         <div class="acc-title">{{ stage.title }}</div>
         <div class="acc-sub">{{ label(stage) }}</div>

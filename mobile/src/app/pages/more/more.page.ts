@@ -35,6 +35,10 @@ export class MorePage {
     return moreMenu(this.content.bootstrap.branding.vesselType);
   }
 
+  trackRow(_: number, row: MoreRow): string {
+    return row.id;
+  }
+
   open(row: MoreRow): void {
     void this.routes.navigateTabs('more', ...row.route);
   }

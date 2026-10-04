@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { LearnStage, resolveLearnPath } from '../../core/guide/learn-path';
-import { DoMenuItem } from '../../core/models/bootstrap-content.model';
+import { DoMenuItem, DoMenuSection } from '../../core/models/bootstrap-content.model';
 import { ContentService } from '../../core/services/content.service';
 import { ProgressService } from '../../core/services/progress.service';
 import { ReaderViewService } from '../../core/services/reader-view.service';
@@ -81,5 +81,17 @@ export class DoPage {
 
   open(route: string): void {
     void this.router.navigateByUrl(route);
+  }
+
+  trackSection(_: number, section: DoMenuSection): string {
+    return section.label || section.items[0]?.key || '';
+  }
+
+  trackItem(_: number, item: DoMenuItem): string {
+    return item.key;
+  }
+
+  trackStage(_: number, stage: LearnStage): string {
+    return stage.id;
   }
 }

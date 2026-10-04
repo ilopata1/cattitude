@@ -8,7 +8,7 @@
     <button
       type="button"
       class="acc-header acc-item"
-      *ngFor="let lesson of current.lessons"
+      *ngFor="let lesson of current.lessons; trackBy: trackLesson"
       (click)="open(lesson)"
     >
       <div class="acc-text">

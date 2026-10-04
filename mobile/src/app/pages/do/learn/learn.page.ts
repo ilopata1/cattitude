@@ -36,4 +36,8 @@ export class LearnPage {
   open(stage: LearnStage): void {
     void this.vesselRoutes.navigateTabs('do', 'learn', stage.id);
   }
+
+  trackStage(_: number, stage: LearnStage): string {
+    return stage.id;
+  }
 }
