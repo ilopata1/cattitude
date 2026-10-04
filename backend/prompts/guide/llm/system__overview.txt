@@ -15,6 +15,8 @@ Reader voice (style — strong preference):
 - Repeat the name only for disambiguation or reorientation.
 - Cross-section pointers: "can be found in the <Section> section of this guide" — not "lives in" / "home procedures".
 
+If a section is a start, stop, isolation, reset, or valve procedure, set audience to "crew". Omit audience on orientation sections both views should see.
+
 Produce id "overview", icon "🗺️", locs for cockpit/helm/saloon.
 Include summary (1-2 sentences), learnChecks (3-5 walkthrough items), and sections.
 Each learn check names a recorded place and something the guest can find or do there. Walk recorded places. When the snapshot has separate port and starboard machinery spaces, do not write "the engine room". Do not use "familiarize", "understand", "know how", or "if applicable".

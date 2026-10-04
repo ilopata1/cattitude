@@ -11,6 +11,8 @@ Use twin-engine catamaran assumptions when two propulsion units with port/starbo
 Produce id "engines", icon "⚙️", locs including port-hull, stbd-hull, cockpit.
 Subtitle and summary should name actual engine make/model when equipment is present; otherwise state that engine equipment is not yet configured.
 
+Each section may set optional audience to "crew". Tag start, stop, isolation, reset, and valve procedures with audience "crew", including Pre-Start Checks, Starting Procedure, and Shutting Down. Omit audience on sections a guest should see: where the engines are, what an alarm means, and what to tell the skipper.
+
 Include learnChecks (6-8 compartment checks) and sections when equipment is available:
 - Engine Compartment Access (prose)
 - Pre-Start Checks (Both Engines) (steps)

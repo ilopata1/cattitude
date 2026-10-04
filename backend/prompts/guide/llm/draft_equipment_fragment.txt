@@ -43,7 +43,10 @@ Return a JSON object with these optional top-level keys:
 - fix_card_overrides: { "<card_key>": { title?, icon?, steps: ["..."] } }
 
 Section objects use: t (title), type (prose|list|steps|warnings|notes), c (prose text),
-items (list of strings or {c: "..."} for steps/warnings/notes).
+items (list of strings or {c: "..."} for steps/warnings/notes). Optional audience
+is "crew" on start, stop, isolation, reset, and valve procedures. Omit it on
+guest-safe sections (where it is, what it does, what to tell the skipper).
+"guest" means both views and is not stored.
 
 Fix-card override steps must be 3–6 guest-actionable steps only. Do NOT include a
 final "contact operator" step — that is added automatically per vessel at assembly

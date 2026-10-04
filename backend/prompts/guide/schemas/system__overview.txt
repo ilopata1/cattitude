@@ -2,4 +2,6 @@
 # Used by: guide_generation._schema_hint_for for system/overview.
 # Module: system / overview
 #
-{"id":"overview","icon","title","subtitle","locs[]","summary","learnChecks[]","sections":[{"t","type":"prose|list|steps","c?","items?"}]}
+{"id":"overview","icon","title","subtitle","locs[]","summary","learnChecks[]","sections":[{"t","type":"prose|list|steps","c?","items?","audience?"}]}
+
+audience is optional. The only value is "crew". Omit it when both reading views should see the section. Tag start, stop, isolation, reset, and valve procedures with audience "crew".

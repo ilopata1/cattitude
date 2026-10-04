@@ -25,6 +25,7 @@ from guide_content_library import LIBRARY_MODULE_BUILDERS
 from location_model import generate_label
 from guide_fix_icons import normalize_fix_card_icons, normalize_fix_icon
 from guide_learn_checks import filter_generated_learn_checks
+from guide_section_to_module import apply_default_section_audience
 from guide_equipment_fragments import (
     apply_fix_card_fragments,
     assemble_system_from_fragments,
@@ -969,7 +970,8 @@ def _finalize_system_payload(
             if not payload.get(key) and reference.get(key):
                 payload[key] = reference[key]
     payload = _merge_system_photo_sections(reference, payload)
-    return _normalize_system_payload(payload)
+    payload = _normalize_system_payload(payload)
+    return apply_default_section_audience(content_key, payload)
 
 
 def _insert_generation_run(

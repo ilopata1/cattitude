@@ -13,6 +13,7 @@ _BACKEND = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_BACKEND))
 
 from guide_equipment_coverage import equipment_for_system, system_has_equipment
+from guide_section_to_module import apply_default_section_audience
 from guide_system_assembly import (
     assemble_system_from_fragments,
     draft_target_systems,
@@ -255,6 +256,11 @@ def main() -> int:
                                     "c": "Tell the skipper.",
                                     "audience": "guest",
                                 },
+                                {
+                                    "t": "Guest-Safe Troubleshooting",
+                                    "type": "prose",
+                                    "c": "Tell the skipper.",
+                                },
                                 {"t": "Day use", "type": "prose", "c": "Ask first."},
                             ]
                         }
@@ -277,7 +283,114 @@ def main() -> int:
         "audience" not in dinghy_by_title["Guest-safe troubleshooting"],
         "explicit guest audience was published",
     )
+    check(
+        "audience" not in dinghy_by_title["Guest-Safe Troubleshooting"],
+        "Guest-Safe Troubleshooting was tagged crew",
+    )
     check("audience" not in dinghy_by_title["Day use"], "day use was tagged crew")
+
+    # Finalize path: titles only, no pre-set audience. Same default as Stage 4
+    # blocks, plus the procedure-title regex. Photo and equipment locations stay open.
+    llm_engines = apply_default_section_audience(
+        "engines",
+        {
+            "id": "engines",
+            "sections": [
+                {"t": "Turning it on", "type": "steps", "c": "Start each engine."},
+                {"t": "How it works", "type": "prose", "c": "They push the boat."},
+                {
+                    "t": "Starting the Outboard Motor",
+                    "type": "steps",
+                    "items": [{"c": "Turn the key."}],
+                },
+                {
+                    "t": "Guest-Safe Troubleshooting",
+                    "type": "prose",
+                    "c": "Tell the skipper.",
+                },
+                {"t": "Turning it on", "type": "photo", "src": "deck.jpg"},
+                {
+                    "t": "Isolating the seacock",
+                    "type": "equipment_locations",
+                    "rows": [{"name": "Seacock", "location": "Under the bed"}],
+                },
+                {
+                    "t": "Monitoring",
+                    "type": "prose",
+                    "c": "Watch the gauges.",
+                    "audience": "guest",
+                },
+            ],
+        },
+    )
+    engines_sections = llm_engines["sections"]
+    check(
+        engines_sections[0].get("audience") == "crew",
+        "engines Turning it on was not tagged crew",
+    )
+    check(
+        "audience" not in engines_sections[1],
+        "engines How it works was tagged crew",
+    )
+    check(
+        engines_sections[2].get("audience") == "crew",
+        "Starting the Outboard Motor was not tagged crew on the title-only path",
+    )
+    check(
+        "audience" not in engines_sections[3],
+        "Guest-Safe Troubleshooting was tagged on the title-only path",
+    )
+    check("audience" not in engines_sections[4], "photo section was tagged crew")
+    check(
+        "audience" not in engines_sections[5],
+        "equipment_locations section was tagged crew",
+    )
+    check(
+        engines_sections[6].get("audience") == "guest",
+        "a section that already carried audience was rewritten",
+    )
+
+    water_how = apply_default_section_audience(
+        "water",
+        {
+            "sections": [
+                {"t": "How it works", "type": "prose", "c": "Tanks and a pump."},
+            ]
+        },
+    )
+    check(
+        water_how["sections"][0].get("audience") == "crew",
+        "water How it works was not tagged crew",
+    )
+    batteries_how = apply_default_section_audience(
+        "batteries",
+        {
+            "sections": [
+                {"t": "How it works", "type": "prose", "c": "A house bank."},
+                {"t": "Operating", "type": "prose", "c": "Set the charger."},
+            ]
+        },
+    )
+    check(
+        "audience" not in batteries_how["sections"][0],
+        "batteries How it works was tagged crew",
+    )
+    check(
+        batteries_how["sections"][1].get("audience") == "crew",
+        "batteries Operating was not tagged crew",
+    )
+
+    # Fragment tags survive the same function _finalize_system_payload calls.
+    dinghy_final = apply_default_section_audience("dinghy", dinghy)
+    final_by_title = {section["t"]: section for section in dinghy_final["sections"]}
+    check(
+        final_by_title["Starting the Outboard Motor"].get("audience") == "crew",
+        "finalize pass dropped the outboard crew tag",
+    )
+    check(
+        "audience" not in final_by_title["Guest-Safe Troubleshooting"],
+        "finalize pass tagged Guest-Safe Troubleshooting",
+    )
 
     entry_crew = assemble_system_from_fragments(
         "dinghy",

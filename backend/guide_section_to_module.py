@@ -28,6 +28,7 @@ import html
 import re
 from typing import Any
 
+from content.audience import PUBLISHED_CREW
 from guide_composition_rules import SECTION_SPINE, normalize_block
 from guide_module_catalog import SYSTEM_CATALOG
 from guide_reader_voice import (
@@ -36,6 +37,7 @@ from guide_reader_voice import (
     format_learn_xref,
     place_labels,
 )
+from guide_system_assembly import _CREW_PROCEDURE_TITLE
 from stage4_substrate import places_for_device
 
 # O3 — reader-facing headings per spine block. capability_summary is the module
@@ -85,6 +87,13 @@ CREW_BLOCKS_BY_SECTION: dict[str, frozenset[str]] = {
     "ac": frozenset({"troubleshooting", "reference"}),
 }
 SOLAR_FOLD_AUDIENCE = "crew"
+
+# Spine titles, reversed, so a payload that only has section titles (LLM,
+# fragment, placeholder) can use the same crew-block table as Stage 4.
+_BLOCK_BY_TITLE: dict[str, str] = {
+    title.casefold(): block for block, title in BLOCK_HEADINGS.items()
+}
+_NEVER_TAG_SECTION_TYPES = frozenset({"photo", "equipment_locations"})
 
 _DEFAULT_ICON = "⚙️"
 _SUBTITLE_MAX = 90
@@ -681,6 +690,39 @@ def section_to_system_module(
             f"section {section_id!r} produced no body sections"
         )
     return module
+
+
+def apply_default_section_audience(
+    content_key: str, payload: dict[str, Any]
+) -> dict[str, Any]:
+    """Tag procedural sections crew when the payload has no spine blocks.
+
+    A title that is a ``BLOCK_HEADINGS`` label maps back to that block and
+    follows ``CREW_BLOCKS_BY_SECTION`` for this system. Any other title that
+    matches the fragment procedure pattern (start, shutdown, outboard, prime,
+    bleed, isolation) is crew on every system. Sections that already carry
+    ``audience`` are left alone. Photo and equipment-location sections are
+    never tagged.
+    """
+    sections = payload.get("sections")
+    if not isinstance(sections, list):
+        return payload
+    crew_blocks = CREW_BLOCKS_BY_SECTION.get(content_key, frozenset())
+    for section in sections:
+        if not isinstance(section, dict) or section.get("audience"):
+            continue
+        if section.get("type") in _NEVER_TAG_SECTION_TYPES:
+            continue
+        title = str(section.get("t") or "").strip()
+        if not title:
+            continue
+        block = _BLOCK_BY_TITLE.get(title.casefold())
+        if block is not None and block in crew_blocks:
+            section["audience"] = PUBLISHED_CREW
+            continue
+        if _CREW_PROCEDURE_TITLE.search(title):
+            section["audience"] = PUBLISHED_CREW
+    return payload
 
 
 def extract_module_metadata(

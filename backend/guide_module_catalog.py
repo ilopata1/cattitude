@@ -175,6 +175,19 @@ SYSTEM_CATALOG: dict[str, dict[str, Any]] = {
     },
 }
 
+# Appended to every system focus. Those strings are the LLM path's brief.
+_READING_VIEW_FOCUS = (
+    "Guest-visible: where it is, what it does, what to tell the skipper. "
+    "Crew: procedures."
+)
+for _system_meta in SYSTEM_CATALOG.values():
+    _existing = str(_system_meta.get("focus") or "").rstrip()
+    if _existing.endswith(_READING_VIEW_FOCUS):
+        continue
+    if _existing and _existing[-1] not in ".!?":
+        _existing += "."
+    _system_meta["focus"] = f"{_existing} {_READING_VIEW_FOCUS}".strip()
+
 CHECKLIST_CATALOG: dict[str, dict[str, str]] = {
     "safety-brief": {
         "title": "Safety briefing",

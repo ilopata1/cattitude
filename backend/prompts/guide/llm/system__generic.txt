@@ -13,6 +13,7 @@ Include title, subtitle, summary (1-2 sentences), learnChecks (3-5 items), and s
 Each learn check names gear from the snapshot and an action the guest can do or a place they can find. Do not use "familiarize", "understand", "know how", or "if applicable".
 Section types allowed: prose, list, steps, warnings, notes. Do NOT include photo sections — photos are merged from REFERENCE separately.
 Prose sections MUST use field "c" for paragraph text (not "text" or "content").
+Each section may set optional audience to "crew". Tag start, stop, isolation, reset, and valve procedures with audience "crew". Omit audience on sections a guest should see: where it is, what it does, and what to tell the skipper.
 
 Use ONLY facts from INPUT SNAPSHOT and RELEVANT EQUIPMENT below. Match REFERENCE structure when provided. Do not copy a brochure tone from the reference.
 
