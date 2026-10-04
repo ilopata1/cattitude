@@ -1,0 +1,18 @@
+# Purpose: Daily engine and fuel notes for crew, from crew facts.
+# Used by: content.assembler.apply_shared_crew_layers
+# Module: system / engines
+#
+
+sections:
+- t: Daily checks on this boat
+  type: list
+  when:
+    has_crew_fact: engines.daily
+  items:
+  - c: "{cf_engines_daily}"
+- t: Fuel
+  type: list
+  when:
+    has_crew_fact: fuel.summary
+  items:
+  - c: "{cf_fuel_summary}"

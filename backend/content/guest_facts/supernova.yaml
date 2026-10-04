@@ -35,3 +35,9 @@ cabinNames:
   - starboard aft
 moorsSternTo: true
 galleyStove: induction
+crewFacts:
+  daggerboards:
+    has: true
+    notes: ""
+  electrical:
+    shorePower: inlet aft on the port hull

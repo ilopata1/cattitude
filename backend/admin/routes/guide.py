@@ -21,7 +21,7 @@ from guide_assets_service import (
 from guide_generation import GuideGenerationError, load_vessel_generation_context, run_guide_generation
 from guide_equipment_coverage import gaps_for_modules, list_system_equipment_gaps
 from guide_module_catalog import GENERATION_SET_OPTIONS, SYSTEM_IDS, modules_for_sets
-from content.slots import guest_fact_gaps
+from content.slots import crew_fact_gaps, guest_fact_gaps
 from guide_context_utils import emergency_contacts_count, merge_guide_context
 from stage4_generation import vessel_has_stage4_substrate
 from guide_publish import (
@@ -311,6 +311,7 @@ async def vessel_guide_overview(
     equipment_gaps: list[dict] = []
     stage4_substrate = False
     guest_fact_gap_lines: list[str] = []
+    crew_fact_gap_lines: list[str] = []
     try:
         with get_engine().connect() as conn:
             stage4_substrate = vessel_has_stage4_substrate(conn, vessel_id)
@@ -319,6 +320,7 @@ async def vessel_guide_overview(
                 generation_context.get("equipment") or []
             )
             guest_fact_gap_lines = guest_fact_gaps(generation_context)
+            crew_fact_gap_lines = crew_fact_gaps(generation_context)
             preview = assemble_publication(conn, vessel_id, vessel["slug"])
     except PublishValidationError as exc:
         preview_error, preview_info = _classify_preview_messages(exc.messages)
@@ -358,6 +360,7 @@ async def vessel_guide_overview(
             "stage4_substrate": stage4_substrate,
             "layout_gap": not layout_present,
             "guest_fact_gaps": guest_fact_gap_lines,
+            "crew_fact_gaps": crew_fact_gap_lines,
         },
     )
 

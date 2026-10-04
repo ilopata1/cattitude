@@ -130,6 +130,41 @@ def guest_facts(snapshot: dict[str, Any]) -> dict[str, Any]:
     return raw if isinstance(raw, dict) else {}
 
 
+def crew_facts(snapshot: dict[str, Any]) -> dict[str, Any]:
+    raw = (snapshot.get("guide_context") or {}).get("crewFacts")
+    return raw if isinstance(raw, dict) else {}
+
+
+def crew_fact(snapshot: dict[str, Any], dotted_key: str) -> Any:
+    """One crewFacts value. A missing path is an empty string."""
+    node: Any = crew_facts(snapshot)
+    for part in dotted_key.split("."):
+        if not isinstance(node, dict) or part not in node:
+            return ""
+        node = node[part]
+    if isinstance(node, str):
+        return node.strip()
+    if isinstance(node, list):
+        return [str(item).strip() for item in node if str(item).strip()]
+    if isinstance(node, bool) or node is None:
+        return node if node is not None else ""
+    return node
+
+
+def crew_fact_present(snapshot: dict[str, Any], dotted_key: str) -> bool:
+    """True when the owner has filled this fact. A recorded false stays false."""
+    value = crew_fact(snapshot, dotted_key)
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, list):
+        return bool(value)
+    return bool(str(value).strip()) if value is not None else False
+
+
+def has_daggerboards(snapshot: dict[str, Any]) -> bool:
+    return crew_fact(snapshot, "daggerboards.has") is True
+
+
 def _row_identity(row: dict[str, Any]) -> str:
     return f"{row.get('manufacturer') or ''} {row.get('model') or ''}"
 
@@ -578,6 +613,7 @@ def slot_values(snapshot: dict[str, Any]) -> dict[str, str]:
         "lifejacket_policy": lifejacket_policy(snapshot),
         "marina_routine": marina_routine(snapshot),
         "sar_contact_line": sar_contact_line(snapshot),
+        **_crew_fact_slots(snapshot),
     }
 
 
@@ -606,6 +642,200 @@ def guest_fact_gaps(snapshot: dict[str, Any]) -> list[str]:
     ):
         gaps.append("How to take the helm from the autopilot is still blank.")
     return gaps
+
+
+# Dotted crewFacts key → published slot name.
+_CREW_FACT_SLOTS: tuple[tuple[str, str], ...] = (
+    ("daggerboards.has", "cf_daggerboards_has"),
+    ("daggerboards.notes", "cf_daggerboards_notes"),
+    ("mainsail.hoist", "cf_mainsail_hoist"),
+    ("mainsail.reefing", "cf_mainsail_reefing"),
+    ("mainsail.preventer", "cf_mainsail_preventer"),
+    ("headsails.notes", "cf_headsails_notes"),
+    ("winches.map", "cf_winches_map"),
+    ("clutches.map", "cf_clutches_map"),
+    ("seacocks.list", "cf_seacocks_list"),
+    ("engines.daily", "cf_engines_daily"),
+    ("fuel.summary", "cf_fuel_summary"),
+    ("anchoring.gear", "cf_anchoring_gear"),
+    ("mooring.sternTo", "cf_mooring_stern_to"),
+    ("electrical.batterySwitches", "cf_electrical_battery_switches"),
+    ("electrical.shorePower", "cf_electrical_shore_power"),
+    ("electrical.navLights", "cf_electrical_nav_lights"),
+    ("bilge.layout", "cf_bilge_layout"),
+    ("standingOrders.text", "cf_standing_orders_text"),
+    ("mob.recovery", "cf_mob_recovery"),
+    ("heavyWeather.prep", "cf_heavy_weather_prep"),
+    ("spares.location", "cf_spares_location"),
+    ("vhf.mmsi", "cf_vhf_mmsi"),
+    ("vhf.handsets", "cf_vhf_handsets"),
+)
+
+# Which guide section an owner question about this fact belongs with.
+CREW_FACT_SECTIONS: dict[str, str] = {
+    "daggerboards.has": "sails",
+    "daggerboards.notes": "sails",
+    "mainsail.hoist": "sails",
+    "mainsail.reefing": "sails",
+    "mainsail.preventer": "sails",
+    "anchoring.gear": "anchoring",
+    "seacocks.list": "safety",
+    "standingOrders.text": "nav",
+    "mob.recovery": "safety",
+}
+
+
+def _seacock_bullet_text(value: Any) -> str:
+    """One bullet per line, joined with newlines."""
+    if isinstance(value, str):
+        lines = [line.strip() for line in value.splitlines() if line.strip()]
+    elif isinstance(value, list):
+        lines = [str(item).strip() for item in value if str(item).strip()]
+    else:
+        return ""
+    bullets: list[str] = []
+    for line in lines:
+        bullets.append(line if line.startswith("- ") else f"- {line}")
+    return "\n".join(bullets)
+
+
+def _crew_slot_text(snapshot: dict[str, Any], dotted_key: str) -> str:
+    value = crew_fact(snapshot, dotted_key)
+    if dotted_key == "daggerboards.has":
+        if value is True:
+            return "yes"
+        if value is False:
+            return "no"
+        return ""
+    if dotted_key == "seacocks.list":
+        return _seacock_bullet_text(value)
+    if isinstance(value, list):
+        return "\n".join(str(item).strip() for item in value if str(item).strip())
+    if isinstance(value, bool):
+        return "yes" if value else ""
+    return str(value or "").strip()
+
+
+def _crew_fact_slots(snapshot: dict[str, Any]) -> dict[str, str]:
+    return {
+        slot: _crew_slot_text(snapshot, dotted_key)
+        for dotted_key, slot in _CREW_FACT_SLOTS
+    }
+
+
+def _daggerboards_has_recorded(snapshot: dict[str, Any]) -> bool:
+    raw = crew_facts(snapshot).get("daggerboards")
+    return isinstance(raw, dict) and isinstance(raw.get("has"), bool)
+
+
+def _crew_text_blank(snapshot: dict[str, Any], dotted_key: str) -> bool:
+    value = crew_fact(snapshot, dotted_key)
+    if isinstance(value, list):
+        return not value
+    if isinstance(value, bool):
+        return False
+    return not str(value or "").strip()
+
+
+def _crew_fact_gap_rows(snapshot: dict[str, Any]) -> list[tuple[str, str]]:
+    """(dotted key, sentence) for crew facts this vessel still needs.
+
+    Daggerboards only on a sailing catamaran. The mainsail only on a sailing
+    boat. Anchoring gear only when the boat has ground tackle. Seacocks,
+    standing orders, and MOB recovery on every boat.
+    """
+    rows: list[tuple[str, str]] = []
+    sailing = is_sailing(snapshot)
+    if is_catamaran(snapshot) and sailing:
+        if not _daggerboards_has_recorded(snapshot):
+            rows.append(
+                (
+                    "daggerboards.has",
+                    "Whether this boat has daggerboards is still blank.",
+                )
+            )
+        elif (
+            crew_fact(snapshot, "daggerboards.has") is True
+            and _crew_text_blank(snapshot, "daggerboards.notes")
+        ):
+            rows.append(
+                (
+                    "daggerboards.notes",
+                    "How the daggerboards work on this boat is still blank.",
+                )
+            )
+    if sailing:
+        if _crew_text_blank(snapshot, "mainsail.hoist"):
+            rows.append(
+                (
+                    "mainsail.hoist",
+                    "How to hoist the mainsail on this boat is still blank.",
+                )
+            )
+        if _crew_text_blank(snapshot, "mainsail.reefing"):
+            rows.append(
+                (
+                    "mainsail.reefing",
+                    "How to reef the mainsail on this boat is still blank.",
+                )
+            )
+        if _crew_text_blank(snapshot, "mainsail.preventer"):
+            rows.append(
+                (
+                    "mainsail.preventer",
+                    "How to rig the preventer on this boat is still blank.",
+                )
+            )
+    if has_category(snapshot, "ground_tackle_and_mooring") and _crew_text_blank(
+        snapshot, "anchoring.gear"
+    ):
+        rows.append(
+            (
+                "anchoring.gear",
+                "Anchoring gear on this boat is still blank.",
+            )
+        )
+    if _crew_text_blank(snapshot, "seacocks.list"):
+        rows.append(
+            (
+                "seacocks.list",
+                "The seacocks and through-hulls are still blank.",
+            )
+        )
+    if _crew_text_blank(snapshot, "standingOrders.text"):
+        rows.append(
+            (
+                "standingOrders.text",
+                "Watch standing orders are still blank.",
+            )
+        )
+    if _crew_text_blank(snapshot, "mob.recovery"):
+        rows.append(
+            (
+                "mob.recovery",
+                "How to recover someone from the water on this boat is still blank.",
+            )
+        )
+    return rows
+
+
+def crew_fact_gaps(snapshot: dict[str, Any]) -> list[str]:
+    """Human sentences for crew facts the owner still needs to fill in."""
+    return [sentence for _key, sentence in _crew_fact_gap_rows(snapshot)]
+
+
+def crew_fact_queries(snapshot: dict[str, Any]) -> list[dict[str, Any]]:
+    """Owner questions for the same blanks ``crew_fact_gaps`` names."""
+    queries: list[dict[str, Any]] = []
+    for key, sentence in _crew_fact_gap_rows(snapshot):
+        queries.append(
+            {
+                "id": f"crewfact:{key}",
+                "prompt": sentence,
+                "detail": {"kind": "crew_fact", "key": key},
+            }
+        )
+    return queries
 
 
 def apply_slots(text: str, snapshot: dict[str, Any]) -> str:

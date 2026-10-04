@@ -69,9 +69,18 @@ def matches(when: dict[str, Any] | None, snapshot: dict[str, Any]) -> bool:
         "moors_stern_to": slots.moors_stern_to(snapshot),
         "has_marina_routine": slots.marina_routine(snapshot),
         "has_galley_tap_note": slots.galley_tap_note(snapshot),
+        "has_daggerboards": slots.has_daggerboards(snapshot),
     }
     for key, actual in flag_checks.items():
         if key in when and bool(when[key]) != bool(actual):
+            return False
+
+    if "has_crew_fact" in when:
+        wanted = when["has_crew_fact"]
+        keys = [wanted] if isinstance(wanted, str) else list(wanted or [])
+        if not keys or not all(
+            isinstance(key, str) and slots.crew_fact_present(snapshot, key) for key in keys
+        ):
             return False
 
     excludes = when.get("local_rules_exclude") or []

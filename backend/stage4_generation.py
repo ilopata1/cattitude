@@ -23,6 +23,7 @@ from guide_generation import (
     _complete_generation_run,
     _fail_generation_run,
     _insert_generation_run,
+    _record_crew_fact_questions,
     _save_generated_draft,
     _validate_module_payload,
     create_input_snapshot,
@@ -104,14 +105,21 @@ def run_stage4_generation(
     from content.assembler import (
         apply_crew_layers,
         apply_guest_layers,
+        apply_shared_crew_layers,
         apply_vessel_guest_layers,
     )
 
     for sid in wanted:
         modules[sid] = apply_crew_layers(
             sid,
-            apply_vessel_guest_layers(
-                sid, apply_guest_layers(sid, modules[sid], snapshot_payload), snapshot_payload
+            apply_shared_crew_layers(
+                sid,
+                apply_vessel_guest_layers(
+                    sid,
+                    apply_guest_layers(sid, modules[sid], snapshot_payload),
+                    snapshot_payload,
+                ),
+                snapshot_payload,
             ),
             snapshot_payload,
         )
@@ -127,6 +135,7 @@ def run_stage4_generation(
         snapshot_id = create_input_snapshot(conn, vessel_id)
 
     results: list[dict[str, Any]] = []
+    crew_questions_recorded = False
     for sid in wanted:
         run_id = _insert_generation_run(
             conn,
@@ -158,6 +167,14 @@ def run_stage4_generation(
                 run_id=run_id,
                 fact_queries=metadata[sid].get("fact_queries"),
             )
+            if not crew_questions_recorded:
+                _record_crew_fact_questions(
+                    conn,
+                    vessel_id=vessel_id,
+                    run_id=run_id,
+                    snapshot=snapshot_payload,
+                )
+                crew_questions_recorded = True
             results.append(
                 {
                     "content_type": "system",

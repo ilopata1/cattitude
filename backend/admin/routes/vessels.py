@@ -36,8 +36,10 @@ from admin.vessel_service import (
     update_vessel_equipment_location,
 )
 from guide_context_utils import (
+    build_crew_facts,
     build_guest_facts,
     build_guide_context_from_form,
+    crew_facts_form_values,
     guest_facts_form_values,
 )
 from guide_equipment_coverage import list_system_equipment_gaps
@@ -689,6 +691,7 @@ async def vessel_guide_context_form(
             ),
             "local_rules_text": "\n".join(context.get("localRules", [])),
             "guest_form": guest_facts_form_values(context.get("guestFacts")),
+            "crew_form": crew_facts_form_values(context.get("crewFacts")),
             "error": None,
         },
     )
@@ -741,6 +744,29 @@ async def save_vessel_guide_context(
     lifejacket_policy: str = Form(""),
     moors_stern_to: str = Form(""),
     marina_routine: str = Form(""),
+    daggerboards_has: str = Form(""),
+    daggerboards_notes: str = Form(""),
+    mainsail_hoist: str = Form(""),
+    mainsail_reefing: str = Form(""),
+    mainsail_preventer: str = Form(""),
+    headsails_notes: str = Form(""),
+    winches_map: str = Form(""),
+    clutches_map: str = Form(""),
+    seacocks_list: str = Form(""),
+    engines_daily: str = Form(""),
+    fuel_summary: str = Form(""),
+    anchoring_gear: str = Form(""),
+    mooring_stern_to: str = Form(""),
+    electrical_battery_switches: str = Form(""),
+    electrical_shore_power: str = Form(""),
+    electrical_nav_lights: str = Form(""),
+    bilge_layout: str = Form(""),
+    standing_orders_text: str = Form(""),
+    mob_recovery: str = Form(""),
+    heavy_weather_prep: str = Form(""),
+    spares_location: str = Form(""),
+    vhf_mmsi: str = Form(""),
+    vhf_handsets: str = Form(""),
 ):
     guest_form = {
         "life_raft_location": life_raft_location,
@@ -771,6 +797,31 @@ async def save_vessel_guide_context(
         "lifejacket_policy": lifejacket_policy,
         "moors_stern_to": moors_stern_to == "yes",
         "marina_routine": marina_routine,
+    }
+    crew_form = {
+        "daggerboards_has": daggerboards_has,
+        "daggerboards_notes": daggerboards_notes,
+        "mainsail_hoist": mainsail_hoist,
+        "mainsail_reefing": mainsail_reefing,
+        "mainsail_preventer": mainsail_preventer,
+        "headsails_notes": headsails_notes,
+        "winches_map": winches_map,
+        "clutches_map": clutches_map,
+        "seacocks_list": seacocks_list,
+        "engines_daily": engines_daily,
+        "fuel_summary": fuel_summary,
+        "anchoring_gear": anchoring_gear,
+        "mooring_stern_to": mooring_stern_to,
+        "electrical_battery_switches": electrical_battery_switches,
+        "electrical_shore_power": electrical_shore_power,
+        "electrical_nav_lights": electrical_nav_lights,
+        "bilge_layout": bilge_layout,
+        "standing_orders_text": standing_orders_text,
+        "mob_recovery": mob_recovery,
+        "heavy_weather_prep": heavy_weather_prep,
+        "spares_location": spares_location,
+        "vhf_mmsi": vhf_mmsi,
+        "vhf_handsets": vhf_handsets,
     }
     error: str | None = None
     try:
@@ -804,6 +855,31 @@ async def save_vessel_guide_context(
             moors_stern_to=moors_stern_to == "yes",
             marina_routine=marina_routine,
         )
+        crew_facts = build_crew_facts(
+            daggerboards_has=daggerboards_has,
+            daggerboards_notes=daggerboards_notes,
+            mainsail_hoist=mainsail_hoist,
+            mainsail_reefing=mainsail_reefing,
+            mainsail_preventer=mainsail_preventer,
+            headsails_notes=headsails_notes,
+            winches_map=winches_map,
+            clutches_map=clutches_map,
+            seacocks_list=seacocks_list,
+            engines_daily=engines_daily,
+            fuel_summary=fuel_summary,
+            anchoring_gear=anchoring_gear,
+            mooring_stern_to=mooring_stern_to,
+            electrical_battery_switches=electrical_battery_switches,
+            electrical_shore_power=electrical_shore_power,
+            electrical_nav_lights=electrical_nav_lights,
+            bilge_layout=bilge_layout,
+            standing_orders_text=standing_orders_text,
+            mob_recovery=mob_recovery,
+            heavy_weather_prep=heavy_weather_prep,
+            spares_location=spares_location,
+            vhf_mmsi=vhf_mmsi,
+            vhf_handsets=vhf_handsets,
+        )
         guide_context = build_guide_context_from_form(
             display_name=display_name,
             region_label=region_label,
@@ -820,6 +896,7 @@ async def save_vessel_guide_context(
             emergency_contacts_json=emergency_contacts_json,
             local_rules_text=local_rules_text,
             guest_facts=guest_facts,
+            crew_facts=crew_facts,
         )
     except (json.JSONDecodeError, ValueError) as exc:
         error = str(exc)
@@ -885,6 +962,7 @@ async def save_vessel_guide_context(
             "emergency_contacts_json": emergency_contacts_json,
             "local_rules_text": local_rules_text,
             "guest_form": guest_form,
+            "crew_form": crew_form,
             "error": error,
         },
         status_code=400,

@@ -4,6 +4,11 @@
 #
 
 sections:
+- t: Daggerboards
+  type: prose
+  when:
+    has_daggerboards: true
+  c: Stay clear of the daggerboard lines and cases when they are being moved.
 - t: Sails on this boat
   type: prose
   when:

@@ -1,0 +1,51 @@
+# Purpose: Boat-specific sail and deck notes for crew, from crew facts.
+# Used by: content.assembler.apply_shared_crew_layers
+# Module: system / sails
+#
+
+sections:
+- t: Daggerboards
+  type: list
+  when:
+    has_daggerboards: true
+  items:
+  - c: "{cf_daggerboards_notes}"
+    when:
+      has_crew_fact: daggerboards.notes
+  - c: Boards up before heavy following seas and before shallow water.
+- t: Mainsail — hoist
+  type: list
+  when:
+    has_crew_fact: mainsail.hoist
+  items:
+  - c: "{cf_mainsail_hoist}"
+- t: Reefing
+  type: list
+  when:
+    has_crew_fact: mainsail.reefing
+  items:
+  - c: "{cf_mainsail_reefing}"
+- t: Preventer
+  type: list
+  when:
+    has_crew_fact: mainsail.preventer
+  items:
+  - c: "{cf_mainsail_preventer}"
+- t: Headsails
+  type: list
+  when:
+    has_crew_fact: headsails.notes
+  items:
+  - c: "{cf_headsails_notes}"
+- t: Winch map
+  type: list
+  when:
+    has_crew_fact: winches.map
+  items:
+  - c: "{cf_winches_map}"
+- t: Clutch map
+  type: list
+  when:
+    has_crew_fact: clutches.map
+  items:
+  - c: "{cf_clutches_map}"

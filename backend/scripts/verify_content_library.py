@@ -140,7 +140,13 @@ def _section_items(module: dict[str, Any], title: str) -> list[str]:
 
 
 def _check_handbook(failures: list[str]) -> None:
-    supernova_facts = load_yaml("guest_facts/supernova.yaml")
+    supernova_recorded = load_yaml("guest_facts/supernova.yaml") or {}
+    if not isinstance(supernova_recorded, dict):
+        supernova_recorded = {}
+    supernova_crew = supernova_recorded.get("crewFacts")
+    supernova_facts = {
+        key: value for key, value in supernova_recorded.items() if key != "crewFacts"
+    }
     catamaran = make_snapshot(
         [
             "hvac",
@@ -155,6 +161,8 @@ def _check_handbook(failures: list[str]) -> None:
         **BASE_CONTEXT,
         "guestFacts": supernova_facts,
     }
+    if isinstance(supernova_crew, dict) and supernova_crew:
+        catamaran["guide_context"]["crewFacts"] = supernova_crew
     catamaran["equipment"] = [
         row
         if row.get("system_category") != "fresh_water_and_plumbing"
@@ -438,6 +446,14 @@ def _check_handbook(failures: list[str]) -> None:
     sails = apply_guest_layers("sails", {"id": "sails", "sections": []}, catamaran)
     if sail_line not in _texts(sails):
         failures.append("sail plan inventory missing from sails")
+    daggerboards = next(
+        (section for section in sails.get("sections") or [] if section.get("t") == "Daggerboards"),
+        None,
+    )
+    if daggerboards is None or "audience" in daggerboards:
+        failures.append("supernova daggerboard warning missing or tagged")
+    if "Stay clear of the daggerboard lines and cases" not in _texts(sails):
+        failures.append("supernova daggerboard warning text missing")
     without_plan = make_snapshot(
         ["rigging_and_sail_handling"], vessel_type="sailing_catamaran"
     )

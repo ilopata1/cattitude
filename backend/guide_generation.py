@@ -1039,6 +1039,33 @@ def _record_guest_fact_gaps(
     return gaps
 
 
+def _record_crew_fact_questions(
+    conn: Connection,
+    *,
+    vessel_id: str,
+    run_id: str,
+    snapshot: dict[str, Any],
+) -> None:
+    """Persist blank crew facts as owner questions. They do not fail generation."""
+    from content.slots import CREW_FACT_SECTIONS, crew_fact_queries
+    from owner_questions import upsert_owner_questions
+
+    grouped: dict[str, list[dict[str, Any]]] = {}
+    for query in crew_fact_queries(snapshot):
+        detail = query.get("detail") if isinstance(query.get("detail"), dict) else {}
+        key = str(detail.get("key") or "")
+        section = CREW_FACT_SECTIONS.get(key, "crew")
+        grouped.setdefault(section, []).append(query)
+    for section, queries in grouped.items():
+        upsert_owner_questions(
+            conn,
+            vessel_id=vessel_id,
+            section=section,
+            run_id=run_id,
+            fact_queries=queries,
+        )
+
+
 def _complete_generation_run(conn: Connection, run_id: str) -> None:
     conn.execute(
         text(
@@ -1189,6 +1216,12 @@ def generate_module(
         if template_builder is not None:
             payload = template_builder(snapshot_payload, reference)
             guest_fact_notes = _record_guest_fact_gaps(conn, run_id, snapshot_payload)
+            _record_crew_fact_questions(
+                conn,
+                vessel_id=vessel_id,
+                run_id=run_id,
+                snapshot=snapshot_payload,
+            )
             if content_type == "fix_card_set":
                 from content.slots import has_generator
 
@@ -1223,14 +1256,19 @@ def generate_module(
             from content.assembler import (
                 apply_crew_layers,
                 apply_guest_layers,
+                apply_shared_crew_layers,
                 apply_vessel_guest_layers,
             )
 
             payload = apply_crew_layers(
                 content_key,
-                apply_vessel_guest_layers(
+                apply_shared_crew_layers(
                     content_key,
-                    apply_guest_layers(content_key, payload, snapshot_payload),
+                    apply_vessel_guest_layers(
+                        content_key,
+                        apply_guest_layers(content_key, payload, snapshot_payload),
+                        snapshot_payload,
+                    ),
                     snapshot_payload,
                 ),
                 snapshot_payload,

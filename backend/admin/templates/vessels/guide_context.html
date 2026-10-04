@@ -180,6 +180,96 @@
     </label>
   </fieldset>
 
+  <fieldset class="full-width">
+    <legend>Crew facts</legend>
+    <p class="muted">Boat-specific notes for competent crew. Leave a box blank until you know the answer. A filled box becomes a crew-only section. Long notes for one boat still live in the vessel crew files.</p>
+
+    <h3>Sails &amp; deck</h3>
+    <label>Daggerboards
+      <select name="daggerboards_has">
+        <option value="" {% if not crew_form.daggerboards_has %}selected{% endif %}>Unset</option>
+        <option value="yes" {% if crew_form.daggerboards_has == 'yes' %}selected{% endif %}>Yes</option>
+        <option value="no" {% if crew_form.daggerboards_has == 'no' %}selected{% endif %}>No</option>
+      </select>
+    </label>
+    <label>Daggerboard notes
+      <textarea name="daggerboards_notes" rows="3" placeholder="How the boards move, and which lines control them">{{ crew_form.daggerboards_notes }}</textarea>
+    </label>
+    <label>Mainsail — hoist
+      <textarea name="mainsail_hoist" rows="3" placeholder="Which halyard, which winch, and when to stop">{{ crew_form.mainsail_hoist }}</textarea>
+    </label>
+    <label>Mainsail — reefing
+      <textarea name="mainsail_reefing" rows="3" placeholder="How to put a reef in">{{ crew_form.mainsail_reefing }}</textarea>
+    </label>
+    <label>Preventer
+      <textarea name="mainsail_preventer" rows="2" placeholder="Where the preventer lives and how to rig it">{{ crew_form.mainsail_preventer }}</textarea>
+    </label>
+    <label>Headsails
+      <textarea name="headsails_notes" rows="3" placeholder="Jib, gennaker, and spinnaker handling">{{ crew_form.headsails_notes }}</textarea>
+    </label>
+    <label>Winch map
+      <textarea name="winches_map" rows="3" placeholder="Which winch does what, and any electric-winch cautions">{{ crew_form.winches_map }}</textarea>
+    </label>
+    <label>Clutch map
+      <textarea name="clutches_map" rows="3" placeholder="Which clutch holds which line">{{ crew_form.clutches_map }}</textarea>
+    </label>
+
+    <h3>Engines &amp; fuel</h3>
+    <label>Daily engine checks
+      <textarea name="engines_daily" rows="3" placeholder="Hatches, dipsticks, strainers, and belts">{{ crew_form.engines_daily }}</textarea>
+    </label>
+    <label>Fuel
+      <textarea name="fuel_summary" rows="3" placeholder="Capacity, gauges, fillers, and range">{{ crew_form.fuel_summary }}</textarea>
+    </label>
+
+    <h3>Anchoring &amp; mooring</h3>
+    <label>Anchoring gear
+      <textarea name="anchoring_gear" rows="3" placeholder="Windlass controls, chain length and markings, bridle">{{ crew_form.anchoring_gear }}</textarea>
+    </label>
+    <label>Stern-to mooring
+      <textarea name="mooring_stern_to" rows="2" placeholder="Lazy lines and the passerelle">{{ crew_form.mooring_stern_to }}</textarea>
+    </label>
+
+    <h3>Electrical</h3>
+    <label>Battery switches
+      <textarea name="electrical_battery_switches" rows="3" placeholder="Where the switches are and which way is on">{{ crew_form.electrical_battery_switches }}</textarea>
+    </label>
+    <label>Shore power
+      <textarea name="electrical_shore_power" rows="2" placeholder="inlet aft on the port hull">{{ crew_form.electrical_shore_power }}</textarea>
+    </label>
+    <label>Navigation and deck lights
+      <textarea name="electrical_nav_lights" rows="2" placeholder="Where the switches are, and which lights to use">{{ crew_form.electrical_nav_lights }}</textarea>
+    </label>
+
+    <h3>Safety</h3>
+    <label>Seacocks and through-hulls (one per line: what | where)
+      <textarea name="seacocks_list" rows="4" placeholder="engine raw water | port engine bay">{{ crew_form.seacocks_list }}</textarea>
+    </label>
+    <label>Bilge pumps
+      <textarea name="bilge_layout" rows="3" placeholder="Where each pump and its switch lives">{{ crew_form.bilge_layout }}</textarea>
+    </label>
+    <label>MOB recovery
+      <textarea name="mob_recovery" rows="3" placeholder="Preferred manoeuvre, recovery point, and the gear">{{ crew_form.mob_recovery }}</textarea>
+    </label>
+    <label>Heavy weather
+      <textarea name="heavy_weather_prep" rows="3" placeholder="What to do before it gets bad">{{ crew_form.heavy_weather_prep }}</textarea>
+    </label>
+    <label>Spares and tools
+      <textarea name="spares_location" rows="2" placeholder="Where the spares and the tools are kept">{{ crew_form.spares_location }}</textarea>
+    </label>
+
+    <h3>Watchkeeping</h3>
+    <label>Standing orders
+      <textarea name="standing_orders_text" rows="4" placeholder="When to wake the skipper, what to log, and which lights to use">{{ crew_form.standing_orders_text }}</textarea>
+    </label>
+    <label>MMSI
+      <input name="vhf_mmsi" value="{{ crew_form.vhf_mmsi }}" placeholder="232000000">
+    </label>
+    <label>VHF handsets
+      <textarea name="vhf_handsets" rows="2" placeholder="Where the handhelds are, and how many">{{ crew_form.vhf_handsets }}</textarea>
+    </label>
+  </fieldset>
+
   <div class="form-actions full-width">
     <button type="submit">Save guide context</button>
     <a href="/admin/vessels/{{ vessel.id }}/guide">Guide overview</a>

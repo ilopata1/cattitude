@@ -1,0 +1,18 @@
+# Purpose: Anchoring and stern-to notes for crew, from crew facts.
+# Used by: content.assembler.apply_shared_crew_layers
+# Module: system / anchoring
+#
+
+sections:
+- t: Anchoring gear on this boat
+  type: list
+  when:
+    has_crew_fact: anchoring.gear
+  items:
+  - c: "{cf_anchoring_gear}"
+- t: Stern-to mooring
+  type: list
+  when:
+    has_crew_fact: mooring.sternTo
+  items:
+  - c: "{cf_mooring_stern_to}"

@@ -247,8 +247,56 @@ def _check_anchoring_guest_layer(failures: list[str]) -> None:
         failures.append(f"anchoring guest chapter still has status prose: {chapter}")
 
 
+def _check_crew_only_chapter(failures: list[str]) -> None:
+    """A chapter whose only real body is crew sections still publishes."""
+    from content.assembler import apply_shared_crew_layers
+
+    snapshot = {
+        "vessel": {"name": "Test", "slug": "test", "vessel_type": "sailing_catamaran"},
+        "equipment": [],
+        "guide_context": {
+            "crewFacts": {
+                "seacocks": {"list": ["engine raw water | port engine bay"]},
+            }
+        },
+    }
+    placeholder = {
+        "id": "safety",
+        "title": "Safety",
+        "summary": "Detailed information for this system is not available yet.",
+        "sections": [
+            {
+                "t": "Not yet available",
+                "type": "prose",
+                "c": "No equipment has been linked for this guide section.",
+            }
+        ],
+    }
+    layered = apply_shared_crew_layers("safety", placeholder, snapshot)
+    payload = {"systems": {"safety": layered}}
+    messages = withhold_pipeline_status(payload)
+    chapter = payload["systems"].get("safety")
+    if not isinstance(chapter, dict):
+        failures.append("crew-only safety chapter was withheld")
+        return
+    titles = [section.get("t") for section in chapter.get("sections") or []]
+    if "Seacocks and through-hulls" not in titles:
+        failures.append(f"crew seacocks section dropped: {titles}")
+        return
+    seacocks = next(
+        section
+        for section in chapter["sections"]
+        if section.get("t") == "Seacocks and through-hulls"
+    )
+    if seacocks.get("audience") != "crew":
+        failures.append(f"seacocks audience: {seacocks.get('audience')!r}")
+    if any("Safety withheld" in message for message in messages):
+        failures.append(f"crew-only chapter withheld: {messages}")
+
+
 def _check() -> list[str]:
     failures: list[str] = []
+    _check_crew_only_chapter(failures)
     payload = {"systems": _systems()}
     messages = withhold_pipeline_status(payload)
     systems = payload["systems"]

@@ -11,6 +11,7 @@ Guest-facing copy for hybrid guide modules (home rules, checklists, fix cards) l
 | `conditions.py` | Evaluate `when:` blocks (`has_category`, `twin_engine`, `is_sailing`, …) |
 | `assembler.py` | Build module payloads; exports `LIBRARY_MODULE_BUILDERS` |
 | `home_rules/` | Section headings + static rules (runtime `localRules` still come from guide context) |
+| `crew_layers/` | Shared crew sections filled from `guide_context.crewFacts` |
 | `region_packs/` | National rescue contacts keyed by country code (`sar.yaml`), appended to the emergency module |
 | `checklists/` | One YAML file per checklist (`safety-brief`, `gh`, `pd`, `anch`, `lu`, `ec`) |
 | `fix_cards/` | Default troubleshooting cards (equipment fragments can override after assembly) |
@@ -76,6 +77,40 @@ Optional keys on `guide_context.guestFacts` (JSONB, no migration). The owner fil
 | `marinaRoutine` | string | `marina_routine` | `has_marina_routine` |
 
 `cabin_names_sentence` reads “The cabins are called: …”. Location slots are the location text alone.
+
+## Crew facts
+
+Optional keys on `guide_context.crewFacts` (JSONB, no migration). The owner fills them in on Admin → Guide context, under Crew facts. A blank value is omitted. Shared files in `crew_layers/` turn a filled fact into a section, and every one of those sections is published with `audience: crew`. Long notes that belong to one boat stay in `vessels/{slug}/crew/`.
+
+`has_crew_fact:` takes the dotted key (for example `has_crew_fact: seacocks.list`). `has_daggerboards` is true only when `daggerboards.has` is true. `cf_seacocks_list` is one bullet per line, joined with newlines. The other slots are the text the owner wrote.
+
+`crew_fact_gaps` names the blanks that matter for this boat: daggerboards only on a sailing catamaran, the mainsail only on a sailing boat, anchoring gear only when the boat has ground tackle, and seacocks, standing orders, and MOB recovery on every boat. The same sentences are written as owner questions (`crewfact:<dotted.key>`) when Stage 4 or a template module is generated.
+
+| Key | Type | Slot | Condition |
+|-----|------|------|-----------|
+| `daggerboards.has` | bool | `cf_daggerboards_has` | `has_daggerboards` |
+| `daggerboards.notes` | string | `cf_daggerboards_notes` | `has_crew_fact: daggerboards.notes` |
+| `mainsail.hoist` | string | `cf_mainsail_hoist` | `has_crew_fact: mainsail.hoist` |
+| `mainsail.reefing` | string | `cf_mainsail_reefing` | `has_crew_fact: mainsail.reefing` |
+| `mainsail.preventer` | string | `cf_mainsail_preventer` | `has_crew_fact: mainsail.preventer` |
+| `headsails.notes` | string | `cf_headsails_notes` | `has_crew_fact: headsails.notes` |
+| `winches.map` | string | `cf_winches_map` | `has_crew_fact: winches.map` |
+| `clutches.map` | string | `cf_clutches_map` | `has_crew_fact: clutches.map` |
+| `seacocks.list` | one line per seacock | `cf_seacocks_list` | `has_crew_fact: seacocks.list` |
+| `engines.daily` | string | `cf_engines_daily` | `has_crew_fact: engines.daily` |
+| `fuel.summary` | string | `cf_fuel_summary` | `has_crew_fact: fuel.summary` |
+| `anchoring.gear` | string | `cf_anchoring_gear` | `has_crew_fact: anchoring.gear` |
+| `mooring.sternTo` | string | `cf_mooring_stern_to` | `has_crew_fact: mooring.sternTo` |
+| `electrical.batterySwitches` | string | `cf_electrical_battery_switches` | `has_crew_fact: electrical.batterySwitches` |
+| `electrical.shorePower` | string | `cf_electrical_shore_power` | `has_crew_fact: electrical.shorePower` |
+| `electrical.navLights` | string | `cf_electrical_nav_lights` | `has_crew_fact: electrical.navLights` |
+| `bilge.layout` | string | `cf_bilge_layout` | `has_crew_fact: bilge.layout` |
+| `standingOrders.text` | string | `cf_standing_orders_text` | `has_crew_fact: standingOrders.text` |
+| `mob.recovery` | string | `cf_mob_recovery` | `has_crew_fact: mob.recovery` |
+| `heavyWeather.prep` | string | `cf_heavy_weather_prep` | `has_crew_fact: heavyWeather.prep` |
+| `spares.location` | string | `cf_spares_location` | `has_crew_fact: spares.location` |
+| `vhf.mmsi` | string | `cf_vhf_mmsi` | `has_crew_fact: vhf.mmsi` |
+| `vhf.handsets` | string | `cf_vhf_handsets` | `has_crew_fact: vhf.handsets` |
 
 ## Regenerating from legacy
 

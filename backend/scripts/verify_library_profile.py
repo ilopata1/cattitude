@@ -14,14 +14,25 @@ _BACKEND = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_BACKEND))
 
 from content.assembler import (  # noqa: E402
+    apply_guest_layers,
+    apply_shared_crew_layers,
     build_checklist_module,
     build_fix_cards_module,
     build_home_rules_module,
 )
 from content.conditions import matches  # noqa: E402
-from content.slots import apply_slots, guest_fact_gaps, slot_values  # noqa: E402
+from content.slots import (  # noqa: E402
+    apply_slots,
+    crew_fact_gaps,
+    crew_fact_queries,
+    guest_fact_gaps,
+    slot_values,
+)
 from guide_context_utils import (  # noqa: E402
+    build_crew_facts,
     build_guest_facts,
+    build_guide_context_from_form,
+    crew_facts_form_values,
     guest_facts_form_values,
 )
 from content.loader import CONTENT_ROOT  # noqa: E402
@@ -723,6 +734,265 @@ def test_home_rule_audience() -> None:
     )
 
 
+def _section_body(section: dict) -> str:
+    parts: list[str] = []
+    if isinstance(section.get("c"), str):
+        parts.append(section["c"])
+    for item in section.get("items") or []:
+        if isinstance(item, str):
+            parts.append(item)
+        elif isinstance(item, dict):
+            parts.append(str(item.get("c") or ""))
+    return "\n".join(parts)
+
+
+def _by_title(module: dict) -> dict[str, dict]:
+    return {
+        str(section.get("t")): section
+        for section in module.get("sections") or []
+        if isinstance(section, dict)
+    }
+
+
+def test_crew_facts_and_layers() -> None:
+    filled_facts = {
+        "daggerboards": {
+            "has": True,
+            "notes": "Boards drop on the lines at the mast.",
+        },
+        "mainsail": {
+            "hoist": "Main halyard on the starboard winch.",
+            "reefing": "Two reefs, tack first.",
+            "preventer": "Preventer on the boom.",
+        },
+        "headsails": {"notes": "Furl the jib before the gennaker."},
+        "winches": {"map": "Starboard primary is the mainsheet."},
+        "clutches": {"map": "The red clutch is the main halyard."},
+        "seacocks": {
+            "list": [
+                "engine raw water | port engine bay",
+                "heads discharge | under the basin",
+            ]
+        },
+        "engines": {"daily": "Dip both engines."},
+        "fuel": {"summary": "Two 300 L tanks."},
+        "anchoring": {"gear": "Windlass foot switches at the helm."},
+        "mooring": {"sternTo": "Lazy lines on the quay wall."},
+        "electrical": {
+            "batterySwitches": "House switch is in the port engine bay.",
+            "shorePower": "inlet aft on the port hull",
+            "navLights": "Nav lights are on the helm panel.",
+        },
+        "bilge": {"layout": "One pump in each hull."},
+        "standingOrders": {"text": "Wake the skipper if the wind rises above 25 knots."},
+        "mob": {"recovery": "Quick stop, then the starboard sugar scoop."},
+        "heavyWeather": {"prep": "Reef early and close the hatches."},
+        "spares": {"location": "Spares are under the port bunk."},
+        "vhf": {"mmsi": "232000000", "handsets": "Two handhelds in the nav table."},
+    }
+    expected = {
+        "sails": {
+            "Daggerboards": "Boards up before heavy following seas",
+            "Mainsail — hoist": "Main halyard on the starboard winch.",
+            "Reefing": "Two reefs, tack first.",
+            "Preventer": "Preventer on the boom.",
+            "Headsails": "Furl the jib before the gennaker.",
+            "Winch map": "Starboard primary is the mainsheet.",
+            "Clutch map": "The red clutch is the main halyard.",
+        },
+        "engines": {
+            "Daily checks on this boat": "Dip both engines.",
+            "Fuel": "Two 300 L tanks.",
+        },
+        "anchoring": {
+            "Anchoring gear on this boat": "Windlass foot switches at the helm.",
+            "Stern-to mooring": "Lazy lines on the quay wall.",
+        },
+        "electrical": {
+            "Battery switches": "House switch is in the port engine bay.",
+            "Shore power": "inlet aft on the port hull",
+            "Navigation and deck lights": "Nav lights are on the helm panel.",
+        },
+        "safety": {
+            "Seacocks and through-hulls": "- engine raw water | port engine bay",
+            "Bilge pumps": "One pump in each hull.",
+            "MOB recovery on this boat": "Quick stop, then the starboard sugar scoop.",
+            "Heavy weather": "Reef early and close the hatches.",
+            "Spares and tools": "Spares are under the port bunk.",
+        },
+        "nav": {
+            "Watch standing orders": "Wake the skipper if the wind rises above 25 knots.",
+            "VHF and DSC": "The MMSI is 232000000.",
+        },
+    }
+    filled = boat("crew", "sailing_catamaran", [row("ground_tackle_and_mooring")])
+    filled["guide_context"]["crewFacts"] = filled_facts
+    blank = boat("crew", "sailing_catamaran", [])
+    base = {
+        "id": "chapter",
+        "sections": [{"t": "Existing", "type": "prose", "c": "Keep this."}],
+    }
+    for system_id, titles in expected.items():
+        layered = apply_shared_crew_layers(system_id, dict(base), filled)
+        found = _by_title(layered)
+        check("Existing" in found, f"{system_id} dropped the existing section")
+        for title, phrase in titles.items():
+            section = found.get(title)
+            check(section is not None, f"{system_id} missing {title}")
+            if section is None:
+                continue
+            check(section.get("audience") == "crew", f"{title} audience: {section.get('audience')!r}")
+            check(phrase in _section_body(section), f"{title} missing {phrase!r}")
+        empty = apply_shared_crew_layers(system_id, dict(base), blank)
+        empty_titles = set(_by_title(empty))
+        check(empty_titles == {"Existing"}, f"{system_id} rendered crew sections with no facts: {empty_titles}")
+
+    boards = apply_guest_layers("sails", {"id": "sails", "sections": []}, filled)
+    warning = _by_title(boards).get("Daggerboards")
+    check(warning is not None, "guest daggerboard warning missing")
+    if warning is not None:
+        check("audience" not in warning, "guest daggerboard warning was tagged")
+        check(
+            "Stay clear of the daggerboard lines and cases when they are being moved."
+            in _section_body(warning),
+            "guest daggerboard warning text",
+        )
+    no_boards = boat("crew", "sailing_catamaran", [])
+    no_boards["guide_context"]["crewFacts"] = {"daggerboards": {"has": False}}
+    hidden = apply_guest_layers("sails", {"id": "sails", "sections": []}, no_boards)
+    check("Daggerboards" not in _by_title(hidden), "daggerboard warning showed without boards")
+    crew_hidden = apply_shared_crew_layers("sails", {"id": "sails", "sections": []}, no_boards)
+    check("Daggerboards" not in _by_title(crew_hidden), "crew daggerboards showed when has is false")
+
+    bullets = slot_values(filled)["cf_seacocks_list"]
+    check(
+        bullets == "- engine raw water | port engine bay\n- heads discharge | under the basin",
+        f"seacock bullets: {bullets!r}",
+    )
+    check(slot_values(filled)["cf_daggerboards_has"] == "yes", "daggerboards slot")
+    check(matches({"has_daggerboards": True}, filled), "has_daggerboards did not open")
+    check(not matches({"has_daggerboards": True}, blank), "has_daggerboards opened on a blank boat")
+    check(matches({"has_crew_fact": "seacocks.list"}, filled), "seacocks fact did not open")
+    check(not matches({"has_crew_fact": "winches.map"}, blank), "winch map opened on a blank boat")
+    check(
+        "The MMSI is 232000000." in _section_body(_by_title(
+            apply_shared_crew_layers("nav", {"id": "nav", "sections": []}, filled)
+        )["VHF and DSC"]),
+        "MMSI line missing",
+    )
+
+    sailing_cat = boat("gaps", "sailing_catamaran", [])
+    sailing_mono = boat("gaps", "cruising_monohull", [row("rigging_and_sail_handling")])
+    power = boat("gaps", "motor_yacht", [])
+    with_anchor = boat("gaps", "motor_yacht", [row("ground_tackle_and_mooring")])
+    cat_gaps = crew_fact_gaps(sailing_cat)
+    check(len(cat_gaps) == 7, f"sailing cat gaps: {cat_gaps}")
+    check(any("daggerboards" in line.lower() for line in cat_gaps), "sailing cat omitted daggerboards")
+    check(len(crew_fact_gaps(sailing_mono)) == 6, f"monohull gaps: {crew_fact_gaps(sailing_mono)}")
+    check(
+        not any("daggerboard" in line.lower() for line in crew_fact_gaps(sailing_mono)),
+        "monohull listed daggerboards",
+    )
+    check(len(crew_fact_gaps(power)) == 3, f"power boat gaps: {crew_fact_gaps(power)}")
+    check(
+        not any("mainsail" in line.lower() or "daggerboard" in line.lower() for line in crew_fact_gaps(power)),
+        "power boat listed sail facts",
+    )
+    check(len(crew_fact_gaps(with_anchor)) == 4, f"anchor boat gaps: {crew_fact_gaps(with_anchor)}")
+    check(any("anchoring gear" in line.lower() for line in crew_fact_gaps(with_anchor)), "anchoring gap missing")
+    check(crew_fact_gaps(filled) == [], f"filled boat still has crew gaps: {crew_fact_gaps(filled)}")
+    notes_blank = boat("gaps", "sailing_catamaran", [])
+    notes_blank["guide_context"]["crewFacts"] = {"daggerboards": {"has": True}}
+    notes_gaps = crew_fact_gaps(notes_blank)
+    check(
+        any(line.startswith("How the daggerboards") for line in notes_gaps),
+        f"notes gap missing: {notes_gaps}",
+    )
+    check(
+        not any(line.startswith("Whether this boat has daggerboards") for line in notes_gaps),
+        "has gap remained after daggerboards were recorded",
+    )
+    queries = crew_fact_queries(sailing_cat)
+    check(len(queries) == len(cat_gaps), "queries and gap sentences diverged")
+    check(queries[0]["id"] == "crewfact:daggerboards.has", f"query id: {queries[0]}")
+    check(queries[0]["prompt"] == cat_gaps[0], "query prompt")
+    check(
+        queries[0]["detail"] == {"kind": "crew_fact", "key": "daggerboards.has"},
+        f"query detail: {queries[0].get('detail')}",
+    )
+
+    built = build_crew_facts(
+        daggerboards_has="yes",
+        daggerboards_notes="  Boards drop on the lines.  ",
+        seacocks_list="engine raw water | port\n\nheads | basin\n",
+        electrical_shore_power=" inlet aft on the port hull ",
+    )
+    check(built["daggerboards"]["has"] is True, "daggerboards has")
+    check(built["daggerboards"]["notes"] == "Boards drop on the lines.", "notes were not trimmed")
+    check(
+        built["seacocks"]["list"] == ["engine raw water | port", "heads | basin"],
+        f"seacocks: {built.get('seacocks')}",
+    )
+    check(built["electrical"]["shorePower"] == "inlet aft on the port hull", "shore power")
+    check("mainsail" not in built, "blank mainsail was stored")
+    check(build_crew_facts(daggerboards_has="no") == {"daggerboards": {"has": False}}, "no boards")
+    check(build_crew_facts(daggerboards_has="unset") == {}, "unset daggerboards were stored")
+    form = crew_facts_form_values(built)
+    check(form["daggerboards_has"] == "yes", "form daggerboards")
+    check(form["seacocks_list"] == "engine raw water | port\nheads | basin", "form seacocks")
+    check(form["electrical_shore_power"] == "inlet aft on the port hull", "form shore power")
+    empty_form = crew_facts_form_values(None)
+    for key in (
+        "daggerboards_has",
+        "seacocks_list",
+        "standing_orders_text",
+        "vhf_handsets",
+        "mainsail_hoist",
+    ):
+        check(key in empty_form, f"empty crew form missing {key}")
+    try:
+        build_crew_facts(daggerboards_has="maybe")
+        check(False, "invalid daggerboards value was accepted")
+    except ValueError:
+        pass
+
+    context = build_guide_context_from_form(
+        display_name="",
+        region_label="",
+        marina="",
+        country_code="",
+        timezone="",
+        vessel_callsign="",
+        office_vhf_label="",
+        office_vhf_channel="",
+        office_vhf_hours="",
+        marina_vhf_label="",
+        marina_vhf_channel="",
+        marina_vhf_detail="",
+        emergency_contacts_json="[]",
+        local_rules_text="",
+        crew_facts=built,
+    )
+    check(context.get("crewFacts") == built, "guide context dropped crew facts")
+    bare_context = build_guide_context_from_form(
+        display_name="",
+        region_label="",
+        marina="",
+        country_code="",
+        timezone="",
+        vessel_callsign="",
+        office_vhf_label="",
+        office_vhf_channel="",
+        office_vhf_hours="",
+        marina_vhf_label="",
+        marina_vhf_channel="",
+        marina_vhf_detail="",
+        emergency_contacts_json="[]",
+        local_rules_text="",
+    )
+    check("crewFacts" not in bare_context, "empty crew facts were stored")
+
+
 def test_vessel_override_survives_second_assembly() -> None:
     path = CONTENT_ROOT / "vessels" / "supernova.yaml"
     if path.exists():
@@ -757,6 +1027,7 @@ def main() -> None:
     test_owner_with_crew()
     test_guest_fact_slots_and_flags()
     test_home_rule_audience()
+    test_crew_facts_and_layers()
     test_vessel_override_survives_second_assembly()
     if FAILURES:
         print(f"FAILED: {len(FAILURES)}")

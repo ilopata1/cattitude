@@ -758,6 +758,32 @@ def _crew_photo_index(slug: str) -> dict[str, dict[str, str]]:
     return index
 
 
+def apply_shared_crew_layers(
+    system_id: str, payload: dict[str, Any], snapshot: dict[str, Any]
+) -> dict[str, Any]:
+    """Append shared crew sections for any vessel that has the facts.
+
+    Files live at ``content/crew_layers/{system_id}.yaml``.
+    Every section is published with ``audience: crew``, whatever the YAML says.
+    Vessel files under ``content/vessels/{slug}/crew/`` are applied afterwards
+    by ``apply_crew_layers``. New sections land before a trailing Related section.
+    """
+    relative = f"crew_layers/{system_id}.yaml"
+    if not (CONTENT_ROOT / relative).is_file():
+        return payload
+    data = load_yaml_cached(relative)
+    incoming = _sections_from_spec(data.get("sections") or [], snapshot)
+    for section in incoming:
+        section["audience"] = "crew"
+    if not incoming:
+        return payload
+    merged = dict(payload)
+    merged["sections"] = _place_before_related(
+        list(payload.get("sections") or []), incoming
+    )
+    return merged
+
+
 def apply_crew_layers(
     system_id: str, payload: dict[str, Any], snapshot: dict[str, Any]
 ) -> dict[str, Any]:

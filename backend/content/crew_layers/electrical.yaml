@@ -1,0 +1,24 @@
+# Purpose: Battery, shore-power, and light notes for crew, from crew facts.
+# Used by: content.assembler.apply_shared_crew_layers
+# Module: system / electrical
+#
+
+sections:
+- t: Battery switches
+  type: list
+  when:
+    has_crew_fact: electrical.batterySwitches
+  items:
+  - c: "{cf_electrical_battery_switches}"
+- t: Shore power
+  type: list
+  when:
+    has_crew_fact: electrical.shorePower
+  items:
+  - c: "{cf_electrical_shore_power}"
+- t: Navigation and deck lights
+  type: list
+  when:
+    has_crew_fact: electrical.navLights
+  items:
+  - c: "{cf_electrical_nav_lights}"

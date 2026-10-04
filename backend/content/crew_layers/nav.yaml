@@ -1,0 +1,25 @@
+# Purpose: Watch orders and VHF notes for crew, from crew facts.
+# Used by: content.assembler.apply_shared_crew_layers
+# Module: system / nav
+#
+
+sections:
+- t: Watch standing orders
+  type: list
+  when:
+    has_crew_fact: standingOrders.text
+  items:
+  - c: "{cf_standing_orders_text}"
+- t: VHF and DSC
+  type: list
+  when:
+    any:
+    - has_crew_fact: vhf.mmsi
+    - has_crew_fact: vhf.handsets
+  items:
+  - c: The MMSI is {cf_vhf_mmsi}.
+    when:
+      has_crew_fact: vhf.mmsi
+  - c: "{cf_vhf_handsets}"
+    when:
+      has_crew_fact: vhf.handsets

@@ -265,6 +265,121 @@ def guest_facts_form_values(facts: dict[str, Any] | None) -> dict[str, Any]:
     }
 
 
+def _store_nested(facts: dict[str, Any], group: str, field: str, value: str) -> None:
+    text = value.strip()
+    if text:
+        facts.setdefault(group, {})[field] = text
+
+
+def build_crew_facts(
+    *,
+    daggerboards_has: str = "",
+    daggerboards_notes: str = "",
+    mainsail_hoist: str = "",
+    mainsail_reefing: str = "",
+    mainsail_preventer: str = "",
+    headsails_notes: str = "",
+    winches_map: str = "",
+    clutches_map: str = "",
+    seacocks_list: str = "",
+    engines_daily: str = "",
+    fuel_summary: str = "",
+    anchoring_gear: str = "",
+    mooring_stern_to: str = "",
+    electrical_battery_switches: str = "",
+    electrical_shore_power: str = "",
+    electrical_nav_lights: str = "",
+    bilge_layout: str = "",
+    standing_orders_text: str = "",
+    mob_recovery: str = "",
+    heavy_weather_prep: str = "",
+    spares_location: str = "",
+    vhf_mmsi: str = "",
+    vhf_handsets: str = "",
+) -> dict[str, Any]:
+    """Boat-specific crew notes. Blank fields are omitted."""
+    facts: dict[str, Any] = {}
+    boards = daggerboards_has.strip().lower()
+    if boards in {"yes", "true"}:
+        facts.setdefault("daggerboards", {})["has"] = True
+    elif boards in {"no", "false"}:
+        facts.setdefault("daggerboards", {})["has"] = False
+    elif boards not in {"", "unset", "default"}:
+        raise ValueError("Daggerboards must be yes, no, or unset.")
+    _store_nested(facts, "daggerboards", "notes", daggerboards_notes)
+    _store_nested(facts, "mainsail", "hoist", mainsail_hoist)
+    _store_nested(facts, "mainsail", "reefing", mainsail_reefing)
+    _store_nested(facts, "mainsail", "preventer", mainsail_preventer)
+    _store_nested(facts, "headsails", "notes", headsails_notes)
+    _store_nested(facts, "winches", "map", winches_map)
+    _store_nested(facts, "clutches", "map", clutches_map)
+    seacocks = [line.strip() for line in seacocks_list.splitlines() if line.strip()]
+    if seacocks:
+        facts["seacocks"] = {"list": seacocks}
+    _store_nested(facts, "engines", "daily", engines_daily)
+    _store_nested(facts, "fuel", "summary", fuel_summary)
+    _store_nested(facts, "anchoring", "gear", anchoring_gear)
+    _store_nested(facts, "mooring", "sternTo", mooring_stern_to)
+    _store_nested(facts, "electrical", "batterySwitches", electrical_battery_switches)
+    _store_nested(facts, "electrical", "shorePower", electrical_shore_power)
+    _store_nested(facts, "electrical", "navLights", electrical_nav_lights)
+    _store_nested(facts, "bilge", "layout", bilge_layout)
+    _store_nested(facts, "standingOrders", "text", standing_orders_text)
+    _store_nested(facts, "mob", "recovery", mob_recovery)
+    _store_nested(facts, "heavyWeather", "prep", heavy_weather_prep)
+    _store_nested(facts, "spares", "location", spares_location)
+    _store_nested(facts, "vhf", "mmsi", vhf_mmsi)
+    _store_nested(facts, "vhf", "handsets", vhf_handsets)
+    return facts
+
+
+def _form_crew_text(facts: dict[str, Any], group: str, field: str) -> str:
+    raw = facts.get(group)
+    if not isinstance(raw, dict):
+        return ""
+    value = raw.get(field)
+    if isinstance(value, list):
+        return "\n".join(str(item).strip() for item in value if str(item).strip())
+    return str(value or "").strip()
+
+
+def crew_facts_form_values(facts: dict[str, Any] | None) -> dict[str, Any]:
+    facts = facts if isinstance(facts, dict) else {}
+    boards = facts.get("daggerboards") if isinstance(facts.get("daggerboards"), dict) else {}
+    has = boards.get("has")
+    if has is True:
+        boards_value = "yes"
+    elif has is False:
+        boards_value = "no"
+    else:
+        boards_value = ""
+    return {
+        "daggerboards_has": boards_value,
+        "daggerboards_notes": _form_crew_text(facts, "daggerboards", "notes"),
+        "mainsail_hoist": _form_crew_text(facts, "mainsail", "hoist"),
+        "mainsail_reefing": _form_crew_text(facts, "mainsail", "reefing"),
+        "mainsail_preventer": _form_crew_text(facts, "mainsail", "preventer"),
+        "headsails_notes": _form_crew_text(facts, "headsails", "notes"),
+        "winches_map": _form_crew_text(facts, "winches", "map"),
+        "clutches_map": _form_crew_text(facts, "clutches", "map"),
+        "seacocks_list": _form_crew_text(facts, "seacocks", "list"),
+        "engines_daily": _form_crew_text(facts, "engines", "daily"),
+        "fuel_summary": _form_crew_text(facts, "fuel", "summary"),
+        "anchoring_gear": _form_crew_text(facts, "anchoring", "gear"),
+        "mooring_stern_to": _form_crew_text(facts, "mooring", "sternTo"),
+        "electrical_battery_switches": _form_crew_text(facts, "electrical", "batterySwitches"),
+        "electrical_shore_power": _form_crew_text(facts, "electrical", "shorePower"),
+        "electrical_nav_lights": _form_crew_text(facts, "electrical", "navLights"),
+        "bilge_layout": _form_crew_text(facts, "bilge", "layout"),
+        "standing_orders_text": _form_crew_text(facts, "standingOrders", "text"),
+        "mob_recovery": _form_crew_text(facts, "mob", "recovery"),
+        "heavy_weather_prep": _form_crew_text(facts, "heavyWeather", "prep"),
+        "spares_location": _form_crew_text(facts, "spares", "location"),
+        "vhf_mmsi": _form_crew_text(facts, "vhf", "mmsi"),
+        "vhf_handsets": _form_crew_text(facts, "vhf", "handsets"),
+    }
+
+
 def build_guide_context_from_form(
     *,
     display_name: str,
@@ -282,6 +397,7 @@ def build_guide_context_from_form(
     emergency_contacts_json: str,
     local_rules_text: str,
     guest_facts: dict[str, Any] | None = None,
+    crew_facts: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     context = {
         "displayName": display_name.strip(),
@@ -305,6 +421,8 @@ def build_guide_context_from_form(
     }
     if guest_facts:
         context["guestFacts"] = guest_facts
+    if crew_facts:
+        context["crewFacts"] = crew_facts
     return context
 
 

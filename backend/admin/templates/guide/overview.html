@@ -61,6 +61,15 @@
       </ul>
       <p><a href="/admin/vessels/{{ vessel.id }}/guide-context">Fill these in under Guest handbook facts</a></p>
     {% endif %}
+    {% if crew_fact_gaps %}
+      <h3>Crew facts still blank</h3>
+      <ul class="note-list">
+        {% for message in crew_fact_gaps %}
+        <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+      <p><a href="/admin/vessels/{{ vessel.id }}/guide-context">Fill these in under Crew facts</a></p>
+    {% endif %}
     {% if equipment_gaps %}
       <div class="flash flash-warn">
         <strong>{{ equipment_gaps|length }} equipment guide section(s)</strong> have no linked equipment yet

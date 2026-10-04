@@ -1,0 +1,35 @@
+# Purpose: Seacocks, bilge, recovery, and spares notes for crew, from crew facts.
+# Used by: content.assembler.apply_shared_crew_layers
+# Module: system / safety
+#
+
+sections:
+- t: Seacocks and through-hulls
+  type: prose
+  when:
+    has_crew_fact: seacocks.list
+  c: "{cf_seacocks_list}"
+- t: Bilge pumps
+  type: list
+  when:
+    has_crew_fact: bilge.layout
+  items:
+  - c: "{cf_bilge_layout}"
+- t: MOB recovery on this boat
+  type: list
+  when:
+    has_crew_fact: mob.recovery
+  items:
+  - c: "{cf_mob_recovery}"
+- t: Heavy weather
+  type: list
+  when:
+    has_crew_fact: heavyWeather.prep
+  items:
+  - c: "{cf_heavy_weather_prep}"
+- t: Spares and tools
+  type: list
+  when:
+    has_crew_fact: spares.location
+  items:
+  - c: "{cf_spares_location}"
