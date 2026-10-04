@@ -12,7 +12,7 @@
         "rows": [
           {
             "name": "Frigomar Air Conditioning System",
-            "location": "Saloon / Living Area"
+            "location": "Port – Accommodation / Cabins – Aft Cabin"
           }
         ]
       },
@@ -39,12 +39,14 @@
       {
         "t": "If something's not right",
         "type": "prose",
-        "c": "If an alarm appears, note the code on the panel, then clear it and restart the unit — or switch the unit off and on again.\n\nTo run the seawater pump alone, hold the mode button for ten seconds while the unit is off until the mode icon turns yellow."
+        "c": "If an alarm appears, note the code on the panel, then clear it and restart the unit — or switch the unit off and on again.\n\nTo run the seawater pump alone, hold the mode button for ten seconds while the unit is off until the mode icon turns yellow.",
+        "audience": "crew"
       },
       {
         "t": "Care & upkeep",
         "type": "prose",
-        "c": "Keep the seawater filter clean so the pump stays protected."
+        "c": "Keep the seawater filter clean so the pump stays protected.",
+        "audience": "crew"
       },
       {
         "t": "Related",
@@ -132,23 +134,27 @@
       {
         "t": "Operating",
         "type": "prose",
-        "c": "When shore or mains AC input is limited, to avoid tripping the external AC circuit breaker, set the AC input current limit from the Combi front panel on the inverter-charger, or the CZone Inverter Charger page on the touchscreen.\n\nStart and stop the generator from its Panda iControl2 panel, and give it a visual check before starting."
+        "c": "When shore or mains AC input is limited, to avoid tripping the external AC circuit breaker, set the AC input current limit from the Combi front panel on the inverter-charger, or the CZone Inverter Charger page on the touchscreen.\n\nStart and stop the generator from its Panda iControl2 panel, and give it a visual check before starting.",
+        "audience": "crew"
       },
       {
         "t": "If something's not right",
         "type": "prose",
-        "c": "The house batteries protect themselves through their BMS — a protective disconnect is the system doing its job, uncommon in normal use, and recoverable with a reset. After a protective disconnect, reset the BMS on the affected house battery before restoring loads."
+        "c": "The house batteries protect themselves through their BMS — a protective disconnect is the system doing its job, uncommon in normal use, and recoverable with a reset. After a protective disconnect, reset the BMS on the affected house battery before restoring loads.",
+        "audience": "crew"
       },
       {
         "t": "Care & upkeep",
         "type": "prose",
         "c": "Battery isolation switches and Class-T protection for the bank can be found in the Electrical Panel section of this guide.",
+        "audience": "crew",
         "html": "<p>Battery isolation switches and Class-T protection for the bank can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:electrical\">Electrical Panel section of this guide</span>.</p>"
       },
       {
         "t": "Solar charging",
         "type": "prose",
-        "c": "Supernova carries about 1.6–1.8 kW of solar.\n\nHer davit array is three rigid panels, about 1.0–1.2 kW, on the davit array controller (Victron SmartSolar MPPT 150/60).\n\nHer coachroof array is six semi-flex panels, about 600 W, on 2 interchangeable coachroof array controllers (Victron SmartSolar MPPT 75/15).\n\nThose chargers feed her Mastervolt MLI Ultra house bank.\n\nCheck her solar charge in the VictronConnect app on each controller when you want to see how much the panels are producing.\n\nUnder sail, when yield looks soft, watch the coachroof controllers first because the boom can shade that array, and treat the davit array controller as the steadier production reference."
+        "c": "Supernova carries about 1.6–1.8 kW of solar.\n\nHer davit array is three rigid panels, about 1.0–1.2 kW, on the davit array controller (Victron SmartSolar MPPT 150/60).\n\nHer coachroof array is six semi-flex panels, about 600 W, on 2 interchangeable coachroof array controllers (Victron SmartSolar MPPT 75/15).\n\nThose chargers feed her Mastervolt MLI Ultra house bank.\n\nCheck her solar charge in the VictronConnect app on each controller when you want to see how much the panels are producing.\n\nUnder sail, when yield looks soft, watch the coachroof controllers first because the boom can shade that array, and treat the davit array controller as the steadier production reference.",
+        "audience": "crew"
       },
       {
         "t": "Related",
@@ -221,18 +227,21 @@
         "t": "Monitoring",
         "type": "prose",
         "c": "Open Monitoring when you want to read the boat's configured meters and status channels from the CZone switching map.\n\nHouse-bank monitoring is available from this screen; full battery detail can be found in the Batteries & Energy section of this guide.\n\nAlarms use severity levels (Critical, Important, Standard, Warning); when an alarm appears, open it on the Alarms page for details and to acknowledge it.",
+        "audience": "crew",
         "html": "<p>Open Monitoring when you want to read the boat&#x27;s configured meters and status channels from the CZone switching map.</p><p>House-bank monitoring is available from this screen; full battery detail can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:batteries\">Batteries &amp; Energy section of this guide</span>.</p><p>Alarms use severity levels (Critical, Important, Standard, Warning); when an alarm appears, open it on the Alarms page for details and to acknowledge it.</p>"
       },
       {
         "t": "Operating",
         "type": "prose",
         "c": "Modes let you control several circuits with one action — activate a Mode from the Modes page when you want that scene.\n\nOn Control, named circuits include Fridge, Freezer, Zeus x2, Lights - Salon PORT, Lights - Salon STBD, Windlass, Navigation Light, Red lights (and 4 more). When you need one, press it to open its controls.\n\nThe Inverter Charger page shows the two inverter-chargers (Mastervolt Mass Combi Pro) for AC/DC power flow; those procedures can be found in the Batteries & Energy section of this guide.\n\n(Configuration pending) Exact Modes, Favourites shortcuts, and alarm details are not yet recorded for this installation; they will appear here once the CZone configuration or an owner screen walkthrough is available.",
+        "audience": "crew",
         "html": "<p>Modes let you control several circuits with one action — activate a Mode from the Modes page when you want that scene.</p><p>On Control, named circuits include Fridge, Freezer, Zeus x2, Lights - Salon PORT, Lights - Salon STBD, Windlass, Navigation Light, Red lights (and 4 more). When you need one, press it to open its controls.</p><p>The Inverter Charger page shows the two inverter-chargers (Mastervolt Mass Combi Pro) for AC/DC power flow; those procedures can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:batteries\">Batteries &amp; Energy section of this guide</span>.</p><p>(Configuration pending) Exact Modes, Favourites shortcuts, and alarm details are not yet recorded for this installation; they will appear here once the CZone configuration or an owner screen walkthrough is available.</p>"
       },
       {
         "t": "If something's not right",
         "type": "prose",
-        "c": "CZone literature also describes AC Mains and Climate pages; they do not appear in the menus until the matching interfaces are configured."
+        "c": "CZone literature also describes AC Mains and Climate pages; they do not appear in the menus until the matching interfaces are configured.",
+        "audience": "crew"
       },
       {
         "t": "Related",
@@ -296,12 +305,14 @@
         "t": "How it works",
         "type": "prose",
         "c": "Leave the ACR Manual Control Override Knob in automatic mode during normal operation so the relay can combine and isolate banks on its own.\n\nThree CZone output interfaces (CZone Combination Output Interface) feed the switched DC circuits from the protected distribution. Use the CZone touchscreen when you need to switch those circuits; details can be found in the Controls and Monitoring section of this guide.",
+        "audience": "crew",
         "html": "<p>Leave the ACR Manual Control Override Knob in automatic mode during normal operation so the relay can combine and isolate banks on its own.</p><p>Three CZone output interfaces (CZone Combination Output Interface) feed the switched DC circuits from the protected distribution. Use the CZone touchscreen when you need to switch those circuits; details can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:controls\">Controls and Monitoring section of this guide</span>.</p>"
       },
       {
         "t": "Operating",
         "type": "prose",
-        "c": "The ACR Manual Control Override Knob takes manual control of bank combine and isolate. Use it when:"
+        "c": "The ACR Manual Control Override Knob takes manual control of bank combine and isolate. Use it when:",
+        "audience": "crew"
       },
       {
         "t": "Operating",
@@ -310,23 +321,27 @@
           "you need to combine battery banks manually",
           "remote operation must be blocked",
           "the ACR must be secured for servicing"
-        ]
+        ],
+        "audience": "crew"
       },
       {
         "t": "Operating",
         "type": "prose",
-        "c": "Use the local rotary isolation switch when that battery connection must be disconnected at the switch."
+        "c": "Use the local rotary isolation switch when that battery connection must be disconnected at the switch.",
+        "audience": "crew"
       },
       {
         "t": "If something's not right",
         "type": "prose",
         "c": "If a bank connection drops unexpectedly, confirm ACR combine/isolate state and Class-T fuse integrity before restoring loads. BMS reset steps can be found in the Batteries & Energy section of this guide.",
+        "audience": "crew",
         "html": "<p>If a bank connection drops unexpectedly, confirm ACR combine/isolate state and Class-T fuse integrity before restoring loads. BMS reset steps can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:batteries\">Batteries &amp; Energy section of this guide</span>.</p>"
       },
       {
         "t": "Care & upkeep",
         "type": "prose",
         "c": "The DC distribution busbar (ProInstaller busbar) — a heavy-duty conductor that distributes power — is the main power distribution point behind those protected connections.\n\nThe MasterBus–CZone bridge (Mastervolt MasterBus Bridge Interface) allows MasterBus equipment and the CZone network to exchange status and control across that boundary.\n\nHouse-bank capacity, charging, and inverter-charger procedures can be found in the Batteries & Energy section of this guide.",
+        "audience": "crew",
         "html": "<p>The DC distribution busbar (ProInstaller busbar) — a heavy-duty conductor that distributes power — is the main power distribution point behind those protected connections.</p><p>The MasterBus–CZone bridge (Mastervolt MasterBus Bridge Interface) allows MasterBus equipment and the CZone network to exchange status and control across that boundary.</p><p>House-bank capacity, charging, and inverter-charger procedures can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:batteries\">Batteries &amp; Energy section of this guide</span>.</p>"
       },
       {
@@ -402,27 +417,32 @@
       {
         "t": "Turning it on",
         "type": "prose",
-        "c": "Start each engine from the Nanni instrument panel with the control lever in neutral, then confirm raw water flows from the exhaust outlet once the engine is running."
+        "c": "Start each engine from the Nanni instrument panel with the control lever in neutral, then confirm raw water flows from the exhaust outlet once the engine is running.",
+        "audience": "crew"
       },
       {
         "t": "Monitoring",
         "type": "prose",
-        "c": "While under way, watch coolant temperature and oil pressure on the Nanni instrument panel; stop promptly if either goes abnormal."
+        "c": "While under way, watch coolant temperature and oil pressure on the Nanni instrument panel; stop promptly if either goes abnormal.",
+        "audience": "crew"
       },
       {
         "t": "Operating",
         "type": "prose",
-        "c": "Stop each engine from the Nanni instrument panel (key counter-clockwise or ON/STOP) after a short idle in neutral — never by opening the main battery switch while running."
+        "c": "Stop each engine from the Nanni instrument panel (key counter-clockwise or ON/STOP) after a short idle in neutral — never by opening the main battery switch while running.",
+        "audience": "crew"
       },
       {
         "t": "If something's not right",
         "type": "prose",
-        "c": "If an engine will not start, confirm the control lever is in neutral, the panel is powered, and fuses or the main switch have not opened — then retry from the panel.\n\nIf the engine is reluctant to start after several attempts, close the raw-water seacock before further cranking so the muffler does not fill with water; reopen the seacock before the next successful start.\n\nStop immediately if oil pressure drops suddenly, coolant temperature climbs, or there are other signs of part failure."
+        "c": "If an engine will not start, confirm the control lever is in neutral, the panel is powered, and fuses or the main switch have not opened — then retry from the panel.\n\nIf the engine fails to start after several attempts, close the raw-water seacock before continuing to crank. This helps prevent the muffler from filling with water; reopen the seacock immediately after a successful start.\n\nStop immediately if oil pressure drops suddenly, coolant temperature climbs, or there are other signs of part failure.",
+        "audience": "crew"
       },
       {
         "t": "Care & upkeep",
         "type": "prose",
-        "c": "Daily care includes oil and coolant level checks and keeping the raw-water filter clear — deeper service intervals belong with the operators manual and yard schedule."
+        "c": "Daily care includes oil and coolant level checks and keeping the raw-water filter clear — deeper service intervals belong with the operators manual and yard schedule.",
+        "audience": "crew"
       },
       {
         "t": "Related",
@@ -500,12 +520,14 @@
         "t": "How it works",
         "type": "prose",
         "c": "Marina pump-out uses the waste deck fitting with these valves left closed. Open a discharge valve only when emptying the tanks overboard.\n\nFresh-water supply for heads, when fitted, is covered in the Water Systems section of this guide; DC protection for sanitation circuits can be found in the Electrical Panel section of this guide.",
+        "audience": "crew",
         "html": "<p>Marina pump-out uses the waste deck fitting with these valves left closed. Open a discharge valve only when emptying the tanks overboard.</p><p>Fresh-water supply for heads, when fitted, is covered in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:water\">Water Systems section of this guide</span>; DC protection for sanitation circuits can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:electrical\">Electrical Panel section of this guide</span>.</p>"
       },
       {
         "t": "Operating",
         "type": "prose",
-        "c": "Keep the discharge valves closed in marinas, ports, harbors, and anchorages.\n\nEmpty the tanks at sea only where local rules allow — in international waters that is typically at least 12 nautical miles from land."
+        "c": "Keep the discharge valves closed in marinas, ports, harbors, and anchorages.\n\nEmpty the tanks at sea only where local rules allow — in international waters that is typically at least 12 nautical miles from land.",
+        "audience": "crew"
       },
       {
         "t": "Related",
@@ -591,17 +613,20 @@
       {
         "t": "Turning it on",
         "type": "prose",
-        "c": "Turn a chartplotter on or off from its power control when leaving or returning to the helm."
+        "c": "Turn a chartplotter on or off from its power control when leaving or returning to the helm.",
+        "audience": "crew"
       },
       {
         "t": "Monitoring",
         "type": "prose",
-        "c": "Open Alerts when you want recent or historic system alerts on the chartplotters.\n\nSelect thermal or color view from a chartplotter when you want live Watchkeeper camera images.\n\nEnable or disable the Watchkeeper voice alarm from a chartplotter when you want audible alerts for detected objects."
+        "c": "Open Alerts when you want recent or historic system alerts on the chartplotters.\n\nSelect thermal or color view from a chartplotter when you want live Watchkeeper camera images.\n\nEnable or disable the Watchkeeper voice alarm from a chartplotter when you want audible alerts for detected objects.",
+        "audience": "crew"
       },
       {
         "t": "Operating",
         "type": "prose",
-        "c": "Open the home screen when you need apps, settings, or alerts.\n\nOpen the Chart app from the home screen when you want navigation charts.\n\nOpen the Radar app from the home screen when you want the radar display, and set all radars to standby from a chartplotter when you want connected radars to stop transmitting.\n\nPin apps you use most often to the activity bar when you want faster access, and create a custom app group with New split when you want two or more apps on screen at once.\n\nActivate MOB in an emergency to create a MOB waypoint at the current position and open the MOB app.\n\nAdjust the Watchkeeper camera tilt when you need to compensate for boat trim at cruising speed."
+        "c": "Open the home screen when you need apps, settings, or alerts.\n\nOpen the Chart app from the home screen when you want navigation charts.\n\nOpen the Radar app from the home screen when you want the radar display, and set all radars to standby from a chartplotter when you want connected radars to stop transmitting.\n\nPin apps you use most often to the activity bar when you want faster access, and create a custom app group with New split when you want two or more apps on screen at once.\n\nActivate MOB in an emergency to create a MOB waypoint at the current position and open the MOB app.\n\nAdjust the Watchkeeper camera tilt when you need to compensate for boat trim at cruising speed.",
+        "audience": "crew"
       },
       {
         "t": "If something's not right",
@@ -674,32 +699,38 @@
         "t": "How it works",
         "type": "prose",
         "c": "The NAVIGATOR control panel selects AC or DC supply and sets working pressure with its motorized pressure-regulator knob. When running on 12 V or 24 V DC for more than five minutes, an engine, shore charger, or generator must be on to support the load.\n\nBattery bank and charging context can be found in the Batteries & Energy section of this guide; DC protection and distribution can be found in the Electrical Panel section of this guide.",
+        "audience": "crew",
         "html": "<p>The NAVIGATOR control panel selects AC or DC supply and sets working pressure with its motorized pressure-regulator knob. When running on 12 V or 24 V DC for more than five minutes, an engine, shore charger, or generator must be on to support the load.</p><p>Battery bank and charging context can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:batteries\">Batteries &amp; Energy section of this guide</span>; DC protection and distribution can be found in the <span role=\"link\" tabindex=\"0\" class=\"guide-link\" data-guide-link=\"system:electrical\">Electrical Panel section of this guide</span>.</p>"
       },
       {
         "t": "Turning it on",
         "type": "prose",
-        "c": "Start the watermaker from the NAVIGATOR control panel when you need to begin fresh water production."
+        "c": "Start the watermaker from the NAVIGATOR control panel when you need to begin fresh water production.",
+        "audience": "crew"
       },
       {
         "t": "Monitoring",
         "type": "prose",
-        "c": "While producing, use the NAVIGATOR control panel to confirm the unit is running and to adjust voltage selection or working pressure."
+        "c": "While producing, use the NAVIGATOR control panel to confirm the unit is running and to adjust voltage selection or working pressure.",
+        "audience": "crew"
       },
       {
         "t": "Operating",
         "type": "prose",
-        "c": "Stop the watermaker from the NAVIGATOR control panel to put it in stand-by when you no longer need to make water.\n\nRestart from the same panel after a stop when you are ready to produce again."
+        "c": "Stop the watermaker from the NAVIGATOR control panel to put it in stand-by when you no longer need to make water.\n\nRestart from the same panel after a stop when you are ready to produce again.",
+        "audience": "crew"
       },
       {
         "t": "If something's not right",
         "type": "prose",
-        "c": "If the watermaker will not produce, confirm the panel voltage selection and that an engine, shore charger, or generator is on when running on 12 V or 24 V DC — then retry start from the panel."
+        "c": "If the watermaker will not produce, confirm the panel voltage selection and that an engine, shore charger, or generator is on when running on 12 V or 24 V DC — then retry start from the panel.",
+        "audience": "crew"
       },
       {
         "t": "Care & upkeep",
         "type": "prose",
-        "c": "Rinse the membranes from the panel after prolonged inactivity to protect membrane quality."
+        "c": "Rinse the membranes from the panel after prolonged inactivity to protect membrane quality.",
+        "audience": "crew"
       },
       {
         "t": "Related",
