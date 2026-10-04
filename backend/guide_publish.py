@@ -15,7 +15,7 @@ from guide_bootstrap import (
     canonical_json_hash,
     read_schema_version,
 )
-from guide_guest_withhold import withhold_pipeline_status
+from guide_guest_withhold import guest_visible_section_count, withhold_pipeline_status
 from guide_publish_consistency import apply_publish_consistency
 from guide_tone import load_tone_grounding, tone_warnings
 from guide_learn_checks import rewrite_learn_checks
@@ -130,6 +130,15 @@ def validate_publication_payload(
         warnings.append(
             "Overview has no Layout diagram. Upload one under Guide images."
         )
+    systems = payload.get("systems")
+    if isinstance(systems, dict):
+        for system_id, module in systems.items():
+            if not isinstance(module, dict):
+                continue
+            if guest_visible_section_count(module) != 0:
+                continue
+            title = str(module.get("title") or system_id).strip() or str(system_id)
+            warnings.append(f"{title}: no sections are visible in the Guest view.")
     warnings.extend(tone_warnings(payload, grounding))
 
     return errors + [f"Warning: {message}" for message in warnings]

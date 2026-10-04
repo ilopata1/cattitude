@@ -482,31 +482,37 @@ def _check_vessel_guest_layers(failures: list[str]) -> None:
                 "type": "prose",
                 "c": "The NAVIGATOR control panel selects AC or DC supply.",
                 "html": "<p>old</p>",
+                "audience": "crew",
             },
             {"t": "Using fresh water", "type": "list", "items": ["Short showers."]},
             {
                 "t": "Turning it on",
                 "type": "prose",
+                "audience": "crew",
                 "c": "Start the watermaker from the NAVIGATOR control panel when you need to begin fresh water production.",
             },
             {
                 "t": "Monitoring",
                 "type": "prose",
+                "audience": "crew",
                 "c": "While producing, use the NAVIGATOR control panel.",
             },
             {
                 "t": "Operating",
                 "type": "prose",
+                "audience": "crew",
                 "c": "Stop the watermaker from the NAVIGATOR control panel.\n\nRestart from the same panel.",
             },
             {
                 "t": "If something's not right",
                 "type": "prose",
+                "audience": "crew",
                 "c": "then retry start from the panel.",
             },
             {
                 "t": "Care & upkeep",
                 "type": "prose",
+                "audience": "crew",
                 "c": "Rinse the membranes from the panel after prolonged inactivity to protect membrane quality.",
             },
             {"t": "Related", "type": "prose", "c": "Open the Fix It cards."},
@@ -544,6 +550,73 @@ def _check_vessel_guest_layers(failures: list[str]) -> None:
         failures.append("guest flush missing its photograph")
     if water["sections"][1].get("items") != ["Short showers."]:
         failures.append("guest watermaker correction replaced a handbook section")
+    for title in (
+        "How it works",
+        "Turning it on",
+        "Monitoring",
+        "Operating",
+        "If something's not right",
+        "Care & upkeep",
+    ):
+        section = next(item for item in water["sections"] if item.get("t") == title)
+        if section.get("audience") != "crew":
+            failures.append(f"guest watermaker re-exposed {title!r} to guests")
+    if "audience" in water["sections"][1]:
+        failures.append("Using fresh water inherited a crew tag")
+    shared = apply_guest_layers(
+        "water",
+        {
+            "id": "water",
+            "sections": [
+                {
+                    "t": "Using fresh water",
+                    "type": "list",
+                    "items": ["Old sentence."],
+                    "audience": "crew",
+                }
+            ],
+        },
+        supernova,
+    )
+    shared_fresh = next(
+        section for section in shared["sections"] if section.get("t") == "Using fresh water"
+    )
+    if shared_fresh.get("audience") != "crew":
+        failures.append("shared guest layer dropped the replaced section's audience")
+    with _yaml_override(
+        {
+            "guest_layers/water.yaml": {
+                "sections": [
+                    {
+                        "t": "Using fresh water",
+                        "type": "list",
+                        "audience": "guest",
+                        "items": [{"c": "Short showers."}],
+                    }
+                ]
+            }
+        }
+    ):
+        explicit = apply_guest_layers(
+            "water",
+            {
+                "id": "water",
+                "sections": [
+                    {
+                        "t": "Using fresh water",
+                        "type": "list",
+                        "items": ["Old sentence."],
+                        "audience": "crew",
+                    }
+                ],
+            },
+            supernova,
+        )
+    explicit_fresh = next(
+        section for section in explicit["sections"] if section.get("t") == "Using fresh water"
+    )
+    if "audience" in explicit_fresh:
+        failures.append("explicit guest audience inherited the crew tag")
     untouched = apply_vessel_guest_layers("water", base, other)
     if untouched != base:
         failures.append("watermaker corrections leaked onto another vessel")

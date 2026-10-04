@@ -80,6 +80,25 @@ def _payload() -> dict:
                 ],
             },
             "sails": {"id": "sails", "sections": [], "learnChecks": []},
+            "water": {
+                "id": "water",
+                "sections": [
+                    {
+                        "t": "Turning it on",
+                        "type": "prose",
+                        "audience": "crew",
+                        "c": "Start the watermaker from the panel in the engine compartment.",
+                    },
+                    {
+                        "t": "Monitoring",
+                        "type": "prose",
+                        "c": "Watch the tank gauges while the watermaker is producing.",
+                    },
+                ],
+                "learnChecks": [
+                    "Know how to turn this system on and shut it down safely",
+                ],
+            },
         }
     }
 
@@ -131,6 +150,15 @@ def _check() -> list[str]:
 
     if "learnChecks" in systems["sails"]:
         failures.append("empty learnChecks should be removed")
+
+    water = systems["water"].get("learnChecks") or []
+    if any(item.get("key") == "water/startup" for item in water):
+        failures.append(f"crew Turning it on produced a startup learn check: {water}")
+    if any("watermaker from the panel" in item.get("text", "") for item in water):
+        failures.append(f"crew startup sentence was used as a learn check: {water}")
+    monitoring = [item for item in water if item.get("key") == "water/monitoring"]
+    if len(monitoring) != 1 or not monitoring[0]["text"].startswith("Watch the tank gauges"):
+        failures.append(f"guest Monitoring check missing: {water}")
 
     payload["systems"]["engines"]["sections"][1]["c"] = "Start each engine from the panel."
     rewrite_learn_checks(payload)

@@ -116,6 +116,7 @@ def _fold_sections(sections: list[Any]) -> list[Any]:
             and end < len(sections)
             and _foldable(sections[end])
             and normalise_title(str(sections[end].get("t") or "")) == title
+            and sections[end].get("audience") == section.get("audience")
         ):
             end += 1
         group = sections[index:end]

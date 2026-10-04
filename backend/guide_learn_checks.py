@@ -186,6 +186,8 @@ def _action_facts(system_id: str, module: dict[str, Any]) -> list[tuple[str, str
         for section in sections:
             if section.get("t") != title:
                 continue
+            if section.get("audience") == "crew":
+                continue
             sentence = _first_sentence(_plain_section(section))
             if sentence:
                 facts.append((sentence, f"{system_id}/{action_key}"))

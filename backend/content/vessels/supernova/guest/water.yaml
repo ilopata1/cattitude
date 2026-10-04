@@ -29,6 +29,7 @@ sections:
   c: If the watermaker will not produce, confirm the voltage selection on the panel in the port engine compartment and that an engine, shore charger, or generator is on when running on 12 V or 24 V DC — then start it again on that panel.
 - t: Care & upkeep
   type: list
+  audience: crew
   photos:
   - watermaker-plumbing
   items:

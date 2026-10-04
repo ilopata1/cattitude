@@ -51,6 +51,34 @@ def _payload() -> dict:
                     {"t": "Layout", "type": "photo", "html": "<img alt='layout'>"},
                 ],
             },
+            "controls": {
+                "title": "Controls",
+                "sections": [
+                    {
+                        "t": "Operating",
+                        "type": "prose",
+                        "audience": "crew",
+                        "c": "Open the breaker before you service the panel.",
+                    },
+                    {
+                        "t": "Operating",
+                        "type": "prose",
+                        "c": "Ask the skipper before you change a favourite.",
+                    },
+                    {
+                        "t": "Operating",
+                        "type": "prose",
+                        "audience": "crew",
+                        "c": "Switch the inverter off at the panel.",
+                    },
+                    {
+                        "t": "Operating",
+                        "type": "list",
+                        "audience": "crew",
+                        "items": ["Wait until the light goes out."],
+                    },
+                ],
+            },
             "anchoring": {
                 "title": "Anchoring",
                 "sections": [
@@ -107,6 +135,15 @@ def _check() -> list[str]:
             failures.append("Operating list moved after the rotary-switch sentence")
         if operating[0].get("items"):
             failures.append("folded Operating still has items beside the html")
+    controls = payload["systems"]["controls"]["sections"]
+    if len(controls) != 3:
+        failures.append(f"crew and guest Operating were folded together: {len(controls)}")
+    elif controls[0].get("audience") != "crew" or "audience" in controls[1]:
+        failures.append(f"Operating audience changed across the fold boundary: {controls[:2]}")
+    elif controls[2].get("audience") != "crew" or "Wait until the light goes out" not in (
+        controls[2].get("html") or ""
+    ):
+        failures.append(f"folded crew Operating lost its audience or body: {controls[2]}")
     if any(section.get("t") == "photo" for section in []):
         pass
     layout = [section.get("type") for section in payload["systems"]["overview"]["sections"] if section.get("t") == "Layout"]
@@ -122,7 +159,9 @@ def _check() -> list[str]:
 
     warnings = duplicate_warnings(payload)
     text = "\n".join(warnings)
-    if "Operating" in text:
+    if any(
+        message.startswith("Electrical Panel:") and "Operating" in message for message in warnings
+    ):
         failures.append(f"folded Operating still warned: {warnings}")
     if "Layout" not in text:
         failures.append(f"Layout duplicate was not reported: {warnings}")

@@ -49,6 +49,43 @@ BLOCK_HEADINGS: dict[str, str] = {
     "reference": "Care & upkeep",
 }
 
+# Procedural spine blocks published as crew. Guests get the human version from
+# content/guest_layers. capability_summary, Equipment Locations, and Related
+# are never tagged.
+CREW_BLOCKS_BY_SECTION: dict[str, frozenset[str]] = {
+    "engines": frozenset(
+        {"startup", "monitoring", "adjusting", "troubleshooting", "reference"}
+    ),
+    "electrical": frozenset(
+        {"how_it_works", "monitoring", "adjusting", "troubleshooting", "reference"}
+    ),
+    "batteries": frozenset({"adjusting", "troubleshooting", "reference"}),
+    "controls": frozenset({"monitoring", "adjusting", "troubleshooting"}),
+    "water": frozenset(
+        {
+            "how_it_works",
+            "startup",
+            "monitoring",
+            "adjusting",
+            "troubleshooting",
+            "reference",
+        }
+    ),
+    "heads": frozenset(
+        {
+            "how_it_works",
+            "startup",
+            "monitoring",
+            "adjusting",
+            "troubleshooting",
+            "reference",
+        }
+    ),
+    "nav": frozenset({"startup", "monitoring", "adjusting"}),
+    "ac": frozenset({"troubleshooting", "reference"}),
+}
+SOLAR_FOLD_AUDIENCE = "crew"
+
 _DEFAULT_ICON = "⚙️"
 _SUBTITLE_MAX = 90
 
@@ -215,9 +252,23 @@ def _split_intro_and_items(para: str) -> list[str]:
 
 
 def _enrich_block_paragraphs(
-    paragraphs: list[str], *, block: str, heading: str
+    paragraphs: list[str],
+    *,
+    block: str,
+    heading: str,
+    audience: str | None = None,
 ) -> list[dict[str, Any]]:
-    """Phase 1b A — expand one O3 block into prose / list / steps / warnings."""
+    """Phase 1b A — expand one O3 block into prose / list / steps / warnings.
+
+    ``audience`` is copied onto every section this block appends. ``None``
+    leaves the section untagged so both reading views see it.
+    """
+
+    def tagged(section: dict[str, Any]) -> dict[str, Any]:
+        if audience is not None:
+            section["audience"] = audience
+        return section
+
     flat: list[str] = []
     for para in paragraphs:
         flat.extend(_split_intro_and_items(para))
@@ -245,7 +296,9 @@ def _enrich_block_paragraphs(
             # duplicate titles.
             title = heading
         sections.append(
-            {"t": title, "type": section_type, "items": list(pending_items)}
+            tagged(
+                {"t": title, "type": section_type, "items": list(pending_items)}
+            )
         )
         pending_items = []
         pending_kind = None
@@ -267,7 +320,7 @@ def _enrich_block_paragraphs(
             continue
         title = heading
         used_heading = True
-        sections.append({"t": title, "type": "prose", "c": text})
+        sections.append(tagged({"t": title, "type": "prose", "c": text}))
 
     flush()
     return sections
@@ -537,7 +590,10 @@ def solar_fold_sections(solar_composed: dict[str, Any]) -> list[dict[str, Any]]:
     if not body:
         return []
     return _enrich_block_paragraphs(
-        _paragraphs(body), block="reference", heading="Solar charging"
+        _paragraphs(body),
+        block="reference",
+        heading="Solar charging",
+        audience=SOLAR_FOLD_AUDIENCE,
     )
 
 
@@ -571,12 +627,21 @@ def section_to_system_module(
             continue
         rendered_blocks.add(block)
         heading = BLOCK_HEADINGS.get(block, block.replace("_", " ").capitalize())
+        audience = (
+            "crew"
+            if block in CREW_BLOCKS_BY_SECTION.get(section_id, frozenset())
+            else None
+        )
         sections.extend(
             _enrich_block_paragraphs(
-                grouped[block], block=block, heading=heading
+                grouped[block],
+                block=block,
+                heading=heading,
+                audience=audience,
             )
         )
 
+    # Already tagged (solar fold). Do not retag here.
     if extra_sections:
         sections.extend(extra_sections)
 

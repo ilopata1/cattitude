@@ -265,6 +265,25 @@ def _matching_phrase(text: str) -> str | None:
     return None
 
 
+def guest_visible_section_count(module: dict[str, Any]) -> int:
+    """Sections with a body that are not tagged crew.
+
+    A crew-only chapter still publishes. This count only feeds the publish
+    warning that guests will see an empty chapter.
+    """
+    if not isinstance(module, dict):
+        return 0
+    count = 0
+    for section in module.get("sections") or []:
+        if not isinstance(section, dict):
+            continue
+        if section.get("audience") == "crew":
+            continue
+        if _section_has_body(section):
+            count += 1
+    return count
+
+
 def _section_has_body(section: dict[str, Any]) -> bool:
     if isinstance(section.get("c"), str) and section["c"].strip():
         return True

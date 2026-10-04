@@ -502,18 +502,66 @@ def _learn_checks_from_spec(specs: list[Any], snapshot: dict[str, Any]) -> list[
     return checks
 
 
+def _titles_with_explicit_audience(specs: list[Any]) -> set[str]:
+    """Titles whose YAML sets ``audience`` (including ``guest``)."""
+    titles: set[str] = set()
+    for spec in specs or []:
+        if not isinstance(spec, dict) or spec.get("audience") is None:
+            continue
+        title = normalise_title(str(spec.get("t") or ""))
+        if title:
+            titles.add(title)
+    return titles
+
+
+def _inherit_replaced_audience(
+    incoming: list[dict[str, Any]],
+    existing_sections: list[Any],
+    explicit_titles: set[str],
+) -> None:
+    """Keep a replaced section's audience when the YAML does not set one.
+
+    ``audience: guest`` is explicit and publishes as both views, so it must
+    not inherit a crew tag. An omitted audience does inherit.
+    """
+    replaced: dict[str, dict[str, Any]] = {}
+    for section in existing_sections:
+        if not isinstance(section, dict):
+            continue
+        key = normalise_title(str(section.get("t") or ""))
+        if key and key not in replaced:
+            replaced[key] = section
+    for section in incoming:
+        key = normalise_title(str(section.get("t") or ""))
+        if not key or key in explicit_titles or "audience" in section:
+            continue
+        previous = replaced.get(key)
+        if not previous:
+            continue
+        inherited = previous.get("audience")
+        if inherited:
+            section["audience"] = inherited
+
+
 def apply_guest_layers(
     system_id: str, payload: dict[str, Any], snapshot: dict[str, Any]
 ) -> dict[str, Any]:
     """Append curated handbook sections. Same titles are replaced, not duplicated.
 
     Title match ignores case and extra whitespace. The curated section wins.
+    A replacement that does not set audience keeps the replaced section's audience.
     """
     relative = f"guest_layers/{system_id}.yaml"
     if not (CONTENT_ROOT / relative).is_file():
         return payload
     data = load_yaml_cached(relative)
-    incoming = _sections_from_spec(data.get("sections") or [], snapshot)
+    specs = data.get("sections") or []
+    incoming = _sections_from_spec(specs, snapshot)
+    _inherit_replaced_audience(
+        incoming,
+        payload.get("sections") or [],
+        _titles_with_explicit_audience(specs),
+    )
     titles = {
         normalise_title(str(section.get("t") or ""))
         for section in incoming
@@ -551,6 +599,7 @@ def apply_vessel_guest_layers(
 
     Files live at ``content/vessels/{slug}/guest/{system_id}.yaml``.
     A matching title is replaced in place. A new title is appended.
+    A replacement that does not set audience keeps the replaced section's audience.
     """
     slug = _vessel_slug(snapshot)
     if not slug:
@@ -559,8 +608,12 @@ def apply_vessel_guest_layers(
     if not (CONTENT_ROOT / relative).is_file():
         return payload
     data = load_yaml_cached(relative)
-    incoming = _sections_from_spec(
-        data.get("sections") or [], snapshot, _crew_photo_index(slug)
+    specs = data.get("sections") or []
+    incoming = _sections_from_spec(specs, snapshot, _crew_photo_index(slug))
+    _inherit_replaced_audience(
+        incoming,
+        payload.get("sections") or [],
+        _titles_with_explicit_audience(specs),
     )
     by_title = {
         normalise_title(str(section.get("t") or "")): section

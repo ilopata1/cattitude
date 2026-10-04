@@ -56,6 +56,38 @@ def _canon(payload: object) -> str:
     return json.dumps(payload, sort_keys=True, ensure_ascii=False)
 
 
+def _assert_procedural_audience(modules: dict) -> list[str]:
+    """Outremer fixture: operator procedures are crew; batteries overview is not."""
+    failures: list[str] = []
+    for sid in ("water", "engines"):
+        turning = [
+            section
+            for section in modules[sid]["sections"]
+            if section.get("t") == "Turning it on"
+        ]
+        if not turning:
+            failures.append(f"{sid}: expected a Turning it on section")
+        for section in turning:
+            if section.get("audience") != "crew":
+                failures.append(
+                    f"{sid}: Turning it on must be crew, got {section.get('audience')!r}"
+                )
+    how = [
+        section
+        for section in modules["batteries"]["sections"]
+        if section.get("t") == "How it works"
+    ]
+    if not how:
+        failures.append("batteries: expected a How it works section")
+    for section in how:
+        if "audience" in section:
+            failures.append(
+                "batteries: How it works must stay untagged, "
+                f"got {section.get('audience')!r}"
+            )
+    return failures
+
+
 def _validate_and_report(modules: dict, metadata: dict) -> list[str]:
     failures: list[str] = []
     for sid in PUBLISHED_SECTIONS:
@@ -246,6 +278,7 @@ def main() -> int:
     )
 
     failures = _validate_and_report(modules, metadata)
+    failures.extend(_assert_procedural_audience(modules))
     print(f"\nWrote {OUT_JSON}")
     if failures:
         print("\nFAILURES:")
