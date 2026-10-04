@@ -65,6 +65,46 @@ interface EntryDraft {
   visibilityNm: string;
 }
 
+type EntryView = 'cards' | 'table';
+
+type LogTableKey =
+  | 'time'
+  | 'why'
+  | 'position'
+  | 'hdg'
+  | 'cog'
+  | 'sog'
+  | 'stw'
+  | 'tws'
+  | 'avg'
+  | 'gust'
+  | 'twd'
+  | 'hpa'
+  | 'trend'
+  | 'depth'
+  | 'status'
+  | 'sails'
+  | 'nm'
+  | 'wp'
+  | 'dtg'
+  | 'sea'
+  | 'cloud'
+  | 'vis'
+  | 'watch'
+  | 'remarks'
+  | 'gaps';
+
+interface LogTableColumn {
+  key: LogTableKey;
+  label: string;
+  unit: string;
+  numeric: boolean;
+  wrap?: boolean;
+  cap?: boolean;
+}
+
+const LOGBOOK_VIEW_KEY = 'cattitude.logbook.entryView';
+
 @Component({
   selector: 'app-logbook',
   templateUrl: './logbook.page.html',
@@ -89,7 +129,35 @@ export class LogbookPage implements OnInit, OnDestroy {
   passageOpen = false;
   settingsOpen = false;
   showAll = false;
+  entryView: EntryView = storedEntryView();
   openId: string | null = null;
+  readonly tableColumns: LogTableColumn[] = [
+    { key: 'time', label: 'Time', unit: 'UTC', numeric: false },
+    { key: 'why', label: 'Why', unit: '', numeric: false },
+    { key: 'position', label: 'Position', unit: '', numeric: false },
+    { key: 'hdg', label: 'HDG', unit: '°', numeric: true },
+    { key: 'cog', label: 'COG', unit: '°', numeric: true },
+    { key: 'sog', label: 'SOG', unit: 'kn', numeric: true },
+    { key: 'stw', label: 'STW', unit: 'kn', numeric: true },
+    { key: 'tws', label: 'TWS', unit: 'kn', numeric: true },
+    { key: 'avg', label: 'Avg', unit: 'kn', numeric: true },
+    { key: 'gust', label: 'Gust', unit: 'kn', numeric: true },
+    { key: 'twd', label: 'TWD', unit: '°', numeric: true },
+    { key: 'hpa', label: 'hPa', unit: '', numeric: true },
+    { key: 'trend', label: '3h', unit: 'hPa', numeric: true },
+    { key: 'depth', label: 'Depth', unit: 'm', numeric: true },
+    { key: 'status', label: 'Status', unit: '', numeric: false, cap: true },
+    { key: 'sails', label: 'Sails', unit: '', numeric: false, wrap: true },
+    { key: 'nm', label: 'Since', unit: 'nm', numeric: true },
+    { key: 'wp', label: 'Waypoint', unit: 'nm', numeric: true },
+    { key: 'dtg', label: 'To go', unit: 'nm', numeric: true },
+    { key: 'sea', label: 'Sea', unit: '0–9', numeric: true },
+    { key: 'cloud', label: 'Cloud', unit: 'oktas', numeric: true },
+    { key: 'vis', label: 'Vis', unit: 'nm', numeric: true },
+    { key: 'watch', label: 'Watch', unit: '', numeric: false },
+    { key: 'remarks', label: 'Remarks', unit: '', numeric: false, wrap: true },
+    { key: 'gaps', label: 'Missing', unit: '', numeric: false, wrap: true },
+  ];
   entryDraft: EntryDraft = { remarks: '', seaState: '', cloudOktas: '', visibilityNm: '' };
   saving = false;
   readonly intervals = LOG_INTERVALS;
@@ -194,6 +262,70 @@ export class LogbookPage implements OnInit, OnDestroy {
     const value = entry.pressureTrend3hHpa;
     if (value == null) return '';
     return `${value > 0 ? '+' : ''}${value.toFixed(1)}`;
+  }
+
+  setEntryView(view: EntryView): void {
+    this.entryView = view;
+    try {
+      localStorage.setItem(LOGBOOK_VIEW_KEY, view);
+    } catch {
+      /* preference is optional */
+    }
+  }
+
+  tableCell(entry: LogEntry, key: LogTableKey): string {
+    switch (key) {
+      case 'time':
+        return formatLogClock(entry.at);
+      case 'why':
+        return triggerLabel(entry.trigger);
+      case 'position':
+        return entry.position ? formatPosition(entry.position.lat, entry.position.lon) : '—';
+      case 'hdg':
+        return this.num(entry.headingTrueDeg, 0);
+      case 'cog':
+        return this.num(entry.cogDeg, 0);
+      case 'sog':
+        return this.num(entry.sogKn);
+      case 'stw':
+        return this.num(entry.stwKn);
+      case 'tws':
+        return this.num(entry.wind.twsKn);
+      case 'avg':
+        return this.num(entry.wind.meanTwsSinceLastKn);
+      case 'gust':
+        return this.num(entry.wind.gustSinceLastKn);
+      case 'twd':
+        return this.num(entry.wind.twdDeg, 0);
+      case 'hpa':
+        return this.num(entry.pressureHpa);
+      case 'trend':
+        return this.trend(entry) || '—';
+      case 'depth':
+        return this.num(entry.depthM);
+      case 'status':
+        return entry.propulsion.state;
+      case 'sails':
+        return sailCell(entry);
+      case 'nm':
+        return this.num(entry.distances.sinceLastEntryGroundNm);
+      case 'wp':
+        return this.num(entry.distances.sinceLastWaypointNm);
+      case 'dtg':
+        return this.num(entry.distances.toDestinationNm);
+      case 'sea':
+        return this.num(entry.seaState, 0);
+      case 'cloud':
+        return this.num(entry.cloudOktas, 0);
+      case 'vis':
+        return this.num(entry.visibilityNm);
+      case 'watch':
+        return entry.watch?.trim() || '—';
+      case 'remarks':
+        return entry.remarks.trim() || '—';
+      case 'gaps':
+        return entry.staleFields.length ? entry.staleFields.join(', ') : '—';
+    }
   }
 
   async logNow(): Promise<void> {
@@ -374,6 +506,23 @@ export class LogbookPage implements OnInit, OnDestroy {
     const alert = await this.alerts.create({ header, message, buttons: ['OK'] });
     await alert.present();
   }
+}
+
+function storedEntryView(): EntryView {
+  try {
+    return localStorage.getItem(LOGBOOK_VIEW_KEY) === 'table' ? 'table' : 'cards';
+  } catch {
+    return 'cards';
+  }
+}
+
+function sailCell(entry: LogEntry): string {
+  const label = entry.sails.label.trim();
+  const plan = entry.sails.recommended?.trim() ?? '';
+  if (!label && !plan) return '—';
+  if (!plan) return label;
+  if (!label) return plan;
+  return `${label} · ${plan}`;
 }
 
 function blankDraft(): PassageDraft {

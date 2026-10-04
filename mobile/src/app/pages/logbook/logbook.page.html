@@ -116,7 +116,20 @@
       </div>
     </section>
 
-    <div class="log-toolbar">
+    <div class="log-toolbar" role="group" aria-label="Logbook entries">
+      <button
+        type="button"
+        [class.on]="entryView === 'cards'"
+        [attr.aria-pressed]="entryView === 'cards'"
+        (click)="setEntryView('cards')"
+      >Cards</button>
+      <button
+        type="button"
+        [class.on]="entryView === 'table'"
+        [attr.aria-pressed]="entryView === 'table'"
+        (click)="setEntryView('table')"
+      >Table</button>
+      <span class="log-toolbar-split" aria-hidden="true"></span>
       <button type="button" [class.on]="!showAll" (click)="showAll = false">This passage</button>
       <button type="button" [class.on]="showAll" (click)="showAll = true">All entries</button>
       <button type="button" (click)="exportCsv()">CSV</button>
@@ -126,65 +139,121 @@
 
     <p class="log-empty" *ngIf="visible().length === 0">No entries yet. Log now, or leave the app open and the interval will write the next one.</p>
 
-    <section *ngFor="let day of days()" class="log-day">
-      <h2>{{ day.label }}</h2>
-      <article class="log-entry" *ngFor="let entry of day.entries" (click)="toggleEntry(entry)">
-        <header>
-          <strong>{{ formatLogClock(entry.at) }}</strong>
-          <span>{{ triggerLabel(entry.trigger) }}</span>
-          <span class="log-state">{{ entry.propulsion.state }}</span>
-        </header>
-        <p>{{ entryPosition(entry) }}</p>
-        <p>
-          HDG {{ num(entry.headingTrueDeg, 0) }}°
-          · COG {{ num(entry.cogDeg, 0) }}°
-          · SOG {{ num(entry.sogKn) }}
-          · STW {{ num(entry.stwKn) }}
-        </p>
-        <p>
-          TWS {{ num(entry.wind.twsKn) }}
-          <span *ngIf="entry.wind.meanTwsSinceLastKn != null"> (avg {{ num(entry.wind.meanTwsSinceLastKn) }}</span>
-          <span *ngIf="entry.wind.gustSinceLastKn != null">, gust {{ num(entry.wind.gustSinceLastKn) }}</span>
-          <span *ngIf="entry.wind.meanTwsSinceLastKn != null">)</span>
-          <span *ngIf="entry.wind.twdDeg != null"> · TWD {{ num(entry.wind.twdDeg, 0) }}°</span>
-        </p>
-        <p>
-          {{ num(entry.pressureHpa) }} hPa
-          <span *ngIf="entry.pressureTrend3hHpa != null"> · {{ trend(entry) }} / 3h</span>
-          <span *ngIf="entry.depthM != null"> · depth {{ num(entry.depthM) }} m</span>
-        </p>
-        <p *ngIf="entry.sails.label">{{ entry.sails.label }}<span *ngIf="entry.sails.recommended"> · plan {{ entry.sails.recommended }}</span></p>
-        <p>
-          <span *ngIf="entry.distances.sinceLastEntryGroundNm != null">{{ num(entry.distances.sinceLastEntryGroundNm) }} nm since last</span>
-          <span *ngIf="entry.distances.sinceLastWaypointNm != null"> · {{ num(entry.distances.sinceLastWaypointNm) }} nm since waypoint</span>
-          <span *ngIf="entry.distances.toDestinationNm != null"> · {{ num(entry.distances.toDestinationNm) }} nm to go</span>
-        </p>
-        <p *ngIf="entry.watch || entry.remarks">
-          <span *ngIf="entry.watch">Watch {{ entry.watch }}</span>
-          <span *ngIf="entry.watch && entry.remarks"> · </span>
-          {{ entry.remarks }}
-        </p>
-        <p class="log-stale" *ngIf="entry.staleFields.length">Missing or old: {{ entry.staleFields.join(', ') }}</p>
+    <ng-container *ngIf="entryView === 'cards'">
+      <section *ngFor="let day of days()" class="log-day">
+        <h2>{{ day.label }}</h2>
+        <article class="log-entry" *ngFor="let entry of day.entries" (click)="toggleEntry(entry)">
+          <header>
+            <strong>{{ formatLogClock(entry.at) }}</strong>
+            <span>{{ triggerLabel(entry.trigger) }}</span>
+            <span class="log-state">{{ entry.propulsion.state }}</span>
+          </header>
+          <p>{{ entryPosition(entry) }}</p>
+          <p>
+            HDG {{ num(entry.headingTrueDeg, 0) }}°
+            · COG {{ num(entry.cogDeg, 0) }}°
+            · SOG {{ num(entry.sogKn) }}
+            · STW {{ num(entry.stwKn) }}
+          </p>
+          <p>
+            TWS {{ num(entry.wind.twsKn) }}
+            <span *ngIf="entry.wind.meanTwsSinceLastKn != null"> (avg {{ num(entry.wind.meanTwsSinceLastKn) }}</span>
+            <span *ngIf="entry.wind.gustSinceLastKn != null">, gust {{ num(entry.wind.gustSinceLastKn) }}</span>
+            <span *ngIf="entry.wind.meanTwsSinceLastKn != null">)</span>
+            <span *ngIf="entry.wind.twdDeg != null"> · TWD {{ num(entry.wind.twdDeg, 0) }}°</span>
+          </p>
+          <p>
+            {{ num(entry.pressureHpa) }} hPa
+            <span *ngIf="entry.pressureTrend3hHpa != null"> · {{ trend(entry) }} / 3h</span>
+            <span *ngIf="entry.depthM != null"> · depth {{ num(entry.depthM) }} m</span>
+          </p>
+          <p *ngIf="entry.sails.label">{{ entry.sails.label }}<span *ngIf="entry.sails.recommended"> · plan {{ entry.sails.recommended }}</span></p>
+          <p>
+            <span *ngIf="entry.distances.sinceLastEntryGroundNm != null">{{ num(entry.distances.sinceLastEntryGroundNm) }} nm since last</span>
+            <span *ngIf="entry.distances.sinceLastWaypointNm != null"> · {{ num(entry.distances.sinceLastWaypointNm) }} nm since waypoint</span>
+            <span *ngIf="entry.distances.toDestinationNm != null"> · {{ num(entry.distances.toDestinationNm) }} nm to go</span>
+          </p>
+          <p *ngIf="entry.watch || entry.remarks">
+            <span *ngIf="entry.watch">Watch {{ entry.watch }}</span>
+            <span *ngIf="entry.watch && entry.remarks"> · </span>
+            {{ entry.remarks }}
+          </p>
+          <p class="log-stale" *ngIf="entry.staleFields.length">Missing or old: {{ entry.staleFields.join(', ') }}</p>
 
-        <div class="log-edit" *ngIf="openId === entry.id" (click)="$event.stopPropagation()">
-          <label>Remarks</label>
-          <ion-textarea [(ngModel)]="entryDraft.remarks" autoGrow="true"></ion-textarea>
-          <div class="log-pair">
-            <div>
-              <label>Sea state 0–9</label>
-              <ion-input [(ngModel)]="entryDraft.seaState" inputmode="numeric"></ion-input>
-            </div>
-            <div>
-              <label>Cloud oktas 0–8</label>
-              <ion-input [(ngModel)]="entryDraft.cloudOktas" inputmode="numeric"></ion-input>
-            </div>
+          <ng-container *ngIf="openId === entry.id">
+            <ng-container *ngTemplateOutlet="entryEdit; context: { $implicit: entry }"></ng-container>
+          </ng-container>
+        </article>
+      </section>
+    </ng-container>
+
+    <div class="log-table-wrap" *ngIf="entryView === 'table' && visible().length">
+      <table class="log-table">
+        <thead>
+          <tr>
+            <th
+              *ngFor="let col of tableColumns"
+              scope="col"
+              [class.num]="col.numeric"
+            >
+              {{ col.label }}
+              <span class="unit" *ngIf="col.unit">{{ col.unit }}</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let day of days()">
+            <tr class="log-day-row">
+              <th [attr.colspan]="tableColumns.length" scope="rowgroup">
+                <span class="log-day-label">{{ day.label }}</span>
+              </th>
+            </tr>
+            <ng-container *ngFor="let entry of day.entries">
+              <tr
+                tabindex="0"
+                [class.open]="openId === entry.id"
+                [attr.aria-expanded]="openId === entry.id"
+                (click)="toggleEntry(entry)"
+                (keydown.enter)="toggleEntry(entry)"
+                (keydown.space)="$event.preventDefault(); toggleEntry(entry)"
+              >
+                <td
+                  *ngFor="let col of tableColumns"
+                  [class.num]="col.numeric"
+                  [class.wrap]="col.wrap"
+                  [class.cap]="col.cap"
+                >{{ tableCell(entry, col.key) }}</td>
+              </tr>
+              <tr class="log-edit-row" *ngIf="openId === entry.id">
+                <td [attr.colspan]="tableColumns.length">
+                  <ng-container *ngTemplateOutlet="entryEdit; context: { $implicit: entry }"></ng-container>
+                </td>
+              </tr>
+            </ng-container>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+
+    <ng-template #entryEdit let-entry>
+      <div class="log-edit" (click)="$event.stopPropagation()">
+        <label>Remarks</label>
+        <ion-textarea [(ngModel)]="entryDraft.remarks" autoGrow="true"></ion-textarea>
+        <div class="log-pair">
+          <div>
+            <label>Sea state 0–9</label>
+            <ion-input [(ngModel)]="entryDraft.seaState" inputmode="numeric"></ion-input>
           </div>
-          <label>Visibility (nm)</label>
-          <ion-input [(ngModel)]="entryDraft.visibilityNm" inputmode="decimal"></ion-input>
-          <ion-button expand="block" fill="outline" (click)="saveEntryEdits(entry)">Save notes</ion-button>
-          <p class="log-meta" *ngIf="entry.corrections.length">{{ entry.corrections.length }} correction{{ entry.corrections.length === 1 ? '' : 's' }} kept with the original.</p>
+          <div>
+            <label>Cloud oktas 0–8</label>
+            <ion-input [(ngModel)]="entryDraft.cloudOktas" inputmode="numeric"></ion-input>
+          </div>
         </div>
-      </article>
-    </section>
+        <label>Visibility (nm)</label>
+        <ion-input [(ngModel)]="entryDraft.visibilityNm" inputmode="decimal"></ion-input>
+        <ion-button expand="block" fill="outline" (click)="saveEntryEdits(entry)">Save notes</ion-button>
+        <p class="log-meta" *ngIf="entry.corrections.length">{{ entry.corrections.length }} correction{{ entry.corrections.length === 1 ? '' : 's' }} kept with the original.</p>
+      </div>
+    </ng-template>
   </div>
 </ion-content>

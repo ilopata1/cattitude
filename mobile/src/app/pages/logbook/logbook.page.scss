@@ -106,8 +106,17 @@ ion-content {
 .log-toolbar {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 6px;
   margin: 8px 0;
+}
+
+.log-toolbar-split {
+  width: 1px;
+  align-self: stretch;
+  min-height: 1.4rem;
+  background: var(--cattitude-sand-mid);
+  margin: 0 2px;
 }
 
 .interval-row button,
@@ -176,4 +185,120 @@ ion-content {
 
 .log-empty {
   color: var(--cattitude-text-light);
+}
+
+.log-table-wrap {
+  overflow: auto;
+  max-height: 70vh;
+  margin-bottom: var(--cattitude-space-md);
+  background: var(--cattitude-surface);
+  border-radius: var(--cattitude-radius-md);
+  box-shadow: var(--cattitude-shadow-md);
+  -webkit-overflow-scrolling: touch;
+}
+
+.log-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: max-content;
+  min-width: 100%;
+  font-size: var(--cattitude-text-sm);
+}
+
+.log-table th,
+.log-table td {
+  padding: 8px 10px;
+  text-align: left;
+  white-space: nowrap;
+  vertical-align: top;
+  background: var(--cattitude-surface);
+  border-bottom: 1px solid var(--cattitude-sand-mid);
+}
+
+.log-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--cattitude-sand);
+  font-weight: 700;
+  box-shadow: 0 1px 0 var(--cattitude-sand-mid);
+}
+
+.log-table thead th:first-child,
+.log-table tbody tr:not(.log-edit-row) td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+}
+
+.log-table thead th:first-child {
+  z-index: 3;
+}
+
+.log-table .unit {
+  display: block;
+  font-weight: 600;
+  font-size: var(--cattitude-text-caption);
+  color: var(--cattitude-text-light);
+}
+
+.log-table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.log-table .wrap {
+  white-space: normal;
+  min-width: 8rem;
+  max-width: 16rem;
+}
+
+.log-table .cap {
+  text-transform: capitalize;
+}
+
+.log-table tbody tr:not(.log-day-row):not(.log-edit-row) {
+  cursor: pointer;
+}
+
+.log-table tbody tr:focus-visible {
+  outline: var(--cattitude-focus-ring);
+  outline-offset: -2px;
+}
+
+.log-table tr.open td {
+  background: var(--cattitude-sand);
+}
+
+.log-table tr.open td:first-child {
+  box-shadow: inset 3px 0 0 var(--cattitude-text-dark);
+}
+
+.log-day-row th {
+  background: var(--cattitude-sand);
+  font-size: var(--cattitude-text-caption);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.log-day-label {
+  position: sticky;
+  left: 10px;
+  display: inline-block;
+}
+
+.log-edit-row td {
+  white-space: normal;
+  min-width: 18rem;
+}
+
+.log-edit-row .log-edit {
+  max-width: 28rem;
+}
+
+@media (hover: hover) {
+  .log-table tbody tr:not(.log-day-row):not(.log-edit-row):hover td {
+    background: var(--cattitude-sand);
+  }
 }
