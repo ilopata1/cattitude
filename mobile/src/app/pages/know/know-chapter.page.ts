@@ -11,6 +11,7 @@ import {
 } from '../../core/guide/power-topic';
 import { SystemModule } from '../../core/models/bootstrap-content.model';
 import { ContentService } from '../../core/services/content.service';
+import { knowChapterRoute } from '../../core/guide/dashboard';
 import { VesselRouteService } from '../../core/services/vessel-route.service';
 import { scrollToElement } from '../../core/search/scroll-into-content';
 import { GuideChapterComponent } from '../../shared/components/guide-chapter/guide-chapter.component';
@@ -48,7 +49,8 @@ export class KnowChapterPage implements OnInit {
 
   openLinked(id: string): void {
     const target = isPowerPart(id) || id === POWER_TOPIC_ID ? (id === POWER_TOPIC_ID ? POWER_TOPIC_ID : id) : id;
-    void this.vesselRoutes.navigateTabs('know', target);
+    const route = knowChapterRoute(target);
+    void this.vesselRoutes.navigateTabsWithExtras(route.segments, { queryParams: route.query });
   }
 
   private load(): void {

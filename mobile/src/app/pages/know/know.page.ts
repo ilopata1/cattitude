@@ -30,6 +30,7 @@ import {
   SystemModule,
   SystemSection,
 } from '../../core/models/bootstrap-content.model';
+import { knowChapterRoute } from '../../core/guide/dashboard';
 import { ReaderView } from '../../core/guide/reader-view';
 import { ReaderViewService } from '../../core/services/reader-view.service';
 
@@ -101,13 +102,11 @@ export class KnowPage implements OnInit {
           return;
         }
         const section = params.get('section');
-        void this.vesselRoutes.navigateTabsWithExtras(
-          ['know', systemId],
-          {
-            queryParams: section ? { section } : {},
-            replaceUrl: true,
-          },
-        );
+        const route = knowChapterRoute(systemId, section);
+        void this.vesselRoutes.navigateTabsWithExtras(route.segments, {
+          queryParams: route.query,
+          replaceUrl: true,
+        });
       });
   }
 
@@ -202,7 +201,8 @@ export class KnowPage implements OnInit {
   }
 
   openSystem(system: SystemModule): void {
-    void this.vesselRoutes.navigateTabs('know', system.id);
+    const route = knowChapterRoute(system.id);
+    void this.vesselRoutes.navigateTabsWithExtras(route.segments, { queryParams: route.query });
   }
 
   powerView(): PowerPresentation<SystemSection> | null {
@@ -269,11 +269,11 @@ export class KnowPage implements OnInit {
   openHit(hit: GuideSearchHit): void {
     this.query = '';
     if (hit.kind === 'chapter' && hit.systemId) {
-      const section = hit.sectionIndex == null ? null : String(hit.sectionIndex);
-      void this.vesselRoutes.navigateTabsWithExtras(
-        ['know', hit.systemId],
-        section ? { queryParams: { section } } : undefined,
+      const route = knowChapterRoute(
+        hit.systemId,
+        hit.sectionIndex == null ? null : String(hit.sectionIndex),
       );
+      void this.vesselRoutes.navigateTabsWithExtras(route.segments, { queryParams: route.query });
       return;
     }
     if (hit.kind === 'checklist' && hit.checklistKey) {
@@ -327,10 +327,11 @@ export class KnowPage implements OnInit {
   }
 
   private openPower(systemId: string | null, index: number | null): void {
-    void this.vesselRoutes.navigateTabsWithExtras(
-      ['know', systemId || POWER_TOPIC_ID],
-      index == null ? undefined : { queryParams: { section: String(index) } },
+    const route = knowChapterRoute(
+      systemId || POWER_TOPIC_ID,
+      index == null ? null : String(index),
     );
+    void this.vesselRoutes.navigateTabsWithExtras(route.segments, { queryParams: route.query });
   }
 
   private scrollToPendingSection(): void {
