@@ -38,7 +38,7 @@ when:
     - has_category: [navigation_electronics]
 ```
 
-4. Tag a section `audience: crew` when only the Crew reading view should show it. Leave the field off, or set `audience: guest`, for a section both views show. Crew view shows every section. Any other value is an error.
+4. Tag `audience: crew` when only the Crew reading view should show it. The same values are accepted on sections, checklist files, checklist items, fix cards, static home rules, and emergency contacts. Leave the field off, or set `audience: guest` (or `both`), when both views should show it. Crew view shows everything. Any other value is an error. The published payload only ever contains `audience: crew`; `guest` is not written out.
 
    Vessel-only crew sections live in `vessels/{slug}/crew/{system}.yaml` and are appended for that slug. A same-titled correction for one boat lives in `vessels/{slug}/guest/{system}.yaml` and replaces that section in place. Name photos by key from `vessels/{slug}/crew_photos.yaml`.
 

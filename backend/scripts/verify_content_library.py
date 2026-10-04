@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import sys
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
 
@@ -13,10 +14,15 @@ sys.path.insert(0, str(_BACKEND))
 import guide_content_library_legacy as legacy
 from content.assembler import (
     LIBRARY_MODULE_BUILDERS,
+    _apply_checklist_overrides,
+    _apply_fix_overrides,
     _sections_from_spec,
     apply_crew_layers,
     apply_guest_layers,
     apply_vessel_guest_layers,
+    build_checklist_module,
+    build_fix_cards_module,
+    build_home_rules_module,
     build_overview_module,
     build_safety_module,
     factual_tender_summary,
@@ -543,6 +549,435 @@ def _check_vessel_guest_layers(failures: list[str]) -> None:
         failures.append("watermaker corrections leaked onto another vessel")
 
 
+def _has_audience_key(value: Any) -> bool:
+    if isinstance(value, dict):
+        if "audience" in value:
+            return True
+        return any(_has_audience_key(child) for child in value.values())
+    if isinstance(value, list):
+        return any(_has_audience_key(child) for child in value)
+    return False
+
+
+def _checklist_items(module: dict[str, Any]) -> list[dict[str, Any]]:
+    items: list[dict[str, Any]] = []
+    for group in module.get("groups") or []:
+        items.extend(group.get("items") or [])
+    return items
+
+
+def _rule_text(sections: list[dict[str, Any]], text: str) -> dict[str, Any] | None:
+    for section in sections:
+        for rule in section.get("rules") or []:
+            if rule.get("text") == text:
+                return rule
+    return None
+
+
+@contextmanager
+def _yaml_override(files: dict[str, Any]):
+    """Serve an in-memory spec from the assembler loader. Shipped YAML stays put."""
+    import content.assembler as assembler_module
+
+    original = assembler_module.load_yaml_cached
+
+    def fake(path: str) -> Any:
+        if path in files:
+            return files[path]
+        return original(path)
+
+    assembler_module.load_yaml_cached = fake
+    try:
+        yield
+    finally:
+        assembler_module.load_yaml_cached = original
+
+
+def _check_audience_plumbing(failures: list[str]) -> None:
+    """Crew tags publish; omitted and guest do not; a bad value is an error.
+
+    The full fixture is built from shipped YAML, which is still untagged.
+    Tagged cases use a temporary in-memory spec.
+    """
+    full = next(snapshot for name, snapshot in FIXTURES if name == "full")
+    for key, builder in LIBRARY_MODULE_BUILDERS.items():
+        payload = builder(full)
+        if _has_audience_key(payload):
+            failures.append(f"full fixture {key[0]}/{key[1]} published an audience key")
+
+    with _yaml_override(
+        {
+            "checklists/pd.yaml": {
+                "audience": "crew",
+                "groups": [
+                    {
+                        "t": "Prep",
+                        "items": [
+                            {"key": "tagged", "c": "Tagged step", "audience": "crew"},
+                            {"key": "plain", "c": "Plain step"},
+                            {"key": "guest", "c": "Guest step", "audience": "guest"},
+                            {"key": "both", "c": "Both step", "audience": "both"},
+                        ],
+                    }
+                ],
+            }
+        }
+    ):
+        checklist = build_checklist_module("pd", full)
+    if checklist.get("audience") != "crew":
+        failures.append("crew checklist file did not publish audience crew")
+    by_key = {item["key"]: item for item in _checklist_items(checklist)}
+    if by_key["tagged"].get("audience") != "crew":
+        failures.append("YAML item tagged crew did not publish audience crew")
+    if "audience" in by_key["plain"]:
+        failures.append("untagged item published an audience key")
+    if "audience" in by_key["guest"] or "audience" in by_key["both"]:
+        failures.append("guest or both audience was copied onto the item")
+
+    try:
+        with _yaml_override(
+            {
+                "checklists/pd.yaml": {
+                    "groups": [
+                        {"t": "Prep", "items": [{"c": "Nope", "audience": "captain"}]}
+                    ]
+                }
+            }
+        ):
+            build_checklist_module("pd", full)
+    except ValueError:
+        pass
+    else:
+        failures.append("invalid audience was accepted")
+
+    carried = _apply_checklist_overrides(
+        [
+            {
+                "t": "Prep",
+                "items": [
+                    {"key": "a", "c": "Original", "s": "", "audience": "crew"},
+                    {"key": "b", "c": "Keep", "s": ""},
+                ],
+            }
+        ],
+        {
+            "replace": {"a": "New wording"},
+            "insert_after": {"b": {"key": "c", "c": "Inserted", "audience": "crew"}},
+        },
+        full,
+    )
+    carried_items = {item["key"]: item for item in carried[0]["items"]}
+    if carried_items["a"].get("audience") != "crew" or carried_items["a"].get("c") != "New wording":
+        failures.append("checklist replace dropped audience")
+    if "audience" in carried_items["b"]:
+        failures.append("untagged checklist item gained an audience from insert")
+    if carried_items["c"].get("audience") != "crew":
+        failures.append("insert_after did not carry audience crew")
+    shared = _apply_checklist_overrides(
+        [
+            {
+                "t": "Prep",
+                "items": [{"key": "a", "c": "Original", "s": "", "audience": "crew"}],
+            }
+        ],
+        {"replace": {"a": {"c": "Now shared", "audience": "guest"}}},
+        full,
+    )
+    if "audience" in shared[0]["items"][0]:
+        failures.append("checklist replace did not clear audience when set to guest")
+
+    with _yaml_override(
+        {
+            "fix_cards/cards.yaml": {
+                "cards": [
+                    {
+                        "key": "crew_card",
+                        "icon": "🔴",
+                        "cat": "engine",
+                        "catL": "Engine",
+                        "title": "Crew card",
+                        "audience": "crew",
+                        "steps": ["Look"],
+                    },
+                    {
+                        "key": "plain_card",
+                        "icon": "🔴",
+                        "cat": "engine",
+                        "catL": "Engine",
+                        "title": "Plain card",
+                        "steps": ["Look"],
+                    },
+                ]
+            }
+        }
+    ):
+        cards = build_fix_cards_module(full)
+    cards_by_key = {card["key"]: card for card in cards}
+    if cards_by_key["crew_card"].get("audience") != "crew":
+        failures.append("crew fix card did not publish audience crew")
+    if "audience" in cards_by_key["plain_card"]:
+        failures.append("untagged fix card published an audience key")
+    preserved = _apply_fix_overrides(
+        cards,
+        {"replace": {"crew_card": {"title": "Retitled", "steps": ["Again"]}}},
+        full,
+    )
+    retitled = next(card for card in preserved if card["key"] == "crew_card")
+    if retitled.get("audience") != "crew" or retitled.get("title") != "Retitled":
+        failures.append("fix override dropped audience")
+
+    from guide_equipment_fragments import apply_fix_card_fragments
+
+    applied = apply_fix_card_fragments(
+        [
+            {
+                "key": "x",
+                "icon": "🔴",
+                "cat": "engine",
+                "catL": "Engine",
+                "title": "Old",
+                "steps": ["Look", "Call the base"],
+                "audience": "crew",
+            }
+        ],
+        [
+            {
+                "fragment": {
+                    "fix_card_overrides": {
+                        "x": {
+                            "steps": ["Equipment step"],
+                            "audience": "guest",
+                            "title": "Retitled",
+                        }
+                    },
+                    "extra_fix_cards": [
+                        {
+                            "key": "extra",
+                            "icon": "⚡",
+                            "cat": "e",
+                            "catL": "E",
+                            "title": "Extra",
+                            "steps": ["Start"],
+                        },
+                        {
+                            "key": "guest_extra",
+                            "icon": "⚡",
+                            "cat": "e",
+                            "catL": "E",
+                            "title": "Guest extra",
+                            "steps": ["Look"],
+                            "audience": "guest",
+                        },
+                    ],
+                }
+            }
+        ],
+    )
+    applied_by_key = {card["key"]: card for card in applied}
+    if applied_by_key["x"].get("audience") != "crew" or applied_by_key["x"].get("title") != "Retitled":
+        failures.append("fragment override did not keep the card audience")
+    if applied_by_key["extra"].get("audience") != "crew":
+        failures.append("extra fix card did not default to crew")
+    if "audience" in applied_by_key["guest_extra"]:
+        failures.append("guest extra fix card published an audience key")
+    try:
+        apply_fix_card_fragments(
+            [],
+            [
+                {
+                    "fragment": {
+                        "extra_fix_cards": [
+                            {
+                                "key": "bad",
+                                "title": "Bad",
+                                "steps": ["x"],
+                                "audience": "captain",
+                            }
+                        ]
+                    }
+                }
+            ],
+        )
+    except ValueError:
+        pass
+    else:
+        failures.append("invalid extra fix card audience was accepted")
+
+    with _yaml_override(
+        {
+            "home_rules/static_rules.yaml": {
+                "rules": [
+                    {
+                        "section": "caution",
+                        "icon": "🛟",
+                        "text": "Crew helm rule",
+                        "audience": "crew",
+                    },
+                    {"section": "good", "icon": "👍", "text": "Shared helm rule"},
+                ]
+            }
+        }
+    ):
+        home = build_home_rules_module(full)
+    crew_rule = _rule_text(home, "Crew helm rule")
+    shared_rule = _rule_text(home, "Shared helm rule")
+    local_rule = _rule_text(home, "Never anchor on coral")
+    if crew_rule is None or crew_rule.get("audience") != "crew":
+        failures.append("static home rule tagged crew did not publish audience crew")
+    if shared_rule is None or "audience" in shared_rule:
+        failures.append("untagged home rule published an audience key")
+    if local_rule is None or "audience" in local_rule:
+        failures.append("local rule published an audience key")
+
+    from guide_template_assembly import _normalize_contact
+
+    crew_contact = _normalize_contact(
+        {"label": "Yard", "value": "VHF 72", "audience": "crew"}
+    )
+    guest_contact = _normalize_contact(
+        {"label": "Coastguard", "value": "VHF 16", "audience": "guest"}
+    )
+    if crew_contact is None or crew_contact.get("audience") != "crew":
+        failures.append("crew emergency contact did not publish audience crew")
+    if guest_contact is None or "audience" in guest_contact:
+        failures.append("guest emergency contact published an audience key")
+    try:
+        _normalize_contact({"label": "X", "value": "Y", "audience": "secret"})
+    except ValueError:
+        pass
+    else:
+        failures.append("invalid emergency contact audience was accepted")
+
+    from guide_generation import GuideGenerationError, _validate_module_payload
+
+    checklist_ok = {
+        "audience": "crew",
+        "groups": [
+            {
+                "t": "Prep",
+                "items": [{"c": "Do it", "audience": "crew"}, {"c": "Shared"}],
+            }
+        ],
+    }
+    try:
+        _validate_module_payload("checklist", "pd", checklist_ok)
+    except GuideGenerationError as exc:
+        failures.append(f"crew checklist audience was rejected: {exc}")
+    bad_item = {
+        "groups": [{"t": "Prep", "items": [{"c": "Do it", "audience": "guest"}]}]
+    }
+    try:
+        _validate_module_payload("checklist", "pd", bad_item)
+    except GuideGenerationError:
+        pass
+    else:
+        failures.append("published checklist item audience guest was accepted")
+
+    try:
+        _validate_module_payload(
+            "fix_card_set",
+            "all",
+            [
+                {
+                    "icon": "🔴",
+                    "cat": "engine",
+                    "catL": "Engine",
+                    "title": "Crew card",
+                    "steps": ["Look"],
+                    "audience": "crew",
+                }
+            ],
+        )
+    except GuideGenerationError as exc:
+        failures.append(f"crew fix card audience was rejected: {exc}")
+    try:
+        _validate_module_payload(
+            "fix_card_set",
+            "all",
+            [
+                {
+                    "icon": "🔴",
+                    "cat": "engine",
+                    "catL": "Engine",
+                    "title": "Bad card",
+                    "steps": ["Look"],
+                    "audience": "captain",
+                }
+            ],
+        )
+    except GuideGenerationError:
+        pass
+    else:
+        failures.append("published fix card audience captain was accepted")
+
+    try:
+        _validate_module_payload(
+            "ui",
+            "homeRuleSections",
+            [
+                {
+                    "title": "Caution",
+                    "tone": "caution",
+                    "rules": [
+                        {
+                            "icon": "🛟",
+                            "tone": "caution",
+                            "text": "Crew helm rule",
+                            "audience": "crew",
+                        }
+                    ],
+                }
+            ],
+        )
+    except GuideGenerationError as exc:
+        failures.append(f"crew home rule audience was rejected: {exc}")
+    try:
+        _validate_module_payload(
+            "ui",
+            "homeRuleSections",
+            [
+                {
+                    "title": "Caution",
+                    "tone": "caution",
+                    "rules": [
+                        {"icon": "🛟", "tone": "caution", "text": "Shared", "audience": "guest"}
+                    ],
+                }
+            ],
+        )
+    except GuideGenerationError:
+        pass
+    else:
+        failures.append("published home rule audience guest was accepted")
+
+    system_ok = {
+        "id": "water",
+        "icon": "💧",
+        "title": "Water",
+        "subtitle": "Fresh water",
+        "summary": "Tanks on board.",
+        "sections": [
+            {"t": "Using it", "type": "prose", "c": "Short showers.", "audience": "crew"}
+        ],
+    }
+    try:
+        _validate_module_payload("system", "water", system_ok)
+    except GuideGenerationError as exc:
+        failures.append(f"crew section audience was rejected: {exc}")
+    system_bad = {
+        **system_ok,
+        "sections": [
+            {"t": "Using it", "type": "prose", "c": "Short showers.", "audience": "guest"}
+        ],
+    }
+    try:
+        _validate_module_payload("system", "water", system_bad)
+    except GuideGenerationError:
+        pass
+    else:
+        failures.append("published section audience guest was accepted")
+
+
 def main() -> int:
     failures: list[str] = []
     for fixture_name, snapshot in FIXTURES:
@@ -561,6 +996,7 @@ def main() -> int:
 
     _check_handbook(failures)
     _check_section_audience(failures)
+    _check_audience_plumbing(failures)
     _check_crew_layers(failures)
     _check_vessel_guest_layers(failures)
 

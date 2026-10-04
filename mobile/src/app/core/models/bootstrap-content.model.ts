@@ -20,6 +20,8 @@ export interface EmergencyContact {
   value: string;
   tel?: string;
   action: 'call' | 'vhf';
+  /** Only ``crew`` is published. Omitted contacts show in both views. */
+  audience?: 'crew';
 }
 
 export interface BootstrapEmergency {
@@ -40,7 +42,7 @@ export interface SystemSection {
   items?: unknown[];
   /** Registry places for devices referenced in this system chapter. */
   rows?: Array<{ name: string; location: string }>;
-  /** ``crew`` is hidden in the Guest reading view. Omitted sections show in both. */
+  /** Only ``crew`` is published. Hidden in the Guest reading view; omitted sections show in both. */
   audience?: 'guest' | 'crew';
   [key: string]: unknown;
 }
@@ -71,6 +73,8 @@ export interface SystemModule {
 export interface ChecklistItem {
   c: string;
   s?: string;
+  /** Only ``crew`` is published. Omitted items show in both views. */
+  audience?: 'crew';
 }
 
 export interface ChecklistGroup {
@@ -81,6 +85,8 @@ export interface ChecklistGroup {
 export interface Checklist {
   title?: string;
   sub?: string;
+  /** Only ``crew`` is published. Omitted checklists show in both views. */
+  audience?: 'crew';
   groups: ChecklistGroup[];
 }
 
@@ -102,6 +108,8 @@ export interface FixCard {
   catL: string;
   title: string;
   steps: string[];
+  /** Only ``crew`` is published. Omitted cards show in both views. */
+  audience?: 'crew';
 }
 
 export type RuleTone = 'danger' | 'caution' | 'good';
@@ -111,6 +119,8 @@ export interface HomeRule {
   text: string;
   tone: RuleTone;
   link?: string;
+  /** Only ``crew`` is published. Omitted rules show in both views. */
+  audience?: 'crew';
 }
 
 export interface HomeRuleSection {

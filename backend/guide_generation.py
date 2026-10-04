@@ -65,6 +65,14 @@ class GuideGenerationError(Exception):
     pass
 
 
+def _require_published_audience(value: Any, where: str) -> None:
+    """Published audience is omitted or ``crew``. YAML ``guest`` is not stored."""
+    if value not in (None, "crew"):
+        raise GuideGenerationError(
+            f"{where} audience must be omitted or 'crew', got {value!r}"
+        )
+
+
 @dataclass
 class GenerationResult:
     snapshot_id: str
@@ -621,6 +629,18 @@ def _validate_module_payload(
     elif content_type == "ui" and content_key == "homeRuleSections":
         if not isinstance(payload, list) or not payload:
             raise GuideGenerationError("homeRuleSections must be a non-empty array")
+        for section_index, section in enumerate(payload):
+            if not isinstance(section, dict):
+                continue
+            rules = section.get("rules") or []
+            if not isinstance(rules, list):
+                continue
+            for rule_index, rule in enumerate(rules):
+                if isinstance(rule, dict):
+                    _require_published_audience(
+                        rule.get("audience"),
+                        f"home rule {section_index}.{rule_index}",
+                    )
     elif content_type == "system":
         _validate_system_module(content_key, payload)
     elif content_type == "checklist":
@@ -641,6 +661,7 @@ def _validate_module_payload(
 def _validate_checklist_module(content_key: str, payload: Any) -> None:
     if not isinstance(payload, dict):
         raise GuideGenerationError("checklist payload must be an object")
+    _require_published_audience(payload.get("audience"), f"checklist {content_key}")
     groups = payload.get("groups")
     if not isinstance(groups, list) or not groups:
         raise GuideGenerationError(f"checklist {content_key} missing groups")
@@ -655,6 +676,10 @@ def _validate_checklist_module(content_key: str, payload: Any) -> None:
                 raise GuideGenerationError(
                     f"checklist {content_key} group {index} item {item_index} missing c"
                 )
+            _require_published_audience(
+                item.get("audience"),
+                f"checklist {content_key} group {index} item {item_index}",
+            )
 
 
 def _validate_fixes_module(payload: Any) -> None:
@@ -669,6 +694,7 @@ def _validate_fixes_module(payload: Any) -> None:
                 raise GuideGenerationError(f"fix card {index} missing {key}")
         if not isinstance(card.get("steps"), list) or not card["steps"]:
             raise GuideGenerationError(f"fix card {index} missing steps")
+        _require_published_audience(card.get("audience"), f"fix card {index}")
         card["icon"] = normalize_fix_icon(card.get("icon"))
 
 
@@ -711,6 +737,7 @@ def _validate_system_module(content_key: str, payload: Any) -> None:
     for index, section in enumerate(sections):
         if not isinstance(section, dict):
             raise GuideGenerationError(f"section {index} must be an object")
+        _require_published_audience(section.get("audience"), f"section {index}")
         if not section.get("t") or not section.get("type"):
             raise GuideGenerationError(f"section {index} missing t or type")
         section_type = section["type"]

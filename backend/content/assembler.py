@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any, Callable
 
 from content import conditions, slots
+from content.audience import stamp_audience
 from content.loader import CONTENT_ROOT, load_yaml, load_yaml_cached
 from guide_fix_icons import normalize_fix_icon
 from guide_section_duplicates import normalise_title
@@ -106,6 +107,7 @@ def _resolve_checklist_items(
         system = _published_system(item.get("when"))
         if system:
             entry["requiresSystem"] = system
+        stamp_audience(entry, item, label=key or text)
         resolved.append(entry)
     return resolved
 
@@ -124,6 +126,7 @@ def _override_item(extra: dict[str, Any], snapshot: dict[str, Any]) -> dict[str,
     system = _published_system(extra.get("when"))
     if system:
         entry["requiresSystem"] = system
+    stamp_audience(entry, extra, label=key or text)
     return entry
 
 
@@ -156,6 +159,13 @@ def _apply_checklist_overrides(
                         item["s"] = slots.apply_slots(
                             str(replacement.get("s") or ""), snapshot
                         ).strip()
+                    if "audience" in replacement:
+                        item.pop("audience", None)
+                        stamp_audience(
+                            item,
+                            replacement,
+                            label=str(key or item.get("c") or "checklist item"),
+                        )
             kept.append(item)
             extra = insert_after.get(key) if key else None
             if isinstance(extra, dict):
@@ -198,6 +208,8 @@ def build_home_rules_module(
         }
         if rule.get("link"):
             entry["link"] = rule["link"]
+        # guide_context.localRules stay visible in both views; only static YAML can tag crew.
+        stamp_audience(entry, rule, label=str(rule.get("text") or "home rule"))
         section = rule["section"]
         if section == "danger":
             danger_rules.append(entry)
@@ -252,7 +264,9 @@ def build_checklist_module(
     overrides = (_vessel_overrides(snapshot).get("checklists") or {}).get(checklist_id) or {}
     if isinstance(overrides, dict) and overrides:
         groups = _apply_checklist_overrides(groups, overrides, snapshot)
-    return {"groups": groups}
+    payload: dict[str, Any] = {"groups": groups}
+    stamp_audience(payload, data, label=checklist_id)
+    return payload
 
 
 def build_fix_cards_module(
@@ -274,6 +288,11 @@ def build_fix_cards_module(
         system = _published_system(card.get("when"))
         if system:
             payload["requiresSystem"] = system
+        stamp_audience(
+            payload,
+            card,
+            label=str(card.get("key") or card.get("title") or "fix card"),
+        )
         cards.append(payload)
     fix_overrides = _vessel_overrides(snapshot).get("fixes") or {}
     if isinstance(fix_overrides, dict) and fix_overrides:
@@ -301,6 +320,15 @@ def _apply_fix_overrides(
                 card["title"] = slots.apply_slots(str(replacement["title"]), snapshot)
             if replacement.get("steps"):
                 card["steps"] = _resolve_steps(replacement["steps"], snapshot)
+            # A title/steps replace keeps audience already stamped on the card
+            # unless the override names audience itself.
+            if "audience" in replacement:
+                card.pop("audience", None)
+                stamp_audience(
+                    card,
+                    replacement,
+                    label=str(key or card.get("title") or "fix card"),
+                )
         if key:
             seen.add(key)
         kept.append(card)
@@ -368,19 +396,8 @@ def _resolve_guest_items(
 
 def _apply_section_audience(section: dict[str, Any], spec: dict[str, Any]) -> None:
     """Copy ``audience: crew`` onto the published section. Omitted means both views."""
-    raw = spec.get("audience")
-    if raw is None:
-        return
-    if not isinstance(raw, str):
-        raise ValueError(f"section audience must be guest or crew, got {raw!r}")
-    audience = raw.strip().lower()
-    if audience == "guest":
-        return
-    if audience == "crew":
-        section["audience"] = "crew"
-        return
     title = spec.get("t") or "section"
-    raise ValueError(f"{title!r} audience must be guest or crew, got {raw!r}")
+    stamp_audience(section, spec, label=str(title))
 
 
 def _html_text(value: str) -> str:

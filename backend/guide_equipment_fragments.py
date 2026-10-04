@@ -15,7 +15,7 @@ registry row (`equipment_guide_fragment.fragment` JSONB):
       "fix_card_overrides": {
         "<card_key>": {"title"?, "icon"?, "steps": ["..."]}
       },
-      "extra_fix_cards": [{icon, cat, catL, title, steps}]
+      "extra_fix_cards": [{icon, cat, catL, title, steps, audience?}]
     }
 
 Fragments are curated once per equipment model (first boat pays, siblings
@@ -27,7 +27,9 @@ don't) and assembled deterministically into vessel guides:
 - Fix cards: fragment overrides replace the body steps of the generic card
   with equipment-specific steps; extra cards are appended. The vessel-specific
   contact step (always the final step of a generic card) is preserved, so
-  fragments never embed charter company details.
+  fragments never embed charter company details. Overrides keep the card's
+  existing audience. Extra cards default to audience ``crew`` unless the
+  fragment sets ``audience: guest``.
 
 Draft fragments (`status = draft`) are for admin review only. Only approved
 fragments are used at guide generation time.
@@ -41,6 +43,7 @@ from typing import Any, Literal
 from sqlalchemy import text
 from sqlalchemy.engine import Connection
 
+from content.audience import PUBLISHED_CREW, stamp_audience
 from guide_fix_icons import normalize_fix_icon
 from guide_system_assembly import assemble_system_from_fragments
 
@@ -146,6 +149,7 @@ def apply_fix_card_fragments(
         if override:
             # Fragment steps are vessel-agnostic; keep the vessel-specific
             # contact step that generic cards always place last.
+            # Audience stays on the generic card; the override does not retag it.
             last_step = card["steps"][-1] if card.get("steps") else None
             card["steps"] = list(override["steps"]) + ([last_step] if last_step else [])
             if override.get("title"):
@@ -168,6 +172,14 @@ def apply_fix_card_fragments(
         extra_card["steps"] = list(extra_card.get("steps") or [])
         if contact_step:
             extra_card["steps"].append(contact_step)
+        audience_spec = extra
+        if extra.get("audience") is None:
+            audience_spec = {**extra, "audience": PUBLISHED_CREW}
+        stamp_audience(
+            extra_card,
+            audience_spec,
+            label=str(extra.get("key") or extra.get("title") or "fix card"),
+        )
         result.append(extra_card)
 
     return result

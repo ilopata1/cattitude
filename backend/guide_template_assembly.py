@@ -15,6 +15,7 @@ from __future__ import annotations
 
 from typing import Any, Callable
 
+from content.audience import stamp_audience
 from prompts.guide.assembly_text import MAYDAY_CHANNEL, mayday_steps
 
 
@@ -91,6 +92,7 @@ def _normalize_contact(contact: dict[str, Any]) -> dict[str, Any] | None:
     if action not in ("call", "vhf"):
         action = "call" if normalized.get("tel") else "vhf"
     normalized["action"] = action
+    stamp_audience(normalized, contact, label=label)
     return normalized
 
 
