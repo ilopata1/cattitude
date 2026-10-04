@@ -4,6 +4,8 @@
 # Slots: {vessel_name}, {company}, {engine_group_title}, etc.
 #
 
+audience: crew
+
 groups:
 - key: anch/spot
   t: Choosing a Spot

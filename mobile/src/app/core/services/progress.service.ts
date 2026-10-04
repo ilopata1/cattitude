@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { groupTopics } from '../guide/power-topic';
+import { ReaderView } from '../guide/reader-view';
 import { Checklist, LearnCheck, SystemModule } from '../models/bootstrap-content.model';
 import { ContentService } from './content.service';
 import { VesselContextService } from './vessel-context.service';
@@ -40,7 +41,11 @@ export class ProgressService {
     this.saveChecklistState(key, {});
   }
 
-  checklistProgress(key: string, checklist: Checklist | undefined): ChecklistProgress {
+  checklistProgress(
+    key: string,
+    checklist: Checklist | undefined,
+    view?: ReaderView,
+  ): ChecklistProgress {
     if (!checklist) {
       return { done: 0, total: 0, percent: 0 };
     }
@@ -48,7 +53,10 @@ export class ProgressService {
     let total = 0;
     let done = 0;
     checklist.groups.forEach((group, gi) =>
-      group.items.forEach((_, ii) => {
+      group.items.forEach((item, ii) => {
+        if (view === 'guest' && item.audience === 'crew') {
+          return;
+        }
         total += 1;
         if (state[`${gi}-${ii}`]) {
           done += 1;

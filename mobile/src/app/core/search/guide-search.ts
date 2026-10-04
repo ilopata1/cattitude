@@ -50,6 +50,7 @@ interface SearchableSection {
 
 interface SearchableChecklist {
   title?: string;
+  audience?: string;
   groups?: Array<{
     t?: string;
     items?: unknown[];
@@ -132,12 +133,18 @@ export function buildGuideIndex(guide: SearchableGuide, view: ReaderView = 'gues
 
   const checklists = guide.checklists ?? {};
   for (const [key, checklist] of Object.entries(checklists)) {
+    if (view === 'guest' && checklist.audience === 'crew') {
+      continue;
+    }
     const checklistTitle =
       text(checklist.title) || text(guide.ui?.checklistMeta?.[key]?.title) || key;
     (checklist.groups ?? []).forEach((group, groupIndex) => {
       const groupTitle = text(group.t);
       (group.items ?? []).forEach((item, itemIndex) => {
-        const parts = itemParts(item);
+        if (view === 'guest' && itemAudience(item) === 'crew') {
+          return;
+        }
+        const parts = itemParts(item, view);
         const fields = [groupTitle, ...parts].filter(Boolean);
         if (!fields.length) {
           return;
@@ -258,7 +265,15 @@ function sectionFields(section: SearchableSection): string[] {
   return fields;
 }
 
-function itemParts(item: unknown): string[] {
+function itemAudience(item: unknown): string | undefined {
+  if (!item || typeof item !== 'object') {
+    return undefined;
+  }
+  const audience = (item as Record<string, unknown>)['audience'];
+  return typeof audience === 'string' ? audience : undefined;
+}
+
+function itemParts(item: unknown, view: ReaderView = 'crew'): string[] {
   if (typeof item === 'string') {
     const value = text(item);
     return value ? [value] : [];
@@ -267,8 +282,13 @@ function itemParts(item: unknown): string[] {
     return [];
   }
   const record = item as Record<string, unknown>;
+  const guestCopy = text(typeof record['gc'] === 'string' ? record['gc'] : '');
+  const keys =
+    view === 'guest' && guestCopy
+      ? ['gc', 's', 'text', 'content', 'label', 'title', 'body']
+      : ['c', 's', 'text', 'content', 'label', 'title', 'body'];
   const parts: string[] = [];
-  for (const key of ['c', 's', 'text', 'content', 'label', 'title', 'body']) {
+  for (const key of keys) {
     const value = record[key];
     if (typeof value === 'string') {
       const cleaned = text(value);

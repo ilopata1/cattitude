@@ -28,7 +28,7 @@ SYSTEM_IDS: list[str] = [
     "dinghy",
 ]
 
-CHECKLIST_IDS: list[str] = ["safety-brief", "pd", "anch", "lu", "ec"]
+CHECKLIST_IDS: list[str] = ["safety-brief", "gh", "pd", "anch", "lu", "ec"]
 
 SYSTEM_MODULES: list[tuple[str, str]] = [("system", sid) for sid in SYSTEM_IDS]
 CHECKLIST_MODULES: list[tuple[str, str]] = [("checklist", cid) for cid in CHECKLIST_IDS]
@@ -180,6 +180,11 @@ CHECKLIST_CATALOG: dict[str, dict[str, str]] = {
         "title": "Safety briefing",
         "focus": "Guest safety briefing before every departure — MOB, hatches, emergency gear",
         "guest_label": "Do — safety brief",
+    },
+    "gh": {
+        "title": "Giving a hand",
+        "focus": "Short guest helper list — hatches, lines, fenders, and staying clear",
+        "guest_label": "Do — giving a hand",
     },
     "pd": {
         "title": "Pre-departure",

@@ -30,6 +30,7 @@ NAVIGATION_MODULE_KEYS: frozenset[tuple[str, str]] = frozenset(
 
 _CHECKLIST_ICONS: dict[str, tuple[str, str]] = {
     "safety-brief": ("🛟", "ic-coral"),
+    "gh": ("🤝", "ic-green"),
     "pd": ("🚀", "ic-green"),
     "anch": ("⚓", "ic-amber"),
     "lu": ("🔒", "ic-coral"),
@@ -38,6 +39,7 @@ _CHECKLIST_ICONS: dict[str, tuple[str, str]] = {
 
 _CHECKLIST_META_SUBTITLES: dict[str, str] = {
     "safety-brief": "Run with all guests before every departure",
+    "gh": "What a guest can do to help",
     "pd": "Complete before every departure",
     "anch": "Setting the hook safely",
     "lu": "Going ashore — secure the boat first",
@@ -47,7 +49,7 @@ _CHECKLIST_META_SUBTITLES: dict[str, str] = {
 _EC_SUBTITLE_PRIVATE = "Secure and shut down before leaving"
 
 # Recurring checklists, in trip order. Learn is a separate path.
-_DO_TRIP_ORDER: list[str] = ["safety-brief", "pd", "anch", "lu", "ec"]
+_DO_TRIP_ORDER: list[str] = ["safety-brief", "gh", "pd", "anch", "lu", "ec"]
 
 _POWER_PART_IDS = ("electrical", "controls", "batteries")
 

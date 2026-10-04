@@ -11,7 +11,7 @@ Guest-facing copy for hybrid guide modules (home rules, checklists, fix cards) l
 | `conditions.py` | Evaluate `when:` blocks (`has_category`, `twin_engine`, `is_sailing`, …) |
 | `assembler.py` | Build module payloads; exports `LIBRARY_MODULE_BUILDERS` |
 | `home_rules/` | Section headings + static rules (runtime `localRules` still come from guide context) |
-| `checklists/` | One YAML file per checklist (`safety-brief`, `pd`, `anch`, `lu`, `ec`) |
+| `checklists/` | One YAML file per checklist (`safety-brief`, `gh`, `pd`, `anch`, `lu`, `ec`) |
 | `fix_cards/` | Default troubleshooting cards (equipment fragments can override after assembly) |
 
 `guide_content_library.py` at the backend root is a thin re-export of `LIBRARY_MODULE_BUILDERS` so existing imports keep working.
@@ -38,7 +38,7 @@ when:
     - has_category: [navigation_electronics]
 ```
 
-4. Tag `audience: crew` when only the Crew reading view should show it. The same values are accepted on sections, checklist files, checklist items, fix cards, static home rules, and emergency contacts. Leave the field off, or set `audience: guest` (or `both`), when both views should show it. Crew view shows everything. Any other value is an error. The published payload only ever contains `audience: crew`; `guest` is not written out.
+4. Tag `audience: crew` when only the Crew reading view should show it. The same values are accepted on sections, checklist files, checklist items, fix cards, static home rules, and emergency contacts. Leave the field off, or set `audience: guest` (or `both`), when both views should show it. Crew view shows everything. Any other value is an error. The published payload only ever contains `audience: crew`; `guest` is not written out. A checklist item may also set `gc:` — the line a guest ticks. It is published as `gc` when present, and the Guest view shows that text instead of `c`.
 
    Vessel-only crew sections live in `vessels/{slug}/crew/{system}.yaml` and are appended for that slug. A same-titled correction for one boat lives in `vessels/{slug}/guest/{system}.yaml` and replaces that section in place. Name photos by key from `vessels/{slug}/crew_photos.yaml`.
 
@@ -85,7 +85,7 @@ Optional keys on `guide_context.guestFacts` (JSONB, no migration). The owner fil
 | Key | Source |
 |-----|--------|
 | `ui` / `homeRuleSections` | `home_rules/*.yaml` + runtime local rules |
-| `checklist` / `safety-brief`, `pd`, `anch`, `lu`, `ec` | `checklists/*.yaml` |
+| `checklist` / `safety-brief`, `gh`, `pd`, `anch`, `lu`, `ec` | `checklists/*.yaml` |
 | `fix_card_set` / `all` | `fix_cards/cards.yaml` |
 
 Equipment-specific fix-card enrichment still happens in `guide_equipment_fragments.py` after library assembly.

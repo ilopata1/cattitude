@@ -680,6 +680,13 @@ def _validate_checklist_module(content_key: str, payload: Any) -> None:
                 item.get("audience"),
                 f"checklist {content_key} group {index} item {item_index}",
             )
+            guest_copy = item.get("gc")
+            if guest_copy is not None and not (
+                isinstance(guest_copy, str) and guest_copy.strip()
+            ):
+                raise GuideGenerationError(
+                    f"checklist {content_key} group {index} item {item_index} gc must be text"
+                )
 
 
 def _validate_fixes_module(payload: Any) -> None:

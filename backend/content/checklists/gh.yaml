@@ -1,0 +1,40 @@
+# Purpose: gh checklist content.
+# Used by: content.assembler.build_checklist_module
+# Module: checklist / gh
+# Slots: {vessel_name}, {company}, {engine_group_title}, etc.
+#
+
+groups:
+- key: gh/before
+  t: Before we leave
+  items:
+  - key: gh/hatches
+    c: Close the hatches and ports in your cabin.
+  - key: gh/cushions
+    c: Put cushions and loose gear inside.
+  - key: gh/shoes
+    c: Leave your shore shoes ashore.
+  - key: gh/fenders-in
+    c: When you are asked, bring the fender aboard before you untie it.
+  - key: gh/lines
+    c: When you are asked, hand the lines up. Do not throw them.
+- key: gh/underway
+  t: Under way
+  items:
+  - key: gh/one-hand
+    c: Keep one hand for the boat.
+  - key: gh/cockpit
+    c: Stay out of the cockpit working area.
+    when:
+      is_sailing: true
+  - key: gh/unwell
+    c: Tell someone if you feel unwell.
+- key: gh/arriving
+  t: Arriving
+  items:
+  - key: gh/fenders-out
+    c: Put the fenders out only when you are asked, and only if you can tie the knot.
+  - key: gh/cleat
+    c: Hold a line round a cleat.
+  - key: gh/step-off
+    c: Step off only when you are told.

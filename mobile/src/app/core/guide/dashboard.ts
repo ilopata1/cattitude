@@ -42,6 +42,8 @@ export interface DashboardDoItemInput {
   subtitle?: string;
   icon?: string;
   progressType?: string;
+  /** Set when the published checklist is crew-only. */
+  crewOnly?: boolean;
 }
 
 export interface DashboardCatalogInput {
@@ -52,9 +54,20 @@ export interface DashboardCatalogInput {
   rulesAvailable: boolean;
 }
 
-const GUEST_DEFAULT = ['learn', 'do:safety-brief', 'know:heads', 'more:ask'];
+const GUEST_DEFAULT = ['learn', 'do:safety-brief', 'do:gh', 'know:overview', 'know:heads', 'more:ask'];
 const CREW_SHORTCUTS = ['know:engines', 'know:electrical', 'know:power', 'more:sail', 'more:anchorage', 'fix', 'more:ask'];
 const CREW_LIVE = ['widget:aws', 'widget:tws', 'widget:sog', 'widget:awa', 'widget:heading', 'widget:cog', 'widget:polar'];
+
+export function knowChapterRoute(
+  systemId: string,
+  section?: string | null,
+): { segments: string[]; query: Record<string, string> } {
+  const query: Record<string, string> = { system: systemId };
+  if (section != null && section !== '') {
+    query['section'] = section;
+  }
+  return { segments: ['know', systemId], query };
+}
 
 export function buildDashboardCatalog(input: DashboardCatalogInput): DashboardItem[] {
   const items: DashboardItem[] = [];
@@ -82,6 +95,7 @@ export function buildDashboardCatalog(input: DashboardCatalogInput): DashboardIt
         subtitle: item.subtitle || '',
         icon: item.icon || 'checkmark-circle-outline',
         segments: ['do', 'checklist', item.key],
+        crewOnly: item.crewOnly,
       }));
     }
   }
@@ -100,23 +114,27 @@ export function buildDashboardCatalog(input: DashboardCatalogInput): DashboardIt
   const topics = groupTopics(input.systems);
   for (const topic of topics) {
     const id = `know:${topic.id}`;
+    const topicRoute = knowChapterRoute(topic.id);
     items.push(shortcut({
       id,
       group: 'know',
       label: topicTitle(topic),
       subtitle: topic.id === POWER_TOPIC_ID ? 'Electrical, controls, and batteries' : (topic.systems[0]?.subtitle || ''),
       icon: topicIcon(topic) || 'book-outline',
-      segments: ['know', topic.id],
+      segments: topicRoute.segments,
+      query: topicRoute.query,
     }));
     for (const system of topic.systems) {
       if (isPowerPart(system.id)) {
+        const partRoute = knowChapterRoute(system.id);
         items.push(shortcut({
           id: `know:${system.id}`,
           group: 'know',
           label: system.title || system.id,
           subtitle: 'Power',
           icon: system.icon || 'flash-outline',
-          segments: ['know', system.id],
+          segments: partRoute.segments,
+          query: partRoute.query,
           parentId: id,
         }));
       }
@@ -125,14 +143,15 @@ export function buildDashboardCatalog(input: DashboardCatalogInput): DashboardIt
         if (!label || classifySection(section).role === 'omit') {
           return;
         }
+        const sectionRoute = knowChapterRoute(system.id, String(index));
         items.push(shortcut({
           id: `know:${system.id}:s:${index}`,
           group: 'know',
           label,
           subtitle: system.title || topicTitle(topic),
           icon: system.icon || topicIcon(topic) || 'book-outline',
-          segments: ['know', system.id],
-          query: { section: String(index) },
+          segments: sectionRoute.segments,
+          query: sectionRoute.query,
           crewOnly: section.audience === 'crew',
           parentId: id,
         }));

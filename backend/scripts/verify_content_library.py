@@ -117,6 +117,7 @@ FIXTURES = [
 LEGACY_SKIP = {
     ("ui", "homeRuleSections"),
     ("checklist", "safety-brief"),
+    ("checklist", "gh"),
     ("checklist", "pd"),
     ("checklist", "anch"),
     ("checklist", "lu"),
@@ -1019,14 +1020,45 @@ def _yaml_override(files: dict[str, Any]):
 def _check_audience_plumbing(failures: list[str]) -> None:
     """Crew tags publish; omitted and guest do not; a bad value is an error.
 
-    The full fixture is built from shipped YAML, which is still untagged.
-    Tagged cases use a temporary in-memory spec.
+    Operating checklists in shipped YAML are crew. Giving a hand and the
+    safety briefing stay in both views. The briefing publishes a guest line
+    on every item. Other tagged cases use a temporary in-memory spec.
     """
     full = next(snapshot for name, snapshot in FIXTURES if name == "full")
+    crew_checklists = {"pd", "anch", "lu", "ec"}
     for key, builder in LIBRARY_MODULE_BUILDERS.items():
         payload = builder(full)
+        if key[0] == "checklist" and key[1] in crew_checklists:
+            if payload.get("audience") != "crew":
+                failures.append(f"full fixture {key[1]} checklist is not crew")
+            if any("audience" in item for item in _checklist_items(payload)):
+                failures.append(f"full fixture {key[1]} item published an audience key")
+            continue
+        if key == ("checklist", "gh"):
+            items = _checklist_items(payload)
+            if "audience" in payload or any("audience" in item for item in items):
+                failures.append("giving a hand published an audience key")
+            if "Stay out of the cockpit working area" not in _texts(payload):
+                failures.append("giving a hand dropped the under-sail line on a sailing boat")
+            if not items or not all(str(item.get("key") or "").startswith("gh/") for item in items):
+                failures.append("giving a hand item is missing a gh/ key")
+            continue
+        if key == ("checklist", "safety-brief"):
+            items = _checklist_items(payload)
+            if _has_audience_key(payload):
+                failures.append("safety briefing published an audience key")
+            missing = [item.get("key") for item in items if not str(item.get("gc") or "").strip()]
+            if missing:
+                failures.append(f"safety briefing items missing gc: {missing}")
+            if not any(item.get("gc") == "I know where my life jacket is" for item in items):
+                failures.append("life jacket guest line missing")
+            continue
         if _has_audience_key(payload):
             failures.append(f"full fixture {key[0]}/{key[1]} published an audience key")
+
+    power_gh = build_checklist_module("gh", make_snapshot([], vessel_type="motor_yacht"))
+    if "cockpit working area" in _texts(power_gh):
+        failures.append("power boat published the under-sail helper line")
 
     with _yaml_override(
         {

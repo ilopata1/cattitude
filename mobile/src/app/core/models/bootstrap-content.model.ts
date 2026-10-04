@@ -73,6 +73,8 @@ export interface SystemModule {
 export interface ChecklistItem {
   c: string;
   s?: string;
+  /** Guest-voice line. The Guest view shows this instead of ``c`` when set. */
+  gc?: string;
   /** Only ``crew`` is published. Omitted items show in both views. */
   audience?: 'crew';
 }

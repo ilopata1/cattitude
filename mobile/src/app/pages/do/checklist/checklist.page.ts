@@ -6,6 +6,7 @@ import { confirmChecklistReset } from './checklist-reset';
 import { Checklist } from '../../../core/models/bootstrap-content.model';
 import { ContentService } from '../../../core/services/content.service';
 import { ProgressService } from '../../../core/services/progress.service';
+import { ReaderViewService } from '../../../core/services/reader-view.service';
 import { scrollToElement } from '../../../core/search/scroll-into-content';
 
 @Component({
@@ -27,6 +28,7 @@ export class ChecklistPage implements OnInit {
   constructor(
     public readonly content: ContentService,
     public readonly progress: ProgressService,
+    public readonly readerView: ReaderViewService,
     private readonly route: ActivatedRoute,
     private readonly alerts: AlertController,
     private readonly toasts: ToastController,
@@ -50,7 +52,7 @@ export class ChecklistPage implements OnInit {
   }
 
   get progressState() {
-    return this.progress.checklistProgress(this.key, this.checklist);
+    return this.progress.checklistProgress(this.key, this.checklist, this.readerView.view());
   }
 
   isDone(groupIndex: number, itemIndex: number): boolean {

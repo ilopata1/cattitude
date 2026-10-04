@@ -23,25 +23,29 @@
   <div class="checklist-body" *ngIf="checklist">
     <div class="cl-group" *ngFor="let group of checklist.groups; let gi = index">
       <div class="cl-group-title">{{ group.t }}</div>
-      <button
-        type="button"
-        class="cl-item"
-        role="checkbox"
-        [attr.aria-checked]="isDone(gi, ii)"
-        [id]="'cl-' + gi + '-' + ii"
-        [class.chk]="isDone(gi, ii)"
-        [class.cl-target]="pendingItem === gi + '-' + ii"
-        *ngFor="let item of group.items; let ii = index"
-        (click)="toggle(gi, ii)"
-      >
-        <div class="cl-checkbox">
-          <ion-icon *ngIf="isDone(gi, ii)" name="checkmark" aria-hidden="true"></ion-icon>
-        </div>
-        <div>
-          <div class="cl-item-text" [class.done]="isDone(gi, ii)">{{ item.c }}</div>
-          <div class="cl-item-sub" *ngIf="item.s">{{ item.s }}</div>
-        </div>
-      </button>
+      <ng-container *ngFor="let item of group.items; let ii = index">
+        <button
+          type="button"
+          class="cl-item"
+          role="checkbox"
+          [attr.aria-checked]="isDone(gi, ii)"
+          [id]="'cl-' + gi + '-' + ii"
+          [class.chk]="isDone(gi, ii)"
+          [class.cl-target]="pendingItem === gi + '-' + ii"
+          *ngIf="readerView.view() !== 'guest' || item.audience !== 'crew'"
+          (click)="toggle(gi, ii)"
+        >
+          <div class="cl-checkbox">
+            <ion-icon *ngIf="isDone(gi, ii)" name="checkmark" aria-hidden="true"></ion-icon>
+          </div>
+          <div>
+            <div class="cl-item-text" [class.done]="isDone(gi, ii)">
+              {{ readerView.view() === 'guest' ? (item.gc || item.c) : item.c }}
+            </div>
+            <div class="cl-item-sub" *ngIf="item.s">{{ item.s }}</div>
+          </div>
+        </button>
+      </ng-container>
     </div>
   </div>
 </ion-content>

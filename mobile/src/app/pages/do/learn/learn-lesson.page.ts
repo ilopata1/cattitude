@@ -5,9 +5,11 @@ import { AlertController, ToastController } from '@ionic/angular';
 import { confirmChecklistReset } from '../checklist/checklist-reset';
 import { LearnLesson, LearnStage, resolveLearnPath } from '../../../core/guide/learn-path';
 import { isPowerPart, POWER_TOPIC_ID, powerSubtitle } from '../../../core/guide/power-topic';
+import { knowChapterRoute } from '../../../core/guide/dashboard';
 import { Checklist, SystemModule } from '../../../core/models/bootstrap-content.model';
 import { ContentService } from '../../../core/services/content.service';
 import { ProgressService } from '../../../core/services/progress.service';
+import { ReaderViewService } from '../../../core/services/reader-view.service';
 import { VesselRouteService } from '../../../core/services/vessel-route.service';
 
 @Component({
@@ -27,6 +29,7 @@ export class LearnLessonPage implements OnInit {
   constructor(
     public readonly content: ContentService,
     public readonly progress: ProgressService,
+    public readonly readerView: ReaderViewService,
     private readonly route: ActivatedRoute,
     private readonly vesselRoutes: VesselRouteService,
     private readonly alerts: AlertController,
@@ -87,7 +90,7 @@ export class LearnLessonPage implements OnInit {
     if (!this.lesson || this.lesson.kind !== 'checklist') {
       return { done: 0, total: 0, percent: 0 };
     }
-    return this.progress.checklistProgress(this.lesson.id, this.checklist);
+    return this.progress.checklistProgress(this.lesson.id, this.checklist, this.readerView.view());
   }
 
   isDone(groupIndex: number, itemIndex: number): boolean {
@@ -115,7 +118,8 @@ export class LearnLessonPage implements OnInit {
         return;
       }
     }
-    void this.vesselRoutes.navigateTabs('know', targetId);
+    const route = knowChapterRoute(targetId);
+    void this.vesselRoutes.navigateTabsWithExtras(route.segments, { queryParams: route.query });
   }
 
   back(): void {

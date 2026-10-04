@@ -4,6 +4,7 @@ import { LearnStage, resolveLearnPath } from '../../core/guide/learn-path';
 import { DoMenuItem } from '../../core/models/bootstrap-content.model';
 import { ContentService } from '../../core/services/content.service';
 import { ProgressService } from '../../core/services/progress.service';
+import { ReaderViewService } from '../../core/services/reader-view.service';
 import { stageTicks, tickLabel } from './learn/learn-ticks';
 
 @Component({
@@ -16,6 +17,7 @@ export class DoPage {
   constructor(
     public readonly content: ContentService,
     public readonly progress: ProgressService,
+    public readonly readerView: ReaderViewService,
     private readonly router: Router,
   ) {}
 
@@ -53,10 +55,13 @@ export class DoPage {
   }
 
   get menu() {
+    const view = this.readerView.view();
     return this.content.bootstrap.ui.doMenu
       .map((section) => ({
         ...section,
-        items: section.items.filter((item) => item.progressType !== 'learn'),
+        items: section.items.filter(
+          (item) => item.progressType !== 'learn' && this.content.checklistVisible(item.key, view),
+        ),
       }))
       .filter((section) => section.items.length > 0);
   }
@@ -69,6 +74,7 @@ export class DoPage {
       this.progress.checklistProgress(
         itemKey,
         this.content.getChecklist(itemKey),
+        this.readerView.view(),
       ),
     );
   }

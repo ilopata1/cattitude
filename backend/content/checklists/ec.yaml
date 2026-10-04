@@ -5,6 +5,8 @@
 # Alternates that share a key: the first match is kept.
 #
 
+audience: crew
+
 groups:
 - key: ec/final-day
   t: Final Day at Sea

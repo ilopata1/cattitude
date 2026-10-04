@@ -101,6 +101,9 @@ def _resolve_checklist_items(
             continue
         subtitle = slots.apply_slots(str(item.get("s") or ""), snapshot).strip()
         entry: dict[str, Any] = {"c": text, "s": subtitle}
+        guest_copy = slots.apply_slots(str(item.get("gc") or ""), snapshot).strip()
+        if guest_copy:
+            entry["gc"] = guest_copy
         if key:
             entry["key"] = key
             seen.add(key)
@@ -120,6 +123,9 @@ def _override_item(extra: dict[str, Any], snapshot: dict[str, Any]) -> dict[str,
         "c": text,
         "s": slots.apply_slots(str(extra.get("s") or ""), snapshot).strip(),
     }
+    guest_copy = slots.apply_slots(str(extra.get("gc") or ""), snapshot).strip()
+    if guest_copy:
+        entry["gc"] = guest_copy
     key = str(extra.get("key") or "").strip()
     if key:
         entry["key"] = key
@@ -159,6 +165,14 @@ def _apply_checklist_overrides(
                         item["s"] = slots.apply_slots(
                             str(replacement.get("s") or ""), snapshot
                         ).strip()
+                    if "gc" in replacement:
+                        guest_copy = slots.apply_slots(
+                            str(replacement.get("gc") or ""), snapshot
+                        ).strip()
+                        if guest_copy:
+                            item["gc"] = guest_copy
+                        else:
+                            item.pop("gc", None)
                     if "audience" in replacement:
                         item.pop("audience", None)
                         stamp_audience(
@@ -911,7 +925,7 @@ def _make_checklist_builder(
     return _builder
 
 
-_CHECKLIST_IDS = ("safety-brief", "pd", "anch", "lu", "ec")
+_CHECKLIST_IDS = ("safety-brief", "gh", "pd", "anch", "lu", "ec")
 
 LIBRARY_MODULE_BUILDERS: dict[
     tuple[str, str], Callable[[dict[str, Any], Any], Any]

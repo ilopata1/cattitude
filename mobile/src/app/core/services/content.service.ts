@@ -219,6 +219,11 @@ export class ContentService {
     return this.bootstrap.checklists[key];
   }
 
+  /** Crew checklists stay in the published menu. The Guest view hides them. */
+  checklistVisible(key: string, view: ReaderView): boolean {
+    return view === 'crew' || this.bootstrap.checklists[key]?.audience !== 'crew';
+  }
+
   getSystemsOrdered(): SystemModule[] {
     return this.bootstrap.ui.systemOrder
       .map((id) => this.bootstrap.systems[id])

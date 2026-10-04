@@ -204,5 +204,48 @@ export function guideSearchFailures(): string[] {
     'duplicate fix titles did not get a suffix',
   );
 
+  const crewLists: SearchableGuide = {
+    checklists: {
+      pd: {
+        audience: 'crew',
+        groups: [{ t: 'Engines', items: [{ c: 'Open the raw water seacock before starting' }] }],
+      },
+      'safety-brief': {
+        groups: [
+          {
+            t: 'Life jackets',
+            items: [
+              {
+                c: 'Show guests the stowage locker',
+                gc: 'I know where my life jacket is',
+              },
+              { c: 'Explain the valve sequence', audience: 'crew' },
+            ],
+          },
+        ],
+      },
+    },
+    ui: {
+      checklistMeta: {
+        pd: { title: 'Pre-departure' },
+        'safety-brief': { title: 'Safety briefing' },
+      },
+    },
+  };
+  expect(hits(crewLists, 'seacock').length === 0, 'guest search returned a crew checklist');
+  expect(hits(crewLists, 'stowage').length === 0, 'guest search indexed the skipper line');
+  expect(hits(crewLists, 'valve sequence').length === 0, 'guest search returned a crew item');
+  expect(
+    hits(crewLists, 'life jacket').some((line) => line.includes('I know where my life jacket is')),
+    'guest search missed the guest-voice line',
+  );
+  const crewSeacock: string[] = [];
+  for (const group of searchGuide(buildGuideIndex(crewLists, 'crew'), 'seacock')) {
+    for (const hit of group.hits) {
+      crewSeacock.push(hit.title);
+    }
+  }
+  expect(crewSeacock.join(',') === 'Pre-departure', `crew search missed the crew checklist: ${crewSeacock.join(',')}`);
+
   return failures;
 }

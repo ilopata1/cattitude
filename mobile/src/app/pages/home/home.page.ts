@@ -216,12 +216,17 @@ export class HomePage {
   }
 
   nextChecklist(): { title: string; route: string; label: string } | null {
+    const view = this.readerView.view();
     for (const section of this.content.bootstrap.ui.doMenu) {
       for (const item of section.items) {
-        if (item.progressType !== 'checklist') {
+        if (item.progressType !== 'checklist' || !this.content.checklistVisible(item.key, view)) {
           continue;
         }
-        const state = this.progress.checklistProgress(item.key, this.content.getChecklist(item.key));
+        const state = this.progress.checklistProgress(
+          item.key,
+          this.content.getChecklist(item.key),
+          view,
+        );
         if (state.total > 0 && state.done < state.total) {
           return {
             title: item.title,
@@ -410,7 +415,16 @@ export class HomePage {
         subtitle: system.subtitle,
         sections: system.sections,
       })),
-      doMenu: ui.doMenu,
+      doMenu: ui.doMenu.map((section) => ({
+        items: section.items.map((item) => ({
+          key: item.key,
+          title: item.title,
+          subtitle: item.subtitle,
+          icon: item.icon,
+          progressType: item.progressType,
+          crewOnly: this.content.bootstrap.checklists[item.key]?.audience === 'crew',
+        })),
+      })),
       learnAvailable: learn.length > 0,
       rulesAvailable: (ui.homeRuleSections ?? []).some((section) => section.rules?.length),
     });

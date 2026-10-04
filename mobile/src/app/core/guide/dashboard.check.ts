@@ -3,6 +3,7 @@ import {
   DashboardCatalogInput,
   defaultTileIds,
   layoutIds,
+  visibleItems,
 } from './dashboard';
 
 export function dashboardFailures(): string[] {
@@ -28,9 +29,24 @@ export function dashboardFailures(): string[] {
   expect(byId.get('more:sail')?.label === 'Sail', 'sailing sail label');
   expect(byId.has('widget:rules') && byId.has('rules'), 'rules are a page shortcut and a widget');
 
+  expect(byId.get('do:pd')?.crewOnly === true, 'crew checklist is marked');
+  expect(byId.get('do:gh')?.crewOnly === false, 'giving a hand stays on the guest home');
   expect(
-    defaultTileIds('guest', sailing, true).join(',') === 'learn,do:safety-brief,know:heads,more:ask',
+    defaultTileIds('guest', sailing, true).join(',') ===
+      'learn,do:safety-brief,do:gh,know:overview,know:heads,more:ask',
     'guest default',
+  );
+  expect(
+    !defaultTileIds('guest', sailing, true).includes('do:pd'),
+    'guest default hides a crew checklist',
+  );
+  expect(
+    !visibleItems(sailing, 'guest').some((item) => item.id === 'do:pd'),
+    'guest add list hides a crew checklist',
+  );
+  expect(
+    visibleItems(sailing, 'crew').some((item) => item.id === 'do:pd'),
+    'crew can still open a crew checklist',
   );
   expect(
     defaultTileIds('crew', sailing, true).join(',') ===
@@ -48,7 +64,8 @@ export function dashboardFailures(): string[] {
   );
   expect(layoutIds([], 'guest', sailing, false).length === 0, 'a cleared home stays empty');
   expect(
-    layoutIds(undefined, 'guest', sailing, false).join(',') === 'learn,do:safety-brief,know:heads,more:ask',
+    layoutIds(undefined, 'guest', sailing, false).join(',') ===
+      'learn,do:safety-brief,do:gh,know:overview,know:heads,more:ask',
     'an unsaved home uses the guest default',
   );
 
@@ -84,10 +101,19 @@ function sample(vesselType: string): DashboardCatalogInput {
         items: [
           { key: 'learn', title: 'Learn', icon: '📘', progressType: 'learn' },
           { key: 'safety-brief', title: 'Safety briefing', icon: '🛟', subtitle: 'Before departure', progressType: 'checklist' },
+          { key: 'gh', title: 'Giving a hand', icon: '🤝', subtitle: 'What a guest can do to help', progressType: 'checklist' },
+          { key: 'pd', title: 'Pre-departure', icon: '🚀', subtitle: 'Before leaving', progressType: 'checklist', crewOnly: true },
         ],
       },
     ],
     systems: [
+      {
+        id: 'overview',
+        title: 'Overview',
+        icon: '🗺️',
+        subtitle: 'Find your way around',
+        sections: [{ t: 'Welcome', type: 'prose' }],
+      },
       {
         id: 'engines',
         title: 'Engines',

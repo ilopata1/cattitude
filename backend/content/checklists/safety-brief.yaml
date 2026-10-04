@@ -10,89 +10,114 @@ groups:
   items:
   - key: sb/jackets-where
     c: Show guests where life jackets are stored
+    gc: I know where my life jacket is
     s: One per person plus spares.
   - key: sb/jackets-demo
     c: Demonstrate how to put on a life jacket
+    gc: I can put a life jacket on
   - key: sb/jackets-count
     c: Confirm one life jacket per person on board
+    gc: There is a life jacket for me
 - key: sb/equipment
   t: Emergency Equipment Locations
   items:
   - key: sb/flares
     c: Show flare kit location
+    gc: I know where the flares are
     s: Red parachute = night. Orange smoke = day.
   - key: sb/extinguishers
     c: Show fire extinguisher locations
+    gc: I know where the fire extinguishers are
   - key: sb/life-raft
     c: Show life raft location and how to release it
+    gc: I know where the life raft is
   - key: sb/epirb
     c: Show EPIRB location
+    gc: I know where the EPIRB is
     s: Only activate in a genuine life-threatening emergency.
   - key: sb/first-aid
     c: Show first aid kit location
+    gc: I know where the first aid kit is
 - key: sb/hatches
   t: Emergency Hatches & Escape
   items:
   - key: sb/deck-hatches
     c: 'Warn guests: do not walk on deck hatches or solar panels'
+    gc: I will not walk on the deck hatches or the solar panels
     s: Hatches can crack or open unexpectedly under weight.
   - key: sb/exits
     c: Point out all companionway and deck hatch exits
+    gc: I know the ways out
     s: In a flooding situation these are your exit routes.
   - key: sb/open-hatches
     c: Show guests how to open hatches from inside
+    gc: I can open a hatch from inside
     s: Confirm each guest can operate them independently.
   - key: sb/one-hand
     c: '"One hand for you, one for the boat" — always'
+    gc: I keep one hand for the boat
     s: Keep one hand holding a fixed part of the boat when moving around, especially on deck or in a seaway. Move deliberately, never rush.
 - key: sb/mob
   t: Man Overboard (MOB)
   items:
   - key: sb/mob-call
     c: Explain MOB call — shout "MAN OVERBOARD" immediately
+    gc: If someone goes in the water, I shout MAN OVERBOARD
   - key: sb/mob-point
     c: Assign one person to keep eyes on the person in the water at all times — point continuously, never look away
+    gc: I point at the person in the water and I do not look away
     s: This is the most important job. Do not stop pointing.
   - key: sb/mob-button
     c: Show the SOS/MOB button on the chartplotter — press immediately to mark position
+    gc: I know the MOB button on the chartplotter
     when:
       has_category:
       - navigation_and_electronics
   - key: sb/mob-recovery
     c: 'Explain recovery manoeuvre: slow down, circle back, approach from downwind'
+    gc: I know we slow down and come back for the person in the water
     s: Engine on immediately. Approach slowly from the downwind side.
   - key: sb/mob-ladder
     c: Show the boarding ladder location and how to deploy it
+    gc: I know where the boarding ladder is
     s: "{primary_ladder_subtitle}"
   - key: sb/mob-buoy
     c: Show the throwable buoy / horseshoe buoy location
+    gc: I know where the throwable buoy is
     s: Throw immediately on MOB.
 - key: sb/fire
   t: Fire
   items:
   - key: sb/fire-drill
     c: 'Explain fire drill: shout "FIRE", locate source, grab extinguisher'
+    gc: If there is a fire, I shout FIRE and tell the skipper
   - key: sb/engine-fire
     c: 'For an engine compartment fire: do NOT open the hatch — use the fire port / extinguisher outlet if fitted'
+    gc: I will not open an engine hatch if there is a fire inside
     s: Opening the hatch feeds oxygen to the fire.
     when:
       has_category:
       - propulsion_and_machinery
   - key: sb/abandon
     c: 'If fire cannot be controlled: MAYDAY, prepare to abandon ship'
+    gc: I know we may have to leave the boat if a fire will not go out
     s: Life raft, EPIRB, flares, water, VHF.
 - key: sb/vhf
   t: VHF & Communications
   items:
   - key: sb/vhf-where
     c: Show guests where the VHF radio is located
+    gc: I know where the VHF radio is
     s: Confirm everyone can find and switch on the radio without help.
   - key: sb/ch16
     c: 'Explain Channel 16: primary distress channel — always monitored. Say MAYDAY here first.'
+    gc: I know channel 16 is for calling for help
   - key: sb/working-channel
     c: '{vhf_working_channel_line}'
+    gc: I know the channel we use to talk to the base
     when:
       has_company_vhf: true
   - key: sb/mayday
     c: Run through the MAYDAY procedure verbally
+    gc: I have heard how to call for help
     s: '{mayday_verbal_script}'
