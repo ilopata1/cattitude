@@ -16,8 +16,8 @@ export interface LearnStage {
 const POWER_PART_IDS = ['electrical', 'controls', 'batteries'];
 
 const STAGE_SPECS: Array<{ id: string; title: string; lessons: string[] }> = [
-  { id: 'walk', title: 'Walk-around', lessons: ['overview'] },
-  { id: 'safety', title: 'Safety briefing', lessons: ['safety-brief'] },
+  { id: 'walk', title: 'Walk-around', lessons: ['overview', 'seamanship'] },
+  { id: 'safety', title: 'Safety briefing', lessons: ['safety', 'safety-brief'] },
   { id: 'living', title: 'Living aboard', lessons: ['heads', 'water', 'power', 'galley', 'ac'] },
   { id: 'underway', title: 'Underway', lessons: ['engines', 'sails', 'nav', 'anchoring'] },
   { id: 'ashore', title: 'Going ashore', lessons: ['dinghy'] },

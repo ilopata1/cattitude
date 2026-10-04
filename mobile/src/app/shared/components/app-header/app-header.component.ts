@@ -118,7 +118,7 @@ export class AppHeaderComponent implements OnInit, OnDestroy {
     const alert = await this.alerts.create({
       header: 'Guest or Crew',
       message:
-        'Guest is the charter briefing. Crew adds owner notes, extra checks, and the fuller manual. The choice stays on this phone and changes Home, Know, and search.',
+        'Guest — How to live aboard safely and what to tell the skipper.<br><br>Crew — Everything, including procedures, valves, switches and standing orders.',
       buttons: [
         { text: 'Guest', handler: () => this.choosePersona('guest') },
         { text: 'Crew', handler: () => this.choosePersona('crew') },

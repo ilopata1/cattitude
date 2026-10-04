@@ -50,7 +50,7 @@ export class DoPage {
       Object.keys(this.content.bootstrap.checklists),
     ).map((stage) => ({
       ...stage,
-      progress: tickLabel(stageTicks(this.content, this.progress, stage)),
+      progress: tickLabel(stageTicks(this.content, this.progress, stage, this.readerView.view())),
     }));
   }
 

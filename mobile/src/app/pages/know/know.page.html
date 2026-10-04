@@ -21,7 +21,10 @@
         *ngFor="let hit of group.hits"
         (click)="openHit(hit)"
       >
-        <span class="search-hit-title">{{ hit.title }}</span>
+        <span class="search-hit-title">
+          {{ hit.title }}
+          <span class="search-hit-crew" *ngIf="hit.audience === 'crew'">Crew</span>
+        </span>
         <span class="search-hit-snippet">{{ hit.snippet }}</span>
       </button>
     </section>

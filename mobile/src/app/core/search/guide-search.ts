@@ -13,6 +13,8 @@ export interface GuideSearchHit {
   checklistKey?: string;
   item?: string;
   card?: string;
+  /** Set on hits the Guest view cannot see. Crew search shows a suffix. */
+  audience?: 'crew';
 }
 
 export interface GuideSearchGroup {
@@ -74,6 +76,7 @@ interface IndexEntry {
   checklistKey?: string;
   item?: string;
   card?: string;
+  audience?: 'crew';
 }
 
 export interface GuideIndex {
@@ -129,6 +132,7 @@ export function buildGuideIndex(guide: SearchableGuide, view: ReaderView = 'gues
         fields,
         systemId,
         sectionIndex,
+        audience: crewMark(view, section.audience),
       });
     });
   }
@@ -157,6 +161,7 @@ export function buildGuideIndex(guide: SearchableGuide, view: ReaderView = 'gues
           fields,
           checklistKey: key,
           item: `${groupIndex}-${itemIndex}`,
+          audience: crewMark(view, checklist.audience === 'crew' ? 'crew' : itemAudience(item)),
         });
       });
     });
@@ -177,6 +182,7 @@ export function buildGuideIndex(guide: SearchableGuide, view: ReaderView = 'gues
       title,
       fields,
       card: slugs[index],
+      audience: crewMark(view, fix.audience),
     });
   });
 
@@ -211,6 +217,7 @@ export function searchGuide(index: GuideIndex, query: string): GuideSearchGroup[
       checklistKey: entry.checklistKey,
       item: entry.item,
       card: entry.card,
+      audience: entry.audience,
     });
   }
   return GROUP_ORDER.filter((kind) => grouped[kind].length).map((kind) => ({
@@ -265,6 +272,11 @@ function sectionFields(section: SearchableSection): string[] {
     }
   }
   return fields;
+}
+
+/** Crew search labels a hit guests cannot see. Guest search never indexes those hits. */
+function crewMark(view: ReaderView, audience: string | undefined): 'crew' | undefined {
+  return view === 'crew' && audience === 'crew' ? 'crew' : undefined;
 }
 
 function itemAudience(item: unknown): string | undefined {

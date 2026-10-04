@@ -32,7 +32,8 @@ export function learnPathFailures(): string[] {
         ],
         checks,
       ),
-    ) === 'walk:overview|safety:safety-brief|living:heads,water,power,galley,ac|underway:engines,sails,nav|ashore:dinghy',
+    ) ===
+      'walk:overview,seamanship|safety:safety,safety-brief|living:heads,water,power,galley,ac|underway:engines,sails,nav|ashore:dinghy',
     'supernova path',
   );
   expect(
@@ -56,7 +57,7 @@ export function learnPathFailures(): string[] {
         checks,
       ),
     ) ===
-      'walk:overview|safety:safety-brief|living:heads,water,power,galley,ac|underway:engines,sails,nav,anchoring|ashore:dinghy',
+      'walk:overview|safety:safety,safety-brief|living:heads,water,power,galley,ac|underway:engines,sails,nav,anchoring|ashore:dinghy',
     'cattitude path',
   );
   expect(

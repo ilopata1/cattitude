@@ -29,6 +29,7 @@ export function dashboardFailures(): string[] {
   expect(byId.get('more:sail')?.label === 'Sail', 'sailing sail label');
   expect(byId.has('widget:rules') && byId.has('rules'), 'rules are a page shortcut and a widget');
 
+  expect(byId.has('know:overview'), 'overview chapter is a home tile');
   expect(byId.get('do:pd')?.crewOnly === true, 'crew checklist is marked');
   expect(byId.get('do:gh')?.crewOnly === false, 'giving a hand stays on the guest home');
   expect(byId.get('fix')?.crewOnly === false, 'Fix It stays on both views');
@@ -88,6 +89,20 @@ export function dashboardFailures(): string[] {
   expect(
     !defaultTileIds('crew', withoutElectrical, false).includes('know:electrical'),
     'missing electrical is not in the crew default',
+  );
+
+  const withoutOverview = buildDashboardCatalog({
+    ...sample('sailing_catamaran'),
+    systems: sample('sailing_catamaran').systems.filter((system) => system.id !== 'overview'),
+  });
+  expect(
+    !withoutOverview.some((item) => item.id === 'know:overview'),
+    'a boat without an overview chapter has no overview tile',
+  );
+  expect(
+    defaultTileIds('guest', withoutOverview, false).join(',') ===
+      'learn,do:safety-brief,do:gh,know:heads,more:ask',
+    'guest default drops a missing overview tile',
   );
 
   return failures;

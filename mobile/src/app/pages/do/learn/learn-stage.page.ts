@@ -5,6 +5,7 @@ import { LearnLesson, LearnStage, resolveLearnPath } from '../../../core/guide/l
 import { isPowerPart, powerSubtitle } from '../../../core/guide/power-topic';
 import { ContentService } from '../../../core/services/content.service';
 import { ProgressService } from '../../../core/services/progress.service';
+import { ReaderViewService } from '../../../core/services/reader-view.service';
 import { VesselRouteService } from '../../../core/services/vessel-route.service';
 import { lessonTicks, tickLabel } from './learn-ticks';
 
@@ -22,6 +23,7 @@ export class LearnStagePage implements OnInit {
   constructor(
     public readonly content: ContentService,
     public readonly progress: ProgressService,
+    private readonly readerView: ReaderViewService,
     private readonly route: ActivatedRoute,
     private readonly vesselRoutes: VesselRouteService,
   ) {}
@@ -63,7 +65,7 @@ export class LearnStagePage implements OnInit {
   }
 
   label(lesson: LearnLesson): string {
-    return tickLabel(lessonTicks(this.content, this.progress, lesson));
+    return tickLabel(lessonTicks(this.content, this.progress, lesson, this.readerView.view()));
   }
 
   open(lesson: LearnLesson): void {

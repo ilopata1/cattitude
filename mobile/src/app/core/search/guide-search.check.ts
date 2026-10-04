@@ -198,6 +198,10 @@ export function guideSearchFailures(): string[] {
     }
   }
   expect(crewHull.join(',') === '1', `crew search lost the original section index: ${crewHull.join(',')}`);
+  const crewHullHits = searchGuide(buildGuideIndex(tagged, 'crew'), 'hull connections');
+  expect(crewHullHits[0]?.hits[0]?.audience === 'crew', 'a crew section is labeled Crew');
+  const crewShowers = searchGuide(buildGuideIndex(tagged, 'crew'), 'showers');
+  expect(crewShowers[0]?.hits[0]?.audience !== 'crew', 'an untagged section is not labeled Crew');
   expect(
     fixCardSlugs(['Engine will not start', 'Engine will not start']).join(',') ===
       'engine-will-not-start,engine-will-not-start-2',
@@ -246,6 +250,18 @@ export function guideSearchFailures(): string[] {
     }
   }
   expect(crewSeacock.join(',') === 'Pre-departure', `crew search missed the crew checklist: ${crewSeacock.join(',')}`);
+  expect(
+    searchGuide(buildGuideIndex(crewLists, 'crew'), 'seacock')[0]?.hits[0]?.audience === 'crew',
+    'a crew checklist hit is labeled Crew',
+  );
+  expect(
+    searchGuide(buildGuideIndex(crewLists, 'crew'), 'valve sequence')[0]?.hits[0]?.audience === 'crew',
+    'a crew checklist item is labeled Crew',
+  );
+  expect(
+    searchGuide(buildGuideIndex(crewLists, 'crew'), 'stowage')[0]?.hits[0]?.audience !== 'crew',
+    'a shared checklist item is not labeled Crew',
+  );
 
   const crewFixes: SearchableGuide = {
     fixes: [
@@ -276,6 +292,14 @@ export function guideSearchFailures(): string[] {
     }
   }
   expect(crewBattery.join(',') === 'Low battery', `crew search missed the crew card: ${crewBattery.join(',')}`);
+  expect(
+    searchGuide(buildGuideIndex(crewFixes, 'crew'), 'high-draw')[0]?.hits[0]?.audience === 'crew',
+    'a crew fix card is labeled Crew',
+  );
+  expect(
+    searchGuide(buildGuideIndex(crewFixes, 'crew'), 'breaker')[0]?.hits[0]?.audience !== 'crew',
+    'a shared fix card is not labeled Crew',
+  );
 
   return failures;
 }

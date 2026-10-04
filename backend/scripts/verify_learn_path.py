@@ -48,8 +48,8 @@ def main() -> int:
     expect(
         _ids(supernova)
         == [
-            "walk:overview",
-            "safety:safety-brief",
+            "walk:overview,seamanship",
+            "safety:safety,safety-brief",
             "living:heads,water,power,galley,ac",
             "underway:engines,sails,nav",
             "ashore:dinghy",
@@ -81,7 +81,7 @@ def main() -> int:
         _ids(cattitude)
         == [
             "walk:overview",
-            "safety:safety-brief",
+            "safety:safety,safety-brief",
             "living:heads,water,power,galley,ac",
             "underway:engines,sails,nav,anchoring",
             "ashore:dinghy",

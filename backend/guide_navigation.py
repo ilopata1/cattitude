@@ -55,8 +55,8 @@ _POWER_PART_IDS = ("electrical", "controls", "batteries")
 
 # (stage id, title, lesson ids). ``power`` is emitted when any power part exists.
 _LEARN_STAGE_SPECS: list[tuple[str, str, list[str]]] = [
-    ("walk", "Walk-around", ["overview"]),
-    ("safety", "Safety briefing", ["safety-brief"]),
+    ("walk", "Walk-around", ["overview", "seamanship"]),
+    ("safety", "Safety briefing", ["safety", "safety-brief"]),
     ("living", "Living aboard", ["heads", "water", "power", "galley", "ac"]),
     ("underway", "Underway", ["engines", "sails", "nav", "anchoring"]),
     ("ashore", "Going ashore", ["dinghy"]),

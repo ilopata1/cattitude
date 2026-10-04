@@ -71,6 +71,15 @@
   color: var(--cattitude-text-dark);
 }
 
+.search-hit-crew {
+  margin-left: 0.4em;
+  font-size: 0.7em;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--cattitude-text-light);
+}
+
 .search-hit-snippet {
   display: block;
   margin-top: 4px;
