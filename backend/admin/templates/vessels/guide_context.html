@@ -154,6 +154,9 @@
         <option value="electric" {% if guest_form.galley_stove == 'electric' %}selected{% endif %}>Electric</option>
       </select>
     </label>
+    <label>Which galley tap is fresh water
+      <input name="galley_tap_note" value="{{ guest_form.galley_tap_note }}" placeholder="the tap on the left">
+    </label>
     <label>Cabin names (one per line)
       <textarea name="cabin_names_text" rows="4" placeholder="port forward">{{ guest_form.cabin_names_text }}</textarea>
     </label>

@@ -431,6 +431,10 @@ def galley_stove(snapshot: dict[str, Any]) -> str:
     return raw if raw in _GALLEY_STOVES else ""
 
 
+def galley_tap_note(snapshot: dict[str, Any]) -> str:
+    return _guest_text(snapshot, "galleyTapNote")
+
+
 def cabin_names(snapshot: dict[str, Any]) -> list[str]:
     raw = guest_facts(snapshot).get("cabinNames")
     if isinstance(raw, str):
@@ -470,6 +474,15 @@ def marina_routine(snapshot: dict[str, Any]) -> str:
 
 def moors_stern_to(snapshot: dict[str, Any]) -> bool:
     return bool(guest_facts(snapshot).get("moorsSternTo"))
+
+
+def sar_contact_line(snapshot: dict[str, Any]) -> str:
+    """Who to call for help. The region pack fills this from countryCode.
+
+    Until that pack is applied, every boat gets VHF channel 16.
+    """
+    del snapshot
+    return "Call for help on VHF channel 16."
 
 
 def slot_values(snapshot: dict[str, Any]) -> dict[str, str]:
@@ -526,10 +539,12 @@ def slot_values(snapshot: dict[str, Any]) -> dict[str, str]:
         "water_tanks_sentence": water_tanks_sentence(snapshot),
         "autopilot_standby_sentence": autopilot_standby_sentence(snapshot),
         "galley_stove": galley_stove(snapshot),
+        "galley_tap_note": galley_tap_note(snapshot),
         "cabin_names_sentence": cabin_names_sentence(snapshot),
         "hatch_notes": hatch_notes(snapshot),
         "lifejacket_policy": lifejacket_policy(snapshot),
         "marina_routine": marina_routine(snapshot),
+        "sar_contact_line": sar_contact_line(snapshot),
     }
 
 

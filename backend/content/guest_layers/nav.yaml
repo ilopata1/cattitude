@@ -1,0 +1,24 @@
+# Purpose: Guest note for the helm — chartplotter, MOB, and the autopilot.
+# Used by: content.assembler.apply_guest_layers
+# Module: system / nav
+#
+
+learnChecks:
+- key: nav/helm
+  c: Left the chartplotter pages alone and found the MOB button
+  when:
+    has_category:
+    - navigation_and_electronics
+sections:
+- t: At the helm, for guests
+  type: list
+  when:
+    has_category:
+    - navigation_and_electronics
+  items:
+  - c: The chartplotters show where we are.
+  - c: Do not change pages while someone is navigating.
+  - c: The MOB button marks the spot if someone goes in the water.
+  - c: "{autopilot_standby_sentence}"
+    when:
+      has_autopilot_standby: true

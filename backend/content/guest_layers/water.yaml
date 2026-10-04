@@ -4,9 +4,42 @@
 #
 
 learnChecks:
+- key: water/source
+  c: Can say where the fresh water comes from
+  when:
+    any:
+    - has_water_tanks_sentence: true
+    - has_hot_water_sentence: true
+- key: water/maker
+  c: Can say what the watermaker is for
+  when:
+    has_watermaker: true
 - key: water/shower
   c: Practised a short shower and found the shower-tray pump switch
 sections:
+- t: Where the water comes from
+  type: list
+  when:
+    any:
+    - has_water_tanks_sentence: true
+    - has_hot_water_sentence: true
+  items:
+  - c: "{water_tanks_sentence}"
+    when:
+      has_water_tanks_sentence: true
+  - c: "{hot_water_sentence}"
+    when:
+      has_hot_water_sentence: true
+  - c: If there is no hot water, that is usually why. Ask before you report it.
+- t: What the watermaker is
+  type: list
+  when:
+    has_watermaker: true
+  items:
+  - c: It makes fresh water from the sea while we are under way or on the generator.
+  - c: It is why we can shower at anchor.
+  - c: Never connect a town-water hose to fill the tanks unless you are asked.
+  - c: You may be asked to say when a tank gauge reaches 90 percent.
 - t: Using fresh water
   type: list
   items:

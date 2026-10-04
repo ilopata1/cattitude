@@ -1,0 +1,21 @@
+# Purpose: Guest note on watching the house batteries.
+# Used by: content.assembler.apply_guest_layers
+# Module: system / batteries
+#
+
+learnChecks:
+- key: batteries/level
+  c: Asked what the battery number is, and what is normal
+  when:
+    has_category:
+    - electrical_dc
+sections:
+- t: Keeping an eye on the batteries
+  type: list
+  when:
+    has_category:
+    - electrical_dc
+  items:
+  - c: The skipper checks the batteries morning and evening.
+  - c: Ask what the number is. You will soon know what is normal.
+  - c: A low-battery alarm means switch off what you are using, and tell the skipper.

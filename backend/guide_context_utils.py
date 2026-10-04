@@ -98,6 +98,7 @@ def build_guest_facts(
     water_tanks_summary: str = "",
     autopilot_standby: str = "",
     galley_stove: str = "",
+    galley_tap_note: str = "",
     cabin_names_text: str = "",
     hatch_notes: str = "",
     lifejacket_policy: str = "",
@@ -167,6 +168,7 @@ def build_guest_facts(
         facts["galleyStove"] = stove
     elif stove not in {"", "unset", "default"}:
         raise ValueError("Galley stove must be induction, gas, electric, or unset.")
+    _store_text(facts, "galleyTapNote", galley_tap_note)
     names = parse_cabin_names(cabin_names_text)
     if names:
         facts["cabinNames"] = names
@@ -254,6 +256,7 @@ def guest_facts_form_values(facts: dict[str, Any] | None) -> dict[str, Any]:
         "water_tanks_summary": _form_nested(facts, "waterTanks", "summary"),
         "autopilot_standby": _form_nested(facts, "autopilot", "standby"),
         "galley_stove": stove if stove in _GALLEY_STOVES else "",
+        "galley_tap_note": str(facts.get("galleyTapNote") or ""),
         "cabin_names_text": _form_cabin_names(facts),
         "hatch_notes": str(facts.get("hatchNotes") or ""),
         "lifejacket_policy": str(facts.get("lifejacketPolicy") or ""),

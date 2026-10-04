@@ -511,6 +511,7 @@ def test_guest_fact_slots_and_flags() -> None:
         "waterTanks": {"summary": "two 270 L tanks, one under the bed in each aft cabin"},
         "autopilot": {"standby": "press STANDBY on the pilot control beside the engine levers"},
         "galleyStove": "induction",
+        "galleyTapNote": "the tap on the left",
         "cabinNames": ["port forward", "port aft", "starboard forward", "starboard aft"],
         "hatchNotes": "The saloon hatch dogs to starboard.",
         "lifejacketPolicy": "Wear one whenever you are asked.",
@@ -541,6 +542,7 @@ def test_guest_fact_slots_and_flags() -> None:
             "press STANDBY on the pilot control beside the engine levers"
         ),
         "galley_stove": "induction",
+        "galley_tap_note": "the tap on the left",
         "cabin_names_sentence": (
             "The cabins are called: port forward, port aft, starboard forward, "
             "and starboard aft."
@@ -571,6 +573,7 @@ def test_guest_fact_slots_and_flags() -> None:
         "has_lifejacket_policy",
         "moors_stern_to",
         "has_marina_routine",
+        "has_galley_tap_note",
     )
     blank = boat("facts", "sailing_catamaran", [])
     for flag in flags:
@@ -637,6 +640,7 @@ def test_guest_fact_slots_and_flags() -> None:
         "moors_stern_to",
         "marina_routine",
         "autopilot_standby",
+        "galley_tap_note",
     ):
         check(key in empty_form, f"empty form missing {key}")
     check(build_guest_facts(galley_stove="unset", cabin_names_text="\n") == {}, "unset stove was stored")

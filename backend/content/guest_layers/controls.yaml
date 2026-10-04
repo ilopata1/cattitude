@@ -1,0 +1,19 @@
+# Purpose: Guest note for a digital-switching touchscreen.
+# Used by: content.assembler.apply_guest_layers
+# Module: system / controls
+#
+
+learnChecks:
+- key: controls/favourites
+  c: Found Favourites and left the alarms for the skipper
+  when:
+    switching_system: digital
+sections:
+- t: The touchscreen, for guests
+  type: list
+  when:
+    switching_system: digital
+  items:
+  - c: Favourites is where the cabin lights and the fans live.
+  - c: Ask before you touch anything else.
+  - c: Never acknowledge an alarm without telling the skipper.

@@ -395,9 +395,11 @@ def _check_handbook(failures: list[str]) -> None:
         failures.append(f"day 1 gear order: {gear_items}")
     elif not any(str(item).startswith("Stern ladder") for item in gear_items[len(gear_prefix) :]):
         failures.append(f"day 1 dropped the swim ladders: {gear_items}")
-    for banned in ("not provided", "extinguisher", "engine room", "sleek", "luxury", "Cabins"):
+    for banned in ("not provided", "extinguisher", "engine room", "sleek", "luxury"):
         if banned.lower() in overview_text.lower():
             failures.append(f"overview invented or advertised {banned!r}")
+    if "Cabins" in overview_text:
+        failures.append("overview invented a Cabins heading")
     built_safety = apply_guest_layers("safety", build_safety_module(recorded), recorded)
     safety_text = _texts(built_safety)
     if "It is kept under the seat at the aft of the cockpit." not in safety_text:
@@ -460,6 +462,272 @@ def _check_handbook(failures: list[str]) -> None:
     brief = _texts(LIBRARY_MODULE_BUILDERS[("checklist", "safety-brief")](catamaran))
     if "the stern of the starboard hull" not in brief:
         failures.append("safety brief missing the primary ladder location")
+
+    _check_shared_guest_sections(failures)
+
+
+def _layer(system_id: str, snapshot: dict[str, Any]) -> dict[str, Any]:
+    return apply_guest_layers(system_id, {"id": system_id, "sections": []}, snapshot)
+
+
+def _require(failures: list[str], label: str, text: str, phrase: str) -> None:
+    if phrase not in text:
+        failures.append(f"{label} missing {phrase!r}")
+
+
+def _forbid(failures: list[str], label: str, text: str, phrase: str) -> None:
+    if phrase in text:
+        failures.append(f"{label} includes {phrase!r}")
+
+
+def _check_shared_guest_sections(failures: list[str]) -> None:
+    """Gated guest sections appear only on a boat that qualifies."""
+    filled = make_snapshot(
+        [
+            "propulsion_and_machinery",
+            "electrical_dc",
+            "electrical_ac",
+            "navigation_and_electronics",
+            "ground_tackle_and_mooring",
+            "tenders_and_watersports",
+            "hvac",
+            "galley_appliances",
+            "fresh_water_and_plumbing",
+            "sanitation",
+            "rigging_and_sail_handling",
+        ],
+        vessel_type="sailing_catamaran",
+        twin_propulsion=True,
+        watermaker_model=True,
+    )
+    filled["equipment"].extend(
+        [
+            {
+                "manufacturer": "CZone",
+                "model": "Touch 7",
+                "system_category": "electrical_dc",
+                "zone": "helm",
+            },
+            {
+                "manufacturer": "Fischer Panda",
+                "model": "Panda 8000i",
+                "system_category": "electrical_ac",
+                "zone": "engine",
+            },
+        ]
+    )
+    filled["guide_context"] = {
+        **BASE_CONTEXT,
+        "guestFacts": {
+            "lifeJackets": {"location": "in the cockpit locker"},
+            "fireExtinguishers": {"location": "by each companionway"},
+            "firstAidKit": {"location": "in the saloon cupboard"},
+            "flares": {"location": "in the grab bag"},
+            "epirb": {"location": "beside the grab bag"},
+            "grabBag": {"location": "under the helm seat"},
+            "throwable": {"location": "on the pushpit"},
+            "vhfDsc": {"location": "the fixed VHF at the nav station"},
+            "hotWater": {"source": "the 90 L tank in the starboard engine bay"},
+            "waterTanks": {"summary": "two 270 L tanks"},
+            "autopilot": {"standby": "press STANDBY on the pilot control"},
+            "galleyStove": "induction",
+            "galleyTapNote": "the tap on the left",
+            "cabinNames": ["port forward", "port aft"],
+            "hatchNotes": "The saloon hatch dogs to starboard.",
+            "lifejacketPolicy": "Wear one whenever the skipper asks.",
+            "moorsSternTo": True,
+            "marinaRoutine": "Pass the lines ashore, then the power lead.",
+            "headsDrive": "electric",
+            "holdToDim": True,
+            "hasTrampoline": True,
+        },
+    }
+    bare = make_snapshot([], vessel_type="motor_yacht")
+
+    layers = (
+        "safety",
+        "water",
+        "heads",
+        "electrical",
+        "batteries",
+        "engines",
+        "nav",
+        "controls",
+        "ac",
+        "dinghy",
+        "galley",
+        "overview",
+        "anchoring",
+    )
+    filled_modules = {sid: _layer(sid, filled) for sid in layers}
+    bare_modules = {sid: _layer(sid, bare) for sid in layers}
+    filled_modules["seamanship"] = LIBRARY_MODULE_BUILDERS[("system", "seamanship")](filled)
+    bare_modules["seamanship"] = LIBRARY_MODULE_BUILDERS[("system", "seamanship")](bare)
+
+    for sid, module in {**filled_modules, **bare_modules}.items():
+        for section in module.get("sections") or []:
+            if "audience" in section:
+                failures.append(
+                    f"{sid} {section.get('t')!r} carries audience {section.get('audience')!r}"
+                )
+
+    filled_text = {sid: _texts(module) for sid, module in filled_modules.items()}
+    bare_text = {sid: _texts(module) for sid, module in bare_modules.items()}
+
+    for sid, phrase in (
+        ("safety", "Life jackets — in the cockpit locker"),
+        ("safety", "Fire extinguishers — by each companionway"),
+        ("safety", "Shout MAN OVERBOARD."),
+        ("safety", "Press MOB on the chartplotter."),
+        ("safety", "Wear one whenever the skipper asks."),
+        ("safety", "Jacklines run along the edge of either deck."),
+        ("safety", "Put the levers for both engines into neutral"),
+        ("safety", "turn the boat into the wind"),
+        ("safety", "let all the chain out"),
+        ("safety", "red DISTRESS button on the fixed VHF at the nav station"),
+        ("safety", "Call for help on VHF channel 16."),
+        ("water", "two 270 L tanks"),
+        ("water", "the 90 L tank in the starboard engine bay"),
+        ("water", "If there is no hot water, that is usually why."),
+        ("water", "It makes fresh water from the sea"),
+        ("heads", "the water pump is probably off"),
+        ("heads", "Press the flush button once."),
+        ("heads", "Nothing wet goes in it."),
+        ("electrical", "If everything goes dark at once"),
+        ("batteries", "The skipper checks the batteries morning and evening."),
+        ("engines", "Both engines live under the aft steps, in the engine compartments."),
+        ("engines", "Never swim with an engine running."),
+        ("nav", "The chartplotters show where we are."),
+        ("nav", "press STANDBY on the pilot control"),
+        ("controls", "Favourites is where the cabin lights"),
+        ("ac", "It only runs on shore power or the generator."),
+        ("ac", "unless the skipper runs the generator"),
+        ("dinghy", "The kill cord stays on the driver."),
+        ("galley", "Pans must be magnetic."),
+        ("galley", "the tap on the left"),
+        ("galley", "Use one bowl of soapy water."),
+        ("galley", "Used the hob once with someone watching"),
+        ("overview", "Port is left when you look forward."),
+        ("overview", "The cabins are called: port forward, and port aft."),
+        ("overview", "The saloon hatch dogs to starboard."),
+        ("overview", "Some switches dim when you hold them."),
+        ("overview", "square 230 V sockets"),
+        ("overview", "Use only red lights"),
+        ("anchoring", "Stay off the trampoline and the bow"),
+        ("anchoring", "wake the skipper"),
+        ("seamanship", "A line goes round a cleat"),
+        ("seamanship", "Wait until the passerelle is secured."),
+        ("seamanship", "Pass the lines ashore, then the power lead."),
+        ("seamanship", "Held a dock line round a cleat under load"),
+    ):
+        _require(failures, f"filled {sid}", filled_text[sid], phrase)
+
+    for sid, phrase in (
+        ("safety", "Life jackets —"),
+        ("safety", "Press MOB on the chartplotter."),
+        ("safety", "Wear one whenever the skipper asks."),
+        ("safety", "clip on"),
+        ("safety", "into neutral"),
+        ("safety", "into the wind"),
+        ("safety", "chain out"),
+        ("safety", "nav station"),
+        ("water", "two 270 L tanks"),
+        ("water", "watermaker"),
+        ("water", "fresh water from the sea"),
+        ("heads", "Press the flush button once."),
+        ("batteries", "morning and evening"),
+        ("engines", "propellers"),
+        ("nav", "chartplotters"),
+        ("nav", "STANDBY"),
+        ("controls", "Favourites"),
+        ("ac", "Air conditioning"),
+        ("dinghy", "kill cord"),
+        ("galley", "magnetic"),
+        ("galley", "the tap on the left"),
+        ("galley", "solenoid"),
+        ("overview", "The cabins are called"),
+        ("overview", "dogs to starboard"),
+        ("overview", "dim when you hold"),
+        ("overview", "230 V"),
+        ("overview", "Trampoline"),
+        ("anchoring", "windlass"),
+        ("seamanship", "passerelle"),
+        ("seamanship", "Pass the lines ashore"),
+    ):
+        _forbid(failures, f"bare {sid}", bare_text[sid], phrase)
+
+    for sid, phrase in (
+        ("safety", "Shout MAN OVERBOARD."),
+        ("safety", "Wear a life jacket at night."),
+        ("safety", "Wear one when we are reefed."),
+        ("safety", "on the fixed VHF."),
+        ("safety", "Call for help on VHF channel 16."),
+        ("heads", "Nothing wet goes in it."),
+        ("heads", "the water pump is probably off"),
+        ("electrical", "If everything goes dark at once"),
+        ("galley", "Use one bowl of soapy water."),
+        ("galley", "Open it briefly."),
+        ("overview", "Port is left when you look forward."),
+        ("overview", "Use only red lights"),
+        ("overview", "undo the dogs"),
+        ("seamanship", "Never jump."),
+        ("seamanship", "A line goes round a cleat"),
+    ):
+        _require(failures, f"bare {sid}", bare_text[sid], phrase)
+
+    _forbid(failures, "filled safety", filled_text["safety"], "when we are reefed")
+    _forbid(failures, "filled safety", filled_text["safety"], "Wear a life jacket at night.")
+    _require(
+        failures,
+        "filled safety",
+        filled_text["safety"],
+        "Found the life jackets and the fire extinguishers",
+    )
+    _require(
+        failures,
+        "filled safety",
+        filled_text["safety"],
+        "Can say what to do if someone else goes in the water",
+    )
+
+    bare_find = [section.get("t") for section in bare_modules["safety"]["sections"]]
+    if "Find these" in bare_find:
+        failures.append("bare safety published an empty Find these list")
+    if "Cooking" in [section.get("t") for section in bare_modules["galley"]["sections"]]:
+        failures.append("bare galley published Cooking without a stove")
+    ac_items = _section_items(filled_modules["ac"], "Air conditioning, for guests")
+    if "It only runs on shore power." in ac_items:
+        failures.append(f"generator boat used the shore-power-only line: {ac_items}")
+
+    gas = make_snapshot(["galley_appliances"], vessel_type="sailing_monohull")
+    gas["guide_context"] = {**BASE_CONTEXT, "guestFacts": {"galleyStove": "gas"}}
+    gas_items = _section_items(_layer("galley", gas), "Cooking")
+    if "Turn the gas on at the bottle and the solenoid only while you are cooking. Turn it off after." not in gas_items:
+        failures.append(f"gas cooking: {gas_items}")
+    if any("induction" in item.lower() or "magnetic" in item.lower() for item in gas_items):
+        failures.append(f"gas cooking includes induction: {gas_items}")
+
+    electric = make_snapshot([], vessel_type="motor_yacht")
+    electric["guide_context"] = {**BASE_CONTEXT, "guestFacts": {"galleyStove": "electric"}}
+    electric_items = _section_items(_layer("galley", electric), "Cooking")
+    if electric_items != ["The hob needs shore power, the generator, or the inverter."]:
+        failures.append(f"electric cooking: {electric_items}")
+
+    shore_only = make_snapshot(["hvac"], vessel_type="motor_yacht")
+    shore_items = _section_items(_layer("ac", shore_only), "Air conditioning, for guests")
+    if "It only runs on shore power." not in shore_items:
+        failures.append(f"shore-only air conditioning: {shore_items}")
+    if any("generator" in item for item in shore_items):
+        failures.append(f"shore-only air conditioning mentions a generator: {shore_items}")
+
+    single = make_snapshot(
+        ["propulsion_and_machinery"], vessel_type="sailing_monohull"
+    )
+    engine_items = _section_items(_layer("engines", single), "Engines, for guests")
+    if "The engine lives under the aft steps, in the engine compartment." not in engine_items:
+        failures.append(f"single engine location: {engine_items}")
+    if any(item.startswith("Both engines") for item in engine_items):
+        failures.append(f"single engine used the twin sentence: {engine_items}")
 
 
 def _check_section_audience(failures: list[str]) -> None:

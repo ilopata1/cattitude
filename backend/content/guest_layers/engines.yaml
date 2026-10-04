@@ -1,0 +1,27 @@
+# Purpose: Guest note on the engines — where they are, and when to call the skipper.
+# Used by: content.assembler.apply_guest_layers
+# Module: system / engines
+#
+
+learnChecks:
+- key: engines/alarm
+  c: Told the skipper when an engine alarm sounded
+  when:
+    has_category:
+    - propulsion_and_machinery
+sections:
+- t: Engines, for guests
+  type: list
+  when:
+    has_category:
+    - propulsion_and_machinery
+  items:
+  - c: "{both_engines_cap} live under the aft steps, in the {engine_compartments}."
+    when:
+      twin_engine: true
+  - c: The engine lives under the aft steps, in the {engine_compartments}.
+    when:
+      not_twin_engine: true
+  - c: If an alarm sounds, or the exhaust stops spitting water, tell the skipper at once.
+  - c: Keep hands, lines, and swimmers clear of the propellers.
+  - c: Never swim with an engine running.

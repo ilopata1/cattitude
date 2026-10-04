@@ -1,0 +1,28 @@
+# Purpose: Guest note for anchoring — where to stand, and when to wake the skipper.
+# Used by: content.assembler.apply_guest_layers
+# Module: system / anchoring
+#
+
+learnChecks:
+- key: anchoring/clear
+  c: Stayed clear of the chain while we anchored
+  when:
+    has_category:
+    - ground_tackle_and_mooring
+sections:
+- t: Anchoring, for guests
+  type: list
+  when:
+    has_category:
+    - ground_tackle_and_mooring
+  items:
+  - c: Stay off the trampoline and the bow, and out of the line of the chain, while we anchor.
+    when:
+      has_trampoline: true
+  - c: Stay off the bow, and out of the line of the chain, while we anchor.
+    when:
+      has_trampoline: false
+  - c: The windlass is loud and strong. Keep your fingers away.
+  - c: Swinging at anchor is normal.
+  - c: If the anchor alarm sounds at night, wake the skipper.
+  - c: Swim only when you are told the engines are off.

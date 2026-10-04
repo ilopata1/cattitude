@@ -191,6 +191,62 @@ def _systems() -> dict:
     }
 
 
+def _check_anchoring_guest_layer(failures: list[str]) -> None:
+    """A placeholder anchoring chapter stays once the guest layer has a body."""
+    from content.assembler import apply_guest_layers
+
+    snapshot = {
+        "vessel": {"name": "Test", "slug": "test", "vessel_type": "sailing_catamaran"},
+        "equipment": [
+            {
+                "manufacturer": "Generic",
+                "model": "Windlass",
+                "system_category": "ground_tackle_and_mooring",
+            }
+        ],
+        "guide_context": {"guestFacts": {"hasTrampoline": True}},
+    }
+    placeholder = {
+        "id": "anchoring",
+        "title": "Anchoring",
+        "subtitle": "Equipment not yet configured",
+        "summary": (
+            "Detailed information for this system is not available yet. "
+            "Link the relevant equipment on the vessel configuration page, "
+            "then regenerate this section."
+        ),
+        "sections": [
+            {
+                "t": "Not yet available",
+                "type": "prose",
+                "c": (
+                    "No equipment has been linked for this guide section. "
+                    "This placeholder will be replaced when equipment is "
+                    "configured and the section is regenerated."
+                ),
+            }
+        ],
+    }
+    layered = apply_guest_layers("anchoring", placeholder, snapshot)
+    payload = {"systems": {"anchoring": layered}}
+    messages = withhold_pipeline_status(payload)
+    chapter = payload["systems"].get("anchoring")
+    if not isinstance(chapter, dict):
+        failures.append("anchoring guest layer was withheld with the placeholder")
+        return
+    titles = [section.get("t") for section in chapter.get("sections") or []]
+    if titles != ["Anchoring, for guests"]:
+        failures.append(f"anchoring guest chapter sections: {titles}")
+    if chapter.get("summary") or chapter.get("subtitle"):
+        failures.append(
+            "anchoring guest chapter kept the placeholder summary or subtitle"
+        )
+    if not any("chapter stays" in message for message in messages):
+        failures.append(f"anchoring guest chapter missing stay message: {messages}")
+    if find_pipeline_status(chapter):
+        failures.append(f"anchoring guest chapter still has status prose: {chapter}")
+
+
 def _check() -> list[str]:
     failures: list[str] = []
     payload = {"systems": _systems()}
@@ -236,6 +292,8 @@ def _check() -> list[str]:
     controls = systems["controls"]["sections"][0]
     if "Configuration pending" in controls["c"] or "Configuration pending" in controls["html"]:
         failures.append("controls pending paragraph kept")
+    _check_anchoring_guest_layer(failures)
+
     if "several circuits" not in controls["c"] or "several circuits" not in controls["html"]:
         failures.append("controls real paragraph dropped")
 

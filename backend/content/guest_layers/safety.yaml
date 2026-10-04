@@ -8,12 +8,43 @@ learnChecks:
   c: Heard what to do if you fall overboard
 - key: safety/life-raft
   c: Found where the life raft is kept and when it is launched
+- key: safety/jackets
+  c: Found the life jackets and the fire extinguishers
+- key: safety/mob-help
+  c: Can say what to do if someone else goes in the water
 sections:
 - t: If you fall overboard
   type: list
   items:
   - c: Do not panic, and conserve your energy.
   - c: Turning the boat around takes time. You may drop out of sight, and the electronics can backtrack to find you.
+- t: Find these
+  type: list
+  items:
+  - c: "Life jackets — {life_jackets_location}"
+    when:
+      has_life_jackets_location: true
+  - c: "Fire extinguishers — {fire_extinguishers_location}"
+    when:
+      has_fire_extinguishers_location: true
+  - c: "First-aid kit — {first_aid_location}"
+    when:
+      has_first_aid_location: true
+  - c: "Flares — {flares_location}"
+    when:
+      has_flares_location: true
+  - c: "EPIRB — {epirb_location}"
+    when:
+      has_epirb_location: true
+  - c: "Grab bag — {grab_bag_location}"
+    when:
+      has_grab_bag_location: true
+  - c: "Throwable buoy — {throwable_location}"
+    when:
+      has_throwable_location: true
+  - c: "Fixed VHF — {vhf_dsc_location}"
+    when:
+      has_vhf_dsc_location: true
 - t: Life raft
   type: list
   items:
@@ -31,3 +62,61 @@ sections:
   - c: Manual bilge pumps can be worked from {manual_bilge_location}.
     when:
       has_manual_bilge_location: true
+- t: If someone else falls overboard
+  type: list
+  items:
+  - c: Shout MAN OVERBOARD.
+  - c: Point, and never look away.
+  - c: Throw the horseshoe or anything that floats.
+  - c: Press MOB on the chartplotter.
+    when:
+      has_category:
+      - navigation_and_electronics
+  - c: Get the skipper.
+- t: Life jackets and clipping on
+  type: list
+  items:
+  - c: "{lifejacket_policy}"
+    when:
+      has_lifejacket_policy: true
+  - c: Wear a life jacket at night.
+    when:
+      has_lifejacket_policy: false
+  - c: Wear one when we are reefed.
+    when:
+      has_lifejacket_policy: false
+  - c: Wear one in the dinghy, and whenever you are asked.
+    when:
+      has_lifejacket_policy: false
+  - c: Jacklines run {jackline_phrase}. You can clip on to them in heavy weather.
+    when:
+      has_jacklines: true
+- t: If the skipper cannot carry on
+  type: list
+  items:
+  - c: Put the levers for {both_engines} into neutral, and stop them from the panel at the helm.
+    when:
+      all:
+      - has_category:
+        - propulsion_and_machinery
+      - twin_engine: true
+  - c: Put the lever for {both_engines} into neutral, and stop it from the panel at the helm.
+    when:
+      all:
+      - has_category:
+        - propulsion_and_machinery
+      - not_twin_engine: true
+  - c: Under sail, turn the boat into the wind and let the sheets go.
+    when:
+      is_sailing: true
+  - c: If you must stop, drop the anchor and let all the chain out.
+    when:
+      has_category:
+      - ground_tackle_and_mooring
+  - c: Call for help with the MAYDAY card on Home and the red DISTRESS button on {vhf_dsc_location}.
+    when:
+      has_vhf_dsc_location: true
+  - c: Call for help with the MAYDAY card on Home and the red DISTRESS button on the fixed VHF.
+    when:
+      has_vhf_dsc_location: false
+  - c: "{sar_contact_line}"

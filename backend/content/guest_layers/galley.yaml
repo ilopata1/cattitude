@@ -4,9 +4,51 @@
 #
 
 learnChecks:
+- key: galley/hob
+  c: Used the hob once with someone watching
 - key: galley/rubbish
   c: Found where rubbish and recycling go
 sections:
+- t: Cooking
+  type: list
+  when:
+    any:
+    - galley_stove: induction
+    - galley_stove: gas
+    - galley_stove: electric
+  items:
+  - c: The hob is induction. It needs the inverter or the generator.
+    when:
+      galley_stove: induction
+  - c: Pans must be magnetic.
+    when:
+      galley_stove: induction
+  - c: Wipe the glass when it is cool.
+    when:
+      galley_stove: induction
+  - c: Turn the gas on at the bottle and the solenoid only while you are cooking. Turn it off after.
+    when:
+      galley_stove: gas
+  - c: If you smell gas, touch no switches. Open everything. Tell the skipper.
+    when:
+      galley_stove: gas
+  - c: The hob needs shore power, the generator, or the inverter.
+    when:
+      galley_stove: electric
+- t: Fridge and freezer
+  type: list
+  items:
+  - c: Open it briefly.
+  - c: Close it firmly.
+  - c: Tell someone if it is not cold.
+- t: Washing up
+  type: list
+  items:
+  - c: "{galley_tap_note}"
+    when:
+      has_galley_tap_note: true
+  - c: Use one bowl of soapy water.
+  - c: Rinse briefly.
 - t: Rubbish
   type: list
   items:

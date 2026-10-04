@@ -1,5 +1,13 @@
 """Deterministic system-module assembly from equipment fragments.
 
+Fragment sections honour an ``audience`` key on the ``system_sections`` entry
+for this system, and on each section. ``guest`` publishes to both reading
+views and is not written out. When neither the entry nor the section sets an
+audience, a procedure title is tagged ``crew``. The match is
+start, starting, shut down, shutdown, outboard, prime, priming, bleed, and
+isolat (so isolation matches), ignoring case. Those steps stay out of the
+Guest view unless the fragment says ``audience: guest``.
+
 Replaces blind ``sections.extend`` with:
 
 1. **Primary home** — overlapping categories (notably ``electrical_dc``) map each
@@ -15,10 +23,19 @@ keyword tables here are intentionally small and unit-testable.
 
 from __future__ import annotations
 
+import re
 from typing import Any
 
+from content.audience import PUBLISHED_CREW, stamp_audience
 from guide_module_catalog import SYSTEM_CATALOG
 from guide_reader_voice import format_guest_equipment_label
+
+# Procedure titles default to the Crew view. No trailing word boundary, so
+# "isolation" and "priming" match the same way the authoring rule is written.
+_CREW_PROCEDURE_TITLE = re.compile(
+    r"\b(start|starting|shut ?down|outboard|prim(?:e|ing)|bleed|isolat)",
+    re.IGNORECASE,
+)
 
 # Systems that share equipment categories and therefore need home routing.
 _OVERLAP_CATEGORIES = frozenset({"electrical_dc", "electrical_ac"})
@@ -351,6 +368,40 @@ def _bucket_heading(bucket: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _fragment_section_audience(
+    section: dict[str, Any], entry: dict[str, Any]
+) -> dict[str, Any]:
+    """Copy one fragment section and apply its reading-view tag.
+
+    A section ``audience`` wins over the entry. ``guest`` publishes as both
+    views. With no audience set, a procedure title is tagged crew.
+    """
+    published = dict(section)
+    label = str(published.get("t") or "section")
+    if "audience" in published:
+        spec: dict[str, Any] | None = published
+    elif "audience" in entry:
+        spec = entry
+    else:
+        spec = None
+    published.pop("audience", None)
+    if spec is not None:
+        stamp_audience(published, spec, label=label)
+    elif _CREW_PROCEDURE_TITLE.search(label):
+        published["audience"] = PUBLISHED_CREW
+    return published
+
+
+def _publish_fragment_sections(entry: dict[str, Any]) -> list[Any]:
+    published: list[Any] = []
+    for section in entry.get("sections") or []:
+        if isinstance(section, dict):
+            published.append(_fragment_section_audience(section, entry))
+        else:
+            published.append(section)
+    return published
+
+
 def assemble_system_from_fragments(
     system_id: str, fragment_rows: list[dict[str, Any]]
 ) -> dict[str, Any] | None:
@@ -400,13 +451,13 @@ def assemble_system_from_fragments(
                 _absorb_meta(entry)
                 if multi:
                     payload["sections"].append(_device_heading(row))
-                payload["sections"].extend(entry["sections"])
+                payload["sections"].extend(_publish_fragment_sections(entry))
     else:
         for row, entry, _role in contributions:
             _absorb_meta(entry)
             if multi:
                 payload["sections"].append(_device_heading(row))
-            payload["sections"].extend(entry["sections"])
+            payload["sections"].extend(_publish_fragment_sections(entry))
 
     if learn_checks:
         payload["learnChecks"] = learn_checks

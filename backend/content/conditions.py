@@ -68,6 +68,7 @@ def matches(when: dict[str, Any] | None, snapshot: dict[str, Any]) -> bool:
         "has_lifejacket_policy": slots.lifejacket_policy(snapshot),
         "moors_stern_to": slots.moors_stern_to(snapshot),
         "has_marina_routine": slots.marina_routine(snapshot),
+        "has_galley_tap_note": slots.galley_tap_note(snapshot),
     }
     for key, actual in flag_checks.items():
         if key in when and bool(when[key]) != bool(actual):

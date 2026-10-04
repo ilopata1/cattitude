@@ -11,6 +11,8 @@ crew_summary_section: How the waste system is set up
 learnChecks:
 - key: heads/bowl
   c: Left a little water in the bowl and put paper in the bin
+- key: heads/bin
+  c: Left the bin lid on and emptied it ashore
 sections:
 - t: Using the heads
   type: list
@@ -21,7 +23,17 @@ sections:
   - c: These heads flush with seawater.
     when:
       heads_flush_sea: true
+  - c: If the toilet will not flush, the water pump is probably off. Ask before you assume the tank is full.
+  - c: Press the flush button once. Do not hold it unless you are shown to.
+    when:
+      heads_drive: electric
   - c: If the holding tank is full, the flush stops working. Say so.
   - c: Keep the toilet roll where it cannot get wet.
   - c: Leave a little water in the bowl when you finish.
   - c: If you are unsure, ask for a demonstration.
+- t: The bin
+  type: list
+  items:
+  - c: Keep the lid on.
+  - c: Empty it ashore.
+  - c: Nothing wet goes in it.

@@ -67,6 +67,7 @@ Optional keys on `guide_context.guestFacts` (JSONB, no migration). The owner fil
 | `waterTanks.summary` | string | `water_tanks_sentence` | `has_water_tanks_sentence` |
 | `autopilot.standby` | string | `autopilot_standby_sentence` | `has_autopilot_standby` |
 | `galleyStove` | `induction`, `gas`, or `electric` | `galley_stove` | `galley_stove:` equals that value |
+| `galleyTapNote` | string | `galley_tap_note` | `has_galley_tap_note` |
 | `cabinNames` | list of strings (one per line in admin) | `cabin_names_sentence` | `has_cabin_names` |
 | `hatchNotes` | string | `hatch_notes` | `has_hatch_notes` |
 | `lifejacketPolicy` | string | `lifejacket_policy` | `has_lifejacket_policy` |

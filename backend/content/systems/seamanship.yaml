@@ -16,6 +16,8 @@ learnChecks:
   c: Tied a clove hitch, a round turn and two half hitches, and a bowline
 - key: seamanship/fender
   c: Brought a fender aboard before undoing its knot
+- key: seamanship/cleat
+  c: Held a dock line round a cleat under load
 sections:
 - t: Fenders
   type: list
@@ -38,3 +40,22 @@ sections:
   - c: Jacklines run {jackline_phrase}. You can clip on to them in heavy weather.
     when:
       has_jacklines: true
+- t: Coming alongside
+  type: list
+  items:
+  - c: Hold the line you are given, and nothing else.
+  - c: Never jump.
+  - c: Never fend off with your hands or your feet.
+  - c: Step off only when you are told.
+  - c: A line goes round a cleat, not in your hand, before you take the load.
+- t: Stern-to and the passerelle
+  type: list
+  when:
+    moors_stern_to: true
+  items:
+  - c: Wait until the passerelle is secured.
+  - c: One person at a time.
+  - c: Hold the rail, not the lines.
+  - c: "{marina_routine}"
+    when:
+      has_marina_routine: true

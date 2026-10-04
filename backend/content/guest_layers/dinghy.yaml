@@ -4,9 +4,26 @@
 #
 
 learnChecks:
+- key: dinghy/rules
+  c: Asked before taking the dinghy
+  when:
+    has_category:
+    - tenders_and_watersports
 - key: dinghy/swimming
   c: Confirmed when swimming is allowed and where the ladder is
 sections:
+- t: Dinghy rules
+  type: list
+  when:
+    has_category:
+    - tenders_and_watersports
+  items:
+  - c: Ask before you take it.
+  - c: The kill cord stays on the driver.
+  - c: Wear life jackets at night, and if you are not a strong swimmer.
+  - c: Tie it with a round turn and two half hitches.
+  - c: Do not go alone after dark.
+  - c: Lift the outboard before you beach it.
 - t: Swimming
   type: list
   items:

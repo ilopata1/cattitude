@@ -223,6 +223,102 @@ def main() -> int:
         ],
         f"engines multi assembly unexpected: {etitles}",
     )
+    by_title = {section["t"]: section for section in engines["sections"]}
+    check(by_title["Start"].get("audience") == "crew", "Start procedure was not tagged crew")
+    check("audience" not in by_title["Saildrive notes"], "saildrive notes were tagged crew")
+    check("audience" not in by_title["Yanmar 4JH45"], "device heading was tagged")
+
+    dinghy = assemble_system_from_fragments(
+        "dinghy",
+        [
+            {
+                "manufacturer": "Yamaha",
+                "model": "F20",
+                "system_category": "tenders_and_watersports",
+                "fragment": {
+                    "system_sections": {
+                        "dinghy": {
+                            "sections": [
+                                {
+                                    "t": "Starting the Outboard Motor",
+                                    "type": "steps",
+                                    "c": "Turn the key.",
+                                },
+                                {
+                                    "t": "Priming the bulb",
+                                    "type": "steps",
+                                    "c": "Squeeze.",
+                                },
+                                {
+                                    "t": "Guest-safe troubleshooting",
+                                    "type": "prose",
+                                    "c": "Tell the skipper.",
+                                    "audience": "guest",
+                                },
+                                {"t": "Day use", "type": "prose", "c": "Ask first."},
+                            ]
+                        }
+                    }
+                },
+            }
+        ],
+    )
+    assert dinghy is not None
+    dinghy_by_title = {section["t"]: section for section in dinghy["sections"]}
+    check(
+        dinghy_by_title["Starting the Outboard Motor"].get("audience") == "crew",
+        "outboard start was not tagged crew",
+    )
+    check(
+        dinghy_by_title["Priming the bulb"].get("audience") == "crew",
+        "priming was not tagged crew",
+    )
+    check(
+        "audience" not in dinghy_by_title["Guest-safe troubleshooting"],
+        "explicit guest audience was published",
+    )
+    check("audience" not in dinghy_by_title["Day use"], "day use was tagged crew")
+
+    entry_crew = assemble_system_from_fragments(
+        "dinghy",
+        [
+            {
+                "manufacturer": "Highfield",
+                "model": "Classic",
+                "system_category": "tenders_and_watersports",
+                "fragment": {
+                    "system_sections": {
+                        "dinghy": {
+                            "audience": "crew",
+                            "sections": [
+                                {
+                                    "t": "Where it lives",
+                                    "type": "prose",
+                                    "c": "On the davits.",
+                                },
+                                {
+                                    "t": "Swim",
+                                    "type": "prose",
+                                    "c": "Ask first.",
+                                    "audience": "guest",
+                                },
+                            ],
+                        }
+                    }
+                },
+            }
+        ],
+    )
+    assert entry_crew is not None
+    entry_by_title = {section["t"]: section for section in entry_crew["sections"]}
+    check(
+        entry_by_title["Where it lives"].get("audience") == "crew",
+        "entry audience crew was not applied",
+    )
+    check(
+        "audience" not in entry_by_title["Swim"],
+        "section guest audience did not override the entry",
+    )
 
     if failures:
         print("FAIL")

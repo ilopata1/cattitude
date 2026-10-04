@@ -3,7 +3,50 @@
 # Module: system / overview
 #
 
+learnChecks:
+- key: overview/which-way
+  c: Pointed to port, starboard, forward, and aft
 sections:
+- t: Which way is which
+  type: list
+  items:
+  - c: Port is left when you look forward.
+  - c: Starboard is right when you look forward.
+  - c: Forward is the pointy end.
+  - c: Aft is the back.
+  - c: "{cabin_names_sentence}"
+    when:
+      has_cabin_names: true
+- t: Hatches and ports
+  type: list
+  items:
+  - c: To open a hatch, undo the dogs and lift. To shut it, lower it and turn the dogs tight.
+  - c: Close hatches and ports before rain, and before we leave the dock.
+  - c: Leave the mosquito screens in.
+  - c: "{hatch_notes}"
+    when:
+      has_hatch_notes: true
+- t: Your cabin
+  type: list
+  items:
+  - c: You have fans and reading lights.
+  - c: Some switches dim when you hold them.
+    when:
+      hold_to_dim: true
+  - c: USB sockets work on the batteries.
+  - c: The square 230 V sockets work only when the inverter or shore power is on.
+    when:
+      has_category:
+      - electrical_ac
+  - c: Stow your bags so nothing can fall.
+  - c: Expect pump noises and chain noises at night.
+- t: At night
+  type: list
+  items:
+  - c: Use only red lights in the saloon and the cockpit.
+  - c: Do not shine a white torch toward the helm.
+  - c: Keep one hand for the boat.
+  - c: Tell the watch-keeper when you come up.
 - t: Trampoline
   type: list
   when:

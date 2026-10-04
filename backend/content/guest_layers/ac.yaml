@@ -1,0 +1,31 @@
+# Purpose: Guest note on air conditioning.
+# Used by: content.assembler.apply_guest_layers
+# Module: system / ac
+#
+
+learnChecks:
+- key: ac/hatches
+  c: Closed the hatches while the air conditioning ran
+  when:
+    has_category:
+    - hvac
+sections:
+- t: Air conditioning, for guests
+  type: list
+  when:
+    has_category:
+    - hvac
+  items:
+  - c: It only runs on shore power or the generator.
+    when:
+      has_generator: true
+  - c: It only runs on shore power.
+    when:
+      has_generator: false
+  - c: Do not expect it at anchor overnight unless the skipper runs the generator.
+    when:
+      has_generator: true
+  - c: Do not expect it at anchor overnight.
+    when:
+      has_generator: false
+  - c: Close hatches and doors while it runs.
