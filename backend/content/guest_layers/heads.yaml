@@ -3,6 +3,11 @@
 # Module: system / heads
 #
 
+summary: >-
+  The heads on {vessel_name} flush with {heads_flush_phrase}. Nothing but human
+  waste goes in them. Paper goes in the bin.
+crew_summary_section: How the waste system is set up
+
 learnChecks:
 - key: heads/bowl
   c: Left a little water in the bowl and put paper in the bin

@@ -288,6 +288,16 @@ def heads_flush_water(snapshot: dict[str, Any]) -> str:
     return value if value in {"fresh", "sea"} else ""
 
 
+def heads_flush_phrase(snapshot: dict[str, Any]) -> str:
+    """Guest-facing flush source. Unknown facts stay as plain "water"."""
+    source = heads_flush_water(snapshot)
+    if source == "fresh":
+        return "fresh water, so every flush comes out of the tanks"
+    if source == "sea":
+        return "sea water"
+    return "water"
+
+
 def shower_pump_switch(snapshot: dict[str, Any]) -> str:
     value = str(guest_facts(snapshot).get("showerPumpSwitch") or "").strip()
     return value or "the switch on the wall"
@@ -400,6 +410,7 @@ def slot_values(snapshot: dict[str, Any]) -> dict[str, str]:
         "jackline_phrase": jackline_phrase(snapshot),
         "sails_on_this_boat": sails_on_this_boat(snapshot),
         "waste_routing": waste_routing(snapshot),
+        "heads_flush_phrase": heads_flush_phrase(snapshot),
         "primary_ladder_subtitle": primary_ladder_subtitle(snapshot),
     }
 

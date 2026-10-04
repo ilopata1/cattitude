@@ -543,6 +543,59 @@ def _inherit_replaced_audience(
             section["audience"] = inherited
 
 
+def _place_before_related(existing: list[Any], incoming: list[Any]) -> list[Any]:
+    """Insert sections ahead of a trailing Related footer."""
+    if (
+        existing
+        and isinstance(existing[-1], dict)
+        and normalise_title(str(existing[-1].get("t") or "")) == "related"
+    ):
+        return [*existing[:-1], *incoming, existing[-1]]
+    return [*existing, *incoming]
+
+
+def _crew_summary_section(
+    data: dict[str, Any], payload: dict[str, Any]
+) -> dict[str, Any] | None:
+    """Keep the composed summary for crew when a guest layer replaces it."""
+    title = data.get("crew_summary_section")
+    if not isinstance(title, str) or not title.strip():
+        return None
+    summary = payload.get("summary")
+    if not isinstance(summary, str) or not summary.strip():
+        return None
+    return {
+        "t": title.strip(),
+        "type": "prose",
+        "c": summary.strip(),
+        "audience": "crew",
+    }
+
+
+def _apply_guest_chapter_fields(
+    merged: dict[str, Any], data: dict[str, Any], snapshot: dict[str, Any]
+) -> None:
+    """Copy summary and subtitle from a shared guest layer. Slots are applied.
+
+    A summary without a subtitle refreshes the subtitle from its first sentence,
+    the same rule Stage 4 uses at transform time.
+    """
+    summary = data.get("summary")
+    subtitle = data.get("subtitle")
+    applied_summary = ""
+    if isinstance(summary, str) and summary.strip():
+        applied_summary = slots.apply_slots(summary, snapshot).strip()
+        merged["summary"] = applied_summary
+    if isinstance(subtitle, str) and subtitle.strip():
+        merged["subtitle"] = slots.apply_slots(subtitle, snapshot).strip()
+    elif applied_summary:
+        from guide_section_to_module import _subtitle_from_summary
+
+        merged["subtitle"] = _subtitle_from_summary(
+            applied_summary, slots.vessel_name(snapshot)
+        )
+
+
 def apply_guest_layers(
     system_id: str, payload: dict[str, Any], snapshot: dict[str, Any]
 ) -> dict[str, Any]:
@@ -550,6 +603,10 @@ def apply_guest_layers(
 
     Title match ignores case and extra whitespace. The curated section wins.
     A replacement that does not set audience keeps the replaced section's audience.
+    New sections land before a trailing Related section.
+    ``summary`` and ``subtitle`` replace the chapter fields.
+    ``crew_summary_section`` keeps the previous summary as a crew prose section
+    ahead of those new sections.
     """
     relative = f"guest_layers/{system_id}.yaml"
     if not (CONTENT_ROOT / relative).is_file():
@@ -576,7 +633,10 @@ def apply_guest_layers(
             and normalise_title(str(section.get("t") or "")) in titles
         )
     ]
-    merged["sections"] = existing + incoming
+    preserved = _crew_summary_section(data, payload)
+    new_sections = ([preserved] if preserved else []) + incoming
+    merged["sections"] = _place_before_related(existing, new_sections)
+    _apply_guest_chapter_fields(merged, data, snapshot)
     extra = _learn_checks_from_spec(data.get("learnChecks") or [], snapshot)
     if extra:
         current = [
@@ -598,7 +658,8 @@ def apply_vessel_guest_layers(
     """Replace generated sections for one vessel. Other boats are left unchanged.
 
     Files live at ``content/vessels/{slug}/guest/{system_id}.yaml``.
-    A matching title is replaced in place. A new title is appended.
+    A matching title is replaced in place. A new title is inserted before a
+    trailing Related section.
     A replacement that does not set audience keeps the replaced section's audience.
     """
     slug = _vessel_slug(snapshot)
@@ -633,11 +694,12 @@ def apply_vessel_guest_layers(
             used.add(key)
         else:
             sections.append(section)
+    extras: list[dict[str, Any]] = []
     for section in incoming:
         key = normalise_title(str(section.get("t") or ""))
         if key not in used:
-            sections.append(section)
-    merged["sections"] = sections
+            extras.append(section)
+    merged["sections"] = _place_before_related(sections, extras)
     summary = data.get("summary")
     if isinstance(summary, str) and summary.strip():
         merged["summary"] = slots.apply_slots(summary, snapshot).strip()
@@ -675,6 +737,7 @@ def apply_crew_layers(
 
     Files live at ``content/vessels/{slug}/crew/{system_id}.yaml``.
     Sections tagged ``audience: crew`` are hidden in the Guest reading view.
+    New sections land before a trailing Related section.
     """
     slug = _vessel_slug(snapshot)
     if not slug:
@@ -689,7 +752,9 @@ def apply_crew_layers(
     if not incoming:
         return payload
     merged = dict(payload)
-    merged["sections"] = list(payload.get("sections") or []) + incoming
+    merged["sections"] = _place_before_related(
+        list(payload.get("sections") or []), incoming
+    )
     return merged
 
 

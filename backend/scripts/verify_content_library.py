@@ -260,6 +260,50 @@ def _check_handbook(failures: list[str]) -> None:
     if "flush with fresh water" in mono_heads or "flush with seawater" in mono_heads:
         failures.append("monohull heads invented a flush-water source")
 
+    old_heads_summary = "Blackwater discharge valves stay shut in harbour."
+    composed_heads = {
+        "id": "heads",
+        "summary": old_heads_summary,
+        "subtitle": "Blackwater discharge valves",
+        "sections": [
+            {"t": "How it works", "type": "prose", "c": "Holding tanks."},
+            {"t": "Related", "type": "prose", "c": "See Fix It."},
+        ],
+    }
+    headed = apply_guest_layers("heads", composed_heads, catamaran)
+    expected_heads_summary = (
+        "The heads on Test Vessel flush with fresh water, so every flush comes out of the tanks. "
+        "Nothing but human waste goes in them. Paper goes in the bin."
+    )
+    if headed.get("summary") != expected_heads_summary:
+        failures.append(f"heads guest summary: {headed.get('summary')!r}")
+    if headed.get("subtitle") != (
+        "The heads on Test Vessel flush with fresh water, so every flush comes out of the tanks"
+    ):
+        failures.append(f"heads guest subtitle: {headed.get('subtitle')!r}")
+    preserved = next(
+        (
+            section
+            for section in headed["sections"]
+            if section.get("t") == "How the waste system is set up"
+        ),
+        None,
+    )
+    if (
+        not isinstance(preserved, dict)
+        or preserved.get("type") != "prose"
+        or preserved.get("audience") != "crew"
+        or preserved.get("c") != old_heads_summary
+    ):
+        failures.append(f"heads crew summary section: {preserved}")
+    heads_titles = [section.get("t") for section in headed["sections"]]
+    if heads_titles[-1] != "Related":
+        failures.append(f"heads Related is not last: {heads_titles}")
+    if "Using the heads" not in heads_titles or heads_titles.index(
+        "How the waste system is set up"
+    ) > heads_titles.index("Using the heads"):
+        failures.append(f"crew summary landed after guest sections: {heads_titles}")
+
     electrical = _texts(
         apply_guest_layers("electrical", {"id": "electrical", "sections": []}, catamaran)
     )
