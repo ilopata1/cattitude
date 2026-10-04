@@ -56,7 +56,7 @@
 
   <fieldset class="full-width">
     <legend>Emergency contacts (JSON array) — required for guide generation</legend>
-    <p class="muted">Same shape as the mobile app <code>emergency.contacts</code> list. Each item needs <code>label</code>, <code>value</code>, and <code>action</code> (<code>call</code> or <code>vhf</code>). Add <code>tel</code> for phone numbers.</p>
+    <p class="muted">Same shape as the mobile app <code>emergency.contacts</code> list. Each item needs <code>label</code>, <code>value</code>, and <code>action</code> (<code>call</code> or <code>vhf</code>). Add <code>tel</code> for phone numbers. Optional <code>"audience": "crew"</code> shows that contact only in the Crew view. Use it for the insurer, the yard, the engine dealer, and the marina office. National rescue contacts for the country code are added on their own.</p>
     <textarea name="emergency_contacts_json" rows="14">{{ emergency_contacts_json }}</textarea>
   </fieldset>
 

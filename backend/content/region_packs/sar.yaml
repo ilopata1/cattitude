@@ -1,0 +1,59 @@
+# Purpose: National search-and-rescue contacts appended to the emergency module.
+# Used by: content.slots.sar_pack_contacts → guide_template_assembly.build_emergency_module
+# Module: emergency / contacts
+# Keys: ISO country code. Contacts use the admin emergencyContacts shape.
+# Pack contacts are both reading views. A boat that already lists the same label keeps its own entry.
+#
+
+FR:
+- label: CROSS (coastguard)
+  detail: VHF 16
+  value: VHF 16
+  tel: "196"
+  action: call
+- label: European emergency
+  value: "112"
+  tel: "112"
+  action: call
+GB:
+- label: HM Coastguard
+  detail: VHF 16
+  value: VHF 16
+  tel: "999"
+  action: call
+US:
+- label: US Coast Guard
+  detail: VHF 16
+  value: VHF 16
+  tel: "911"
+  action: call
+BS:
+- label: BASRA
+  detail: VHF 16
+  value: VHF 16
+  tel: "+1 242 325 8864"
+  action: call
+HR:
+- label: MRCC Rijeka
+  detail: VHF 16
+  value: VHF 16
+  tel: "195"
+  action: call
+GR:
+- label: Hellenic Coast Guard
+  detail: VHF 16
+  value: VHF 16
+  tel: "108"
+  action: call
+IT:
+- label: Italian Coast Guard
+  detail: VHF 16
+  value: VHF 16
+  tel: "1530"
+  action: call
+ES:
+- label: Salvamento Marítimo
+  detail: VHF 16
+  value: VHF 16
+  tel: "112"
+  action: call

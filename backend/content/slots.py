@@ -5,6 +5,8 @@ from __future__ import annotations
 import re
 from typing import Any
 
+from content.loader import load_yaml_cached
+
 _SLOT_RE = re.compile(r"\{([a-z_]+)\}")
 
 _WATERMAKER_HINTS = (
@@ -476,12 +478,43 @@ def moors_stern_to(snapshot: dict[str, Any]) -> bool:
     return bool(guest_facts(snapshot).get("moorsSternTo"))
 
 
-def sar_contact_line(snapshot: dict[str, Any]) -> str:
-    """Who to call for help. The region pack fills this from countryCode.
+def sar_pack_contacts(country_code: Any) -> list[dict[str, Any]]:
+    """National rescue contacts for an ISO country code. Unknown codes yield none."""
+    code = country_code.strip().upper() if isinstance(country_code, str) else ""
+    if not code:
+        return []
+    pack = load_yaml_cached("region_packs/sar.yaml") or {}
+    if not isinstance(pack, dict):
+        return []
+    raw = pack.get(code)
+    if not isinstance(raw, list):
+        return []
+    contacts: list[dict[str, Any]] = []
+    for item in raw:
+        if not isinstance(item, dict):
+            continue
+        contact = dict(item)
+        for key in ("label", "detail", "value", "tel"):
+            if key not in contact or isinstance(contact[key], str):
+                continue
+            text = str(contact[key]).strip() if contact[key] is not None else ""
+            if text and not isinstance(contact[key], bool):
+                contact[key] = text
+            else:
+                contact.pop(key, None)
+        contacts.append(contact)
+    return contacts
 
-    Until that pack is applied, every boat gets VHF channel 16.
-    """
-    del snapshot
+
+def sar_contact_line(snapshot: dict[str, Any]) -> str:
+    """Who to call for help, from the first region-pack contact for countryCode."""
+    context = snapshot.get("guide_context") or {}
+    country = context.get("countryCode") if isinstance(context, dict) else ""
+    for contact in sar_pack_contacts(country):
+        label = contact.get("label")
+        tel = contact.get("tel")
+        if isinstance(label, str) and label.strip() and isinstance(tel, str) and tel.strip():
+            return f"Call {label.strip()} on VHF 16 or {tel.strip()}."
     return "Call for help on VHF channel 16."
 
 

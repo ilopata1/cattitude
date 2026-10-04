@@ -11,6 +11,7 @@ Guest-facing copy for hybrid guide modules (home rules, checklists, fix cards) l
 | `conditions.py` | Evaluate `when:` blocks (`has_category`, `twin_engine`, `is_sailing`, …) |
 | `assembler.py` | Build module payloads; exports `LIBRARY_MODULE_BUILDERS` |
 | `home_rules/` | Section headings + static rules (runtime `localRules` still come from guide context) |
+| `region_packs/` | National rescue contacts keyed by country code (`sar.yaml`), appended to the emergency module |
 | `checklists/` | One YAML file per checklist (`safety-brief`, `gh`, `pd`, `anch`, `lu`, `ec`) |
 | `fix_cards/` | Default troubleshooting cards (equipment fragments can override after assembly) |
 

@@ -16,6 +16,7 @@ from __future__ import annotations
 from typing import Any, Callable
 
 from content.audience import stamp_audience
+from content.slots import sar_pack_contacts, vhf_dsc_location
 from prompts.guide.assembly_text import MAYDAY_CHANNEL, mayday_steps
 
 
@@ -96,6 +97,24 @@ def _normalize_contact(contact: dict[str, Any]) -> dict[str, Any] | None:
     return normalized
 
 
+def _append_sar_contacts(contacts: list[dict[str, Any]], country_code: Any) -> None:
+    """Add region-pack rescue contacts whose label is not already listed.
+
+    Pack contacts are both reading views. Matching is case-insensitive.
+    """
+    seen = {str(contact.get("label") or "").strip().casefold() for contact in contacts}
+    for raw in sar_pack_contacts(country_code):
+        contact = _normalize_contact(raw)
+        if not contact:
+            continue
+        contact.pop("audience", None)
+        key = contact["label"].casefold()
+        if key in seen:
+            continue
+        contacts.append(contact)
+        seen.add(key)
+
+
 def build_emergency_module(
     snapshot: dict[str, Any], reference: Any = None
 ) -> dict[str, Any]:
@@ -111,6 +130,7 @@ def build_emergency_module(
         contact = _normalize_contact(raw)
         if contact:
             contacts.append(contact)
+    _append_sar_contacts(contacts, context.get("countryCode"))
 
     subtitle_parts = [
         _clean(vessel.get("name")),
@@ -122,7 +142,7 @@ def build_emergency_module(
         "mayday": {
             "channel": MAYDAY_CHANNEL,
             "vesselCallsign": callsign,
-            "steps": mayday_steps(callsign),
+            "steps": mayday_steps(callsign, dsc_location=vhf_dsc_location(snapshot)),
         },
         "contacts": contacts,
         "modalSubtitle": " · ".join(part for part in subtitle_parts if part),

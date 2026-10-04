@@ -239,7 +239,9 @@ def build_home_rules_module(
         text = "Always monitor VHF Ch 16 underway" + slots.slot_values(snapshot)[
             "vhf_monitor_suffix"
         ]
-        caution_rules.append({"icon": "📻", "tone": "caution", "text": text})
+        caution_rules.append(
+            {"icon": "📻", "tone": "caution", "text": text, "audience": "crew"}
+        )
 
     sections = []
     for section_spec in spec.get("sections") or []:

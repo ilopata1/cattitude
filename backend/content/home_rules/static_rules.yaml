@@ -20,14 +20,19 @@ rules:
   section: danger
   icon: 🛞
   text: Never leave the helm unattended with autopilot on in traffic, channels, or near shore
+  audience: crew
 - section: caution
   icon: 🛟
   text: Run the Safety Briefing with all guests before every departure
   link: /tabs/do/checklist/safety-brief
+  audience: crew
 - section: caution
   icon: ✋
   text: Keep one hand for you and one for the boat when you move around
   link: /tabs/do/checklist/safety-brief
+- section: caution
+  icon: 🛟
+  text: Wear a life jacket at night, in the dinghy, and whenever you are asked.
 - section: danger
   icon: 👟
   text: Wear non-marking shoes on board. Shore shoes stay ashore — they can bring cockroach eggs aboard.
@@ -50,6 +55,7 @@ rules:
   section: caution
   icon: 🔋
   text: Check house battery state of charge morning and evening — charge before it gets low, not after
+  audience: crew
 - when:
     has_category:
     - galley_appliances
@@ -71,3 +77,6 @@ rules:
 - section: caution
   icon: 👀
   text: Tell someone at once if something breaks, you spill a lot of water, notice an unusual smell, feel unwell, or see anything that concerns you.
+- section: good
+  icon: 👂
+  text: If you hear an alarm, find the skipper. Do not silence it.

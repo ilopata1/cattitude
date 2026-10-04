@@ -2,8 +2,13 @@
 # Used by: guide_template_assembly._mayday_steps → build_emergency_module
 # Module: emergency / mayday.steps (template assembly, not LLM)
 # Variables: {callsign} — vessel radio callsign or vessel name
+#            {dsc_location} — where the fixed VHF with the distress button is
+# The two DISTRESS lines are alternatives. mayday_steps keeps one: the line
+# with {dsc_location} when that place is known, otherwise the other line.
 #
 Tune VHF to Channel 16 — switch to high power (25W)
+If the radio has a red DISTRESS button, lift its cover and hold the button for five seconds, then speak
+If the radio has a red DISTRESS button on {dsc_location}, lift its cover and hold the button for five seconds, then speak
 Say "MAYDAY MAYDAY MAYDAY"
 Say "This is {callsign}, {callsign}, {callsign}"
 Say "MAYDAY {callsign}"

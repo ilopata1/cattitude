@@ -16,6 +16,7 @@ sys.path.insert(0, str(_BACKEND))
 from content.assembler import (  # noqa: E402
     build_checklist_module,
     build_fix_cards_module,
+    build_home_rules_module,
 )
 from content.conditions import matches  # noqa: E402
 from content.slots import apply_slots, guest_fact_gaps, slot_values  # noqa: E402
@@ -684,6 +685,44 @@ def test_guest_fact_slots_and_flags() -> None:
         pass
 
 
+def test_home_rule_audience() -> None:
+    snapshot = boat(
+        "rules",
+        "sailing_catamaran",
+        [row("navigation_and_electronics"), row("electrical_dc")],
+    )
+    rules = [
+        rule
+        for section in build_home_rules_module(snapshot)
+        for rule in section["rules"]
+    ]
+
+    def find(prefix: str) -> dict | None:
+        for rule in rules:
+            if str(rule.get("text") or "").startswith(prefix):
+                return rule
+        return None
+
+    helm = find("Never leave the helm")
+    check(helm is not None and helm.get("audience") == "crew", "helm rule is crew")
+    briefing = find("Run the Safety Briefing")
+    check(briefing is not None and briefing.get("audience") == "crew", "safety briefing is crew")
+    battery = find("Check house battery")
+    check(battery is not None and battery.get("audience") == "crew", "battery rule is crew")
+    radio = find("Always monitor VHF")
+    check(radio is not None and radio.get("audience") == "crew", "VHF monitor rule is crew")
+    jacket = find("Wear a life jacket at night")
+    check(
+        jacket is not None and "audience" not in (jacket or {}),
+        "life jacket rule stays in both views",
+    )
+    alarm = find("If you hear an alarm")
+    check(
+        alarm is not None and "audience" not in (alarm or {}),
+        "alarm rule stays in both views",
+    )
+
+
 def test_vessel_override_survives_second_assembly() -> None:
     path = CONTENT_ROOT / "vessels" / "supernova.yaml"
     if path.exists():
@@ -717,6 +756,7 @@ def main() -> None:
     test_heads_and_tender_facts()
     test_owner_with_crew()
     test_guest_fact_slots_and_flags()
+    test_home_rule_audience()
     test_vessel_override_survives_second_assembly()
     if FAILURES:
         print(f"FAILED: {len(FAILURES)}")

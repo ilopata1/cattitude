@@ -258,4 +258,44 @@ describe('ContentService boot', () => {
     expect(loaded.branding.vesselName).toBe('Fresh');
     expect(toasts.create).not.toHaveBeenCalled();
   });
+
+  it('hides crew home rules and contacts in the guest view', async () => {
+    const loaded = guide('Rules');
+    loaded.ui.homeRuleSections = [
+      {
+        title: 'Never',
+        tone: 'danger',
+        rules: [{ icon: '🛞', text: 'Stay at the helm', tone: 'danger', audience: 'crew' }],
+      },
+      {
+        title: 'Always',
+        tone: 'caution',
+        rules: [
+          { icon: '🛟', text: 'Wear a life jacket', tone: 'caution' },
+          { icon: '📻', text: 'Monitor the radio', tone: 'caution', audience: 'crew' },
+        ],
+      },
+    ];
+    loaded.emergency.contacts = [
+      { label: 'CROSS', value: 'VHF 16', action: 'vhf' },
+      { label: 'Yard', value: '555', action: 'call', audience: 'crew' },
+    ];
+    guideSync.loadFromCache.and.resolveTo({ content: loaded, contentHash: 'rules' });
+    guideSync.ensureGuide.and.returnValue(new Promise(() => undefined));
+
+    await service.loadBootstrapContent('cattitude');
+
+    const guest = service.visibleHomeRuleSections('guest');
+    expect(guest.map((section) => section.title)).toEqual(['Always']);
+    expect(guest[0].rules.map((rule) => rule.text)).toEqual(['Wear a life jacket']);
+    expect(service.visibleHomeRuleSections('crew').map((section) => section.title)).toEqual([
+      'Never',
+      'Always',
+    ]);
+    expect(service.visibleEmergencyContacts('guest').map((contact) => contact.label)).toEqual(['CROSS']);
+    expect(service.visibleEmergencyContacts('crew').map((contact) => contact.label)).toEqual([
+      'CROSS',
+      'Yard',
+    ]);
+  });
 });

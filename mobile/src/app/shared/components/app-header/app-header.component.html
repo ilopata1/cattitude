@@ -80,7 +80,7 @@
 
       <div
         class="modal-contact"
-        *ngFor="let contact of content.bootstrap.emergency.contacts"
+        *ngFor="let contact of content.visibleEmergencyContacts(readerView.view())"
       >
         <div>
           <div class="mc-label">{{ contact.label }}</div>

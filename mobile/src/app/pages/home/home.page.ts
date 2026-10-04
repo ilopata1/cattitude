@@ -399,6 +399,10 @@ export class HomePage {
     this.dragPointerId = null;
   }
 
+  ruleSections() {
+    return this.content.visibleHomeRuleSections(this.readerView.view());
+  }
+
   private catalog(): DashboardItem[] {
     const ui = this.content.bootstrap.ui;
     const learn = resolveLearnPath(
@@ -426,7 +430,7 @@ export class HomePage {
         })),
       })),
       learnAvailable: learn.length > 0,
-      rulesAvailable: (ui.homeRuleSections ?? []).some((section) => section.rules?.length),
+      rulesAvailable: this.ruleSections().length > 0,
     });
   }
 }

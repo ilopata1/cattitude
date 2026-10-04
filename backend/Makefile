@@ -24,6 +24,7 @@ pipeline-verify:
 	python scripts/verify_heads_section_v4.py
 	python scripts/verify_ac_section_v4.py
 	python scripts/verify_stage4_modules.py
+	python scripts/verify_emergency_module.py
 	python scripts/build_outremer_thinned_fixture.py
 	python scripts/verify_stage4_vessel_b.py
 

@@ -1085,6 +1085,39 @@ def _check_full_fixture_fixes(cards: Any, failures: list[str]) -> None:
         failures.append("guestSteps list was rejected")
 
 
+def _check_full_fixture_home_rules(sections: list[dict[str, Any]], failures: list[str]) -> None:
+    """Crew duties are tagged. The two guest-voice rules stay in both views."""
+    rules = [rule for section in sections for rule in section.get("rules") or []]
+    crew_prefixes = (
+        "Never leave the helm",
+        "Run the Safety Briefing",
+        "Check house battery",
+    )
+    both_texts = (
+        "Wear a life jacket at night, in the dinghy, and whenever you are asked.",
+        "If you hear an alarm, find the skipper. Do not silence it.",
+    )
+    for prefix in crew_prefixes:
+        match = next((rule for rule in rules if str(rule.get("text") or "").startswith(prefix)), None)
+        if match is None or match.get("audience") != "crew":
+            failures.append(f"full fixture home rule {prefix!r} is not crew")
+    for text in both_texts:
+        match = _rule_text(sections, text)
+        if match is None or "audience" in match:
+            failures.append(f"full fixture home rule {text!r} published an audience key")
+    local = _rule_text(sections, "Never anchor on coral")
+    if local is None or "audience" in local:
+        failures.append("full fixture local rule published an audience key")
+    extra = [
+        rule.get("text")
+        for rule in rules
+        if rule.get("audience") == "crew"
+        and not str(rule.get("text") or "").startswith(crew_prefixes)
+    ]
+    if extra:
+        failures.append(f"unexpected crew home rules: {extra}")
+
+
 def _check_audience_plumbing(failures: list[str]) -> None:
     """Crew tags publish; omitted and guest do not; a bad value is an error.
 
@@ -1123,6 +1156,9 @@ def _check_audience_plumbing(failures: list[str]) -> None:
             continue
         if key == ("fix_card_set", "all"):
             _check_full_fixture_fixes(payload, failures)
+            continue
+        if key == ("ui", "homeRuleSections"):
+            _check_full_fixture_home_rules(payload, failures)
             continue
         if _has_audience_key(payload):
             failures.append(f"full fixture {key[0]}/{key[1]} published an audience key")

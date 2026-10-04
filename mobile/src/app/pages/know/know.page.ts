@@ -79,7 +79,7 @@ export class KnowPage implements OnInit {
   }
 
   get hasBoatRules(): boolean {
-    return (this.content.bootstrap.ui.homeRuleSections ?? []).some((section) => section.rules?.length);
+    return this.content.visibleHomeRuleSections(this.readerView.view()).length > 0;
   }
 
   openRules(): void {

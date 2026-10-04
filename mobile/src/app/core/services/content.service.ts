@@ -5,11 +5,13 @@ import { TimeoutError } from 'rxjs';
 import {
   BootstrapContent,
   Checklist,
+  EmergencyContact,
   FixCard,
+  HomeRuleSection,
   LocationZone,
   SystemModule,
 } from '../models/bootstrap-content.model';
-import { ReaderView } from '../guide/reader-view';
+import { ReaderView, sectionVisible } from '../guide/reader-view';
 import {
   BootstrapSchemaError,
   assertBootstrapSchema,
@@ -237,6 +239,26 @@ export class ContentService {
 
   getFixes(): FixCard[] {
     return this.bootstrap.fixes;
+  }
+
+  /** Crew rules stay published. The Guest view hides them and drops an empty section. */
+  visibleHomeRuleSections(view: ReaderView): HomeRuleSection[] {
+    const sections = this.bootstrap.ui.homeRuleSections ?? [];
+    const visible: HomeRuleSection[] = [];
+    for (const section of sections) {
+      const rules = (section.rules ?? []).filter((rule) => sectionVisible(rule, view));
+      if (!rules.length) {
+        continue;
+      }
+      visible.push({ ...section, rules });
+    }
+    return visible;
+  }
+
+  /** Crew contacts stay published. The Guest view hides them. */
+  visibleEmergencyContacts(view: ReaderView): EmergencyContact[] {
+    const contacts = this.bootstrap.emergency?.contacts ?? [];
+    return view === 'crew' ? contacts : contacts.filter((contact) => sectionVisible(contact, view));
   }
 
   /** Crew cards stay in the published list. The Guest view hides them. */

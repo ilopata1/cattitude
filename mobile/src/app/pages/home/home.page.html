@@ -125,7 +125,7 @@
             *ngIf="item.id === 'widget:rules'"
             class="dash-widget dash-widget-rules"
           >
-            <app-boat-rules></app-boat-rules>
+            <app-boat-rules [sections]="ruleSections()"></app-boat-rules>
           </div>
         </div>
       </ng-container>
