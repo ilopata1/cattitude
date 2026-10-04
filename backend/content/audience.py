@@ -39,3 +39,22 @@ def stamp_audience(target: dict[str, Any], spec: dict[str, Any], *, label: str) 
     """
     if read_audience(spec, label=label) == PUBLISHED_CREW:
         target["audience"] = PUBLISHED_CREW
+
+
+def guest_steps_problem(card: dict[str, Any], *, label: str) -> str | None:
+    """Return an error when published ``guestSteps`` are not a guest-only list.
+
+    The field is optional. When present it is a non-empty list of non-empty
+    strings. A crew card must not carry it.
+    """
+    guest_steps = card.get("guestSteps")
+    if card.get("audience") == PUBLISHED_CREW and guest_steps is not None:
+        return f"{label} is crew and must not carry guestSteps"
+    if guest_steps is None:
+        return None
+    if not isinstance(guest_steps, list) or not guest_steps:
+        return f"{label} guestSteps must be a non-empty list"
+    for index, step in enumerate(guest_steps):
+        if not isinstance(step, str) or not step.strip():
+            return f"{label} guestSteps {index} must be text"
+    return None

@@ -190,5 +190,24 @@ export function chapterPresentationFailures(): string[] {
     'crew view dropped the section or renumbered it',
   );
 
+  const electrical = {
+    id: 'electrical',
+    guideLinks: [{ target_kind: 'fix', target_id: 'electrical', data_guide_link: 'fix:electrical' }],
+    sections: [],
+  };
+  const guestButtons = presentChapter(electrical, [{ title: 'Fridge not cooling', cat: 'electrical' }]);
+  expect(
+    guestButtons.fixButtons.map((button) => button.title).join('|') === 'Fridge not cooling',
+    'guest fix buttons included a crew card',
+  );
+  const crewButtons = presentChapter(electrical, [
+    { title: 'Fridge not cooling', cat: 'electrical' },
+    { title: 'Low battery', cat: 'electrical' },
+  ]);
+  expect(
+    crewButtons.fixButtons.map((button) => button.title).join('|') === 'Fridge not cooling|Low battery',
+    'crew list dropped a fix button',
+  );
+
   return failures;
 }

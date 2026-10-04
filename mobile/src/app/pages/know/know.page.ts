@@ -210,9 +210,9 @@ export class KnowPage implements OnInit {
     if (!members.length) {
       return null;
     }
-    const fixes = this.content.getFixes();
-    const galley = this.content.getSystem('galley') ?? null;
     const view = this.readerView.view();
+    const fixes = this.content.visibleFixes(view);
+    const galley = this.content.getSystem('galley') ?? null;
     const sameMembers =
       !!this.powerMembers &&
       this.powerMembers.length === members.length &&
@@ -235,8 +235,8 @@ export class KnowPage implements OnInit {
   }
 
   chapterOf(system: SystemModule): ChapterPresentation<SystemSection> {
-    const fixes = this.content.getFixes();
     const view = this.readerView.view();
+    const fixes = this.content.visibleFixes(view);
     if (
       this.presented &&
       this.presentedSystem === system &&

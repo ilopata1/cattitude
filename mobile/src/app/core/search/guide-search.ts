@@ -61,6 +61,8 @@ interface SearchableFix {
   title?: string;
   catL?: string;
   steps?: string[];
+  guestSteps?: string[];
+  audience?: string;
 }
 
 interface IndexEntry {
@@ -160,13 +162,13 @@ export function buildGuideIndex(guide: SearchableGuide, view: ReaderView = 'gues
     });
   }
 
-  const fixes = guide.fixes ?? [];
+  const fixes = (guide.fixes ?? []).filter((fix) => view === 'crew' || fix.audience !== 'crew');
   const slugs = fixCardSlugs(fixes.map((fix) => text(fix.title)));
   fixes.forEach((fix, index) => {
     const title = text(fix.title) || 'Fix It';
-    const fields = [title, text(fix.catL), ...(fix.steps ?? []).map((step) => text(step))].filter(
-      Boolean,
-    );
+    const steps =
+      view === 'guest' && fix.guestSteps?.length ? fix.guestSteps : (fix.steps ?? []);
+    const fields = [title, text(fix.catL), ...steps.map((step) => text(step))].filter(Boolean);
     if (!fields.length) {
       return;
     }

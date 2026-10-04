@@ -2,10 +2,13 @@
 # Used by: content.assembler.build_fix_cards_module
 # Module: fix_card_set / all
 # Slots: {contact_step}, twin_engine append on overheating step
+# Guest cards omit audience and list guest_steps (published as guestSteps).
+# A guest step may set when:, for example switching_system: digital.
 #
 
 cards:
 - key: engine_wont_start
+  audience: crew
   when:
     has_category:
     - propulsion_and_machinery
@@ -21,6 +24,7 @@ cards:
   - Never crank more than 10 seconds — risk of water in the exhaust
   - '{contact_step}'
 - key: engine_overheating
+  audience: crew
   when:
     has_category:
     - propulsion_and_machinery
@@ -56,7 +60,12 @@ cards:
   - Do NOT try to disassemble the toilet
   - 'REMINDER: Nothing goes in the head except human waste — no TP, no wipes, ever'
   - '{contact_step}'
+  guest_steps:
+  - Do not force it.
+  - The pump is probably off.
+  - Tell the skipper.
 - key: holding_tank_full
+  audience: crew
   when:
     has_category:
     - sanitation
@@ -83,7 +92,12 @@ cards:
   - Check the fresh water tank level — tanks may be empty
   - Turn the pressure pump switch off and back on to reset
   - '{contact_step}'
+  guest_steps:
+  - The pump may be off or a tank may be empty.
+  - Do not open anything.
+  - Tell the skipper.
 - key: watermaker
+  audience: crew
   when:
     has_watermaker: true
   icon: 🌊
@@ -111,7 +125,19 @@ cards:
   - 'If the breaker trips again immediately: fault — leave it off'
   - Check battery voltage — when low, some systems auto-shut off
   - '{contact_step}'
+  guest_steps:
+  - text: On the touchscreen, open Favourites and press the circuit.
+    when:
+      switching_system: digital
+  - text: Find the switch for that circuit and turn it off, then on.
+    when:
+      any:
+      - switching_system: breaker
+      - switching_system: null
+  - If it will not stay on, leave it off.
+  - Tell the skipper.
 - key: low_battery
+  audience: crew
   when:
     has_category:
     - electrical_dc
@@ -140,7 +166,12 @@ cards:
   - Check the fridge fan is running — feel for airflow at the vents
   - Keep the door closed — allow 30 minutes to recover after power is restored
   - '{contact_step}'
+  guest_steps:
+  - Keep the door closed.
+  - Check nothing is blocking the vents.
+  - Tell the skipper. Fridges switch off when the batteries are low.
 - key: headsail_wont_furl
+  audience: crew
   when:
     all:
     - is_sailing: true
@@ -157,6 +188,7 @@ cards:
   - Check the furling drum at the bow for line tangles
   - '{contact_step}'
 - key: autopilot
+  audience: crew
   when:
     has_category:
     - navigation_and_electronics
@@ -170,6 +202,7 @@ cards:
   - Disengage and re-engage — sometimes resets drift
   - '{contact_step}'
 - key: vhf_not_transmitting
+  audience: crew
   when:
     has_category:
     - navigation_and_electronics
@@ -184,6 +217,7 @@ cards:
   - Check the antenna connection at the back of the radio
   - Report a non-functioning fixed VHF immediately — {contact_step}
 - key: windlass
+  audience: crew
   when:
     all:
     - has_category:
@@ -213,7 +247,12 @@ cards:
   - Check the AC circuit breaker on the electrical panel
   - Do not run all units simultaneously on generator — it may overload
   - '{contact_step}'
+  guest_steps:
+  - It only runs on shore power or the generator.
+  - Try off and on at the wall panel once.
+  - Tell the skipper.
 - key: bilge_alarm
+  audience: crew
   when:
     always: true
   icon: 🌊

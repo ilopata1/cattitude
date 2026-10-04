@@ -110,6 +110,8 @@ export interface FixCard {
   catL: string;
   title: string;
   steps: string[];
+  /** Guest-safe steps. The Guest view shows these instead of ``steps``. */
+  guestSteps?: string[];
   /** Only ``crew`` is published. Omitted cards show in both views. */
   audience?: 'crew';
 }

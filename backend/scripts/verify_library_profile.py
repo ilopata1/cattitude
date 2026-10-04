@@ -202,6 +202,27 @@ def test_supernova() -> None:
     check("Dinghy secured" in lu and "davits" not in "\n".join(lu), "supernova dinghy is unnamed")
     keys = card_keys(payload["fixes"])
     check("toilet_wont_flush" not in keys, "supernova toilet card omitted")
+    stopped = next(card for card in payload["fixes"] if card.get("key") == "something_stopped")
+    check("audience" not in stopped, "something stopped stays in both views")
+    check(
+        any("Favourites" in step for step in stopped.get("guestSteps") or []),
+        "supernova guest step uses the touchscreen",
+    )
+    check(
+        all(
+            card.get("audience") == "crew"
+            for card in payload["fixes"]
+            if card.get("key")
+            not in {
+                "something_stopped",
+                "fridge_not_cooling",
+                "ac_not_working",
+                "no_fresh_water",
+                "toilet_wont_flush",
+            }
+        ),
+        "other supernova cards are crew",
+    )
     check("windlass" not in keys, "supernova windlass card dropped")
     check("headsail_wont_furl" in keys, "supernova headsail card kept")
     check(all("requiresSystem" not in card for card in payload["fixes"]), "requiresSystem stripped")
@@ -223,6 +244,8 @@ def test_supernova() -> None:
         build_fix_cards_module(snapshot), GENERATOR_FRAGMENT, has_generator=True
     )
     check(any(card.get("key") == "generator_wont_start" for card in fixes), "panda card kept")
+    generator = next(card for card in fixes if card.get("key") == "generator_wont_start")
+    check(generator.get("audience") == "crew", "generator extra is crew")
     check(fixes[0].get("key"), "fix card key survives fragment apply")
     rich, rich_warnings = publish(snapshot, ["electrical", "engines"], fixes)
     check(any(card.get("title") == "Generator won't start" for card in rich["fixes"]), "generator card stays")
@@ -342,6 +365,12 @@ def test_cattitude() -> None:
         "cattitude sign-off",
     )
     check("toilet_wont_flush" not in card_keys(payload["fixes"]), "cattitude toilet omitted")
+    cattitude_stopped = next(
+        card for card in payload["fixes"] if card.get("key") == "something_stopped"
+    )
+    cattitude_guest = " ".join(cattitude_stopped.get("guestSteps") or [])
+    check("Favourites" not in cattitude_guest, "cattitude guest step stays generic")
+    check("turn it off, then on" in cattitude_guest, "cattitude generic switch step")
     check("windlass" in card_keys(payload["fixes"]), "cattitude windlass card stays")
     branding = build_branding_module(snapshot)
     item = menu_item(
@@ -436,9 +465,13 @@ def test_heads_and_tender_facts() -> None:
         "sailing_catamaran",
         [row("sanitation", "Tecma", "Silence Plus")],
     )
+    electric_cards = {card["key"]: card for card in build_fix_cards_module(electric)}
+    check("toilet_wont_flush" in electric_cards, "tecma model keeps the toilet card")
+    toilet = electric_cards.get("toilet_wont_flush") or {}
+    check("audience" not in toilet, "toilet card stays in both views")
     check(
-        "toilet_wont_flush" in card_keys(build_fix_cards_module(electric)),
-        "tecma model keeps the toilet card",
+        any("skipper" in step.lower() for step in toilet.get("guestSteps") or []),
+        "toilet guest steps tell the skipper",
     )
     manual = boat(
         "heads",

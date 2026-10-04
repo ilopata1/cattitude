@@ -58,6 +58,7 @@ export class GuideLoadError extends Error {
 export class ContentService {
   private content: BootstrapContent | null = null;
   private guideIndexes = new Map<ReaderView, GuideIndex>();
+  private visibleFixLists = new Map<ReaderView, FixCard[]>();
 
   private generation = 0;
 
@@ -238,6 +239,18 @@ export class ContentService {
     return this.bootstrap.fixes;
   }
 
+  /** Crew cards stay in the published list. The Guest view hides them. */
+  visibleFixes(view: ReaderView): FixCard[] {
+    const cached = this.visibleFixLists.get(view);
+    if (cached) {
+      return cached;
+    }
+    const all = this.bootstrap.fixes ?? [];
+    const fixes = view === 'crew' ? all : all.filter((fix) => fix.audience !== 'crew');
+    this.visibleFixLists.set(view, fixes);
+    return fixes;
+  }
+
   search(query: string): GuideSearchGroup[] {
     const index = this.indexFor(this.readerView.view());
     if (!index) {
@@ -258,6 +271,7 @@ export class ContentService {
     const prepared = this.prefixVesselRoutes(structuredClone(content) as BootstrapContent, slug);
     this.content = prepared;
     this.guideIndexes.clear();
+    this.visibleFixLists.clear();
     this.vesselContext.applyResolvedContext({
       vesselId: prepared.vesselId,
       vesselSlug: prepared.vesselSlug,

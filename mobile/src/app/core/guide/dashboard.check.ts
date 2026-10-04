@@ -31,6 +31,8 @@ export function dashboardFailures(): string[] {
 
   expect(byId.get('do:pd')?.crewOnly === true, 'crew checklist is marked');
   expect(byId.get('do:gh')?.crewOnly === false, 'giving a hand stays on the guest home');
+  expect(byId.get('fix')?.crewOnly === false, 'Fix It stays on both views');
+  expect(visibleItems(sailing, 'guest').some((item) => item.id === 'fix'), 'guest home can open Fix It');
   expect(
     defaultTileIds('guest', sailing, true).join(',') ===
       'learn,do:safety-brief,do:gh,know:overview,know:heads,more:ask',

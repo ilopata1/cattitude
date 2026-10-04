@@ -40,7 +40,7 @@
         </ion-item>
         <div slot="content" class="fix-body">
           <ol class="fix-steps">
-            <li *ngFor="let step of fix.steps; let si = index">
+            <li *ngFor="let step of stepsFor(fix); let si = index">
               <div class="step-num">{{ si + 1 }}</div>
               <div class="step-content">
                 <div *ngIf="isHtmlStep(step)" [innerHTML]="step" appRichHtml></div>

@@ -247,5 +247,35 @@ export function guideSearchFailures(): string[] {
   }
   expect(crewSeacock.join(',') === 'Pre-departure', `crew search missed the crew checklist: ${crewSeacock.join(',')}`);
 
+  const crewFixes: SearchableGuide = {
+    fixes: [
+      {
+        title: 'Low battery',
+        catL: 'Electrical',
+        audience: 'crew',
+        steps: ['Turn off all high-draw loads'],
+      },
+      {
+        title: 'Fridge not cooling',
+        catL: 'Electrical',
+        steps: ['Check the DC breaker for that fridge'],
+        guestSteps: ['Keep the door closed.', 'Tell the skipper.'],
+      },
+    ],
+  };
+  expect(hits(crewFixes, 'high-draw').length === 0, 'guest search returned a crew fix card');
+  expect(hits(crewFixes, 'breaker').length === 0, 'guest search indexed crew steps');
+  expect(
+    hits(crewFixes, 'skipper').some((line) => line.includes('Fridge not cooling')),
+    'guest search missed guest steps',
+  );
+  const crewBattery: string[] = [];
+  for (const group of searchGuide(buildGuideIndex(crewFixes, 'crew'), 'high-draw')) {
+    for (const hit of group.hits) {
+      crewBattery.push(hit.title);
+    }
+  }
+  expect(crewBattery.join(',') === 'Low battery', `crew search missed the crew card: ${crewBattery.join(',')}`);
+
   return failures;
 }

@@ -12,6 +12,7 @@ _BACKEND = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_BACKEND))
 
 import guide_content_library_legacy as legacy
+from content.audience import guest_steps_problem
 from content.assembler import (
     LIBRARY_MODULE_BUILDERS,
     _apply_checklist_overrides,
@@ -1017,6 +1018,73 @@ def _yaml_override(files: dict[str, Any]):
         assembler_module.load_yaml_cached = original
 
 
+_GUEST_FIX_KEYS = {
+    "something_stopped",
+    "fridge_not_cooling",
+    "ac_not_working",
+    "no_fresh_water",
+    "toilet_wont_flush",
+}
+
+
+def _check_full_fixture_fixes(cards: Any, failures: list[str]) -> None:
+    """Shared cards publish guestSteps. Every other card is crew."""
+    if not isinstance(cards, list):
+        failures.append("full fixture fixes were not a list")
+        return
+    guest = [card for card in cards if "audience" not in card]
+    guest_keys = {card.get("key") for card in guest}
+    unexpected = guest_keys - _GUEST_FIX_KEYS
+    if unexpected:
+        failures.append(f"unexpected shared fix cards: {sorted(unexpected)}")
+    if not 4 <= len(guest) <= 5:
+        failures.append(f"full fixture published {len(guest)} shared fix cards")
+    if "toilet_wont_flush" in guest_keys:
+        failures.append("full fixture published the electric toilet card")
+    for card in cards:
+        key = card.get("key")
+        if card.get("audience") == "crew":
+            if key in _GUEST_FIX_KEYS:
+                failures.append(f"{key} was tagged crew")
+            if "guestSteps" in card:
+                failures.append(f"crew card {key} published guestSteps")
+            continue
+        if key not in _GUEST_FIX_KEYS:
+            failures.append(f"fix card {key} has audience {card.get('audience')!r}")
+            continue
+        steps = card.get("guestSteps") or []
+        if not steps or not all(isinstance(step, str) and step.strip() for step in steps):
+            failures.append(f"{key} missing guestSteps")
+        elif not any("skipper" in step.lower() for step in steps):
+            failures.append(f"{key} guest steps do not tell the skipper")
+    stopped = next((card for card in guest if card.get("key") == "something_stopped"), None)
+    generic = " ".join((stopped or {}).get("guestSteps") or [])
+    if stopped and "Favourites" in generic:
+        failures.append("breaker boat published the touchscreen guest step")
+    if stopped and "turn it off, then on" not in generic:
+        failures.append("something_stopped lost the generic guest step")
+
+    digital = make_snapshot(ALL_CATEGORIES, twin_propulsion=True, watermaker_model=True)
+    for row in digital["equipment"]:
+        if row.get("system_category") == "electrical_dc":
+            row["manufacturer"] = "CZone"
+            row["model"] = "Touch 7"
+    digital_cards = {card["key"]: card for card in build_fix_cards_module(digital)}
+    touch = " ".join(digital_cards["something_stopped"].get("guestSteps") or [])
+    if "Favourites" not in touch:
+        failures.append("digital boat missed the Favourites guest step")
+    if "turn it off, then on" in touch:
+        failures.append("digital boat kept the generic switch step")
+    if guest_steps_problem({"audience": "crew", "guestSteps": ["Tell the skipper."]}, label="crew card"):
+        pass
+    else:
+        failures.append("crew fix card with guestSteps was accepted")
+    if guest_steps_problem({"guestSteps": ["", "Tell the skipper."]}, label="guest card") is None:
+        failures.append("blank guestSteps text was accepted")
+    if guest_steps_problem({"guestSteps": ["Tell the skipper."]}, label="guest card") is not None:
+        failures.append("guestSteps list was rejected")
+
+
 def _check_audience_plumbing(failures: list[str]) -> None:
     """Crew tags publish; omitted and guest do not; a bad value is an error.
 
@@ -1052,6 +1120,9 @@ def _check_audience_plumbing(failures: list[str]) -> None:
                 failures.append(f"safety briefing items missing gc: {missing}")
             if not any(item.get("gc") == "I know where my life jacket is" for item in items):
                 failures.append("life jacket guest line missing")
+            continue
+        if key == ("fix_card_set", "all"):
+            _check_full_fixture_fixes(payload, failures)
             continue
         if _has_audience_key(payload):
             failures.append(f"full fixture {key[0]}/{key[1]} published an audience key")
@@ -1172,6 +1243,7 @@ def _check_audience_plumbing(failures: list[str]) -> None:
         failures.append("crew fix card did not publish audience crew")
     if "audience" in cards_by_key["plain_card"]:
         failures.append("untagged fix card published an audience key")
+    cards_by_key["plain_card"]["guestSteps"] = ["Tell the skipper."]
     preserved = _apply_fix_overrides(
         cards,
         {"replace": {"crew_card": {"title": "Retitled", "steps": ["Again"]}}},
@@ -1180,6 +1252,9 @@ def _check_audience_plumbing(failures: list[str]) -> None:
     retitled = next(card for card in preserved if card["key"] == "crew_card")
     if retitled.get("audience") != "crew" or retitled.get("title") != "Retitled":
         failures.append("fix override dropped audience")
+    shared = next(card for card in preserved if card["key"] == "plain_card")
+    if shared.get("guestSteps") != ["Tell the skipper."]:
+        failures.append("fix override dropped guestSteps")
 
     from guide_equipment_fragments import apply_fix_card_fragments
 
@@ -1193,7 +1268,16 @@ def _check_audience_plumbing(failures: list[str]) -> None:
                 "title": "Old",
                 "steps": ["Look", "Call the base"],
                 "audience": "crew",
-            }
+            },
+            {
+                "key": "shared",
+                "icon": "🧊",
+                "cat": "electrical",
+                "catL": "Electrical",
+                "title": "Fridge not cooling",
+                "steps": ["Check the breaker", "Call the base"],
+                "guestSteps": ["Tell the skipper."],
+            },
         ],
         [
             {
@@ -1203,7 +1287,8 @@ def _check_audience_plumbing(failures: list[str]) -> None:
                             "steps": ["Equipment step"],
                             "audience": "guest",
                             "title": "Retitled",
-                        }
+                        },
+                        "shared": {"steps": ["Equipment step"]},
                     },
                     "extra_fix_cards": [
                         {
@@ -1223,6 +1308,22 @@ def _check_audience_plumbing(failures: list[str]) -> None:
                             "steps": ["Look"],
                             "audience": "guest",
                         },
+                        {
+                            "key": "generator_wont_start",
+                            "icon": "⚡",
+                            "cat": "electrical",
+                            "catL": "Electrical",
+                            "title": "Generator won't start",
+                            "steps": ["Press Start on the panel"],
+                        },
+                        {
+                            "key": "watchkeeper_no_video",
+                            "icon": "🧭",
+                            "cat": "nav",
+                            "catL": "Navigation",
+                            "title": "Watchkeeper no video feed",
+                            "steps": ["Reboot the Watchkeeper system"],
+                        },
                     ],
                 }
             }
@@ -1235,6 +1336,13 @@ def _check_audience_plumbing(failures: list[str]) -> None:
         failures.append("extra fix card did not default to crew")
     if "audience" in applied_by_key["guest_extra"]:
         failures.append("guest extra fix card published an audience key")
+    if applied_by_key["shared"].get("guestSteps") != ["Tell the skipper."]:
+        failures.append("fragment override dropped guestSteps")
+    if applied_by_key["generator_wont_start"].get("audience") != "crew":
+        failures.append("generator extra was not crew")
+    watchkeeper = next(card for card in applied if card.get("title") == "Watchkeeper no video feed")
+    if watchkeeper.get("audience") != "crew":
+        failures.append("Watchkeeper extra was not crew")
     try:
         apply_fix_card_fragments(
             [],

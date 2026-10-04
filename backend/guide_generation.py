@@ -12,6 +12,7 @@ from sqlalchemy import text
 from sqlalchemy.engine import Connection
 
 from config import settings
+from content.audience import guest_steps_problem
 from guide_bootstrap import canonical_json_hash
 from guide_context_utils import emergency_contacts_count, merge_guide_context
 from guide_equipment_coverage import (
@@ -702,6 +703,9 @@ def _validate_fixes_module(payload: Any) -> None:
         if not isinstance(card.get("steps"), list) or not card["steps"]:
             raise GuideGenerationError(f"fix card {index} missing steps")
         _require_published_audience(card.get("audience"), f"fix card {index}")
+        guest_problem = guest_steps_problem(card, label=f"fix card {index}")
+        if guest_problem:
+            raise GuideGenerationError(guest_problem)
         card["icon"] = normalize_fix_icon(card.get("icon"))
 
 

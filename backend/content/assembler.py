@@ -38,6 +38,8 @@ def _resolve_step(step: Any, snapshot: dict[str, Any]) -> str | None:
         return slots.apply_slots(step, snapshot)
     if not isinstance(step, dict):
         return None
+    if not conditions.matches(step.get("when"), snapshot):
+        return None
     text = slots.apply_slots(str(step.get("text") or ""), snapshot)
     append_when = step.get("append_when") or {}
     for key, suffix in append_when.items():
@@ -299,6 +301,9 @@ def build_fix_cards_module(
         }
         payload["icon"] = normalize_fix_icon(payload.get("icon"))
         payload["steps"] = _resolve_steps(card.get("steps") or [], snapshot)
+        guest_steps = _resolve_steps(card.get("guest_steps") or [], snapshot)
+        if guest_steps:
+            payload["guestSteps"] = guest_steps
         system = _published_system(card.get("when"))
         if system:
             payload["requiresSystem"] = system
@@ -334,6 +339,13 @@ def _apply_fix_overrides(
                 card["title"] = slots.apply_slots(str(replacement["title"]), snapshot)
             if replacement.get("steps"):
                 card["steps"] = _resolve_steps(replacement["steps"], snapshot)
+            # A title/steps replace keeps guestSteps unless the override
+            # names guest_steps itself.
+            if "guest_steps" in replacement:
+                card.pop("guestSteps", None)
+                replaced_guest = _resolve_steps(replacement.get("guest_steps") or [], snapshot)
+                if replaced_guest:
+                    card["guestSteps"] = replaced_guest
             # A title/steps replace keeps audience already stamped on the card
             # unless the override names audience itself.
             if "audience" in replacement:

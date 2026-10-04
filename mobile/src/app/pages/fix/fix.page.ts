@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { IonContent } from '@ionic/angular';
 import { ContentService } from '../../core/services/content.service';
 import { EmergencyService } from '../../core/services/emergency.service';
+import { ReaderViewService } from '../../core/services/reader-view.service';
 import { VesselRouteService } from '../../core/services/vessel-route.service';
 import { FixCard } from '../../core/models/bootstrap-content.model';
 import { fixCardSlugs } from '../../core/search/guide-search';
@@ -46,6 +47,7 @@ export class FixPage implements OnInit {
 
   constructor(
     public readonly content: ContentService,
+    public readonly readerView: ReaderViewService,
     private readonly emergency: EmergencyService,
     private readonly routes: VesselRouteService,
     private readonly route: ActivatedRoute,
@@ -72,7 +74,7 @@ export class FixPage implements OnInit {
   private openCard(slug: string): void {
     this.query = '';
     this.categoryFilter = 'all';
-    const fixes = this.content.getFixes();
+    const fixes = this.content.visibleFixes(this.readerView.view());
     const index = fixCardSlugs(fixes.map((fix) => fix.title)).indexOf(slug);
     const found = index >= 0 ? fixes[index] : undefined;
     if (!found) {
@@ -84,9 +86,17 @@ export class FixPage implements OnInit {
   }
 
   cardSlug(fix: FixCard): string {
-    const fixes = this.content.getFixes();
+    const fixes = this.content.visibleFixes(this.readerView.view());
     const index = fixes.indexOf(fix);
     return fixCardSlugs(fixes.map((card) => card.title))[index] ?? fix.title;
+  }
+
+  /** Guest view uses guestSteps when the card publishes them. */
+  stepsFor(fix: FixCard): string[] {
+    if (this.readerView.view() === 'guest' && fix.guestSteps?.length) {
+      return fix.guestSteps;
+    }
+    return fix.steps;
   }
 
   onAccordion(event: CustomEvent<{ value?: string | string[] | null }>): void {
@@ -104,7 +114,7 @@ export class FixPage implements OnInit {
 
   filteredFixes(): FixCard[] {
     const q = this.query.trim().toLowerCase();
-    let fixes = this.content.getFixes();
+    let fixes = this.content.visibleFixes(this.readerView.view());
 
     if (this.categoryFilter !== 'all') {
       fixes = fixes.filter((fix) => fix.cat === this.categoryFilter);
@@ -115,7 +125,7 @@ export class FixPage implements OnInit {
         (fix) =>
           fix.title.toLowerCase().includes(q) ||
           fix.catL.toLowerCase().includes(q) ||
-          fix.steps.some((step) => step.toLowerCase().includes(q)),
+          this.stepsFor(fix).some((step) => step.toLowerCase().includes(q)),
       );
     }
 

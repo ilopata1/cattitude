@@ -28,8 +28,8 @@ don't) and assembled deterministically into vessel guides:
   with equipment-specific steps; extra cards are appended. The vessel-specific
   contact step (always the final step of a generic card) is preserved, so
   fragments never embed charter company details. Overrides keep the card's
-  existing audience. Extra cards default to audience ``crew`` unless the
-  fragment sets ``audience: guest``.
+  existing audience and ``guestSteps``. Extra cards default to audience
+  ``crew`` unless the fragment sets ``audience: guest``.
 
 Draft fragments (`status = draft`) are for admin review only. Only approved
 fragments are used at guide generation time.
@@ -149,7 +149,8 @@ def apply_fix_card_fragments(
         if override:
             # Fragment steps are vessel-agnostic; keep the vessel-specific
             # contact step that generic cards always place last.
-            # Audience stays on the generic card; the override does not retag it.
+            # Audience and guestSteps stay on the generic card.
+            # The override does not retag it or replace the guest steps.
             last_step = card["steps"][-1] if card.get("steps") else None
             card["steps"] = list(override["steps"]) + ([last_step] if last_step else [])
             if override.get("title"):
