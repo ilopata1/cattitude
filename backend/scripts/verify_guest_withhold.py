@@ -294,9 +294,65 @@ def _check_crew_only_chapter(failures: list[str]) -> None:
         failures.append(f"crew-only chapter withheld: {messages}")
 
 
+def _check_crew_sections_with_summary(failures: list[str]) -> None:
+    """A real summary plus only crew sections still publishes.
+
+    ``guest_visible_section_count`` is 0, which is the condition that makes
+    publish warn that the Guest view has no sections in that chapter.
+    """
+    from guide_bootstrap import BOOTSTRAP_SCHEMA_VERSION
+    from guide_guest_withhold import guest_visible_section_count
+    from guide_publish import validate_publication_payload
+
+    summary = "The filler is on the starboard transom."
+    chapter = {
+        "id": "fuel",
+        "title": "Fuel",
+        "summary": summary,
+        "sections": [
+            {
+                "t": "Fuel on this boat",
+                "type": "prose",
+                "c": "Dip the tank before you leave the dock.",
+                "audience": "crew",
+            }
+        ],
+    }
+    payload = {"systems": {"fuel": chapter}}
+    messages = withhold_pipeline_status(payload)
+    kept = payload["systems"].get("fuel")
+    if not isinstance(kept, dict):
+        failures.append(f"crew-only chapter with a summary was withheld: {messages}")
+        return
+    if kept.get("summary") != summary:
+        failures.append(f"crew-only chapter lost its summary: {kept.get('summary')!r}")
+    titles = [section.get("t") for section in kept.get("sections") or []]
+    if titles != ["Fuel on this boat"]:
+        failures.append(f"crew-only chapter sections: {titles}")
+    visible = guest_visible_section_count(kept)
+    if visible != 0:
+        failures.append(f"guest_visible_section_count for a crew-only chapter: {visible}")
+        return
+    publication = {
+        "schemaVersion": BOOTSTRAP_SCHEMA_VERSION,
+        "branding": {"vesselName": "Test"},
+        "emergency": {"contacts": [{"label": "Coastguard", "value": "16"}]},
+        "ui": {
+            "homeRuleSections": [{"title": "On board", "rules": [{"text": "Tell the skipper."}]}],
+            "systemOrder": ["fuel"],
+        },
+        "systems": {"fuel": kept},
+    }
+    report = validate_publication_payload(publication)
+    warning = "Fuel: no sections are visible in the Guest view."
+    if not any(warning in line for line in report):
+        failures.append(f"publish warning missing: {report}")
+
+
 def _check() -> list[str]:
     failures: list[str] = []
     _check_crew_only_chapter(failures)
+    _check_crew_sections_with_summary(failures)
     payload = {"systems": _systems()}
     messages = withhold_pipeline_status(payload)
     systems = payload["systems"]

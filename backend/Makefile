@@ -4,7 +4,7 @@
 # Live extract gate (after extract_interaction_profile.py writes scratch):
 #   make pipeline-compare-scratch
 
-.PHONY: pipeline-verify pipeline-compare-scratch pipeline-regression stage4-bytematch stage4-substrate-match stage4-seed stage4-seed-vessel-b stage4-plant-drift stage4-phase4-verify stage4-vessel-b
+.PHONY: pipeline-verify content-verify pipeline-compare-scratch pipeline-regression stage4-bytematch stage4-substrate-match stage4-seed stage4-seed-vessel-b stage4-plant-drift stage4-phase4-verify stage4-vessel-b
 
 pipeline-verify:
 	python scripts/verify_interaction_profile_validate.py
@@ -27,6 +27,17 @@ pipeline-verify:
 	python scripts/verify_emergency_module.py
 	python scripts/build_outremer_thinned_fixture.py
 	python scripts/verify_stage4_vessel_b.py
+
+# Curated library, audience tags, and offline assembly. No database.
+content-verify:
+	python scripts/verify_content_library.py
+	python scripts/verify_library_profile.py
+	python scripts/verify_learn_checks.py
+	python scripts/verify_guest_withhold.py
+	python scripts/verify_section_duplicates.py
+	python scripts/verify_learn_path.py
+	python scripts/verify_system_assembly.py
+	python scripts/verify_emergency_module.py
 
 # Phase 2+ gate (needs DB seeded + frozen oracle under fixtures/pipeline/oracles/):
 #   python scripts/verify_stage4_modules.py --write-oracle --slug supernova

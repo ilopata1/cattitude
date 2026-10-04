@@ -71,6 +71,17 @@ flowchart LR
 
 The same mobile app serves different roles. Terminology matters: **vessel guide** content is for everyone on the boat (guests, owners, crew). **Charter guest** refers only to access control (e.g. Ask API after charter end), not to who reads the guide.
 
+### Reading views
+
+The header switch chooses a reading view of the one published guide.
+
+- **Guest** shows everything that is not tagged crew: how to live aboard, what to tell the skipper, and the troubleshooting that is safe to try.
+- **Crew** shows everything, including procedures, valves, switches, and standing orders.
+
+A published entry may carry `audience`. The only value that is written out is `"crew"`. Leaving it off means both views. In the YAML library, `audience: guest` (or `both`) also means both, and is not written out. The tag is used on system sections, checklist files and items, fix cards, home rules, and emergency contacts.
+
+**Guest facts** and **Crew facts** live on Admin → Guide context (`vessels.guide_context`). Shared files in `backend/content/guest_layers/` and `backend/content/crew_layers/` turn those facts into sections for any vessel on the next Generate → approve → publish. Long notes that belong to one boat stay in `backend/content/vessels/{slug}/`.
+
 ### Charter guest
 
 Someone on a time-limited charter (e.g. weekly Abacos charter on Cattitude).
