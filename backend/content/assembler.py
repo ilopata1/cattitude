@@ -808,6 +808,17 @@ def _day_one_items(snapshot: dict[str, Any]) -> list[str]:
     raft = slots.life_raft_location(snapshot)
     if raft:
         items.append(f"Life raft — {raft}")
+    for label, location in (
+        ("Life jackets", slots.life_jackets_location(snapshot)),
+        ("Fire extinguishers", slots.fire_extinguishers_location(snapshot)),
+        ("First-aid kit", slots.first_aid_location(snapshot)),
+        ("Throwable buoy", slots.throwable_location(snapshot)),
+        ("EPIRB", slots.epirb_location(snapshot)),
+        ("Grab bag", slots.grab_bag_location(snapshot)),
+        ("Flares", slots.flares_location(snapshot)),
+    ):
+        if location:
+            items.append(f"{label} — {location}")
     bilge = slots.manual_bilge_location(snapshot)
     if bilge:
         items.append(f"Manual bilge pump — {bilge}")

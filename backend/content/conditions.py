@@ -52,6 +52,22 @@ def matches(when: dict[str, Any] | None, snapshot: dict[str, Any]) -> bool:
         "has_sail_inventory": bool(slots.sail_inventory(snapshot)),
         "has_water_heater": slots.has_water_heater(snapshot),
         "has_swim_ladders": bool(slots.swim_ladders(snapshot)),
+        "has_life_jackets_location": slots.life_jackets_location(snapshot),
+        "has_fire_extinguishers_location": slots.fire_extinguishers_location(snapshot),
+        "has_first_aid_location": slots.first_aid_location(snapshot),
+        "has_flares_location": slots.flares_location(snapshot),
+        "has_epirb_location": slots.epirb_location(snapshot),
+        "has_grab_bag_location": slots.grab_bag_location(snapshot),
+        "has_throwable_location": slots.throwable_location(snapshot),
+        "has_vhf_dsc_location": slots.vhf_dsc_location(snapshot),
+        "has_hot_water_sentence": slots.hot_water_sentence(snapshot),
+        "has_water_tanks_sentence": slots.water_tanks_sentence(snapshot),
+        "has_autopilot_standby": slots.autopilot_standby_sentence(snapshot),
+        "has_cabin_names": slots.cabin_names(snapshot),
+        "has_hatch_notes": slots.hatch_notes(snapshot),
+        "has_lifejacket_policy": slots.lifejacket_policy(snapshot),
+        "moors_stern_to": slots.moors_stern_to(snapshot),
+        "has_marina_routine": slots.marina_routine(snapshot),
     }
     for key, actual in flag_checks.items():
         if key in when and bool(when[key]) != bool(actual):
@@ -81,6 +97,8 @@ def matches(when: dict[str, Any] | None, snapshot: dict[str, Any]) -> bool:
         elif actual != expected:
             return False
     if "heads_drive" in when and profile["heads_drive"] != when["heads_drive"]:
+        return False
+    if "galley_stove" in when and slots.galley_stove(snapshot) != when["galley_stove"]:
         return False
     # published_system is decided after withhold. Keep the item and tag it.
     return True

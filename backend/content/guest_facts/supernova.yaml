@@ -19,3 +19,19 @@ waste:
 headsFlushWater: fresh
 holdToDim: true
 hasTrampoline: true
+hotWater:
+  source: >-
+    the 90 L tank in the starboard engine bay; it heats when the starboard
+    engine runs or when the electric heater is on — red light under the CZone
+    console
+waterTanks:
+  summary: two 270 L tanks, one under the bed in each aft cabin
+autopilot:
+  standby: press STANDBY on the pilot control beside the engine levers; the wheel is then live
+cabinNames:
+  - port forward
+  - port aft
+  - starboard forward
+  - starboard aft
+moorsSternTo: true
+galleyStove: induction

@@ -1003,6 +1003,31 @@ def _insert_generation_run(
     return str(run_row[0])
 
 
+def _record_guest_fact_gaps(
+    conn: Connection, run_id: str, snapshot: dict[str, Any]
+) -> list[str]:
+    """Store missing guest-fact sentences on the run. They do not fail generation."""
+    from content.slots import guest_fact_gaps
+
+    gaps = guest_fact_gaps(snapshot)
+    if not gaps:
+        return []
+    conn.execute(
+        text(
+            """
+            UPDATE guide_generation_run
+            SET metadata = COALESCE(metadata, '{}'::jsonb) || CAST(:patch AS jsonb)
+            WHERE id = :run_id
+            """
+        ),
+        {
+            "run_id": run_id,
+            "patch": json.dumps({"guest_fact_gaps": gaps}, ensure_ascii=False),
+        },
+    )
+    return gaps
+
+
 def _complete_generation_run(conn: Connection, run_id: str) -> None:
     conn.execute(
         text(
@@ -1148,9 +1173,11 @@ def generate_module(
             "relevant_equipment": _equipment_for_system(snapshot_payload, content_key),
         }
 
+    guest_fact_notes: list[str] = []
     try:
         if template_builder is not None:
             payload = template_builder(snapshot_payload, reference)
+            guest_fact_notes = _record_guest_fact_gaps(conn, run_id, snapshot_payload)
             if content_type == "fix_card_set":
                 from content.slots import has_generator
 
@@ -1254,6 +1281,8 @@ def generate_module(
         if reader_voice_style is not None:
             # Report-only — style warnings never fail generation.
             result["reader_voice_style"] = reader_voice_style
+        if guest_fact_notes:
+            result["notes"] = guest_fact_notes
         return result
     except Exception as exc:
         _fail_generation_run(conn, run_id, str(exc))

@@ -25,6 +25,7 @@ _WIND_RE = re.compile(r"\bwind\b", re.I)
 _ELECTRIC_HEAD_RE = re.compile(r"\b(?:tecma|electric\s+toilet)\b", re.I)
 _TENDER_LAUNCHES = frozenset({"davits", "platform", "none"})
 _HEADS_DRIVES = frozenset({"electric", "manual"})
+_GALLEY_STOVES = frozenset({"induction", "gas", "electric"})
 
 
 def equipment(snapshot: dict[str, Any]) -> list[dict[str, Any]]:
@@ -370,6 +371,107 @@ def sails_on_this_boat(snapshot: dict[str, Any]) -> str:
     return f"Sails on this boat: {listed}."
 
 
+def _guest_text(snapshot: dict[str, Any], *keys: str) -> str:
+    raw: Any = guest_facts(snapshot)
+    for key in keys:
+        if not isinstance(raw, dict):
+            return ""
+        raw = raw.get(key)
+    if raw is None or isinstance(raw, dict):
+        return ""
+    return str(raw).strip()
+
+
+def life_jackets_location(snapshot: dict[str, Any]) -> str:
+    return _guest_text(snapshot, "lifeJackets", "location")
+
+
+def fire_extinguishers_location(snapshot: dict[str, Any]) -> str:
+    return _guest_text(snapshot, "fireExtinguishers", "location")
+
+
+def first_aid_location(snapshot: dict[str, Any]) -> str:
+    return _guest_text(snapshot, "firstAidKit", "location")
+
+
+def flares_location(snapshot: dict[str, Any]) -> str:
+    return _guest_text(snapshot, "flares", "location")
+
+
+def epirb_location(snapshot: dict[str, Any]) -> str:
+    return _guest_text(snapshot, "epirb", "location")
+
+
+def grab_bag_location(snapshot: dict[str, Any]) -> str:
+    return _guest_text(snapshot, "grabBag", "location")
+
+
+def throwable_location(snapshot: dict[str, Any]) -> str:
+    return _guest_text(snapshot, "throwable", "location")
+
+
+def vhf_dsc_location(snapshot: dict[str, Any]) -> str:
+    return _guest_text(snapshot, "vhfDsc", "location")
+
+
+def hot_water_sentence(snapshot: dict[str, Any]) -> str:
+    return _guest_text(snapshot, "hotWater", "source")
+
+
+def water_tanks_sentence(snapshot: dict[str, Any]) -> str:
+    return _guest_text(snapshot, "waterTanks", "summary")
+
+
+def autopilot_standby_sentence(snapshot: dict[str, Any]) -> str:
+    return _guest_text(snapshot, "autopilot", "standby")
+
+
+def galley_stove(snapshot: dict[str, Any]) -> str:
+    raw = str(guest_facts(snapshot).get("galleyStove") or "").strip().lower()
+    return raw if raw in _GALLEY_STOVES else ""
+
+
+def cabin_names(snapshot: dict[str, Any]) -> list[str]:
+    raw = guest_facts(snapshot).get("cabinNames")
+    if isinstance(raw, str):
+        raw = raw.splitlines()
+    if not isinstance(raw, list):
+        return []
+    names: list[str] = []
+    for item in raw:
+        name = str(item).strip()
+        if name:
+            names.append(name)
+    return names
+
+
+def cabin_names_sentence(snapshot: dict[str, Any]) -> str:
+    names = cabin_names(snapshot)
+    if not names:
+        return ""
+    if len(names) == 1:
+        listed = names[0]
+    else:
+        listed = ", ".join(names[:-1]) + ", and " + names[-1]
+    return f"The cabins are called: {listed}."
+
+
+def hatch_notes(snapshot: dict[str, Any]) -> str:
+    return _guest_text(snapshot, "hatchNotes")
+
+
+def lifejacket_policy(snapshot: dict[str, Any]) -> str:
+    return _guest_text(snapshot, "lifejacketPolicy")
+
+
+def marina_routine(snapshot: dict[str, Any]) -> str:
+    return _guest_text(snapshot, "marinaRoutine")
+
+
+def moors_stern_to(snapshot: dict[str, Any]) -> bool:
+    return bool(guest_facts(snapshot).get("moorsSternTo"))
+
+
 def slot_values(snapshot: dict[str, Any]) -> dict[str, str]:
     vhf = office_vhf(snapshot)
     company = company_name(snapshot)
@@ -412,7 +514,50 @@ def slot_values(snapshot: dict[str, Any]) -> dict[str, str]:
         "waste_routing": waste_routing(snapshot),
         "heads_flush_phrase": heads_flush_phrase(snapshot),
         "primary_ladder_subtitle": primary_ladder_subtitle(snapshot),
+        "life_jackets_location": life_jackets_location(snapshot),
+        "fire_extinguishers_location": fire_extinguishers_location(snapshot),
+        "first_aid_location": first_aid_location(snapshot),
+        "flares_location": flares_location(snapshot),
+        "epirb_location": epirb_location(snapshot),
+        "grab_bag_location": grab_bag_location(snapshot),
+        "throwable_location": throwable_location(snapshot),
+        "vhf_dsc_location": vhf_dsc_location(snapshot),
+        "hot_water_sentence": hot_water_sentence(snapshot),
+        "water_tanks_sentence": water_tanks_sentence(snapshot),
+        "autopilot_standby_sentence": autopilot_standby_sentence(snapshot),
+        "galley_stove": galley_stove(snapshot),
+        "cabin_names_sentence": cabin_names_sentence(snapshot),
+        "hatch_notes": hatch_notes(snapshot),
+        "lifejacket_policy": lifejacket_policy(snapshot),
+        "marina_routine": marina_routine(snapshot),
     }
+
+
+def guest_fact_gaps(snapshot: dict[str, Any]) -> list[str]:
+    """Human sentences for guest facts the owner still needs to fill in.
+
+    Hot water is listed only when a heater is on the registry. The autopilot
+    sentence is listed only when the boat has navigation electronics.
+    """
+    gaps: list[str] = []
+    if not life_jackets_location(snapshot):
+        gaps.append("Where the life jackets are kept is still blank.")
+    if not fire_extinguishers_location(snapshot):
+        gaps.append("Where the fire extinguishers are kept is still blank.")
+    if not first_aid_location(snapshot):
+        gaps.append("Where the first-aid kit is kept is still blank.")
+    if not epirb_location(snapshot):
+        gaps.append("Where the EPIRB is kept is still blank.")
+    if not vhf_dsc_location(snapshot):
+        gaps.append("Where the fixed VHF with the distress button is kept is still blank.")
+    if has_water_heater(snapshot) and not hot_water_sentence(snapshot):
+        gaps.append("Where the hot water comes from is still blank.")
+    if (
+        has_category(snapshot, "navigation_and_electronics")
+        and not autopilot_standby_sentence(snapshot)
+    ):
+        gaps.append("How to take the helm from the autopilot is still blank.")
+    return gaps
 
 
 def apply_slots(text: str, snapshot: dict[str, Any]) -> str:

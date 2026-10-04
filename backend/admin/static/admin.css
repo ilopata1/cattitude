@@ -454,6 +454,11 @@ select {
 
 .form-grid .full-width { grid-column: 1 / -1; }
 
+.form-grid fieldset h3 {
+  margin: 1.25rem 0 0.75rem;
+  font-size: 1rem;
+}
+
 label {
   display: block;
   margin-bottom: 0.75rem;

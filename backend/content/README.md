@@ -49,6 +49,32 @@ cd backend
 python scripts/verify_content_library.py
 ```
 
+## Guest facts
+
+Optional keys on `guide_context.guestFacts` (JSONB, no migration). The owner fills them in on Admin → Guide context. A blank value is omitted. Shared guest layers read the slots below. `guest_fact_gaps` in `slots.py` names the important blanks: life jackets, fire extinguishers, the first-aid kit, the EPIRB, and the fixed VHF always; hot water only when a heater is on the registry; the autopilot only when the boat has navigation electronics.
+
+| Key | Type | Slot | Condition |
+|-----|------|------|-----------|
+| `lifeJackets.location` | string | `life_jackets_location` | `has_life_jackets_location` |
+| `fireExtinguishers.location` | string | `fire_extinguishers_location` | `has_fire_extinguishers_location` |
+| `firstAidKit.location` | string | `first_aid_location` | `has_first_aid_location` |
+| `flares.location` | string | `flares_location` | `has_flares_location` |
+| `epirb.location` | string | `epirb_location` | `has_epirb_location` |
+| `grabBag.location` | string | `grab_bag_location` | `has_grab_bag_location` |
+| `throwable.location` | string | `throwable_location` | `has_throwable_location` |
+| `vhfDsc.location` | string | `vhf_dsc_location` | `has_vhf_dsc_location` |
+| `hotWater.source` | string | `hot_water_sentence` | `has_hot_water_sentence` |
+| `waterTanks.summary` | string | `water_tanks_sentence` | `has_water_tanks_sentence` |
+| `autopilot.standby` | string | `autopilot_standby_sentence` | `has_autopilot_standby` |
+| `galleyStove` | `induction`, `gas`, or `electric` | `galley_stove` | `galley_stove:` equals that value |
+| `cabinNames` | list of strings (one per line in admin) | `cabin_names_sentence` | `has_cabin_names` |
+| `hatchNotes` | string | `hatch_notes` | `has_hatch_notes` |
+| `lifejacketPolicy` | string | `lifejacket_policy` | `has_lifejacket_policy` |
+| `moorsSternTo` | bool | — | `moors_stern_to` |
+| `marinaRoutine` | string | `marina_routine` | `has_marina_routine` |
+
+`cabin_names_sentence` reads “The cabins are called: …”. Location slots are the location text alone.
+
 ## Regenerating from legacy
 
 `scripts/materialize_guide_content.py` can rebuild YAML from `guide_content_library_legacy.py` (kept for verification). Prefer hand-editing with slots after the initial export; re-run materialize only when merging large legacy changes.

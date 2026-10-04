@@ -55,6 +55,25 @@ def parse_swim_ladders(raw: str) -> list[dict[str, str]]:
     return ladders
 
 
+_GALLEY_STOVES = frozenset({"induction", "gas", "electric"})
+
+
+def parse_cabin_names(raw: str) -> list[str]:
+    return [line.strip() for line in raw.splitlines() if line.strip()]
+
+
+def _store_location(facts: dict[str, Any], key: str, value: str) -> None:
+    text = value.strip()
+    if text:
+        facts[key] = {"location": text}
+
+
+def _store_text(facts: dict[str, Any], key: str, value: str) -> None:
+    text = value.strip()
+    if text:
+        facts[key] = text
+
+
 def build_guest_facts(
     *,
     life_raft_location: str = "",
@@ -67,6 +86,23 @@ def build_guest_facts(
     hold_to_dim: bool = False,
     has_trampoline: str = "",
     has_jacklines: str = "",
+    life_jackets_location: str = "",
+    fire_extinguishers_location: str = "",
+    first_aid_location: str = "",
+    flares_location: str = "",
+    epirb_location: str = "",
+    grab_bag_location: str = "",
+    throwable_location: str = "",
+    vhf_dsc_location: str = "",
+    hot_water_source: str = "",
+    water_tanks_summary: str = "",
+    autopilot_standby: str = "",
+    galley_stove: str = "",
+    cabin_names_text: str = "",
+    hatch_notes: str = "",
+    lifejacket_policy: str = "",
+    moors_stern_to: bool = False,
+    marina_routine: str = "",
 ) -> dict[str, Any]:
     """Vessel handbook facts. Omitted keys keep the shared defaults."""
     facts: dict[str, Any] = {}
@@ -109,6 +145,36 @@ def build_guest_facts(
         facts["hasJacklines"] = False
     elif jacklines not in {"", "default"}:
         raise ValueError("Jacklines must be default, yes, or no.")
+    _store_location(facts, "lifeJackets", life_jackets_location)
+    _store_location(facts, "fireExtinguishers", fire_extinguishers_location)
+    _store_location(facts, "firstAidKit", first_aid_location)
+    _store_location(facts, "flares", flares_location)
+    _store_location(facts, "epirb", epirb_location)
+    _store_location(facts, "grabBag", grab_bag_location)
+    _store_location(facts, "throwable", throwable_location)
+    _store_location(facts, "vhfDsc", vhf_dsc_location)
+    source = hot_water_source.strip()
+    if source:
+        facts["hotWater"] = {"source": source}
+    tanks = water_tanks_summary.strip()
+    if tanks:
+        facts["waterTanks"] = {"summary": tanks}
+    standby = autopilot_standby.strip()
+    if standby:
+        facts["autopilot"] = {"standby": standby}
+    stove = galley_stove.strip().lower()
+    if stove in _GALLEY_STOVES:
+        facts["galleyStove"] = stove
+    elif stove not in {"", "unset", "default"}:
+        raise ValueError("Galley stove must be induction, gas, electric, or unset.")
+    names = parse_cabin_names(cabin_names_text)
+    if names:
+        facts["cabinNames"] = names
+    _store_text(facts, "hatchNotes", hatch_notes)
+    _store_text(facts, "lifejacketPolicy", lifejacket_policy)
+    if moors_stern_to:
+        facts["moorsSternTo"] = True
+    _store_text(facts, "marinaRoutine", marina_routine)
     return facts
 
 
@@ -129,6 +195,29 @@ def format_swim_ladders(facts: dict[str, Any] | None) -> str:
     return "\n".join(lines)
 
 
+def _form_location(facts: dict[str, Any], key: str) -> str:
+    raw = facts.get(key)
+    if isinstance(raw, dict):
+        return str(raw.get("location") or "")
+    return ""
+
+
+def _form_nested(facts: dict[str, Any], key: str, field: str) -> str:
+    raw = facts.get(key)
+    if isinstance(raw, dict):
+        return str(raw.get(field) or "")
+    return ""
+
+
+def _form_cabin_names(facts: dict[str, Any]) -> str:
+    raw = facts.get("cabinNames")
+    if isinstance(raw, str):
+        return raw.strip()
+    if not isinstance(raw, list):
+        return ""
+    return "\n".join(str(item).strip() for item in raw if str(item).strip())
+
+
 def guest_facts_form_values(facts: dict[str, Any] | None) -> dict[str, Any]:
     facts = facts if isinstance(facts, dict) else {}
     waste = facts.get("waste") if isinstance(facts.get("waste"), dict) else {}
@@ -137,6 +226,7 @@ def guest_facts_form_values(facts: dict[str, Any] | None) -> dict[str, Any]:
     trampoline = facts.get("hasTrampoline")
     jacklines = facts.get("hasJacklines")
     flush = str(facts.get("headsFlushWater") or "").strip().lower()
+    stove = str(facts.get("galleyStove") or "").strip().lower()
     return {
         "life_raft_location": str(raft.get("location") or ""),
         "manual_bilge_location": str(bilge.get("location") or ""),
@@ -152,6 +242,23 @@ def guest_facts_form_values(facts: dict[str, Any] | None) -> dict[str, Any]:
         "has_jacklines": (
             "yes" if jacklines is True else "no" if jacklines is False else "default"
         ),
+        "life_jackets_location": _form_location(facts, "lifeJackets"),
+        "fire_extinguishers_location": _form_location(facts, "fireExtinguishers"),
+        "first_aid_location": _form_location(facts, "firstAidKit"),
+        "flares_location": _form_location(facts, "flares"),
+        "epirb_location": _form_location(facts, "epirb"),
+        "grab_bag_location": _form_location(facts, "grabBag"),
+        "throwable_location": _form_location(facts, "throwable"),
+        "vhf_dsc_location": _form_location(facts, "vhfDsc"),
+        "hot_water_source": _form_nested(facts, "hotWater", "source"),
+        "water_tanks_summary": _form_nested(facts, "waterTanks", "summary"),
+        "autopilot_standby": _form_nested(facts, "autopilot", "standby"),
+        "galley_stove": stove if stove in _GALLEY_STOVES else "",
+        "cabin_names_text": _form_cabin_names(facts),
+        "hatch_notes": str(facts.get("hatchNotes") or ""),
+        "lifejacket_policy": str(facts.get("lifejacketPolicy") or ""),
+        "moors_stern_to": bool(facts.get("moorsSternTo")),
+        "marina_routine": str(facts.get("marinaRoutine") or ""),
     }
 
 

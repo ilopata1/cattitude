@@ -112,6 +112,69 @@
         <option value="no" {% if guest_form.has_jacklines == 'no' %}selected{% endif %}>No</option>
       </select>
     </label>
+
+    <h3>Safety gear locations</h3>
+    <label>Life jackets
+      <input name="life_jackets_location" value="{{ guest_form.life_jackets_location }}" placeholder="in the cockpit locker">
+    </label>
+    <label>Fire extinguishers
+      <input name="fire_extinguishers_location" value="{{ guest_form.fire_extinguishers_location }}" placeholder="by each companionway">
+    </label>
+    <label>First-aid kit
+      <input name="first_aid_location" value="{{ guest_form.first_aid_location }}" placeholder="in the saloon cupboard">
+    </label>
+    <label>Flares
+      <input name="flares_location" value="{{ guest_form.flares_location }}" placeholder="in the grab bag">
+    </label>
+    <label>EPIRB
+      <input name="epirb_location" value="{{ guest_form.epirb_location }}" placeholder="beside the grab bag">
+    </label>
+    <label>Grab bag
+      <input name="grab_bag_location" value="{{ guest_form.grab_bag_location }}" placeholder="under the helm seat">
+    </label>
+    <label>Throwable buoy
+      <input name="throwable_location" value="{{ guest_form.throwable_location }}" placeholder="on the pushpit">
+    </label>
+    <label>Fixed VHF with the distress button
+      <input name="vhf_dsc_location" value="{{ guest_form.vhf_dsc_location }}" placeholder="the fixed VHF at the nav station">
+    </label>
+
+    <h3>Living aboard</h3>
+    <label>Hot water
+      <textarea name="hot_water_source" rows="3" placeholder="the 90 L tank in the starboard engine bay; it heats when the starboard engine runs or when the electric heater is on — red light under the CZone console">{{ guest_form.hot_water_source }}</textarea>
+    </label>
+    <label>Fresh-water tanks
+      <textarea name="water_tanks_summary" rows="2" placeholder="two 270 L tanks, one under the bed in each aft cabin">{{ guest_form.water_tanks_summary }}</textarea>
+    </label>
+    <label>Galley stove
+      <select name="galley_stove">
+        <option value="" {% if not guest_form.galley_stove %}selected{% endif %}>Unset</option>
+        <option value="induction" {% if guest_form.galley_stove == 'induction' %}selected{% endif %}>Induction</option>
+        <option value="gas" {% if guest_form.galley_stove == 'gas' %}selected{% endif %}>Gas</option>
+        <option value="electric" {% if guest_form.galley_stove == 'electric' %}selected{% endif %}>Electric</option>
+      </select>
+    </label>
+    <label>Cabin names (one per line)
+      <textarea name="cabin_names_text" rows="4" placeholder="port forward">{{ guest_form.cabin_names_text }}</textarea>
+    </label>
+    <label>Hatch notes
+      <textarea name="hatch_notes" rows="2" placeholder="How the hatches dog, and anything odd about them">{{ guest_form.hatch_notes }}</textarea>
+    </label>
+    <label>Life jacket policy
+      <textarea name="lifejacket_policy" rows="2" placeholder="When a guest should wear a life jacket">{{ guest_form.lifejacket_policy }}</textarea>
+    </label>
+
+    <h3>At the helm</h3>
+    <label>Taking the helm from the autopilot
+      <textarea name="autopilot_standby" rows="2" placeholder="press STANDBY on the pilot control beside the engine levers; the wheel is then live">{{ guest_form.autopilot_standby }}</textarea>
+    </label>
+    <label>Stern-to mooring
+      <input type="checkbox" name="moors_stern_to" value="yes" {% if guest_form.moors_stern_to %}checked{% endif %}>
+      This boat moors stern-to
+    </label>
+    <label>Marina routine
+      <textarea name="marina_routine" rows="2" placeholder="What a guest should do when coming into this marina">{{ guest_form.marina_routine }}</textarea>
+    </label>
   </fieldset>
 
   <div class="form-actions full-width">

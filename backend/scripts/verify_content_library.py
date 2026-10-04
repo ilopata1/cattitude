@@ -357,6 +357,44 @@ def _check_handbook(failures: list[str]) -> None:
         failures.append(f"overview photo or trampoline missing: {overview_titles}")
     if "Life raft — under the seat at the aft of the cockpit" not in overview_text:
         failures.append("overview day 1 missing the life raft")
+    day_one = _section_items(built_overview, "Find these on day 1")
+    if any(str(item).startswith("Life jackets") for item in day_one):
+        failures.append("day 1 lists life jackets when the location is blank")
+    gear_facts = dict(recorded["guide_context"]["guestFacts"])
+    gear_facts.update(
+        {
+            "lifeJackets": {"location": "in the cockpit locker"},
+            "fireExtinguishers": {"location": "by each companionway"},
+            "firstAidKit": {"location": "in the saloon cupboard"},
+            "throwable": {"location": "on the pushpit"},
+            "epirb": {"location": "beside the grab bag"},
+            "grabBag": {"location": "under the helm seat"},
+            "flares": {"location": "in the grab bag"},
+        }
+    )
+    gear_snapshot = dict(recorded)
+    gear_snapshot["guide_context"] = {
+        **recorded["guide_context"],
+        "guestFacts": gear_facts,
+    }
+    gear_items = _section_items(
+        build_overview_module(gear_snapshot), "Find these on day 1"
+    )
+    gear_prefix = [
+        "Life raft — under the seat at the aft of the cockpit",
+        "Life jackets — in the cockpit locker",
+        "Fire extinguishers — by each companionway",
+        "First-aid kit — in the saloon cupboard",
+        "Throwable buoy — on the pushpit",
+        "EPIRB — beside the grab bag",
+        "Grab bag — under the helm seat",
+        "Flares — in the grab bag",
+        "Manual bilge pump — the cockpit",
+    ]
+    if gear_items[: len(gear_prefix)] != gear_prefix:
+        failures.append(f"day 1 gear order: {gear_items}")
+    elif not any(str(item).startswith("Stern ladder") for item in gear_items[len(gear_prefix) :]):
+        failures.append(f"day 1 dropped the swim ladders: {gear_items}")
     for banned in ("not provided", "extinguisher", "engine room", "sleek", "luxury", "Cabins"):
         if banned.lower() in overview_text.lower():
             failures.append(f"overview invented or advertised {banned!r}")

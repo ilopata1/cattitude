@@ -17,6 +17,12 @@ from content.assembler import (  # noqa: E402
     build_checklist_module,
     build_fix_cards_module,
 )
+from content.conditions import matches  # noqa: E402
+from content.slots import apply_slots, guest_fact_gaps, slot_values  # noqa: E402
+from guide_context_utils import (  # noqa: E402
+    build_guest_facts,
+    guest_facts_form_values,
+)
 from content.loader import CONTENT_ROOT  # noqa: E402
 from guide_equipment_fragments import apply_fix_card_fragments  # noqa: E402
 from guide_navigation import build_do_menu  # noqa: E402
@@ -491,6 +497,156 @@ def test_owner_with_crew() -> None:
     )
 
 
+def test_guest_fact_slots_and_flags() -> None:
+    filled_facts = {
+        "lifeJackets": {"location": "in the cockpit locker"},
+        "fireExtinguishers": {"location": "by each companionway"},
+        "firstAidKit": {"location": "in the saloon cupboard"},
+        "flares": {"location": "in the grab bag"},
+        "epirb": {"location": "beside the grab bag"},
+        "grabBag": {"location": "under the helm seat"},
+        "throwable": {"location": "on the pushpit"},
+        "vhfDsc": {"location": "the fixed VHF at the nav station"},
+        "hotWater": {"source": "the 90 L tank in the starboard engine bay"},
+        "waterTanks": {"summary": "two 270 L tanks, one under the bed in each aft cabin"},
+        "autopilot": {"standby": "press STANDBY on the pilot control beside the engine levers"},
+        "galleyStove": "induction",
+        "cabinNames": ["port forward", "port aft", "starboard forward", "starboard aft"],
+        "hatchNotes": "The saloon hatch dogs to starboard.",
+        "lifejacketPolicy": "Wear one whenever you are asked.",
+        "moorsSternTo": True,
+        "marinaRoutine": "Pass the lines ashore, then the power lead.",
+    }
+    filled = boat(
+        "facts",
+        "sailing_catamaran",
+        [
+            row("fresh_water_and_plumbing", "Webasto", "calorifier"),
+            row("navigation_and_electronics"),
+        ],
+        facts=filled_facts,
+    )
+    expected = {
+        "life_jackets_location": "in the cockpit locker",
+        "fire_extinguishers_location": "by each companionway",
+        "first_aid_location": "in the saloon cupboard",
+        "flares_location": "in the grab bag",
+        "epirb_location": "beside the grab bag",
+        "grab_bag_location": "under the helm seat",
+        "throwable_location": "on the pushpit",
+        "vhf_dsc_location": "the fixed VHF at the nav station",
+        "hot_water_sentence": "the 90 L tank in the starboard engine bay",
+        "water_tanks_sentence": "two 270 L tanks, one under the bed in each aft cabin",
+        "autopilot_standby_sentence": (
+            "press STANDBY on the pilot control beside the engine levers"
+        ),
+        "galley_stove": "induction",
+        "cabin_names_sentence": (
+            "The cabins are called: port forward, port aft, starboard forward, "
+            "and starboard aft."
+        ),
+        "hatch_notes": "The saloon hatch dogs to starboard.",
+        "lifejacket_policy": "Wear one whenever you are asked.",
+        "marina_routine": "Pass the lines ashore, then the power lead.",
+    }
+    values = slot_values(filled)
+    for key, text in expected.items():
+        check(values.get(key) == text, f"slot {key}: {values.get(key)!r}")
+        check(apply_slots("{" + key + "}", filled) == text, f"render {key}")
+
+    flags = (
+        "has_life_jackets_location",
+        "has_fire_extinguishers_location",
+        "has_first_aid_location",
+        "has_flares_location",
+        "has_epirb_location",
+        "has_grab_bag_location",
+        "has_throwable_location",
+        "has_vhf_dsc_location",
+        "has_hot_water_sentence",
+        "has_water_tanks_sentence",
+        "has_autopilot_standby",
+        "has_cabin_names",
+        "has_hatch_notes",
+        "has_lifejacket_policy",
+        "moors_stern_to",
+        "has_marina_routine",
+    )
+    blank = boat("facts", "sailing_catamaran", [])
+    for flag in flags:
+        check(matches({flag: True}, filled), f"{flag} did not open")
+        check(not matches({flag: True}, blank), f"{flag} opened on a blank boat")
+    check(matches({"galley_stove": "induction"}, filled), "induction stove did not match")
+    check(not matches({"galley_stove": "gas"}, filled), "gas stove matched an induction boat")
+    check(not matches({"galley_stove": "induction"}, blank), "unset stove matched induction")
+
+    heater_nav = boat(
+        "gaps",
+        "sailing_catamaran",
+        [
+            row("fresh_water_and_plumbing", "Webasto", "calorifier"),
+            row("navigation_and_electronics"),
+        ],
+    )
+    gaps = guest_fact_gaps(heater_nav)
+    check(len(gaps) == 7, f"heater and nav boat should list 7 gaps, got {gaps}")
+    check(guest_fact_gaps(blank) == gaps[:5], f"plain boat gaps: {guest_fact_gaps(blank)}")
+    check(
+        not any("hot water" in line.lower() or "autopilot" in line.lower() for line in guest_fact_gaps(blank)),
+        "plain boat listed hot water or the autopilot",
+    )
+    check(guest_fact_gaps(filled) == [], f"filled boat still has gaps: {guest_fact_gaps(filled)}")
+    standby_only = boat(
+        "gaps",
+        "sailing_catamaran",
+        [row("navigation_and_electronics")],
+        facts={"autopilot": {"standby": "press STANDBY"}},
+    )
+    standby_gaps = guest_fact_gaps(standby_only)
+    check(len(standby_gaps) == 5, f"autopilot set should leave 5 gaps, got {standby_gaps}")
+    check(
+        not any("autopilot" in line.lower() for line in standby_gaps),
+        "autopilot gap remained after the sentence was set",
+    )
+
+    built = build_guest_facts(
+        life_jackets_location="  in the cockpit locker  ",
+        galley_stove="Induction",
+        cabin_names_text="port forward\n\nport aft\n",
+        moors_stern_to=True,
+        hot_water_source=" the 90 L tank ",
+        autopilot_standby="press STANDBY",
+    )
+    check(built["lifeJackets"] == {"location": "in the cockpit locker"}, "location was not trimmed")
+    check(built["galleyStove"] == "induction", f"stove: {built.get('galleyStove')!r}")
+    check(built["cabinNames"] == ["port forward", "port aft"], f"cabins: {built.get('cabinNames')!r}")
+    check(built["moorsSternTo"] is True, "stern-to was dropped")
+    check(built["hotWater"] == {"source": "the 90 L tank"}, "hot water shape")
+    check("fireExtinguishers" not in built, "blank extinguishers were stored")
+    form = guest_facts_form_values(built)
+    check(form["life_jackets_location"] == "in the cockpit locker", "form location")
+    check(form["cabin_names_text"] == "port forward\nport aft", "form cabins")
+    check(form["galley_stove"] == "induction", "form stove")
+    check(form["moors_stern_to"] is True, "form stern-to")
+    check(form["hot_water_source"] == "the 90 L tank", "form hot water")
+    empty_form = guest_facts_form_values(None)
+    for key in (
+        "life_jackets_location",
+        "galley_stove",
+        "cabin_names_text",
+        "moors_stern_to",
+        "marina_routine",
+        "autopilot_standby",
+    ):
+        check(key in empty_form, f"empty form missing {key}")
+    check(build_guest_facts(galley_stove="unset", cabin_names_text="\n") == {}, "unset stove was stored")
+    try:
+        build_guest_facts(galley_stove="wood")
+        check(False, "invalid galley stove was accepted")
+    except ValueError:
+        pass
+
+
 def test_vessel_override_survives_second_assembly() -> None:
     path = CONTENT_ROOT / "vessels" / "supernova.yaml"
     if path.exists():
@@ -523,6 +679,7 @@ def main() -> None:
     test_unknown_panel_omits_both_lines()
     test_heads_and_tender_facts()
     test_owner_with_crew()
+    test_guest_fact_slots_and_flags()
     test_vessel_override_survives_second_assembly()
     if FAILURES:
         print(f"FAILED: {len(FAILURES)}")
