@@ -76,8 +76,8 @@ export class ContentService {
 
   /**
    * Paint the IndexedDB guide immediately, then revalidate in the background.
-   * With nothing stored yet, this still waits on the network — that wait is
-   * capped inside {@link GuideSyncService.ensureGuide}.
+   * That check stays on a short timeout. With nothing stored yet, this waits
+   * for the publication bundle only; photos download afterward.
    */
   async loadBootstrapContent(slug: string): Promise<BootstrapContent> {
     const generation = ++this.generation;
@@ -94,7 +94,7 @@ export class ContentService {
       ? new BootstrapSchemaError(declaredBootstrapSchemaVersion(cached.content))
       : null;
     try {
-      const synced = await this.guideSync.ensureGuide(slug);
+      const synced = await this.guideSync.downloadGuide(slug);
       if (generation !== this.generation && this.content) {
         return this.content;
       }

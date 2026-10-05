@@ -63,6 +63,7 @@ describe('ContentService boot', () => {
     guideSync = jasmine.createSpyObj<GuideSyncService>('GuideSyncService', [
       'loadFromCache',
       'ensureGuide',
+      'downloadGuide',
     ]);
     toasts = {
       create: jasmine.createSpy('create').and.resolveTo({ present: () => Promise.resolve() }),
@@ -154,7 +155,7 @@ describe('ContentService boot', () => {
   it('waits for the network only when nothing is stored', async () => {
     let resolveNetwork: (value: EnsuredGuide) => void = () => undefined;
     guideSync.loadFromCache.and.resolveTo(null);
-    guideSync.ensureGuide.and.returnValue(
+    guideSync.downloadGuide.and.returnValue(
       new Promise((resolve) => {
         resolveNetwork = resolve;
       }),
@@ -167,6 +168,8 @@ describe('ContentService boot', () => {
     });
     await flushPromises();
     expect(settled).toBeFalse();
+    expect(guideSync.downloadGuide).toHaveBeenCalledOnceWith('cattitude');
+    expect(guideSync.ensureGuide).not.toHaveBeenCalled();
 
     resolveNetwork({ content: guide('Fresh'), contentHash: 'bbb', updated: true });
     const loaded = await pending;
@@ -176,7 +179,7 @@ describe('ContentService boot', () => {
 
   it('reports a first download that times out as offline', async () => {
     guideSync.loadFromCache.and.resolveTo(null);
-    guideSync.ensureGuide.and.returnValue(Promise.reject(new TimeoutError()));
+    guideSync.downloadGuide.and.returnValue(Promise.reject(new TimeoutError()));
 
     try {
       await service.loadBootstrapContent('cattitude');
@@ -217,7 +220,7 @@ describe('ContentService boot', () => {
     const stale = guide('Old');
     stale.schemaVersion = 2;
     guideSync.loadFromCache.and.resolveTo({ content: stale, contentHash: 'old' });
-    guideSync.ensureGuide.and.returnValue(Promise.reject(new BootstrapSchemaError(2)));
+    guideSync.downloadGuide.and.returnValue(Promise.reject(new BootstrapSchemaError(2)));
 
     try {
       await service.loadBootstrapContent('cattitude');
@@ -238,7 +241,7 @@ describe('ContentService boot', () => {
     stale.schemaVersion = 2;
     let resolveNetwork: (value: EnsuredGuide) => void = () => undefined;
     guideSync.loadFromCache.and.resolveTo({ content: stale, contentHash: 'old' });
-    guideSync.ensureGuide.and.returnValue(
+    guideSync.downloadGuide.and.returnValue(
       new Promise((resolve) => {
         resolveNetwork = resolve;
       }),

@@ -16,6 +16,12 @@ const ASSET_PATH_RE = /assets\/images\/[^\s"'<>]+/g;
 /** Bound for a background publication check. A hung marina link must not outlive this. */
 export const GUIDE_REVALIDATE_TIMEOUT_MS = 5000;
 
+/**
+ * Bound for the first publication fetch (manifest and bundle only).
+ * Guide photos are not part of this wait.
+ */
+export const GUIDE_DOWNLOAD_TIMEOUT_MS = 30_000;
+
 export interface CachedGuide {
   content: BootstrapContent;
   contentHash: string;
@@ -30,6 +36,9 @@ export interface EnsuredGuide {
 
 @Injectable({ providedIn: 'root' })
 export class GuideSyncService {
+  /** Image downloads outlive the publication fetch that painted the guide. */
+  private assetSyncAbort: AbortController | null = null;
+
   constructor(
     private readonly http: HttpClient,
     private readonly store: GuideStoreService,
@@ -57,11 +66,25 @@ export class GuideSyncService {
   }
 
   /**
-   * Network revalidation. Resolves with the publication, or rejects at
-   * {@link GUIDE_REVALIDATE_TIMEOUT_MS} and aborts the in-flight request.
-   * Callers that already painted a cached guide should not await this.
+   * First download. Waits for the manifest and bundle, saves the guide text,
+   * and resolves. Photos continue afterward and are not part of this wait.
+   * A dead connection still rejects at {@link GUIDE_DOWNLOAD_TIMEOUT_MS}.
+   */
+  async downloadGuide(vesselSlug: string): Promise<EnsuredGuide> {
+    return this.syncWithTimeout(vesselSlug, GUIDE_DOWNLOAD_TIMEOUT_MS);
+  }
+
+  /**
+   * Background publication check. Resolves with the bundle, or rejects at
+   * {@link GUIDE_REVALIDATE_TIMEOUT_MS} and aborts that manifest or bundle
+   * request. Photos are not part of this wait. Callers that already painted
+   * a cached guide should not await this.
    */
   async ensureGuide(vesselSlug: string): Promise<EnsuredGuide> {
+    return this.syncWithTimeout(vesselSlug, GUIDE_REVALIDATE_TIMEOUT_MS);
+  }
+
+  private syncWithTimeout(vesselSlug: string, limitMs: number): Promise<EnsuredGuide> {
     const abort = new AbortController();
     const run = new Observable<EnsuredGuide>((subscriber) => {
       void this.syncGuide(vesselSlug, abort.signal).then(
@@ -79,7 +102,7 @@ export class GuideSyncService {
       );
       return () => abort.abort();
     });
-    return firstValueFrom(run.pipe(timeout(GUIDE_REVALIDATE_TIMEOUT_MS)));
+    return firstValueFrom(run.pipe(timeout(limitMs)));
   }
 
   private async syncGuide(vesselSlug: string, signal: AbortSignal): Promise<EnsuredGuide> {
@@ -100,6 +123,7 @@ export class GuideSyncService {
 
     if (stored?.guide && stored.contentHash === manifest.contentHash) {
       assertBootstrapSchema(stored.guide);
+      this.scheduleAssetSync(vesselSlug, manifest, stored.manifest);
       return {
         content: await this.rewriteAssetUrls(vesselSlug, stored.guide as BootstrapContent),
         contentHash: manifest.contentHash,
@@ -111,8 +135,6 @@ export class GuideSyncService {
     this.throwIfAborted(signal);
     assertBootstrapSchema(guide);
     try {
-      await this.syncAssets(vesselSlug, manifest, stored?.manifest ?? null, signal);
-      this.throwIfAborted(signal);
       await this.store.saveGuide(vesselSlug, manifest, guide);
     } catch (error) {
       if (signal.aborted) {
@@ -120,11 +142,33 @@ export class GuideSyncService {
       }
       console.warn('Guide cache write failed; continuing with network bundle.', error);
     }
+    this.throwIfAborted(signal);
+    this.scheduleAssetSync(vesselSlug, manifest, stored?.manifest ?? null);
     return {
       content: await this.rewriteAssetUrls(vesselSlug, guide),
       contentHash: manifest.contentHash,
       updated: true,
     };
+  }
+
+  /**
+   * Photos are not required to read the guide. A later visit fills any image
+   * that did not finish, including when the publication hash is unchanged.
+   */
+  private scheduleAssetSync(
+    vesselSlug: string,
+    manifest: GuideManifest,
+    previous: GuideManifest | null,
+  ): void {
+    this.assetSyncAbort?.abort();
+    const abort = new AbortController();
+    this.assetSyncAbort = abort;
+    void this.syncAssets(vesselSlug, manifest, previous, abort.signal).catch((error: unknown) => {
+      if (abort.signal.aborted) {
+        return;
+      }
+      console.warn('Guide image sync failed; the guide text is already saved.', error);
+    });
   }
 
   private manifestUrl(vesselSlug: string): string {
@@ -176,12 +220,22 @@ export class GuideSyncService {
       if (asset.missing || !asset.hash) {
         continue;
       }
-      if (previousHashes.get(asset.path) === asset.hash) {
+      const unchanged = previousHashes.get(asset.path) === asset.hash;
+      if (unchanged && await this.assetIsStored(vesselSlug, asset.path)) {
         continue;
       }
 
       const blob = await this.getBlob(this.assetUrl(vesselSlug, asset.path), signal);
       await this.store.saveAsset(vesselSlug, asset.path, blob);
+    }
+  }
+
+  private async assetIsStored(vesselSlug: string, path: string): Promise<boolean> {
+    try {
+      return (await this.store.getAssetBlob(vesselSlug, path)) != null;
+    } catch (error) {
+      console.warn('Guide image cache read failed.', error);
+      return false;
     }
   }
 
