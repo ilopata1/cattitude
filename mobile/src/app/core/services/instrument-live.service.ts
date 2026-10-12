@@ -19,12 +19,12 @@ import {
   computeTrueWindBaseAngle,
   normalizeAngleDeg,
 } from '../../instruments/skip/wind-steer.util';
+import { STW_MIN_USEFUL_MPS, isInterspersedStwZero } from './stw-dropout';
 
 const MPS_TO_KNOTS = 1.94384;
 const RAD_TO_DEG = 180 / Math.PI;
 const STALE_MS = 15_000;
 const FRESH_MS = 5_000;
-const STW_MIN_USEFUL_MPS = 0.05;
 const DEG_EPSILON = 1;
 
 type PathKey = string;
@@ -51,6 +51,8 @@ export class InstrumentLiveService implements OnDestroy {
 
   private wind: WindSteerLive = { ...EMPTY_WIND_STEER };
   private stwMps: number | null = null;
+  /** When `stwMps` last came from a useful log reading. */
+  private lastGoodStwAt: number | null = null;
   private sogMps: number | null = null;
   private depthM: number | null = null;
 
@@ -177,7 +179,17 @@ export class InstrumentLiveService implements OnDestroy {
         this.wind = { ...this.wind, tws: this.asKnots(pathKey, raw) };
         break;
       case 'speed':
+        if (isInterspersedStwZero(raw, {
+          previousMps: this.stwMps ?? undefined,
+          previousAtMs: this.lastGoodStwAt,
+          sogMps: this.sogMps ?? undefined,
+        }, now)) {
+          break;
+        }
         this.stwMps = raw;
+        if (Math.abs(raw) >= STW_MIN_USEFUL_MPS) {
+          this.lastGoodStwAt = now;
+        }
         break;
       case 'sog':
         this.sogMps = raw;

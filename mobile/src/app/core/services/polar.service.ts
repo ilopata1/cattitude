@@ -6,6 +6,8 @@
  *
  * Boat speed prefers navigation.speedThroughWater; falls back to
  * navigation.speedOverGround when STW is missing or effectively zero.
+ * Interspersed zeros are ignored while SOG shows the boat is still under way
+ * and a recent STW reading was real.
  */
 import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -22,6 +24,7 @@ import {
   PolarWindowMinutes,
   PolarWindowSet,
 } from '../models/polar.model';
+import { STW_MIN_USEFUL_MPS, isInterspersedStwZero } from './stw-dropout';
 
 const DEFAULT_POLAR_ASSET = 'assets/polars/outremer-55sc.pol';
 const BUFFER_MS = 15 * 60 * 1000;
@@ -42,8 +45,6 @@ const EMPTY_WINDOWS: PolarWindowSet = {
 };
 const MPS_TO_KNOTS = 1.94384;
 const RAD_TO_DEG = 180 / Math.PI;
-/** Below this, a published STW is treated as "no sensor" so SOG can win. */
-const STW_MIN_USEFUL_MPS = 0.05;
 
 const EMPTY_LIVE: PolarLiveState = {
   stwKnots: null,
@@ -73,6 +74,8 @@ export class PolarService implements OnDestroy {
   private polarFilename = 'outremer-55sc.pol';
   private samples: PolarSample[] = [];
   private partial: SkPartial = { lastSeen: 0 };
+  /** When the stored STW last came from a useful log reading. */
+  private lastGoodStwAt: number | null = null;
   private sub: Subscription | null = null;
   private tickSub: Subscription | null = null;
   private lastSampleAt = 0;
@@ -165,7 +168,7 @@ export class PolarService implements OnDestroy {
     const normalized = path.startsWith('self.') ? path.slice(5) : path;
     switch (normalized) {
       case 'navigation.speedThroughWater':
-        if (typeof value === 'number') this.partial.stwMps = value;
+        this.acceptSpeedThroughWater(value);
         break;
       case 'navigation.speedOverGround':
         if (typeof value === 'number') this.partial.sogMps = value;
@@ -185,6 +188,26 @@ export class PolarService implements OnDestroy {
       case 'environment.wind.angleApparent':
         if (typeof value === 'number') this.partial.twaApparentRad = value;
         break;
+    }
+  }
+
+  /**
+   * Keep a useful log reading across a zero that arrives while SOG still shows
+   * way on. A zero that persists, or a log that has never reported a speed, is stored.
+   */
+  private acceptSpeedThroughWater(value: unknown): void {
+    if (typeof value !== 'number' || !Number.isFinite(value)) return;
+    const now = Date.now();
+    if (isInterspersedStwZero(value, {
+      previousMps: this.partial.stwMps,
+      previousAtMs: this.lastGoodStwAt,
+      sogMps: this.partial.sogMps,
+    }, now)) {
+      return;
+    }
+    this.partial.stwMps = value;
+    if (Math.abs(value) >= STW_MIN_USEFUL_MPS) {
+      this.lastGoodStwAt = now;
     }
   }
 
