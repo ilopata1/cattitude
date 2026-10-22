@@ -1,7 +1,7 @@
 <svg-windsteer
   [compassHeading]="wind().heading"
   [compassModeEnabled]="true"
-  [updateInterval]="1000"
+  [updateInterval]="displayPublishMs"
   [courseOverGroundAngle]="wind().cog"
   [courseOverGroundEnabled]="true"
   [sogActive]="true"

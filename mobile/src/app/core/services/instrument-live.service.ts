@@ -187,19 +187,19 @@ export class InstrumentLiveService implements OnDestroy {
 
     switch (role) {
       case 'heading':
-        this.rawHeadingDeg = this.asDegrees(pathKey, raw);
+        this.rawHeadingDeg = this.asDegrees(raw);
         this.pending.add('heading');
         break;
       case 'cog':
-        this.rawCogDeg = this.asDegrees(pathKey, raw);
+        this.rawCogDeg = this.asDegrees(raw);
         this.pending.add('cog');
         break;
       case 'awa':
-        this.rawAwaDeg = this.asDegrees(pathKey, raw);
+        this.rawAwaDeg = this.asDegrees(raw);
         this.pending.add('apparent');
         break;
       case 'twa':
-        this.rawTwaDeg = this.asDegrees(pathKey, raw);
+        this.rawTwaDeg = this.asDegrees(raw);
         this.pending.add('trueWind');
         break;
       case 'aws':
@@ -384,18 +384,12 @@ export class InstrumentLiveService implements OnDestroy {
     return full.startsWith('self.') ? full.slice(5) : full;
   }
 
-  private asDegrees(pathKey: PathKey, value: number): number {
-    if (this.looksLikeRadians(value)) {
-      return normalizeAngleDeg(value * RAD_TO_DEG);
-    }
-    return normalizeAngleDeg(value);
+  /** Signal K angles are radians. */
+  private asDegrees(value: number): number {
+    return normalizeAngleDeg(value * RAD_TO_DEG);
   }
 
   private asKnots(_pathKey: PathKey, value: number): number {
     return value * MPS_TO_KNOTS;
-  }
-
-  private looksLikeRadians(value: number): boolean {
-    return Math.abs(value) <= 6.5;
   }
 }

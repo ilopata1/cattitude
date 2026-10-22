@@ -5,6 +5,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { SvgWindsteerComponent } from './svg-windsteer.component';
+import { DISPLAY_PUBLISH_MS } from '../../core/services/instrument-damping';
 import { InstrumentLiveService } from '../../core/services/instrument-live.service';
 import { EMPTY_WIND_STEER } from '../../core/models/instrument-map.model';
 
@@ -19,4 +20,5 @@ import { EMPTY_WIND_STEER } from '../../core/models/instrument-map.model';
 export class WindSteerPanelComponent {
   private readonly live = inject(InstrumentLiveService);
   protected readonly wind = toSignal(this.live.wind$, { initialValue: EMPTY_WIND_STEER });
+  protected readonly displayPublishMs = DISPLAY_PUBLISH_MS;
 }
