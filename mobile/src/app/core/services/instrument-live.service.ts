@@ -1,7 +1,9 @@
 /**
  * Live Sail instrument values from Signal-K, resolved through the vessel instrument map.
+ * Display values are damped here. Freshness, staleness, and speed-through-water
+ * dropout still use the raw samples.
  */
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, NgZone, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import {
   EMPTY_SAIL_ESSENTIALS,
@@ -12,10 +14,18 @@ import {
   SailEssentialsLive,
   WindSteerLive,
 } from '../models/instrument-map.model';
+import {
+  AngleDamper,
+  DAMPING_SNAP,
+  DAMPING_TAU_S,
+  DISPLAY_PUBLISH_MS,
+  ScalarDamper,
+  VectorDamper,
+  sampleTimeMs,
+} from './instrument-damping';
 import { InstrumentMapService } from './instrument-map.service';
 import { SignalKDelta, SignalKService } from './signal-k.service';
 import {
-  angleDeltaDeg,
   computeTrueWindBaseAngle,
   normalizeAngleDeg,
 } from '../../instruments/skip/wind-steer.util';
@@ -25,9 +35,15 @@ const MPS_TO_KNOTS = 1.94384;
 const RAD_TO_DEG = 180 / Math.PI;
 const STALE_MS = 15_000;
 const FRESH_MS = 5_000;
-const DEG_EPSILON = 1;
+/** Below this damped speed over ground, course is published but marked stale. */
+const COG_MIN_SOG_KN = 0.5;
+const SPEED_SNAP = {
+  fraction: DAMPING_SNAP.speedFraction,
+  floor: DAMPING_SNAP.speedFloorKn,
+};
 
 type PathKey = string;
+type DamperKey = 'heading' | 'cog' | 'stw' | 'sog' | 'depth' | 'apparent' | 'trueWind';
 
 @Injectable({ providedIn: 'root' })
 export class InstrumentLiveService implements OnDestroy {
@@ -47,33 +63,61 @@ export class InstrumentLiveService implements OnDestroy {
   private numericByPath = new Map<PathKey, number>();
   private lastSeenMs = 0;
   private freshUntil = new Map<InstrumentRole, number>();
-  private rawTwa: number | null = null;
+  private linkUp = false;
+  private dampersCleared = false;
+  private pending = new Set<DamperKey>();
+
+  private rawHeadingDeg: number | null = null;
+  private rawCogDeg: number | null = null;
+  private rawAwaDeg: number | null = null;
+  private rawAwsKn: number | null = null;
+  private rawTwaDeg: number | null = null;
+  private rawTwsKn: number | null = null;
+  private rawDepthM: number | null = null;
 
   private wind: WindSteerLive = { ...EMPTY_WIND_STEER };
   private stwMps: number | null = null;
   /** When `stwMps` last came from a useful log reading. */
   private lastGoodStwAt: number | null = null;
   private sogMps: number | null = null;
+  private dampedStwKn: number | null = null;
+  private dampedSogKn: number | null = null;
   private depthM: number | null = null;
+
+  private readonly headingDamper = new AngleDamper(DAMPING_TAU_S.heading);
+  private readonly cogDamper = new AngleDamper(DAMPING_TAU_S.cog);
+  private readonly stwDamper = new ScalarDamper(DAMPING_TAU_S.stw, SPEED_SNAP);
+  private readonly sogDamper = new ScalarDamper(DAMPING_TAU_S.sog, SPEED_SNAP);
+  private readonly depthDamper = new ScalarDamper(DAMPING_TAU_S.depth);
+  private readonly apparentDamper = new VectorDamper(DAMPING_TAU_S.apparentWind);
+  private readonly trueWindDamper = new VectorDamper(DAMPING_TAU_S.trueWind);
+
+  private publishTimer: ReturnType<typeof setInterval> | null = null;
 
   constructor(
     private readonly sk: SignalKService,
     private readonly maps: InstrumentMapService,
+    private readonly zone: NgZone,
   ) {
     this.subs.push(
       this.maps.map$.subscribe(map => this.rebuildPathIndex(map)),
       this.sk.delta$.subscribe(delta => this.handleDelta(delta)),
-    );
-    this.subs.push(
       this.sk.connected$.subscribe(connected => {
+        this.linkUp = connected;
         if (!connected) {
-          this.publishEssentials(true);
+          this.resetDampers();
+          this.dampersCleared = true;
         }
+        this.publishHeld();
       }),
     );
+    this.zone.runOutsideAngular(() => {
+      this.publishTimer = setInterval(() => this.onDisplayTick(), DISPLAY_PUBLISH_MS);
+    });
   }
 
   ngOnDestroy(): void {
+    if (this.publishTimer !== null) clearInterval(this.publishTimer);
     this.subs.forEach(s => s.unsubscribe());
   }
 
@@ -118,8 +162,10 @@ export class InstrumentLiveService implements OnDestroy {
     const ctx = delta.context ?? '';
     if (ctx.startsWith('vessels.') && this.sk.self && ctx !== this.sk.self) return;
 
-    let touched = false;
     for (const update of delta.updates ?? []) {
+      const arrivedMs = Date.now();
+      const tMs = sampleTimeMs(update.timestamp, arrivedMs);
+      this.pending.clear();
       for (const kv of update.values ?? []) {
         if (typeof kv.value !== 'number' || !Number.isFinite(kv.value)) continue;
         const key = kv.path.startsWith('self.') ? kv.path.slice(5) : kv.path;
@@ -127,127 +173,211 @@ export class InstrumentLiveService implements OnDestroy {
         if (!roles?.length) continue;
 
         this.numericByPath.set(key, kv.value);
-        this.lastSeenMs = Date.now();
+        this.lastSeenMs = arrivedMs;
         for (const role of roles) {
-          this.applyRole(role, key, kv.value);
+          this.applyRole(role, key, kv.value, arrivedMs);
         }
-        touched = true;
       }
-    }
-    if (touched) {
-      this.publishWind();
-      this.publishEssentials(false);
+      if (this.pending.size) this.flushDampers(tMs);
     }
   }
 
-  private applyRole(role: InstrumentRole, pathKey: PathKey, raw: number): void {
-    const now = Date.now();
-    this.freshUntil.set(role, now + FRESH_MS);
+  private applyRole(role: InstrumentRole, pathKey: PathKey, raw: number, arrivedMs: number): void {
+    this.freshUntil.set(role, arrivedMs + FRESH_MS);
 
     switch (role) {
-      case 'heading': {
-        const next = this.asDegrees(pathKey, raw);
-        if (angleDeltaDeg(this.wind.heading, next) >= DEG_EPSILON) {
-          this.wind = { ...this.wind, heading: next };
-          this.recomputeTwa();
-        }
+      case 'heading':
+        this.rawHeadingDeg = this.asDegrees(pathKey, raw);
+        this.pending.add('heading');
         break;
-      }
-      case 'cog': {
-        const next = this.asDegrees(pathKey, raw);
-        if (angleDeltaDeg(this.wind.cog, next) >= DEG_EPSILON) {
-          this.wind = { ...this.wind, cog: next };
-        }
+      case 'cog':
+        this.rawCogDeg = this.asDegrees(pathKey, raw);
+        this.pending.add('cog');
         break;
-      }
-      case 'awa': {
-        const next = this.asDegrees(pathKey, raw);
-        if (angleDeltaDeg(this.wind.awa, next) >= DEG_EPSILON) {
-          this.wind = { ...this.wind, awa: next };
-        }
+      case 'awa':
+        this.rawAwaDeg = this.asDegrees(pathKey, raw);
+        this.pending.add('apparent');
         break;
-      }
-      case 'twa': {
-        this.rawTwa = this.asDegrees(pathKey, raw);
-        this.recomputeTwa();
+      case 'twa':
+        this.rawTwaDeg = this.asDegrees(pathKey, raw);
+        this.pending.add('trueWind');
         break;
-      }
       case 'aws':
-        this.wind = { ...this.wind, aws: this.asKnots(pathKey, raw) };
+        this.rawAwsKn = this.asKnots(pathKey, raw);
+        this.pending.add('apparent');
         break;
       case 'tws':
-        this.wind = { ...this.wind, tws: this.asKnots(pathKey, raw) };
+        this.rawTwsKn = this.asKnots(pathKey, raw);
+        this.pending.add('trueWind');
         break;
       case 'speed':
         if (isInterspersedStwZero(raw, {
           previousMps: this.stwMps ?? undefined,
           previousAtMs: this.lastGoodStwAt,
           sogMps: this.sogMps ?? undefined,
-        }, now)) {
+        }, arrivedMs)) {
           break;
         }
         this.stwMps = raw;
         if (Math.abs(raw) >= STW_MIN_USEFUL_MPS) {
-          this.lastGoodStwAt = now;
+          this.lastGoodStwAt = arrivedMs;
         }
+        this.pending.add('stw');
         break;
       case 'sog':
         this.sogMps = raw;
+        this.pending.add('sog');
         break;
       case 'depth':
-        this.depthM = raw;
+        this.rawDepthM = raw;
+        this.pending.add('depth');
         break;
       default:
         break;
     }
   }
 
-  private recomputeTwa(): void {
-    if (this.rawTwa == null) return;
-    const next = normalizeAngleDeg(
-      computeTrueWindBaseAngle(this.twaPath, this.rawTwa, this.wind.heading, true),
-    );
-    if (angleDeltaDeg(this.wind.twa, next) >= DEG_EPSILON) {
-      this.wind = { ...this.wind, twa: next };
+  /**
+   * One push per damper per update. A Signal K update carries one timestamp
+   * for every path in the batch, and a second push at that same time would
+   * look like a clock rewind and re-seed the filter.
+   */
+  private flushDampers(tMs: number): void {
+    if (this.pending.has('heading') && this.rawHeadingDeg !== null) {
+      this.wind = { ...this.wind, heading: this.headingDamper.push(this.rawHeadingDeg, tMs) };
     }
+    if (this.pending.has('cog') && this.rawCogDeg !== null) {
+      this.wind = { ...this.wind, cog: this.cogDamper.push(this.rawCogDeg, tMs) };
+    }
+    if (this.pending.has('stw') && this.stwMps !== null) {
+      this.dampedStwKn = this.stwDamper.push(this.stwMps * MPS_TO_KNOTS, tMs);
+    }
+    if (this.pending.has('sog') && this.sogMps !== null) {
+      this.dampedSogKn = this.sogDamper.push(this.sogMps * MPS_TO_KNOTS, tMs);
+    }
+    if (this.pending.has('depth') && this.rawDepthM !== null) {
+      this.depthM = this.depthDamper.push(this.rawDepthM, tMs);
+    }
+    if (this.pending.has('apparent')) this.pushApparent(tMs);
+    if (this.pending.has('heading') || this.pending.has('trueWind')) this.pushTrueWind(tMs);
+    this.pending.clear();
   }
 
-  private publishWind(): void {
+  private pushApparent(tMs: number): void {
+    if (this.rawAwaDeg === null || this.rawAwsKn === null) return;
+    const next = this.apparentDamper.push(this.rawAwaDeg, this.rawAwsKn, tMs);
+    this.wind = { ...this.wind, awa: next.angleDeg, aws: next.speed };
+  }
+
+  private pushTrueWind(tMs: number): void {
+    if (this.rawTwaDeg === null || this.rawTwsKn === null) return;
+    const heading = this.rawHeadingDeg ?? 0;
+    const twd = normalizeAngleDeg(
+      computeTrueWindBaseAngle(this.twaPath, this.rawTwaDeg, heading, true),
+    );
+    const next = this.trueWindDamper.push(twd, this.rawTwsKn, tMs);
+    this.wind = { ...this.wind, twa: next.angleDeg, tws: next.speed };
+  }
+
+  private onDisplayTick(): void {
     const now = Date.now();
-    this.windSubject.next({
-      ...this.wind,
-      headingFresh: (this.freshUntil.get('heading') ?? 0) > now,
-      cogFresh: (this.freshUntil.get('cog') ?? 0) > now,
-      awaFresh: (this.freshUntil.get('awa') ?? 0) > now,
-      awsFresh: (this.freshUntil.get('aws') ?? 0) > now,
-      twaFresh: (this.freshUntil.get('twa') ?? 0) > now,
-      twsFresh: (this.freshUntil.get('tws') ?? 0) > now,
+    const stale = !this.linkUp || !this.lastSeenMs || (now - this.lastSeenMs > STALE_MS);
+    if (stale) {
+      if (!this.dampersCleared) {
+        this.resetDampers();
+        this.dampersCleared = true;
+      }
+    } else {
+      this.dampersCleared = false;
+    }
+    this.publishHeld();
+  }
+
+  private publishHeld(): void {
+    const wind = this.windSnapshot(Date.now());
+    const essentials = this.essentialsSnapshot();
+    const windChanged = !this.sameWind(this.windSubject.value, wind);
+    const essentialsChanged = !this.sameEssentials(this.essentialsSubject.value, essentials);
+    if (!windChanged && !essentialsChanged) return;
+    this.zone.run(() => {
+      if (windChanged) this.windSubject.next(wind);
+      if (essentialsChanged) this.essentialsSubject.next(essentials);
     });
   }
 
-  private publishEssentials(stale: boolean): void {
+  private windSnapshot(now: number): WindSteerLive {
+    const fresh = (role: InstrumentRole) => (this.freshUntil.get(role) ?? 0) > now;
+    const sogKn = this.dampedSogKn;
+    const cogSlow = sogKn !== null && sogKn < COG_MIN_SOG_KN;
+    return {
+      ...this.wind,
+      headingFresh: fresh('heading'),
+      cogFresh: fresh('cog') && !cogSlow,
+      awaFresh: fresh('awa'),
+      awsFresh: fresh('aws'),
+      twaFresh: fresh('twa'),
+      twsFresh: fresh('tws'),
+    };
+  }
+
+  private essentialsSnapshot(): SailEssentialsLive {
     const speed = this.resolveSpeed();
-    const isStale = stale || !this.lastSeenMs || (Date.now() - this.lastSeenMs > STALE_MS);
-    this.essentialsSubject.next({
+    const now = Date.now();
+    const quiet = !this.lastSeenMs || (now - this.lastSeenMs > STALE_MS);
+    return {
       depthM: this.depthM,
       speedKn: speed.knots,
       speedSource: speed.source,
-      sogKnots: this.sogMps === null ? null : this.sogMps * MPS_TO_KNOTS,
-      stale: isStale,
-    });
+      sogKnots: this.dampedSogKn,
+      stale: !this.linkUp || quiet,
+    };
   }
 
   private resolveSpeed(): { knots: number | null; source: 'stw' | 'sog' | null } {
     if (this.stwMps !== null && Math.abs(this.stwMps) >= STW_MIN_USEFUL_MPS) {
-      return { knots: this.stwMps * MPS_TO_KNOTS, source: 'stw' };
+      return { knots: this.dampedStwKn, source: 'stw' };
     }
     if (this.sogMps !== null) {
-      return { knots: this.sogMps * MPS_TO_KNOTS, source: 'sog' };
+      return { knots: this.dampedSogKn, source: 'sog' };
     }
     if (this.stwMps !== null) {
-      return { knots: this.stwMps * MPS_TO_KNOTS, source: 'stw' };
+      return { knots: this.dampedStwKn, source: 'stw' };
     }
     return { knots: null, source: null };
+  }
+
+  private resetDampers(): void {
+    this.headingDamper.reset();
+    this.cogDamper.reset();
+    this.stwDamper.reset();
+    this.sogDamper.reset();
+    this.depthDamper.reset();
+    this.apparentDamper.reset();
+    this.trueWindDamper.reset();
+  }
+
+  private sameWind(a: WindSteerLive, b: WindSteerLive): boolean {
+    return a.heading === b.heading
+      && a.cog === b.cog
+      && a.awa === b.awa
+      && a.aws === b.aws
+      && a.twa === b.twa
+      && a.tws === b.tws
+      && a.trueWindPath === b.trueWindPath
+      && a.headingFresh === b.headingFresh
+      && a.cogFresh === b.cogFresh
+      && a.awaFresh === b.awaFresh
+      && a.awsFresh === b.awsFresh
+      && a.twaFresh === b.twaFresh
+      && a.twsFresh === b.twsFresh;
+  }
+
+  private sameEssentials(a: SailEssentialsLive, b: SailEssentialsLive): boolean {
+    return a.depthM === b.depthM
+      && a.speedKn === b.speedKn
+      && a.speedSource === b.speedSource
+      && a.sogKnots === b.sogKnots
+      && a.stale === b.stale;
   }
 
   private skPath(full: string): PathKey {
