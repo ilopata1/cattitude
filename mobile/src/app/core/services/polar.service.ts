@@ -1,21 +1,17 @@
 /**
  * PolarService
  *
- * Loads a vessel polar (.pol), subscribes to Signal-K for boat speed/TWS/TWA,
- * and computes instantaneous plus 5/10/15-minute mean TWA, TWS, and polar %.
+ * Loads a vessel polar (.pol) and computes instantaneous plus 5/10/15-minute
+ * mean TWA, TWS, and polar % from the smoothed instrument readings.
  *
- * Boat speed prefers navigation.speedThroughWater; falls back to
- * navigation.speedOverGround when STW is missing or effectively zero.
- * Interspersed zeros are ignored while SOG shows the boat is still under way
- * and a recent STW reading was real.
+ * Boat speed, true wind, and apparent wind come from InstrumentLiveService,
+ * which already prefers speed through water and ignores interspersed log zeros.
  */
 import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Subscription, firstValueFrom, interval } from 'rxjs';
-import { SignalKService, SignalKDelta } from './signal-k.service';
+import { BehaviorSubject, Subscription, combineLatest, firstValueFrom, interval } from 'rxjs';
 import { interpolateTargetSpeed, parsePolarFile, targetCurveAtTws } from './polar-parser';
 import {
-  PolarBoatSpeedSource,
   PolarCurvePoint,
   PolarLiveState,
   PolarSample,
@@ -24,7 +20,8 @@ import {
   PolarWindowMinutes,
   PolarWindowSet,
 } from '../models/polar.model';
-import { STW_MIN_USEFUL_MPS, isInterspersedStwZero } from './stw-dropout';
+import { EMPTY_SAIL_ESSENTIALS, EMPTY_WIND_STEER, SailEssentialsLive, WindSteerLive } from '../models/instrument-map.model';
+import { InstrumentLiveService } from './instrument-live.service';
 
 const DEFAULT_POLAR_ASSET = 'assets/polars/outremer-55sc.pol';
 const BUFFER_MS = 15 * 60 * 1000;
@@ -43,9 +40,6 @@ const EMPTY_WINDOWS: PolarWindowSet = {
   10: EMPTY_WINDOW,
   15: EMPTY_WINDOW,
 };
-const MPS_TO_KNOTS = 1.94384;
-const RAD_TO_DEG = 180 / Math.PI;
-
 const EMPTY_LIVE: PolarLiveState = {
   stwKnots: null,
   boatSpeedSource: null,
@@ -57,25 +51,19 @@ const EMPTY_LIVE: PolarLiveState = {
   stale: true,
 };
 
-interface SkPartial {
-  stwMps?: number;
-  sogMps?: number;
-  twsMps?: number;
-  twaWaterRad?: number;
-  twaGroundRad?: number;
-  twaApparentRad?: number;
-  lastSeen: number;
-}
-
 @Injectable({ providedIn: 'root' })
 export class PolarService implements OnDestroy {
 
   private table: PolarTable | null = null;
   private polarFilename = 'outremer-55sc.pol';
   private samples: PolarSample[] = [];
-  private partial: SkPartial = { lastSeen: 0 };
-  /** When the stored STW last came from a useful log reading. */
-  private lastGoodStwAt: number | null = null;
+  private wind: WindSteerLive = EMPTY_WIND_STEER;
+  private essentials: SailEssentialsLive = EMPTY_SAIL_ESSENTIALS;
+  /** Latched once each half of a wind pair has arrived, so a later calm 0 is kept. */
+  private seenTwa = false;
+  private seenTws = false;
+  private seenAwa = false;
+  private seenAws = false;
   private sub: Subscription | null = null;
   private tickSub: Subscription | null = null;
   private lastSampleAt = 0;
@@ -96,7 +84,7 @@ export class PolarService implements OnDestroy {
 
   constructor(
     private readonly http: HttpClient,
-    private readonly sk: SignalKService,
+    private readonly instruments: InstrumentLiveService,
   ) {
     void this.loadDefaultPolar();
     this.start();
@@ -135,8 +123,18 @@ export class PolarService implements OnDestroy {
 
   start(): void {
     this.stop();
-    this.sub = this.sk.delta$.subscribe(delta => this.handleDelta(delta));
-    this.tickSub = interval(1_000).subscribe(() => this.onTick());
+    this.sub = combineLatest([this.instruments.wind$, this.instruments.essentials$]).subscribe(
+      ([wind, essentials]) => {
+        this.wind = wind;
+        this.essentials = essentials;
+        if (wind.twaFresh) this.seenTwa = true;
+        if (wind.twsFresh) this.seenTws = true;
+        if (wind.awaFresh) this.seenAwa = true;
+        if (wind.awsFresh) this.seenAws = true;
+        this.publishLive();
+      },
+    );
+    this.tickSub = interval(SAMPLE_INTERVAL_MS).subscribe(() => this.onTick());
   }
 
   stop(): void {
@@ -148,97 +146,11 @@ export class PolarService implements OnDestroy {
 
   // ---------------------------------------------------------------------------
 
-  private handleDelta(delta: SignalKDelta): void {
-    const ctx = delta.context ?? '';
-    if (ctx.startsWith('vessels.') && this.sk.self && ctx !== this.sk.self) return;
-
-    this.partial.lastSeen = Date.now();
-
-    for (const update of delta.updates ?? []) {
-      for (const kv of update.values ?? []) {
-        this.applyPath(kv.path, kv.value);
-      }
-    }
-
-    this.publishLive();
-    this.maybeRecordSample();
-  }
-
-  private applyPath(path: string, value: unknown): void {
-    const normalized = path.startsWith('self.') ? path.slice(5) : path;
-    switch (normalized) {
-      case 'navigation.speedThroughWater':
-        this.acceptSpeedThroughWater(value);
-        break;
-      case 'navigation.speedOverGround':
-        if (typeof value === 'number') this.partial.sogMps = value;
-        break;
-      case 'environment.wind.speedTrue':
-        if (typeof value === 'number') this.partial.twsMps = value;
-        break;
-      case 'environment.wind.speedApparent':
-        if (typeof value === 'number' && this.partial.twsMps === undefined) this.partial.twsMps = value;
-        break;
-      case 'environment.wind.angleTrueWater':
-        if (typeof value === 'number') this.partial.twaWaterRad = value;
-        break;
-      case 'environment.wind.angleTrueGround':
-        if (typeof value === 'number') this.partial.twaGroundRad = value;
-        break;
-      case 'environment.wind.angleApparent':
-        if (typeof value === 'number') this.partial.twaApparentRad = value;
-        break;
-    }
-  }
-
-  /**
-   * Keep a useful log reading across a zero that arrives while SOG still shows
-   * way on. A zero that persists, or a log that has never reported a speed, is stored.
-   */
-  private acceptSpeedThroughWater(value: unknown): void {
-    if (typeof value !== 'number' || !Number.isFinite(value)) return;
-    const now = Date.now();
-    if (isInterspersedStwZero(value, {
-      previousMps: this.partial.stwMps,
-      previousAtMs: this.lastGoodStwAt,
-      sogMps: this.partial.sogMps,
-    }, now)) {
-      return;
-    }
-    this.partial.stwMps = value;
-    if (Math.abs(value) >= STW_MIN_USEFUL_MPS) {
-      this.lastGoodStwAt = now;
-    }
-  }
-
-  /**
-   * Prefer STW for polar % (matches water-referenced polars). Use SOG when STW is
-   * missing or effectively zero — common when no paddlewheel/log is installed.
-   */
-  private resolveBoatSpeed(): { knots: number | null; source: PolarBoatSpeedSource | null } {
-    const stw = this.partial.stwMps;
-    const sog = this.partial.sogMps;
-    if (stw !== undefined && Number.isFinite(stw) && Math.abs(stw) >= STW_MIN_USEFUL_MPS) {
-      return { knots: stw * MPS_TO_KNOTS, source: 'stw' };
-    }
-    if (sog !== undefined && Number.isFinite(sog)) {
-      return { knots: sog * MPS_TO_KNOTS, source: 'sog' };
-    }
-    if (stw !== undefined && Number.isFinite(stw)) {
-      return { knots: stw * MPS_TO_KNOTS, source: 'stw' };
-    }
-    return { knots: null, source: null };
-  }
-
   private publishLive(): void {
-    const boat = this.resolveBoatSpeed();
-    const stwKnots = boat.knots;
-    const twsKnots = this.toKnots(this.partial.twsMps);
-    const twaRad =
-      this.partial.twaWaterRad ??
-      this.partial.twaGroundRad ??
-      this.partial.twaApparentRad;
-    const twaDeg = twaRad !== undefined ? Math.abs(twaRad * RAD_TO_DEG) : null;
+    const windReading = this.smoothedWind();
+    const stwKnots = this.essentials.speedKn;
+    const twsKnots = windReading.twsKnots;
+    const twaDeg = windReading.twaDeg;
 
     let targetKnots: number | null = null;
     let instantPolarPct: number | null = null;
@@ -250,12 +162,13 @@ export class PolarService implements OnDestroy {
       }
     }
 
-    const lastUpdate = this.partial.lastSeen || null;
-    const stale = !lastUpdate || (Date.now() - lastUpdate > STALE_AFTER_MS);
+    const stale = this.essentials.stale;
+    const previous = this.liveSubject.value;
+    const lastUpdate = stale ? previous.lastUpdate : Date.now();
 
     this.liveSubject.next({
       stwKnots,
-      boatSpeedSource: boat.source,
+      boatSpeedSource: this.essentials.speedSource,
       twsKnots,
       twaDeg,
       targetKnots,
@@ -263,6 +176,27 @@ export class PolarService implements OnDestroy {
       lastUpdate,
       stale,
     });
+  }
+
+  /**
+   * True wind arrives as a compass direction. Subtract the heading and fold
+   * it to an angle off the bow. Apparent wind is already boat-relative.
+   * Polar curves use that absolute angle, so port and starboard share one side.
+   */
+  private smoothedWind(): { twsKnots: number | null; twaDeg: number | null } {
+    if (this.seenTwa && this.seenTws) {
+      return {
+        twsKnots: this.wind.tws,
+        twaDeg: absoluteOffBow(this.wind.twa, this.wind.heading),
+      };
+    }
+    if (this.seenAwa && this.seenAws) {
+      return {
+        twsKnots: this.wind.aws,
+        twaDeg: absoluteOffBow(this.wind.awa, 0),
+      };
+    }
+    return { twsKnots: null, twaDeg: null };
   }
 
   private maybeRecordSample(): void {
@@ -300,10 +234,12 @@ export class PolarService implements OnDestroy {
 
   private onTick(): void {
     const live = this.liveSubject.value;
-    const stale = !live.lastUpdate || (Date.now() - live.lastUpdate > STALE_AFTER_MS);
+    const quiet = !live.lastUpdate || (Date.now() - live.lastUpdate > STALE_AFTER_MS);
+    const stale = this.essentials.stale || quiet;
     if (stale !== live.stale) {
       this.liveSubject.next({ ...live, stale });
     }
+    this.maybeRecordSample();
     const before = this.samples.length;
     this.pruneSamples(Date.now());
     if (this.samples.length !== before) {
@@ -354,8 +290,10 @@ export class PolarService implements OnDestroy {
     };
   }
 
-  private toKnots(mps: number | undefined): number | null {
-    if (mps === undefined || !Number.isFinite(mps)) return null;
-    return mps * MPS_TO_KNOTS;
-  }
+}
+
+/** Smallest angle between a wind direction and the bow, in 0–180°. */
+function absoluteOffBow(directionDeg: number, headingDeg: number): number {
+  const relative = ((directionDeg - headingDeg) % 360 + 360) % 360;
+  return relative > 180 ? 360 - relative : relative;
 }
