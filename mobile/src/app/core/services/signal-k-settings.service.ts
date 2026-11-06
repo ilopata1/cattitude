@@ -3,7 +3,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 
 const STORAGE_KEY = 'cattitude.signalk.url';
 /** Used when no URL has been saved yet. */
-export const DEFAULT_SIGNALK_URL = 'https://sailsupernova.com';
+export const DEFAULT_SIGNALK_URL = 'https://signalk.sailsupernova.com';
 
 @Injectable({ providedIn: 'root' })
 export class SignalKSettingsService {
