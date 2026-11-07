@@ -1,0 +1,105 @@
+ion-content {
+  --background: var(--cattitude-sand);
+  --color: var(--cattitude-text-dark);
+}
+
+.levels {
+  padding: var(--cattitude-space-md);
+}
+
+.levels-group {
+  margin-bottom: var(--cattitude-space-md);
+}
+
+.levels-heading {
+  margin: 0 0 var(--cattitude-space-xs);
+  font-size: var(--cattitude-text-sm);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cattitude-text-light);
+}
+
+.level-card {
+  background: var(--cattitude-surface);
+  border-radius: var(--cattitude-radius-md);
+  box-shadow: var(--cattitude-shadow-md);
+  padding: var(--cattitude-space-md);
+  margin-bottom: var(--cattitude-space-sm);
+}
+
+.level-title,
+.levels-connect h2 {
+  margin: 0;
+  font-family: var(--cattitude-font-display);
+  font-size: 1.25rem;
+  font-weight: 650;
+  color: var(--cattitude-text-dark);
+}
+
+.level-track {
+  height: 14px;
+  margin-top: var(--cattitude-space-sm);
+  border-radius: 999px;
+  background: var(--cattitude-fill-muted);
+  overflow: hidden;
+}
+
+.level-fill {
+  height: 100%;
+  border-radius: inherit;
+  width: 0;
+}
+
+.level-fill.fuel {
+  background: var(--cattitude-amber);
+}
+
+.level-fill.freshWater {
+  background: var(--cattitude-teal-dark);
+}
+
+.level-fill.blackWater {
+  background: var(--cattitude-text-mid);
+}
+
+.level-fill.battery {
+  background: var(--cattitude-text-accent);
+}
+
+.level-face {
+  margin: var(--cattitude-space-xs) 0 0;
+  font-size: 1.05rem;
+  font-weight: 650;
+  color: var(--cattitude-text-dark);
+}
+
+.level-metrics {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 16px;
+  margin: var(--cattitude-space-sm) 0 0;
+}
+
+.level-metrics dt {
+  margin: 0;
+  color: var(--cattitude-text-light);
+  font-size: var(--cattitude-text-sm);
+}
+
+.level-metrics dd {
+  margin: 0;
+  text-align: right;
+  font-weight: 650;
+  color: var(--cattitude-text-dark);
+}
+
+.levels-empty {
+  margin: var(--cattitude-space-lg) 0;
+  color: var(--cattitude-text-light);
+}
+
+.levels-connect p {
+  margin: var(--cattitude-space-xs) 0 var(--cattitude-space-md);
+  color: var(--cattitude-text-light);
+}

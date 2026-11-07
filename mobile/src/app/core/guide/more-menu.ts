@@ -7,7 +7,7 @@ export const SAILING_VESSEL_TYPES = [
 ] as const;
 
 export interface MoreRow {
-  id: 'ask' | 'sail' | 'polar' | 'logbook' | 'anchorage' | 'settings';
+  id: 'ask' | 'sail' | 'polar' | 'levels' | 'logbook' | 'anchorage' | 'settings';
   label: string;
   subtitle: string;
   icon: string;
@@ -49,6 +49,13 @@ export function moreMenu(vesselType: string | null | undefined): MoreRow[] {
     });
   }
   rows.push(
+    {
+      id: 'levels',
+      label: 'Levels',
+      subtitle: 'Tanks and batteries',
+      icon: 'water-outline',
+      route: ['levels'],
+    },
     {
       id: 'logbook',
       label: 'Logbook',

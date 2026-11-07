@@ -25,10 +25,16 @@ export interface SignalKDelta {
   updates: SignalKUpdate[];
 }
 
+export interface SignalKMeta {
+  path: string;
+  value?: unknown;
+}
+
 export interface SignalKUpdate {
   source?: { label?: string; type?: string; };
   timestamp?: string;
   values: SignalKValue[];
+  meta?: SignalKMeta[];
 }
 
 export interface SignalKValue {

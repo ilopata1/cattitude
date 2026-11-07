@@ -101,7 +101,7 @@
             *ngIf="item.kind === 'widget' && item.id !== 'widget:rules' && (liveConfigured() || editing)"
             type="button"
             class="dash-widget"
-            [class.stale]="liveStale()"
+            [class.stale]="widgetStale(item)"
             (click)="open(item)"
           >
             <span class="widget-kicker"><app-ui-icon [icon]="item.icon" fallback="ellipse-outline"></app-ui-icon> {{ item.label }}</span>
@@ -117,7 +117,7 @@
                 <span class="polar-pct">{{ row.pct }}</span>
               </span>
             </span>
-            <span class="widget-open">{{ item.id === 'widget:polar' ? 'Open Polar' : 'Open Sail' }} <ion-icon name="chevron-forward" aria-hidden="true"></ion-icon></span>
+            <span class="widget-open">{{ widgetLink(item.id) }} <ion-icon name="chevron-forward" aria-hidden="true"></ion-icon></span>
             </ng-container>
           </button>
 

@@ -1,8 +1,10 @@
+import { emptyLevels, ingestLevel } from '../levels/levels';
 import {
   buildDashboardCatalog,
   DashboardCatalogInput,
   defaultTileIds,
   layoutIds,
+  levelDashboardItems,
   visibleItems,
 } from './dashboard';
 
@@ -103,6 +105,31 @@ export function dashboardFailures(): string[] {
     defaultTileIds('guest', withoutOverview, false).join(',') ===
       'learn,do:safety-brief,do:gh,know:heads,more:ask',
     'guest default drops a missing overview tile',
+  );
+
+  const levels = emptyLevels();
+  ingestLevel(levels, 'tanks.fuel.0.currentLevel', 0.5);
+  ingestLevel(levels, 'electrical.batteries.0.voltage', 27);
+  const levelItems = levelDashboardItems(levels);
+  const withLevels = [...sailing, ...levelItems];
+  expect(
+    levelItems.map((item) => item.id).join(',') === 'widget:level:fuel:0,widget:level:battery:0',
+    'a seen tank and battery become home tiles',
+  );
+  expect(levelItems.every((item) => item.segments.join('/') === 'more/levels' && item.span === 1), 'level tiles open Levels');
+  expect(
+    defaultTileIds('crew', withLevels, true).join(',') ===
+      'widget:aws,widget:tws,widget:sog,widget:awa,widget:heading,widget:cog,widget:polar,know:engines,know:electrical,more:sail,more:anchorage,fix,more:ask',
+    'level tiles stay off the crew default',
+  );
+  expect(
+    defaultTileIds('guest', withLevels, true).join(',') ===
+      'learn,do:safety-brief,do:gh,know:overview,know:heads,more:ask',
+    'level tiles stay off the guest default',
+  );
+  expect(
+    visibleItems(withLevels, 'guest').some((item) => item.id === 'widget:level:fuel:0'),
+    'a guest can add a tank tile',
   );
 
   return failures;

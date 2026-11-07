@@ -1,0 +1,61 @@
+<app-header title="Levels" [showBack]="true" backTo="more"></app-header>
+
+<ion-content [fullscreen]="true" class="page-content">
+  <div class="scroll-area levels">
+    <section *ngIf="!configured()" class="level-card levels-connect">
+      <h2>Connect to Signal K</h2>
+      <p>Set the Signal K server in Settings. Tank levels, capacity, and battery readings come from that stream.</p>
+      <ion-button [routerLink]="routes.tabs('more', 'settings')" expand="block">Open Settings</ion-button>
+    </section>
+
+    <ng-container *ngIf="configured()">
+      <p class="levels-empty" *ngIf="!groups().length">{{ emptyMessage() }}</p>
+
+      <section class="levels-group" *ngFor="let group of groups(); trackBy: trackGroup">
+        <h2 class="levels-heading">{{ group.label }}</h2>
+
+        <article class="level-card" *ngFor="let tank of group.tanks; trackBy: trackTank">
+          <h3 class="level-title">{{ tank.title }}</h3>
+          <div
+            class="level-track"
+            [attr.role]="tank.fill == null ? null : 'meter'"
+            [attr.aria-label]="tank.title"
+            [attr.aria-valuenow]="tank.fill"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            [attr.aria-valuetext]="tank.face"
+          >
+            <div class="level-fill" [ngClass]="tank.kind" [style.width.%]="tank.fill ?? 0"></div>
+          </div>
+          <p class="level-face">{{ tank.face }}</p>
+        </article>
+
+        <article class="level-card" *ngFor="let battery of group.batteries; trackBy: trackBattery">
+          <h3 class="level-title">{{ battery.title }}</h3>
+          <div
+            *ngIf="battery.chargeFill != null"
+            class="level-track"
+            role="meter"
+            aria-label="Charge"
+            [attr.aria-valuenow]="battery.chargeFill"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            [attr.aria-valuetext]="battery.charge"
+          >
+            <div class="level-fill battery" [style.width.%]="battery.chargeFill"></div>
+          </div>
+          <dl class="level-metrics">
+            <dt>Charge</dt>
+            <dd>{{ battery.charge }}</dd>
+            <dt>Voltage</dt>
+            <dd>{{ battery.voltage }}</dd>
+            <dt>Current</dt>
+            <dd>{{ battery.current }}</dd>
+            <dt>Temperature</dt>
+            <dd>{{ battery.temperature }}</dd>
+          </dl>
+        </article>
+      </section>
+    </ng-container>
+  </div>
+</ion-content>

@@ -6,9 +6,11 @@ import {
   DashboardItem,
   buildDashboardCatalog,
   layoutIds,
+  levelDashboardItems,
   resolveDashboard,
   visibleItems,
 } from '../../core/guide/dashboard';
+import { levelWidgetValue } from '../../core/levels/levels';
 import { resolveLearnPath } from '../../core/guide/learn-path';
 import { EMPTY_SAIL_ESSENTIALS, EMPTY_WIND_STEER } from '../../core/models/instrument-map.model';
 import { PolarWindowAverages, PolarWindowMinutes, PolarWindowSet } from '../../core/models/polar.model';
@@ -16,6 +18,7 @@ import { AlarmNotice, AlarmBannerService } from '../../core/services/alarm-banne
 import { ContentService } from '../../core/services/content.service';
 import { DashboardLayoutService } from '../../core/services/dashboard-layout.service';
 import { InstrumentLiveService } from '../../core/services/instrument-live.service';
+import { LevelsService } from '../../core/services/levels.service';
 import { PolarService } from '../../core/services/polar.service';
 import { ProgressService } from '../../core/services/progress.service';
 import { ReaderViewService } from '../../core/services/reader-view.service';
@@ -53,6 +56,7 @@ export class HomePage {
 
   private readonly destroyRef = inject(DestroyRef);
   private readonly live = inject(InstrumentLiveService);
+  private readonly levels = inject(LevelsService);
   private readonly polar = inject(PolarService);
   private readonly layouts = inject(DashboardLayoutService);
   private readonly routes = inject(VesselRouteService);
@@ -259,6 +263,10 @@ export class HomePage {
       void this.routes.navigateTabs('more', 'polar');
       return;
     }
+    if (item.id.startsWith('widget:level:')) {
+      void this.routes.navigateTabs('more', 'levels');
+      return;
+    }
     if (item.kind === 'widget' && item.id !== 'widget:rules') {
       this.openLive();
       return;
@@ -267,6 +275,10 @@ export class HomePage {
   }
 
   reading(id: string): string | null {
+    const level = levelWidgetValue(this.levels.current, id);
+    if (level != null) {
+      return level;
+    }
     const wind = this.wind();
     switch (id) {
       case 'widget:depth':
@@ -344,6 +356,19 @@ export class HomePage {
     return this.essentials().stale;
   }
 
+  widgetStale(item: DashboardItem): boolean {
+    if (item.id.startsWith('widget:level:') || item.id === 'widget:rules') {
+      return false;
+    }
+    return item.kind === 'widget' && this.liveStale();
+  }
+
+  widgetLink(id: string): string {
+    if (id === 'widget:polar') return 'Open Polar';
+    if (id.startsWith('widget:level:')) return 'Open Levels';
+    return 'Open Sail';
+  }
+
   private openLive(): void {
     if (this.signalKOn()) {
       void this.routes.navigateTabs('more', 'sail');
@@ -410,28 +435,31 @@ export class HomePage {
       ui.systemOrder,
       Object.keys(this.content.bootstrap.checklists),
     );
-    return buildDashboardCatalog({
-      vesselType: this.content.bootstrap.branding.vesselType,
-      systems: this.content.getSystemsOrdered().map((system) => ({
-        id: system.id,
-        title: system.title,
-        icon: system.icon,
-        subtitle: system.subtitle,
-        sections: system.sections,
-      })),
-      doMenu: ui.doMenu.map((section) => ({
-        items: section.items.map((item) => ({
-          key: item.key,
-          title: item.title,
-          subtitle: item.subtitle,
-          icon: item.icon,
-          progressType: item.progressType,
-          crewOnly: this.content.bootstrap.checklists[item.key]?.audience === 'crew',
+    return [
+      ...buildDashboardCatalog({
+        vesselType: this.content.bootstrap.branding.vesselType,
+        systems: this.content.getSystemsOrdered().map((system) => ({
+          id: system.id,
+          title: system.title,
+          icon: system.icon,
+          subtitle: system.subtitle,
+          sections: system.sections,
         })),
-      })),
-      learnAvailable: learn.length > 0,
-      rulesAvailable: this.ruleSections().length > 0,
-    });
+        doMenu: ui.doMenu.map((section) => ({
+          items: section.items.map((item) => ({
+            key: item.key,
+            title: item.title,
+            subtitle: item.subtitle,
+            icon: item.icon,
+            progressType: item.progressType,
+            crewOnly: this.content.bootstrap.checklists[item.key]?.audience === 'crew',
+          })),
+        })),
+        learnAvailable: learn.length > 0,
+        rulesAvailable: this.ruleSections().length > 0,
+      }),
+      ...levelDashboardItems(this.levels.current),
+    ];
   }
 }
 

@@ -44,7 +44,7 @@ export class MorePage {
   }
 
   liveStatus(row: MoreRow): string {
-    if (row.id !== 'sail' && row.id !== 'polar' && row.id !== 'anchorage' && row.id !== 'logbook') {
+    if (row.id !== 'sail' && row.id !== 'polar' && row.id !== 'levels' && row.id !== 'anchorage' && row.id !== 'logbook') {
       return '';
     }
     if (!this.configured) {

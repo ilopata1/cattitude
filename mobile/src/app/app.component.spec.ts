@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { AppComponent } from './app.component';
 import { AppUpdateService } from './core/services/app-update.service';
+import { LevelsService } from './core/services/levels.service';
 import { NotificationBridgeService } from './core/services/notification-bridge.service';
 import { LogbookTriggerService } from './core/services/logbook-trigger.service';
 import { SailWatchService } from './core/services/sail-watch.service';
@@ -15,6 +16,7 @@ describe('AppComponent', () => {
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         { provide: NotificationBridgeService, useValue: { start: () => undefined } },
+        { provide: LevelsService, useValue: {} },
         { provide: SailWatchService, useValue: { ensureRunning: () => undefined } },
         { provide: LogbookTriggerService, useValue: { ensureRunning: () => undefined } },
         { provide: AppUpdateService, useValue: { start: () => undefined } },

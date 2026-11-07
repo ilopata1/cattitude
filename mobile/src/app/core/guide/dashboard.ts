@@ -3,6 +3,18 @@
  * Layouts store catalog ids. This module has no Angular imports.
  */
 
+import {
+  BatteryLevel,
+  LevelsState,
+  TankKind,
+  TankLevel,
+  batteriesInOrder,
+  batteryTitle,
+  levelWidgetId,
+  tankKindLabel,
+  tankTitle,
+  tanksInOrder,
+} from '../levels/levels';
 import { classifySection } from './chapter-presentation';
 import { isSailingVessel, moreMenu } from './more-menu';
 import { groupTopics, isPowerPart, POWER_TOPIC_ID, topicIcon, topicTitle } from './power-topic';
@@ -252,6 +264,47 @@ export function visibleItems(catalog: DashboardItem[], view: ReaderView): Dashbo
   return view === 'crew' ? catalog : catalog.filter((item) => !item.crewOnly);
 }
 
+/** One home tile per tank or battery seen on the stream. None belong in a default layout. */
+export function levelDashboardItems(state: LevelsState): DashboardItem[] {
+  return [
+    ...tanksInOrder(state).map((tank) => levelTile(tank)),
+    ...batteriesInOrder(state).map((battery) => batteryTile(battery)),
+  ];
+}
+
+function levelTile(tank: TankLevel): DashboardItem {
+  return widget(
+    levelWidgetId(tank.kind, tank.id),
+    tankTitle(tank),
+    tankKindLabel(tank.kind),
+    tankIcon(tank.kind),
+    1,
+    ['more', 'levels'],
+  );
+}
+
+function batteryTile(battery: BatteryLevel): DashboardItem {
+  return widget(
+    levelWidgetId('battery', battery.id),
+    batteryTitle(battery),
+    'Voltage, current, and charge',
+    'battery-half-outline',
+    1,
+    ['more', 'levels'],
+  );
+}
+
+function tankIcon(kind: TankKind): string {
+  switch (kind) {
+    case 'fuel':
+      return 'flame-outline';
+    case 'freshWater':
+      return 'water-outline';
+    case 'blackWater':
+      return 'flask-outline';
+  }
+}
+
 function shortcut(item: Omit<DashboardItem, 'kind' | 'span' | 'crewOnly'> & { crewOnly?: boolean }): DashboardItem {
   return {
     ...item,
@@ -261,7 +314,14 @@ function shortcut(item: Omit<DashboardItem, 'kind' | 'span' | 'crewOnly'> & { cr
   };
 }
 
-function widget(id: string, label: string, subtitle: string, icon: string, span: 1 | 2): DashboardItem {
+function widget(
+  id: string,
+  label: string,
+  subtitle: string,
+  icon: string,
+  span: 1 | 2,
+  segments?: string[],
+): DashboardItem {
   return {
     id,
     kind: 'widget',
@@ -269,7 +329,7 @@ function widget(id: string, label: string, subtitle: string, icon: string, span:
     label,
     subtitle,
     icon,
-    segments: id === 'widget:rules' ? ['home', 'rules'] : ['more', 'sail'],
+    segments: segments ?? (id === 'widget:rules' ? ['home', 'rules'] : ['more', 'sail']),
     crewOnly: false,
     span,
   };
