@@ -120,7 +120,11 @@ export function levelGroups(state: LevelsState): LevelGroupView[] {
 }
 
 export function tanksInOrder(state: LevelsState): TankLevel[] {
-  return TANK_KINDS.flatMap((kind) => tanksInKind(state, kind));
+  const tanks: TankLevel[] = [];
+  for (const kind of TANK_KINDS) {
+    tanks.push(...tanksInKind(state, kind));
+  }
+  return tanks;
 }
 
 export function batteriesInOrder(state: LevelsState): BatteryLevel[] {
