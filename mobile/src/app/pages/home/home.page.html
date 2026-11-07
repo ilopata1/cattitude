@@ -144,9 +144,9 @@
       </ion-toolbar>
     </ion-header>
     <ion-content class="add-content">
-      <section class="add-group" *ngFor="let group of addGroups()">
+      <section class="add-group" *ngFor="let group of addGroups(); trackBy: trackGroup">
         <h2 class="add-heading">{{ group.label }}</h2>
-        <ng-container *ngFor="let topic of group.topics">
+        <ng-container *ngFor="let topic of group.topics; trackBy: trackTile">
           <button
             type="button"
             class="add-row"
@@ -162,7 +162,7 @@
           <button
             type="button"
             class="add-row add-row-child"
-            *ngFor="let child of children(topic)"
+            *ngFor="let child of children(topic); trackBy: trackTile"
             [disabled]="placed(child)"
             (click)="add(child)"
           >

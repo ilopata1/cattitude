@@ -141,6 +141,10 @@ export class HomePage {
     return item.id;
   }
 
+  trackGroup(_index: number, group: { label: string }): string {
+    return group.label;
+  }
+
   add(item: DashboardItem): void {
     if (this.placed(item)) {
       return;
