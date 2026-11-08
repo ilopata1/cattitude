@@ -55,6 +55,19 @@
             Address of this boat's live-data server. Depth, speed, and wind on
             Instruments, Sail, Polar, Anchorage, and the logbook come from this connection.
           </p>
+          <ion-label class="settings-label">Access token</ion-label>
+          <ion-input
+            [formControl]="tokenControl"
+            type="password"
+            placeholder="Leave blank when the server does not ask for one"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="none"
+            class="settings-input"
+          ></ion-input>
+          <p class="settings-hint">
+            A read/write token from the Signal K admin, used so this app can write the logbook.
+          </p>
           <p class="field-error" *ngIf="urlError && (urlControl.dirty || urlControl.touched || !urlControl.value)">
             {{ urlError }}
           </p>

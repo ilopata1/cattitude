@@ -13,18 +13,20 @@ import {
 } from '../logbook/logbook-math';
 import { PropulsionState } from '../models/logbook.model';
 import { CurrentSailService } from './current-sail.service';
+import { LogbookRemoteService } from './logbook-remote.service';
 import { LogbookSamplerService } from './logbook-sampler.service';
 import { LogbookService } from './logbook.service';
 
 /**
- * Writes log entries while the app is open: on the clock, after the sails
- * settle, and after the engine or anchor state holds steady.
+ * While the boat recorder is running it writes the log. This service
+ * only writes on the device when that recorder cannot be reached.
  */
 @Injectable({ providedIn: 'root' })
 export class LogbookTriggerService implements OnDestroy {
   private readonly logbook = inject(LogbookService);
   private readonly sampler = inject(LogbookSamplerService);
   private readonly sails = inject(CurrentSailService);
+  private readonly remote = inject(LogbookRemoteService);
 
   private started = false;
   private busy = false;
@@ -61,6 +63,11 @@ export class LogbookTriggerService implements OnDestroy {
     this.busy = true;
     try {
       await this.logbook.ensureReady();
+      await this.remote.refresh();
+      if (this.remote.recording()) {
+        await this.logbook.publishContext();
+        return;
+      }
       const reading = this.sampler.snapshot;
       if (!readingUsable(reading)) return;
       const now = Date.now();

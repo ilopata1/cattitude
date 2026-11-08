@@ -16,7 +16,9 @@
         <span *ngIf="liveDtg()"> · {{ liveDtg() }}</span>
       </p>
       <p class="log-meta">Next interval {{ nextLog() }} · every {{ settings.intervalHours }} h</p>
+      <p class="log-meta" *ngIf="boat.recording()">Recording on the boat, including while this screen is closed.</p>
       <p class="log-warn" *ngIf="sync.error() as syncError">{{ syncError }}</p>
+      <p class="log-warn" *ngIf="boat.error() as boatError">{{ boatError }}</p>
       <ion-button expand="block" (click)="logNow()">Log now</ion-button>
     </section>
 

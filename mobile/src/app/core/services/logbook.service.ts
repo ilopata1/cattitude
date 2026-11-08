@@ -25,6 +25,7 @@ import {
   DEFAULT_LOGBOOK_SETTINGS,
 } from '../models/logbook.model';
 import { CurrentSailService } from './current-sail.service';
+import { LogbookRemoteService } from './logbook-remote.service';
 import { LogbookSamplerService } from './logbook-sampler.service';
 import { LogbookStoreService } from './logbook-store.service';
 import { LogbookSyncService } from './logbook-sync.service';
@@ -52,6 +53,7 @@ export class LogbookService {
   private readonly store = inject(LogbookStoreService);
   private readonly sampler = inject(LogbookSamplerService);
   private readonly sync = inject(LogbookSyncService);
+  private readonly remote = inject(LogbookRemoteService);
   private readonly sails = inject(CurrentSailService);
   private readonly sailPlans = inject(SailPlanService);
   private readonly polar = inject(PolarService);
@@ -74,7 +76,7 @@ export class LogbookService {
   }
 
   record(trigger: LogTrigger, options: LogRecordOptions = {}): Promise<LogEntry | null> {
-    const run = this.tail.then(() => this.recordNow(trigger, options));
+    const run = this.tail.then(() => this.recordNowOrRemote(trigger, options));
     this.tail = run.then(() => undefined, () => undefined);
     return run;
   }
@@ -102,6 +104,19 @@ export class LogbookService {
     }
     if (corrections.length === current.corrections.length) return;
     next.corrections = corrections;
+    if (this.remote.recording()) {
+      const saved = await this.remote.correct(id, {
+        remarks: next.remarks,
+        seaState: next.seaState,
+        cloudOktas: next.cloudOktas,
+        visibilityNm: next.visibilityNm,
+        watch: next.watch,
+      });
+      if (saved) {
+        await this.persist(saved);
+        return;
+      }
+    }
     await this.persist(next);
   }
 
@@ -113,6 +128,11 @@ export class LogbookService {
     await this.store.markPassageDirty(true);
     this.passage$.next(next);
     this.sync.schedule();
+    await this.publishContext();
+    if (this.remote.recording()) {
+      await this.absorbBoat();
+      return;
+    }
     if (previous && previous.watch.trim() !== next.watch.trim() && next.departedAt) {
       await this.record('watch-change');
     }
@@ -125,6 +145,24 @@ export class LogbookService {
     await this.store.saveSettings(next);
     const normalized = await this.store.settings();
     this.settings$.next(normalized);
+    await this.publishContext();
+  }
+
+  /** Sail set, passage, and interval, for the recorder on the boat. */
+  async publishContext(): Promise<void> {
+    const selection = this.sails.selection();
+    const average = this.polar.windows[15];
+    const advice = this.sailPlans.advise(average.twaDeg, average.twsKnots, average.polarPct);
+    await this.remote.publish({
+      settings: this.settings$.value,
+      passage: this.passage$.value,
+      sails: {
+        main: selection.main,
+        headsail: selection.headsail,
+        recommended: advice && !advice.empty ? advice.primary : null,
+      },
+      recommended: advice && !advice.empty ? advice.primary : null,
+    });
   }
 
   private async load(): Promise<void> {
@@ -133,6 +171,62 @@ export class LogbookService {
     const pulled = await this.sync.pull();
     this.entries$.next(pulled.entries);
     this.passage$.next(pulled.passage);
+    await this.remote.refresh();
+    await this.absorbBoat();
+  }
+
+  private async recordNowOrRemote(
+    trigger: LogTrigger,
+    options: LogRecordOptions,
+  ): Promise<LogEntry | null> {
+    await this.ensureReady();
+    if (this.remote.recording()) {
+      const remote = await this.remote.record(trigger, options);
+      if (remote) {
+        await this.persist(remote);
+        await this.absorbBoat();
+        return remote;
+      }
+      if (remote === null) return null;
+    }
+    return this.recordNow(trigger, options);
+  }
+
+  /** Boat rows replace this device's copy, then Railway receives anything new. */
+  private async absorbBoat(): Promise<void> {
+    const boat = await this.remote.pullEntries();
+    if (!boat) return;
+    const dirty = new Set(await this.store.dirtyIds());
+    const byId = new Map(this.entries$.value.map(entry => [entry.id, entry]));
+    let changed = false;
+    for (const entry of boat) {
+      const have = byId.get(entry.id);
+      if (!have) {
+        await this.store.saveEntry(entry);
+        await this.store.markDirty(entry.id);
+        byId.set(entry.id, entry);
+        changed = true;
+      } else if (!dirty.has(entry.id) && entry.updatedAt > have.updatedAt) {
+        await this.store.saveEntry(entry);
+        await this.store.markDirty(entry.id);
+        byId.set(entry.id, entry);
+        changed = true;
+      }
+    }
+    const passage = this.remote.passage();
+    if (passage && !(await this.store.passageDirty())) {
+      await this.store.savePassage(passage);
+      this.passage$.next(passage);
+    }
+    const settings = this.remote.serverSettings();
+    if (settings) {
+      await this.store.saveSettings(settings);
+      this.settings$.next(await this.store.settings());
+    }
+    if (changed) {
+      this.entries$.next([...byId.values()].sort((a, b) => b.at.localeCompare(a.at)));
+      this.sync.schedule();
+    }
   }
 
   private async recordNow(trigger: LogTrigger, options: LogRecordOptions): Promise<LogEntry | null> {

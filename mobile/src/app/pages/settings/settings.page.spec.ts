@@ -26,7 +26,7 @@ describe('SettingsPage notifications', () => {
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         NotificationPreferenceService,
-        { provide: SignalKSettingsService, useValue: { url: '', setUrl: () => undefined } },
+        { provide: SignalKSettingsService, useValue: { url: '', token: '', setUrl: () => undefined, setToken: () => undefined } },
         {
           provide: SignalKService,
           useValue: {

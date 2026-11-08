@@ -33,6 +33,7 @@ import {
   emptyReading,
 } from '../../core/models/logbook.model';
 import { CurrentSailService } from '../../core/services/current-sail.service';
+import { LogbookRemoteService } from '../../core/services/logbook-remote.service';
 import { LogbookSamplerService } from '../../core/services/logbook-sampler.service';
 import { LogbookSyncService } from '../../core/services/logbook-sync.service';
 import { LogbookService } from '../../core/services/logbook.service';
@@ -114,6 +115,7 @@ const LOGBOOK_VIEW_KEY = 'cattitude.logbook.entryView';
 })
 export class LogbookPage implements OnInit, OnDestroy {
   private readonly logbook = inject(LogbookService);
+  readonly boat = inject(LogbookRemoteService);
   private readonly sampler = inject(LogbookSamplerService);
   private readonly sails = inject(CurrentSailService);
   private readonly alerts = inject(AlertController);

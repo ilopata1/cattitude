@@ -21,6 +21,7 @@ import { ThemePreference, ThemeService } from '../../core/services/theme.service
 export class SettingsPage implements OnInit, OnDestroy {
 
   urlControl = new FormControl('', [Validators.pattern(/^(https?|wss?):\/\/.+|[a-zA-Z0-9.-]+(:\d+)?$/)]);
+  tokenControl = new FormControl('');
 
   connectionState: SignalKConnectionState = 'disconnected';
   selfContext = '';
@@ -47,6 +48,7 @@ export class SettingsPage implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.urlControl.setValue(this.skSettings.url);
+    this.tokenControl.setValue(this.skSettings.token ?? '');
 
     this.subs.push(
       this.sk.state$.subscribe(state => {
@@ -99,6 +101,7 @@ export class SettingsPage implements OnInit, OnDestroy {
     if (this.urlControl.invalid) return;
     const url = (this.urlControl.value ?? '').trim();
     this.skSettings.setUrl(url);
+    this.skSettings.setToken(this.tokenControl.value ?? '');
     if (url) {
       this.sk.connect();
     } else {
