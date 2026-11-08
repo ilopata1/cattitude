@@ -3,6 +3,7 @@ import { emptyFuelMotion, enginesInOrder, ingestFuelMotion } from './fuel-motion
 import {
   CRUISE_RPM,
   RUNNING_RPM,
+  defaultFuelCurve,
   emptyFuelCurve,
   engineFuelLph,
   fuelCurveError,
@@ -24,6 +25,17 @@ export function fuelRangeFailures(): string[] {
   const near = (actual: number | null, expected: number, message: string) => {
     expect(actual != null && Math.abs(actual - expected) < 1e-6, `${message} (got ${actual})`);
   };
+
+  const defaults = defaultFuelCurve();
+  expect(
+    defaults.maxRpm === 2700
+      && defaults.maxFuelLph === 13.3
+      && defaults.cruiseFuelLph === 4.451
+      && defaults.engineCount === 2
+      && defaults.idleFuelLph == null,
+    'a device with no saved chart starts from the boat defaults',
+  );
+  expect(fuelExponent(defaults) != null, 'the default chart is a usable curve');
 
   const curve: FuelCurveSettings = {
     maxRpm: 3600,

@@ -71,6 +71,17 @@ export function emptyFuelCurve(): FuelCurveSettings {
   };
 }
 
+/** Used until this device saves its own chart. */
+export function defaultFuelCurve(): FuelCurveSettings {
+  return {
+    maxRpm: 2700,
+    maxFuelLph: 13.3,
+    cruiseFuelLph: 4.451,
+    engineCount: 2,
+    idleFuelLph: null,
+  };
+}
+
 export function normalizeFuelCurve(value: unknown): FuelCurveSettings {
   const body = value && typeof value === 'object' ? value as Record<string, unknown> : {};
   return {

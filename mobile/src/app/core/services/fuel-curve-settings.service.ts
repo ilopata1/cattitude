@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import {
   FuelCurveSettings,
-  emptyFuelCurve,
+  defaultFuelCurve,
   normalizeFuelCurve,
 } from '../fuel/fuel-range';
 
@@ -30,10 +30,19 @@ export class FuelCurveSettingsService {
   private read(): FuelCurveSettings {
     try {
       const stored = localStorage.getItem(FUEL_CURVE_STORAGE_KEY);
-      if (!stored) return emptyFuelCurve();
-      return normalizeFuelCurve(JSON.parse(stored) as unknown);
+      if (!stored) return defaultFuelCurve();
+      const saved = normalizeFuelCurve(JSON.parse(stored) as unknown);
+      return curveIsBlank(saved) ? defaultFuelCurve() : saved;
     } catch {
-      return emptyFuelCurve();
+      return defaultFuelCurve();
     }
   }
+}
+
+function curveIsBlank(curve: FuelCurveSettings): boolean {
+  return curve.maxRpm == null
+    && curve.maxFuelLph == null
+    && curve.cruiseFuelLph == null
+    && curve.engineCount == null
+    && curve.idleFuelLph == null;
 }
