@@ -430,10 +430,26 @@
   color: var(--cattitude-text-light);
 }
 
-.polar-averages {
+.polar-averages,
+.fuel-range-figures {
   display: flex;
   justify-content: space-between;
   gap: 8px;
+}
+
+.fuel-range-caption {
+  display: block;
+  font-size: var(--cattitude-text-caption);
+  color: var(--cattitude-text-light);
+}
+
+.fuel-range-value {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--cattitude-font-display);
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--cattitude-text-dark);
 }
 
 .polar-min {

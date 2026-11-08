@@ -59,6 +59,16 @@ export function dashboardFailures(): string[] {
     'crew default leads with live readings',
   );
   expect(byId.get('widget:aws')?.span === 1 && byId.get('widget:polar')?.span === 2, 'wind readings share a cell and polar uses the row');
+  expect(byId.get('widget:fuel-range')?.span === 2, 'fuel range uses a wide tile');
+  expect(byId.get('widget:fuel-range')?.segments.join('/') === 'more/levels', 'fuel range opens Levels');
+  expect(
+    !defaultTileIds('crew', sailing, true).includes('widget:fuel-range'),
+    'fuel range stays off the crew default until it is added',
+  );
+  expect(
+    visibleItems(sailing, 'guest').some((item) => item.id === 'widget:fuel-range'),
+    'a guest can add the fuel range tile',
+  );
   expect(
     defaultTileIds('crew', sailing, false).join(',') === 'know:engines,know:electrical,more:sail,more:anchorage,fix,more:ask',
     'crew default without Signal K omits live widgets',

@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, take } from 'rxjs';
 import { AlarmBannerService, AlarmNotice } from './core/services/alarm-banner.service';
+import { FuelMotionService } from './core/services/fuel-motion.service';
 import { LevelsService } from './core/services/levels.service';
 import { AppUpdateService } from './core/services/app-update.service';
 import { EmergencyService } from './core/services/emergency.service';
@@ -30,6 +31,7 @@ export class AppComponent {
 
   constructor() {
     void inject(LevelsService);
+    void inject(FuelMotionService);
     this.theme.resolved();
     this.notificationBridge.start();
     this.sailWatch.ensureRunning();

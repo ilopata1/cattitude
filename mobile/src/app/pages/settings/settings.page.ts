@@ -1,8 +1,16 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import {
+  FuelCurveFields,
+  fuelCurveError,
+  fuelCurveFromText,
+  fuelCurveIdleNote,
+  fuelCurveSummary,
+} from '../../core/fuel/fuel-range';
 import { isSailingVessel } from '../../core/guide/more-menu';
 import { ContentService } from '../../core/services/content.service';
+import { FuelCurveSettingsService } from '../../core/services/fuel-curve-settings.service';
 import {
   DeviceNotificationPermission,
   NotificationBridgeService,
@@ -28,12 +36,18 @@ export class SettingsPage implements OnInit, OnDestroy {
   lastError = '';
   alertsEnabled = true;
   devicePermission: DeviceNotificationPermission = 'prompt';
+  maxRpmControl = new FormControl('');
+  maxFuelControl = new FormControl('');
+  cruiseFuelControl = new FormControl('');
+  engineCountControl = new FormControl('');
+  idleFuelControl = new FormControl('');
 
   private subs: Subscription[] = [];
 
   constructor(
     private readonly sk: SignalKService,
     private readonly skSettings: SignalKSettingsService,
+    private readonly fuelCurve: FuelCurveSettingsService,
     private readonly content: ContentService,
     private readonly notificationPrefs: NotificationPreferenceService,
     private readonly notifications: NotificationBridgeService,
@@ -49,6 +63,7 @@ export class SettingsPage implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.urlControl.setValue(this.skSettings.url);
     this.tokenControl.setValue(this.skSettings.token ?? '');
+    this.loadFuelCurve();
 
     this.subs.push(
       this.sk.state$.subscribe(state => {
@@ -113,6 +128,10 @@ export class SettingsPage implements OnInit, OnDestroy {
     this.sk.disconnect();
   }
 
+  ionViewWillLeave(): void {
+    this.saveFuelCurve();
+  }
+
   ionViewWillEnter(): void {
     this.alertsEnabled = this.notificationPrefs.enabled();
     void this.notifications.refreshDevicePermission().then(permission => {
@@ -145,6 +164,32 @@ export class SettingsPage implements OnInit, OnDestroy {
     });
   }
 
+  fuelFields(): FuelCurveFields {
+    return {
+      maxRpm: text(this.maxRpmControl.value),
+      maxFuelLph: text(this.maxFuelControl.value),
+      cruiseFuelLph: text(this.cruiseFuelControl.value),
+      engineCount: text(this.engineCountControl.value),
+      idleFuelLph: text(this.idleFuelControl.value),
+    };
+  }
+
+  fuelSummary(): string {
+    return fuelCurveSummary(fuelCurveFromText(this.fuelFields()));
+  }
+
+  fuelError(): string {
+    return fuelCurveError(this.fuelFields());
+  }
+
+  fuelIdleNote(): string {
+    return fuelCurveIdleNote(fuelCurveFromText(this.fuelFields()));
+  }
+
+  saveFuelCurve(): void {
+    this.fuelCurve.save(fuelCurveFromText(this.fuelFields()));
+  }
+
   get devicePermissionHint(): string {
     switch (this.devicePermission) {
       case 'granted':
@@ -157,4 +202,17 @@ export class SettingsPage implements OnInit, OnDestroy {
         return 'Allow device notifications to hear alerts when the app is in the background. The browser only asks from the button below.';
     }
   }
+
+  private loadFuelCurve(): void {
+    const curve = this.fuelCurve.current;
+    this.maxRpmControl.setValue(curve.maxRpm == null ? '' : String(curve.maxRpm));
+    this.maxFuelControl.setValue(curve.maxFuelLph == null ? '' : String(curve.maxFuelLph));
+    this.cruiseFuelControl.setValue(curve.cruiseFuelLph == null ? '' : String(curve.cruiseFuelLph));
+    this.engineCountControl.setValue(curve.engineCount == null ? '' : String(curve.engineCount));
+    this.idleFuelControl.setValue(curve.idleFuelLph == null ? '' : String(curve.idleFuelLph));
+  }
+}
+
+function text(value: string | number | null | undefined): string {
+  return value == null ? '' : String(value);
 }

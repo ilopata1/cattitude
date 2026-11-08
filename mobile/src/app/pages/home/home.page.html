@@ -117,6 +117,19 @@
                 <span class="polar-pct">{{ row.pct }}</span>
               </span>
             </span>
+            <ng-container *ngIf="item.id === 'widget:fuel-range'">
+              <span class="fuel-range-figures">
+                <span>
+                  <span class="fuel-range-caption">Time</span>
+                  <span class="fuel-range-value">{{ fuelRange().hours }}</span>
+                </span>
+                <span>
+                  <span class="fuel-range-caption">Distance</span>
+                  <span class="fuel-range-value">{{ fuelRange().distance }}</span>
+                </span>
+              </span>
+              <span class="widget-detail" *ngIf="fuelRange().note">{{ fuelRange().note }}</span>
+            </ng-container>
             <span class="widget-open">{{ widgetLink(item.id) }} <ion-icon name="chevron-forward" aria-hidden="true"></ion-icon></span>
             </ng-container>
           </button>

@@ -109,6 +109,74 @@
 
     <ion-list inset="true" lines="none" class="settings-list">
       <ion-list-header>
+        <ion-label>Fuel range</ion-label>
+      </ion-list-header>
+      <ion-item>
+        <div class="settings-row">
+          <p class="settings-hint">
+            Taken from the engine performance chart, for one engine. Burn rises
+            with RPM. The app fits the curve through the max RPM figure and the
+            2,000 RPM figure. Each engine uses its own RPM. When the boat sends
+            only one RPM, that value is used for every engine.
+          </p>
+          <ion-label class="settings-label">Max engine RPM</ion-label>
+          <ion-input
+            [formControl]="maxRpmControl"
+            type="number"
+            inputmode="numeric"
+            placeholder="3600"
+            class="settings-input"
+            (ionBlur)="saveFuelCurve()"
+          ></ion-input>
+          <ion-label class="settings-label">Fuel at max RPM (L/h)</ion-label>
+          <ion-input
+            [formControl]="maxFuelControl"
+            type="number"
+            inputmode="decimal"
+            placeholder="30"
+            class="settings-input"
+            (ionBlur)="saveFuelCurve()"
+          ></ion-input>
+          <ion-label class="settings-label">Fuel at 2,000 RPM (L/h)</ion-label>
+          <ion-input
+            [formControl]="cruiseFuelControl"
+            type="number"
+            inputmode="decimal"
+            placeholder="12"
+            class="settings-input"
+            (ionBlur)="saveFuelCurve()"
+          ></ion-input>
+          <ion-label class="settings-label">Number of engines</ion-label>
+          <ion-input
+            [formControl]="engineCountControl"
+            type="number"
+            inputmode="numeric"
+            placeholder="2"
+            class="settings-input"
+            (ionBlur)="saveFuelCurve()"
+          ></ion-input>
+          <ion-label class="settings-label">Idle fuel (L/h)</ion-label>
+          <ion-input
+            [formControl]="idleFuelControl"
+            type="number"
+            inputmode="decimal"
+            placeholder="Optional"
+            class="settings-input"
+            (ionBlur)="saveFuelCurve()"
+          ></ion-input>
+          <p class="settings-hint">
+            Optional, per engine. A running engine is not estimated below this.
+            Leave it blank to follow the curve all the way down.
+          </p>
+          <p class="settings-hint" *ngIf="fuelSummary()">{{ fuelSummary() }}</p>
+          <p class="settings-hint" *ngIf="fuelIdleNote()">{{ fuelIdleNote() }}</p>
+          <p class="field-error" *ngIf="fuelError()">{{ fuelError() }}</p>
+        </div>
+      </ion-item>
+    </ion-list>
+
+    <ion-list inset="true" lines="none" class="settings-list">
+      <ion-list-header>
         <ion-label>Notifications</ion-label>
       </ion-list-header>
       <ion-item>

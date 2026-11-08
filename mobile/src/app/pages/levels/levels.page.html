@@ -9,6 +9,41 @@
     </section>
 
     <ng-container *ngIf="configured()">
+      <section class="levels-group">
+        <h2 class="levels-heading">Fuel range</h2>
+        <article class="level-card" [attr.aria-label]="rangeLabel()">
+          <h3 class="level-title">At this RPM</h3>
+          <p class="fuel-range-note" *ngIf="range().note">{{ range().note }}</p>
+          <div class="fuel-range-figures">
+            <div>
+              <p class="fuel-range-value">{{ range().hours }}</p>
+              <p class="fuel-range-caption">Time left</p>
+            </div>
+            <div>
+              <p class="fuel-range-value">{{ range().distance }}</p>
+              <p class="fuel-range-caption">Distance left</p>
+            </div>
+          </div>
+          <dl class="level-metrics">
+            <dt>Burn</dt>
+            <dd>{{ range().burn }}</dd>
+            <dt>Fuel left</dt>
+            <dd>{{ range().remaining }}</dd>
+            <dt>RPM</dt>
+            <dd>{{ range().rpm }}</dd>
+            <dt>Speed</dt>
+            <dd>{{ range().speed }}</dd>
+          </dl>
+          <ion-button
+            class="fuel-range-edit"
+            [fill]="range().status === 'needs-settings' ? 'outline' : 'clear'"
+            [routerLink]="routes.tabs('more', 'settings')"
+          >
+            {{ range().status === 'needs-settings' ? 'Set fuel curve' : 'Edit fuel curve' }}
+          </ion-button>
+        </article>
+      </section>
+
       <p class="levels-empty" *ngIf="!groups().length">{{ emptyMessage() }}</p>
 
       <section class="levels-group" *ngFor="let group of groups(); trackBy: trackGroup">

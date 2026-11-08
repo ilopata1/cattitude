@@ -103,3 +103,35 @@ ion-content {
   margin: var(--cattitude-space-xs) 0 var(--cattitude-space-md);
   color: var(--cattitude-text-light);
 }
+
+.fuel-range-note {
+  margin: var(--cattitude-space-xs) 0 0;
+  color: var(--cattitude-text-light);
+  font-size: var(--cattitude-text-sm);
+  line-height: 1.4;
+}
+
+.fuel-range-figures {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: var(--cattitude-space-sm);
+}
+
+.fuel-range-value {
+  margin: 0;
+  font-family: var(--cattitude-font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--cattitude-text-dark);
+}
+
+.fuel-range-caption {
+  margin: 2px 0 0;
+  font-size: var(--cattitude-text-sm);
+  color: var(--cattitude-text-light);
+}
+
+.fuel-range-edit {
+  margin: var(--cattitude-space-sm) 0 0;
+}

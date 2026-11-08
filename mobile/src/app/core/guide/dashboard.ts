@@ -3,6 +3,7 @@
  * Layouts store catalog ids. This module has no Angular imports.
  */
 
+import { FUEL_RANGE_WIDGET_ID } from '../fuel/fuel-range';
 import {
   BatteryLevel,
   LevelsState,
@@ -201,6 +202,7 @@ export function buildDashboardCatalog(input: DashboardCatalogInput): DashboardIt
     widget('widget:depth', 'Depth', 'Live depth', 'water-outline', 1),
     widget('widget:speed', 'Speed', 'Live speed', 'speedometer-outline', 1),
     widget('widget:wind', 'Wind', 'Live wind', 'wind-outline', 1),
+    widget(FUEL_RANGE_WIDGET_ID, 'Fuel range', 'Hours and distance at this RPM', 'flame-outline', 2, ['more', 'levels']),
   );
   if (isSailingVessel(input.vesselType)) {
     items.push(widget('widget:polar', 'Polar', '5, 10, and 15 minute average', 'trending-up-outline', 2));

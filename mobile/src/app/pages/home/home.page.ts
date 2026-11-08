@@ -10,6 +10,8 @@ import {
   resolveDashboard,
   visibleItems,
 } from '../../core/guide/dashboard';
+import { emptyFuelCurve, fuelRangeView, FuelRangeView } from '../../core/fuel/fuel-range';
+import { emptyFuelMotion } from '../../core/fuel/fuel-motion';
 import { levelWidgetValue } from '../../core/levels/levels';
 import { resolveLearnPath } from '../../core/guide/learn-path';
 import { EMPTY_SAIL_ESSENTIALS, EMPTY_WIND_STEER } from '../../core/models/instrument-map.model';
@@ -17,6 +19,8 @@ import { PolarWindowAverages, PolarWindowMinutes, PolarWindowSet } from '../../c
 import { AlarmNotice, AlarmBannerService } from '../../core/services/alarm-banner.service';
 import { ContentService } from '../../core/services/content.service';
 import { DashboardLayoutService } from '../../core/services/dashboard-layout.service';
+import { FuelCurveSettingsService } from '../../core/services/fuel-curve-settings.service';
+import { FuelMotionService } from '../../core/services/fuel-motion.service';
 import { InstrumentLiveService } from '../../core/services/instrument-live.service';
 import { LevelsService } from '../../core/services/levels.service';
 import { PolarService } from '../../core/services/polar.service';
@@ -57,6 +61,8 @@ export class HomePage {
   private readonly destroyRef = inject(DestroyRef);
   private readonly live = inject(InstrumentLiveService);
   private readonly levels = inject(LevelsService);
+  private readonly fuelCurve = inject(FuelCurveSettingsService);
+  private readonly fuelMotion = inject(FuelMotionService);
   private readonly polar = inject(PolarService);
   private readonly layouts = inject(DashboardLayoutService);
   private readonly routes = inject(VesselRouteService);
@@ -72,6 +78,9 @@ export class HomePage {
   readonly essentials = toSignal(this.live.essentials$, { initialValue: EMPTY_SAIL_ESSENTIALS });
   readonly wind = toSignal(this.live.wind$, { initialValue: EMPTY_WIND_STEER });
   readonly polarWindows = toSignal(this.polar.windows$, { initialValue: EMPTY_POLAR_WINDOWS });
+  private readonly levelsState = toSignal(this.levels.state$, { initialValue: this.levels.current });
+  private readonly curve = toSignal(this.fuelCurve.settings$, { initialValue: this.fuelCurve.current });
+  private readonly motion = toSignal(this.fuelMotion.state$, { initialValue: this.fuelMotion.current });
 
   constructor() {
     this.heroFull = !this.heroWasSeen();
@@ -267,7 +276,7 @@ export class HomePage {
       void this.routes.navigateTabs('more', 'polar');
       return;
     }
-    if (item.id.startsWith('widget:level:')) {
+    if (item.id === 'widget:fuel-range' || item.id.startsWith('widget:level:')) {
       void this.routes.navigateTabs('more', 'levels');
       return;
     }
@@ -306,6 +315,16 @@ export class HomePage {
       default:
         return null;
     }
+  }
+
+  fuelRange(): FuelRangeView {
+    const motion = this.motion() ?? emptyFuelMotion();
+    return fuelRangeView({
+      curve: this.curve() ?? emptyFuelCurve(),
+      engines: motion.engines,
+      sogKn: motion.sogKn,
+      tanks: (this.levelsState() ?? this.levels.current).tanks,
+    });
   }
 
   polarRows(): Array<{ minutes: PolarWindowMinutes; pct: string }> {
@@ -361,7 +380,7 @@ export class HomePage {
   }
 
   widgetStale(item: DashboardItem): boolean {
-    if (item.id.startsWith('widget:level:') || item.id === 'widget:rules') {
+    if (item.id.startsWith('widget:level:') || item.id === 'widget:rules' || item.id === 'widget:fuel-range') {
       return false;
     }
     return item.kind === 'widget' && this.liveStale();
@@ -369,7 +388,7 @@ export class HomePage {
 
   widgetLink(id: string): string {
     if (id === 'widget:polar') return 'Open Polar';
-    if (id.startsWith('widget:level:')) return 'Open Levels';
+    if (id === 'widget:fuel-range' || id.startsWith('widget:level:')) return 'Open Levels';
     return 'Open Sail';
   }
 
