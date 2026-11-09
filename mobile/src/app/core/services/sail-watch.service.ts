@@ -9,7 +9,8 @@ import { SailPlanService } from './sail-plan.service';
 /**
  * Compares the sails the crew entered with the 15-minute polar recommendation.
  * Polar sampling starts with this service, so it continues on every screen
- * for as long as the app process is alive.
+ * for as long as the app process is alive. The comparison waits until those
+ * samples actually span fifteen minutes.
  */
 @Injectable({ providedIn: 'root' })
 export class SailWatchService {
@@ -35,6 +36,9 @@ export class SailWatchService {
   }
 
   private evaluate(): void {
+    if (!this.polar.windowCovered(15)) {
+      return;
+    }
     const average = this.polar.windows[15];
     const advice = this.sailPlans.advise(average.twaDeg, average.twsKnots, average.polarPct);
     const recommended = advice && !advice.empty ? advice.primary : '';

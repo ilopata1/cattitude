@@ -22,11 +22,14 @@ import {
 } from '../models/polar.model';
 import { EMPTY_SAIL_ESSENTIALS, EMPTY_WIND_STEER, SailEssentialsLive, WindSteerLive } from '../models/instrument-map.model';
 import { InstrumentLiveService } from './instrument-live.service';
+import {
+  POLAR_BUFFER_MS,
+  POLAR_SAMPLE_INTERVAL_MS,
+  POLAR_STALE_AFTER_MS,
+  polarWindowCovered,
+} from './polar-window';
 
 const DEFAULT_POLAR_ASSET = 'assets/polars/outremer-55sc.pol';
-const BUFFER_MS = 15 * 60 * 1000;
-const SAMPLE_INTERVAL_MS = 1_000;
-const STALE_AFTER_MS = 15_000;
 
 const EMPTY_WINDOW: PolarWindowAverages = {
   twaDeg: null,
@@ -82,6 +85,14 @@ export class PolarService implements OnDestroy {
     return this.windowsSubject.value;
   }
 
+  /**
+   * True once samples for this window reach back across its full length
+   * and the newest sample is still fresh.
+   */
+  windowCovered(minutes: PolarWindowMinutes, now = Date.now()): boolean {
+    return polarWindowCovered(this.samples, minutes * 60 * 1000, now);
+  }
+
   constructor(
     private readonly http: HttpClient,
     private readonly instruments: InstrumentLiveService,
@@ -134,7 +145,7 @@ export class PolarService implements OnDestroy {
         this.publishLive();
       },
     );
-    this.tickSub = interval(SAMPLE_INTERVAL_MS).subscribe(() => this.onTick());
+    this.tickSub = interval(POLAR_SAMPLE_INTERVAL_MS).subscribe(() => this.onTick());
   }
 
   stop(): void {
@@ -203,7 +214,7 @@ export class PolarService implements OnDestroy {
     if (!this.table) return;
 
     const now = Date.now();
-    if (now - this.lastSampleAt < SAMPLE_INTERVAL_MS) return;
+    if (now - this.lastSampleAt < POLAR_SAMPLE_INTERVAL_MS) return;
 
     const live = this.liveSubject.value;
     if (
@@ -234,7 +245,7 @@ export class PolarService implements OnDestroy {
 
   private onTick(): void {
     const live = this.liveSubject.value;
-    const quiet = !live.lastUpdate || (Date.now() - live.lastUpdate > STALE_AFTER_MS);
+    const quiet = !live.lastUpdate || (Date.now() - live.lastUpdate > POLAR_STALE_AFTER_MS);
     const stale = this.essentials.stale || quiet;
     if (stale !== live.stale) {
       this.liveSubject.next({ ...live, stale });
@@ -249,7 +260,7 @@ export class PolarService implements OnDestroy {
   }
 
   private pruneSamples(now: number): void {
-    const cutoff = now - BUFFER_MS;
+    const cutoff = now - POLAR_BUFFER_MS;
     if (this.samples.length === 0) return;
     let start = 0;
     while (start < this.samples.length && this.samples[start].timestamp < cutoff) {
