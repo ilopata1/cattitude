@@ -119,10 +119,10 @@ export function ingestLevelDocument(state: LevelsState, document: unknown): bool
   if (!document || typeof document !== 'object') return false;
   const root = document as Record<string, unknown>;
   let changed = false;
-  changed = ingestTankDocument(state, root.tanks) || changed;
-  const electrical = root.electrical;
+  changed = ingestTankDocument(state, root['tanks']) || changed;
+  const electrical = root['electrical'];
   const batteries = electrical && typeof electrical === 'object'
-    ? (electrical as Record<string, unknown>).batteries
+    ? (electrical as Record<string, unknown>)['batteries']
     : undefined;
   changed = ingestBatteryDocument(state, batteries) || changed;
   return changed;
@@ -437,7 +437,7 @@ function ingestTankDocument(state: LevelsState, tanks: unknown): boolean {
     for (const [id, node] of Object.entries(group as Record<string, unknown>)) {
       if (DOCUMENT_SKIP.has(id) || !node || typeof node !== 'object') continue;
       const instance = node as Record<string, unknown>;
-      const name = leafMetaName(instance.currentLevel) ?? leafMetaName(instance) ?? leafMetaName(instance.capacity);
+      const name = leafMetaName(instance['currentLevel']) ?? leafMetaName(instance) ?? leafMetaName(instance['capacity']);
       if (!name) continue;
       changed = setTankDisplayName(state, kind, id, name) || changed;
     }
@@ -451,11 +451,11 @@ function ingestBatteryDocument(state: LevelsState, batteries: unknown): boolean 
   for (const [id, node] of Object.entries(batteries as Record<string, unknown>)) {
     if (DOCUMENT_SKIP.has(id) || !node || typeof node !== 'object') continue;
     const instance = node as Record<string, unknown>;
-    const capacity = instance.capacity;
+    const capacity = instance['capacity'];
     const charge = capacity && typeof capacity === 'object'
-      ? (capacity as Record<string, unknown>).stateOfCharge
+      ? (capacity as Record<string, unknown>)['stateOfCharge']
       : undefined;
-    const name = leafMetaName(instance) ?? leafMetaName(instance.voltage) ?? leafMetaName(charge);
+    const name = leafMetaName(instance) ?? leafMetaName(instance['voltage']) ?? leafMetaName(charge);
     if (!name) continue;
     changed = setBatteryDisplayName(state, id, name) || changed;
   }
