@@ -2,6 +2,7 @@ import { levelDashboardItems } from '../guide/dashboard';
 import {
   emptyLevels,
   ingestLevel,
+  ingestLevelDocument,
   ingestLevelMeta,
   levelGroups,
   levelWidgetId,
@@ -69,6 +70,8 @@ export function levelsFailures(): string[] {
   expect(levelGroups(state)[0].tanks[0].title === 'Port fuel', 'meta does not replace a path name');
   ingestLevelMeta(state, 'tanks.freshWater.2.currentLevel', { displayName: 'Galley' });
   expect(levelGroups(state)[1].tanks[0].title === 'Galley', 'meta names a tank that has no name value');
+  ingestLevelMeta(state, 'tanks.freshWater.2.currentLevel', { displayName: 'Heads' });
+  expect(levelGroups(state)[1].tanks[0].title === 'Heads', 'a later displayName replaces the previous one');
 
   ingestLevel(state, 'tanks.fuel.0.currentLevel', null);
   const cleared = levelGroups(state)[0].tanks[0];
@@ -92,6 +95,36 @@ export function levelsFailures(): string[] {
   expect(start.current === '4.2 A' && start.temperature === '28 °C', 'positive current keeps its sign and celsius is left alone');
   ingestLevel(packed, 'electrical.batteries.house.temperature', 500);
   expect(levelGroups(packed)[0].batteries[0].temperature === '28 °C', 'an impossible temperature does not wipe the last reading');
+
+  const saved = emptyLevels();
+  ingestLevel(saved, 'tanks.fuel.0.currentLevel', 0.5);
+  ingestLevel(saved, 'tanks.freshWater.2.currentLevel', 0.41);
+  ingestLevel(saved, 'electrical.batteries.1.voltage', 12.8);
+  expect(levelGroups(saved)[0].tanks[0].title === 'Fuel tank 0', 'a fresh connection falls back to the instance');
+  ingestLevelDocument(saved, {
+    tanks: {
+      fuel: {
+        '0': { currentLevel: { value: 0.5, meta: { units: 'ratio' } } },
+      },
+      freshWater: {
+        '2': {
+          currentLevel: { value: 0.41, meta: { displayName: 'Galley', units: 'ratio' } },
+          capacity: { meta: { displayName: 'Ignore capacity' } },
+        },
+      },
+    },
+    electrical: {
+      batteries: {
+        '1': { voltage: { value: 12.8, meta: { displayName: 'Start battery' } } },
+      },
+    },
+  });
+  const savedGroups = levelGroups(saved);
+  expect(savedGroups[0].tanks[0].title === 'Fuel tank 0', 'schema units are not a tank name');
+  expect(savedGroups[1].tanks[0].title === 'Galley', 'a saved currentLevel displayName is read back');
+  expect(savedGroups[2].batteries[0].title === 'Start battery', 'a saved battery displayName is read back');
+  ingestLevel(saved, 'tanks.freshWater.2.name', 'Starboard');
+  expect(levelGroups(saved)[1].tanks[0].title === 'Starboard', 'a path name still wins over the saved displayName');
 
   const tiles = levelDashboardItems(state);
   expect(tiles[0].label === 'Port fuel' && tiles[0].subtitle === 'Fuel', 'the add list uses the Signal K name and the tank type');

@@ -13,7 +13,10 @@ export type LevelKind = TankKind | 'battery';
 export interface TankLevel {
   id: string;
   kind: TankKind;
+  /** From the path's own `name` value. Wins over `displayName`. */
   name: string | null;
+  /** From Signal K metadata. The stream does not replay this after a reconnect. */
+  displayName: string | null;
   /** Remaining fraction, 0–1. */
   level: number | null;
   /** Cubic metres, as sent. */
@@ -22,7 +25,10 @@ export interface TankLevel {
 
 export interface BatteryLevel {
   id: string;
+  /** From the path's own `name` value. Wins over `displayName`. */
   name: string | null;
+  /** From Signal K metadata. The stream does not replay this after a reconnect. */
+  displayName: string | null;
   voltage: number | null;
   current: number | null;
   temperatureC: number | null;
@@ -88,20 +94,38 @@ export function ingestLevel(state: LevelsState, path: string, value: unknown): b
   return false;
 }
 
-/** Use a Signal K display name until the path's own `name` value arrives. */
+/** Remember a Signal K display name. A path `name` value still wins in the title. */
 export function ingestLevelMeta(state: LevelsState, path: string, value: unknown): boolean {
   const name = metaName(value);
   if (!name) return false;
   const key = stripVessel(path);
   const tank = key.match(/^tanks\.(fuel|freshWater|blackWater)\.([^.]+)/);
   if (tank) {
-    return setTankName(state, tank[1] as TankKind, tank[2], name, true);
+    return setTankDisplayName(state, tank[1] as TankKind, tank[2], name);
   }
   const battery = key.match(/^electrical\.batteries\.([^.]+)/);
   if (battery) {
-    return setBatteryName(state, battery[1], name, true);
+    return setBatteryDisplayName(state, battery[1], name);
   }
   return false;
+}
+
+/**
+ * Read display names out of a Signal K vessel document.
+ * `GET /signalk/v1/api/vessels/self/tanks` is one such document.
+ * Levels stay with the stream; this only fills names.
+ */
+export function ingestLevelDocument(state: LevelsState, document: unknown): boolean {
+  if (!document || typeof document !== 'object') return false;
+  const root = document as Record<string, unknown>;
+  let changed = false;
+  changed = ingestTankDocument(state, root.tanks) || changed;
+  const electrical = root.electrical;
+  const batteries = electrical && typeof electrical === 'object'
+    ? (electrical as Record<string, unknown>).batteries
+    : undefined;
+  changed = ingestBatteryDocument(state, batteries) || changed;
+  return changed;
 }
 
 export function levelGroups(state: LevelsState): LevelGroupView[] {
@@ -143,11 +167,11 @@ export function tankKindLabel(kind: TankKind): string {
 }
 
 export function tankTitle(tank: TankLevel): string {
-  return tank.name ?? `${tankKindTitle(tank.kind)} ${tank.id}`;
+  return tank.name ?? tank.displayName ?? `${tankKindTitle(tank.kind)} ${tank.id}`;
 }
 
 export function batteryTitle(battery: BatteryLevel): string {
-  return battery.name ?? (battery.id === '0' ? 'House battery' : `Battery ${battery.id}`);
+  return battery.name ?? battery.displayName ?? (battery.id === '0' ? 'House battery' : `Battery ${battery.id}`);
 }
 
 export function levelWidgetId(kind: LevelKind, id: string): string {
@@ -253,12 +277,12 @@ function ingestTank(
     let changed = false;
     if ('currentLevel' in body) changed = setLevel(state, kind, id, body.currentLevel) || changed;
     if ('capacity' in body) changed = setCapacity(state, kind, id, body.capacity) || changed;
-    if ('name' in body) changed = setTankName(state, kind, id, body.name, false) || changed;
+    if ('name' in body) changed = setTankName(state, kind, id, body.name) || changed;
     return changed;
   }
   if (field === 'currentLevel') return setLevel(state, kind, id, value);
   if (field === 'capacity') return setCapacity(state, kind, id, value);
-  return setTankName(state, kind, id, value, false);
+  return setTankName(state, kind, id, value);
 }
 
 function ingestBattery(
@@ -281,14 +305,14 @@ function ingestBattery(
     if ('voltage' in body) changed = setVoltage(state, id, body.voltage) || changed;
     if ('current' in body) changed = setCurrent(state, id, body.current) || changed;
     if ('temperature' in body) changed = setTemperature(state, id, body.temperature) || changed;
-    if ('name' in body) changed = setBatteryName(state, id, body.name, false) || changed;
+    if ('name' in body) changed = setBatteryName(state, id, body.name) || changed;
     if ('capacity' in body) changed = setChargeFromCapacity(state, id, body.capacity) || changed;
     return changed;
   }
   if (field === 'voltage') return setVoltage(state, id, value);
   if (field === 'current') return setCurrent(state, id, value);
   if (field === 'temperature') return setTemperature(state, id, value);
-  if (field === 'name') return setBatteryName(state, id, value, false);
+  if (field === 'name') return setBatteryName(state, id, value);
   return setChargeFromCapacity(state, id, value);
 }
 
@@ -306,20 +330,14 @@ function setCapacity(state: LevelsState, kind: TankKind, id: string, value: unkn
   return updateTank(state, kind, id, (tank) => assign(tank, 'capacityM3', value), true);
 }
 
-function setTankName(
-  state: LevelsState,
-  kind: TankKind,
-  id: string,
-  value: unknown,
-  keepExisting: boolean,
-): boolean {
+function setTankName(state: LevelsState, kind: TankKind, id: string, value: unknown): boolean {
   const name = readName(value);
   if (name === undefined) return false;
-  if (keepExisting && !name) return false;
-  return updateTank(state, kind, id, (tank) => {
-    if (keepExisting && tank.name) return false;
-    return assign(tank, 'name', name);
-  }, name != null);
+  return updateTank(state, kind, id, (tank) => assign(tank, 'name', name), name != null);
+}
+
+function setTankDisplayName(state: LevelsState, kind: TankKind, id: string, name: string): boolean {
+  return updateTank(state, kind, id, (tank) => assign(tank, 'displayName', name), true);
 }
 
 function setVoltage(state: LevelsState, id: string, value: unknown): boolean {
@@ -356,14 +374,14 @@ function setChargeFromCapacity(state: LevelsState, id: string, value: unknown): 
   return setCharge(state, id, body.stateOfCharge);
 }
 
-function setBatteryName(state: LevelsState, id: string, value: unknown, keepExisting: boolean): boolean {
+function setBatteryName(state: LevelsState, id: string, value: unknown): boolean {
   const name = readName(value);
   if (name === undefined) return false;
-  if (keepExisting && !name) return false;
-  return updateBattery(state, id, (battery) => {
-    if (keepExisting && battery.name) return false;
-    return assign(battery, 'name', name);
-  }, name != null);
+  return updateBattery(state, id, (battery) => assign(battery, 'name', name), name != null);
+}
+
+function setBatteryDisplayName(state: LevelsState, id: string, name: string): boolean {
+  return updateBattery(state, id, (battery) => assign(battery, 'displayName', name), true);
 }
 
 function setBatteryNumber<K extends 'voltage' | 'current' | 'temperatureC' | 'stateOfCharge'>(
@@ -401,12 +419,56 @@ function metaName(value: unknown): string | null {
   return null;
 }
 
+/** Display name stored on a full-model leaf, beside `value`. */
+function leafMetaName(node: unknown): string | null {
+  if (!node || typeof node !== 'object') return null;
+  return metaName((node as { meta?: unknown }).meta);
+}
+
+const DOCUMENT_SKIP = new Set(['meta', 'value', '$source', 'source', 'timestamp', 'pgn', 'sentence', 'values']);
+
+function ingestTankDocument(state: LevelsState, tanks: unknown): boolean {
+  if (!tanks || typeof tanks !== 'object') return false;
+  const body = tanks as Record<string, unknown>;
+  let changed = false;
+  for (const kind of TANK_KINDS) {
+    const group = body[kind];
+    if (!group || typeof group !== 'object') continue;
+    for (const [id, node] of Object.entries(group as Record<string, unknown>)) {
+      if (DOCUMENT_SKIP.has(id) || !node || typeof node !== 'object') continue;
+      const instance = node as Record<string, unknown>;
+      const name = leafMetaName(instance.currentLevel) ?? leafMetaName(instance) ?? leafMetaName(instance.capacity);
+      if (!name) continue;
+      changed = setTankDisplayName(state, kind, id, name) || changed;
+    }
+  }
+  return changed;
+}
+
+function ingestBatteryDocument(state: LevelsState, batteries: unknown): boolean {
+  if (!batteries || typeof batteries !== 'object') return false;
+  let changed = false;
+  for (const [id, node] of Object.entries(batteries as Record<string, unknown>)) {
+    if (DOCUMENT_SKIP.has(id) || !node || typeof node !== 'object') continue;
+    const instance = node as Record<string, unknown>;
+    const capacity = instance.capacity;
+    const charge = capacity && typeof capacity === 'object'
+      ? (capacity as Record<string, unknown>).stateOfCharge
+      : undefined;
+    const name = leafMetaName(instance) ?? leafMetaName(instance.voltage) ?? leafMetaName(charge);
+    if (!name) continue;
+    changed = setBatteryDisplayName(state, id, name) || changed;
+  }
+  return changed;
+}
+
 function clearTank(state: LevelsState, kind: TankKind, id: string): boolean {
   return updateTank(state, kind, id, (tank) => {
     let changed = false;
     changed = assign(tank, 'level', null) || changed;
     changed = assign(tank, 'capacityM3', null) || changed;
     changed = assign(tank, 'name', null) || changed;
+    changed = assign(tank, 'displayName', null) || changed;
     return changed;
   });
 }
@@ -419,6 +481,7 @@ function clearBattery(state: LevelsState, id: string): boolean {
     changed = assign(battery, 'temperatureC', null) || changed;
     changed = assign(battery, 'stateOfCharge', null) || changed;
     changed = assign(battery, 'name', null) || changed;
+    changed = assign(battery, 'displayName', null) || changed;
     return changed;
   });
 }
@@ -432,7 +495,7 @@ function updateTank(
 ): boolean {
   const existing = state.tanks.find((tank) => tank.kind === kind && tank.id === id);
   if (!existing && !create) return false;
-  const tank = existing ?? { id, kind, name: null, level: null, capacityM3: null };
+  const tank = existing ?? { id, kind, name: null, displayName: null, level: null, capacityM3: null };
   const changed = apply(tank);
   if (!existing && changed) state.tanks.push(tank);
   return changed;
@@ -449,6 +512,7 @@ function updateBattery(
   const battery = existing ?? {
     id,
     name: null,
+    displayName: null,
     voltage: null,
     current: null,
     temperatureC: null,

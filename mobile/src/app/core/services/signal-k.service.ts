@@ -40,6 +40,8 @@ export interface SignalKUpdate {
 export interface SignalKValue {
   path: string;
   value: unknown;
+  /** Present when the server attaches metadata to the value itself. */
+  meta?: unknown;
 }
 
 export type SignalKConnectionState = 'disconnected' | 'connecting' | 'connected' | 'error';
