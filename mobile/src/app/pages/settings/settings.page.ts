@@ -8,9 +8,11 @@ import {
   fuelCurveIdleNote,
   fuelCurveSummary,
 } from '../../core/fuel/fuel-range';
+import { formatHousePercent, houseBatteryPercentFromText } from '../../core/levels/house-battery';
 import { isSailingVessel } from '../../core/guide/more-menu';
 import { ContentService } from '../../core/services/content.service';
 import { FuelCurveSettingsService } from '../../core/services/fuel-curve-settings.service';
+import { HouseBatterySettingsService } from '../../core/services/house-battery-settings.service';
 import {
   DeviceNotificationPermission,
   NotificationBridgeService,
@@ -41,6 +43,7 @@ export class SettingsPage implements OnInit, OnDestroy {
   cruiseFuelControl = new FormControl('');
   engineCountControl = new FormControl('');
   idleFuelControl = new FormControl('');
+  housePercentControl = new FormControl('30');
 
   private subs: Subscription[] = [];
 
@@ -48,6 +51,7 @@ export class SettingsPage implements OnInit, OnDestroy {
     private readonly sk: SignalKService,
     private readonly skSettings: SignalKSettingsService,
     private readonly fuelCurve: FuelCurveSettingsService,
+    private readonly houseBattery: HouseBatterySettingsService,
     private readonly content: ContentService,
     private readonly notificationPrefs: NotificationPreferenceService,
     private readonly notifications: NotificationBridgeService,
@@ -64,6 +68,7 @@ export class SettingsPage implements OnInit, OnDestroy {
     this.urlControl.setValue(this.skSettings.url);
     this.tokenControl.setValue(this.skSettings.token ?? '');
     this.loadFuelCurve();
+    this.housePercentControl.setValue(formatHousePercent(this.houseBattery.percent));
 
     this.subs.push(
       this.sk.state$.subscribe(state => {
@@ -130,6 +135,7 @@ export class SettingsPage implements OnInit, OnDestroy {
 
   ionViewWillLeave(): void {
     this.saveFuelCurve();
+    this.saveHousePercent();
   }
 
   ionViewWillEnter(): void {
@@ -188,6 +194,17 @@ export class SettingsPage implements OnInit, OnDestroy {
 
   saveFuelCurve(): void {
     this.fuelCurve.save(fuelCurveFromText(this.fuelFields()));
+  }
+
+  housePercentError(): string {
+    return houseBatteryPercentFromText(text(this.housePercentControl.value)).error;
+  }
+
+  saveHousePercent(): void {
+    const parsed = houseBatteryPercentFromText(text(this.housePercentControl.value));
+    if (parsed.error) return;
+    this.houseBattery.save(parsed.percent);
+    this.housePercentControl.setValue(formatHousePercent(parsed.percent));
   }
 
   get devicePermissionHint(): string {

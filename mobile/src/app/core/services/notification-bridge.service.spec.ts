@@ -79,6 +79,17 @@ describe('NotificationBridgeService', () => {
     }
   });
 
+  it('opens Levels for a house battery alert', async () => {
+    spyOn(access(service), 'readDevicePermission').and.resolveTo('prompt');
+
+    service.notifyAppEvent('house-battery.low', 'House battery', 'House battery is at 24%. The alert is set for 30%.');
+    await flushPromises();
+    await flushPromises();
+
+    expect(alarms.current()?.actionLabel).toBe('Open Levels');
+    expect(alarms.current()?.route).toEqual(['more', 'levels']);
+  });
+
   it('stays quiet when alerts are off', async () => {
     prefs.setEnabled(false);
 

@@ -177,6 +177,29 @@
 
     <ion-list inset="true" lines="none" class="settings-list">
       <ion-list-header>
+        <ion-label>House battery</ion-label>
+      </ion-list-header>
+      <ion-item>
+        <div class="settings-row">
+          <p class="settings-hint">
+            Alert when the house battery charge on Levels falls below this.
+          </p>
+          <ion-label class="settings-label">Alert below (%)</ion-label>
+          <ion-input
+            [formControl]="housePercentControl"
+            type="number"
+            inputmode="decimal"
+            placeholder="30"
+            class="settings-input"
+            (ionBlur)="saveHousePercent()"
+          ></ion-input>
+          <p class="field-error" *ngIf="housePercentError()">{{ housePercentError() }}</p>
+        </div>
+      </ion-item>
+    </ion-list>
+
+    <ion-list inset="true" lines="none" class="settings-list">
+      <ion-list-header>
         <ion-label>Notifications</ion-label>
       </ion-list-header>
       <ion-item>
@@ -184,7 +207,7 @@
         <div class="settings-toggle-copy">
           <ion-label class="settings-label">Alerts</ion-label>
           <p class="settings-hint">
-            Sail-plan changes, anchorage conflicts, and Signal-K alarms.
+            Sail-plan changes, anchorage conflicts, the house battery, and Signal-K alarms.
             On by default. Notices show in the app without asking the browser.
           </p>
         </div>

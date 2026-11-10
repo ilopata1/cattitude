@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { FUEL_CURVE_STORAGE_KEY } from '../../core/services/fuel-curve-settings.service';
+import { HOUSE_BATTERY_PERCENT_KEY } from '../../core/services/house-battery-settings.service';
 import { ContentService } from '../../core/services/content.service';
 import { NotificationBridgeService } from '../../core/services/notification-bridge.service';
 import { NotificationPreferenceService } from '../../core/services/notification-preference.service';
@@ -20,6 +21,7 @@ describe('SettingsPage notifications', () => {
   beforeEach(async () => {
     localStorage.removeItem('cattitude.notifications.enabled');
     localStorage.removeItem(FUEL_CURVE_STORAGE_KEY);
+    localStorage.removeItem(HOUSE_BATTERY_PERCENT_KEY);
     allowFromUserGesture = jasmine.createSpy('allowFromUserGesture').and.resolveTo('granted');
 
     await TestBed.configureTestingModule({
@@ -73,6 +75,11 @@ describe('SettingsPage notifications', () => {
     expect(text).toContain('Fuel at 2,000 RPM');
     expect(text).toContain('Number of engines');
     expect(text).toContain('Idle fuel');
+  });
+
+  it('defaults the house battery alert to 30%', () => {
+    expect(fixture.nativeElement.textContent).toContain('Alert below');
+    expect(fixture.componentInstance.housePercentControl.value).toBe('30');
   });
 
   it('announces Signal K connection changes', () => {

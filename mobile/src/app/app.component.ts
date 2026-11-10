@@ -7,6 +7,7 @@ import { LevelsService } from './core/services/levels.service';
 import { AppUpdateService } from './core/services/app-update.service';
 import { EmergencyService } from './core/services/emergency.service';
 import { NotificationBridgeService } from './core/services/notification-bridge.service';
+import { HouseBatteryWatchService } from './core/services/house-battery-watch.service';
 import { LogbookTriggerService } from './core/services/logbook-trigger.service';
 import { SailWatchService } from './core/services/sail-watch.service';
 import { ThemeService } from './core/services/theme.service';
@@ -22,6 +23,7 @@ export class AppComponent {
   readonly alarms = inject(AlarmBannerService);
   private readonly notificationBridge = inject(NotificationBridgeService);
   private readonly sailWatch = inject(SailWatchService);
+  private readonly houseBattery = inject(HouseBatteryWatchService);
   private readonly logbook = inject(LogbookTriggerService);
   private readonly appUpdate = inject(AppUpdateService);
   private readonly theme = inject(ThemeService);
@@ -35,6 +37,7 @@ export class AppComponent {
     this.theme.resolved();
     this.notificationBridge.start();
     this.sailWatch.ensureRunning();
+    this.houseBattery.ensureRunning();
     this.logbook.ensureRunning();
     this.appUpdate.start();
     this.router.events.pipe(
