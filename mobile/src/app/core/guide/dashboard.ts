@@ -205,7 +205,7 @@ export function buildDashboardCatalog(input: DashboardCatalogInput): DashboardIt
     widget(FUEL_RANGE_WIDGET_ID, 'Fuel range', 'Hours and distance at this RPM', 'flame-outline', 2, ['more', 'levels']),
   );
   if (isSailingVessel(input.vesselType)) {
-    items.push(widget('widget:polar', 'Polar', '5, 10, and 15 minute average', 'trending-up-outline', 2));
+    items.push(widget('widget:polar', 'Polar', '15, 30, and 60 minute average', 'trending-up-outline', 2));
   }
   if (input.rulesAvailable) {
     items.push(widget('widget:rules', 'Boat rules', 'Never, always, and good habits', 'clipboard-outline', 2));

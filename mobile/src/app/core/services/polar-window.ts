@@ -1,5 +1,5 @@
-/** How long a polar sample stays in the rolling buffer. */
-export const POLAR_BUFFER_MS = 15 * 60 * 1000;
+/** How long a polar sample stays in the rolling buffer. Matches the longest window. */
+export const POLAR_BUFFER_MS = 60 * 60 * 1000;
 /** Live readings are recorded about once a second. */
 export const POLAR_SAMPLE_INTERVAL_MS = 1_000;
 /** A sample newer than this still counts as the current end of the window. */

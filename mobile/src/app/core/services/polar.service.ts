@@ -1,7 +1,7 @@
 /**
  * PolarService
  *
- * Loads a vessel polar (.pol) and computes instantaneous plus 5/10/15-minute
+ * Loads a vessel polar (.pol) and computes instantaneous plus 15/30/60-minute
  * mean TWA, TWS, and polar % from the smoothed instrument readings.
  *
  * Boat speed, true wind, and apparent wind come from InstrumentLiveService,
@@ -12,6 +12,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Subscription, combineLatest, firstValueFrom, interval } from 'rxjs';
 import { interpolateTargetSpeed, parsePolarFile, targetCurveAtTws } from './polar-parser';
 import {
+  POLAR_WINDOW_MINUTES,
   PolarCurvePoint,
   PolarLiveState,
   PolarSample,
@@ -39,9 +40,9 @@ const EMPTY_WINDOW: PolarWindowAverages = {
 };
 
 const EMPTY_WINDOWS: PolarWindowSet = {
-  5: EMPTY_WINDOW,
-  10: EMPTY_WINDOW,
   15: EMPTY_WINDOW,
+  30: EMPTY_WINDOW,
+  60: EMPTY_WINDOW,
 };
 const EMPTY_LIVE: PolarLiveState = {
   stwKnots: null,
@@ -77,7 +78,7 @@ export class PolarService implements OnDestroy {
 
   readonly live$ = this.liveSubject.asObservable();
   readonly samples$ = this.samplesSubject.asObservable();
-  /** 5/10/15-minute mean TWA, TWS, and polar %. */
+  /** 15/30/60-minute mean TWA, TWS, and polar %. Empty until that window is fully covered. */
   readonly windows$ = this.windowsSubject.asObservable();
   readonly polarFilename$ = new BehaviorSubject<string>(this.polarFilename);
 
@@ -273,14 +274,15 @@ export class PolarService implements OnDestroy {
 
   private refreshRollingAverages(): void {
     const now = Date.now();
-    this.windowsSubject.next({
-      5: this.averageWindow(now, 5),
-      10: this.averageWindow(now, 10),
-      15: this.averageWindow(now, 15),
-    });
+    const next = {} as PolarWindowSet;
+    for (const minutes of POLAR_WINDOW_MINUTES) {
+      next[minutes] = this.averageWindow(now, minutes);
+    }
+    this.windowsSubject.next(next);
   }
 
   private averageWindow(now: number, minutes: PolarWindowMinutes): PolarWindowAverages {
+    if (!this.windowCovered(minutes, now)) return EMPTY_WINDOW;
     const cutoff = now - minutes * 60 * 1000;
     const windowSamples = this.samples.filter(s => s.timestamp >= cutoff);
     if (windowSamples.length === 0) return EMPTY_WINDOW;

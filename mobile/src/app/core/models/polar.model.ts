@@ -32,7 +32,9 @@ export interface PolarLiveState {
   stale: boolean;
 }
 
-export type PolarWindowMinutes = 5 | 10 | 15;
+export const POLAR_WINDOW_MINUTES = [15, 30, 60] as const;
+
+export type PolarWindowMinutes = (typeof POLAR_WINDOW_MINUTES)[number];
 
 /** Rolling means of TWA / TWS / polar % over a Polar window. */
 export interface PolarWindowAverages {

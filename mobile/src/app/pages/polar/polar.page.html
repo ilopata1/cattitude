@@ -41,7 +41,7 @@
   <section class="panel perf-panel" [class.stale]="live.stale">
     <h2 class="section-title">Current sails</h2>
     <p class="current-sails-lead">
-      What you have up now. If the 15-minute recommendation is different, the app notifies you.
+      What you have up now. If the 15-, 30-, or 60-minute recommendation is different, the app notifies you.
     </p>
     <ion-select
       class="current-sails-select"
@@ -80,7 +80,7 @@
           Mean {{ formatDeg(w.avg.twaDeg) }} TWA · {{ formatKnots(w.avg.twsKnots) }} TWS
         </p>
 
-        <ng-container *ngIf="w.advice && !w.advice.empty">
+        <ng-container *ngIf="w.covered && w.advice && !w.advice.empty">
           <p class="window-would">
             Best sail plan for the last {{ w.minutes }} minutes would have been
           </p>
@@ -92,8 +92,12 @@
           <p class="advice-note" *ngIf="w.advice.notes">{{ w.advice.notes }}</p>
           <p class="advice-note avoid" *ngIf="w.advice.avoid">Avoid: {{ w.advice.avoid }}</p>
         </ng-container>
-        <p class="window-waiting" *ngIf="!w.advice">Waiting for TWA and TWS</p>
-        <p class="window-waiting" *ngIf="w.advice?.empty">
+        <p class="window-waiting" *ngIf="!w.covered && collectingWind">
+          Collecting a full {{ w.minutes }} minutes
+        </p>
+        <p class="window-waiting" *ngIf="!w.covered && !collectingWind">Waiting for TWA and TWS</p>
+        <p class="window-waiting" *ngIf="w.covered && !w.advice">Waiting for TWA and TWS</p>
+        <p class="window-waiting" *ngIf="w.covered && w.advice?.empty">
           This band is empty — add a recommendation in the editor
         </p>
       </article>
@@ -105,7 +109,7 @@
         class="perf-chart"
         [attr.viewBox]="'0 0 ' + chartW + ' ' + chartH"
         role="img"
-        aria-label="Performance percentage over the last 15 minutes"
+        [attr.aria-label]="'Performance percentage over the last ' + chartMinutes + ' minutes'"
       >
         <rect
           class="plot-bg"
@@ -149,14 +153,14 @@
           [attr.x2]="padL + plotW"
           [attr.y2]="padT + plotH"
         ></line>
-        <text class="x-label" [attr.x]="padL" [attr.y]="chartH - 4">−15 min</text>
+        <text class="x-label" [attr.x]="padL" [attr.y]="chartH - 4">−{{ chartMinutes }} min</text>
         <text class="x-label" [attr.x]="padL + plotW" [attr.y]="chartH - 4" text-anchor="end">Now</text>
       </svg>
       <p class="perf-hint" *ngIf="bars.length === 0">
         Waiting for performance samples…
       </p>
       <p class="perf-hint" *ngIf="bars.length > 0">
-        Last 15 minutes · vs polar target at current TWA / TWS
+        Last {{ chartMinutes }} minutes · vs polar target at current TWA / TWS
       </p>
       <div class="perf-legend">
         <span class="leg low">&lt;50%</span>

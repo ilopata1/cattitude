@@ -58,7 +58,7 @@ export function normalizeSailConfiguration(value: string | null | undefined): st
 }
 
 /**
- * True when a sail the crew selected disagrees with the 15-minute recommendation.
+ * True when a sail the crew selected disagrees with a polar-window recommendation.
  * Advice that does not name a main or a headsail (for example "do not press
  * dead downwind") is not a sail configuration, so it does not alert.
  * A dropdown the crew has not set yet is left out of the comparison.

@@ -15,7 +15,12 @@ import { emptyFuelMotion } from '../../core/fuel/fuel-motion';
 import { levelWidgetValue } from '../../core/levels/levels';
 import { resolveLearnPath } from '../../core/guide/learn-path';
 import { EMPTY_SAIL_ESSENTIALS, EMPTY_WIND_STEER } from '../../core/models/instrument-map.model';
-import { PolarWindowAverages, PolarWindowMinutes, PolarWindowSet } from '../../core/models/polar.model';
+import {
+  POLAR_WINDOW_MINUTES,
+  PolarWindowAverages,
+  PolarWindowMinutes,
+  PolarWindowSet,
+} from '../../core/models/polar.model';
 import { AlarmNotice, AlarmBannerService } from '../../core/services/alarm-banner.service';
 import { ContentService } from '../../core/services/content.service';
 import { DashboardLayoutService } from '../../core/services/dashboard-layout.service';
@@ -329,7 +334,7 @@ export class HomePage {
 
   polarRows(): Array<{ minutes: PolarWindowMinutes; pct: string }> {
     const windows = this.polarWindows();
-    return ([5, 10, 15] as const).map((minutes) => {
+    return POLAR_WINDOW_MINUTES.map((minutes) => {
       const pct = windows[minutes].polarPct;
       return { minutes, pct: pct === null ? '—' : `${pct.toFixed(0)}%` };
     });
@@ -494,9 +499,9 @@ const EMPTY_POLAR_WINDOW: PolarWindowAverages = {
 };
 
 const EMPTY_POLAR_WINDOWS: PolarWindowSet = {
-  5: EMPTY_POLAR_WINDOW,
-  10: EMPTY_POLAR_WINDOW,
   15: EMPTY_POLAR_WINDOW,
+  30: EMPTY_POLAR_WINDOW,
+  60: EMPTY_POLAR_WINDOW,
 };
 
 function freshKnots(knots: number, fresh: boolean): string {
