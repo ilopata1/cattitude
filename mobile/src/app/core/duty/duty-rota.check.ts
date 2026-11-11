@@ -93,6 +93,29 @@ export function dutyRotaFailures(): string[] {
   const joOnly = rosterWindow(rota, startMs + 3 * hour, 0, 1, 'jo');
   expect(joOnly.days[0]?.rows.length === 1 && joOnly.days[0]?.rows[0]?.cells.join('|') === 'Jo|', 'one person sees only the rows they hold');
 
+  const across = rosterWindow(rota, startMs + 3 * hour, 0, 2);
+  const nextDay = across.days.find((day) => day.key === '2026-11-13');
+  expect(nextDay?.rows[0]?.when === '00:00–04:00', 'each watch keeps its own row after midnight');
+  expect(nextDay?.rows[0]?.cells.join('|') === 'Jo|', 'a daily name stays blank until that job changes');
+  expect(
+    nextDay?.rows.find((row) => row.when === '12:00–16:00')?.cells.join('|') === 'Sam|Jo',
+    'the next daily name appears on the first watch of that day',
+  );
+
+  const mixed = sanitizeRota({
+    ...rota,
+    tasks: [
+      { id: 'watch', name: 'Watch', intervalHours: 4 },
+      { id: 'cooking', name: 'Cooking', intervalHours: 6 },
+    ],
+  });
+  const mixedRows = rosterWindow(mixed, startMs + hour, 0, 1).days[0]?.rows ?? [];
+  expect(
+    mixedRows.map((row) => row.when).join(',') === '12:00–16:00,16:00–20:00,20:00–00:00',
+    'rows follow the most frequent task',
+  );
+  expect(mixedRows[2]?.cells.join('|') === 'Sam|Jo', 'a slower task is named on the first watch of its assignment');
+
   const local = { ...rota, updatedAt: '2026-11-12T18:00:00.000Z' };
   const remote = { ...rota, updatedAt: '2026-11-13T08:00:00.000Z', crew: [{ id: 'sam', name: 'Sam' }] };
   expect(preferRota(local, remote, true).crew.length === 3, 'an unsynced edit beats a newer server copy');

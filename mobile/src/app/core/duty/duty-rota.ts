@@ -193,8 +193,9 @@ export function formatSlotWhen(startMs: number, endMs: number): string {
 }
 
 /**
- * One row per moment any task changes. A cell is blank when that task
- * still belongs to the person named in the previous row of the same day.
+ * One row per slot of the most frequent task, counted from the trip start.
+ * A cell names the person only on the first of those rows in their assignment,
+ * so a daily job is named once and the next name appears the next day.
  * A person filter keeps a row only when they hold at least one task then.
  */
 export function rosterGrid(
@@ -203,15 +204,20 @@ export function rosterGrid(
   toMs: number,
   crewId?: string | null,
 ): { columns: RosterColumn[]; days: RosterDay[] } {
-  const columns: RosterColumn[] = rota.tasks
-    .filter((task) => task.name.trim())
-    .map((task) => ({ id: task.id, name: task.name.trim() }));
-  if (!columns.length || !(toMs > fromMs)) {
+  const tasks = rota.tasks.filter((task) => task.name.trim() && task.intervalHours > 0);
+  const columns: RosterColumn[] = tasks.map((task) => ({ id: task.id, name: task.name.trim() }));
+  const start = parseWall(rota.startAt);
+  if (!columns.length || start == null || !namedCrew(rota).length || !(toMs > fromMs) || toMs <= start) {
     return { columns, days: [] };
   }
-  const slots = dutySlots(rota, fromMs, toMs);
+  const step = Math.min(...tasks.map((task) => task.intervalHours)) * 60 * 60 * 1000;
+  let index = fromMs > start ? Math.floor((fromMs - start) / step) : 0;
+  if (start + (index + 1) * step <= fromMs) {
+    index += 1;
+  }
+  const last = Math.ceil((toMs - start) / step);
+  const slots = dutySlots(rota, start + Math.max(0, index - 1) * step, start + last * step);
   const byTask = new Map<string, DutySlot[]>();
-  const bounds = new Set<number>();
   for (const slot of slots) {
     const list = byTask.get(slot.taskId);
     if (list) {
@@ -219,27 +225,20 @@ export function rosterGrid(
     } else {
       byTask.set(slot.taskId, [slot]);
     }
-    if (slot.startMs >= fromMs && slot.startMs < toMs) {
-      bounds.add(slot.startMs);
-    } else if (slot.startMs < fromMs && slot.endMs > fromMs) {
-      bounds.add(fromMs);
-    }
   }
-  const times = [...bounds].sort((a, b) => a - b);
-  const groups = new Map<string, RosterDay>();
-  let dayKey = '';
   const previous = new Map<string, string>();
-  for (let index = 0; index < times.length; index += 1) {
-    const rowStart = times[index];
-    const rowEnd = index + 1 < times.length ? times[index + 1] : toMs;
-    const keyMs = startOfWallDay(rowStart);
-    const key = new Date(keyMs).toISOString().slice(0, 10);
-    if (key !== dayKey) {
-      previous.clear();
-      dayKey = key;
+  if (index > 0) {
+    rememberHolders(columns, byTask, start + (index - 1) * step, crewId, previous);
+  }
+  const groups = new Map<string, RosterDay>();
+  for (; index < last; index += 1) {
+    const rowStart = start + index * step;
+    const rowEnd = rowStart + step;
+    if (rowStart >= toMs || rowEnd <= fromMs) {
+      continue;
     }
     const cells: string[] = [];
-    const nextPrevious = new Map<string, string>();
+    const heldNow = new Map<string, string>();
     let held = false;
     for (const column of columns) {
       const holder = holderAt(byTask.get(column.id) ?? [], rowStart);
@@ -247,15 +246,16 @@ export function rosterGrid(
       if (visible) {
         held = true;
       }
-      const show = visible && visible !== (previous.get(column.id) ?? '') ? visible : '';
-      cells.push(show);
-      nextPrevious.set(column.id, visible);
+      cells.push(visible && visible !== (previous.get(column.id) ?? '') ? visible : '');
+      heldNow.set(column.id, visible);
     }
+    previous.clear();
+    heldNow.forEach((name, id) => previous.set(id, name));
     if (crewId && !held) {
       continue;
     }
-    previous.clear();
-    nextPrevious.forEach((name, id) => previous.set(id, name));
+    const keyMs = startOfWallDay(rowStart);
+    const key = new Date(keyMs).toISOString().slice(0, 10);
     let day = groups.get(key);
     if (!day) {
       day = { key, label: formatWallDay(keyMs), rows: [] };
@@ -287,6 +287,19 @@ export function rosterWindow(
   const to = Math.max(today, startOfWallDay(start)) + Math.max(1, futureDays) * DAY_MS;
   const grid = rosterGrid(rota, from, to, crewId);
   return { ...grid, canGoEarlier: from > start };
+}
+
+function rememberHolders(
+  columns: RosterColumn[],
+  byTask: Map<string, DutySlot[]>,
+  atMs: number,
+  crewId: string | null | undefined,
+  previous: Map<string, string>,
+): void {
+  for (const column of columns) {
+    const holder = holderAt(byTask.get(column.id) ?? [], atMs);
+    previous.set(column.id, holder && (!crewId || holder.crewId === crewId) ? holder.crewName : '');
+  }
 }
 
 function holderAt(slots: DutySlot[], atMs: number): DutySlot | null {
