@@ -90,10 +90,21 @@
 
       <div class="duty-day" *ngFor="let day of roster.days; trackBy: trackDay">
         <h3>{{ day.label }}</h3>
-        <div class="duty-slot" *ngFor="let slot of day.rows; trackBy: trackSlot">
-          <span class="duty-when">{{ slotWhen(slot.startMs, slot.endMs) }}</span>
-          <span class="duty-what">{{ slot.taskName }}</span>
-          <span class="duty-who">{{ slot.crewName }}</span>
+        <div class="duty-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Time</th>
+                <th scope="col" *ngFor="let column of roster.columns; trackBy: trackColumn">{{ column.name }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of day.rows; trackBy: trackRow">
+                <th scope="row">{{ row.when }}</th>
+                <td *ngFor="let cell of row.cells; let ci = index">{{ cell }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
 

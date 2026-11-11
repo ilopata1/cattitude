@@ -144,27 +144,38 @@
   margin-top: 14px;
 }
 
-.duty-slot {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 12px;
-  align-items: baseline;
-  padding: 10px 0;
-  border-top: 1px solid var(--cattitude-sand-mid);
+.duty-table-wrap {
+  overflow-x: auto;
 }
 
-.duty-when {
-  min-width: 9.5rem;
+.duty-day table {
+  width: 100%;
+  min-width: 28rem;
+  border-collapse: collapse;
+}
+
+.duty-day th,
+.duty-day td {
+  padding: 8px 8px 8px 0;
+  text-align: left;
+  vertical-align: top;
+  font-weight: 500;
+  border-bottom: 1px solid var(--cattitude-sand-mid);
+}
+
+.duty-day thead th {
+  font-size: var(--cattitude-text-caption);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cattitude-text-light);
+}
+
+.duty-day tbody th {
   font-variant-numeric: tabular-nums;
+  font-weight: 500;
   color: var(--cattitude-text-mid);
-}
-
-.duty-what {
-  font-weight: 650;
-}
-
-.duty-who {
-  margin-left: auto;
+  white-space: nowrap;
 }
 
 .duty-more {

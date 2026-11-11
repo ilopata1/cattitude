@@ -81,9 +81,17 @@ export function dutyRotaFailures(): string[] {
   const now = parseWall('2026-11-14T15:00')!;
   const window = rosterWindow(rota, now, 0, 2);
   expect(window.canGoEarlier, 'a trip that has already started can scroll back to the start');
-  expect(window.days[0]?.key === '2026-11-13', 'a daily job still running is listed on the day it started');
-  expect(window.days.some((day) => day.key === '2026-11-14'), 'today is in the roster');
+  expect(window.days[0]?.key === '2026-11-14', 'the roster opens on today');
   expect(window.days.every((day) => day.rows.length > 0), 'empty days are left out');
+
+  const opening = rosterWindow(rota, startMs + 3 * hour, 0, 1);
+  expect(opening.columns.map((column) => column.name).join(',') === 'Watch,Cooking', 'each task is a column');
+  expect(opening.days[0]?.rows[0]?.when === '12:00–16:00', 'the first row is the opening watch');
+  expect(opening.days[0]?.rows[0]?.cells.join('|') === 'Sam|Sam', 'the first row names every task');
+  expect(opening.days[0]?.rows[1]?.cells.join('|') === 'Jo|', 'a task that keeps its person leaves a blank cell');
+  expect(opening.days[0]?.rows[2]?.cells.join('|') === 'Sam|', 'the watch names the person again when it changes back');
+  const joOnly = rosterWindow(rota, startMs + 3 * hour, 0, 1, 'jo');
+  expect(joOnly.days[0]?.rows.length === 1 && joOnly.days[0]?.rows[0]?.cells.join('|') === 'Jo|', 'one person sees only the rows they hold');
 
   const local = { ...rota, updatedAt: '2026-11-12T18:00:00.000Z' };
   const remote = { ...rota, updatedAt: '2026-11-13T08:00:00.000Z', crew: [{ id: 'sam', name: 'Sam' }] };

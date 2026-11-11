@@ -43,10 +43,22 @@ export interface DutySlot {
   endMs: number;
 }
 
+export interface RosterColumn {
+  id: string;
+  name: string;
+}
+
+export interface RosterGridRow {
+  startMs: number;
+  when: string;
+  /** Parallel to the roster columns. Empty when the person has not changed. */
+  cells: string[];
+}
+
 export interface RosterDay {
   key: string;
   label: string;
-  rows: DutySlot[];
+  rows: RosterGridRow[];
 }
 
 const ID_RE = /^[a-z0-9][a-z0-9-]{0,39}$/;
@@ -180,34 +192,110 @@ export function formatSlotWhen(startMs: number, endMs: number): string {
   return `${startLabel} – ${weekdayShort(endMs)} ${endLabel}`;
 }
 
+/**
+ * One row per moment any task changes. A cell is blank when that task
+ * still belongs to the person named in the previous row of the same day.
+ * A person filter keeps a row only when they hold at least one task then.
+ */
+export function rosterGrid(
+  rota: DutyRota,
+  fromMs: number,
+  toMs: number,
+  crewId?: string | null,
+): { columns: RosterColumn[]; days: RosterDay[] } {
+  const columns: RosterColumn[] = rota.tasks
+    .filter((task) => task.name.trim())
+    .map((task) => ({ id: task.id, name: task.name.trim() }));
+  if (!columns.length || !(toMs > fromMs)) {
+    return { columns, days: [] };
+  }
+  const slots = dutySlots(rota, fromMs, toMs);
+  const byTask = new Map<string, DutySlot[]>();
+  const bounds = new Set<number>();
+  for (const slot of slots) {
+    const list = byTask.get(slot.taskId);
+    if (list) {
+      list.push(slot);
+    } else {
+      byTask.set(slot.taskId, [slot]);
+    }
+    if (slot.startMs >= fromMs && slot.startMs < toMs) {
+      bounds.add(slot.startMs);
+    } else if (slot.startMs < fromMs && slot.endMs > fromMs) {
+      bounds.add(fromMs);
+    }
+  }
+  const times = [...bounds].sort((a, b) => a - b);
+  const groups = new Map<string, RosterDay>();
+  let dayKey = '';
+  const previous = new Map<string, string>();
+  for (let index = 0; index < times.length; index += 1) {
+    const rowStart = times[index];
+    const rowEnd = index + 1 < times.length ? times[index + 1] : toMs;
+    const keyMs = startOfWallDay(rowStart);
+    const key = new Date(keyMs).toISOString().slice(0, 10);
+    if (key !== dayKey) {
+      previous.clear();
+      dayKey = key;
+    }
+    const cells: string[] = [];
+    const nextPrevious = new Map<string, string>();
+    let held = false;
+    for (const column of columns) {
+      const holder = holderAt(byTask.get(column.id) ?? [], rowStart);
+      const visible = holder && (!crewId || holder.crewId === crewId) ? holder.crewName : '';
+      if (visible) {
+        held = true;
+      }
+      const show = visible && visible !== (previous.get(column.id) ?? '') ? visible : '';
+      cells.push(show);
+      nextPrevious.set(column.id, visible);
+    }
+    if (crewId && !held) {
+      continue;
+    }
+    previous.clear();
+    nextPrevious.forEach((name, id) => previous.set(id, name));
+    let day = groups.get(key);
+    if (!day) {
+      day = { key, label: formatWallDay(keyMs), rows: [] };
+      groups.set(key, day);
+    }
+    day.rows.push({
+      startMs: rowStart,
+      when: formatSlotWhen(rowStart, rowEnd),
+      cells,
+    });
+  }
+  return { columns, days: [...groups.values()] };
+}
+
 export function rosterWindow(
   rota: DutyRota,
   nowMs: number,
   pastDays: number,
   futureDays: number,
   crewId?: string | null,
-): { days: RosterDay[]; canGoEarlier: boolean } {
+): { columns: RosterColumn[]; days: RosterDay[]; canGoEarlier: boolean } {
   const start = parseWall(rota.startAt);
   if (start == null) {
-    return { days: [], canGoEarlier: false };
+    return { columns: [], days: [], canGoEarlier: false };
   }
   const today = startOfWallDay(nowMs);
   const fromFloor = start > today ? start : today - Math.max(0, pastDays) * DAY_MS;
   const from = Math.max(start, fromFloor);
   const to = Math.max(today, startOfWallDay(start)) + Math.max(1, futureDays) * DAY_MS;
-  const slots = dutySlots(rota, from, to, crewId);
-  const groups = new Map<string, RosterDay>();
+  const grid = rosterGrid(rota, from, to, crewId);
+  return { ...grid, canGoEarlier: from > start };
+}
+
+function holderAt(slots: DutySlot[], atMs: number): DutySlot | null {
   for (const slot of slots) {
-    const keyMs = startOfWallDay(slot.startMs);
-    const key = new Date(keyMs).toISOString().slice(0, 10);
-    let day = groups.get(key);
-    if (!day) {
-      day = { key, label: formatWallDay(keyMs), rows: [] };
-      groups.set(key, day);
+    if (slot.startMs <= atMs && atMs < slot.endMs) {
+      return slot;
     }
-    day.rows.push(slot);
   }
-  return { days: [...groups.values()], canGoEarlier: from > start };
+  return null;
 }
 
 /** Local unsynced edits win. Otherwise the newer `updatedAt` wins. */

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {
   DUTY_INTERVAL_OPTIONS,
-  formatSlotWhen,
   rosterWindow,
 } from '../../core/duty/duty-rota';
 import { DutyRotaService } from '../../core/services/duty-rota.service';
@@ -18,7 +17,6 @@ export class DutyPage implements OnInit {
   futureDays = 7;
   crewId: string | null = null;
   readonly intervals = DUTY_INTERVAL_OPTIONS;
-  readonly slotWhen = formatSlotWhen;
 
   constructor(public readonly duty: DutyRotaService) {}
 
@@ -90,7 +88,11 @@ export class DutyPage implements OnInit {
     return day.key;
   }
 
-  trackSlot(_: number, slot: { taskId: string; startMs: number }): string {
-    return `${slot.taskId}-${slot.startMs}`;
+  trackColumn(_: number, column: { id: string }): string {
+    return column.id;
+  }
+
+  trackRow(_: number, row: { startMs: number }): string {
+    return String(row.startMs);
   }
 }
