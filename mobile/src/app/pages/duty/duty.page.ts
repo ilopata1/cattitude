@@ -4,7 +4,7 @@ import {
   rosterWindow,
 } from '../../core/duty/duty-rota';
 import { DutyRotaService } from '../../core/services/duty-rota.service';
-import { wallNowMs } from '../../core/wall-time';
+import { formatWallDay, formatWallTime, parseWall, wallNowMs } from '../../core/wall-time';
 
 @Component({
   selector: 'app-duty',
@@ -16,9 +16,13 @@ export class DutyPage implements OnInit {
   pastDays = 0;
   futureDays = 7;
   crewId: string | null = null;
+  /** Closed once a trip is already set, so the roster is what you see. */
+  setupOpen = true;
   readonly intervals = DUTY_INTERVAL_OPTIONS;
 
-  constructor(public readonly duty: DutyRotaService) {}
+  constructor(public readonly duty: DutyRotaService) {
+    this.setupOpen = !this.duty.rota().startAt || this.duty.named().length === 0;
+  }
 
   ngOnInit(): void {
     this.duty.open();
@@ -33,6 +37,13 @@ export class DutyPage implements OnInit {
 
   get roster() {
     return rosterWindow(this.duty.rota(), wallNowMs(), this.pastDays, this.futureDays, this.filterId);
+  }
+
+  get setupSummary(): string {
+    const start = parseWall(this.duty.rota().startAt);
+    const when = start == null ? 'No start time' : `${formatWallDay(start)}, ${formatWallTime(start)}`;
+    const names = this.duty.named().map((person) => person.name);
+    return `${when} · ${names.length ? names.join(', ') : 'No crew'}`;
   }
 
   get emptyReason(): string {
@@ -65,7 +76,11 @@ export class DutyPage implements OnInit {
   }
 
   setIntervalHours(id: string, hours: number | string): void {
-    this.duty.setInterval(id, Number(hours));
+    const value = Number(hours);
+    if (!this.intervals.some((option) => option.hours === value)) {
+      return;
+    }
+    this.duty.setInterval(id, value);
   }
 
   earlier(): void {

@@ -22,7 +22,7 @@ export interface CrewMember {
 export interface DutyTask {
   id: string;
   name: string;
-  /** Length of one assignment. 24 hours changes at the trip's start clock time. */
+  /** Length of one assignment. Daily runs to midnight, then one calendar day each. */
   intervalHours: number;
 }
 
@@ -141,16 +141,17 @@ export function dutySlots(
     if (interval <= 0 || toMs <= start) {
       continue;
     }
-    let index = fromMs > start ? Math.floor((fromMs - start) / interval) : 0;
-    const last = Math.ceil((toMs - start) / interval);
-    while (index < last && slots.length < MAX_SLOTS) {
-      const slotStart = start + index * interval;
-      const slotEnd = slotStart + interval;
-      const person = people[index % people.length];
+    let index = fromMs > start ? assignmentIndex(start, interval, fromMs) : 0;
+    while (slots.length < MAX_SLOTS) {
+      const bounds = assignmentBounds(start, interval, index);
       index += 1;
-      if (slotEnd <= fromMs || slotStart >= toMs) {
+      if (bounds.startMs >= toMs) {
+        break;
+      }
+      if (bounds.endMs <= fromMs) {
         continue;
       }
+      const person = people[(index - 1) % people.length];
       if (crewId && person.id !== crewId) {
         continue;
       }
@@ -159,8 +160,8 @@ export function dutySlots(
         taskName: task.name.trim(),
         crewId: person.id,
         crewName: person.name.trim(),
-        startMs: slotStart,
-        endMs: slotEnd,
+        startMs: bounds.startMs,
+        endMs: bounds.endMs,
       });
     }
   }
@@ -211,12 +212,9 @@ export function rosterGrid(
     return { columns, days: [] };
   }
   const step = Math.min(...tasks.map((task) => task.intervalHours)) * 60 * 60 * 1000;
-  let index = fromMs > start ? Math.floor((fromMs - start) / step) : 0;
-  if (start + (index + 1) * step <= fromMs) {
-    index += 1;
-  }
-  const last = Math.ceil((toMs - start) / step);
-  const slots = dutySlots(rota, start + Math.max(0, index - 1) * step, start + last * step);
+  let index = fromMs > start ? assignmentIndex(start, step, fromMs) : 0;
+  const priorStart = index > 0 ? assignmentBounds(start, step, index - 1).startMs : start;
+  const slots = dutySlots(rota, priorStart, toMs);
   const byTask = new Map<string, DutySlot[]>();
   for (const slot of slots) {
     const list = byTask.get(slot.taskId);
@@ -228,15 +226,19 @@ export function rosterGrid(
   }
   const previous = new Map<string, string>();
   if (index > 0) {
-    rememberHolders(columns, byTask, start + (index - 1) * step, crewId, previous);
+    rememberHolders(columns, byTask, priorStart, crewId, previous);
   }
   const groups = new Map<string, RosterDay>();
-  for (; index < last; index += 1) {
-    const rowStart = start + index * step;
-    const rowEnd = rowStart + step;
-    if (rowStart >= toMs || rowEnd <= fromMs) {
+  for (; index < MAX_SLOTS; index += 1) {
+    const bounds = assignmentBounds(start, step, index);
+    if (bounds.startMs >= toMs) {
+      break;
+    }
+    if (bounds.endMs <= fromMs) {
       continue;
     }
+    const rowStart = bounds.startMs;
+    const rowEnd = bounds.endMs;
     const cells: string[] = [];
     const heldNow = new Map<string, string>();
     let held = false;
@@ -287,6 +289,38 @@ export function rosterWindow(
   const to = Math.max(today, startOfWallDay(start)) + Math.max(1, futureDays) * DAY_MS;
   const grid = rosterGrid(rota, from, to, crewId);
   return { ...grid, canGoEarlier: from > start };
+}
+
+/**
+ * A daily task ends at midnight. The opening stretch may be shorter than a
+ * day; every later assignment is one calendar day. Other intervals count
+ * forward from the trip start.
+ */
+function assignmentBounds(startMs: number, intervalMs: number, index: number): { startMs: number; endMs: number } {
+  if (intervalMs === DAY_MS) {
+    const firstEnd = startMs === startOfWallDay(startMs) ? startMs + DAY_MS : startOfWallDay(startMs) + DAY_MS;
+    if (index <= 0) {
+      return { startMs, endMs: firstEnd };
+    }
+    const slotStart = firstEnd + (index - 1) * DAY_MS;
+    return { startMs: slotStart, endMs: slotStart + DAY_MS };
+  }
+  const slotStart = startMs + Math.max(0, index) * intervalMs;
+  return { startMs: slotStart, endMs: slotStart + intervalMs };
+}
+
+function assignmentIndex(startMs: number, intervalMs: number, atMs: number): number {
+  if (atMs <= startMs) {
+    return 0;
+  }
+  if (intervalMs === DAY_MS) {
+    const firstEnd = assignmentBounds(startMs, intervalMs, 0).endMs;
+    if (atMs < firstEnd) {
+      return 0;
+    }
+    return 1 + Math.floor((atMs - firstEnd) / DAY_MS);
+  }
+  return Math.floor((atMs - startMs) / intervalMs);
 }
 
 function rememberHolders(

@@ -3,7 +3,21 @@
   <div class="duty">
     <p class="duty-sync" *ngIf="duty.syncNote() as note">{{ note }}</p>
 
-    <section class="duty-card">
+    <section class="duty-card duty-setup">
+      <button
+        type="button"
+        class="duty-setup-toggle"
+        [attr.aria-expanded]="setupOpen"
+        (click)="setupOpen = !setupOpen"
+      >
+        <span class="duty-setup-label">
+          <span class="duty-setup-title">Trip and crew</span>
+          <span class="duty-setup-summary" *ngIf="!setupOpen">{{ setupSummary }}</span>
+        </span>
+        <ion-icon [name]="setupOpen ? 'chevron-up-outline' : 'chevron-down-outline'" aria-hidden="true"></ion-icon>
+      </button>
+
+      <div class="duty-setup-body" *ngIf="setupOpen">
       <h2>Trip start</h2>
       <label class="duty-field">
         <span>Date and time</span>
@@ -14,12 +28,10 @@
         />
       </label>
       <p class="duty-hint">
-        Watches and the other jobs count forward from this time. A daily job
-        changes at this clock time each day.
+        Watches count forward from this time. A daily job runs until midnight,
+        then changes at the start of each day. The first day may be shorter.
       </p>
-    </section>
 
-    <section class="duty-card">
       <h2>Crew</h2>
       <p class="duty-hint">Order is the rotation order.</p>
       <div class="duty-line" *ngFor="let person of duty.rota().crew; let i = index; trackBy: trackCrew">
@@ -44,9 +56,7 @@
         </button>
       </div>
       <button type="button" class="duty-add" (click)="duty.addCrew()">Add crew</button>
-    </section>
 
-    <section class="duty-card">
       <h2>Tasks</h2>
       <div class="duty-task" *ngFor="let task of duty.rota().tasks; trackBy: trackTask">
         <input
@@ -70,6 +80,7 @@
         </button>
       </div>
       <button type="button" class="duty-add" (click)="duty.addTask()">Add task</button>
+      </div>
     </section>
 
     <section class="duty-card">

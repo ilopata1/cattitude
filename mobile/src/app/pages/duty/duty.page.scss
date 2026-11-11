@@ -58,11 +58,64 @@
   margin-bottom: 8px;
 }
 
+.duty-setup-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: var(--cattitude-touch-min);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.duty-setup-label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.duty-setup-title {
+  font-size: var(--cattitude-text-caption);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cattitude-text-light);
+}
+
+.duty-setup-summary {
+  color: var(--cattitude-text-dark);
+  font-size: var(--cattitude-text-sm);
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.duty-setup-toggle ion-icon {
+  flex: none;
+  color: var(--cattitude-text-light);
+  font-size: 1.25rem;
+}
+
+.duty-setup-body {
+  margin-top: 4px;
+}
+
+.duty-setup-body h2 {
+  margin-top: 16px;
+}
+
 .duty input,
 .duty select,
 .duty-line button,
 .duty-task button,
 .duty-add,
+.duty-setup-toggle,
 .duty-filters button,
 .duty-more button {
   font: inherit;

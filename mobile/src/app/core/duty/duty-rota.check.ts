@@ -62,13 +62,16 @@ export function dutyRotaFailures(): string[] {
 
   const cooking = dutySlots(rota, startMs, startMs + 48 * hour).filter((slot) => slot.taskId === 'cooking');
   expect(
-    cooking.map((slot) => slot.crewName).join(',') === 'Sam,Jo',
-    'a daily task changes at the start clock time',
+    cooking.map((slot) => slot.crewName).join(',') === 'Sam,Jo,Sam',
+    'a daily task changes at midnight, after a short first day',
   );
-  expect(
-    formatSlotWhen(cooking[0].startMs, cooking[0].endMs) === '12:00 – Fri 12:00',
-    'a daily slot names the weekday it ends',
-  );
+  expect(cooking[0].endMs === startMs + 12 * hour, 'the first daily stretch ends at the next midnight');
+  expect(cooking[1].startMs === cooking[0].endMs && cooking[1].endMs - cooking[1].startMs === 24 * hour, 'later daily tasks are full calendar days');
+  expect(assigneeAt(rota, 'cooking', startMs + 20 * hour) === 'Jo', 'after midnight the next person has the daily job');
+  const midnightStart = sanitizeRota({ ...rota, startAt: '2026-11-12T00:00' });
+  const midnightMs = parseWall('2026-11-12T00:00')!;
+  const fullDays = dutySlots(midnightStart, midnightMs, midnightMs + 36 * hour).filter((slot) => slot.taskId === 'cooking');
+  expect(fullDays[0].endMs - fullDays[0].startMs === 24 * hour && fullDays[0].crewName === 'Sam', 'a midnight start gives the first person a full day');
 
   expect(dutySlots({ ...rota, crew: [] }, startMs, startMs + hour).length === 0, 'no named crew produces no slots');
   expect(assigneeAt(rota, 'inspection', startMs + hour) === null, 'a missing task has no assignee');
@@ -96,10 +99,10 @@ export function dutyRotaFailures(): string[] {
   const across = rosterWindow(rota, startMs + 3 * hour, 0, 2);
   const nextDay = across.days.find((day) => day.key === '2026-11-13');
   expect(nextDay?.rows[0]?.when === '00:00–04:00', 'each watch keeps its own row after midnight');
-  expect(nextDay?.rows[0]?.cells.join('|') === 'Jo|', 'a daily name stays blank until that job changes');
+  expect(nextDay?.rows[0]?.cells.join('|') === 'Jo|Jo', 'the next daily name appears at midnight');
   expect(
-    nextDay?.rows.find((row) => row.when === '12:00–16:00')?.cells.join('|') === 'Sam|Jo',
-    'the next daily name appears on the first watch of that day',
+    nextDay?.rows.find((row) => row.when === '12:00–16:00')?.cells.join('|') === 'Sam|',
+    'a daily name stays blank for the rest of that calendar day',
   );
 
   const mixed = sanitizeRota({
