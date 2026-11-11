@@ -1,0 +1,70 @@
+<app-header
+  title="Daily inspection"
+  subtitle="Walk around the boat"
+  [showBack]="true"
+  backTo="do"
+></app-header>
+<ion-content [fullscreen]="true" class="page-content">
+  <div class="cl-prog-wrap">
+    <div class="cl-bar-wrap">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="progress.percent"></div>
+      </div>
+      <div class="cl-count">{{ progress.done }} of {{ progress.total }} complete</div>
+    </div>
+    <button type="button" class="cl-reset" *ngIf="!readonly" (click)="clear()">
+      <ion-icon name="refresh-outline" aria-hidden="true"></ion-icon>
+      Clear
+    </button>
+  </div>
+
+  <p class="insp-sync" *ngIf="inspections.syncNote() as note">{{ note }}</p>
+  <p class="insp-intro">{{ intro }}</p>
+  <p class="insp-warning">{{ warning }}</p>
+
+  <label class="insp-day">
+    <span>Day</span>
+    <select [value]="date" (change)="pick($any($event.target).value)">
+      <option [value]="today">Today · {{ dayLabel(today) }}</option>
+      <option *ngFor="let day of inspections.history(); trackBy: trackDay" [value]="day.date">
+        {{ dayLabel(day.date) }}
+      </option>
+    </select>
+  </label>
+  <p class="insp-kept" *ngIf="readonly">Kept from {{ dayLabel(date) }}.</p>
+  <p class="insp-who" *ngIf="who as name">{{ name }} is on inspection.</p>
+
+  <div class="checklist-body">
+    <div class="cl-group" *ngFor="let group of groups; trackBy: trackGroup">
+      <div class="cl-group-title">{{ group.title }}</div>
+      <p class="insp-group-intro" *ngIf="group.intro">{{ group.intro }}</p>
+      <div class="cl-item" *ngFor="let item of group.items; trackBy: trackItem" [class.chk]="isDone(item.id)">
+        <button
+          type="button"
+          class="cl-hit"
+          role="checkbox"
+          [attr.aria-checked]="isDone(item.id)"
+          [disabled]="readonly"
+          (click)="toggle(item.id)"
+        >
+          <div class="cl-checkbox">
+            <ion-icon *ngIf="isDone(item.id)" name="checkmark" aria-hidden="true"></ion-icon>
+          </div>
+          <div class="cl-item-text" [class.done]="isDone(item.id)">{{ item.text }}</div>
+        </button>
+        <p class="insp-note-read" *ngIf="readonly && draft[item.id]">{{ draft[item.id] }}</p>
+        <label class="insp-note-label" *ngIf="!readonly">
+          <span class="visually-hidden">Note for {{ item.text }}</span>
+          <textarea
+            class="insp-note"
+            rows="2"
+            maxlength="500"
+            placeholder="Note"
+            [ngModel]="draft[item.id]"
+            (ngModelChange)="editNote(item.id, $event)"
+          ></textarea>
+        </label>
+      </div>
+    </div>
+  </div>
+</ion-content>

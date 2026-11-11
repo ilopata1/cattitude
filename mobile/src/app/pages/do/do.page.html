@@ -1,6 +1,22 @@
 <app-header></app-header>
 <ion-content [fullscreen]="true" class="page-content">
   <div class="scroll-area do-menu">
+    <section class="do-section">
+      <div class="section-label">Today</div>
+      <div class="do-cards">
+        <button type="button" class="do-card" (click)="openInspection()">
+          <div class="do-card-icon ic-blue">
+            <app-ui-icon icon="walk-outline" fallback="clipboard-outline"></app-ui-icon>
+          </div>
+          <div class="do-card-body">
+            <div class="do-card-title">Daily inspection</div>
+            <div class="do-card-sub">Walk around the boat</div>
+            <div class="do-card-prog">{{ inspectionProgressLabel() }}</div>
+          </div>
+          <div class="do-card-arrow" aria-hidden="true"><ion-icon name="chevron-forward"></ion-icon></div>
+        </button>
+      </div>
+    </section>
     <section class="do-section" *ngIf="learnCard as learn">
       <div class="section-label">Learn</div>
       <button type="button" class="do-card learn-card" (click)="open(learn.route)">

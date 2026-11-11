@@ -1,0 +1,106 @@
+<app-header title="Duty rota" subtitle="Who does what, and when it changes" [showBack]="true" backTo="more"></app-header>
+<ion-content [fullscreen]="true" class="page-content">
+  <div class="duty">
+    <p class="duty-sync" *ngIf="duty.syncNote() as note">{{ note }}</p>
+
+    <section class="duty-card">
+      <h2>Trip start</h2>
+      <label class="duty-field">
+        <span>Date and time</span>
+        <input
+          type="datetime-local"
+          [value]="duty.rota().startAt"
+          (change)="setStart($event)"
+        />
+      </label>
+      <p class="duty-hint">
+        Watches and the other jobs count forward from this time. A daily job
+        changes at this clock time each day.
+      </p>
+    </section>
+
+    <section class="duty-card">
+      <h2>Crew</h2>
+      <p class="duty-hint">Order is the rotation order.</p>
+      <div class="duty-line" *ngFor="let person of duty.rota().crew; let i = index; trackBy: trackCrew">
+        <input
+          type="text"
+          [value]="person.name"
+          maxlength="60"
+          autocapitalize="words"
+          autocomplete="off"
+          [attr.aria-label]="'Crew name ' + (i + 1)"
+          placeholder="Name"
+          (input)="renameCrew(person.id, $event)"
+        />
+        <button type="button" aria-label="Move up" [disabled]="i === 0" (click)="duty.moveCrew(i, -1)">
+          <ion-icon name="chevron-up-outline" aria-hidden="true"></ion-icon>
+        </button>
+        <button type="button" aria-label="Move down" [disabled]="i === duty.rota().crew.length - 1" (click)="duty.moveCrew(i, 1)">
+          <ion-icon name="chevron-down-outline" aria-hidden="true"></ion-icon>
+        </button>
+        <button type="button" [attr.aria-label]="'Remove ' + (person.name || 'crew')" (click)="duty.removeCrew(person.id)">
+          <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+        </button>
+      </div>
+      <button type="button" class="duty-add" (click)="duty.addCrew()">Add crew</button>
+    </section>
+
+    <section class="duty-card">
+      <h2>Tasks</h2>
+      <div class="duty-task" *ngFor="let task of duty.rota().tasks; trackBy: trackTask">
+        <input
+          type="text"
+          [value]="task.name"
+          maxlength="40"
+          autocapitalize="words"
+          autocomplete="off"
+          aria-label="Task name"
+          placeholder="Task"
+          (input)="renameTask(task.id, $event)"
+        />
+        <label class="duty-field duty-interval">
+          <span class="visually-hidden">How often {{ task.name || 'this task' }} changes</span>
+          <select [ngModel]="task.intervalHours" (ngModelChange)="setIntervalHours(task.id, $event)">
+            <option *ngFor="let option of intervals" [ngValue]="option.hours">{{ option.label }}</option>
+          </select>
+        </label>
+        <button type="button" [attr.aria-label]="'Remove ' + (task.name || 'task')" (click)="duty.removeTask(task.id)">
+          <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+        </button>
+      </div>
+      <button type="button" class="duty-add" (click)="duty.addTask()">Add task</button>
+    </section>
+
+    <section class="duty-card">
+      <h2>Roster</h2>
+      <div class="duty-filters" *ngIf="duty.named().length" role="group" aria-label="Show assignments for">
+        <button type="button" [attr.aria-pressed]="!filterId" (click)="crewId = null">Everyone</button>
+        <button
+          type="button"
+          *ngFor="let person of duty.named(); trackBy: trackCrew"
+          [attr.aria-pressed]="filterId === person.id"
+          (click)="crewId = person.id"
+        >
+          {{ person.name }}
+        </button>
+      </div>
+
+      <p class="duty-hint" *ngIf="!roster.days.length">{{ emptyReason }}</p>
+
+      <div class="duty-day" *ngFor="let day of roster.days; trackBy: trackDay">
+        <h3>{{ day.label }}</h3>
+        <div class="duty-slot" *ngFor="let slot of day.rows; trackBy: trackSlot">
+          <span class="duty-when">{{ slotWhen(slot.startMs, slot.endMs) }}</span>
+          <span class="duty-what">{{ slot.taskName }}</span>
+          <span class="duty-who">{{ slot.crewName }}</span>
+        </div>
+      </div>
+
+      <div class="duty-more" *ngIf="duty.rota().startAt && duty.named().length">
+        <button type="button" (click)="earlier()" [disabled]="!roster.canGoEarlier">Earlier</button>
+        <button type="button" (click)="later()" [disabled]="futureDays >= 60">Later</button>
+      </div>
+    </section>
+  </div>
+</ion-content>

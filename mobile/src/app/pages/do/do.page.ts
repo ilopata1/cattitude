@@ -3,8 +3,11 @@ import { Router } from '@angular/router';
 import { LearnStage, resolveLearnPath } from '../../core/guide/learn-path';
 import { DoMenuItem, DoMenuSection } from '../../core/models/bootstrap-content.model';
 import { ContentService } from '../../core/services/content.service';
+import { DutyRotaService } from '../../core/services/duty-rota.service';
+import { InspectionService } from '../../core/services/inspection.service';
 import { ProgressService } from '../../core/services/progress.service';
 import { ReaderViewService } from '../../core/services/reader-view.service';
+import { VesselRouteService } from '../../core/services/vessel-route.service';
 import { stageTicks, tickLabel } from './learn/learn-ticks';
 
 @Component({
@@ -18,8 +21,14 @@ export class DoPage {
     public readonly content: ContentService,
     public readonly progress: ProgressService,
     public readonly readerView: ReaderViewService,
+    private readonly inspections: InspectionService,
+    private readonly duty: DutyRotaService,
+    private readonly routes: VesselRouteService,
     private readonly router: Router,
-  ) {}
+  ) {
+    this.inspections.open();
+    this.duty.open();
+  }
 
   get learnCard(): DoMenuItem | null {
     for (const section of this.content.bootstrap.ui.doMenu) {
@@ -81,6 +90,22 @@ export class DoPage {
 
   open(route: string): void {
     void this.router.navigateByUrl(route);
+  }
+
+  openInspection(): void {
+    void this.routes.navigateTabs('do', 'inspection');
+  }
+
+  inspectionProgressLabel(): string {
+    const progress = this.inspections.progress(this.inspections.todayKey());
+    const who = this.duty.assigneeName('inspection');
+    let label = 'Not started';
+    if (progress.total > 0 && progress.done === progress.total) {
+      label = 'Complete';
+    } else if (progress.done > 0) {
+      label = `${progress.done} of ${progress.total} checked`;
+    }
+    return who ? `${label} · ${who}` : label;
   }
 
   trackSection(_: number, section: DoMenuSection): string {

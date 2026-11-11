@@ -13,14 +13,14 @@ export function moreMenuFailures(): string[] {
 
   for (const vesselType of ['sailing_catamaran', 'sailing_trimaran', 'cruising_monohull']) {
     expect(
-      ids(vesselType).join(',') === 'ask,sail,polar,levels,logbook,anchorage,settings',
+      ids(vesselType).join(',') === 'ask,sail,polar,levels,logbook,duty,anchorage,settings',
       `${vesselType} more rows`,
     );
     expect(label(vesselType, 'sail') === 'Sail', `${vesselType} sail label`);
   }
   for (const vesselType of ['power_catamaran', 'motor_yacht', 'sport_fishing', '']) {
     expect(
-      ids(vesselType).join(',') === 'ask,sail,levels,logbook,anchorage,settings',
+      ids(vesselType).join(',') === 'ask,sail,levels,logbook,duty,anchorage,settings',
       `${vesselType || 'unset'} more rows`,
     );
     expect(label(vesselType, 'sail') === 'Instruments', `${vesselType || 'unset'} instruments label`);

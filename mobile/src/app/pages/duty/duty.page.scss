@@ -1,0 +1,186 @@
+.page-content {
+  --background: var(--cattitude-sand);
+}
+
+.duty {
+  padding: var(--cattitude-space-md);
+}
+
+.duty-sync {
+  margin: 0 0 var(--cattitude-space-md);
+  color: var(--cattitude-coral);
+  font-size: var(--cattitude-text-sm);
+  font-weight: 600;
+}
+
+.duty-card {
+  background: var(--cattitude-surface);
+  border-radius: var(--cattitude-radius-md);
+  box-shadow: var(--cattitude-shadow-md);
+  padding: var(--cattitude-space-md);
+  margin-bottom: var(--cattitude-space-md);
+}
+
+.duty-card h2,
+.duty-day h3 {
+  margin: 0 0 8px;
+  font-size: var(--cattitude-text-caption);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cattitude-text-light);
+}
+
+.duty-hint {
+  margin: 0 0 10px;
+  color: var(--cattitude-text-light);
+  font-size: var(--cattitude-text-sm);
+  line-height: 1.45;
+}
+
+.duty-field {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.duty-field span {
+  display: block;
+  margin-bottom: 4px;
+  font-size: var(--cattitude-text-sm);
+  font-weight: 650;
+}
+
+.duty-line,
+.duty-task {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.duty input,
+.duty select,
+.duty-line button,
+.duty-task button,
+.duty-add,
+.duty-filters button,
+.duty-more button {
+  font: inherit;
+  color: var(--cattitude-text-dark);
+}
+
+.duty input,
+.duty select {
+  min-height: var(--cattitude-touch-min);
+  border: 1px solid var(--cattitude-sand-mid);
+  border-radius: 8px;
+  background: var(--cattitude-sand);
+  padding: 0 10px;
+}
+
+.duty-line input,
+.duty-task input {
+  flex: 1;
+  min-width: 0;
+}
+
+.duty-interval {
+  margin: 0;
+  flex: 0 0 8.5rem;
+}
+
+.duty-interval select {
+  width: 100%;
+}
+
+.duty-line button,
+.duty-task button {
+  width: var(--cattitude-touch-min);
+  height: var(--cattitude-touch-min);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--cattitude-sand-mid);
+  border-radius: 8px;
+  background: transparent;
+  font-size: 1.25rem;
+}
+
+.duty-line button:disabled,
+.duty-more button:disabled {
+  opacity: 0.35;
+}
+
+.duty-add,
+.duty-more button,
+.duty-filters button {
+  min-height: var(--cattitude-touch-min);
+  border: 1px solid var(--cattitude-sand-mid);
+  border-radius: 999px;
+  background: transparent;
+  padding: 0 14px;
+}
+
+.duty-add {
+  margin-top: 4px;
+}
+
+.duty-filters {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin-bottom: 12px;
+  padding-bottom: 2px;
+}
+
+.duty-filters button[aria-pressed='true'] {
+  background: var(--cattitude-teal);
+  border-color: var(--cattitude-teal);
+  color: #fff;
+  font-weight: 650;
+}
+
+.duty-day {
+  margin-top: 14px;
+}
+
+.duty-slot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  align-items: baseline;
+  padding: 10px 0;
+  border-top: 1px solid var(--cattitude-sand-mid);
+}
+
+.duty-when {
+  min-width: 9.5rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--cattitude-text-mid);
+}
+
+.duty-what {
+  font-weight: 650;
+}
+
+.duty-who {
+  margin-left: auto;
+}
+
+.duty-more {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

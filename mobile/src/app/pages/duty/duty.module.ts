@@ -1,0 +1,13 @@
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { IonicModule } from '@ionic/angular';
+import { SharedModule } from '../../shared/shared.module';
+import { DutyPage } from './duty.page';
+import { DutyRoutingModule } from './duty-routing.module';
+
+@NgModule({
+  imports: [CommonModule, FormsModule, IonicModule, SharedModule, DutyRoutingModule],
+  declarations: [DutyPage],
+})
+export class DutyModule {}
