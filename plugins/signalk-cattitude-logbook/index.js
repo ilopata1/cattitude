@@ -12,6 +12,7 @@ const {
   sailsUp,
 } = require('./lib/math');
 const { applyPassageEvent, buildEntry, toLogentryResource } = require('./lib/entry');
+const { watchAssignee } = require('./lib/duty');
 
 const SAMPLE_MS = 10_000;
 const RETAIN_MS = 48 * 60 * 60 * 1000;
@@ -199,11 +200,33 @@ module.exports = (app) => {
         && String(previous.watch || '').trim() !== String(body.passage.watch || '').trim()
         && body.passage.departedAt);
     }
+    if (body.rota && typeof body.rota === 'object') state.rota = body.rota;
+    if (Number.isFinite(body.wallOffsetMs)) state.wallOffsetMs = body.wallOffsetMs;
     persist();
     return watchChanged;
   }
 
+  async function applyRotaWatch(now) {
+    const passage = state.passage;
+    if (!passage || !state.rota) return;
+    const watch = watchAssignee(state.rota, now + (Number(state.wallOffsetMs) || 0));
+    if (String(passage.watch || '').trim() === watch) return;
+    const previous = passage;
+    state.passage = { ...passage, watch };
+    if (!passage.departedAt) {
+      persist();
+      return;
+    }
+    try {
+      await recordTrigger('watch-change', { force: true }, now);
+    } catch (err) {
+      state.passage = previous;
+      throw err;
+    }
+  }
+
   async function evaluate(now) {
+    await applyRotaWatch(now);
     if (!readingUsable(reading)) {
       setStatus();
       return;
@@ -410,6 +433,8 @@ function emptyState() {
     settings: normalizeSettings(null),
     passage: null,
     sails: { main: '', headsail: '', label: '', recommended: null },
+    rota: null,
+    wallOffsetMs: 0,
     stable: null,
     pending: null,
     pendingSince: 0,

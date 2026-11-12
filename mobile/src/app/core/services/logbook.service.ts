@@ -24,7 +24,9 @@ import {
   PassageWaypoint,
   DEFAULT_LOGBOOK_SETTINGS,
 } from '../models/logbook.model';
+import { wallNowMs } from '../wall-time';
 import { CurrentSailService } from './current-sail.service';
+import { DutyRotaService } from './duty-rota.service';
 import { LogbookRemoteService } from './logbook-remote.service';
 import { LogbookSamplerService } from './logbook-sampler.service';
 import { LogbookStoreService } from './logbook-store.service';
@@ -57,6 +59,7 @@ export class LogbookService {
   private readonly sails = inject(CurrentSailService);
   private readonly sailPlans = inject(SailPlanService);
   private readonly polar = inject(PolarService);
+  private readonly duty = inject(DutyRotaService);
 
   readonly entries$ = new BehaviorSubject<LogEntry[]>([]);
   readonly passage$ = new BehaviorSubject<Passage | null>(null);
@@ -76,7 +79,17 @@ export class LogbookService {
   }
 
   record(trigger: LogTrigger, options: LogRecordOptions = {}): Promise<LogEntry | null> {
-    const run = this.tail.then(() => this.recordNowOrRemote(trigger, options));
+    const run = this.tail.then(async () => {
+      await this.noteDutyWatch();
+      return this.recordNowOrRemote(trigger, options);
+    });
+    this.tail = run.then(() => undefined, () => undefined);
+    return run;
+  }
+
+  /** Write a watch-change entry when the duty rota hands the watch to someone else. */
+  syncWatchFromDuty(): Promise<void> {
+    const run = this.tail.then(() => this.noteDutyWatch());
     this.tail = run.then(() => undefined, () => undefined);
     return run;
   }
@@ -121,14 +134,29 @@ export class LogbookService {
   }
 
   async savePassage(passage: Passage): Promise<void> {
+    await this.writePassage(passage, true);
+  }
+
+  /**
+   * The passage watch is the person currently on the duty rota's watch task.
+   * A change during a passage writes a watch-change entry.
+   * `queueHandover` is false when the caller is already inside the record queue.
+   */
+  private async writePassage(passage: Passage, queueHandover: boolean): Promise<void> {
     await this.ensureReady();
+    if (this.duty.hasVessel()) await this.duty.whenReady();
     const previous = this.passage$.value;
-    const next: Passage = { ...passage, updatedAt: new Date().toISOString() };
+    const next: Passage = {
+      ...passage,
+      watch: this.duty.hasVessel() ? this.dutyWatch() : passage.watch,
+      updatedAt: new Date().toISOString(),
+    };
     await this.store.savePassage(next);
     await this.store.markPassageDirty(true);
     this.passage$.next(next);
     this.sync.schedule();
     await this.publishContext();
+    if (!queueHandover) return;
     if (this.remote.recording()) {
       await this.absorbBoat();
       return;
@@ -136,6 +164,39 @@ export class LogbookService {
     if (previous && previous.watch.trim() !== next.watch.trim() && next.departedAt) {
       await this.record('watch-change');
     }
+  }
+
+  private async noteDutyWatch(): Promise<void> {
+    if (!this.duty.hasVessel()) return;
+    await this.duty.whenReady();
+    const passage = this.passage$.value;
+    if (!passage) return;
+    const watch = this.dutyWatch();
+    if (passage.watch.trim() === watch) return;
+    const departed = !!passage.departedAt;
+    await this.writePassage({ ...passage, watch }, false);
+    if (!departed) return;
+    if (this.remote.recording()) {
+      await this.absorbBoat();
+      return;
+    }
+    await this.recordNow('watch-change', {});
+  }
+
+  private dutyWatch(): string {
+    return this.duty.assigneeName('watch')?.trim() ?? '';
+  }
+
+  private passageForBoat(): Passage | null {
+    const passage = this.passage$.value;
+    if (!passage || !this.duty.hasVessel()) return passage;
+    const watch = this.dutyWatch();
+    return passage.watch === watch ? passage : { ...passage, watch };
+  }
+
+  private entryWatch(passage: Passage | null): string | null {
+    if (!this.duty.hasVessel()) return passage?.watch?.trim() || null;
+    return this.dutyWatch() || null;
   }
 
   async saveSettings(settings: LogbookSettings): Promise<void> {
@@ -150,12 +211,15 @@ export class LogbookService {
 
   /** Sail set, passage, and interval, for the recorder on the boat. */
   async publishContext(): Promise<void> {
+    if (this.duty.hasVessel()) await this.duty.whenReady();
     const selection = this.sails.selection();
     const average = this.polar.windows[15];
     const advice = this.sailPlans.advise(average.twaDeg, average.twsKnots, average.polarPct);
     await this.remote.publish({
       settings: this.settings$.value,
-      passage: this.passage$.value,
+      passage: this.passageForBoat(),
+      rota: this.duty.hasVessel() ? this.duty.rota() : undefined,
+      wallOffsetMs: wallNowMs() - Date.now(),
       sails: {
         main: selection.main,
         headsail: selection.headsail,
@@ -350,7 +414,7 @@ export class LogbookService {
         tanks: reading.tanks.map(tank => ({ ...tank })),
       },
       tripLogM: reading.tripLogM,
-      watch: passage?.watch?.trim() || null,
+      watch: this.entryWatch(passage),
       seaState: null,
       cloudOktas: null,
       visibilityNm: null,

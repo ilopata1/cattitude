@@ -44,8 +44,7 @@
         </div>
         <label>Arrival radius (nm)</label>
         <ion-input [(ngModel)]="draft.radius" (ngModelChange)="markDraftDirty()" inputmode="decimal"></ion-input>
-        <label>On watch</label>
-        <ion-input [(ngModel)]="draft.watch" (ngModelChange)="markDraftDirty()" placeholder="Name carried onto each entry"></ion-input>
+        <p class="log-meta">On watch {{ onWatch() || '—' }}</p>
 
         <div class="log-waypoints">
           <div class="log-waypoint" *ngFor="let waypoint of draft.waypoints">

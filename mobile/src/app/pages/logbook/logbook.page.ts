@@ -34,6 +34,7 @@ import {
   emptyReading,
 } from '../../core/models/logbook.model';
 import { CurrentSailService } from '../../core/services/current-sail.service';
+import { DutyRotaService } from '../../core/services/duty-rota.service';
 import { LogbookRemoteService } from '../../core/services/logbook-remote.service';
 import { LogbookSamplerService } from '../../core/services/logbook-sampler.service';
 import { LogbookSyncService } from '../../core/services/logbook-sync.service';
@@ -54,7 +55,6 @@ interface PassageDraft {
   lat: string;
   lon: string;
   radius: string;
-  watch: string;
   waypoints: WaypointDraft[];
   departedAt: string | null;
   arrivedAt: string | null;
@@ -120,6 +120,7 @@ export class LogbookPage implements OnInit, OnDestroy {
   readonly boat = inject(LogbookRemoteService);
   private readonly sampler = inject(LogbookSamplerService);
   private readonly sails = inject(CurrentSailService);
+  private readonly duty = inject(DutyRotaService);
   private readonly alerts = inject(AlertController);
   private readonly cdr = inject(ChangeDetectorRef);
   readonly sync = inject(LogbookSyncService);
@@ -398,6 +399,10 @@ export class LogbookPage implements OnInit, OnDestroy {
     });
   }
 
+  onWatch(): string {
+    return this.duty.assigneeName('watch')?.trim() ?? '';
+  }
+
   markDraftDirty(): void {
     this.draftDirty = true;
   }
@@ -527,7 +532,7 @@ export class LogbookPage implements OnInit, OnDestroy {
       waypoints,
       departedAt: this.draft.departedAt,
       arrivedAt: this.draft.arrivedAt,
-      watch: this.draft.watch.trim(),
+      watch: this.onWatch(),
       updatedAt: new Date().toISOString(),
     };
   }
@@ -563,7 +568,6 @@ function blankDraft(): PassageDraft {
     lat: '',
     lon: '',
     radius: '0.3',
-    watch: '',
     waypoints: [],
     departedAt: null,
     arrivedAt: null,
@@ -578,7 +582,6 @@ function draftFrom(passage: Passage): PassageDraft {
     lat: passage.destinationLat == null ? '' : String(passage.destinationLat),
     lon: passage.destinationLon == null ? '' : String(passage.destinationLon),
     radius: String(passage.arrivalRadiusNm),
-    watch: passage.watch,
     departedAt: passage.departedAt,
     arrivedAt: passage.arrivedAt,
     waypoints: passage.waypoints.map(waypoint => ({

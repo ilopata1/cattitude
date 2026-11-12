@@ -35,6 +35,7 @@ export class DutyRotaService {
   private pushing = false;
   private pushAgain = false;
   private timer: ReturnType<typeof setTimeout> | null = null;
+  private ready: Promise<void> = Promise.resolve();
 
   constructor() {
     this.open();
@@ -48,7 +49,16 @@ export class DutyRotaService {
     }
     this.slug = slug;
     this.restore();
-    void this.hydrate();
+    this.ready = this.hydrate().then(() => undefined, () => undefined);
+  }
+
+  /** Resolves after the latest local restore and server load for this vessel. */
+  whenReady(): Promise<void> {
+    return this.ready;
+  }
+
+  hasVessel(): boolean {
+    return this.slug.length > 0;
   }
 
   named(): CrewMember[] {

@@ -64,6 +64,7 @@ export class LogbookTriggerService implements OnDestroy {
     try {
       await this.logbook.ensureReady();
       await this.remote.refresh();
+      await this.logbook.syncWatchFromDuty();
       if (this.remote.recording()) {
         await this.logbook.publishContext();
         return;

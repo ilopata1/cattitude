@@ -1,6 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
+import { DutyRota } from '../duty/duty-rota';
 import { entriesFromLogentriesBody, isPassage, recorderIsFresh } from '../logbook/logbook-remote';
 import {
   LogEntry,
@@ -14,6 +15,9 @@ import { SignalKService } from './signal-k.service';
 export interface RecorderContext {
   settings?: LogbookSettings;
   passage?: Passage | null;
+  rota?: DutyRota;
+  /** Phone wall clock minus `Date.now()`, so the boat can follow the duty rota. */
+  wallOffsetMs?: number;
   sails?: { main: string; headsail: string; recommended?: string | null };
   recommended?: string | null;
 }
