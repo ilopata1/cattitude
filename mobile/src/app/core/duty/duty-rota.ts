@@ -277,6 +277,24 @@ export function rosterGrid(
   return { columns, days: [...groups.values()] };
 }
 
+/** The same window the roster shows: from the trip, today, or the scrolled past, through the days ahead. */
+export function rosterBounds(
+  rota: DutyRota,
+  nowMs: number,
+  pastDays: number,
+  futureDays: number,
+): { fromMs: number; toMs: number } | null {
+  const start = parseWall(rota.startAt);
+  if (start == null) {
+    return null;
+  }
+  const today = startOfWallDay(nowMs);
+  const fromFloor = start > today ? start : today - Math.max(0, pastDays) * DAY_MS;
+  const fromMs = Math.max(start, fromFloor);
+  const toMs = Math.max(today, startOfWallDay(start)) + Math.max(1, futureDays) * DAY_MS;
+  return { fromMs, toMs };
+}
+
 export function rosterWindow(
   rota: DutyRota,
   nowMs: number,
@@ -284,16 +302,81 @@ export function rosterWindow(
   futureDays: number,
   crewId?: string | null,
 ): { columns: RosterColumn[]; days: RosterDay[]; canGoEarlier: boolean } {
-  const start = parseWall(rota.startAt);
-  if (start == null) {
+  const bounds = rosterBounds(rota, nowMs, pastDays, futureDays);
+  if (!bounds) {
     return { columns: [], days: [], canGoEarlier: false };
   }
-  const today = startOfWallDay(nowMs);
-  const fromFloor = start > today ? start : today - Math.max(0, pastDays) * DAY_MS;
-  const from = Math.max(start, fromFloor);
-  const to = Math.max(today, startOfWallDay(start)) + Math.max(1, futureDays) * DAY_MS;
-  const grid = rosterGrid(rota, from, to, crewId);
-  return { ...grid, canGoEarlier: from > start };
+  const grid = rosterGrid(rota, bounds.fromMs, bounds.toMs, crewId);
+  const start = parseWall(rota.startAt) ?? bounds.fromMs;
+  return { ...grid, canGoEarlier: bounds.fromMs > start };
+}
+
+/** A reminder more than a day ahead is clipped. `null` means no reminder. */
+export const DUTY_REMIND_MAX_MINUTES = 24 * 60;
+
+export interface DutyCalendarOptions {
+  fromMs: number;
+  toMs: number;
+  crewId?: string | null;
+  /** Minutes before each start. Omit, or pass null, for no reminder. */
+  remindMinutes?: number | null;
+  /** UTC instant written as `DTSTAMP`. */
+  stampMs: number;
+}
+
+/**
+ * One event per assignment in the window. Times are floating boat-clock times,
+ * so a calendar on this phone shows the same hours as the roster.
+ * `crewId` keeps one person; omit it for everyone.
+ */
+export function dutyToIcs(rota: DutyRota, options: DutyCalendarOptions): string {
+  const slots = dutySlots(rota, options.fromMs, options.toMs, options.crewId);
+  const remind = remindOffset(options.remindMinutes);
+  const title = calendarTitle(rota, options.crewId);
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Cattitude//Duty rota//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    `NAME:${icsText(title)}`,
+    `X-WR-CALNAME:${icsText(title)}`,
+  ];
+  for (const slot of slots) {
+    if (slot.endMs <= slot.startMs) {
+      continue;
+    }
+    lines.push('BEGIN:VEVENT');
+    lines.push(`UID:cattitude-duty-${slot.taskId}-${slot.crewId}-${slot.startMs}@cattitude`);
+    lines.push(`DTSTAMP:${formatIcsUtc(options.stampMs)}`);
+    lines.push(`DTSTART:${formatIcsLocal(slot.startMs)}`);
+    lines.push(`DTEND:${formatIcsLocal(slot.endMs)}`);
+    lines.push(`SUMMARY:${icsText(`${slot.taskName} · ${slot.crewName}`)}`);
+    lines.push(`DESCRIPTION:${icsText(`${slot.taskName} for ${slot.crewName}`)}`);
+    if (remind != null) {
+      lines.push('BEGIN:VALARM');
+      lines.push('ACTION:DISPLAY');
+      lines.push(`DESCRIPTION:${icsText(alarmDescription(slot, remind))}`);
+      lines.push(`TRIGGER:${remind === 0 ? 'PT0S' : `-PT${remind}M`}`);
+      lines.push('END:VALARM');
+    }
+    lines.push('END:VEVENT');
+  }
+  lines.push('END:VCALENDAR');
+  return `${lines.map(foldIcsLine).join('\r\n')}\r\n`;
+}
+
+export function dutyCalendarFilename(rota: DutyRota, crewId?: string | null): string {
+  const name = selectedCrewName(rota, crewId);
+  if (!name) {
+    return 'duty-rota.ics';
+  }
+  const slug = name
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 40);
+  return `duty-${slug || 'crew'}.ics`;
 }
 
 /**
@@ -446,4 +529,88 @@ function normalizeStart(value: unknown): string {
 
 function clipText(value: unknown, max: number): string {
   return typeof value === 'string' ? value.trim().slice(0, max) : '';
+}
+
+function selectedCrewName(rota: DutyRota, crewId?: string | null): string {
+  if (!crewId) {
+    return '';
+  }
+  return rota.crew.find((person) => person.id === crewId)?.name.trim() ?? '';
+}
+
+function calendarTitle(rota: DutyRota, crewId?: string | null): string {
+  const name = selectedCrewName(rota, crewId);
+  return name ? `Duty rota — ${name}` : 'Duty rota';
+}
+
+function remindOffset(value: number | null | undefined): number | null {
+  if (value == null || !Number.isFinite(value)) {
+    return null;
+  }
+  return Math.max(0, Math.min(DUTY_REMIND_MAX_MINUTES, Math.round(value)));
+}
+
+function alarmDescription(slot: DutySlot, minutes: number): string {
+  const lead = `${slot.taskName} for ${slot.crewName}`;
+  if (minutes <= 0) {
+    return `${lead} starts now`;
+  }
+  if (minutes === 1) {
+    return `${lead} starts in 1 minute`;
+  }
+  return `${lead} starts in ${minutes} minutes`;
+}
+
+function icsText(value: string): string {
+  return value
+    .replace(/\\/g, '\\\\')
+    .replace(/\r\n|\n|\r/g, '\\n')
+    .replace(/;/g, '\\;')
+    .replace(/,/g, '\\,');
+}
+
+/** Fold at 75 octets. A continuation line starts with a space, which counts. */
+function foldIcsLine(line: string): string {
+  const bytes = new TextEncoder().encode(line);
+  if (bytes.length <= 75) {
+    return line;
+  }
+  const decoder = new TextDecoder();
+  const parts: string[] = [];
+  let offset = 0;
+  let budget = 75;
+  while (offset < bytes.length) {
+    let end = Math.min(bytes.length, offset + budget);
+    while (end > offset && (bytes[end] & 0xc0) === 0x80) {
+      end -= 1;
+    }
+    if (end === offset) {
+      end = Math.min(bytes.length, offset + budget);
+    }
+    parts.push(decoder.decode(bytes.subarray(offset, end)));
+    offset = end;
+    budget = 74;
+  }
+  return parts.join('\r\n ');
+}
+
+function formatIcsLocal(ms: number): string {
+  const date = new Date(ms);
+  return `${icsDate(date)}T${icsTime(date)}`;
+}
+
+function formatIcsUtc(ms: number): string {
+  return `${formatIcsLocal(ms)}Z`;
+}
+
+function icsDate(date: Date): string {
+  return `${date.getUTCFullYear()}${icsPad(date.getUTCMonth() + 1)}${icsPad(date.getUTCDate())}`;
+}
+
+function icsTime(date: Date): string {
+  return `${icsPad(date.getUTCHours())}${icsPad(date.getUTCMinutes())}${icsPad(date.getUTCSeconds())}`;
+}
+
+function icsPad(value: number): string {
+  return String(value).padStart(2, '0');
 }

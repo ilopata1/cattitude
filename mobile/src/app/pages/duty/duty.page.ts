@@ -1,7 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import {
   DUTY_INTERVAL_OPTIONS,
+  DUTY_REMIND_MAX_MINUTES,
   DutyTask,
+  dutyCalendarFilename,
+  dutySlots,
+  dutyToIcs,
+  rosterBounds,
   rosterWindow,
 } from '../../core/duty/duty-rota';
 import { DutyRotaService } from '../../core/services/duty-rota.service';
@@ -17,6 +22,9 @@ export class DutyPage implements OnInit {
   pastDays = 0;
   futureDays = 7;
   crewId: string | null = null;
+  remind = true;
+  remindMinutes: number | null = 15;
+  readonly remindMax = DUTY_REMIND_MAX_MINUTES;
   /** Closed once a trip is already set, so the roster is what you see. */
   setupOpen = true;
   private taskOpen: Record<string, boolean> = {};
@@ -46,6 +54,22 @@ export class DutyPage implements OnInit {
     const when = start == null ? 'No start time' : `${formatWallDay(start)}, ${formatWallTime(start)}`;
     const names = this.duty.named().map((person) => person.name);
     return `${when} · ${names.length ? names.join(', ') : 'No crew'}`;
+  }
+
+  get canDownload(): boolean {
+    const bounds = this.calendarBounds();
+    if (!bounds) {
+      return false;
+    }
+    return dutySlots(this.duty.rota(), bounds.fromMs, bounds.toMs, this.filterId).length > 0;
+  }
+
+  get calendarHint(): string {
+    const who = this.filterId ? this.crewLabel(this.filterId) : 'everyone';
+    if (!this.canDownload) {
+      return `Nothing for ${who} in the days below.`;
+    }
+    return `Downloads ${who} for the days shown below.`;
   }
 
   get emptyReason(): string {
@@ -116,6 +140,29 @@ export class DutyPage implements OnInit {
     this.duty.setInterval(id, value);
   }
 
+  downloadCalendar(): void {
+    const rota = this.duty.rota();
+    const bounds = this.calendarBounds();
+    if (!bounds || !this.canDownload) {
+      return;
+    }
+    const remindMinutes = this.remind ? clampRemindMinutes(this.remindMinutes) : null;
+    if (this.remind) {
+      this.remindMinutes = remindMinutes;
+    }
+    download(
+      dutyCalendarFilename(rota, this.filterId),
+      'text/calendar',
+      dutyToIcs(rota, {
+        fromMs: bounds.fromMs,
+        toMs: bounds.toMs,
+        crewId: this.filterId,
+        remindMinutes,
+        stampMs: Date.now(),
+      }),
+    );
+  }
+
   earlier(): void {
     this.pastDays += 7;
   }
@@ -147,4 +194,25 @@ export class DutyPage implements OnInit {
   trackIndex(index: number): number {
     return index;
   }
+
+  private calendarBounds(): { fromMs: number; toMs: number } | null {
+    return rosterBounds(this.duty.rota(), wallNowMs(), this.pastDays, this.futureDays);
+  }
+}
+
+function clampRemindMinutes(value: number | null): number {
+  if (value == null || !Number.isFinite(value)) {
+    return 15;
+  }
+  return Math.max(0, Math.min(DUTY_REMIND_MAX_MINUTES, Math.round(value)));
+}
+
+function download(filename: string, mime: string, body: string): void {
+  const blob = new Blob([body], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
 }

@@ -2,7 +2,9 @@ import { parseWall } from '../wall-time';
 import {
   assigneeAt,
   defaultDutyRota,
+  dutyCalendarFilename,
   dutySlots,
+  dutyToIcs,
   formatSlotWhen,
   namedCrew,
   nearestInterval,
@@ -151,5 +153,111 @@ export function dutyRotaFailures(): string[] {
   expect(preferRota(defaultDutyRota(), remote, false).updatedAt === remote.updatedAt, 'an untouched rota takes the server copy');
 
   expect(sanitizeRota({ startAt: 'not-a-date', tasks: fresh.tasks }).startAt === '', 'a bad start is cleared');
+
+  const stampMs = Date.UTC(2026, 10, 12, 18, 0, 0);
+  const ics = unfoldIcs(dutyToIcs(rota, {
+    fromMs: startMs,
+    toMs: startMs + 12 * hour,
+    remindMinutes: 15,
+    stampMs,
+  }));
+  expect(ics.startsWith('BEGIN:VCALENDAR\r\n') && ics.endsWith('END:VCALENDAR\r\n'), 'the download is a calendar file');
+  expect(ics.includes('NAME:Duty rota\r\n'), 'everyone shares one calendar name');
+  expect(ics.includes('DTSTAMP:20261112T180000Z'), 'the stamp is an actual UTC instant');
+  expect(
+    ics.includes('DTSTART:20261112T120000\r\n') && !ics.includes('DTSTART:20261112T120000Z'),
+    'event times stay on the boat clock',
+  );
+  expect(ics.includes('DTEND:20261112T160000\r\n'), 'a watch ends four hours later');
+  expect(ics.includes('DTEND:20261113T000000\r\n'), 'the first daily job ends at the next midnight');
+  expect(
+    summaries(ics).join(',') === 'Watch · Sam,Cooking · Sam,Watch · Jo,Watch · Sam',
+    'everyone gets each assignment, in roster order',
+  );
+  expect(ics.includes('TRIGGER:-PT15M') && ics.includes('DESCRIPTION:Watch for Sam starts in 15 minutes'), 'the reminder fires that many minutes before the start');
+
+  const joIcs = unfoldIcs(dutyToIcs(rota, {
+    fromMs: startMs,
+    toMs: startMs + 12 * hour,
+    crewId: 'jo',
+    remindMinutes: null,
+    stampMs,
+  }));
+  expect(summaries(joIcs).join(',') === 'Watch · Jo', 'one person gets only their duties');
+  expect(joIcs.includes('NAME:Duty rota — Jo'), 'a personal file is named for that person');
+  expect(!joIcs.includes('BEGIN:VALARM'), 'turning the reminder off leaves it out of the file');
+  expect(dutyCalendarFilename(rota, null) === 'duty-rota.ics', 'everyone downloads duty-rota.ics');
+  expect(dutyCalendarFilename(rota, 'jo') === 'duty-jo.ics', 'one person downloads a file named for them');
+
+  const joLater = unfoldIcs(dutyToIcs(rota, {
+    fromMs: startMs,
+    toMs: startMs + 48 * hour,
+    crewId: 'jo',
+    remindMinutes: 30,
+    stampMs,
+  }));
+  expect(summaries(joLater).includes('Cooking · Jo'), 'a longer window still keeps only that person');
+  expect(joLater.includes('TRIGGER:-PT30M'), 'their reminder uses the minutes they set');
+
+  const comma = sanitizeRota({
+    startAt: start,
+    crew: [
+      { id: 'sam', name: 'Sam, Jr' },
+      { id: 'jo', name: 'Jo' },
+    ],
+    tasks: [{ id: 'watch', name: 'Watch; helm', intervalHours: 4 }],
+  });
+  const commaIcs = unfoldIcs(dutyToIcs(comma, {
+    fromMs: startMs,
+    toMs: startMs + hour,
+    remindMinutes: 0,
+    stampMs,
+  }));
+  expect(commaIcs.includes('SUMMARY:Watch\\; helm · Sam\\, Jr'), 'commas and semicolons in names stay in the text');
+  expect(commaIcs.includes('TRIGGER:PT0S'), 'zero minutes reminds at the start');
+  expect(
+    dutyToIcs(rota, { fromMs: startMs, toMs: startMs + hour, remindMinutes: 100000, stampMs }).includes('TRIGGER:-PT1440M'),
+    'a reminder is capped at one day',
+  );
+
+  const longName = 'A'.repeat(80);
+  const folded = dutyToIcs({
+    startAt: start,
+    crew: [{ id: 'sam', name: longName }],
+    tasks: [{ id: 'watch', name: 'Watch', intervalHours: 4, sequence: ['sam'] }],
+    updatedAt: '',
+  }, { fromMs: startMs, toMs: startMs + hour, remindMinutes: null, stampMs });
+  expect(
+    folded.split('\r\n').every((line) => new TextEncoder().encode(line).length <= 75),
+    'calendar lines stay within 75 bytes',
+  );
+  expect(unfoldIcs(folded).includes(`SUMMARY:Watch · ${longName}`), 'a folded name is still the whole name');
+  const accented = 'é'.repeat(40);
+  const accentedIcs = dutyToIcs({
+    startAt: start,
+    crew: [{ id: 'sam', name: accented }],
+    tasks: [{ id: 'watch', name: 'Watch', intervalHours: 4, sequence: ['sam'] }],
+    updatedAt: '',
+  }, { fromMs: startMs, toMs: startMs + hour, remindMinutes: null, stampMs });
+  expect(
+    accentedIcs.split('\r\n').every((line) => new TextEncoder().encode(line).length <= 75)
+      && unfoldIcs(accentedIcs).includes(`SUMMARY:Watch · ${accented}`),
+    'a folded line keeps a multibyte name intact',
+  );
+  expect(
+    !dutyToIcs(defaultDutyRota(), { fromMs: startMs, toMs: startMs + hour, remindMinutes: 15, stampMs }).includes('BEGIN:VEVENT'),
+    'an unset rota downloads as an empty calendar',
+  );
   return failures;
+}
+
+function unfoldIcs(ics: string): string {
+  return ics.replace(/\r\n[ \t]/g, '');
+}
+
+function summaries(ics: string): string[] {
+  return ics
+    .split('\r\n')
+    .filter((line) => line.startsWith('SUMMARY:'))
+    .map((line) => line.slice('SUMMARY:'.length));
 }

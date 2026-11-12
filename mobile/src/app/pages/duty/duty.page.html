@@ -126,6 +126,39 @@
         </button>
       </div>
 
+      <div class="duty-calendar" *ngIf="duty.rota().startAt && duty.named().length">
+        <div class="duty-remind-row">
+          <label class="duty-remind">
+            <input type="checkbox" [(ngModel)]="remind" />
+            <span>Reminder</span>
+          </label>
+          <label class="duty-minutes">
+            <input
+              type="number"
+              min="0"
+              [max]="remindMax"
+              step="1"
+              inputmode="numeric"
+              [(ngModel)]="remindMinutes"
+              [disabled]="!remind"
+              aria-label="Minutes before the start"
+            />
+            <span>minutes before the start</span>
+          </label>
+        </div>
+        <button
+          type="button"
+          class="duty-download"
+          (click)="downloadCalendar()"
+          [disabled]="!canDownload"
+          [attr.aria-label]="'Download calendar for ' + (filterId ? crewLabel(filterId) : 'everyone')"
+        >
+          <ion-icon name="download-outline" aria-hidden="true"></ion-icon>
+          Download calendar
+        </button>
+        <p class="duty-hint">{{ calendarHint }}</p>
+      </div>
+
       <p class="duty-hint" *ngIf="!roster.days.length">{{ emptyReason }}</p>
 
       <div class="duty-day" *ngFor="let day of roster.days; trackBy: trackDay">
