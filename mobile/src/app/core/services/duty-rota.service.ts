@@ -77,27 +77,26 @@ export class DutyRotaService {
     }));
   }
 
-  moveCrew(index: number, delta: number): void {
-    this.mutate((rota) => {
-      const next = rota.crew.slice();
-      const target = index + delta;
-      if (target < 0 || target >= next.length) {
-        return rota;
-      }
-      const [row] = next.splice(index, 1);
-      next.splice(target, 0, row);
-      return { ...rota, crew: next };
-    });
-  }
-
   removeCrew(id: string): void {
-    this.mutate((rota) => ({ ...rota, crew: rota.crew.filter((person) => person.id !== id) }));
+    this.mutate((rota) => ({
+      ...rota,
+      crew: rota.crew.filter((person) => person.id !== id),
+      tasks: rota.tasks.map((task) => ({
+        ...task,
+        sequence: task.sequence.filter((crewId) => crewId !== id),
+      })),
+    }));
   }
 
   addTask(): void {
     this.mutate((rota) => ({
       ...rota,
-      tasks: [...rota.tasks, { id: newDutyId(), name: '', intervalHours: 24 }],
+      tasks: [...rota.tasks, {
+        id: newDutyId(),
+        name: '',
+        intervalHours: 24,
+        sequence: namedCrew(rota).map((person) => person.id),
+      }],
     }));
   }
 
@@ -117,6 +116,46 @@ export class DutyRotaService {
 
   removeTask(id: string): void {
     this.mutate((rota) => ({ ...rota, tasks: rota.tasks.filter((task) => task.id !== id) }));
+  }
+
+  addToSequence(taskId: string, crewId: string): void {
+    this.mutate((rota) => ({
+      ...rota,
+      tasks: rota.tasks.map((task) => {
+        if (task.id !== taskId || task.sequence.length >= 64 || !rota.crew.some((person) => person.id === crewId)) {
+          return task;
+        }
+        return { ...task, sequence: [...task.sequence, crewId] };
+      }),
+    }));
+  }
+
+  moveInSequence(taskId: string, index: number, delta: number): void {
+    this.mutate((rota) => ({
+      ...rota,
+      tasks: rota.tasks.map((task) => {
+        if (task.id !== taskId) {
+          return task;
+        }
+        const target = index + delta;
+        if (target < 0 || target >= task.sequence.length) {
+          return task;
+        }
+        const sequence = task.sequence.slice();
+        const [row] = sequence.splice(index, 1);
+        sequence.splice(target, 0, row);
+        return { ...task, sequence };
+      }),
+    }));
+  }
+
+  removeFromSequence(taskId: string, index: number): void {
+    this.mutate((rota) => ({
+      ...rota,
+      tasks: rota.tasks.map((task) => task.id === taskId
+        ? { ...task, sequence: task.sequence.filter((_, at) => at !== index) }
+        : task),
+    }));
   }
 
   private mutate(update: (rota: DutyRota) => DutyRota): void {

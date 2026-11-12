@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {
   DUTY_INTERVAL_OPTIONS,
+  DutyTask,
   rosterWindow,
 } from '../../core/duty/duty-rota';
 import { DutyRotaService } from '../../core/services/duty-rota.service';
@@ -18,6 +19,7 @@ export class DutyPage implements OnInit {
   crewId: string | null = null;
   /** Closed once a trip is already set, so the roster is what you see. */
   setupOpen = true;
+  private taskOpen: Record<string, boolean> = {};
   readonly intervals = DUTY_INTERVAL_OPTIONS;
 
   constructor(public readonly duty: DutyRotaService) {
@@ -52,10 +54,10 @@ export class DutyPage implements OnInit {
       return 'Set when the trip starts. Rotations count forward from that time.';
     }
     if (!this.duty.named().length) {
-      return 'Add the crew. The first name takes the first watch, then the list repeats.';
+      return 'Add the crew, then open each task and set who takes it.';
     }
-    if (!rota.tasks.some((task) => task.name.trim())) {
-      return 'Add a task to build the roster.';
+    if (!rota.tasks.some((task) => task.name.trim() && task.sequence.some((id) => this.duty.named().some((person) => person.id === id)))) {
+      return 'Open a task and set the order. Each task has its own sequence.';
     }
     if (this.filterId) {
       return 'Nothing for this person in this range.';
@@ -73,6 +75,37 @@ export class DutyPage implements OnInit {
 
   renameTask(id: string, event: Event): void {
     this.duty.renameTask(id, (event.target as HTMLInputElement).value);
+  }
+
+  addTask(): void {
+    const before = new Set(this.duty.rota().tasks.map((task) => task.id));
+    this.duty.addTask();
+    const added = this.duty.rota().tasks.find((task) => !before.has(task.id));
+    if (added) {
+      this.taskOpen = { ...this.taskOpen, [added.id]: true };
+    }
+  }
+
+  toggleTask(id: string): void {
+    this.taskOpen = { ...this.taskOpen, [id]: !this.taskOpen[id] };
+  }
+
+  isTaskOpen(id: string): boolean {
+    return this.taskOpen[id] === true;
+  }
+
+  taskSummary(task: DutyTask): string {
+    const option = this.intervals.find((item) => item.hours === task.intervalHours);
+    const names = task.sequence.map((id) => this.crewLabel(id)).filter((name) => name && name !== 'Unnamed');
+    return `${option?.label ?? ''} · ${names.length ? names.join(', ') : 'No one yet'}`;
+  }
+
+  crewLabel(id: string): string {
+    const person = this.duty.rota().crew.find((item) => item.id === id);
+    if (!person) {
+      return '';
+    }
+    return person.name.trim() || 'Unnamed';
   }
 
   setIntervalHours(id: string, hours: number | string): void {
@@ -109,5 +142,9 @@ export class DutyPage implements OnInit {
 
   trackRow(_: number, row: { startMs: number }): string {
     return String(row.startMs);
+  }
+
+  trackIndex(index: number): number {
+    return index;
   }
 }

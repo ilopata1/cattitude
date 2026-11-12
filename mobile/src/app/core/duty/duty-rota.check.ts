@@ -45,6 +45,7 @@ export function dutyRotaFailures(): string[] {
     updatedAt: '2026-11-12T12:00:00.000Z',
   });
   expect(rota.crew.map((person) => person.name).join(',') === 'Sam,,Jo', 'names are trimmed and a blank row is kept so it can be filled in');
+  expect(rota.tasks[0].sequence.join(',') === 'sam,blank,jo', 'a saved task with no sequence keeps the crew list');
   expect(namedCrew(rota).map((person) => person.name).join(',') === 'Sam,Jo', 'a blank name does not take a turn');
   expect(rota.tasks.length === 2 && rota.tasks[0].id === 'watch', 'a repeated task id is kept once');
 
@@ -77,6 +78,30 @@ export function dutyRotaFailures(): string[] {
   expect(assigneeAt(rota, 'inspection', startMs + hour) === null, 'a missing task has no assignee');
   expect(assigneeAt(rota, 'watch', startMs + 5 * hour) === 'Jo', 'the assignee is whoever holds the slot');
   expect(assigneeAt(rota, 'watch', startMs + 4 * hour) === 'Jo', 'a slot boundary belongs to the next person');
+
+  const custom = sanitizeRota({
+    ...rota,
+    tasks: [
+      { id: 'watch', name: 'Watch', intervalHours: 4, sequence: ['jo', 'sam'] },
+      { id: 'cooking', name: 'Cooking', intervalHours: 24, sequence: ['sam'] },
+    ],
+  });
+  const customWatches = dutySlots(custom, startMs, startMs + 12 * hour).filter((slot) => slot.taskId === 'watch');
+  expect(customWatches.map((slot) => slot.crewName).join(',') === 'Jo,Sam,Jo', 'a task follows its own sequence');
+  const customCooking = dutySlots(custom, startMs, startMs + 48 * hour).filter((slot) => slot.taskId === 'cooking');
+  expect(customCooking.every((slot) => slot.crewName === 'Sam'), 'another task can keep a different order');
+  expect(
+    sanitizeRota({
+      ...rota,
+      tasks: [{ id: 'watch', name: 'Watch', intervalHours: 4, sequence: ['jo', 'nope', 'jo'] }],
+    }).tasks[0].sequence.join(',') === 'jo,jo',
+    'a sequence can repeat a person and drops anyone not on the crew list',
+  );
+  const nobody = sanitizeRota({
+    ...rota,
+    tasks: [{ id: 'watch', name: 'Watch', intervalHours: 4, sequence: [] }],
+  });
+  expect(dutySlots(nobody, startMs, startMs + hour).length === 0, 'a task with an empty sequence assigns nobody');
 
   const renamed = { ...rota, tasks: rota.tasks.map((task) => task.id === 'watch' ? { ...task, name: 'Helm' } : task) };
   expect(dutySlots(renamed, startMs, startMs + hour)[0].taskName === 'Helm', 'renaming a task keeps its rotation');

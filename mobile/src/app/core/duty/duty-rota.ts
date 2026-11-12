@@ -24,6 +24,8 @@ export interface DutyTask {
   name: string;
   /** Length of one assignment. Daily runs to midnight, then one calendar day each. */
   intervalHours: number;
+  /** Crew ids in this task's own order. The same person may appear more than once. */
+  sequence: string[];
 }
 
 export interface DutyRota {
@@ -76,10 +78,10 @@ export function defaultDutyRota(): DutyRota {
     startAt: '',
     crew: [],
     tasks: [
-      { id: 'watch', name: 'Watch', intervalHours: 4 },
-      { id: 'cooking', name: 'Cooking', intervalHours: 24 },
-      { id: 'inspection', name: 'Inspection', intervalHours: 24 },
-      { id: 'cleaning', name: 'Cleaning', intervalHours: 24 },
+      { id: 'watch', name: 'Watch', intervalHours: 4, sequence: [] },
+      { id: 'cooking', name: 'Cooking', intervalHours: 24, sequence: [] },
+      { id: 'inspection', name: 'Inspection', intervalHours: 24, sequence: [] },
+      { id: 'cleaning', name: 'Cleaning', intervalHours: 24, sequence: [] },
     ],
     updatedAt: '',
   };
@@ -107,10 +109,11 @@ export function sanitizeRota(raw: unknown): DutyRota {
     return fallback;
   }
   const source = raw as Partial<DutyRota>;
+  const crew = sanitizeCrew(source.crew);
   return {
     startAt: normalizeStart(source.startAt),
-    crew: sanitizeCrew(source.crew),
-    tasks: sanitizeTasks(source.tasks),
+    crew,
+    tasks: sanitizeTasks(source.tasks, crew),
     updatedAt: clipText(source.updatedAt, 40),
   };
 }
@@ -121,7 +124,7 @@ export function namedCrew(rota: DutyRota): CrewMember[] {
 
 /**
  * Assignments that overlap `[fromMs, toMs)`.
- * Slot `i` of a task belongs to named crew `i % crew`, counting from the trip start.
+ * Slot `i` of a task belongs to that task's sequence at `i % sequence`.
  */
 export function dutySlots(
   rota: DutyRota,
@@ -134,11 +137,13 @@ export function dutySlots(
   if (start == null || !people.length || !(toMs > fromMs)) {
     return [];
   }
+  const byId = new Map(people.map((person) => [person.id, person]));
   const tasks = rota.tasks.filter((task) => task.name.trim());
   const slots: DutySlot[] = [];
   for (const task of tasks) {
+    const rotation = taskRotation(task, byId);
     const interval = task.intervalHours * 60 * 60 * 1000;
-    if (interval <= 0 || toMs <= start) {
+    if (!rotation.length || interval <= 0 || toMs <= start) {
       continue;
     }
     let index = fromMs > start ? assignmentIndex(start, interval, fromMs) : 0;
@@ -151,7 +156,7 @@ export function dutySlots(
       if (bounds.endMs <= fromMs) {
         continue;
       }
-      const person = people[(index - 1) % people.length];
+      const person = rotation[(index - 1) % rotation.length];
       if (crewId && person.id !== crewId) {
         continue;
       }
@@ -377,17 +382,29 @@ function sanitizeCrew(raw: unknown): CrewMember[] {
   return crew;
 }
 
-function sanitizeTasks(raw: unknown): DutyTask[] {
+function taskRotation(task: DutyTask, byId: Map<string, CrewMember>): CrewMember[] {
+  const rotation: CrewMember[] = [];
+  for (const id of task.sequence) {
+    const person = byId.get(id);
+    if (person) {
+      rotation.push(person);
+    }
+  }
+  return rotation;
+}
+
+function sanitizeTasks(raw: unknown, crew: CrewMember[]): DutyTask[] {
   if (!Array.isArray(raw)) {
     return [];
   }
+  const known = new Set(crew.map((person) => person.id));
   const tasks: DutyTask[] = [];
   const seen = new Set<string>();
   for (const item of raw.slice(0, 8)) {
     if (!item || typeof item !== 'object') {
       continue;
     }
-    const row = item as Partial<DutyTask>;
+    const row = item as Partial<DutyTask> & { sequence?: unknown };
     const id = typeof row.id === 'string' ? row.id.trim() : '';
     if (!ID_RE.test(id) || seen.has(id)) {
       continue;
@@ -398,9 +415,25 @@ function sanitizeTasks(raw: unknown): DutyTask[] {
       id,
       name: clipText(row.name, 40),
       intervalHours: nearestInterval(hours),
+      sequence: sanitizeSequence(row.sequence, known, crew),
     });
   }
   return tasks;
+}
+
+/** A missing sequence keeps the old crew-list order. An empty one stays empty. */
+function sanitizeSequence(raw: unknown, known: Set<string>, crew: CrewMember[]): string[] {
+  if (!Array.isArray(raw)) {
+    return crew.map((person) => person.id);
+  }
+  const sequence: string[] = [];
+  for (const item of raw.slice(0, 64)) {
+    const id = typeof item === 'string' ? item.trim() : '';
+    if (known.has(id)) {
+      sequence.push(id);
+    }
+  }
+  return sequence;
 }
 
 function normalizeStart(value: unknown): string {

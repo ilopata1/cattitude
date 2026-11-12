@@ -115,7 +115,9 @@
 .duty-line button,
 .duty-task button,
 .duty-add,
+.duty-sequence-add button,
 .duty-setup-toggle,
+.duty-task-toggle,
 .duty-filters button,
 .duty-more button {
   font: inherit;
@@ -146,6 +148,68 @@
   width: 100%;
 }
 
+.duty-task-block {
+  border: 1px solid var(--cattitude-sand-mid);
+  border-radius: 10px;
+  padding: 4px 8px;
+  margin-bottom: 8px;
+}
+
+.duty-task-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.duty-task-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+  min-height: var(--cattitude-touch-min);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.duty-task-name {
+  font-weight: 700;
+}
+
+.duty-task-toggle ion-icon {
+  flex: none;
+  color: var(--cattitude-text-light);
+  font-size: 1.25rem;
+}
+
+.duty-task-body {
+  padding-bottom: 8px;
+}
+
+.duty-task-body > input,
+.duty-task-body select {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.duty-sequence-name {
+  flex: 1;
+  min-width: 0;
+  font-weight: 650;
+}
+
+.duty-sequence-add {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.duty-task-head > button[aria-label],
 .duty-line button,
 .duty-task button {
   width: var(--cattitude-touch-min);
@@ -165,6 +229,7 @@
 }
 
 .duty-add,
+.duty-sequence-add button,
 .duty-more button,
 .duty-filters button {
   min-height: var(--cattitude-touch-min);

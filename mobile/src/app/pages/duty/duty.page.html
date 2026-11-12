@@ -33,7 +33,7 @@
       </p>
 
       <h2>Crew</h2>
-      <p class="duty-hint">Order is the rotation order.</p>
+      <p class="duty-hint">The people on board. Each task has its own order.</p>
       <div class="duty-line" *ngFor="let person of duty.rota().crew; let i = index; trackBy: trackCrew">
         <input
           type="text"
@@ -45,12 +45,6 @@
           placeholder="Name"
           (input)="renameCrew(person.id, $event)"
         />
-        <button type="button" aria-label="Move up" [disabled]="i === 0" (click)="duty.moveCrew(i, -1)">
-          <ion-icon name="chevron-up-outline" aria-hidden="true"></ion-icon>
-        </button>
-        <button type="button" aria-label="Move down" [disabled]="i === duty.rota().crew.length - 1" (click)="duty.moveCrew(i, 1)">
-          <ion-icon name="chevron-down-outline" aria-hidden="true"></ion-icon>
-        </button>
         <button type="button" [attr.aria-label]="'Remove ' + (person.name || 'crew')" (click)="duty.removeCrew(person.id)">
           <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
         </button>
@@ -58,28 +52,63 @@
       <button type="button" class="duty-add" (click)="duty.addCrew()">Add crew</button>
 
       <h2>Tasks</h2>
-      <div class="duty-task" *ngFor="let task of duty.rota().tasks; trackBy: trackTask">
-        <input
-          type="text"
-          [value]="task.name"
-          maxlength="40"
-          autocapitalize="words"
-          autocomplete="off"
-          aria-label="Task name"
-          placeholder="Task"
-          (input)="renameTask(task.id, $event)"
-        />
-        <label class="duty-field duty-interval">
-          <span class="visually-hidden">How often {{ task.name || 'this task' }} changes</span>
-          <select [ngModel]="task.intervalHours" (ngModelChange)="setIntervalHours(task.id, $event)">
-            <option *ngFor="let option of intervals" [ngValue]="option.hours">{{ option.label }}</option>
-          </select>
-        </label>
-        <button type="button" [attr.aria-label]="'Remove ' + (task.name || 'task')" (click)="duty.removeTask(task.id)">
-          <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
-        </button>
+      <p class="duty-hint">Open a task to set who takes it, and how long each turn lasts.</p>
+      <div class="duty-task-block" *ngFor="let task of duty.rota().tasks; trackBy: trackTask">
+        <div class="duty-task-head">
+          <button
+            type="button"
+            class="duty-task-toggle"
+            [attr.aria-expanded]="isTaskOpen(task.id)"
+            (click)="toggleTask(task.id)"
+          >
+            <span class="duty-setup-label">
+              <span class="duty-task-name">{{ task.name || 'Task' }}</span>
+              <span class="duty-setup-summary">{{ taskSummary(task) }}</span>
+            </span>
+            <ion-icon [name]="isTaskOpen(task.id) ? 'chevron-up-outline' : 'chevron-down-outline'" aria-hidden="true"></ion-icon>
+          </button>
+          <button type="button" [attr.aria-label]="'Remove ' + (task.name || 'task')" (click)="duty.removeTask(task.id)">
+            <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+          </button>
+        </div>
+        <div class="duty-task-body" *ngIf="isTaskOpen(task.id)">
+          <input
+            type="text"
+            [value]="task.name"
+            maxlength="40"
+            autocapitalize="words"
+            autocomplete="off"
+            aria-label="Task name"
+            placeholder="Task"
+            (input)="renameTask(task.id, $event)"
+          />
+          <label class="duty-field">
+            <span>Each turn</span>
+            <select [ngModel]="task.intervalHours" (ngModelChange)="setIntervalHours(task.id, $event)">
+              <option *ngFor="let option of intervals" [ngValue]="option.hours">{{ option.label }}</option>
+            </select>
+          </label>
+          <p class="duty-hint">Order is who takes this job, then the list repeats.</p>
+          <div class="duty-line" *ngFor="let crewId of task.sequence; let i = index; trackBy: trackIndex">
+            <span class="duty-sequence-name">{{ crewLabel(crewId) }}</span>
+            <button type="button" aria-label="Move up" [disabled]="i === 0" (click)="duty.moveInSequence(task.id, i, -1)">
+              <ion-icon name="chevron-up-outline" aria-hidden="true"></ion-icon>
+            </button>
+            <button type="button" aria-label="Move down" [disabled]="i === task.sequence.length - 1" (click)="duty.moveInSequence(task.id, i, 1)">
+              <ion-icon name="chevron-down-outline" aria-hidden="true"></ion-icon>
+            </button>
+            <button type="button" [attr.aria-label]="'Remove ' + crewLabel(crewId) + ' from ' + (task.name || 'task')" (click)="duty.removeFromSequence(task.id, i)">
+              <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+            </button>
+          </div>
+          <div class="duty-sequence-add" *ngIf="duty.named().length">
+            <button type="button" *ngFor="let person of duty.named(); trackBy: trackCrew" (click)="duty.addToSequence(task.id, person.id)">
+              Add {{ person.name }}
+            </button>
+          </div>
+        </div>
       </div>
-      <button type="button" class="duty-add" (click)="duty.addTask()">Add task</button>
+      <button type="button" class="duty-add" (click)="addTask()">Add task</button>
       </div>
     </section>
 

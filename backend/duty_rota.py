@@ -39,6 +39,19 @@ def _nearest_interval(raw: Any) -> int:
     return best
 
 
+def _sequence(raw: Any, crew_ids: list[str]) -> list[str]:
+    """A missing sequence keeps the old crew-list order. An empty one stays empty."""
+    if not isinstance(raw, list):
+        return list(crew_ids)
+    known = set(crew_ids)
+    sequence: list[str] = []
+    for item in raw[:64]:
+        crew_id = _clip(item, 40)
+        if crew_id in known:
+            sequence.append(crew_id)
+    return sequence
+
+
 def _stamp() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
@@ -83,6 +96,7 @@ def sanitize_rota(raw: Any) -> dict[str, Any]:
                 "id": task_id,
                 "name": _clip(item.get("name"), 40),
                 "intervalHours": _nearest_interval(item.get("intervalHours")),
+                "sequence": _sequence(item.get("sequence"), [person["id"] for person in crew]),
             })
     updated = _clip(source.get("updatedAt"), 40)
     return {

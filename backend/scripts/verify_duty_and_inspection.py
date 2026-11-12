@@ -37,7 +37,23 @@ def main() -> None:
     check(rota["startAt"] == "2026-11-12T12:00", "start keeps the clock and drops seconds")
     check([person["name"] for person in rota["crew"]] == ["Sam", "Jo"], "crew ids are unique and names trim")
     check(rota["tasks"][0]["intervalHours"] == 4, "5 hours snaps to 4")
+    check(rota["tasks"][0]["sequence"] == ["sam", "jo"], "a missing sequence follows the crew list")
     check(len(rota["tasks"]) == 2, "a repeated task id is stored once")
+    ordered = sanitize_rota({
+        "crew": rota["crew"],
+        "tasks": [{
+            "id": "watch",
+            "name": "Watch",
+            "intervalHours": 4,
+            "sequence": ["jo", "nope", "jo"],
+        }],
+    })
+    check(ordered["tasks"][0]["sequence"] == ["jo", "jo"], "a sequence can repeat a person and drops unknown ids")
+    empty = sanitize_rota({
+        "crew": rota["crew"],
+        "tasks": [{"id": "watch", "name": "Watch", "intervalHours": 4, "sequence": []}],
+    })
+    check(empty["tasks"][0]["sequence"] == [], "an empty sequence stays empty")
     check(sanitize_rota({"startAt": "2026-02-31T12:00"})["startAt"] == "", "an impossible start is cleared")
 
     day = sanitize_day({
