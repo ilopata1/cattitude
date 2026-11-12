@@ -21,6 +21,10 @@ export function dashboardFailures(): string[] {
 
   expect(!byId.has('do:learn'), 'learn checklist is not also a Do shortcut');
   expect(byId.get('do:safety-brief')?.segments.join('/') === 'do/checklist/safety-brief', 'safety briefing route');
+  expect(byId.get('do:inspection')?.segments.join('/') === 'do/inspection', 'daily inspection opens the walk-around');
+  expect(byId.get('do:inspection')?.label === 'Daily inspection', 'daily inspection label');
+  expect(byId.get('more:duty')?.label === 'Duty rota', 'duty rota is a home tile');
+  expect(byId.get('more:duty')?.segments.join('/') === 'more/duty', 'duty rota route');
   expect(byId.get('know:power')?.query?.['system'] === 'power', 'power topic opens the Power chapter');
   expect(byId.get('know:electrical')?.parentId === 'know:power', 'electrical sits under Power');
   expect(byId.get('know:engines:s:0')?.label === 'Starting', 'engine section keeps its index');
@@ -54,9 +58,29 @@ export function dashboardFailures(): string[] {
     'crew can still open a crew checklist',
   );
   expect(
+    !defaultTileIds('guest', sailing, true).includes('do:inspection') &&
+      !defaultTileIds('guest', sailing, true).includes('more:duty'),
+    'guest default leaves the daily inspection and duty rota off the home',
+  );
+  const reservedInspection = buildDashboardCatalog({
+    ...sample('sailing_catamaran'),
+    doMenu: [
+      {
+        items: [
+          { key: 'inspection', title: 'Published inspection', subtitle: 'Checklist', progressType: 'checklist' },
+        ],
+      },
+    ],
+  });
+  expect(
+    reservedInspection.filter((item) => item.id === 'do:inspection').length === 1 &&
+      reservedInspection.find((item) => item.id === 'do:inspection')?.segments.join('/') === 'do/inspection',
+    'the walk-around keeps the daily inspection tile',
+  );
+  expect(
     defaultTileIds('crew', sailing, true).join(',') ===
-      'widget:aws,widget:tws,widget:sog,widget:awa,widget:heading,widget:cog,widget:polar,know:engines,know:electrical,more:sail,more:anchorage,fix,more:ask',
-    'crew default leads with live readings',
+      'widget:aws,widget:tws,widget:sog,widget:awa,widget:heading,widget:cog,widget:polar,do:inspection,more:duty,know:engines,know:electrical,more:sail,more:anchorage,fix,more:ask',
+    'crew default leads with live readings, then the daily inspection and duty rota',
   );
   expect(byId.get('widget:aws')?.span === 1 && byId.get('widget:polar')?.span === 2, 'wind readings share a cell and polar uses the row');
   expect(byId.get('widget:fuel-range')?.span === 2, 'fuel range uses a wide tile');
@@ -70,7 +94,8 @@ export function dashboardFailures(): string[] {
     'a guest can add the fuel range tile',
   );
   expect(
-    defaultTileIds('crew', sailing, false).join(',') === 'know:engines,know:electrical,more:sail,more:anchorage,fix,more:ask',
+    defaultTileIds('crew', sailing, false).join(',') ===
+      'do:inspection,more:duty,know:engines,know:electrical,more:sail,more:anchorage,fix,more:ask',
     'crew default without Signal K omits live widgets',
   );
   expect(
@@ -129,7 +154,7 @@ export function dashboardFailures(): string[] {
   expect(levelItems.every((item) => item.segments.join('/') === 'more/levels' && item.span === 1), 'level tiles open Levels');
   expect(
     defaultTileIds('crew', withLevels, true).join(',') ===
-      'widget:aws,widget:tws,widget:sog,widget:awa,widget:heading,widget:cog,widget:polar,know:engines,know:electrical,more:sail,more:anchorage,fix,more:ask',
+      'widget:aws,widget:tws,widget:sog,widget:awa,widget:heading,widget:cog,widget:polar,do:inspection,more:duty,know:engines,know:electrical,more:sail,more:anchorage,fix,more:ask',
     'level tiles stay off the crew default',
   );
   expect(

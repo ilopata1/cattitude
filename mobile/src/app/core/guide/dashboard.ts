@@ -68,7 +68,17 @@ export interface DashboardCatalogInput {
 }
 
 const GUEST_DEFAULT = ['learn', 'do:safety-brief', 'do:gh', 'know:overview', 'know:heads', 'more:ask'];
-const CREW_SHORTCUTS = ['know:engines', 'know:electrical', 'know:power', 'more:sail', 'more:anchorage', 'fix', 'more:ask'];
+const CREW_SHORTCUTS = [
+  'do:inspection',
+  'more:duty',
+  'know:engines',
+  'know:electrical',
+  'know:power',
+  'more:sail',
+  'more:anchorage',
+  'fix',
+  'more:ask',
+];
 const CREW_LIVE = ['widget:aws', 'widget:tws', 'widget:sog', 'widget:awa', 'widget:heading', 'widget:cog', 'widget:polar'];
 
 export function knowChapterRoute(
@@ -84,6 +94,14 @@ export function knowChapterRoute(
 
 export function buildDashboardCatalog(input: DashboardCatalogInput): DashboardItem[] {
   const items: DashboardItem[] = [];
+  items.push(shortcut({
+    id: 'do:inspection',
+    group: 'do',
+    label: 'Daily inspection',
+    subtitle: 'Walk around the boat',
+    icon: 'walk-outline',
+    segments: ['do', 'inspection'],
+  }));
   if (input.learnAvailable) {
     items.push(shortcut({
       id: 'learn',
@@ -97,7 +115,7 @@ export function buildDashboardCatalog(input: DashboardCatalogInput): DashboardIt
   const seenDo = new Set<string>();
   for (const section of input.doMenu) {
     for (const item of section.items) {
-      if (item.progressType === 'learn' || !item.key || seenDo.has(item.key)) {
+      if (item.progressType === 'learn' || !item.key || item.key === 'inspection' || seenDo.has(item.key)) {
         continue;
       }
       seenDo.add(item.key);
