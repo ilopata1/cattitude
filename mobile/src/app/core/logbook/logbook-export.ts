@@ -1,7 +1,9 @@
 import { LogEntry, Passage } from '../models/logbook.model';
+import { formatLevelPercent, levelPercentCsv, levelRatio, logLevelColumns } from './logbook-levels';
 import { formatLogClock, formatPosition } from './logbook-math';
 
 export function logbookToCsv(entries: LogEntry[]): string {
+  const levels = logLevelColumns(entries);
   const header = [
     'time_utc',
     'trigger',
@@ -38,6 +40,7 @@ export function logbookToCsv(entries: LogEntry[]): string {
     'visibility_nm',
     'remarks',
     'stale',
+    ...levels.map(column => (column.key === 'house' ? 'house_battery_pct' : `${column.key.replace(':', '_')}_pct`)),
   ];
   const lines = [header.join(',')];
   const ordered = [...entries].sort((a, b) => a.at.localeCompare(b.at));
@@ -78,6 +81,7 @@ export function logbookToCsv(entries: LogEntry[]): string {
       num(entry.visibilityNm),
       entry.remarks,
       entry.staleFields.join(' '),
+      ...levels.map(column => levelPercentCsv(levelRatio(entry, column.key))),
     ].map(value => csvCell(String(value))).join(','));
   }
   return `${lines.join('\n')}\n`;
@@ -117,6 +121,7 @@ export function logbookToGpx(entries: LogEntry[], passage: Passage | null): stri
 
 export function logbookPrintHtml(entries: LogEntry[], passage: Passage | null): string {
   const title = escapeXml(passage?.name?.trim() || 'Logbook');
+  const levels = logLevelColumns(entries);
   const rows = [...entries]
     .sort((a, b) => a.at.localeCompare(b.at))
     .map(entry => {
@@ -139,6 +144,7 @@ export function logbookPrintHtml(entries: LogEntry[], passage: Passage | null): 
         <td>${cell(entry.distances.sinceLastEntryGroundNm, '')}</td>
         <td>${cell(entry.distances.toDestinationNm, '')}</td>
         <td>${escapeXml(entry.watch ?? '')}</td>
+        ${levels.map(column => `<td>${escapeXml(formatLevelPercent(levelRatio(entry, column.key)))}</td>`).join('\n        ')}
         <td>${escapeXml(entry.remarks)}</td>
       </tr>`;
     })
@@ -163,7 +169,9 @@ export function logbookPrintHtml(entries: LogEntry[], passage: Passage | null): 
       <tr>
         <th>Time</th><th>Why</th><th>Position</th><th>HDG</th><th>COG</th>
         <th>SOG</th><th>TWS</th><th>Gust</th><th>hPa</th><th>3h</th>
-        <th>Status</th><th>Sails</th><th>nm</th><th>DTG</th><th>Watch</th><th>Remarks</th>
+        <th>Status</th><th>Sails</th><th>nm</th><th>DTG</th><th>Watch</th>
+        ${levels.map(column => `<th>${escapeXml(column.label)} %</th>`).join('')}
+        <th>Remarks</th>
       </tr>
     </thead>
     <tbody>

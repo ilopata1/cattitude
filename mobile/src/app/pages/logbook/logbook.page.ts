@@ -10,6 +10,7 @@ import { AlertController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { formatCurrentSails } from '../../core/guide/current-sail';
 import { logbookPrintHtml, logbookToCsv, logbookToGpx, triggerLabel } from '../../core/logbook/logbook-export';
+import { formatLevelNumber, levelRatio, logLevelColumns, logLevelsSummary } from '../../core/logbook/logbook-levels';
 import { enginesRunning } from '../../core/logbook/logbook-ingest';
 import {
   derivePropulsion,
@@ -96,12 +97,13 @@ type LogTableKey =
   | 'gaps';
 
 interface LogTableColumn {
-  key: LogTableKey;
+  key: string;
   label: string;
   unit: string;
   numeric: boolean;
   wrap?: boolean;
   cap?: boolean;
+  level?: boolean;
 }
 
 const LOGBOOK_VIEW_KEY = 'cattitude.logbook.entryView';
@@ -266,6 +268,31 @@ export class LogbookPage implements OnInit, OnDestroy {
     return `${value > 0 ? '+' : ''}${value.toFixed(1)}`;
   }
 
+  columns(): LogTableColumn[] {
+    const levels: LogTableColumn[] = logLevelColumns(this.visible()).map(column => ({
+      key: column.key,
+      label: column.label,
+      unit: '%',
+      numeric: true,
+      level: true,
+    }));
+    const status = this.tableColumns.findIndex(column => column.key === 'status');
+    const insert = status < 0 ? this.tableColumns.length : status + 1;
+    return [
+      ...this.tableColumns.slice(0, insert),
+      ...levels,
+      ...this.tableColumns.slice(insert),
+    ];
+  }
+
+  levelsLine(entry: LogEntry): string {
+    return logLevelsSummary(entry);
+  }
+
+  trackColumn(_index: number, column: LogTableColumn): string {
+    return column.key;
+  }
+
   setEntryView(view: EntryView): void {
     this.entryView = view;
     try {
@@ -275,8 +302,9 @@ export class LogbookPage implements OnInit, OnDestroy {
     }
   }
 
-  tableCell(entry: LogEntry, key: LogTableKey): string {
-    switch (key) {
+  tableCell(entry: LogEntry, key: string): string {
+    if (key === 'house' || key.includes(':')) return formatLevelNumber(levelRatio(entry, key));
+    switch (key as LogTableKey) {
       case 'time':
         return formatLogClock(entry.at);
       case 'why':

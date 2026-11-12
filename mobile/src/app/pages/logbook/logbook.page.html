@@ -170,6 +170,7 @@
             <span *ngIf="entry.depthM != null"> · depth {{ num(entry.depthM) }} m</span>
           </p>
           <p *ngIf="entry.sails.label">{{ entry.sails.label }}<span *ngIf="entry.sails.recommended"> · plan {{ entry.sails.recommended }}</span></p>
+          <p *ngIf="levelsLine(entry) as levels">{{ levels }}</p>
           <p>
             <span *ngIf="entry.distances.sinceLastEntryGroundNm != null">{{ num(entry.distances.sinceLastEntryGroundNm) }} nm since last</span>
             <span *ngIf="entry.distances.sinceLastWaypointNm != null"> · {{ num(entry.distances.sinceLastWaypointNm) }} nm since waypoint</span>
@@ -194,7 +195,7 @@
         <thead>
           <tr>
             <th
-              *ngFor="let col of tableColumns"
+              *ngFor="let col of columns(); trackBy: trackColumn"
               scope="col"
               [class.num]="col.numeric"
             >
@@ -206,7 +207,7 @@
         <tbody>
           <ng-container *ngFor="let day of days()">
             <tr class="log-day-row">
-              <th [attr.colspan]="tableColumns.length" scope="rowgroup">
+              <th [attr.colspan]="columns().length" scope="rowgroup">
                 <span class="log-day-label">{{ day.label }}</span>
               </th>
             </tr>
@@ -220,14 +221,14 @@
                 (keydown.space)="$event.preventDefault(); toggleEntry(entry)"
               >
                 <td
-                  *ngFor="let col of tableColumns"
+                  *ngFor="let col of columns(); trackBy: trackColumn"
                   [class.num]="col.numeric"
                   [class.wrap]="col.wrap"
                   [class.cap]="col.cap"
                 >{{ tableCell(entry, col.key) }}</td>
               </tr>
               <tr class="log-edit-row" *ngIf="openId === entry.id">
-                <td [attr.colspan]="tableColumns.length">
+                <td [attr.colspan]="columns().length">
                   <ng-container *ngTemplateOutlet="entryEdit; context: { $implicit: entry }"></ng-container>
                 </td>
               </tr>

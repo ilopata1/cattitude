@@ -1,5 +1,6 @@
 import { emptyReading, Passage, TrackSample } from '../models/logbook.model';
 import { logbookToCsv, logbookToGpx } from './logbook-export';
+import { logLevelsSummary } from './logbook-levels';
 import { enginesRunning, ingestSignalK } from './logbook-ingest';
 import {
   anchoringPauseActive,
@@ -110,6 +111,44 @@ export function logbookMathFailures(): string[] {
   const csv = logbookToCsv([entry]);
   expect(csv.includes('"squall, east"'), 'csv quotes commas');
   expect(csv.split('\n')[0].includes('time_utc'), 'csv header');
+  expect(csv.split('\n')[0].includes('house_battery_pct'), 'csv keeps a house battery column');
+  const levels = logLevelsSummary({
+    ...entry,
+    ship: {
+      batteries: [
+        { id: '1', soc: 0.1, volts: 12 },
+        { id: '0', soc: 0.84, volts: 26.4 },
+      ],
+      tanks: [
+        { id: '0', type: 'freshWater', level: 0.805 },
+        { id: 'port', type: 'fuel', level: 0.5 },
+        { id: 'starboard', type: 'fuel', level: 0.25 },
+        { id: '0', type: 'blackWater', level: 0.9 },
+      ],
+    },
+  });
+  expect(
+    levels === 'Water 80.5% · Fuel port 50% · Fuel starboard 25% · House 84%',
+    `log levels ${levels}`,
+  );
+  const namedHouse = logLevelsSummary({
+    ...entry,
+    ship: { batteries: [{ id: 'house', soc: 0.5, volts: null }], tanks: [] },
+  });
+  expect(namedHouse === 'House 50%', `house instance ${namedHouse}`);
+  const csvLevels = logbookToCsv([{
+    ...entry,
+    ship: {
+      batteries: [{ id: '0', soc: 0.84, volts: null }],
+      tanks: [
+        { id: '0', type: 'freshWater', level: 0.8 },
+        { id: '0', type: 'blackWater', level: 0.9 },
+      ],
+    },
+  }]);
+  expect(csvLevels.includes('water_0_pct'), 'csv names the water tank');
+  expect(csvLevels.includes('black') === false, 'csv leaves out black water');
+  expect(logLevelsSummary(entry) === '', 'an entry with no tank or house reading stays blank');
   const gpx = logbookToGpx([entry], passage);
   expect(gpx.includes('lat="24.520000"'), 'gpx point');
   expect(gpx.includes('&lt;note&gt;') === false, 'gpx escapes text');
