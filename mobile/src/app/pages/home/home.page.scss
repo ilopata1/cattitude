@@ -342,10 +342,10 @@
 .dash-shortcut,
 .dash-widget {
   min-width: 0;
-  border: none;
+  border: 1px solid var(--cattitude-line);
   background: var(--cattitude-surface);
-  border-radius: 14px;
-  box-shadow: var(--cattitude-shadow-md);
+  border-radius: var(--cattitude-radius-md);
+  box-shadow: none;
   font-family: inherit;
   text-align: left;
   cursor: pointer;
@@ -387,13 +387,14 @@
   min-height: 88px;
 }
 
-.dash-widget.stale .widget-value {
-  opacity: 0.55;
+.dash-widget.stale .cs-value {
+  color: var(--cattitude-text-light);
 }
 
 .dash-widget-rules {
   cursor: default;
   background: transparent;
+  border: none;
   box-shadow: none;
   padding: 0;
 }
@@ -402,12 +403,11 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: var(--cattitude-text-caption);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--cattitude-text-light);
   margin-bottom: 6px;
+
+  .cs-stale-flag {
+    margin-inline-start: auto;
+  }
 }
 
 .widget-value {
@@ -432,8 +432,6 @@
 
 .fuel-range-caption {
   display: block;
-  font-size: var(--cattitude-text-caption);
-  color: var(--cattitude-text-light);
 }
 
 .fuel-range-value {
@@ -445,8 +443,6 @@
 
 .polar-min {
   display: block;
-  font-size: var(--cattitude-text-caption);
-  color: var(--cattitude-text-light);
 }
 
 .polar-pct {

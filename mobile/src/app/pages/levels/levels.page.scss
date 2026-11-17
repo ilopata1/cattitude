@@ -13,17 +13,13 @@ ion-content {
 
 .levels-heading {
   margin: 0 0 var(--cattitude-space-xs);
-  font-size: var(--cattitude-text-sm);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--cattitude-text-light);
 }
 
 .level-card {
   background: var(--cattitude-surface);
+  border: 1px solid var(--cattitude-line);
   border-radius: var(--cattitude-radius-md);
-  box-shadow: var(--cattitude-shadow-md);
+  box-shadow: none;
   padding: var(--cattitude-space-md);
   margin-bottom: var(--cattitude-space-sm);
 }
@@ -124,8 +120,6 @@ ion-content {
 
 .fuel-range-caption {
   margin: 2px 0 0;
-  font-size: var(--cattitude-text-sm);
-  color: var(--cattitude-text-light);
 }
 
 .fuel-range-edit {

@@ -4,15 +4,16 @@
   gap: 10px;
   padding: 0 12px 12px;
 
-  &.stale {
-    opacity: 0.55;
+  &.stale .value {
+    color: var(--cattitude-text-light);
   }
 }
 
 .card {
   background: var(--cattitude-surface);
   border: 1px solid var(--cattitude-line);
-  border-radius: 10px;
+  border-radius: var(--cattitude-radius-md);
+  box-shadow: none;
   padding: 12px 14px;
   display: flex;
   flex-direction: column;
@@ -20,11 +21,8 @@
 }
 
 .label {
-  font-size: var(--cattitude-text-caption);
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--cattitude-text-light);
+  display: flex;
+  align-items: center;
 }
 
 .value {

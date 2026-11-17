@@ -104,7 +104,11 @@
             [class.stale]="widgetStale(item)"
             (click)="open(item)"
           >
-            <span class="widget-kicker"><app-ui-icon [icon]="item.icon" fallback="ellipse-outline"></app-ui-icon> {{ item.label }}</span>
+            <span class="widget-kicker cs-kicker">
+              <app-ui-icon [icon]="item.icon" fallback="ellipse-outline"></app-ui-icon>
+              {{ item.label }}
+              <span class="cs-stale-flag" *ngIf="widgetStale(item)">Stale</span>
+            </span>
             <ng-container *ngIf="liveConfigured()">
             <span class="widget-value cs-value" *ngIf="reading(item.id) as value">
               <ng-container *ngIf="value | csReading as parts">{{ parts.figure }}<span class="cs-unit" *ngIf="parts.unit" [class.cs-unit-tight]="parts.tight">{{ parts.unit }}</span></ng-container>
@@ -117,7 +121,7 @@
             </ng-container>
             <span class="polar-averages" *ngIf="item.id === 'widget:polar'">
               <span class="polar-stat" *ngFor="let row of polarRows()">
-                <span class="polar-min">{{ row.minutes }} min</span>
+                <span class="polar-min cs-kicker">{{ row.minutes }} min</span>
                 <span class="polar-pct cs-value">
                   <ng-container *ngIf="row.pct | csReading as parts">{{ parts.figure }}<span class="cs-unit" *ngIf="parts.unit" [class.cs-unit-tight]="parts.tight">{{ parts.unit }}</span></ng-container>
                 </span>
@@ -126,13 +130,13 @@
             <ng-container *ngIf="item.id === 'widget:fuel-range'">
               <span class="fuel-range-figures">
                 <span>
-                  <span class="fuel-range-caption">Time</span>
+                  <span class="fuel-range-caption cs-kicker">Time</span>
                   <span class="fuel-range-value cs-value">
                     <ng-container *ngIf="fuelRange().hours | csReading as parts">{{ parts.figure }}<span class="cs-unit" *ngIf="parts.unit" [class.cs-unit-tight]="parts.tight">{{ parts.unit }}</span></ng-container>
                   </span>
                 </span>
                 <span>
-                  <span class="fuel-range-caption">Distance</span>
+                  <span class="fuel-range-caption cs-kicker">Distance</span>
                   <span class="fuel-range-value cs-value">
                     <ng-container *ngIf="fuelRange().distance | csReading as parts">{{ parts.figure }}<span class="cs-unit" *ngIf="parts.unit" [class.cs-unit-tight]="parts.tight">{{ parts.unit }}</span></ng-container>
                   </span>

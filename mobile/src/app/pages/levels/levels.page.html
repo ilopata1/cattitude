@@ -10,7 +10,7 @@
 
     <ng-container *ngIf="configured()">
       <section class="levels-group">
-        <h2 class="levels-heading">Fuel range</h2>
+        <h2 class="levels-heading cs-kicker">Fuel range</h2>
         <article class="level-card" [attr.aria-label]="rangeLabel()">
           <h3 class="level-title cs-heading">At this RPM</h3>
           <p class="fuel-range-note" *ngIf="range().note">{{ range().note }}</p>
@@ -19,13 +19,13 @@
               <p class="fuel-range-value cs-value">
                 <ng-container *ngIf="range().hours | csReading as parts">{{ parts.figure }}<span class="cs-unit" *ngIf="parts.unit" [class.cs-unit-tight]="parts.tight">{{ parts.unit }}</span></ng-container>
               </p>
-              <p class="fuel-range-caption">Time left</p>
+              <p class="fuel-range-caption cs-kicker">Time left</p>
             </div>
             <div>
               <p class="fuel-range-value cs-value">
                 <ng-container *ngIf="range().distance | csReading as parts">{{ parts.figure }}<span class="cs-unit" *ngIf="parts.unit" [class.cs-unit-tight]="parts.tight">{{ parts.unit }}</span></ng-container>
               </p>
-              <p class="fuel-range-caption">Distance left</p>
+              <p class="fuel-range-caption cs-kicker">Distance left</p>
             </div>
           </div>
           <dl class="level-metrics">
@@ -51,7 +51,7 @@
       <p class="levels-empty" *ngIf="!groups().length">{{ emptyMessage() }}</p>
 
       <section class="levels-group" *ngFor="let group of groups(); trackBy: trackGroup">
-        <h2 class="levels-heading">{{ group.label }}</h2>
+        <h2 class="levels-heading cs-kicker">{{ group.label }}</h2>
 
         <article class="level-card" *ngFor="let tank of group.tanks; trackBy: trackTank">
           <h3 class="level-title cs-heading">{{ tank.title }}</h3>

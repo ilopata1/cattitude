@@ -116,6 +116,38 @@ body {
   letter-spacing: -0.01em;
 }
 
+/* Label above a live reading. */
+.cs-kicker {
+  font-size: var(--cattitude-text-caption);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cattitude-text-light);
+}
+
+/* Shown with a dimmed value when a .stale reading is old. */
+.cs-stale-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  margin-inline-start: 0.6em;
+  font-size: var(--cattitude-text-caption);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cattitude-text-light);
+  line-height: 1;
+
+  &::before {
+    content: "";
+    width: 0.45em;
+    height: 0.45em;
+    border-radius: var(--cattitude-radius-full);
+    background: currentColor;
+    flex: 0 0 auto;
+  }
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -306,6 +338,19 @@ $pressable: '.dash-shortcut',
     background-color: var(--cattitude-sand-mid);
     box-shadow: var(--cattitude-shadow-sm);
   }
+}
+
+/* Home tiles stay flat. The lift shadow is only while a tile is dragged. */
+@media (hover: hover) {
+  .dash-shortcut:hover,
+  .dash-widget:not(.dash-widget-rules):hover {
+    box-shadow: none;
+  }
+}
+
+.dash-shortcut:active,
+.dash-widget:not(.dash-widget-rules):active {
+  box-shadow: none;
 }
 
 @media (hover: hover) {
