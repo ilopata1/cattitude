@@ -31,34 +31,25 @@ ion-content {
   color: var(--cattitude-text-dark);
 }
 
-.level-track {
-  height: 14px;
+cs-level-bar {
+  display: block;
   margin-top: var(--cattitude-space-sm);
-  border-radius: 999px;
-  background: var(--cattitude-fill-muted);
-  overflow: hidden;
 }
 
-.level-fill {
-  height: 100%;
-  border-radius: inherit;
-  width: 0;
+cs-level-bar.fuel {
+  color: var(--cattitude-amber);
 }
 
-.level-fill.fuel {
-  background: var(--cattitude-amber);
+cs-level-bar.freshWater {
+  color: var(--cattitude-teal-dark);
 }
 
-.level-fill.freshWater {
-  background: var(--cattitude-teal-dark);
+cs-level-bar.blackWater {
+  color: var(--cattitude-text-mid);
 }
 
-.level-fill.blackWater {
-  background: var(--cattitude-text-mid);
-}
-
-.level-fill.battery {
-  background: var(--cattitude-text-accent);
+cs-level-bar.battery {
+  color: var(--cattitude-text-accent);
 }
 
 .level-face {

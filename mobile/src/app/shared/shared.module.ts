@@ -7,9 +7,20 @@ import { PhotoOverlayComponent } from './components/photo-overlay/photo-overlay.
 import { UiIconComponent } from './components/ui-icon/ui-icon.component';
 import { RichHtmlDirective } from './directives/rich-html.directive';
 import { CsReadingPipe } from './pipes/cs-reading.pipe';
+import { CsArcGaugeComponent } from './components/viz/cs-arc-gauge.component';
+import { CsCompassCardComponent } from './components/viz/cs-compass-card.component';
+import { CsLevelBarComponent } from './components/viz/cs-level-bar.component';
+import { CsSparklineComponent } from './components/viz/cs-sparkline.component';
 
 @NgModule({
-  imports: [CommonModule, IonicModule],
+  imports: [
+    CommonModule,
+    IonicModule,
+    CsSparklineComponent,
+    CsArcGaugeComponent,
+    CsLevelBarComponent,
+    CsCompassCardComponent,
+  ],
   declarations: [
     AppHeaderComponent,
     PhotoOverlayComponent,
@@ -25,6 +36,10 @@ import { CsReadingPipe } from './pipes/cs-reading.pipe';
     GuideChapterComponent,
     UiIconComponent,
     CsReadingPipe,
+    CsSparklineComponent,
+    CsArcGaugeComponent,
+    CsLevelBarComponent,
+    CsCompassCardComponent,
   ],
 })
 export class SharedModule {}

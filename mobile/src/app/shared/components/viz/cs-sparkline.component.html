@@ -1,0 +1,9 @@
+<svg viewBox="0 0 100 28" preserveAspectRatio="none">
+  @if (figure().line) {
+    <polygon class="fill" [attr.points]="figure().fill" />
+    <polyline class="line" [attr.points]="figure().line" />
+  }
+  @if (figure().dot; as dot) {
+    <circle class="dot" [attr.cx]="dot.x" [attr.cy]="dot.y" r="1.75" />
+  }
+</svg>

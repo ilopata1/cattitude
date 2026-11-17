@@ -55,34 +55,24 @@
 
         <article class="level-card" *ngFor="let tank of group.tanks; trackBy: trackTank">
           <h3 class="level-title cs-heading">{{ tank.title }}</h3>
-          <div
-            class="level-track"
-            [attr.role]="tank.fill == null ? null : 'meter'"
-            [attr.aria-label]="tank.title"
-            [attr.aria-valuenow]="tank.fill"
-            aria-valuemin="0"
-            aria-valuemax="100"
-            [attr.aria-valuetext]="tank.face"
-          >
-            <div class="level-fill" [ngClass]="tank.kind" [style.width.%]="tank.fill ?? 0"></div>
-          </div>
+          <cs-level-bar
+            [ngClass]="tank.kind"
+            [fill]="tank.fill"
+            [label]="tank.title"
+            [valueText]="tank.face"
+          ></cs-level-bar>
           <p class="level-face">{{ tank.face }}</p>
         </article>
 
         <article class="level-card" *ngFor="let battery of group.batteries; trackBy: trackBattery">
           <h3 class="level-title cs-heading">{{ battery.title }}</h3>
-          <div
+          <cs-level-bar
             *ngIf="battery.chargeFill != null"
-            class="level-track"
-            role="meter"
-            aria-label="Charge"
-            [attr.aria-valuenow]="battery.chargeFill"
-            aria-valuemin="0"
-            aria-valuemax="100"
-            [attr.aria-valuetext]="battery.charge"
-          >
-            <div class="level-fill battery" [style.width.%]="battery.chargeFill"></div>
-          </div>
+            class="battery"
+            [fill]="battery.chargeFill"
+            label="Charge"
+            [valueText]="battery.charge"
+          ></cs-level-bar>
           <dl class="level-metrics">
             <dt>Charge</dt>
             <dd>{{ battery.charge }}</dd>

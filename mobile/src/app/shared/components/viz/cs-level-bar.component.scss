@@ -1,0 +1,28 @@
+:host {
+  display: block;
+  height: 14px;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.track {
+  fill: var(--cattitude-fill-muted);
+}
+
+.fill {
+  fill: currentColor;
+}
+
+.warning {
+  fill: var(--cattitude-warning);
+}
+
+.alarm {
+  fill: var(--cattitude-danger);
+}

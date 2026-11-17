@@ -1,0 +1,27 @@
+<div class="gauge">
+  <svg [attr.viewBox]="'0 0 ' + geom.width + ' ' + geom.height" aria-hidden="true">
+    <circle
+      class="track"
+      [attr.cx]="geom.cx"
+      [attr.cy]="geom.cy"
+      [attr.r]="geom.r"
+      [attr.stroke-dasharray]="dash"
+      [attr.transform]="arcTurn"
+    />
+    @for (zone of picture().zones; track zone.d) {
+      <path [attr.d]="zone.d" [class]="zone.tone" />
+    }
+    @if (picture().fraction > 0) {
+      <circle
+        class="value"
+        [attr.cx]="geom.cx"
+        [attr.cy]="geom.cy"
+        [attr.r]="geom.r"
+        [attr.stroke-dasharray]="dash"
+        [attr.stroke-dashoffset]="picture().offset"
+        [attr.transform]="arcTurn"
+      />
+    }
+  </svg>
+  <p class="readout cs-value">{{ picture().label }}</p>
+</div>

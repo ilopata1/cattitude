@@ -1,0 +1,52 @@
+<div class="compass">
+  <svg viewBox="0 0 200 200" aria-hidden="true">
+    <circle class="ring" cx="100" cy="100" r="86" />
+    @if (cardTurn() != null) {
+      <g class="card is-ready" [style.transform]="'rotate(' + cardTurn() + 'deg)'">
+        @for (tick of ticks; track tick.bearing) {
+          <line
+            class="tick"
+            [class.major]="tick.major"
+            [attr.x1]="tick.x1"
+            [attr.y1]="tick.y1"
+            [attr.x2]="tick.x2"
+            [attr.y2]="tick.y2"
+          />
+          @if (tick.label) {
+            <text class="mark" [attr.x]="tick.lx" [attr.y]="tick.ly" text-anchor="middle" dominant-baseline="central" font-size="14">{{ tick.label }}</text>
+          }
+        }
+        @if (cogPoints(); as points) {
+          <polygon class="cog" [attr.points]="points" />
+        }
+      </g>
+    }
+    @if (awaTurn() != null) {
+      <g
+        class="pointer is-ready"
+        [class.port]="awaSide() === 'port'"
+        [class.starboard]="awaSide() === 'starboard'"
+        [style.transform]="'rotate(' + awaTurn() + 'deg)'"
+      >
+        <line x1="100" y1="48" x2="100" y2="24" />
+      </g>
+    }
+    @if (twaTurn() != null) {
+      <g
+        class="pointer twa is-ready"
+        [class.port]="twaSide() === 'port'"
+        [class.starboard]="twaSide() === 'starboard'"
+        [style.transform]="'rotate(' + twaTurn() + 'deg)'"
+      >
+        <line x1="100" y1="48" x2="100" y2="36" />
+      </g>
+    }
+    <line class="lubber" x1="100" y1="6" x2="100" y2="20" />
+  </svg>
+  <p class="heading cs-value">
+    {{ headingLabel() }}
+    @if (headingFinite()) {
+      <span class="cs-unit cs-unit-tight">°</span>
+    }
+  </p>
+</div>

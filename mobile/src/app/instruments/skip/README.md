@@ -13,3 +13,10 @@ Cattitude wraps these with `InstrumentLiveService` and vessel path mappings.
 The Skip dashboard is not built or shipped with the PWA. If the full Skip app
 is needed again, maintain a fork with patches committed. Do not regex-patch
 upstream sources at deploy time.
+
+## Cattitude changes
+
+- `wind-steer.util.ts` adds `signedAngleDeltaDeg` and `unwrapAngleDeg` so a
+  compass card can take the short turn (359° to 1° continues forward instead of
+  spinning almost a full circle). `angleDeltaDeg` is unchanged. The Skip dial
+  still animates with `svg-animate.util.ts`.

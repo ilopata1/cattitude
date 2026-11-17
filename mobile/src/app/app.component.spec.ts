@@ -4,6 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import { AppUpdateService } from './core/services/app-update.service';
 import { FuelMotionService } from './core/services/fuel-motion.service';
+import { InstrumentHistoryService } from './core/services/instrument-history.service';
 import { LevelsService } from './core/services/levels.service';
 import { NotificationBridgeService } from './core/services/notification-bridge.service';
 import { HouseBatteryWatchService } from './core/services/house-battery-watch.service';
@@ -20,6 +21,7 @@ describe('AppComponent', () => {
         { provide: NotificationBridgeService, useValue: { start: () => undefined } },
         { provide: LevelsService, useValue: {} },
         { provide: FuelMotionService, useValue: {} },
+        { provide: InstrumentHistoryService, useValue: {} },
         { provide: SailWatchService, useValue: { ensureRunning: () => undefined } },
         { provide: HouseBatteryWatchService, useValue: { ensureRunning: () => undefined } },
         { provide: LogbookTriggerService, useValue: { ensureRunning: () => undefined } },

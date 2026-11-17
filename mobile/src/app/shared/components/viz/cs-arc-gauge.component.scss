@@ -1,0 +1,56 @@
+:host {
+  display: block;
+  container-type: inline-size;
+}
+
+.gauge {
+  position: relative;
+}
+
+svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.track,
+.warning,
+.alarm,
+.value {
+  fill: none;
+  stroke-width: 8;
+}
+
+.track {
+  stroke: var(--cattitude-fill-muted);
+}
+
+.warning {
+  stroke: var(--cattitude-warning);
+}
+
+.alarm {
+  stroke: var(--cattitude-danger);
+}
+
+.value {
+  stroke: currentColor;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.45s ease;
+}
+
+.readout {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 42%;
+  margin: 0;
+  text-align: center;
+  font-size: 22cqw;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .value {
+    transition: none;
+  }
+}
