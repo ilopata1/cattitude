@@ -50,6 +50,14 @@ const AUTOMATIC = new Set<LogTrigger>([
   'arrival',
 ]);
 
+/** The boat recorder writes these. A phone never stores its own copy. */
+const BOAT_ONLY = new Set<LogTrigger>([
+  'interval',
+  'propulsion-change',
+  'sail-change',
+  'watch-change',
+]);
+
 @Injectable({ providedIn: 'root' })
 export class LogbookService {
   private readonly store = inject(LogbookStoreService);
@@ -87,7 +95,10 @@ export class LogbookService {
     return run;
   }
 
-  /** Write a watch-change entry when the duty rota hands the watch to someone else. */
+  /**
+   * Keep this device's passage watch in step with the duty rota.
+   * The boat recorder writes the watch-change row from the rota it was sent.
+   */
   syncWatchFromDuty(): Promise<void> {
     const run = this.tail.then(() => this.noteDutyWatch());
     this.tail = run.then(() => undefined, () => undefined);
@@ -134,18 +145,16 @@ export class LogbookService {
   }
 
   async savePassage(passage: Passage): Promise<void> {
-    await this.writePassage(passage, true);
+    await this.writePassage(passage);
   }
 
   /**
    * The passage watch is the person currently on the duty rota's watch task.
-   * A change during a passage writes a watch-change entry.
-   * `queueHandover` is false when the caller is already inside the record queue.
+   * The boat recorder logs the handover. This device only stores and publishes it.
    */
-  private async writePassage(passage: Passage, queueHandover: boolean): Promise<void> {
+  private async writePassage(passage: Passage): Promise<void> {
     await this.ensureReady();
     if (this.duty.hasVessel()) await this.duty.whenReady();
-    const previous = this.passage$.value;
     const next: Passage = {
       ...passage,
       watch: this.duty.hasVessel() ? this.dutyWatch() : passage.watch,
@@ -156,14 +165,6 @@ export class LogbookService {
     this.passage$.next(next);
     this.sync.schedule();
     await this.publishContext();
-    if (!queueHandover) return;
-    if (this.remote.recording()) {
-      await this.absorbBoat();
-      return;
-    }
-    if (previous && previous.watch.trim() !== next.watch.trim() && next.departedAt) {
-      await this.record('watch-change');
-    }
   }
 
   private async noteDutyWatch(): Promise<void> {
@@ -173,14 +174,7 @@ export class LogbookService {
     if (!passage) return;
     const watch = this.dutyWatch();
     if (passage.watch.trim() === watch) return;
-    const departed = !!passage.departedAt;
-    await this.writePassage({ ...passage, watch }, false);
-    if (!departed) return;
-    if (this.remote.recording()) {
-      await this.absorbBoat();
-      return;
-    }
-    await this.recordNow('watch-change', {});
+    await this.writePassage({ ...passage, watch });
   }
 
   private dutyWatch(): string {
@@ -209,7 +203,7 @@ export class LogbookService {
     await this.publishContext();
   }
 
-  /** Sail set, passage, and interval, for the recorder on the boat. */
+  /** Sail set, duty rota, passage, and interval, for the recorder on the boat. */
   async publishContext(): Promise<void> {
     if (this.duty.hasVessel()) await this.duty.whenReady();
     const selection = this.sails.selection();
@@ -253,6 +247,7 @@ export class LogbookService {
       }
       if (remote === null) return null;
     }
+    if (BOAT_ONLY.has(trigger)) return null;
     return this.recordNow(trigger, options);
   }
 
