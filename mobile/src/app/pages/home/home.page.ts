@@ -12,7 +12,7 @@ import {
 } from '../../core/guide/dashboard';
 import { emptyFuelCurve, fuelRangeView, FuelRangeView } from '../../core/fuel/fuel-range';
 import { emptyFuelMotion } from '../../core/fuel/fuel-motion';
-import { levelWidgetValue } from '../../core/levels/levels';
+import { levelWidgetValue, parseLevelWidgetId } from '../../core/levels/levels';
 import { resolveLearnPath } from '../../core/guide/learn-path';
 import { EMPTY_SAIL_ESSENTIALS, EMPTY_WIND_STEER } from '../../core/models/instrument-map.model';
 import {
@@ -26,6 +26,8 @@ import { ContentService } from '../../core/services/content.service';
 import { DashboardLayoutService } from '../../core/services/dashboard-layout.service';
 import { FuelCurveSettingsService } from '../../core/services/fuel-curve-settings.service';
 import { FuelMotionService } from '../../core/services/fuel-motion.service';
+import { HistoryRole } from '../../core/services/instrument-history';
+import { InstrumentHistoryService } from '../../core/services/instrument-history.service';
 import { InstrumentLiveService } from '../../core/services/instrument-live.service';
 import { LevelsService } from '../../core/services/levels.service';
 import { PolarService } from '../../core/services/polar.service';
@@ -65,6 +67,7 @@ export class HomePage {
 
   private readonly destroyRef = inject(DestroyRef);
   private readonly live = inject(InstrumentLiveService);
+  private readonly history = inject(InstrumentHistoryService);
   private readonly levels = inject(LevelsService);
   private readonly fuelCurve = inject(FuelCurveSettingsService);
   private readonly fuelMotion = inject(FuelMotionService);
@@ -389,6 +392,44 @@ export class HomePage {
       return false;
     }
     return item.kind === 'widget' && this.liveStale();
+  }
+
+  sparkRole(id: string): HistoryRole | null {
+    switch (id) {
+      case 'widget:depth':
+        return 'depth';
+      case 'widget:speed':
+        return 'speed';
+      case 'widget:sog':
+        return 'sog';
+      case 'widget:aws':
+        return 'aws';
+      case 'widget:tws':
+        return 'tws';
+      case 'widget:wind':
+        return this.wind().twsFresh ? 'tws' : 'aws';
+      default:
+        return null;
+    }
+  }
+
+  trace(role: HistoryRole): readonly number[] {
+    return this.history.history(role);
+  }
+
+  /** Fuel level or battery charge, 0–100. Null hides the arc. */
+  gaugeValue(id: string): number | null {
+    const ref = parseLevelWidgetId(id);
+    if (!ref || (ref.kind !== 'fuel' && ref.kind !== 'battery')) {
+      return null;
+    }
+    const state = this.levelsState() ?? this.levels.current;
+    if (ref.kind === 'battery') {
+      const battery = state.batteries.find((item) => item.id === ref.id);
+      return battery?.stateOfCharge == null ? null : battery.stateOfCharge * 100;
+    }
+    const tank = state.tanks.find((item) => item.kind === 'fuel' && item.id === ref.id);
+    return tank?.level == null ? null : tank.level * 100;
   }
 
   widgetLink(id: string): string {

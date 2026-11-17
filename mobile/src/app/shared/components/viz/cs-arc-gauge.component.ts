@@ -16,11 +16,11 @@ import {
   styleUrls: ['./cs-arc-gauge.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    role: 'meter',
-    '[attr.aria-valuenow]': 'value()',
-    '[attr.aria-valuemin]': 'min()',
-    '[attr.aria-valuemax]': 'max()',
-    '[attr.aria-valuetext]': 'picture().label',
+    '[attr.role]': 'showValue() ? "meter" : null',
+    '[attr.aria-valuenow]': 'showValue() ? value() : null',
+    '[attr.aria-valuemin]': 'showValue() ? min() : null',
+    '[attr.aria-valuemax]': 'showValue() ? max() : null',
+    '[attr.aria-valuetext]': 'showValue() ? picture().label : null',
   },
 })
 export class CsArcGaugeComponent {
@@ -28,6 +28,8 @@ export class CsArcGaugeComponent {
   readonly min = input.required<number>();
   readonly max = input.required<number>();
   readonly zones = input<readonly CsGaugeZone[]>([]);
+  /** Centre number. Off when the parent already shows the reading. */
+  readonly showValue = input(true);
 
   protected readonly geom = GAUGE;
   protected readonly dash = `${GAUGE.arcLength} ${GAUGE.circumference}`;

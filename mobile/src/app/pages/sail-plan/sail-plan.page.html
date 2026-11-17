@@ -29,7 +29,7 @@
       </ion-chip>
     </div>
 
-    <h2 class="section-title">TWA cutovers (°)</h2>
+    <h2 class="section-title cs-kicker">TWA cutovers (°)</h2>
     <p class="hint">Row boundaries. Typical start is 0° and end is 180°.</p>
     <div class="cuts">
       <div class="cut" *ngFor="let cut of draft.twaCuts; let i = index; trackBy: trackByIndex">
@@ -41,7 +41,7 @@
       <ion-button size="small" fill="outline" (click)="addCut('twa')">Add TWA</ion-button>
     </div>
 
-    <h2 class="section-title">TWS cutovers (kn)</h2>
+    <h2 class="section-title cs-kicker">TWS cutovers (kn)</h2>
     <p class="hint">Column boundaries for normal sailing. Heavy-weather mode starts at the last value unless you set it below.</p>
     <div class="cuts">
       <div class="cut" *ngFor="let cut of draft.twsCuts; let i = index; trackBy: trackByIndex">
@@ -53,7 +53,7 @@
       <ion-button size="small" fill="outline" (click)="addCut('tws')">Add TWS</ion-button>
     </div>
 
-    <h2 class="section-title">Crossover matrix</h2>
+    <h2 class="section-title cs-kicker">Crossover matrix</h2>
     <p class="hint">Tap a cell to set the sails for that wind angle and strength.</p>
     <div
       class="heat-grid"
@@ -75,7 +75,7 @@
       </ng-container>
     </div>
 
-    <h2 class="section-title">Heavy weather</h2>
+    <h2 class="section-title cs-kicker">Heavy weather</h2>
     <ion-item>
       <ion-toggle [(ngModel)]="draft.heavyWeather.enabled" (ngModelChange)="onHwToggle()">Use overlay above TWS threshold</ion-toggle>
     </ion-item>
@@ -130,7 +130,7 @@
   >
     <ng-template>
       <div class="cell-sheet" *ngIf="editingCell as cell">
-        <h2 class="section-title">{{ editingTitle }}</h2>
+        <h2 class="section-title cs-kicker">{{ editingTitle }}</h2>
         <ng-container *ngTemplateOutlet="cellFields; context: { $implicit: cell }"></ng-container>
         <ion-button expand="block" (click)="closeCell()">Done</ion-button>
       </div>

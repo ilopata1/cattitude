@@ -4,7 +4,8 @@
   gap: 10px;
   padding: 0 12px 12px;
 
-  &.stale .value {
+  &.stale .value,
+  &.stale cs-sparkline {
     color: var(--cattitude-text-light);
   }
 }
@@ -34,8 +35,13 @@
 }
 
 .value {
-  font-size: 1.35rem;
-  font-weight: 700;
+  font-size: var(--cattitude-value-lg);
   color: var(--cattitude-text-dark);
-  line-height: 1.1;
+  line-height: 1;
+}
+
+cs-sparkline {
+  display: block;
+  margin-top: 8px;
+  color: var(--cattitude-text-accent);
 }

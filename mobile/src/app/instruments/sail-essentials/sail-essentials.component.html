@@ -4,13 +4,25 @@
       Depth
       <span class="cs-stale-flag">Stale</span>
     </span>
-    <span class="value">{{ formatDepth(essentials().depthM) }}</span>
+    <span class="value cs-value">
+      {{ depthParts().figure }}
+      @if (depthParts().unit) {
+        <span class="cs-unit" [class.cs-unit-tight]="depthParts().tight">{{ depthParts().unit }}</span>
+      }
+    </span>
+    <cs-sparkline [values]="depthTrace()"></cs-sparkline>
   </div>
   <div class="card">
     <span class="label cs-kicker">
       Speed
       <span class="cs-stale-flag">Stale</span>
     </span>
-    <span class="value">{{ formatSpeed(essentials().speedKn, essentials().speedSource) }}</span>
+    <span class="value cs-value">
+      {{ speedParts().figure }}
+      @if (speedParts().unit) {
+        <span class="cs-unit" [class.cs-unit-tight]="speedParts().tight">{{ speedParts().unit }}</span>
+      }
+    </span>
+    <cs-sparkline [values]="speedTrace()"></cs-sparkline>
   </div>
 </div>

@@ -75,12 +75,10 @@
       <span class="sheet-pill"></span>
     </div>
     <div class="sheet-body">
-  <ion-card *ngIf="!skConnected" color="warning" class="status-card">
-    <ion-card-content>
-      <ion-icon name="warning-outline"></ion-icon>
-      Signal-K not connected. Configure the server URL in Settings.
-    </ion-card-content>
-  </ion-card>
+  <p class="status-note" *ngIf="!skConnected">
+    <ion-icon name="warning-outline" aria-hidden="true"></ion-icon>
+    Signal-K not connected. Configure the server URL in Settings.
+  </p>
 
   <div class="controls-strip">
     <ion-button
@@ -98,7 +96,7 @@
 
   <ion-list *ngIf="listVessels.length > 0">
     <ion-list-header>
-      <ion-label>Vessels ({{ listVessels.length }})</ion-label>
+      <ion-label class="cs-kicker">Vessels ({{ listVessels.length }})</ion-label>
     </ion-list-header>
 
     <ion-item *ngFor="let v of listVessels; trackBy: trackByMmsi" button (click)="selectVessel(v)">

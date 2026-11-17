@@ -6,12 +6,10 @@
 
 <ion-content>
 
-  <ion-card *ngIf="!skConnected" color="warning" class="status-card">
-    <ion-card-content>
-      <ion-icon name="warning-outline"></ion-icon>
-      Signal-K not connected. Configure the server URL in Settings.
-    </ion-card-content>
-  </ion-card>
+  <p class="status-note" *ngIf="!skConnected">
+    <ion-icon name="warning-outline" aria-hidden="true"></ion-icon>
+    Signal-K not connected. Configure the server URL in Settings.
+  </p>
 
   <section class="panel" [class.stale]="live.stale">
     <h2 class="section-title cs-kicker">
@@ -21,19 +19,27 @@
     <div class="live-readouts">
       <div class="live-item">
         <span class="label cs-kicker">{{ boatSpeedLabel }}</span>
-        <span class="value">{{ formatKnots(live.stwKnots) }}</span>
+        <span class="value cs-value">
+          <ng-container *ngIf="formatKnots(live.stwKnots) | csReading as parts">{{ parts.figure }}<span class="cs-unit" *ngIf="parts.unit" [class.cs-unit-tight]="parts.tight">{{ parts.unit }}</span></ng-container>
+        </span>
       </div>
       <div class="live-item">
         <span class="label cs-kicker">TWS</span>
-        <span class="value">{{ formatKnots(live.twsKnots) }}</span>
+        <span class="value cs-value">
+          <ng-container *ngIf="formatKnots(live.twsKnots) | csReading as parts">{{ parts.figure }}<span class="cs-unit" *ngIf="parts.unit" [class.cs-unit-tight]="parts.tight">{{ parts.unit }}</span></ng-container>
+        </span>
       </div>
       <div class="live-item">
         <span class="label cs-kicker">TWA</span>
-        <span class="value">{{ formatDeg(live.twaDeg) }}</span>
+        <span class="value cs-value">
+          <ng-container *ngIf="formatDeg(live.twaDeg) | csReading as parts">{{ parts.figure }}<span class="cs-unit" *ngIf="parts.unit" [class.cs-unit-tight]="parts.tight">{{ parts.unit }}</span></ng-container>
+        </span>
       </div>
       <div class="live-item">
         <span class="label cs-kicker">Target</span>
-        <span class="value">{{ formatKnots(live.targetKnots) }}</span>
+        <span class="value cs-value">
+          <ng-container *ngIf="formatKnots(live.targetKnots) | csReading as parts">{{ parts.figure }}<span class="cs-unit" *ngIf="parts.unit" [class.cs-unit-tight]="parts.tight">{{ parts.unit }}</span></ng-container>
+        </span>
       </div>
     </div>
     <p class="source-note" *ngIf="live.boatSpeedSource === 'sog'">
@@ -80,7 +86,9 @@
             <span class="window-label cs-kicker">{{ w.minutes }} min average</span>
             <span class="window-sublabel cs-kicker">Performance percentage</span>
           </div>
-          <span class="window-value">{{ formatPct(w.avg.polarPct) }}</span>
+          <span class="window-value cs-value">
+            <ng-container *ngIf="formatPct(w.avg.polarPct) | csReading as parts">{{ parts.figure }}<span class="cs-unit" *ngIf="parts.unit" [class.cs-unit-tight]="parts.tight">{{ parts.unit }}</span></ng-container>
+          </span>
         </header>
         <p class="window-means">
           Mean {{ formatDeg(w.avg.twaDeg) }} TWA · {{ formatKnots(w.avg.twsKnots) }} TWS

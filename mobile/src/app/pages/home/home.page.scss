@@ -13,9 +13,9 @@
     var(--cattitude-navy-mid) 60%,
     var(--cattitude-teal-dark) 100%
   );
-  border-radius: 14px;
-  padding: 24px 20px 20px;
-  margin-bottom: 12px;
+  border-radius: var(--cattitude-radius-md);
+  padding: 16px 16px 14px;
+  margin-bottom: 10px;
   position: relative;
   overflow: hidden;
 }
@@ -26,22 +26,22 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  margin-bottom: 6px;
+  margin-bottom: 2px;
 }
 
 .hero-title {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 1.75rem;
+  font-size: 1.35rem;
   color: #fff;
   line-height: 1.1;
   margin-bottom: 4px;
 }
 
 .hero-logo {
-  width: 64px;
-  height: 64px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
@@ -50,7 +50,7 @@
   font-size: var(--cattitude-text-sm);
   color: rgba(255, 255, 255, 0.65);
   font-style: italic;
-  margin-bottom: 14px;
+  margin-bottom: 8px;
 }
 
 .hero-chips {
@@ -129,10 +129,10 @@
   width: 100%;
   margin-bottom: 12px;
   padding: 16px;
-  border: none;
-  border-radius: 14px;
+  border: 1px solid var(--cattitude-line);
+  border-radius: var(--cattitude-radius-md);
   background: var(--cattitude-surface);
-  box-shadow: var(--cattitude-shadow-md);
+  box-shadow: none;
   text-align: left;
   font-family: inherit;
   cursor: pointer;
@@ -414,6 +414,20 @@
   display: block;
   font-size: var(--cattitude-value-md);
   color: var(--cattitude-text-dark);
+}
+
+.widget-trace {
+  display: block;
+  margin-top: 8px;
+  color: var(--cattitude-text-accent);
+}
+
+.widget-trace-gauge {
+  width: 88px;
+}
+
+.dash-widget.stale .widget-trace {
+  color: var(--cattitude-text-light);
 }
 
 .widget-detail {

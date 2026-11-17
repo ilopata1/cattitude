@@ -1,3 +1,8 @@
+ion-content {
+  --background: var(--cattitude-sand);
+  --color: var(--cattitude-text-dark);
+}
+
 .editor {
   padding: 16px;
   max-width: 640px;
@@ -38,12 +43,26 @@
 
 .live-hint {
   font-size: var(--cattitude-text-sm);
-  color: var(--ion-color-success-shade, #2dd36f);
+  color: var(--cattitude-green);
   margin: 0 0 12px 12px;
 
   &.attention {
-    color: var(--ion-color-warning-shade, #e0ac08);
+    color: var(--cattitude-warning);
   }
+}
+
+ion-item {
+  --background: var(--cattitude-surface);
+  --color: var(--cattitude-text-dark);
+  --border-color: var(--cattitude-line);
+  --border-radius: var(--cattitude-radius-md);
+  border: 1px solid var(--cattitude-line);
+  border-radius: var(--cattitude-radius-md);
+  margin-bottom: 8px;
+}
+
+ion-label.cs-kicker {
+  --color: var(--cattitude-text-light);
 }
 
 .role-block {

@@ -23,5 +23,7 @@
       />
     }
   </svg>
-  <p class="readout cs-value">{{ picture().label }}</p>
+  @if (showValue()) {
+    <p class="readout cs-value">{{ picture().label }}</p>
+  }
 </div>

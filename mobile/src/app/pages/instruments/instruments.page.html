@@ -30,8 +30,8 @@
     </div>
 
     <div class="role-block" *ngFor="let cfg of roles; trackBy: trackByRole">
-      <ion-item lines="full">
-        <ion-label position="stacked">{{ cfg.label }}</ion-label>
+      <ion-item lines="none">
+        <ion-label class="cs-kicker" position="stacked">{{ cfg.label }}</ion-label>
         <button type="button" class="path-picker" (click)="openPicker(cfg.role)">
           {{ selectedPath(cfg.role) || 'Choose path' }}
         </button>
@@ -44,8 +44,8 @@
     </div>
 
     <div class="role-block">
-      <ion-item lines="full">
-        <ion-label position="stacked">Speed fallback (SOG)</ion-label>
+      <ion-item lines="none">
+        <ion-label class="cs-kicker" position="stacked">Speed fallback (SOG)</ion-label>
         <button type="button" class="path-picker" (click)="openPicker('sog')">
           {{ selectedSogFallback() || 'Choose path' }}
         </button>

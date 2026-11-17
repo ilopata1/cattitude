@@ -21,21 +21,17 @@ ion-content {
 }
 
 .section-title {
-  font-size: var(--cattitude-text-caption);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--cattitude-text-accent);
   margin: var(--cattitude-space-lg) var(--cattitude-space-2xs) var(--cattitude-space-2xs);
 }
 
 ion-item {
   --background: var(--cattitude-surface);
   --color: var(--cattitude-text-dark);
-  --border-color: transparent;
+  --border-color: var(--cattitude-line);
   --border-radius: var(--cattitude-radius-md);
+  border: 1px solid var(--cattitude-line);
   border-radius: var(--cattitude-radius-md);
-  box-shadow: var(--cattitude-shadow-sm);
+  box-shadow: none;
   margin: var(--cattitude-space-xs) 0;
 }
 

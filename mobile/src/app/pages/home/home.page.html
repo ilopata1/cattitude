@@ -144,6 +144,20 @@
               </span>
               <span class="widget-detail" *ngIf="fuelRange().note">{{ fuelRange().note }}</span>
             </ng-container>
+            <cs-sparkline
+              *ngIf="sparkRole(item.id) as role"
+              class="widget-trace"
+              [values]="trace(role)"
+            ></cs-sparkline>
+            <cs-arc-gauge
+              *ngIf="gaugeValue(item.id) != null"
+              class="widget-trace widget-trace-gauge"
+              aria-hidden="true"
+              [showValue]="false"
+              [value]="gaugeValue(item.id) ?? 0"
+              [min]="0"
+              [max]="100"
+            ></cs-arc-gauge>
             <span class="widget-open">{{ widgetLink(item.id) }} <ion-icon name="chevron-forward" aria-hidden="true"></ion-icon></span>
             </ng-container>
           </button>

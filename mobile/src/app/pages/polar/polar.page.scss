@@ -31,8 +31,7 @@ ion-content {
 
   .value {
     display: block;
-    font-size: var(--cattitude-text-lg);
-    font-weight: 600;
+    font-size: var(--cattitude-value-md);
     color: var(--cattitude-text-dark);
     margin-top: var(--cattitude-space-2xs);
   }
@@ -170,9 +169,8 @@ ion-content {
 
 .window-value {
   display: block;
-  font-size: var(--cattitude-text-display);
-  font-weight: 700;
-  line-height: 1.1;
+  font-size: var(--cattitude-value-md);
+  line-height: 1;
   color: var(--cattitude-text-dark);
   flex-shrink: 0;
 }
@@ -236,14 +234,22 @@ ion-content {
   }
 }
 
-.status-card {
-  margin: var(--cattitude-space-sm);
+.status-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--cattitude-space-xs);
+  margin: var(--cattitude-space-sm) var(--cattitude-space-md) 0;
+  padding: var(--cattitude-space-sm) var(--cattitude-space-md);
+  border: 1px solid var(--cattitude-line);
+  border-radius: var(--cattitude-radius-md);
+  background: var(--cattitude-surface);
+  color: var(--cattitude-text-dark);
 
-  ion-card-content {
-    display: flex;
-    align-items: center;
-    gap: var(--cattitude-space-xs);
-    font-weight: 500;
+  ion-icon {
+    flex: 0 0 auto;
+    margin-top: 2px;
+    color: var(--cattitude-warning);
+    font-size: 1.25rem;
   }
 }
 

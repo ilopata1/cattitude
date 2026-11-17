@@ -109,14 +109,22 @@ ion-content {
   50%       { opacity: 0.4; }
 }
 
-.status-card {
+.status-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--cattitude-space-xs);
   margin: var(--cattitude-space-sm);
+  padding: var(--cattitude-space-sm) var(--cattitude-space-md);
+  border: 1px solid var(--cattitude-line);
+  border-radius: var(--cattitude-radius-md);
+  background: var(--cattitude-sand);
+  color: var(--cattitude-text-dark);
 
-  ion-card-content {
-    display: flex;
-    align-items: center;
-    gap: var(--cattitude-space-xs);
-    font-weight: 500;
+  ion-icon {
+    flex: 0 0 auto;
+    margin-top: 2px;
+    color: var(--cattitude-warning);
+    font-size: 1.25rem;
   }
 }
 
@@ -138,11 +146,12 @@ ion-list-header {
 ion-item {
   --background: var(--cattitude-surface);
   --color: var(--cattitude-text-dark);
-  --border-color: transparent;
+  --border-color: var(--cattitude-line);
   --border-radius: var(--cattitude-radius-md);
+  border: 1px solid var(--cattitude-line);
   border-radius: var(--cattitude-radius-md);
   margin-bottom: var(--cattitude-space-xs);
-  box-shadow: var(--cattitude-shadow-sm);
+  box-shadow: none;
 }
 
 .empty-hint {
