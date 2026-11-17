@@ -33,9 +33,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-family: var(--cattitude-font-display);
   font-size: 1.75rem;
-  font-weight: 900;
   color: #fff;
   line-height: 1.1;
   margin-bottom: 4px;
@@ -74,9 +72,7 @@
 
 .status-name {
   flex: 1 0 100%;
-  font-family: var(--cattitude-font-display);
   font-size: 1.125rem;
-  font-weight: 700;
   color: #fff;
 }
 
@@ -416,11 +412,8 @@
 
 .widget-value {
   display: block;
-  font-family: var(--cattitude-font-display);
-  font-size: 1.375rem;
-  font-weight: 700;
+  font-size: var(--cattitude-value-md);
   color: var(--cattitude-text-dark);
-  line-height: 1.1;
 }
 
 .widget-detail {
@@ -446,9 +439,7 @@
 .fuel-range-value {
   display: block;
   margin-top: 2px;
-  font-family: var(--cattitude-font-display);
-  font-size: 1.375rem;
-  font-weight: 700;
+  font-size: var(--cattitude-value-md);
   color: var(--cattitude-text-dark);
 }
 
@@ -461,9 +452,7 @@
 .polar-pct {
   display: block;
   margin-top: 2px;
-  font-family: var(--cattitude-font-display);
-  font-size: 1.375rem;
-  font-weight: 700;
+  font-size: var(--cattitude-value-md);
   color: var(--cattitude-text-dark);
 }
 

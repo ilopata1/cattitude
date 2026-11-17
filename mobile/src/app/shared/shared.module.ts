@@ -6,6 +6,7 @@ import { GuideChapterComponent } from './components/guide-chapter/guide-chapter.
 import { PhotoOverlayComponent } from './components/photo-overlay/photo-overlay.component';
 import { UiIconComponent } from './components/ui-icon/ui-icon.component';
 import { RichHtmlDirective } from './directives/rich-html.directive';
+import { CsReadingPipe } from './pipes/cs-reading.pipe';
 
 @NgModule({
   imports: [CommonModule, IonicModule],
@@ -15,6 +16,7 @@ import { RichHtmlDirective } from './directives/rich-html.directive';
     RichHtmlDirective,
     GuideChapterComponent,
     UiIconComponent,
+    CsReadingPipe,
   ],
   exports: [
     AppHeaderComponent,
@@ -22,6 +24,7 @@ import { RichHtmlDirective } from './directives/rich-html.directive';
     RichHtmlDirective,
     GuideChapterComponent,
     UiIconComponent,
+    CsReadingPipe,
   ],
 })
 export class SharedModule {}

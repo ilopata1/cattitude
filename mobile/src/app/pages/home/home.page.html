@@ -9,7 +9,7 @@
     <div class="hero-banner" [class.compact]="!heroFull">
       <ng-container *ngIf="heroFull">
         <div class="hero-greeting">Welcome Aboard</div>
-        <div class="hero-title">
+        <div class="hero-title cs-heading">
           <span>{{ content.bootstrap.branding.vesselName }}</span>
           <img
             *ngIf="content.bootstrap.branding.heroLogo as logo"
@@ -25,7 +25,7 @@
         </div>
       </ng-container>
       <div class="status-strip" *ngIf="!heroFull">
-        <span class="status-name">{{ content.bootstrap.branding.vesselName }}</span>
+        <span class="status-name cs-heading">{{ content.bootstrap.branding.vesselName }}</span>
         <button type="button" class="status-chip" (click)="openConnection()">
           {{ connectionLabel() }}
         </button>
@@ -106,26 +106,36 @@
           >
             <span class="widget-kicker"><app-ui-icon [icon]="item.icon" fallback="ellipse-outline"></app-ui-icon> {{ item.label }}</span>
             <ng-container *ngIf="liveConfigured()">
-            <span class="widget-value" *ngIf="reading(item.id) as value">{{ value }}</span>
+            <span class="widget-value cs-value" *ngIf="reading(item.id) as value">
+              <ng-container *ngIf="value | csReading as parts">{{ parts.figure }}<span class="cs-unit" *ngIf="parts.unit" [class.cs-unit-tight]="parts.tight">{{ parts.unit }}</span></ng-container>
+            </span>
             <ng-container *ngIf="item.id === 'widget:wind'">
-              <span class="widget-value">{{ windSpeedLabel() }}</span>
+              <span class="widget-value cs-value">
+                <ng-container *ngIf="windSpeedLabel() | csReading as parts">{{ parts.figure }}<span class="cs-unit" *ngIf="parts.unit" [class.cs-unit-tight]="parts.tight">{{ parts.unit }}</span></ng-container>
+              </span>
               <span class="widget-detail">{{ windDetailLabel() }}</span>
             </ng-container>
             <span class="polar-averages" *ngIf="item.id === 'widget:polar'">
               <span class="polar-stat" *ngFor="let row of polarRows()">
                 <span class="polar-min">{{ row.minutes }} min</span>
-                <span class="polar-pct">{{ row.pct }}</span>
+                <span class="polar-pct cs-value">
+                  <ng-container *ngIf="row.pct | csReading as parts">{{ parts.figure }}<span class="cs-unit" *ngIf="parts.unit" [class.cs-unit-tight]="parts.tight">{{ parts.unit }}</span></ng-container>
+                </span>
               </span>
             </span>
             <ng-container *ngIf="item.id === 'widget:fuel-range'">
               <span class="fuel-range-figures">
                 <span>
                   <span class="fuel-range-caption">Time</span>
-                  <span class="fuel-range-value">{{ fuelRange().hours }}</span>
+                  <span class="fuel-range-value cs-value">
+                    <ng-container *ngIf="fuelRange().hours | csReading as parts">{{ parts.figure }}<span class="cs-unit" *ngIf="parts.unit" [class.cs-unit-tight]="parts.tight">{{ parts.unit }}</span></ng-container>
+                  </span>
                 </span>
                 <span>
                   <span class="fuel-range-caption">Distance</span>
-                  <span class="fuel-range-value">{{ fuelRange().distance }}</span>
+                  <span class="fuel-range-value cs-value">
+                    <ng-container *ngIf="fuelRange().distance | csReading as parts">{{ parts.figure }}<span class="cs-unit" *ngIf="parts.unit" [class.cs-unit-tight]="parts.tight">{{ parts.unit }}</span></ng-container>
+                  </span>
                 </span>
               </span>
               <span class="widget-detail" *ngIf="fuelRange().note">{{ fuelRange().note }}</span>

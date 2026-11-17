@@ -31,9 +31,7 @@ ion-content {
 .level-title,
 .levels-connect h2 {
   margin: 0;
-  font-family: var(--cattitude-font-display);
   font-size: 1.25rem;
-  font-weight: 650;
   color: var(--cattitude-text-dark);
 }
 
@@ -120,9 +118,7 @@ ion-content {
 
 .fuel-range-value {
   margin: 0;
-  font-family: var(--cattitude-font-display);
-  font-size: 1.75rem;
-  font-weight: 700;
+  font-size: var(--cattitude-value-md);
   color: var(--cattitude-text-dark);
 }
 

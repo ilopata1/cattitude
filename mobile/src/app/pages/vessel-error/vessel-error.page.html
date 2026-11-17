@@ -2,15 +2,15 @@
   <div class="vessel-error__card">
     <ng-container [ngSwitch]="guideLoad.failure">
       <ng-container *ngSwitchCase="'offline'">
-        <h1>Guide not downloaded</h1>
+        <h1 class="cs-heading">Guide not downloaded</h1>
         <p>{{ guideLoad.message }}</p>
       </ng-container>
       <ng-container *ngSwitchCase="'schema'">
-        <h1>App update required</h1>
+        <h1 class="cs-heading">App update required</h1>
         <p>{{ guideLoad.message }}</p>
       </ng-container>
       <ng-container *ngSwitchDefault>
-        <h1>Guide not available</h1>
+        <h1 class="cs-heading">Guide not available</h1>
         <p>
           We could not load the guide for <strong>{{ slug }}</strong>.
         </p>

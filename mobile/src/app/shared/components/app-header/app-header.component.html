@@ -11,7 +11,7 @@
         <img [src]="logo" alt="" class="header-logo" />
       </button>
       <div>
-        <div class="header-title">{{ content.bootstrap.branding.charterCompany }}</div>
+        <div class="header-title cs-heading">{{ content.bootstrap.branding.charterCompany }}</div>
         <div class="header-sub">
           {{ content.bootstrap.branding.vesselName }} · {{ content.bootstrap.branding.model }}
         </div>
@@ -45,7 +45,7 @@
         <ion-icon name="chevron-back" aria-hidden="true"></ion-icon>
       </button>
       <div class="sub-copy">
-        <div class="sub-title" *ngIf="title">{{ title }}</div>
+        <div class="sub-title cs-heading" *ngIf="title">{{ title }}</div>
         <div class="sub-sub" *ngIf="subtitle">{{ subtitle }}</div>
       </div>
       <div class="sub-actions">
@@ -65,9 +65,9 @@
 >
   <ng-template>
     <div class="modal-sheet">
-      <h2 class="modal-title">Emergency</h2>
+      <h2 class="modal-title cs-heading">Emergency</h2>
       <div class="mayday-block" *ngIf="content.bootstrap.emergency.mayday.steps.length">
-        <h3>MAYDAY — {{ content.bootstrap.emergency.mayday.channel }}</h3>
+        <h3 class="cs-heading">MAYDAY — {{ content.bootstrap.emergency.mayday.channel }}</h3>
         <ol class="mayday-steps">
           <li *ngFor="let step of content.bootstrap.emergency.mayday.steps; let i = index">
             <span class="mayday-num">{{ i + 1 }}</span>
@@ -75,7 +75,7 @@
           </li>
         </ol>
       </div>
-      <h3 class="contacts-heading">Contacts</h3>
+      <h3 class="contacts-heading cs-heading">Contacts</h3>
       <p class="modal-sub">{{ content.bootstrap.emergency.modalSubtitle }}</p>
 
       <div

@@ -3,6 +3,7 @@ import {
   clearDay,
   dayHasContent,
   emptyDay,
+  InspectionDay,
   inspectionProgress,
   mergeInspectionDays,
   sanitizeDay,
@@ -47,11 +48,11 @@ export function inspectionFailures(): string[] {
   expect(!messy?.marks['before-clip'] && !messy?.marks['Nope'], 'empty notes and illegal ids are dropped');
   expect(sanitizeDay({ date: '12 Nov', marks: {} }) == null, 'a day needs a calendar date');
 
-  const local = [
+  const local: InspectionDay[] = [
     { date: '2026-11-11', marks: { 'before-tell': { done: true, note: 'local' } }, updatedAt: '2026-11-11T10:00:00.000Z' },
     { date: '2026-11-12', marks: { 'before-tell': { done: true, note: 'phone' } }, updatedAt: '2026-11-12T09:00:00.000Z' },
   ];
-  const remote = [
+  const remote: InspectionDay[] = [
     { date: '2026-11-11', marks: { 'before-tell': { done: true, note: 'server' } }, updatedAt: '2026-11-11T18:00:00.000Z' },
     { date: '2026-11-12', marks: { 'before-tell': { done: false, note: 'other phone' } }, updatedAt: '2026-11-12T11:00:00.000Z' },
     { date: '2026-11-10', marks: { 'crew-log': { done: true, note: '' } }, updatedAt: '2026-11-10T12:00:00.000Z' },

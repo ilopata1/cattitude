@@ -3,7 +3,7 @@
 <ion-content [fullscreen]="true" class="page-content">
   <div class="scroll-area levels">
     <section *ngIf="!configured()" class="level-card levels-connect">
-      <h2>Connect to Signal K</h2>
+      <h2 class="cs-heading">Connect to Signal K</h2>
       <p>Set the Signal K server in Settings. Tank levels, capacity, and battery readings come from that stream.</p>
       <ion-button [routerLink]="routes.tabs('more', 'settings')" expand="block">Open Settings</ion-button>
     </section>
@@ -12,15 +12,19 @@
       <section class="levels-group">
         <h2 class="levels-heading">Fuel range</h2>
         <article class="level-card" [attr.aria-label]="rangeLabel()">
-          <h3 class="level-title">At this RPM</h3>
+          <h3 class="level-title cs-heading">At this RPM</h3>
           <p class="fuel-range-note" *ngIf="range().note">{{ range().note }}</p>
           <div class="fuel-range-figures">
             <div>
-              <p class="fuel-range-value">{{ range().hours }}</p>
+              <p class="fuel-range-value cs-value">
+                <ng-container *ngIf="range().hours | csReading as parts">{{ parts.figure }}<span class="cs-unit" *ngIf="parts.unit" [class.cs-unit-tight]="parts.tight">{{ parts.unit }}</span></ng-container>
+              </p>
               <p class="fuel-range-caption">Time left</p>
             </div>
             <div>
-              <p class="fuel-range-value">{{ range().distance }}</p>
+              <p class="fuel-range-value cs-value">
+                <ng-container *ngIf="range().distance | csReading as parts">{{ parts.figure }}<span class="cs-unit" *ngIf="parts.unit" [class.cs-unit-tight]="parts.tight">{{ parts.unit }}</span></ng-container>
+              </p>
               <p class="fuel-range-caption">Distance left</p>
             </div>
           </div>
@@ -50,7 +54,7 @@
         <h2 class="levels-heading">{{ group.label }}</h2>
 
         <article class="level-card" *ngFor="let tank of group.tanks; trackBy: trackTank">
-          <h3 class="level-title">{{ tank.title }}</h3>
+          <h3 class="level-title cs-heading">{{ tank.title }}</h3>
           <div
             class="level-track"
             [attr.role]="tank.fill == null ? null : 'meter'"
@@ -66,7 +70,7 @@
         </article>
 
         <article class="level-card" *ngFor="let battery of group.batteries; trackBy: trackBattery">
-          <h3 class="level-title">{{ battery.title }}</h3>
+          <h3 class="level-title cs-heading">{{ battery.title }}</h3>
           <div
             *ngIf="battery.chargeFill != null"
             class="level-track"
