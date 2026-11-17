@@ -9,6 +9,7 @@ import {
   LogbookSettings,
   Passage,
 } from '../models/logbook.model';
+import { PolarHistoryResponse } from '../models/polar.model';
 import { SignalKSettingsService } from './signal-k-settings.service';
 import { SignalKService } from './signal-k.service';
 
@@ -134,6 +135,25 @@ export class LogbookRemoteService {
       return entry;
     } catch (err) {
       this.note(err, 'The boat recorder did not save that correction.');
+      return null;
+    }
+  }
+
+  /**
+   * Polar samples recorded on the boat since `since` (boat clock, milliseconds).
+   * Null when the plugin is missing or the request fails. Does not raise a logbook error.
+   */
+  async polarHistory(since: number): Promise<PolarHistoryResponse | null> {
+    const base = this.sk.httpBaseUrl();
+    if (!base) return null;
+    try {
+      const body = await firstValueFrom(this.http.get<PolarHistoryResponse>(
+        `${base}/plugins/cattitude-logbook/polar?since=${encodeURIComponent(String(since))}`,
+        { headers: this.headers() },
+      ));
+      if (!body || !Array.isArray(body.samples) || !Number.isFinite(body.now)) return null;
+      return body;
+    } catch {
       return null;
     }
   }

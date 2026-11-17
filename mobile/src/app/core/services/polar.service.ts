@@ -4,6 +4,10 @@
  * Loads a vessel polar (.pol) and computes instantaneous plus 15/30/60-minute
  * mean TWA, TWS, and polar % from the smoothed instrument readings.
  *
+ * The hour of samples is recorded by the Signal K logbook plugin, so the chart
+ * keeps filling while this page is closed. This service polls that history and
+ * falls back to local sampling when the plugin is not reachable.
+ *
  * Boat speed, true wind, and apparent wind come from InstrumentLiveService,
  * which already prefers speed through water and ignores interspersed log zeros.
  */
@@ -13,7 +17,10 @@ import { BehaviorSubject, Subscription, combineLatest, firstValueFrom, interval 
 import { interpolateTargetSpeed, parsePolarFile, targetCurveAtTws } from './polar-parser';
 import {
   POLAR_WINDOW_MINUTES,
+  PolarBoatSpeedSource,
   PolarCurvePoint,
+  PolarHistoryResponse,
+  PolarHistorySample,
   PolarLiveState,
   PolarSample,
   PolarTable,
@@ -27,8 +34,15 @@ import {
   POLAR_BUFFER_MS,
   POLAR_SAMPLE_INTERVAL_MS,
   POLAR_STALE_AFTER_MS,
-  polarWindowCovered,
+  alignHistoryTimestamp,
+  polarWindowReady,
 } from './polar-window';
+import { LogbookRemoteService } from './logbook-remote.service';
+
+/** How often the boat's polar history is read. */
+const POLAR_HISTORY_POLL_MS = 5_000;
+/** Local sampling stays off while the boat's newest sample is this recent. */
+const POLAR_SERVER_FRESH_MS = 20_000;
 
 const DEFAULT_POLAR_ASSET = 'assets/polars/outremer-55sc.pol';
 
@@ -70,7 +84,13 @@ export class PolarService implements OnDestroy {
   private seenAws = false;
   private sub: Subscription | null = null;
   private tickSub: Subscription | null = null;
+  private pollSub: Subscription | null = null;
   private lastSampleAt = 0;
+  private rawHistory: RawPolarPoint[] = [];
+  private serverPrimed = false;
+  private lastServerT = 0;
+  private serverNewestAt = 0;
+  private polling = false;
 
   private readonly liveSubject = new BehaviorSubject<PolarLiveState>(EMPTY_LIVE);
   private readonly samplesSubject = new BehaviorSubject<PolarSample[]>([]);
@@ -78,7 +98,11 @@ export class PolarService implements OnDestroy {
 
   readonly live$ = this.liveSubject.asObservable();
   readonly samples$ = this.samplesSubject.asObservable();
-  /** 15/30/60-minute mean TWA, TWS, and polar %. Empty until that window is fully covered. */
+  /**
+   * 15/30/60-minute mean TWA, TWS, and polar %.
+   * Empty until that window is fully covered. A longer window stays empty
+   * while any shorter window is empty.
+   */
   readonly windows$ = this.windowsSubject.asObservable();
   readonly polarFilename$ = new BehaviorSubject<string>(this.polarFilename);
 
@@ -87,16 +111,17 @@ export class PolarService implements OnDestroy {
   }
 
   /**
-   * True once samples for this window reach back across its full length
-   * and the newest sample is still fresh.
+   * True once this window, and every shorter window, reaches back across its
+   * full length and the newest sample is still fresh.
    */
   windowCovered(minutes: PolarWindowMinutes, now = Date.now()): boolean {
-    return polarWindowCovered(this.samples, minutes * 60 * 1000, now);
+    return polarWindowReady(this.samples, minutes, now);
   }
 
   constructor(
     private readonly http: HttpClient,
     private readonly instruments: InstrumentLiveService,
+    private readonly history: LogbookRemoteService,
   ) {
     void this.loadDefaultPolar();
     this.start();
@@ -118,9 +143,7 @@ export class PolarService implements OnDestroy {
     this.table = parsePolarFile(text);
     this.polarFilename = filename;
     this.polarFilename$.next(filename);
-    this.samples = [];
-    this.samplesSubject.next([]);
-    this.refreshRollingAverages();
+    this.publishSamples();
   }
 
   /** Target-speed curve at the current (or supplied) TWS for chart rendering. */
@@ -147,13 +170,19 @@ export class PolarService implements OnDestroy {
       },
     );
     this.tickSub = interval(POLAR_SAMPLE_INTERVAL_MS).subscribe(() => this.onTick());
+    this.pollSub = interval(POLAR_HISTORY_POLL_MS).subscribe(() => {
+      void this.pollHistory();
+    });
+    void this.pollHistory();
   }
 
   stop(): void {
     this.sub?.unsubscribe();
     this.tickSub?.unsubscribe();
+    this.pollSub?.unsubscribe();
     this.sub = null;
     this.tickSub = null;
+    this.pollSub = null;
   }
 
   // ---------------------------------------------------------------------------
@@ -212,7 +241,7 @@ export class PolarService implements OnDestroy {
   }
 
   private maybeRecordSample(): void {
-    if (!this.table) return;
+    if (this.serverIsLive()) return;
 
     const now = Date.now();
     if (now - this.lastSampleAt < POLAR_SAMPLE_INTERVAL_MS) return;
@@ -222,54 +251,105 @@ export class PolarService implements OnDestroy {
       live.stwKnots === null ||
       live.twsKnots === null ||
       live.twaDeg === null ||
-      live.targetKnots === null ||
-      live.instantPolarPct === null ||
+      (live.boatSpeedSource !== 'stw' && live.boatSpeedSource !== 'sog') ||
       live.stale
     ) {
       return;
     }
 
     this.lastSampleAt = now;
-    this.samples.push({
+    this.rawHistory.push({
+      t: now,
       timestamp: now,
-      stwKnots: live.stwKnots,
-      twsKnots: live.twsKnots,
+      speedKn: live.stwKnots,
+      speedSource: live.boatSpeedSource,
+      twsKn: live.twsKnots,
       twaDeg: live.twaDeg,
-      targetKnots: live.targetKnots,
-      polarPct: live.instantPolarPct,
     });
+  }
 
-    this.pruneSamples(now);
+  private serverIsLive(now = Date.now()): boolean {
+    return this.serverNewestAt > 0 && now - this.serverNewestAt < POLAR_SERVER_FRESH_MS;
+  }
+
+  private publishSamples(): void {
+    this.rebuildSamples();
     this.samplesSubject.next(this.samples.slice());
     this.refreshRollingAverages();
   }
 
+  private async pollHistory(): Promise<void> {
+    if (this.polling) return;
+    this.polling = true;
+    try {
+      const since = this.serverPrimed ? this.lastServerT : 0;
+      const body = await this.history.polarHistory(since);
+      if (!body) return;
+      this.acceptHistory(body);
+    } finally {
+      this.polling = false;
+    }
+  }
+
+  private acceptHistory(body: PolarHistoryResponse): void {
+    const clientNow = Date.now();
+    const incoming = body.samples.filter(isHistorySample).map(point => ({
+      t: point.t,
+      timestamp: alignHistoryTimestamp(point.t, body.now, clientNow),
+      speedKn: point.speedKn,
+      speedSource: point.speedSource,
+      twsKn: point.twsKn,
+      twaDeg: point.twaDeg,
+    }));
+    if (!incoming.length) return;
+    if (!this.serverPrimed) {
+      this.rawHistory = incoming;
+      this.serverPrimed = true;
+    } else {
+      this.rawHistory.push(...incoming);
+    }
+    for (const point of incoming) {
+      if (point.t > this.lastServerT) this.lastServerT = point.t;
+      if (point.timestamp > this.serverNewestAt) this.serverNewestAt = point.timestamp;
+    }
+    this.publishSamples();
+  }
+
+  private rebuildSamples(): void {
+    const cutoff = Date.now() - POLAR_BUFFER_MS;
+    const bySecond = new Map<number, RawPolarPoint>();
+    for (const point of this.rawHistory) {
+      if (point.timestamp < cutoff) continue;
+      bySecond.set(Math.round(point.timestamp / 1000), point);
+    }
+    this.rawHistory = [...bySecond.values()].sort((a, b) => a.timestamp - b.timestamp);
+    const table = this.table;
+    this.samples = [];
+    if (!table) return;
+    for (const point of this.rawHistory) {
+      const targetKnots = interpolateTargetSpeed(point.twaDeg, point.twsKn, table);
+      if (!(targetKnots > 0)) continue;
+      this.samples.push({
+        timestamp: point.timestamp,
+        stwKnots: point.speedKn,
+        twsKnots: point.twsKn,
+        twaDeg: point.twaDeg,
+        targetKnots,
+        polarPct: (point.speedKn / targetKnots) * 100,
+      });
+    }
+  }
+
   private onTick(): void {
+    const now = Date.now();
     const live = this.liveSubject.value;
-    const quiet = !live.lastUpdate || (Date.now() - live.lastUpdate > POLAR_STALE_AFTER_MS);
+    const quiet = !live.lastUpdate || (now - live.lastUpdate > POLAR_STALE_AFTER_MS);
     const stale = this.essentials.stale || quiet;
     if (stale !== live.stale) {
       this.liveSubject.next({ ...live, stale });
     }
     this.maybeRecordSample();
-    const before = this.samples.length;
-    this.pruneSamples(Date.now());
-    if (this.samples.length !== before) {
-      this.samplesSubject.next(this.samples.slice());
-    }
-    this.refreshRollingAverages();
-  }
-
-  private pruneSamples(now: number): void {
-    const cutoff = now - POLAR_BUFFER_MS;
-    if (this.samples.length === 0) return;
-    let start = 0;
-    while (start < this.samples.length && this.samples[start].timestamp < cutoff) {
-      start++;
-    }
-    if (start > 0) {
-      this.samples = this.samples.slice(start);
-    }
+    this.publishSamples();
   }
 
   private refreshRollingAverages(): void {
@@ -303,6 +383,24 @@ export class PolarService implements OnDestroy {
     };
   }
 
+}
+
+interface RawPolarPoint {
+  t: number;
+  timestamp: number;
+  speedKn: number;
+  speedSource: PolarBoatSpeedSource;
+  twsKn: number;
+  twaDeg: number;
+}
+
+function isHistorySample(point: PolarHistorySample): boolean {
+  return !!point
+    && Number.isFinite(point.t)
+    && Number.isFinite(point.speedKn)
+    && (point.speedSource === 'stw' || point.speedSource === 'sog')
+    && Number.isFinite(point.twsKn)
+    && Number.isFinite(point.twaDeg);
 }
 
 /** Smallest angle between a wind direction and the bow, in 0–180°. */

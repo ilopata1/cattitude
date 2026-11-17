@@ -50,3 +50,19 @@ export interface PolarCurvePoint {
   twaDeg: number;
   targetKnots: number;
 }
+
+/** One second of boat speed and wind, recorded by the Signal K plugin. */
+export interface PolarHistorySample {
+  t: number;
+  speedKn: number;
+  speedSource: PolarBoatSpeedSource;
+  twsKn: number;
+  twaDeg: number;
+}
+
+export interface PolarHistoryResponse {
+  now: number;
+  retainMs?: number;
+  sampleIntervalMs?: number;
+  samples: PolarHistorySample[];
+}

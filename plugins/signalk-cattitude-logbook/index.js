@@ -13,6 +13,15 @@ const {
 } = require('./lib/math');
 const { applyPassageEvent, buildEntry, toLogentryResource } = require('./lib/entry');
 const { watchAssignee } = require('./lib/duty');
+const {
+  POLAR_RETAIN_MS,
+  POLAR_SAMPLE_MS,
+  createPolarRecorder,
+  exportPolar,
+  importPolar,
+  recordPolar,
+  samplesSince,
+} = require('./lib/polar');
 
 const SAMPLE_MS = 10_000;
 const RETAIN_MS = 48 * 60 * 60 * 1000;
@@ -29,7 +38,7 @@ module.exports = (app) => {
   const plugin = {
     id: 'cattitude-logbook',
     name: 'Cattitude logbook recorder',
-    description: 'Writes Clever Sailor log entries into signalk-logbook while Signal K is running.',
+    description: 'Writes Clever Sailor log entries, and keeps polar history, while Signal K is running.',
     schema: {
       type: 'object',
       properties: {},
@@ -44,10 +53,15 @@ module.exports = (app) => {
   let unsubscribes = [];
   let chain = Promise.resolve();
   let recordingAt = 0;
+  let polar = createPolarRecorder();
+  let polarTimer = null;
+  let polarDirty = false;
+  let polarSavedAt = 0;
 
   plugin.start = () => {
     dataDir = app.getDataDirPath();
     state = loadState(dataDir);
+    polar = loadPolar(dataDir);
     registerStateProvider();
     const subscription = {
       context: 'vessels.self',
@@ -74,6 +88,19 @@ module.exports = (app) => {
       });
     }, SAMPLE_MS);
     recordingAt = Date.now();
+    polarTimer = setInterval(() => {
+      const now = Date.now();
+      try {
+        if (recordPolar(polar, reading, now)) polarDirty = true;
+        if (polarDirty && now - polarSavedAt >= 60_000) {
+          savePolar();
+          polarDirty = false;
+          polarSavedAt = now;
+        }
+      } catch (err) {
+        app.error(`Cattitude logbook polar: ${err.message}`);
+      }
+    }, POLAR_SAMPLE_MS);
     setStatus();
   };
 
@@ -82,7 +109,10 @@ module.exports = (app) => {
     unsubscribes = [];
     if (timer) clearInterval(timer);
     timer = null;
+    if (polarTimer) clearInterval(polarTimer);
+    polarTimer = null;
     persist();
+    savePolar();
   };
 
   plugin.registerWithRouter = (router) => {
@@ -91,18 +121,18 @@ module.exports = (app) => {
     read.get('/status', (req, res) => {
       res.json(publicState());
     });
-    write.put('/context', (req, res) => {
-      const watchChanged = applyContext(req.body || {});
-      if (!watchChanged) {
-        res.json(publicState());
-        return;
-      }
-      chain = chain.then(async () => {
-        await recordTrigger('watch-change', { force: true }, Date.now());
-        res.json(publicState());
-      }).catch((err) => {
-        if (!res.headersSent) res.status(503).json({ message: err.message });
+    read.get('/polar', (req, res) => {
+      const since = Number(req.query.since);
+      res.json({
+        now: Date.now(),
+        retainMs: POLAR_RETAIN_MS,
+        sampleIntervalMs: POLAR_SAMPLE_MS,
+        samples: samplesSince(polar, since),
       });
+    });
+    write.put('/context', (req, res) => {
+      applyContext(req.body || {});
+      res.json(publicState());
     });
     write.post('/record', (req, res) => {
       const body = req.body || {};
@@ -151,10 +181,7 @@ module.exports = (app) => {
           },
           async setResource(id, value) {
             if (id !== 'state') throw notFound();
-            const watchChanged = applyContext(value || {});
-            if (watchChanged) {
-              chain = chain.then(() => recordTrigger('watch-change', { force: true }, Date.now()));
-            }
+            applyContext(value || {});
           },
           async deleteResource() {},
         },
@@ -192,18 +219,19 @@ module.exports = (app) => {
     } else if (body.recommended !== undefined) {
       state.sails = { ...state.sails, recommended: body.recommended };
     }
-    let watchChanged = false;
     if (body.passage && typeof body.passage === 'object') {
       const previous = state.passage;
-      state.passage = body.passage;
-      watchChanged = !!(previous
-        && String(previous.watch || '').trim() !== String(body.passage.watch || '').trim()
-        && body.passage.departedAt);
+      const incoming = body.passage;
+      const samePassage = !!(previous && previous.id && incoming.id && previous.id === incoming.id);
+      // The rota on this server owns the watch name. A phone publish must not move it.
+      state.passage = {
+        ...incoming,
+        watch: samePassage ? (previous.watch ?? '') : (incoming.watch ?? ''),
+      };
     }
     if (body.rota && typeof body.rota === 'object') state.rota = body.rota;
     if (Number.isFinite(body.wallOffsetMs)) state.wallOffsetMs = body.wallOffsetMs;
     persist();
-    return watchChanged;
   }
 
   async function applyRotaWatch(now) {
@@ -413,6 +441,27 @@ module.exports = (app) => {
     const status = app.setPluginStatus || app.setProviderStatus;
     if (!status) return;
     status(readingUsable(reading) ? 'Recording' : 'Waiting for navigation data');
+  }
+
+  function loadPolar(dir) {
+    try {
+      return importPolar(JSON.parse(fs.readFileSync(path.join(dir, 'polar.json'), 'utf8')));
+    } catch {
+      return createPolarRecorder();
+    }
+  }
+
+  function savePolar() {
+    if (!dataDir) return;
+    try {
+      const file = path.join(dataDir, 'polar.json');
+      const temp = `${file}.tmp`;
+      fs.mkdirSync(dataDir, { recursive: true });
+      fs.writeFileSync(temp, JSON.stringify(exportPolar(polar)));
+      fs.renameSync(temp, file);
+    } catch (err) {
+      app.error(`Cattitude logbook polar history: ${err.message}`);
+    }
   }
 
   function persist() {

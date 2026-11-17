@@ -12,7 +12,7 @@ import {
   PolarWindowSet,
 } from '../../core/models/polar.model';
 import { PolarService } from '../../core/services/polar.service';
-import { POLAR_BUFFER_MS } from '../../core/services/polar-window';
+import { POLAR_BUFFER_MS, holdWindowDisplay, HeldWindow } from '../../core/services/polar-window';
 import { SignalKService } from '../../core/services/signal-k.service';
 import { MAIN_REEF_OPTIONS, MainReef, headsailOptions, isMainReef } from '../../core/guide/current-sail';
 import { SailAdvice, formatBand } from '../../core/models/sail-plan.model';
@@ -91,6 +91,7 @@ export class PolarPage implements OnInit, OnDestroy {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly vesselContext = inject(VesselContextService);
   private samples: PolarSample[] = [];
+  private readonly heldWindows = new Map<PolarWindowMinutes, HeldWindow<PolarWindowAssessment>>();
   private windowSet: PolarWindowSet = {
     15: EMPTY_WINDOW,
     30: EMPTY_WINDOW,
@@ -224,15 +225,20 @@ export class PolarPage implements OnInit, OnDestroy {
   }
 
   private refreshAssessments(): void {
+    const now = Date.now();
     this.windows = POLAR_WINDOW_MINUTES.map(minutes => {
       const covered = this.polar.windowCovered(minutes);
       const avg = this.windowSet[minutes];
-      return {
+      const next: PolarWindowAssessment = {
         minutes,
         avg,
         covered,
         advice: covered ? this.sailPlans.advise(avg.twaDeg, avg.twsKnots, avg.polarPct) : null,
       };
+      const held = holdWindowDisplay(next, this.heldWindows.get(minutes), now);
+      if (held.held) this.heldWindows.set(minutes, held.held);
+      else this.heldWindows.delete(minutes);
+      return held.display;
     });
   }
 

@@ -1,8 +1,12 @@
 import {
   POLAR_BUFFER_MS,
+  POLAR_DISPLAY_HOLD_MS,
   POLAR_SAMPLE_INTERVAL_MS,
   POLAR_STALE_AFTER_MS,
+  alignHistoryTimestamp,
+  holdWindowDisplay,
   polarWindowCovered,
+  polarWindowReady,
 } from './polar-window';
 
 const QUARTER_MS = 15 * 60 * 1000;
@@ -76,6 +80,43 @@ export function polarWindowFailures(): string[] {
     ),
     'samples older than fifteen minutes do not keep that window from opening',
   );
+
+  const gapped = [at(HALF_MS - POLAR_SAMPLE_INTERVAL_MS), at(0)];
+  expect(covered(gapped, HALF_MS), 'endpoints alone still span thirty minutes');
+  expect(!polarWindowReady(gapped, 15, now), 'a hole in the last fifteen minutes keeps that average closed');
+  expect(
+    !polarWindowReady(gapped, 30, now),
+    'a thirty-minute percentage stays hidden while the fifteen-minute window is empty',
+  );
+  expect(!polarWindowReady(gapped, 60, now), 'an hour stays closed while the shorter windows are empty');
+  expect(polarWindowReady(quarterFull, 15, now), 'fifteen continuous minutes open the short window');
+  expect(!polarWindowReady(quarterFull, 30, now), 'fifteen continuous minutes leave thirty closed');
+  expect(polarWindowReady(halfFull, 15, now), 'thirty continuous minutes keep fifteen open');
+  expect(polarWindowReady(halfFull, 30, now), 'thirty continuous minutes open thirty');
+  expect(!polarWindowReady(halfFull, 60, now), 'thirty continuous minutes leave the hour closed');
+
+  const serverNow = 5_000_000;
+  const clientNow = serverNow - 30_000;
+  expect(
+    alignHistoryTimestamp(serverNow, serverNow, clientNow) === clientNow,
+    'the newest boat sample is placed at the phone clock',
+  );
+  expect(
+    alignHistoryTimestamp(serverNow - QUARTER_MS, serverNow, clientNow) === clientNow - QUARTER_MS,
+    'older boat samples keep their age on the phone clock',
+  );
+
+  const open = { covered: true, label: 'open' };
+  const closed = { covered: false, label: 'closed' };
+  const shown = holdWindowDisplay(open, undefined, now);
+  expect(shown.display === open && shown.held?.at === now, 'an open window is shown and remembered');
+  const held = holdWindowDisplay(closed, shown.held, now + 1_000);
+  expect(
+    held.display === open && held.held === shown.held,
+    'a short gap keeps the last recommendation on screen',
+  );
+  const dropped = holdWindowDisplay(closed, shown.held, now + POLAR_DISPLAY_HOLD_MS);
+  expect(dropped.display === closed && dropped.held == null, 'a long gap clears the held recommendation');
 
   return failures;
 }

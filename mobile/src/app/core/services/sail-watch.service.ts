@@ -10,9 +10,9 @@ import { decideSailWindows } from './sail-watch';
 
 /**
  * Compares the sails the crew entered with the 15-, 30-, and 60-minute polar
- * recommendations. Polar sampling starts with this service, so it continues on
- * every screen for as long as the app process is alive. Each window notifies
- * on its own, and only once its samples actually span that long.
+ * recommendations. Samples are kept on the boat, so the windows keep filling
+ * while this app is closed. A longer window stays quiet until every shorter
+ * window is covered. Each window notifies on its own.
  */
 @Injectable({ providedIn: 'root' })
 export class SailWatchService {

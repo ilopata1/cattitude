@@ -2,7 +2,7 @@
   "name": "signalk-cattitude-logbook",
   "version": "0.1.0",
   "private": true,
-  "description": "Writes Clever Sailor log entries into signalk-logbook while Signal K is running.",
+  "description": "Writes Clever Sailor log entries, and keeps polar history, while Signal K is running.",
   "main": "index.js",
   "scripts": {
     "test": "node --test"
