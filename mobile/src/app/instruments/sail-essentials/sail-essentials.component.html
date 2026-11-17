@@ -2,14 +2,14 @@
   <div class="card">
     <span class="label cs-kicker">
       Depth
-      <span class="cs-stale-flag" *ngIf="essentials().stale">Stale</span>
+      <span class="cs-stale-flag">Stale</span>
     </span>
     <span class="value">{{ formatDepth(essentials().depthM) }}</span>
   </div>
   <div class="card">
     <span class="label cs-kicker">
       Speed
-      <span class="cs-stale-flag" *ngIf="essentials().stale">Stale</span>
+      <span class="cs-stale-flag">Stale</span>
     </span>
     <span class="value">{{ formatSpeed(essentials().speedKn, essentials().speedSource) }}</span>
   </div>
