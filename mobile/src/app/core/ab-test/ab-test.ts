@@ -41,6 +41,10 @@ export interface AbSample {
   headingDeg: number | null;
   cogDeg: number | null;
   twaDeg: number | null;
+  /** True wind angle, positive when the wind is on starboard. */
+  signedTwaDeg: number | null;
+  /** Rudder angle in degrees, positive when the trailing edge is to starboard. */
+  rudderDeg: number | null;
   targetKn: number | null;
   vmgSpeedKn: number | null;
   vmgSpeedSource: 'stw' | 'sog' | null;
@@ -138,6 +142,7 @@ interface LegScore {
   vmcKn: Moment;
   windSpeed: ScalarStat;
   windDir: ScalarStat;
+  helm: ScalarStat;
   rmsPitch: number | null;
   rmsRoll: number | null;
   rmsAccel: number | null;
@@ -262,6 +267,39 @@ export function scoredSamples(session: AbSession): number {
 export function absoluteOffBow(directionDeg: number, headingDeg: number): number {
   const relative = ((directionDeg - headingDeg) % 360 + 360) % 360;
   return relative > 180 ? 360 - relative : relative;
+}
+
+export function foldSignedDeg(deg: number): number {
+  return ((deg + 180) % 360 + 360) % 360 - 180;
+}
+
+/**
+ * Mean of the rudder sensors, in degrees. A port and starboard pair is averaged.
+ * Positive means the trailing edge is to starboard, matching NMEA RSA and PGN 127245.
+ */
+export function combinedRudderDeg(
+  primaryRad: number | null,
+  portRad: number | null,
+  starboardRad: number | null,
+): number | null {
+  const toDeg = (rad: number) => rad * (180 / Math.PI);
+  if (portRad != null && starboardRad != null) return (toDeg(portRad) + toDeg(starboardRad)) / 2;
+  if (primaryRad != null) return toDeg(primaryRad);
+  if (portRad != null) return toDeg(portRad);
+  if (starboardRad != null) return toDeg(starboardRad);
+  return null;
+}
+
+/**
+ * Rudder angle expressed as weather helm. Positive is weather helm, negative is lee helm.
+ * NMEA rudder angle is positive to starboard, so the sign flips with the tack.
+ */
+export function weatherHelmDeg(rudderDeg: number, signedTwaDeg: number): number | null {
+  if (!Number.isFinite(rudderDeg) || !Number.isFinite(signedTwaDeg)) return null;
+  const abs = Math.abs(signedTwaDeg);
+  if (abs < 1 || abs > 179) return null;
+  const starboardTack = signedTwaDeg > 0 ? 1 : -1;
+  return -rudderDeg * starboardTack;
 }
 
 export function startTest(session: AbSession, setup: AbSetup, now: number): AbSession {
@@ -406,6 +444,11 @@ export function buildReport(session: AbSession): AbReport | null {
   else notes.push(`VMC is speed over ground toward ${Math.round(course)}°.`);
   if (sideA.usedSog) notes.push('VMG for A used speed over ground because the log was missing.');
   if (sideB.usedSog) notes.push('VMG for B used speed over ground because the log was missing.');
+  if (sideA.helm.mean == null && sideB.helm.mean == null) {
+    notes.push('Rudder angle did not arrive, so helm is blank.');
+  } else {
+    notes.push('Helm is the mean rudder angle. Weather means the rudder is held to stop the bow coming up, and lee means it is held to stop the bow falling off.');
+  }
 
   const pctAhead = vmgBasis === 'pct' && vmg.winner !== 'tie' ? vmg.winner : null;
   const knAhead = vmgBasis === 'knots' && vmg.winner !== 'tie' ? vmg.winner : null;
@@ -420,6 +463,9 @@ export function buildReport(session: AbSession): AbReport | null {
     metric('VMG', measure(sideA.vmgKn.mean, 2, 'kn', true), measure(sideB.vmgKn.mean, 2, 'kn', true), false, knAhead),
     metric('VMC', measure(sideA.vmcKn.mean, 2, 'kn', true), measure(sideB.vmcKn.mean, 2, 'kn', true), false, vmcAhead),
     metric('Mean TWA', measure(sideA.twa, 0, '°', false), measure(sideB.twa, 0, '°', false)),
+    { kind: 'group', label: 'Helm' },
+    metric('Helm', formatHelm(sideA.helm.mean), formatHelm(sideB.helm.mean)),
+    metric('Helm spread', measure(sideA.helm.sd, 1, '°', false), measure(sideB.helm.sd, 1, '°', false)),
     { kind: 'group', label: 'Wind' },
     metric('Wind speed', measure(sideA.windSpeed.mean, 1, 'kn', true), measure(sideB.windSpeed.mean, 1, 'kn', true)),
     metric('Gustiness', measure(sideA.windSpeed.sd, 1, 'kn', true), measure(sideB.windSpeed.sd, 1, 'kn', true)),
@@ -511,6 +557,7 @@ function scoreLeg(leg: AbLeg, course: number | null): LegScore {
   const mode: PointOfSail = twa != null && twa > 90 ? 'downwind' : 'upwind';
   const wind = pairs(window, (sample) => sample.twsKn);
   const direction = pairs(window, (sample) => sample.twdDeg);
+  const helm = pairs(window, sampleHelm);
   const sea = seaStats(leg.samples, leg.imu);
   const current = currentVector(window);
   const setDrift = current ? vectorToSetDrift(current.north, current.east) : { setDeg: null, driftKn: null };
@@ -535,6 +582,7 @@ function scoreLeg(leg: AbLeg, course: number | null): LegScore {
     vmcKn: gated(finite(window.map((sample) => progressVmc(sample, mode, course)))),
     windSpeed: scalarStats(wind.t, wind.v),
     windDir: directionStats(direction.t, direction.v),
+    helm: scalarStats(helm.t, helm.v),
     rmsPitch: sea.rmsPitch,
     rmsRoll: sea.rmsRoll,
     rmsAccel: sea.rmsAccel,
@@ -566,6 +614,7 @@ function combineSide(parts: LegScore[]): LegScore {
     vmcKn: combineMoments(parts.map((part) => part.vmcKn)),
     windSpeed: combineScalar(parts.map((part) => part.windSpeed)),
     windDir: combineDirection(parts.map((part) => part.windDir)),
+    helm: combineScalar(parts.map((part) => part.helm)),
     rmsPitch: sea.rmsPitch,
     rmsRoll: sea.rmsRoll,
     rmsAccel: sea.rmsAccel,
@@ -665,6 +714,24 @@ function judge(name: string, a: Moment, b: Moment, digits: number, unit: string,
     headline: rounded != null && rounded < 70 ? `${winner} is slightly ahead on ${name}` : `${winner} is ahead on ${name}`,
     detail: rounded == null ? summary : `${summary} Confidence ${rounded}%.`,
   };
+}
+
+function sampleHelm(sample: AbSample): number | null {
+  if (sample.rudderDeg == null) return null;
+  const signed = sample.signedTwaDeg != null
+    ? sample.signedTwaDeg
+    : sample.headingDeg != null && sample.twdDeg != null
+      ? signedDelta(sample.headingDeg, sample.twdDeg)
+      : null;
+  if (signed == null) return null;
+  return weatherHelmDeg(sample.rudderDeg, signed);
+}
+
+function formatHelm(value: number | null): string {
+  if (value == null || !Number.isFinite(value)) return '—';
+  const abs = Math.abs(value);
+  if (abs < 0.05) return '0.0°';
+  return `${abs.toFixed(1)}° ${value > 0 ? 'weather' : 'lee'}`;
 }
 
 function progressVmg(sample: AbSample, mode: PointOfSail): number | null {

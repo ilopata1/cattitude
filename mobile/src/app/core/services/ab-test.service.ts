@@ -13,6 +13,8 @@ import {
   ImuPoint,
   absoluteOffBow,
   armLeg,
+  combinedRudderDeg,
+  foldSignedDeg,
   clearTest,
   emptySession,
   noteAlarm,
@@ -167,15 +169,21 @@ export class AbTestService implements OnDestroy {
     const boatRelative = this.twaPath.includes('angleTrueWater') || this.twaPath.includes('angleTrueGround');
     let twd: number | null = null;
     let twa: number | null = null;
+    let signedTwa: number | null = null;
     if (angle != null) {
       const base = normalizeAngleDeg(computeTrueWindBaseAngle(this.twaPath, angle, heading ?? 0, true));
       if (boatRelative) {
         twa = absoluteOffBow(base, heading ?? 0);
         twd = heading == null ? null : base;
+        const relative = this.rawDegrees(this.paths.twa, now);
+        signedTwa = relative == null ? null : foldSignedDeg(relative);
       } else {
         twd = base;
         twa = heading == null ? null : absoluteOffBow(base, heading);
       }
+    }
+    if (signedTwa == null && heading != null && twd != null) {
+      signedTwa = foldSignedDeg(twd - heading);
     }
     const stw = this.stwKnots(now);
     const sog = this.knots(this.paths.sog, now);
@@ -184,6 +192,11 @@ export class AbTestService implements OnDestroy {
     const roll = this.slot(this.roll, now);
     const heave = this.slot(this.heave, now);
     const vertAccel = this.slot(this.accel, now);
+    const rudderDeg = combinedRudderDeg(
+      this.read('steering.rudderAngle', now),
+      this.read('steering.rudderAngle.port', now),
+      this.read('steering.rudderAngle.starboard', now),
+    );
     const targetKn = twa != null && tws != null ? this.polar.targetKnots(twa, tws) : null;
     const vmgSpeedKn = stw ?? sog;
     const vmgSpeedSource = stw != null ? 'stw' : sog != null ? 'sog' : null;
@@ -196,6 +209,8 @@ export class AbTestService implements OnDestroy {
       headingDeg: heading,
       cogDeg: cog,
       twaDeg: twa,
+      signedTwaDeg: signedTwa,
+      rudderDeg,
       targetKn,
       vmgSpeedKn,
       vmgSpeedSource,
@@ -349,8 +364,13 @@ export class AbTestService implements OnDestroy {
   }
 
   private degrees(path: string, now: number): number | null {
+    const value = this.rawDegrees(path, now);
+    return value == null ? null : normalizeAngleDeg(value);
+  }
+
+  private rawDegrees(path: string, now: number): number | null {
     const value = this.read(path, now);
-    return value == null ? null : normalizeAngleDeg(value * RAD_TO_DEG);
+    return value == null ? null : value * RAD_TO_DEG;
   }
 
   private read(path: string, now: number): number | null {

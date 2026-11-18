@@ -20,6 +20,8 @@ import {
   tick,
   welchConfidence,
   absoluteOffBow,
+  combinedRudderDeg,
+  weatherHelmDeg,
 } from './ab-test';
 
 export function abTestFailures(): string[] {
@@ -31,6 +33,12 @@ export function abTestFailures(): string[] {
   expect(formatClock(AB_BLOCK_MS) === '6:30', 'a full part is 6:30');
   expect(formatClock(AB_SETTLE_MS) === '1:30', 'settling time is 1:30');
   expect(absoluteOffBow(10, 40) === 30, 'true wind 10° off a 40° heading is 30° off the bow');
+  expect(weatherHelmDeg(-4, 40) === 4, 'port rudder on starboard tack is weather helm');
+  expect(weatherHelmDeg(3, -40) === 3, 'starboard rudder on port tack is weather helm');
+  expect(weatherHelmDeg(2, 40) === -2, 'rudder toward the wind is lee helm');
+  expect(weatherHelmDeg(1, 0) === null, 'helm needs a settled tack');
+  const paired = combinedRudderDeg(null, -0.1, -0.2);
+  expect(paired != null && Math.abs(paired - ((-0.1 - 0.2) / 2) * (180 / Math.PI)) < 1e-9, 'twin rudders are averaged');
 
   const setup = filledSetup();
   expect(!canStart({ ...setup, settingB: '42°' }), 'identical settings do not start');
@@ -97,6 +105,12 @@ export function abTestFailures(): string[] {
   expect(row(wind, 'Set')?.a === '0°' && row(wind, 'Drift')?.a === '1.00 kn', 'current is the ground vector minus the water vector');
   expect(row(wind, 'Wind dropouts')?.a === '4', 'wind dropouts are counted on the scored window');
 
+  const helm = buildReport(helmSession());
+  expect(row(helm, 'Helm')?.a === '3.0° weather', 'two cycles of weather helm are averaged');
+  expect(row(helm, 'Helm')?.b === '2.0° lee', 'lee helm keeps its sign');
+  expect(row(helm, 'Helm spread')?.a === '0.0°', 'a steady helm has no spread');
+  expect(helm?.notes.some((note) => note.includes('Weather means')), 'the result explains weather and lee helm');
+
   const sea = buildReport(seaSession());
   const pitch = Number(row(sea, 'Pitch')?.a?.replace('°', ''));
   const period = Number(row(sea, 'Dominant period')?.a?.split(' ')[0]);
@@ -113,7 +127,7 @@ export function abTestFailures(): string[] {
 }
 
 function row(report: ReturnType<typeof buildReport>, label: string) {
-  return report?.rows.find((item) => item.label === label);
+  return report?.rows.find((item) => item.kind === 'metric' && item.label === label);
 }
 
 function filledSetup(): AbSetup {
@@ -139,6 +153,8 @@ function point(tOffsetMs: number, extra: Partial<AbSample> = {}): AbSample {
     headingDeg: null,
     cogDeg: null,
     twaDeg: null,
+    signedTwaDeg: null,
+    rudderDeg: null,
     targetKn: null,
     vmgSpeedKn: null,
     vmgSpeedSource: null,
@@ -224,6 +240,27 @@ function seaSession(): AbSession {
   return session(filledSetup(), [
     leg('A', 1, steady(60, 6, 10, 5), [], imu),
     leg('B', 1, steady(60, 5, 10, 5)),
+  ]);
+}
+
+function helmSamples(signedTwa: number, rudder: number, count = 8): AbSample[] {
+  const samples: AbSample[] = [];
+  for (let i = 0; i < count; i++) {
+    samples.push(point(AB_SETTLE_MS + i * 1000, {
+      signedTwaDeg: signedTwa,
+      rudderDeg: rudder,
+      twaDeg: Math.abs(signedTwa),
+    }));
+  }
+  return samples;
+}
+
+function helmSession(): AbSession {
+  return session(filledSetup(), [
+    leg('A', 1, helmSamples(40, -4)),
+    leg('A', 2, helmSamples(40, -2)),
+    leg('B', 1, helmSamples(40, 2)),
+    leg('B', 2, helmSamples(40, 2)),
   ]);
 }
 
