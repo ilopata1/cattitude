@@ -5,6 +5,7 @@
  * out of the scores. One or two A/B cycles are compared on VMG as a percentage
  * of the polar, with a confidence that accounts for serial correlation.
  */
+import { bearingDeg, haversineNm } from '../logbook/logbook-math';
 
 export const AB_BLOCK_MS = 6.5 * 60 * 1000;
 export const AB_SETTLE_MS = 90 * 1000;
@@ -543,6 +544,27 @@ function courseOf(setup: AbSetup): number | null {
   const value = Number(raw);
   if (!Number.isFinite(value)) return null;
   return ((value % 360) + 360) % 360;
+}
+
+/** A bearing this close to the boat is too short to use as a mark course. */
+const MIN_MARK_DISTANCE_NM = 0.1;
+
+/**
+ * Bearing to fill an empty mark course. A course the crew already entered,
+ * including one they cleared, is left alone. Null means "do not write".
+ */
+export function markCourseFromDestination(
+  course: string,
+  touched: boolean,
+  position: { lat: number; lon: number } | null,
+  destination: { lat: number; lon: number } | null,
+): string | null {
+  if (touched || String(course ?? '').trim()) return null;
+  if (!position || !destination) return null;
+  if (haversineNm(position, destination) < MIN_MARK_DISTANCE_NM) return null;
+  const bearing = bearingDeg(position, destination);
+  if (!Number.isFinite(bearing)) return null;
+  return String(Math.round(bearing) % 360);
 }
 
 function scoreLeg(leg: AbLeg, course: number | null): LegScore {

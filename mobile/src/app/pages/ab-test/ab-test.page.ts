@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { AlertController } from '@ionic/angular';
-import { Subscription } from 'rxjs';
+import { Subscription, combineLatest } from 'rxjs';
 import {
   AB_SETTLE_MS,
   AbReport,
@@ -16,6 +16,7 @@ import {
   formatClock,
   isSettling,
   liveVmg,
+  markCourseFromDestination,
   preparePrompt,
   remainingMs,
   blockProgress,
@@ -23,8 +24,12 @@ import {
   variableLabel,
 } from '../../core/ab-test/ab-test';
 import { MAIN_REEF_OPTIONS } from '../../core/guide/current-sail';
+import { STALE_AFTER_MS } from '../../core/logbook/logbook-math';
+import { LiveReading, Passage } from '../../core/models/logbook.model';
 import { AbTestService } from '../../core/services/ab-test.service';
 import { CurrentSailService } from '../../core/services/current-sail.service';
+import { LogbookSamplerService } from '../../core/services/logbook-sampler.service';
+import { LogbookService } from '../../core/services/logbook.service';
 import { SignalKService } from '../../core/services/signal-k.service';
 
 @Component({
@@ -52,19 +57,29 @@ export class AbTestPage implements OnInit, OnDestroy {
   livePct: string | null = null;
   liveKnots: string | null = null;
   liveDirection = '';
+  destinationLabel = '';
 
   private readonly tests = inject(AbTestService);
   private readonly sails = inject(CurrentSailService);
+  private readonly logbook = inject(LogbookService);
+  private readonly sampler = inject(LogbookSamplerService);
   private readonly sk = inject(SignalKService);
   private readonly alerts = inject(AlertController);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subs: Subscription[] = [];
+  private courseTouched = false;
+  private courseSeen = '';
+  private liveCourse = '';
 
   ngOnInit(): void {
     this.session = this.tests.session;
     this.setup = { ...this.tests.session.setup };
+    this.courseSeen = this.setup.courseDeg.trim();
+    if (this.courseSeen) this.courseTouched = true;
     if (this.session.phase === 'setup') this.prefill();
     this.refresh(this.session);
+    void this.logbook.ensureReady();
+    void this.sampler.start();
     this.subs.push(
       this.tests.session$.subscribe((session) => {
         this.session = session;
@@ -74,6 +89,9 @@ export class AbTestPage implements OnInit, OnDestroy {
       this.sk.connected$.subscribe((connected) => {
         this.connected = connected;
         this.cdr.markForCheck();
+      }),
+      combineLatest([this.logbook.passage$, this.sampler.reading$]).subscribe(([passage, reading]) => {
+        this.offerDestinationCourse(passage, reading);
       }),
     );
   }
@@ -121,8 +139,29 @@ export class AbTestPage implements OnInit, OnDestroy {
     return boatStateLine(this.session.phase === 'setup' ? this.setup : this.session.setup);
   }
 
+  get courseHelp(): string {
+    const course = this.setup.courseDeg.trim();
+    if (!course) return 'Leave the course blank to score VMC along the wind.';
+    if (this.destinationLabel && course === this.liveCourse) {
+      return `Bearing to ${this.destinationLabel}. Clear it to score VMC along the wind.`;
+    }
+    return 'VMC uses this course. Clear it to score along the wind.';
+  }
+
   touch(): void {
     this.tests.remember(this.setup);
+  }
+
+  onCourseEdit(value: string): void {
+    const next = String(value ?? '').trim();
+    if (next === this.courseSeen) {
+      this.touch();
+      return;
+    }
+    const previous = this.courseSeen;
+    this.courseSeen = next;
+    if (!(previous === '' && next === '') && next !== this.liveCourse) this.courseTouched = true;
+    this.touch();
   }
 
   setMain(value: string | null | undefined): void {
@@ -189,6 +228,25 @@ export class AbTestPage implements OnInit, OnDestroy {
     this.touch();
   }
 
+  private offerDestinationCourse(passage: Passage | null, reading: LiveReading): void {
+    const destination = destinationOf(passage);
+    const position = freshPosition(reading);
+    this.destinationLabel = passage?.destinationName.trim() || passage?.name.trim() || (destination ? 'the destination' : '');
+    this.liveCourse = markCourseFromDestination('', false, position, destination) ?? '';
+    if (this.session.phase !== 'setup') {
+      this.cdr.markForCheck();
+      return;
+    }
+    const next = markCourseFromDestination(this.setup.courseDeg, this.courseTouched, position, destination);
+    if (next != null) {
+      this.courseSeen = next;
+      this.liveCourse = next;
+      this.setup.courseDeg = next;
+      this.touch();
+    }
+    this.cdr.markForCheck();
+  }
+
   private refresh(session: AbSession): void {
     const now = Date.now();
     this.report = session.phase === 'results' ? buildReport(session) : null;
@@ -202,4 +260,16 @@ export class AbTestPage implements OnInit, OnDestroy {
     this.liveKnots = live?.knots == null ? null : `${live.knots.toFixed(1)} kn`;
     this.liveDirection = live == null ? '' : live.mode === 'downwind' ? 'downwind' : 'to windward';
   }
+}
+
+function destinationOf(passage: Passage | null): { lat: number; lon: number } | null {
+  if (!passage || passage.destinationLat == null || passage.destinationLon == null) return null;
+  return { lat: passage.destinationLat, lon: passage.destinationLon };
+}
+
+function freshPosition(reading: LiveReading): { lat: number; lon: number } | null {
+  if (!reading.position || !reading.positionAt) return null;
+  const at = Date.parse(reading.positionAt);
+  if (!Number.isFinite(at) || Date.now() - at > STALE_AFTER_MS) return null;
+  return reading.position;
 }

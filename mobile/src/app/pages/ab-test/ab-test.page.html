@@ -95,10 +95,10 @@
       label-placement="stacked"
       inputmode="decimal"
       [(ngModel)]="setup.courseDeg"
-      (ngModelChange)="touch()"
+      (ngModelChange)="onCourseEdit($event)"
       placeholder="Degrees true, optional"
     ></ion-input>
-    <p class="field-help">Leave the course blank to score VMC along the wind.</p>
+    <p class="field-help">{{ courseHelp }}</p>
 
     <div class="actions">
       <ion-button expand="block" (click)="start()" [disabled]="!canStartSetup">Start test</ion-button>

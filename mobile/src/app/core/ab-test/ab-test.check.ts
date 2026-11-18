@@ -8,6 +8,7 @@ import {
   armLeg,
   buildReport,
   canStart,
+  markCourseFromDestination,
   emptySession,
   emptySetup,
   formatClock,
@@ -44,6 +45,14 @@ export function abTestFailures(): string[] {
   expect(!canStart({ ...setup, settingB: '42°' }), 'identical settings do not start');
   expect(!canStart({ ...setup, variable: ' ' }), 'an unnamed change does not start');
   expect(canStart(setup), 'two different settings can start');
+  const north = markCourseFromDestination('', false, { lat: 0, lon: 0 }, { lat: 1, lon: 0 });
+  expect(north === '0', 'an empty course takes the bearing to the destination');
+  const east = markCourseFromDestination('', false, { lat: 0, lon: 0 }, { lat: 0, lon: 1 });
+  expect(east === '90', 'a destination due east is 90°');
+  expect(markCourseFromDestination('40', false, { lat: 0, lon: 0 }, { lat: 1, lon: 0 }) == null, 'an entered course stays');
+  expect(markCourseFromDestination('', true, { lat: 0, lon: 0 }, { lat: 1, lon: 0 }) == null, 'a cleared course stays blank');
+  expect(markCourseFromDestination('', false, null, { lat: 1, lon: 0 }) == null, 'a course needs a position');
+  expect(markCourseFromDestination('', false, { lat: 1, lon: 0 }, { lat: 1, lon: 0 }) == null, 'a destination under the boat has no bearing');
 
   expect(Math.abs(studentTCdf(0, 20) - 0.5) < 1e-6, 'a t of zero is the middle of the distribution');
   expect(Math.abs(studentTCdf(1.7247182429, 20) - 0.95) < 0.002, 'df 20 reaches 95% at its critical value');
