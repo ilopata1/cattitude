@@ -42,7 +42,7 @@ export function abTestFailures(): string[] {
 
   const setup = filledSetup();
   expect(!canStart({ ...setup, settingB: '42°' }), 'identical settings do not start');
-  expect(!canStart({ ...setup, variableId: 'other', customVariable: ' ' }), 'an unnamed change does not start');
+  expect(!canStart({ ...setup, variable: ' ' }), 'an unnamed change does not start');
   expect(canStart(setup), 'two different settings can start');
 
   expect(Math.abs(studentTCdf(0, 20) - 0.5) < 1e-6, 'a t of zero is the middle of the distribution');
@@ -133,7 +133,7 @@ function row(report: ReturnType<typeof buildReport>, label: string) {
 function filledSetup(): AbSetup {
   return {
     ...emptySetup(),
-    variableId: 'awa',
+    variable: 'Autopilot AWA hold',
     settingA: '42°',
     settingB: '38°',
     main: 'Full',

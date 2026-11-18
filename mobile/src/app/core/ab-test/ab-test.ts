@@ -13,15 +13,13 @@ export const AB_SAMPLE_MS = 1000;
 const MIN_PERF = 20;
 const MIN_SCALAR = 5;
 
-export type AbVariableId = 'awa' | 'gennaker' | 'other';
 export type AbPhase = 'setup' | 'recording' | 'prepare' | 'rerun' | 'results';
 export type AbLegId = 'A' | 'B';
 export type AbCycle = 1 | 2;
 export type PointOfSail = 'upwind' | 'downwind';
 
 export interface AbSetup {
-  variableId: AbVariableId;
-  customVariable: string;
+  variable: string;
   settingA: string;
   settingB: string;
   main: string;
@@ -162,8 +160,7 @@ interface LegScore {
 
 export function emptySetup(): AbSetup {
   return {
-    variableId: 'awa',
-    customVariable: '',
+    variable: '',
     settingA: '',
     settingB: '',
     main: '',
@@ -190,9 +187,7 @@ export function emptySession(): AbSession {
 }
 
 export function variableLabel(setup: AbSetup): string {
-  if (setup.variableId === 'awa') return 'Autopilot AWA hold';
-  if (setup.variableId === 'gennaker') return 'Gennaker trim';
-  return setup.customVariable.trim();
+  return setup.variable.trim();
 }
 
 export function canStart(setup: AbSetup): boolean {
@@ -530,8 +525,7 @@ function finishLeg(session: AbSession): AbSession {
 
 function cleaned(setup: AbSetup): AbSetup {
   return {
-    variableId: setup.variableId,
-    customVariable: setup.customVariable.trim(),
+    variable: setup.variable.trim(),
     settingA: setup.settingA.trim(),
     settingB: setup.settingB.trim(),
     main: setup.main.trim(),

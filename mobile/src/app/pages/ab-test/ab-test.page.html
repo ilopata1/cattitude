@@ -14,33 +14,26 @@
       The result is VMG as a percentage of the polar.
     </p>
 
-    <ion-segment [value]="setup.variableId" (ionChange)="setVariable($any($event).detail.value)">
-      <ion-segment-button value="awa">AWA hold</ion-segment-button>
-      <ion-segment-button value="gennaker">Gennaker</ion-segment-button>
-      <ion-segment-button value="other">Other</ion-segment-button>
-    </ion-segment>
-
     <ion-input
-      *ngIf="setup.variableId === 'other'"
       label="What is changing"
       label-placement="stacked"
-      [(ngModel)]="setup.customVariable"
+      [(ngModel)]="setup.variable"
       (ngModelChange)="touch()"
-      placeholder="Traveller car"
+      placeholder="AWA hold, gennaker trim…"
     ></ion-input>
     <ion-input
       label="Setting A"
       label-placement="stacked"
       [(ngModel)]="setup.settingA"
       (ngModelChange)="touch()"
-      [placeholder]="placeholderA"
+      placeholder="42°"
     ></ion-input>
     <ion-input
       label="Setting B"
       label-placement="stacked"
       [(ngModel)]="setup.settingB"
       (ngModelChange)="touch()"
-      [placeholder]="placeholderB"
+      placeholder="38°"
     ></ion-input>
     <p class="field-help" *ngIf="sameSettings">B should be the other setting.</p>
 

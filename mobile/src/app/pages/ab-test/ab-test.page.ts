@@ -92,18 +92,6 @@ export class AbTestPage implements OnInit, OnDestroy {
     return Boolean(a && b && a === b);
   }
 
-  get placeholderA(): string {
-    if (this.setup.variableId === 'gennaker') return 'Sheeted';
-    if (this.setup.variableId === 'other') return 'First setting';
-    return '42°';
-  }
-
-  get placeholderB(): string {
-    if (this.setup.variableId === 'gennaker') return 'Eased 5 cm';
-    if (this.setup.variableId === 'other') return 'Second setting';
-    return '38°';
-  }
-
   get variableName(): string {
     return variableLabel(this.session.phase === 'setup' ? this.setup : this.session.setup);
   }
@@ -135,12 +123,6 @@ export class AbTestPage implements OnInit, OnDestroy {
 
   touch(): void {
     this.tests.remember(this.setup);
-  }
-
-  setVariable(value: string): void {
-    if (value !== 'awa' && value !== 'gennaker' && value !== 'other') return;
-    this.setup.variableId = value;
-    this.touch();
   }
 
   setMain(value: string | null | undefined): void {
