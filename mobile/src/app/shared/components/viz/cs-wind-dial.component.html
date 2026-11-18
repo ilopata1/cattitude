@@ -1,0 +1,24 @@
+<svg viewBox="0 0 100 100">
+  <text class="n" [attr.x]="geom.cx" y="11" text-anchor="middle" dominant-baseline="central">N</text>
+  <line class="tick" [attr.x1]="geom.cx + geom.r" [attr.y1]="geom.cy" [attr.x2]="geom.cx + geom.r + 6" [attr.y2]="geom.cy" />
+  <line class="tick" [attr.x1]="geom.cx" [attr.y1]="geom.cy + geom.r" [attr.x2]="geom.cx" [attr.y2]="geom.cy + geom.r + 6" />
+  <line class="tick" [attr.x1]="geom.cx - geom.r - 6" [attr.y1]="geom.cy" [attr.x2]="geom.cx - geom.r" [attr.y2]="geom.cy" />
+  <circle class="ring" [attr.cx]="geom.cx" [attr.cy]="geom.cy" [attr.r]="geom.r" />
+  @if (figure().full) {
+    <circle class="range" [attr.cx]="geom.cx" [attr.cy]="geom.cy" [attr.r]="geom.r" />
+  } @else if (figure().arc) {
+    <path class="range" [attr.d]="figure().arc" />
+  }
+  @if (figure().port; as port) {
+    <circle class="port" [attr.cx]="port.x" [attr.cy]="port.y" r="4.2" />
+  }
+  @if (figure().starboard; as starboard) {
+    <circle class="starboard" [attr.cx]="starboard.x" [attr.cy]="starboard.y" r="4.2" />
+  }
+  @if (figure().current != null) {
+    <g [attr.transform]="'rotate(' + figure().current + ' ' + geom.cx + ' ' + geom.cy + ')'">
+      <line class="arrow-shaft" [attr.x1]="geom.cx" [attr.y1]="geom.cy - 4" [attr.x2]="geom.cx" [attr.y2]="geom.cy - 20" />
+      <polygon class="arrow-head" [attr.points]="arrowHead" />
+    </g>
+  }
+</svg>

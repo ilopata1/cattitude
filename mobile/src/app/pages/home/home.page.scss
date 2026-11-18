@@ -414,6 +414,7 @@
   display: block;
   font-size: var(--cattitude-value-md);
   color: var(--cattitude-text-dark);
+  text-align: center;
 }
 
 .widget-trace {
@@ -422,8 +423,10 @@
   color: var(--cattitude-text-accent);
 }
 
-.widget-trace-gauge {
+.widget-trace-gauge,
+.widget-trace-dial {
   width: 88px;
+  margin-inline: auto;
 }
 
 .dash-widget.stale .widget-trace {
@@ -435,13 +438,21 @@
   margin-top: 4px;
   font-size: var(--cattitude-text-sm);
   color: var(--cattitude-text-light);
+  text-align: center;
 }
 
 .polar-averages,
 .fuel-range-figures {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   gap: 8px;
+  text-align: center;
+
+  > span {
+    flex: 1 1 0;
+    min-width: 0;
+    text-align: center;
+  }
 }
 
 .fuel-range-caption {

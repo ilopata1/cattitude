@@ -149,6 +149,13 @@
               class="widget-trace"
               [values]="trace(role)"
             ></cs-sparkline>
+            <cs-wind-dial
+              *ngIf="windDial(item.id) as dial"
+              class="widget-trace widget-trace-dial"
+              [bearings]="dial.bearings"
+              [current]="dial.current"
+              [heading]="dial.heading"
+            ></cs-wind-dial>
             <cs-arc-gauge
               *ngIf="gaugeValue(item.id) != null"
               class="widget-trace widget-trace-gauge"

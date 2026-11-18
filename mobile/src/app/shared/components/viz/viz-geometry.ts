@@ -1,3 +1,5 @@
+import { normalizeAngleDeg, signedAngleDeltaDeg } from '../../../instruments/skip/wind-steer.util';
+
 /** Shape only. Colours stay in CSS (`currentColor` or `--cattitude-*`). */
 
 export interface CsGaugeZone {
@@ -162,6 +164,65 @@ export function compassTicks(): CompassTick[] {
   return ticks;
 }
 
+/** Small north-up dial under the home wind-angle tiles. North is 0°. */
+export const WIND_DIAL = { cx: 50, cy: 56, r: 32 } as const;
+
+export interface WindDialPoint {
+  x: number;
+  y: number;
+}
+
+export interface WindDialFigure {
+  /** Clockwise arc that holds every sample. Null when the range is empty or a full circle. */
+  arc: string | null;
+  full: boolean;
+  /** Furthest sample to port of `heading`. */
+  port: WindDialPoint | null;
+  /** Furthest sample to starboard of `heading`. */
+  starboard: WindDialPoint | null;
+  /** Compass bearing of the current-direction arrow. Null hides it. */
+  current: number | null;
+}
+
+/**
+ * Range of compass bearings, with the two ends marked port and starboard of `heading`.
+ * `current` is included in the range so the arrow stays inside the arc between history samples.
+ * Without a heading the arc and arrow still draw, and the coloured ends stay hidden.
+ */
+export function windDialLayout(
+  bearings: readonly number[],
+  current: number | null,
+  heading: number | null,
+): WindDialFigure {
+  const samples: number[] = [];
+  for (const value of bearings) {
+    if (Number.isFinite(value)) samples.push(normalizeAngleDeg(value));
+  }
+  const now = current != null && Number.isFinite(current) ? normalizeAngleDeg(current) : null;
+  if (now != null) samples.push(now);
+
+  const arc = containingArc(samples);
+  const head = heading != null && Number.isFinite(heading) ? normalizeAngleDeg(heading) : null;
+  let port: WindDialPoint | null = null;
+  let starboard: WindDialPoint | null = null;
+  if (arc && head != null) {
+    const startSide = signedAngleDeltaDeg(head, arc.start);
+    const endSide = signedAngleDeltaDeg(head, arc.end);
+    const portBearing = startSide <= endSide ? arc.start : arc.end;
+    const starboardBearing = startSide <= endSide ? arc.end : arc.start;
+    port = polar(portBearing, WIND_DIAL.r, WIND_DIAL.cx, WIND_DIAL.cy);
+    starboard = polar(starboardBearing, WIND_DIAL.r, WIND_DIAL.cx, WIND_DIAL.cy);
+  }
+
+  return {
+    arc: arc && !arc.full ? compassArc(arc.start, arc.sweep) : null,
+    full: arc?.full ?? false,
+    port,
+    starboard,
+    current: now,
+  };
+}
+
 /** Triangle on the card rim at an absolute compass bearing. North is up. */
 export function compassCogPoints(bearing: number): string {
   const tip = polar(bearing, 90);
@@ -182,6 +243,48 @@ function arcPath(cx: number, cy: number, r: number, startDeg: number, endDeg: nu
 function arcPoint(cx: number, cy: number, r: number, deg: number): { x: number; y: number } {
   const rad = (deg * Math.PI) / 180;
   return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+}
+
+interface ContainingArc {
+  start: number;
+  end: number;
+  sweep: number;
+  full: boolean;
+}
+
+/** Smallest clockwise arc that contains every bearing. One bearing has no range. */
+function containingArc(degrees: readonly number[]): ContainingArc | null {
+  if (degrees.length < 2) return null;
+  const unique = [...new Set(degrees.map(value => Math.round(value * 10) / 10))].sort((a, b) => a - b);
+  if (unique.length < 2) return null;
+
+  let maxGap = -1;
+  let gapAfter = 0;
+  for (let index = 0; index < unique.length; index += 1) {
+    const next = (index + 1) % unique.length;
+    const gap = next === 0 ? (360 - unique[index] + unique[0]) : (unique[next] - unique[index]);
+    if (gap > maxGap) {
+      maxGap = gap;
+      gapAfter = index;
+    }
+  }
+
+  const sweep = 360 - maxGap;
+  if (sweep < 0.5) return null;
+  return {
+    start: unique[(gapAfter + 1) % unique.length],
+    end: unique[gapAfter],
+    sweep,
+    full: sweep >= 359.5,
+  };
+}
+
+function compassArc(startBearing: number, sweep: number): string {
+  const { cx, cy, r } = WIND_DIAL;
+  const start = polar(startBearing, r, cx, cy);
+  const end = polar(normalizeAngleDeg(startBearing + sweep), r, cx, cy);
+  const large = sweep > 180 ? 1 : 0;
+  return `M ${start.x.toFixed(2)} ${start.y.toFixed(2)} A ${r} ${r} 0 ${large} 1 ${end.x.toFixed(2)} ${end.y.toFixed(2)}`;
 }
 
 function polar(bearing: number, radius: number, cx = 100, cy = 100): { x: number; y: number } {

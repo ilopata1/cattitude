@@ -11,12 +11,14 @@ import { CsArcGaugeComponent } from './components/viz/cs-arc-gauge.component';
 import { CsCompassCardComponent } from './components/viz/cs-compass-card.component';
 import { CsLevelBarComponent } from './components/viz/cs-level-bar.component';
 import { CsSparklineComponent } from './components/viz/cs-sparkline.component';
+import { CsWindDialComponent } from './components/viz/cs-wind-dial.component';
 
 @NgModule({
   imports: [
     CommonModule,
     IonicModule,
     CsSparklineComponent,
+    CsWindDialComponent,
     CsArcGaugeComponent,
     CsLevelBarComponent,
     CsCompassCardComponent,
@@ -37,6 +39,7 @@ import { CsSparklineComponent } from './components/viz/cs-sparkline.component';
     UiIconComponent,
     CsReadingPipe,
     CsSparklineComponent,
+    CsWindDialComponent,
     CsArcGaugeComponent,
     CsLevelBarComponent,
     CsCompassCardComponent,

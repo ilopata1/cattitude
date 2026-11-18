@@ -79,7 +79,7 @@ export function dashboardFailures(): string[] {
   );
   expect(
     defaultTileIds('crew', sailing, true).join(',') ===
-      'widget:aws,widget:tws,widget:sog,widget:awa,widget:heading,widget:cog,widget:polar,do:inspection,more:duty,know:engines,know:electrical,more:sail,more:anchorage,fix,more:ask',
+      'widget:aws,widget:tws,widget:sog,widget:awa,widget:twa,widget:heading,widget:cog,widget:polar,do:inspection,more:duty,know:engines,know:electrical,more:sail,more:anchorage,fix,more:ask',
     'crew default leads with live readings, then the daily inspection and duty rota',
   );
   expect(byId.get('widget:aws')?.span === 1 && byId.get('widget:polar')?.span === 2, 'wind readings share a cell and polar uses the row');
@@ -103,6 +103,14 @@ export function dashboardFailures(): string[] {
     'guest layout drops crew-only and unknown tiles',
   );
   expect(layoutIds([], 'guest', sailing, false).length === 0, 'a cleared home stays empty');
+  expect(
+    layoutIds(['widget:awa', 'widget:heading'], 'crew', sailing, true).join(',') === 'widget:awa,widget:twa,widget:heading',
+    'a saved home with apparent wind gains true wind angle beside it',
+  );
+  expect(
+    layoutIds(['widget:aws'], 'crew', sailing, true).join(',') === 'widget:aws',
+    'a saved home without apparent wind does not gain a true wind tile',
+  );
   expect(
     layoutIds(undefined, 'guest', sailing, false).join(',') ===
       'learn,do:safety-brief,do:gh,know:overview,know:heads,more:ask',
@@ -154,7 +162,7 @@ export function dashboardFailures(): string[] {
   expect(levelItems.every((item) => item.segments.join('/') === 'more/levels' && item.span === 1), 'level tiles open Levels');
   expect(
     defaultTileIds('crew', withLevels, true).join(',') ===
-      'widget:aws,widget:tws,widget:sog,widget:awa,widget:heading,widget:cog,widget:polar,do:inspection,more:duty,know:engines,know:electrical,more:sail,more:anchorage,fix,more:ask',
+      'widget:aws,widget:tws,widget:sog,widget:awa,widget:twa,widget:heading,widget:cog,widget:polar,do:inspection,more:duty,know:engines,know:electrical,more:sail,more:anchorage,fix,more:ask',
     'level tiles stay off the crew default',
   );
   expect(

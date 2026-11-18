@@ -37,6 +37,7 @@ import { SignalKConnectionState, SignalKService } from '../../core/services/sign
 import { SignalKSettingsService } from '../../core/services/signal-k-settings.service';
 import { VesselContextService } from '../../core/services/vessel-context.service';
 import { VesselRouteService } from '../../core/services/vessel-route.service';
+import { normalizeAngleDeg } from '../../instruments/skip/wind-steer.util';
 
 const HERO_SEEN = 'cattitude.home.heroSeen';
 
@@ -312,6 +313,8 @@ export class HomePage {
         return freshKnots(wind.tws, wind.twsFresh);
       case 'widget:awa':
         return freshDegrees(wind.awa, wind.awaFresh);
+      case 'widget:twa':
+        return freshDegrees(wind.twa, wind.twaFresh);
       case 'widget:heading':
         return freshDegrees(wind.heading, wind.headingFresh);
       case 'widget:cog':
@@ -415,6 +418,30 @@ export class HomePage {
 
   trace(role: HistoryRole): readonly number[] {
     return this.history.history(role);
+  }
+
+  /**
+   * Compass bearings for the angle dial. North is up.
+   * AWA is off the bow, so the current heading swings it onto the compass.
+   * TWA is already the direction the true wind is coming from.
+   */
+  windDial(id: string): { bearings: readonly number[]; current: number | null; heading: number | null } | null {
+    const wind = this.wind();
+    const heading = wind.headingFresh && Number.isFinite(wind.heading) ? wind.heading : null;
+    if (id === 'widget:awa') {
+      const bearings = heading == null
+        ? []
+        : this.trace('awa').map((angle) => normalizeAngleDeg(heading + angle));
+      const current = heading != null && wind.awaFresh && Number.isFinite(wind.awa)
+        ? normalizeAngleDeg(heading + wind.awa)
+        : null;
+      return { bearings, current, heading };
+    }
+    if (id === 'widget:twa') {
+      const current = wind.twaFresh && Number.isFinite(wind.twa) ? normalizeAngleDeg(wind.twa) : null;
+      return { bearings: this.trace('twa'), current, heading };
+    }
+    return null;
   }
 
   /** Fuel level or battery charge, 0–100. Null hides the arc. */

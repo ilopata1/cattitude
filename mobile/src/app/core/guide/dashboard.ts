@@ -79,7 +79,7 @@ const CREW_SHORTCUTS = [
   'fix',
   'more:ask',
 ];
-const CREW_LIVE = ['widget:aws', 'widget:tws', 'widget:sog', 'widget:awa', 'widget:heading', 'widget:cog', 'widget:polar'];
+const CREW_LIVE = ['widget:aws', 'widget:tws', 'widget:sog', 'widget:awa', 'widget:twa', 'widget:heading', 'widget:cog', 'widget:polar'];
 
 export function knowChapterRoute(
   systemId: string,
@@ -215,6 +215,7 @@ export function buildDashboardCatalog(input: DashboardCatalogInput): DashboardIt
     widget('widget:tws', 'TWS', 'True wind speed', 'wind-outline', 1),
     widget('widget:sog', 'SOG', 'Speed over ground', 'boat', 1),
     widget('widget:awa', 'AWA', 'Apparent wind angle', 'compass-outline', 1),
+    widget('widget:twa', 'TWA', 'True wind angle', 'compass-outline', 1),
     widget('widget:heading', 'HDG', 'Compass heading', 'compass-outline', 1),
     widget('widget:cog', 'COG', 'Course over ground', 'navigate-outline', 1),
     widget('widget:depth', 'Depth', 'Live depth', 'water-outline', 1),
@@ -250,6 +251,16 @@ export function defaultTileIds(
   return [...live, ...shortcuts];
 }
 
+/** A home that already shows AWA picks up TWA beside it. A cleared home stays empty. */
+function withTrueWindTile(ids: string[]): string[] {
+  if (ids.includes('widget:twa') || !ids.includes('widget:awa')) {
+    return ids;
+  }
+  const next = ids.slice();
+  next.splice(next.indexOf('widget:awa') + 1, 0, 'widget:twa');
+  return next;
+}
+
 /** Saved `undefined` means the persona default. An empty list is a cleared home. */
 export function layoutIds(
   saved: string[] | undefined,
@@ -258,7 +269,7 @@ export function layoutIds(
   signalK: boolean,
 ): string[] {
   const chosen = saved ?? defaultTileIds(view, catalog, signalK);
-  return resolveDashboard(chosen, catalog, view).map((item) => item.id);
+  return resolveDashboard(withTrueWindTile(chosen), catalog, view).map((item) => item.id);
 }
 
 export function resolveDashboard(

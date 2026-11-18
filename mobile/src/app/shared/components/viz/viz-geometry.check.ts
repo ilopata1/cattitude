@@ -10,6 +10,8 @@ import {
   levelFillWidth,
   levelZoneRect,
   sparklineLayout,
+  WIND_DIAL,
+  windDialLayout,
   windSide,
 } from './viz-geometry';
 
@@ -75,6 +77,37 @@ export function vizGeometryFailures(): string[] {
   expect(displayHeadingDeg(359.6) === '0', 'a heading just below 360 displays as 0');
   expect(displayHeadingDeg(247.2) === '247', 'a heading displays as whole degrees');
   expect(displayHeadingDeg(Number.NaN) === '—', 'a missing heading is an em dash');
+
+  const emptyDial = windDialLayout([], null, 0);
+  expect(emptyDial.arc == null && emptyDial.port == null && emptyDial.current == null, 'an empty dial draws no range and no arrow');
+
+  const ahead = windDialLayout([350, 20], 5, 0);
+  expect(ahead.port != null && ahead.port.x < WIND_DIAL.cx && ahead.port.y < WIND_DIAL.cy, 'wind west of north is the port marker');
+  expect(ahead.starboard != null && ahead.starboard.x > WIND_DIAL.cx && ahead.starboard.y < WIND_DIAL.cy, 'wind east of north is the starboard marker');
+  expect(ahead.current === 5, 'the arrow uses the current compass bearing');
+  expect(ahead.arc != null && ahead.arc.includes(' 0 0 1 '), 'a wind shift across the bow uses the short arc');
+
+  const oneSide = windDialLayout([30, 55], null, 0);
+  expect(
+    oneSide.port != null && oneSide.starboard != null && oneSide.port.x > WIND_DIAL.cx && oneSide.port.x < oneSide.starboard.x,
+    'on one tack the port marker is the end closer to the bow',
+  );
+
+  const astern = windDialLayout([170, 190], 180, 0);
+  expect(astern.port != null && astern.port.x < WIND_DIAL.cx && astern.port.y > WIND_DIAL.cy, 'the port end of a shift across the stern stays to port');
+  expect(astern.starboard != null && astern.starboard.x > WIND_DIAL.cx && astern.starboard.y > WIND_DIAL.cy, 'the starboard end of a shift across the stern stays to starboard');
+  expect(astern.arc != null && astern.arc.includes(' 0 0 1 '), 'a shift across the stern does not draw the long way round');
+
+  const eastbound = windDialLayout([0, 180], null, 90);
+  expect(eastbound.port != null && eastbound.port.y < WIND_DIAL.cy, 'north is port of an eastbound boat');
+  expect(eastbound.starboard != null && eastbound.starboard.y > WIND_DIAL.cy, 'south is starboard of an eastbound boat');
+
+  const noHeading = windDialLayout([350, 20], 5, null);
+  expect(noHeading.arc != null && noHeading.port == null && noHeading.starboard == null, 'without a heading the range stays and the coloured ends hide');
+  expect(noHeading.current === 5, 'the arrow does not need a heading');
+
+  const liveEdge = windDialLayout([40], 70, 0);
+  expect(liveEdge.port != null && liveEdge.starboard != null && liveEdge.port.x < liveEdge.starboard.x, 'the live bearing joins the range before the next history sample');
 
   return failures;
 }
