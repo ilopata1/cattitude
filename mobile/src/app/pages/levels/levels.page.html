@@ -53,15 +53,20 @@
       <section class="levels-group" *ngFor="let group of groups(); trackBy: trackGroup">
         <h2 class="levels-heading cs-kicker">{{ group.label }}</h2>
 
-        <article class="level-card" *ngFor="let tank of group.tanks; trackBy: trackTank">
-          <h3 class="level-title cs-heading">{{ tank.title }}</h3>
-          <cs-level-bar
+        <article class="level-card level-card-tank" *ngFor="let tank of group.tanks; trackBy: trackTank">
+          <cs-arc-gauge
+            class="tank-gauge"
             [ngClass]="tank.kind"
-            [fill]="tank.fill"
-            [label]="tank.title"
-            [valueText]="tank.face"
-          ></cs-level-bar>
-          <p class="level-face">{{ tank.face }}</p>
+            aria-hidden="true"
+            [showValue]="false"
+            [value]="tank.fill ?? 0"
+            [min]="0"
+            [max]="100"
+          ></cs-arc-gauge>
+          <div class="tank-copy">
+            <h3 class="level-title cs-heading">{{ tank.title }}</h3>
+            <p class="level-face">{{ tank.face }}</p>
+          </div>
         </article>
 
         <article class="level-card" *ngFor="let battery of group.batteries; trackBy: trackBattery">

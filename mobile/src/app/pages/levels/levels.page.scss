@@ -31,19 +31,41 @@ ion-content {
   color: var(--cattitude-text-dark);
 }
 
+.level-card-tank {
+  display: flex;
+  align-items: center;
+  gap: var(--cattitude-space-md);
+}
+
+.tank-gauge {
+  flex: 0 0 104px;
+  width: 104px;
+}
+
+.tank-copy {
+  min-width: 0;
+}
+
+.tank-copy .level-face {
+  margin-top: 2px;
+}
+
 cs-level-bar {
   display: block;
   margin-top: var(--cattitude-space-sm);
 }
 
+cs-arc-gauge.fuel,
 cs-level-bar.fuel {
   color: var(--cattitude-amber);
 }
 
+cs-arc-gauge.freshWater,
 cs-level-bar.freshWater {
   color: var(--cattitude-teal-dark);
 }
 
+cs-arc-gauge.blackWater,
 cs-level-bar.blackWater {
   color: var(--cattitude-text-mid);
 }
