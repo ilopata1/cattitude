@@ -31,46 +31,39 @@ ion-content {
   color: var(--cattitude-text-dark);
 }
 
-.level-card-tank {
+.level-card-gauge {
   display: flex;
   align-items: center;
   gap: var(--cattitude-space-md);
 }
 
-.tank-gauge {
+.level-gauge {
   flex: 0 0 104px;
   width: 104px;
 }
 
-.tank-copy {
+.level-copy {
+  flex: 1;
   min-width: 0;
 }
 
-.tank-copy .level-face {
+.level-copy .level-face {
   margin-top: 2px;
 }
 
-cs-level-bar {
-  display: block;
-  margin-top: var(--cattitude-space-sm);
-}
-
-cs-arc-gauge.fuel,
-cs-level-bar.fuel {
+cs-arc-gauge.fuel {
   color: var(--cattitude-amber);
 }
 
-cs-arc-gauge.freshWater,
-cs-level-bar.freshWater {
+cs-arc-gauge.freshWater {
   color: var(--cattitude-teal-dark);
 }
 
-cs-arc-gauge.blackWater,
-cs-level-bar.blackWater {
+cs-arc-gauge.blackWater {
   color: var(--cattitude-text-mid);
 }
 
-cs-level-bar.battery {
+cs-arc-gauge.battery {
   color: var(--cattitude-text-accent);
 }
 

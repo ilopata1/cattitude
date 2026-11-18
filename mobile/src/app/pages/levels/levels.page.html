@@ -53,9 +53,9 @@
       <section class="levels-group" *ngFor="let group of groups(); trackBy: trackGroup">
         <h2 class="levels-heading cs-kicker">{{ group.label }}</h2>
 
-        <article class="level-card level-card-tank" *ngFor="let tank of group.tanks; trackBy: trackTank">
+        <article class="level-card level-card-gauge" *ngFor="let tank of group.tanks; trackBy: trackTank">
           <cs-arc-gauge
-            class="tank-gauge"
+            class="level-gauge"
             [ngClass]="tank.kind"
             aria-hidden="true"
             [showValue]="false"
@@ -63,31 +63,34 @@
             [min]="0"
             [max]="100"
           ></cs-arc-gauge>
-          <div class="tank-copy">
+          <div class="level-copy">
             <h3 class="level-title cs-heading">{{ tank.title }}</h3>
             <p class="level-face">{{ tank.face }}</p>
           </div>
         </article>
 
-        <article class="level-card" *ngFor="let battery of group.batteries; trackBy: trackBattery">
-          <h3 class="level-title cs-heading">{{ battery.title }}</h3>
-          <cs-level-bar
-            *ngIf="battery.chargeFill != null"
-            class="battery"
-            [fill]="battery.chargeFill"
-            label="Charge"
-            [valueText]="battery.charge"
-          ></cs-level-bar>
-          <dl class="level-metrics">
-            <dt>Charge</dt>
-            <dd>{{ battery.charge }}</dd>
-            <dt>Voltage</dt>
-            <dd>{{ battery.voltage }}</dd>
-            <dt>Current</dt>
-            <dd>{{ battery.current }}</dd>
-            <dt>Temperature</dt>
-            <dd>{{ battery.temperature }}</dd>
-          </dl>
+        <article class="level-card level-card-gauge" *ngFor="let battery of group.batteries; trackBy: trackBattery">
+          <cs-arc-gauge
+            class="level-gauge battery"
+            aria-hidden="true"
+            [showValue]="false"
+            [value]="battery.chargeFill ?? 0"
+            [min]="0"
+            [max]="100"
+          ></cs-arc-gauge>
+          <div class="level-copy">
+            <h3 class="level-title cs-heading">{{ battery.title }}</h3>
+            <dl class="level-metrics">
+              <dt>Charge</dt>
+              <dd>{{ battery.charge }}</dd>
+              <dt>Voltage</dt>
+              <dd>{{ battery.voltage }}</dd>
+              <dt>Current</dt>
+              <dd>{{ battery.current }}</dd>
+              <dt>Temperature</dt>
+              <dd>{{ battery.temperature }}</dd>
+            </dl>
+          </div>
         </article>
       </section>
     </ng-container>
