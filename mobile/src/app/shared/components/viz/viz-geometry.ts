@@ -164,7 +164,7 @@ export function compassTicks(): CompassTick[] {
   return ticks;
 }
 
-/** Small north-up dial under the home wind-angle tiles. North is 0°. */
+/** Small north-up dial under the home compass tiles. North is 0°. */
 export const WIND_DIAL = { cx: 50, cy: 56, r: 32 } as const;
 
 export interface WindDialPoint {

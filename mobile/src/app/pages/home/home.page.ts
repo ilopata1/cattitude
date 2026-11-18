@@ -423,11 +423,15 @@ export class HomePage {
   /**
    * Compass bearings for the angle dial. North is up.
    * AWA is off the bow, so the current heading swings it onto the compass.
-   * TWA is already the direction the true wind is coming from.
+   * Heading, COG, and TWA are already compass directions. Port and starboard
+   * are measured from the bow.
    */
   windDial(id: string): { bearings: readonly number[]; current: number | null; heading: number | null } | null {
     const wind = this.wind();
     const heading = wind.headingFresh && Number.isFinite(wind.heading) ? wind.heading : null;
+    const compass = (value: number, fresh: boolean): number | null => (
+      fresh && Number.isFinite(value) ? normalizeAngleDeg(value) : null
+    );
     if (id === 'widget:awa') {
       const bearings = heading == null
         ? []
@@ -438,8 +442,13 @@ export class HomePage {
       return { bearings, current, heading };
     }
     if (id === 'widget:twa') {
-      const current = wind.twaFresh && Number.isFinite(wind.twa) ? normalizeAngleDeg(wind.twa) : null;
-      return { bearings: this.trace('twa'), current, heading };
+      return { bearings: this.trace('twa'), current: compass(wind.twa, wind.twaFresh), heading };
+    }
+    if (id === 'widget:heading') {
+      return { bearings: this.trace('heading'), current: compass(wind.heading, wind.headingFresh), heading };
+    }
+    if (id === 'widget:cog') {
+      return { bearings: this.trace('cog'), current: compass(wind.cog, wind.cogFresh), heading };
     }
     return null;
   }

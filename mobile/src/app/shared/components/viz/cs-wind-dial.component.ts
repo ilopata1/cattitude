@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { WIND_DIAL, windDialLayout } from './viz-geometry';
 
 /**
- * North-up wind dial. The arc is the range encountered, the red dot is the
+ * North-up compass dial. The arc is the range encountered, the red dot is the
  * port extreme, the green dot is the starboard extreme, and the arrow is now.
  */
 @Component({
@@ -17,7 +17,7 @@ import { WIND_DIAL, windDialLayout } from './viz-geometry';
 export class CsWindDialComponent {
   /** Compass bearings, degrees clockwise from north. */
   readonly bearings = input<readonly number[]>([]);
-  /** Current wind direction, compass degrees. Null hides the arrow. */
+  /** Current direction, compass degrees. Null hides the arrow. */
   readonly current = input<number | null>(null);
   /** Boat heading. Null hides the port and starboard markers. */
   readonly heading = input<number | null>(null);
