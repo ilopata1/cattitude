@@ -40,6 +40,7 @@ const routes: Routes = [
       },
       { path: 'anchorage', redirectTo: 'more/anchorage', pathMatch: 'full' },
       { path: 'polar', redirectTo: 'more/polar', pathMatch: 'full' },
+      { path: 'ab-test', redirectTo: 'more/ab-test', pathMatch: 'full' },
       { path: 'settings/sail-plan', redirectTo: 'more/settings/sail-plan', pathMatch: 'full' },
       { path: 'settings/instruments', redirectTo: 'more/settings/instruments', pathMatch: 'full' },
       { path: 'settings', redirectTo: 'more/settings', pathMatch: 'full' },

@@ -1,0 +1,228 @@
+ion-content {
+  --background: var(--cattitude-sand);
+  --color: var(--cattitude-text-dark);
+}
+
+.panel {
+  padding: var(--cattitude-space-sm) var(--cattitude-space-md) var(--cattitude-space-xl);
+}
+
+.section-title {
+  margin: 0 0 var(--cattitude-space-xs);
+}
+
+.lead,
+.field-help,
+.phase-line,
+.boat-line,
+.note {
+  margin: 0 0 var(--cattitude-space-sm);
+  font-size: var(--cattitude-text-body);
+  line-height: 1.4;
+  color: var(--cattitude-text-mid);
+}
+
+.field-help,
+.note {
+  font-size: var(--cattitude-text-sm);
+  color: var(--cattitude-text-light);
+}
+
+.note.alarm {
+  color: var(--cattitude-danger);
+}
+
+ion-segment,
+ion-input,
+ion-select,
+ion-textarea {
+  margin-bottom: var(--cattitude-space-sm);
+}
+
+.board-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--cattitude-space-sm);
+}
+
+.variable {
+  margin: 0;
+  text-align: center;
+  color: var(--cattitude-text-mid);
+}
+
+.setting,
+.prompt-title {
+  margin: var(--cattitude-space-2xs) 0 var(--cattitude-space-sm);
+  text-align: center;
+  font-size: var(--cattitude-text-lg);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.timer {
+  margin: 0;
+  font-size: 3.25rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+  text-align: center;
+  line-height: 1;
+}
+
+.track {
+  height: 0.5rem;
+  margin: var(--cattitude-space-sm) 0;
+  border-radius: var(--cattitude-radius-full);
+  background: var(--cattitude-line);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background: var(--cattitude-success);
+
+  &.settling {
+    background: var(--cattitude-warning);
+  }
+}
+
+.phase-line,
+.boat-line {
+  text-align: center;
+}
+
+.live-vmg {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: var(--cattitude-space-sm) 0;
+}
+
+.live-vmg .cs-value {
+  font-size: var(--cattitude-value-md);
+}
+
+.live-knots {
+  color: var(--cattitude-text-mid);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cattitude-space-xs);
+  margin-top: var(--cattitude-space-md);
+}
+
+.verdict {
+  background: var(--cattitude-surface);
+  border: 1px solid var(--cattitude-line);
+  border-radius: var(--cattitude-radius-md);
+  padding: var(--cattitude-space-md);
+  margin-bottom: var(--cattitude-space-sm);
+
+  h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    line-height: 1.25;
+  }
+
+  p {
+    margin: var(--cattitude-space-xs) 0 0;
+    color: var(--cattitude-text-mid);
+  }
+
+  &.primary {
+    border-color: var(--cattitude-success);
+  }
+}
+
+.confidence {
+  font-size: 2rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--cattitude-text-dark);
+
+  &.secondary {
+    font-size: 1.5rem;
+  }
+}
+
+.compare-wrap {
+  overflow-x: auto;
+  margin-top: var(--cattitude-space-sm);
+}
+
+.compare {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 0.45rem 0.35rem;
+    border-bottom: 1px solid var(--cattitude-line);
+    vertical-align: baseline;
+  }
+
+  th {
+    text-align: left;
+    font-weight: 500;
+    color: var(--cattitude-text-mid);
+  }
+
+  td {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .group th {
+    padding-top: var(--cattitude-space-sm);
+    border-bottom: none;
+    font-size: var(--cattitude-text-caption);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--cattitude-text-light);
+  }
+
+  .focus th,
+  .focus td {
+    font-size: 1.05rem;
+    color: var(--cattitude-text-dark);
+  }
+
+  .ahead {
+    color: var(--cattitude-success);
+  }
+}
+
+.col-head {
+  text-align: right;
+  font-size: var(--cattitude-text-sm);
+
+  strong {
+    display: block;
+    font-size: 1rem;
+    color: var(--cattitude-text-dark);
+  }
+}
+
+.status-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--cattitude-space-xs);
+  margin: var(--cattitude-space-sm) var(--cattitude-space-md) 0;
+  padding: var(--cattitude-space-sm) var(--cattitude-space-md);
+  border: 1px solid var(--cattitude-line);
+  border-radius: var(--cattitude-radius-md);
+  background: var(--cattitude-surface);
+  color: var(--cattitude-text-dark);
+
+  ion-icon {
+    flex: 0 0 auto;
+    margin-top: 2px;
+    color: var(--cattitude-warning);
+    font-size: 1.25rem;
+  }
+}

@@ -1,0 +1,216 @@
+<app-header title="A/B test" [showBack]="true" backTo="more"></app-header>
+
+<ion-content>
+  <p class="status-note" *ngIf="!connected">
+    <ion-icon name="warning-outline" aria-hidden="true"></ion-icon>
+    Signal K is offline. The test can still be set up, and it will record once the instruments are live.
+  </p>
+
+  <section class="panel" *ngIf="session.phase === 'setup'">
+    <h2 class="section-title cs-kicker">The change</h2>
+    <p class="lead">
+      Change one thing between A and B. Each part records for 6½ minutes.
+      The first 90 seconds settle the boat and stay out of the score.
+      The result is VMG as a percentage of the polar.
+    </p>
+
+    <ion-segment [value]="setup.variableId" (ionChange)="setVariable($any($event).detail.value)">
+      <ion-segment-button value="awa">AWA hold</ion-segment-button>
+      <ion-segment-button value="gennaker">Gennaker</ion-segment-button>
+      <ion-segment-button value="other">Other</ion-segment-button>
+    </ion-segment>
+
+    <ion-input
+      *ngIf="setup.variableId === 'other'"
+      label="What is changing"
+      label-placement="stacked"
+      [(ngModel)]="setup.customVariable"
+      (ngModelChange)="touch()"
+      placeholder="Traveller car"
+    ></ion-input>
+    <ion-input
+      label="Setting A"
+      label-placement="stacked"
+      [(ngModel)]="setup.settingA"
+      (ngModelChange)="touch()"
+      [placeholder]="placeholderA"
+    ></ion-input>
+    <ion-input
+      label="Setting B"
+      label-placement="stacked"
+      [(ngModel)]="setup.settingB"
+      (ngModelChange)="touch()"
+      [placeholder]="placeholderB"
+    ></ion-input>
+    <p class="field-help" *ngIf="sameSettings">B should be the other setting.</p>
+
+    <h2 class="section-title cs-kicker">Boat state</h2>
+    <p class="lead">What stays the same while A and B are sailed.</p>
+    <ion-select
+      label="Mainsail"
+      label-placement="stacked"
+      interface="popover"
+      placeholder="Reef"
+      [value]="setup.main"
+      (ionChange)="setMain($any($event).detail.value)"
+    >
+      <ion-select-option value="">Not set</ion-select-option>
+      <ion-select-option *ngFor="let option of mainReefOptions" [value]="option">{{ option }}</ion-select-option>
+    </ion-select>
+    <ion-input
+      label="Headsail"
+      label-placement="stacked"
+      [(ngModel)]="setup.headsail"
+      (ngModelChange)="touch()"
+      placeholder="Solent, gennaker…"
+    ></ion-input>
+    <div class="board-row">
+      <ion-select
+        label="Port board"
+        label-placement="stacked"
+        interface="popover"
+        placeholder="Position"
+        [value]="setup.boardPort"
+        (ionChange)="setBoard('boardPort', $any($event).detail.value)"
+      >
+        <ion-select-option value="">Not set</ion-select-option>
+        <ion-select-option *ngFor="let option of boards" [value]="option">{{ option }}</ion-select-option>
+      </ion-select>
+      <ion-select
+        label="Starboard board"
+        label-placement="stacked"
+        interface="popover"
+        placeholder="Position"
+        [value]="setup.boardStarboard"
+        (ionChange)="setBoard('boardStarboard', $any($event).detail.value)"
+      >
+        <ion-select-option value="">Not set</ion-select-option>
+        <ion-select-option *ngFor="let option of boards" [value]="option">{{ option }}</ion-select-option>
+      </ion-select>
+    </div>
+    <ion-textarea
+      label="Trim notes"
+      label-placement="stacked"
+      [(ngModel)]="setup.trimNotes"
+      (ngModelChange)="touch()"
+      autoGrow="true"
+      rows="2"
+      placeholder="Cars, sheets, anything else left alone"
+    ></ion-textarea>
+    <ion-input
+      label="Mark course"
+      label-placement="stacked"
+      inputmode="decimal"
+      [(ngModel)]="setup.courseDeg"
+      (ngModelChange)="touch()"
+      placeholder="Degrees true, optional"
+    ></ion-input>
+    <p class="field-help">Leave the course blank to score VMC along the wind.</p>
+
+    <div class="actions">
+      <ion-button expand="block" (click)="start()" [disabled]="!canStartSetup">Start test</ion-button>
+    </div>
+  </section>
+
+  <section class="panel" *ngIf="session.phase === 'recording'">
+    <h2 class="section-title cs-kicker">{{ partLabel }}</h2>
+    <p class="variable">{{ variableName }}</p>
+    <p class="setting">{{ settingValue }}</p>
+    <p class="timer" aria-live="polite">{{ clock }}</p>
+    <div
+      class="track"
+      role="progressbar"
+      [attr.aria-valuenow]="progress"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      [attr.aria-label]="settling ? 'Settling' : 'Scoring'"
+    >
+      <div class="fill" [class.settling]="settling" [style.width.%]="progress"></div>
+    </div>
+    <p class="phase-line" *ngIf="settling">Settling · {{ settleClock }} left before the score starts</p>
+    <p class="phase-line" *ngIf="!settling">Scoring this part · {{ scored }} samples</p>
+    <p class="live-vmg" *ngIf="livePct || liveKnots">
+      <span class="cs-value" *ngIf="livePct">{{ livePct }}</span>
+      <span class="cs-kicker" *ngIf="livePct">of polar VMG</span>
+      <span class="live-knots" *ngIf="liveKnots">{{ liveKnots }} {{ liveDirection }}</span>
+    </p>
+    <p class="phase-line" *ngIf="!livePct && !settling">Waiting for wind and boat speed</p>
+    <p class="boat-line" *ngIf="boatLine">{{ boatLine }}</p>
+    <p class="field-help">You can leave this screen. The test keeps running.</p>
+    <div class="actions">
+      <ion-button expand="block" fill="clear" color="medium" (click)="cancel()">Cancel test</ion-button>
+    </div>
+  </section>
+
+  <section class="panel" *ngIf="session.phase === 'prepare'">
+    <h2 class="section-title cs-kicker">{{ partLabel }}</h2>
+    <p class="prompt-title">{{ promptTitle }}</p>
+    <p class="variable">{{ variableName }}</p>
+    <p class="setting">{{ settingValue }}</p>
+    <p class="lead">{{ promptBody }}</p>
+    <div class="actions">
+      <ion-button expand="block" (click)="confirmReady()">{{ promptAction }}</ion-button>
+      <ion-button expand="block" fill="clear" color="medium" (click)="cancel()">Cancel test</ion-button>
+    </div>
+  </section>
+
+  <section class="panel" *ngIf="session.phase === 'rerun'">
+    <h2 class="section-title cs-kicker">Both parts are recorded</h2>
+    <p class="lead">
+      A second A/B cycle can make the result clearer.
+      The settings stay as you entered them.
+    </p>
+    <div class="actions">
+      <ion-button expand="block" (click)="rerun()">Run the pair again</ion-button>
+      <ion-button expand="block" fill="outline" (click)="showResults()">Show results</ion-button>
+    </div>
+  </section>
+
+  <section class="panel" *ngIf="session.phase === 'results' && report">
+    <ng-container *ngIf="report as result">
+    <h2 class="section-title cs-kicker">{{ result.variable }}</h2>
+    <p class="boat-line" *ngIf="result.boatState">{{ result.boatState }}</p>
+
+    <article class="verdict primary">
+      <h2>{{ result.vmg.headline }}</h2>
+      <p class="confidence" *ngIf="result.vmg.confidencePct !== null">{{ result.vmg.confidencePct }}%</p>
+      <p>{{ result.vmg.detail }}</p>
+    </article>
+    <article class="verdict">
+      <h2>{{ result.vmc.headline }}</h2>
+      <p class="confidence secondary" *ngIf="result.vmc.confidencePct !== null">{{ result.vmc.confidencePct }}%</p>
+      <p>{{ result.vmc.detail }}</p>
+    </article>
+
+    <div class="compare-wrap">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th></th>
+            <th class="col-head">A<strong>{{ result.settingA }}</strong></th>
+            <th class="col-head">B<strong>{{ result.settingB }}</strong></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let row of result.rows; trackBy: trackRow"
+            [class.group]="row.kind === 'group'"
+            [class.focus]="row.focus"
+          >
+            <th [attr.colspan]="row.kind === 'group' ? 3 : null">{{ row.label }}</th>
+            <td *ngIf="row.kind === 'metric'" [class.ahead]="row.ahead === 'A'">{{ row.a }}</td>
+            <td *ngIf="row.kind === 'metric'" [class.ahead]="row.ahead === 'B'">{{ row.b }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="note" *ngFor="let note of result.notes">{{ note }}</p>
+    <p class="note alarm" *ngFor="let line of result.alarmLines">{{ line }}</p>
+
+    <div class="actions">
+      <ion-button expand="block" (click)="newTest()">New test</ion-button>
+    </div>
+    </ng-container>
+  </section>
+</ion-content>

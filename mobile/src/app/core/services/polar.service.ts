@@ -152,6 +152,13 @@ export class PolarService implements OnDestroy {
     return targetCurveAtTws(twsKnots, this.table);
   }
 
+  /** Target boat speed (knots) at a true-wind angle and speed, or null when no polar is loaded. */
+  targetKnots(twaDeg: number, twsKnots: number): number | null {
+    if (!this.table || !Number.isFinite(twaDeg) || !Number.isFinite(twsKnots)) return null;
+    const target = interpolateTargetSpeed(twaDeg, twsKnots, this.table);
+    return target > 0 ? target : null;
+  }
+
   get loaded(): boolean {
     return this.table !== null;
   }

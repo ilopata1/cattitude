@@ -7,7 +7,7 @@ export const SAILING_VESSEL_TYPES = [
 ] as const;
 
 export interface MoreRow {
-  id: 'ask' | 'sail' | 'polar' | 'levels' | 'logbook' | 'duty' | 'anchorage' | 'settings';
+  id: 'ask' | 'sail' | 'polar' | 'ab' | 'levels' | 'logbook' | 'duty' | 'anchorage' | 'settings';
   label: string;
   subtitle: string;
   icon: string;
@@ -40,13 +40,22 @@ export function moreMenu(vesselType: string | null | undefined): MoreRow[] {
     },
   ];
   if (sailing) {
-    rows.push({
-      id: 'polar',
-      label: 'Polar',
-      subtitle: 'How she is sailing against her sail plan',
-      icon: 'speedometer-outline',
-      route: ['polar'],
-    });
+    rows.push(
+      {
+        id: 'polar',
+        label: 'Polar',
+        subtitle: 'How she is sailing against her sail plan',
+        icon: 'speedometer-outline',
+        route: ['polar'],
+      },
+      {
+        id: 'ab',
+        label: 'A/B test',
+        subtitle: 'Compare two settings by VMG against the polar',
+        icon: 'git-compare-outline',
+        route: ['ab-test'],
+      },
+    );
   }
   rows.push(
     {

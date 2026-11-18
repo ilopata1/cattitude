@@ -13,9 +13,10 @@ export function moreMenuFailures(): string[] {
 
   for (const vesselType of ['sailing_catamaran', 'sailing_trimaran', 'cruising_monohull']) {
     expect(
-      ids(vesselType).join(',') === 'ask,sail,polar,levels,logbook,duty,anchorage,settings',
+      ids(vesselType).join(',') === 'ask,sail,polar,ab,levels,logbook,duty,anchorage,settings',
       `${vesselType} more rows`,
     );
+    expect(label(vesselType, 'ab') === 'A/B test', `${vesselType} A/B test label`);
     expect(label(vesselType, 'sail') === 'Sail', `${vesselType} sail label`);
   }
   for (const vesselType of ['power_catamaran', 'motor_yacht', 'sport_fishing', '']) {
@@ -25,6 +26,7 @@ export function moreMenuFailures(): string[] {
     );
     expect(label(vesselType, 'sail') === 'Instruments', `${vesselType || 'unset'} instruments label`);
     expect(!ids(vesselType).includes('polar'), `${vesselType || 'unset'} hides polar`);
+    expect(!ids(vesselType).includes('ab'), `${vesselType || 'unset'} hides A/B test`);
   }
   return failures;
 }
