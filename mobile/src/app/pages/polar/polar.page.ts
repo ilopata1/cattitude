@@ -15,8 +15,10 @@ import { PolarService } from '../../core/services/polar.service';
 import { POLAR_BUFFER_MS, holdWindowDisplay, HeldWindow } from '../../core/services/polar-window';
 import { SignalKService } from '../../core/services/signal-k.service';
 import { MAIN_REEF_OPTIONS, MainReef, headsailOptions, isMainReef } from '../../core/guide/current-sail';
+import { livePropulsion } from '../../core/logbook/logbook-math';
 import { SailAdvice, formatBand } from '../../core/models/sail-plan.model';
 import { CurrentSailService } from '../../core/services/current-sail.service';
+import { LogbookSamplerService } from '../../core/services/logbook-sampler.service';
 import { SailPlanService } from '../../core/services/sail-plan.service';
 import { VesselContextService } from '../../core/services/vessel-context.service';
 
@@ -68,6 +70,8 @@ export class PolarPage implements OnInit, OnDestroy {
   };
 
   skConnected = false;
+  /** True once the logbook's live reading has concluded she is anchored or moored. */
+  anchored = false;
   windows: PolarWindowAssessment[] = POLAR_WINDOW_MINUTES.map(minutes => this.emptyAssessment(minutes));
 
   /** Original viewBox sizing — CSS uses width:100%; height:auto. */
@@ -86,6 +90,7 @@ export class PolarPage implements OnInit, OnDestroy {
 
   private readonly polar = inject(PolarService);
   private readonly sk = inject(SignalKService);
+  private readonly sampler = inject(LogbookSamplerService);
   private readonly sailPlans = inject(SailPlanService);
   private readonly currentSails = inject(CurrentSailService);
   private readonly cdr = inject(ChangeDetectorRef);
@@ -104,9 +109,18 @@ export class PolarPage implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    void this.sampler.start();
     this.subs.push(
       this.sk.connected$.subscribe(c => {
         this.skConnected = c;
+        this.cdr.markForCheck();
+      }),
+      this.sampler.reading$.subscribe(() => {
+        this.notePropulsion();
+        this.cdr.markForCheck();
+      }),
+      this.currentSails.changed$.subscribe(() => {
+        this.notePropulsion();
         this.cdr.markForCheck();
       }),
       this.polar.live$.subscribe(live => {
@@ -233,13 +247,22 @@ export class PolarPage implements OnInit, OnDestroy {
         minutes,
         avg,
         covered,
-        advice: covered ? this.sailPlans.advise(avg.twaDeg, avg.twsKnots, avg.polarPct) : null,
+        advice: covered && !this.anchored
+          ? this.sailPlans.advise(avg.twaDeg, avg.twsKnots, avg.polarPct)
+          : null,
       };
       const held = holdWindowDisplay(next, this.heldWindows.get(minutes), now);
       if (held.held) this.heldWindows.set(minutes, held.held);
       else this.heldWindows.delete(minutes);
       return held.display;
     });
+  }
+
+  private notePropulsion(): void {
+    const anchored = livePropulsion(this.sampler.snapshot, this.currentSails.selection()) === 'anchored';
+    if (anchored === this.anchored) return;
+    this.anchored = anchored;
+    this.refreshAssessments();
   }
 
   private emptyAssessment(minutes: PolarWindowMinutes): PolarWindowAssessment {

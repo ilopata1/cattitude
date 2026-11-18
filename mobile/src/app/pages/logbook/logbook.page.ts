@@ -11,16 +11,13 @@ import { Subscription } from 'rxjs';
 import { formatCurrentSails } from '../../core/guide/current-sail';
 import { tankTitle } from '../../core/levels/levels';
 import { logbookPrintHtml, logbookToCsv, logbookToGpx, triggerLabel } from '../../core/logbook/logbook-export';
-import { enginesRunning } from '../../core/logbook/logbook-ingest';
 import { formatLevelNumber, levelRatio, logLevelColumns, logLevelsSummary } from '../../core/logbook/logbook-levels';
 import {
-  derivePropulsion,
   destinationDistanceNm,
   formatLogClock,
   formatPosition,
+  livePropulsion,
   nextSlotMs,
-  readingUsable,
-  sailsUp,
   utcDayKey,
   utcDayLabel,
 } from '../../core/logbook/logbook-math';
@@ -224,14 +221,7 @@ export class LogbookPage implements OnInit, OnDestroy {
   }
 
   propulsion(): PropulsionState | null {
-    if (!readingUsable(this.reading)) return null;
-    const selection = this.sails.selection();
-    return derivePropulsion({
-      navState: this.reading.navState,
-      enginesRunning: enginesRunning(this.reading),
-      sailsUp: sailsUp(selection.main, selection.headsail),
-      sogKn: this.reading.sogKn,
-    });
+    return livePropulsion(this.reading, this.sails.selection());
   }
 
   positionText(): string {

@@ -36,16 +36,16 @@ export class LogbookSamplerService implements OnDestroy {
   async start(): Promise<void> {
     if (this.started) return;
     this.started = true;
+    this.subs.push(
+      this.sk.delta$.subscribe(delta => this.handleDelta(delta)),
+      interval(SAMPLE_MS).subscribe(() => this.sample()),
+    );
     const cutoff = Date.now() - RETAIN_MS;
     try {
       this.samples = await this.store.samplesSince(cutoff);
     } catch {
       this.samples = [];
     }
-    this.subs.push(
-      this.sk.delta$.subscribe(delta => this.handleDelta(delta)),
-      interval(SAMPLE_MS).subscribe(() => this.sample()),
-    );
   }
 
   ngOnDestroy(): void {

@@ -135,6 +135,24 @@ export function sailsUp(main: string, headsail: string): boolean {
   return !!(main.trim() || headsail.trim());
 }
 
+/**
+ * The propulsion state the logbook shows for a live reading.
+ * Null until the reading has a position, speed, wind, or heading to stand on.
+ * `navigation.state` of anchored or moored is the conclusion that she is anchored.
+ */
+export function livePropulsion(
+  reading: LiveReading,
+  sails: { main: string; headsail: string },
+): PropulsionState | null {
+  if (!readingUsable(reading)) return null;
+  return derivePropulsion({
+    navState: reading.navState,
+    enginesRunning: reading.engines.some(engine => engine.running),
+    sailsUp: sailsUp(sails.main, sails.headsail),
+    sogKn: reading.sogKn,
+  });
+}
+
 export function readingUsable(reading: LiveReading): boolean {
   return reading.position != null
     || reading.sogKn != null

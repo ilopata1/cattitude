@@ -13,6 +13,7 @@ import {
   haversineNm,
   intervalDue,
   latestSlotMs,
+  livePropulsion,
   pressureHpa,
   propulsionTriggerFor,
   rpmFromRevolutions,
@@ -46,6 +47,28 @@ export function logbookMathFailures(): string[] {
   expect(derivePropulsion({ navState: null, enginesRunning: true, sailsUp: false, sogKn: 6 }) === 'motoring', 'motoring');
   expect(derivePropulsion({ navState: null, enginesRunning: false, sailsUp: true, sogKn: 6 }) === 'sailing', 'sailing');
   expect(derivePropulsion({ navState: null, enginesRunning: false, sailsUp: false, sogKn: 0 }) === 'stopped', 'stopped');
+
+  const anchoredReading = emptyReading();
+  anchoredReading.navState = 'anchored';
+  anchoredReading.position = { lat: 24.5, lon: -64.2 };
+  expect(
+    livePropulsion(anchoredReading, { main: 'Full main', headsail: 'Jib' }) === 'anchored',
+    'a live anchored navigation state is anchored even with sails set',
+  );
+  const mooredReading = emptyReading();
+  mooredReading.navState = 'moored';
+  mooredReading.sogKn = 0;
+  expect(livePropulsion(mooredReading, { main: '', headsail: '' }) === 'anchored', 'moored is the same conclusion');
+  const sailingReading = emptyReading();
+  sailingReading.sogKn = 6;
+  sailingReading.twsKn = 12;
+  expect(
+    livePropulsion(sailingReading, { main: 'Full main', headsail: 'Jib' }) === 'sailing',
+    'underway with sails is not anchored',
+  );
+  const navOnly = emptyReading();
+  navOnly.navState = 'anchored';
+  expect(livePropulsion(navOnly, { main: '', headsail: '' }) === null, 'navigation state alone is not a live reading');
 
   const midnight = Date.UTC(2026, 9, 2, 0, 0, 0);
   expect(latestSlotMs(Date.UTC(2026, 9, 2, 7, 30), 6, 0) === midnight + 6 * 3_600_000, '6 h slot at 06:00');
