@@ -20,3 +20,7 @@ upstream sources at deploy time.
   compass card can take the short turn (359° to 1° continues forward instead of
   spinning almost a full circle). `angleDeltaDeg` is unchanged. The Skip dial
   still animates with `svg-animate.util.ts`.
+- `svg-windsteer.component.scss` flattens the classic dial: thinner ticks, no
+  bezel or boat gradient, and centre figures in the numeric face. The SVG paths
+  and the animation are unchanged. Two unused definition colours that were hex
+  now use `currentColor`.

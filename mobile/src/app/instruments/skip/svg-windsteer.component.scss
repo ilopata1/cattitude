@@ -121,3 +121,69 @@ svg {
 .rudder-port {
   stroke: var(--skip-port-color);
 }
+
+/* Cattitude: a flat dial. Inline Skip sizes stay in the SVG; these win. */
+#boat path {
+  stroke: var(--cattitude-text-light) !important;
+  stroke-width: 2 !important;
+  opacity: 0.4;
+}
+
+.fixed-dial-background {
+  fill: none;
+  stroke: var(--cattitude-line);
+  stroke-width: 1.5 !important;
+}
+
+.port,
+.starboard {
+  stroke-width: 8 !important;
+}
+
+.rotating-dial-Backplate {
+  stroke: none;
+}
+
+#barsAndText path[style*="stroke-width:4"] {
+  display: none;
+}
+
+#barsAndText path[style*="stroke-width:15"] {
+  stroke-width: 2.5 !important;
+  opacity: 0.45;
+  stroke-linecap: round;
+}
+
+text {
+  font-family: var(--cattitude-font-numeric) !important;
+  font-variant-numeric: tabular-nums;
+}
+
+#layerHeading text {
+  font-size: 128px !important;
+  font-weight: 600;
+}
+
+#twsCounter .true-wind,
+#awsCounter .app-wind {
+  font-size: 84px !important;
+  font-weight: 600;
+}
+
+.heading-background {
+  fill: none;
+  stroke: none;
+}
+
+.crosshair {
+  stroke-width: 1.5;
+  opacity: 0.22;
+}
+
+.course-over-ground {
+  stroke-width: 6 !important;
+}
+
+.laylines {
+  stroke-width: 2 !important;
+}

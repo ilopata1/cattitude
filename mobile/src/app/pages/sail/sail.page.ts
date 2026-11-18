@@ -1,7 +1,8 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { isSailingVessel } from '../../core/guide/more-menu';
 import { ContentService } from '../../core/services/content.service';
+import { DialStyle, DialStyleService } from '../../core/services/dial-style.service';
 import { SignalKSettingsService } from '../../core/services/signal-k-settings.service';
 import { InstrumentMapService } from '../../core/services/instrument-map.service';
 import { VesselRouteService } from '../../core/services/vessel-route.service';
@@ -20,6 +21,7 @@ import { VesselRouteService } from '../../core/services/vessel-route.service';
 export class SailPage implements OnInit, OnDestroy {
 
   hasSignalKUrl = false;
+  readonly dialStyle = inject(DialStyleService);
   private wakeLock: WakeLockSentinel | null = null;
   private readonly onVisibility = (): void => {
     if (document.visibilityState === 'visible') {
@@ -41,6 +43,12 @@ export class SailPage implements OnInit, OnDestroy {
 
   get pageTitle(): string {
     return isSailingVessel(this.content.bootstrap.branding.vesselType) ? 'Sail' : 'Instruments';
+  }
+
+  setDialStyle(value: string | undefined): void {
+    if (value === 'classic' || value === 'modern') {
+      this.dialStyle.setStyle(value as DialStyle);
+    }
   }
 
   ngOnInit(): void {

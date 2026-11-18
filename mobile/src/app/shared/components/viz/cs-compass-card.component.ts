@@ -20,7 +20,7 @@ import {
 
 /**
  * Compass card. The card turns under a fixed lubber line; the boat does not.
- * Not mounted yet — the sail dial picks this up when Modern style is offered.
+ * The Sail page shows this when Dial style is Modern.
  *
  * `heading`, `cog`, and `twa` are compass degrees (`twa` matches `wind().twa`).
  * `awa` is degrees clockwise from the bow.
@@ -34,6 +34,8 @@ import {
 })
 export class CsCompassCardComponent {
   readonly heading = input.required<number>();
+  /** When false, the centre shows an em dash. The card still turns to `heading`. */
+  readonly fresh = input(true);
   readonly cog = input<number | null>(null);
   readonly awa = input<number | null>(null);
   readonly twa = input<number | null>(null);
@@ -47,8 +49,10 @@ export class CsCompassCardComponent {
   private readonly awaState = { ready: false, unwrapped: 0 };
   private readonly twaState = { ready: false, unwrapped: 0 };
 
-  protected readonly headingLabel = computed(() => displayHeadingDeg(this.heading()));
-  protected readonly headingFinite = computed(() => Number.isFinite(this.heading()));
+  protected readonly headingLabel = computed(() => (
+    this.fresh() ? displayHeadingDeg(this.heading()) : '—'
+  ));
+  protected readonly headingFinite = computed(() => this.fresh() && Number.isFinite(this.heading()));
   protected readonly cogPoints = computed(() => {
     const cog = this.cog();
     if (cog == null || !Number.isFinite(cog)) return null;

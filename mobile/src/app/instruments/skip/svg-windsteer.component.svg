@@ -35,7 +35,7 @@
     <linearGradient
        id="swatch4">
       <stop
-         style="stop-color:#000000;stop-opacity:1;"
+         style="stop-color:currentColor;stop-opacity:1;"
          offset="0"
          id="stop4" />
     </linearGradient>
@@ -43,7 +43,7 @@
        clipPathUnits="userSpaceOnUse"
        id="clipPath16">
       <ellipse
-         style="display:inline;fill:#9a9300;fill-opacity:1;stroke:none;stroke-width:55;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1"
+         style="display:inline;fill:currentColor;fill-opacity:1;stroke:none;stroke-width:55;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1"
          id="ellipse16"
          cx="311.24539"
          cy="-1516.3778"

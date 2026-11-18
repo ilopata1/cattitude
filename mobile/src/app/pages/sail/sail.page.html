@@ -19,9 +19,26 @@
     </ion-button>
   </div>
 
-  <div *ngIf="hasSignalKUrl" class="instruments">
-    <app-wind-steer-panel></app-wind-steer-panel>
-    <app-sail-essentials></app-sail-essentials>
+  <div *ngIf="hasSignalKUrl" class="sail-live">
+    <div class="dial-style">
+      <span class="cs-kicker" id="dial-style-label">Dial style</span>
+      <ion-segment
+        [value]="dialStyle.style()"
+        (ionChange)="setDialStyle($any($event).detail.value)"
+        aria-labelledby="dial-style-label"
+      >
+        <ion-segment-button value="classic">
+          <ion-label>Classic</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="modern">
+          <ion-label>Modern</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+    </div>
+    <div class="instruments">
+      <app-wind-steer-panel></app-wind-steer-panel>
+      <app-sail-essentials></app-sail-essentials>
+    </div>
   </div>
 
 </div>
