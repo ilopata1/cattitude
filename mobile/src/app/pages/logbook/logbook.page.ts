@@ -9,9 +9,10 @@ import {
 import { AlertController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { formatCurrentSails } from '../../core/guide/current-sail';
+import { tankTitle } from '../../core/levels/levels';
 import { logbookPrintHtml, logbookToCsv, logbookToGpx, triggerLabel } from '../../core/logbook/logbook-export';
-import { formatLevelNumber, levelRatio, logLevelColumns, logLevelsSummary } from '../../core/logbook/logbook-levels';
 import { enginesRunning } from '../../core/logbook/logbook-ingest';
+import { formatLevelNumber, levelRatio, logLevelColumns, logLevelsSummary } from '../../core/logbook/logbook-levels';
 import {
   derivePropulsion,
   destinationDistanceNm,
@@ -35,6 +36,7 @@ import {
 } from '../../core/models/logbook.model';
 import { CurrentSailService } from '../../core/services/current-sail.service';
 import { DutyRotaService } from '../../core/services/duty-rota.service';
+import { LevelsService } from '../../core/services/levels.service';
 import { LogbookRemoteService } from '../../core/services/logbook-remote.service';
 import { LogbookSamplerService } from '../../core/services/logbook-sampler.service';
 import { LogbookSyncService } from '../../core/services/logbook-sync.service';
@@ -117,6 +119,7 @@ const LOGBOOK_VIEW_KEY = 'cattitude.logbook.entryView';
 })
 export class LogbookPage implements OnInit, OnDestroy {
   private readonly logbook = inject(LogbookService);
+  private readonly levels = inject(LevelsService);
   readonly boat = inject(LogbookRemoteService);
   private readonly sampler = inject(LogbookSamplerService);
   private readonly sails = inject(CurrentSailService);
@@ -193,6 +196,7 @@ export class LogbookPage implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       }),
       this.sails.changed$.subscribe(() => this.cdr.markForCheck()),
+      this.levels.state$.subscribe(() => this.cdr.markForCheck()),
     );
   }
 
@@ -270,7 +274,7 @@ export class LogbookPage implements OnInit, OnDestroy {
   }
 
   columns(): LogTableColumn[] {
-    const levels: LogTableColumn[] = logLevelColumns(this.visible()).map(column => ({
+    const levels: LogTableColumn[] = logLevelColumns(this.visible(), (kind, id) => this.tankHeading(kind, id)).map(column => ({
       key: column.key,
       label: column.label,
       unit: '%',
@@ -287,7 +291,15 @@ export class LogbookPage implements OnInit, OnDestroy {
   }
 
   levelsLine(entry: LogEntry): string {
-    return logLevelsSummary(entry);
+    return logLevelsSummary(entry, (kind, id) => this.tankHeading(kind, id));
+  }
+
+  /** Same title the Levels page shows, once Signal K has named this tank. */
+  private tankHeading(kind: 'water' | 'fuel', id: string): string | null {
+    const levelKind = kind === 'water' ? 'freshWater' : 'fuel';
+    const tank = this.levels.current.tanks.find(item => item.kind === levelKind && item.id === id);
+    if (!tank || (!tank.name && !tank.displayName)) return null;
+    return tankTitle(tank);
   }
 
   trackColumn(_index: number, column: LogTableColumn): string {
@@ -470,7 +482,7 @@ export class LogbookPage implements OnInit, OnDestroy {
   printLog(): void {
     const popup = window.open('', '_blank', 'noopener');
     if (!popup) return;
-    popup.document.write(logbookPrintHtml(this.visible(), this.passage));
+    popup.document.write(logbookPrintHtml(this.visible(), this.passage, (kind, id) => this.tankHeading(kind, id)));
     popup.document.close();
     popup.focus();
     popup.print();

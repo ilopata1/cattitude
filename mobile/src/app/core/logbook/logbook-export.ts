@@ -1,5 +1,5 @@
 import { LogEntry, Passage } from '../models/logbook.model';
-import { formatLevelPercent, levelPercentCsv, levelRatio, logLevelColumns } from './logbook-levels';
+import { formatLevelPercent, levelPercentCsv, levelRatio, logLevelColumns, LogTankNamer } from './logbook-levels';
 import { formatLogClock, formatPosition } from './logbook-math';
 
 export function logbookToCsv(entries: LogEntry[]): string {
@@ -119,9 +119,9 @@ export function logbookToGpx(entries: LogEntry[], passage: Passage | null): stri
   ].join('\n');
 }
 
-export function logbookPrintHtml(entries: LogEntry[], passage: Passage | null): string {
+export function logbookPrintHtml(entries: LogEntry[], passage: Passage | null, tankName?: LogTankNamer): string {
   const title = escapeXml(passage?.name?.trim() || 'Logbook');
-  const levels = logLevelColumns(entries);
+  const levels = logLevelColumns(entries, tankName);
   const rows = [...entries]
     .sort((a, b) => a.at.localeCompare(b.at))
     .map(entry => {

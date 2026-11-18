@@ -5,6 +5,12 @@ export interface LogLevelColumn {
   label: string;
 }
 
+/**
+ * Title used on the Levels page for this fresh-water or fuel tank.
+ * An empty result keeps the instance label (`Water 2`, `Fuel 0`).
+ */
+export type LogTankNamer = (kind: 'water' | 'fuel', id: string) => string | null;
+
 const HOUSE_IDS = new Set(['0', 'house']);
 
 /**
@@ -12,7 +18,7 @@ const HOUSE_IDS = new Set(['0', 'house']);
  * entries. Black water and other holding tanks are left out. The house
  * battery is Signal K battery 0, or an instance named `house`.
  */
-export function logLevelColumns(entries: LogEntry[]): LogLevelColumn[] {
+export function logLevelColumns(entries: LogEntry[], tankName?: LogTankNamer): LogLevelColumn[] {
   const water = new Set<string>();
   const fuel = new Set<string>();
   for (const entry of entries) {
@@ -23,15 +29,15 @@ export function logLevelColumns(entries: LogEntry[]): LogLevelColumn[] {
     }
   }
   const columns: LogLevelColumn[] = [];
-  pushTanks(columns, 'water', 'Water', [...water]);
-  pushTanks(columns, 'fuel', 'Fuel', [...fuel]);
+  pushTanks(columns, 'water', 'Water', [...water], tankName);
+  pushTanks(columns, 'fuel', 'Fuel', [...fuel], tankName);
   columns.push({ key: 'house', label: 'House' });
   return columns;
 }
 
 /** One line for a card, or empty when the entry recorded none of these readings. */
-export function logLevelsSummary(entry: LogEntry): string {
-  const tanks = logLevelColumns([entry]).filter(column => column.key !== 'house');
+export function logLevelsSummary(entry: LogEntry, tankName?: LogTankNamer): string {
+  const tanks = logLevelColumns([entry], tankName).filter(column => column.key !== 'house');
   const house = houseBattery(entry);
   if (!tanks.length && !house) return '';
   const parts = tanks.map(column => `${column.label} ${formatLevelPercent(levelRatio(entry, column.key))}`);
@@ -68,12 +74,19 @@ export function levelPercentCsv(ratio: number | null): string {
   return number === '—' ? '' : number;
 }
 
-function pushTanks(columns: LogLevelColumn[], kind: string, label: string, ids: string[]): void {
+function pushTanks(
+  columns: LogLevelColumn[],
+  kind: 'water' | 'fuel',
+  fallback: string,
+  ids: string[],
+  tankName?: LogTankNamer,
+): void {
   const ordered = ids.sort(compareInstance);
   for (const id of ordered) {
+    const named = tankName?.(kind, id)?.trim();
     columns.push({
       key: `${kind}:${id}`,
-      label: ordered.length === 1 && /^\d+$/.test(id) ? label : `${label} ${id}`,
+      label: named || (ordered.length === 1 && /^\d+$/.test(id) ? fallback : `${fallback} ${id}`),
     });
   }
 }

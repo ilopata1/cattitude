@@ -131,6 +131,30 @@ export function logbookMathFailures(): string[] {
     levels === 'Water 80.5% · Fuel port 50% · Fuel starboard 25% · House 84%',
     `log levels ${levels}`,
   );
+  const titled = logLevelsSummary({
+    ...entry,
+    ship: {
+      batteries: [{ id: '0', soc: 0.84, volts: 26.4 }],
+      tanks: [
+        { id: '0', type: 'freshWater', level: 0.805 },
+        { id: '0', type: 'fuel', level: 0.5 },
+        { id: '1', type: 'fuel', level: 0.25 },
+      ],
+    },
+  }, (kind, id) => {
+    if (kind === 'water' && id === '0') return 'Galley';
+    if (kind === 'fuel' && id === '0') return 'Port fuel';
+    return null;
+  });
+  expect(
+    titled === 'Galley 80.5% · Port fuel 50% · Fuel 1 25% · House 84%',
+    `named tanks ${titled}`,
+  );
+  const blankName = logLevelsSummary({
+    ...entry,
+    ship: { batteries: [], tanks: [{ id: '2', type: 'freshWater', level: 1 }] },
+  }, () => '  ');
+  expect(blankName === 'Water 100%', `blank name keeps the instance label (${blankName})`);
   const namedHouse = logLevelsSummary({
     ...entry,
     ship: { batteries: [{ id: 'house', soc: 0.5, volts: null }], tanks: [] },
