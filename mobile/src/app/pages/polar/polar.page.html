@@ -82,6 +82,7 @@
 
     <h2 class="section-title cs-kicker">Sail Plan</h2>
     <p class="current-sails-lead" *ngIf="anchored">Anchored. No sail plan until she is underway.</p>
+    <p class="current-sails-lead" *ngIf="holdSailPlan && !anchored">No sail plan until she is underway.</p>
     <div class="window-readouts">
       <article class="window-card" *ngFor="let w of windows; trackBy: trackWindow">
         <header class="window-head">
@@ -97,7 +98,7 @@
           Mean {{ formatDeg(w.avg.twaDeg) }} TWA · {{ formatKnots(w.avg.twsKnots) }} TWS
         </p>
 
-        <div class="window-advice" *ngIf="!anchored">
+        <div class="window-advice" *ngIf="!holdSailPlan">
           <ng-container *ngIf="w.covered && w.advice && !w.advice.empty">
             <p class="window-would">
               Best sail plan for the last {{ w.minutes }} minutes would have been

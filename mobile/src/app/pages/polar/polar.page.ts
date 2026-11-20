@@ -16,7 +16,7 @@ import { PolarService } from '../../core/services/polar.service';
 import { POLAR_BUFFER_MS, holdWindowDisplay, HeldWindow } from '../../core/services/polar-window';
 import { SignalKService } from '../../core/services/signal-k.service';
 import { MAIN_REEF_OPTIONS, MainReef, headsailOptions, isMainReef } from '../../core/guide/current-sail';
-import { livePropulsion } from '../../core/logbook/logbook-math';
+import { holdSailAdvice } from '../../core/logbook/logbook-math';
 import { SailAdvice, formatBand } from '../../core/models/sail-plan.model';
 import { CurrentSailService } from '../../core/services/current-sail.service';
 import { LogbookSamplerService } from '../../core/services/logbook-sampler.service';
@@ -71,8 +71,8 @@ export class PolarPage implements OnInit, OnDestroy {
   };
 
   skConnected = false;
-  /** True once the logbook's live reading has concluded she is anchored or moored. */
-  anchored = false;
+  /** True while sail-plan advice waits for way on, or for her to leave the dock. */
+  holdSailPlan = true;
   windows: PolarWindowAssessment[] = POLAR_WINDOW_MINUTES.map(minutes => this.emptyAssessment(minutes));
 
   /** Original viewBox sizing — CSS uses width:100%; height:auto. */
@@ -253,7 +253,7 @@ export class PolarPage implements OnInit, OnDestroy {
         minutes,
         avg,
         covered,
-        advice: covered && !this.anchored
+        advice: covered && !this.holdSailPlan
           ? this.sailPlans.advise(avg.twaDeg, avg.twsKnots, avg.polarPct)
           : null,
       };
@@ -264,10 +264,16 @@ export class PolarPage implements OnInit, OnDestroy {
     });
   }
 
+  /** Moored and anchored keep the dock sentence. Other holds use the shorter one. */
+  get anchored(): boolean {
+    const nav = (this.sampler.snapshot.navState || '').toLowerCase();
+    return nav === 'anchored' || nav === 'moored';
+  }
+
   private notePropulsion(): void {
-    const anchored = livePropulsion(this.sampler.snapshot, this.currentSails.selection()) === 'anchored';
-    if (anchored === this.anchored) return;
-    this.anchored = anchored;
+    const hold = holdSailAdvice(this.sampler.snapshot);
+    if (hold === this.holdSailPlan) return;
+    this.holdSailPlan = hold;
     this.refreshAssessments();
   }
 

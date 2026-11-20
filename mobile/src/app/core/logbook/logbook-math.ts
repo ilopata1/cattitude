@@ -14,6 +14,8 @@ const RAD_TO_DEG = 180 / Math.PI;
 export const ANCHOR_PAUSE_MS = 15 * 60 * 1000;
 export const STALE_AFTER_MS = 60_000;
 export const POSITION_JITTER_M = 5;
+/** The log calls her stopped below this. Sail advice waits until speed reaches it. */
+export const WAY_ON_KN = 0.4;
 
 const BEAUFORT_MAX_KN = [1, 3, 6, 10, 16, 21, 27, 33, 40, 47, 55, 63];
 
@@ -127,7 +129,7 @@ export function derivePropulsion(input: {
   if (input.enginesRunning && input.sailsUp) return 'motor-sailing';
   if (input.enginesRunning) return 'motoring';
   if (input.sailsUp) return 'sailing';
-  if ((input.sogKn ?? 0) < 0.4) return 'stopped';
+  if ((input.sogKn ?? 0) < WAY_ON_KN) return 'stopped';
   return 'sailing';
 }
 
@@ -158,6 +160,18 @@ export function readingUsable(reading: LiveReading): boolean {
     || reading.sogKn != null
     || reading.twsKn != null
     || reading.headingTrueDeg != null;
+}
+
+/**
+ * Sail-plan advice waits until she has way on.
+ * Moored and anchored hold even while she is still moving.
+ * A saved sail selection is what the advice compares; it is not evidence she is sailing.
+ */
+export function holdSailAdvice(reading: LiveReading): boolean {
+  const nav = (reading.navState || '').toLowerCase();
+  if (nav === 'anchored' || nav === 'moored') return true;
+  if (!readingUsable(reading)) return true;
+  return (reading.sogKn ?? 0) < WAY_ON_KN && (reading.stwKn ?? 0) < WAY_ON_KN;
 }
 
 export function coreStaleFields(reading: LiveReading, nowMs: number): string[] {

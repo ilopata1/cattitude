@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { formatCurrentSails, normalizeSailConfiguration, sailPlansDiffer } from '../guide/current-sail';
-import { livePropulsion } from '../logbook/logbook-math';
+import { holdSailAdvice } from '../logbook/logbook-math';
 import { POLAR_WINDOW_MINUTES, PolarWindowMinutes } from '../models/polar.model';
 import { CurrentSailService } from './current-sail.service';
 import { LogbookSamplerService } from './logbook-sampler.service';
@@ -14,8 +14,8 @@ import { decideSailWindows } from './sail-watch';
  * Compares the sails the crew entered with the 15-, 30-, and 60-minute polar
  * recommendations. Samples are kept on the boat, so the windows keep filling
  * while this app is closed. A longer window stays quiet until every shorter
- * window is covered. Each window notifies on its own. Nothing is recommended
- * once the logbook has concluded the boat is anchored.
+ * window is covered. Each window notifies on its own. Advice waits until she
+ * has way on, and stays quiet while she is moored or anchored.
  */
 @Injectable({ providedIn: 'root' })
 export class SailWatchService {
@@ -44,7 +44,7 @@ export class SailWatchService {
   }
 
   private evaluate(): void {
-    if (livePropulsion(this.sampler.snapshot, this.currentSails.selection()) === 'anchored') {
+    if (holdSailAdvice(this.sampler.snapshot)) {
       return;
     }
     const plan = this.sailPlans.plan;

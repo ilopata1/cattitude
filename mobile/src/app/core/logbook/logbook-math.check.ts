@@ -13,6 +13,7 @@ import {
   haversineNm,
   intervalDue,
   latestSlotMs,
+  holdSailAdvice,
   livePropulsion,
   pressureHpa,
   propulsionTriggerFor,
@@ -69,6 +70,39 @@ export function logbookMathFailures(): string[] {
   const navOnly = emptyReading();
   navOnly.navState = 'anchored';
   expect(livePropulsion(navOnly, { main: '', headsail: '' }) === null, 'navigation state alone is not a live reading');
+
+  expect(holdSailAdvice(emptyReading()), 'an empty reading holds sail advice');
+  expect(holdSailAdvice(navOnly), 'moored or anchored holds sail advice before any other reading');
+  const dock = emptyReading();
+  dock.position = { lat: 24.5, lon: -64.2 };
+  dock.sogKn = 0;
+  dock.stwKn = 0;
+  dock.twsKn = 8;
+  expect(holdSailAdvice(dock), 'no way on at the dock holds sail advice');
+  const noisy = emptyReading();
+  noisy.sogKn = 0.2;
+  noisy.stwKn = 0;
+  expect(holdSailAdvice(noisy), 'speed under 0.4 kn holds sail advice');
+  const alongside = emptyReading();
+  alongside.sogKn = 0;
+  alongside.engines = [{ id: 'port', rpm: 800, hours: null, state: 'started', running: true }];
+  expect(holdSailAdvice(alongside), 'engines alongside with no way on hold sail advice');
+  const dragging = emptyReading();
+  dragging.navState = 'moored';
+  dragging.sogKn = 1.2;
+  dragging.position = { lat: 1, lon: 2 };
+  expect(holdSailAdvice(dragging), 'moored holds sail advice even with way on');
+  const windOnly = emptyReading();
+  windOnly.twsKn = 12;
+  expect(holdSailAdvice(windOnly), 'wind without way on holds sail advice');
+  const sailing = emptyReading();
+  sailing.sogKn = 6;
+  sailing.twsKn = 12;
+  expect(!holdSailAdvice(sailing), 'way on releases sail advice without a navigation state');
+  const throughWater = emptyReading();
+  throughWater.stwKn = 0.4;
+  throughWater.sogKn = 0;
+  expect(!holdSailAdvice(throughWater), 'speed through water at 0.4 kn is way on');
 
   const midnight = Date.UTC(2026, 9, 2, 0, 0, 0);
   expect(latestSlotMs(Date.UTC(2026, 9, 2, 7, 30), 6, 0) === midnight + 6 * 3_600_000, '6 h slot at 06:00');
