@@ -79,7 +79,7 @@ const CREW_SHORTCUTS = [
   'fix',
   'more:ask',
 ];
-const CREW_LIVE = ['widget:aws', 'widget:tws', 'widget:sog', 'widget:awa', 'widget:twa', 'widget:heading', 'widget:cog', 'widget:polar'];
+const CREW_LIVE = ['widget:aws', 'widget:tws', 'widget:sog', 'widget:awa', 'widget:twa', 'widget:heading', 'widget:cog', 'widget:polar', 'widget:waves'];
 
 export function knowChapterRoute(
   systemId: string,
@@ -222,6 +222,7 @@ export function buildDashboardCatalog(input: DashboardCatalogInput): DashboardIt
     widget('widget:speed', 'Speed', 'Live speed', 'speedometer-outline', 1),
     widget('widget:wind', 'Wind', 'Live wind', 'wind-outline', 1),
     widget(FUEL_RANGE_WIDGET_ID, 'Fuel range', 'Hours and distance at this RPM', 'flame-outline', 2, ['more', 'levels']),
+    widget('widget:waves', 'Waves', 'Height, period, and direction', 'water-outline', 2, ['waves']),
   );
   if (isSailingVessel(input.vesselType)) {
     items.push(widget('widget:polar', 'Polar', '15, 30, and 60 minute average', 'trending-up-outline', 2));

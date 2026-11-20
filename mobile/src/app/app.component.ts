@@ -13,6 +13,7 @@ import { LogbookTriggerService } from './core/services/logbook-trigger.service';
 import { SailWatchService } from './core/services/sail-watch.service';
 import { ThemeService } from './core/services/theme.service';
 import { VesselRouteService } from './core/services/vessel-route.service';
+import { WaveEstimatorService } from './core/services/wave-estimator.service';
 
 @Component({
   selector: 'app-root',
@@ -36,6 +37,7 @@ export class AppComponent {
     void inject(LevelsService);
     void inject(FuelMotionService);
     void inject(InstrumentHistoryService);
+    void inject(WaveEstimatorService);
     this.theme.resolved();
     this.notificationBridge.start();
     this.sailWatch.ensureRunning();
@@ -73,7 +75,7 @@ export class AppComponent {
 
   /** Night red-shift covers the tab bar too, only while a helm screen is open. */
   private syncHelmRoute(url: string): void {
-    const helm = /\/(sail|polar|anchorage)(?:\/|$|\?)/.test(url);
+    const helm = /\/(sail|polar|anchorage|waves)(?:\/|$|\?)/.test(url);
     document.documentElement.classList.toggle('helm-route', helm);
   }
 }

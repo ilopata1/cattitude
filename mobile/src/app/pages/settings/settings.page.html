@@ -245,6 +245,119 @@
     </ion-list>
 
     <ion-list inset="true" lines="none" class="settings-list">
+      <ion-item button detail="false" (click)="toggleWaves()" [attr.aria-expanded]="waveOpen">
+        <ion-label>
+          <span class="cs-kicker">Wave height</span>
+          <p class="settings-hint">Hull, GPS antenna, and natural periods for the estimator.</p>
+        </ion-label>
+        <ion-icon slot="end" [name]="waveOpen ? 'chevron-up' : 'chevron-down'" aria-hidden="true"></ion-icon>
+      </ion-item>
+      <ion-item *ngIf="waveOpen">
+        <div class="settings-row">
+          <p class="settings-hint">
+            Significant height, period, and direction come from pitch, roll, and GPS height.
+            On a catamaran the attitude should update at 5 Hz or more, or the short roll aliases into the wave band.
+          </p>
+          <ion-segment
+            class="appearance-segment"
+            [value]="hullType"
+            (ionChange)="onHull($any($event).detail.value)"
+            aria-label="Hull type"
+          >
+            <ion-segment-button value="mono">
+              <ion-label>Monohull</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="cat">
+              <ion-label>Catamaran</ion-label>
+            </ion-segment-button>
+          </ion-segment>
+          <p class="settings-hint">A trimaran uses the catamaran settings, with the float spacing as the roll width.</p>
+          <ion-label class="settings-label">Waterline length (m)</ion-label>
+          <ion-input
+            [formControl]="lWlControl"
+            type="number"
+            inputmode="decimal"
+            [placeholder]="hullType === 'cat' ? '16' : '12'"
+            class="settings-input"
+            (ionBlur)="saveWaves()"
+          ></ion-input>
+          <ion-label class="settings-label">{{ rollWidthLabel() }}</ion-label>
+          <ion-input
+            [formControl]="bRollControl"
+            type="number"
+            inputmode="decimal"
+            [placeholder]="hullType === 'cat' ? '6.5' : '4'"
+            class="settings-input"
+            (ionBlur)="saveWaves()"
+          ></ion-input>
+          <p class="settings-hint" *ngIf="hullType === 'cat'">The distance between hull centrelines, not the beam of one hull.</p>
+          <ion-label class="settings-label">Natural roll period (s)</ion-label>
+          <ion-input
+            [formControl]="tRollControl"
+            type="number"
+            inputmode="decimal"
+            [placeholder]="hullType === 'cat' ? '2' : '5'"
+            class="settings-input"
+            (ionBlur)="saveWaves()"
+          ></ion-input>
+          <ion-label class="settings-label">Natural pitch period (s)</ion-label>
+          <ion-input
+            [formControl]="tPitchControl"
+            type="number"
+            inputmode="decimal"
+            [placeholder]="hullType === 'cat' ? '3' : '3.5'"
+            class="settings-input"
+            (ionBlur)="saveWaves()"
+          ></ion-input>
+          <p class="settings-hint">{{ wavePresetHint() }}</p>
+          <ion-label class="settings-label">GPS antenna forward of centre (m)</ion-label>
+          <ion-input
+            [formControl]="antennaXControl"
+            type="number"
+            inputmode="decimal"
+            placeholder="Aft is negative"
+            class="settings-input"
+            (ionBlur)="saveWaves()"
+          ></ion-input>
+          <ion-label class="settings-label">GPS antenna to starboard (m)</ion-label>
+          <ion-input
+            [formControl]="antennaYControl"
+            type="number"
+            inputmode="decimal"
+            placeholder="0"
+            class="settings-input"
+            (ionBlur)="saveWaves()"
+          ></ion-input>
+          <ion-label class="settings-label">GPS antenna height above waterline (m)</ion-label>
+          <ion-input
+            [formControl]="antennaZControl"
+            type="number"
+            inputmode="decimal"
+            placeholder="0"
+            class="settings-input"
+            (ionBlur)="saveWaves()"
+          ></ion-input>
+          <ion-label class="settings-label">Roll gain</ion-label>
+          <ion-input
+            [formControl]="rollGainControl"
+            type="number"
+            inputmode="decimal"
+            placeholder="1"
+            class="settings-input"
+            (ionBlur)="saveWaves()"
+          ></ion-input>
+          <p class="settings-hint">
+            How much she over-rolls or under-rolls compared with the true wave slope. Leave blank for 1.
+          </p>
+          <p class="field-error" *ngIf="waveError">{{ waveError }}</p>
+          <ion-button expand="block" routerLink="../../../waves" class="settings-btn">
+            Open wave height
+          </ion-button>
+        </div>
+      </ion-item>
+    </ion-list>
+
+    <ion-list inset="true" lines="none" class="settings-list">
       <ion-list-header>
         <ion-label class="cs-kicker">Instruments</ion-label>
       </ion-list-header>

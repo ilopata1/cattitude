@@ -10,6 +10,7 @@ import { NotificationBridgeService } from './core/services/notification-bridge.s
 import { HouseBatteryWatchService } from './core/services/house-battery-watch.service';
 import { LogbookTriggerService } from './core/services/logbook-trigger.service';
 import { SailWatchService } from './core/services/sail-watch.service';
+import { WaveEstimatorService } from './core/services/wave-estimator.service';
 
 describe('AppComponent', () => {
 
@@ -22,6 +23,7 @@ describe('AppComponent', () => {
         { provide: LevelsService, useValue: {} },
         { provide: FuelMotionService, useValue: {} },
         { provide: InstrumentHistoryService, useValue: {} },
+        { provide: WaveEstimatorService, useValue: {} },
         { provide: SailWatchService, useValue: { ensureRunning: () => undefined } },
         { provide: HouseBatteryWatchService, useValue: { ensureRunning: () => undefined } },
         { provide: LogbookTriggerService, useValue: { ensureRunning: () => undefined } },

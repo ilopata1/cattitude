@@ -13,6 +13,10 @@ const routes: Routes = [
     loadChildren: () => import('../sail/sail.module').then((m) => m.SailPageModule),
   },
   {
+    path: 'waves',
+    loadChildren: () => import('../waves/waves.module').then((m) => m.WavesModule),
+  },
+  {
     path: 'anchorage',
     loadChildren: () =>
       import('../anchorage/anchorage.module').then((m) => m.AnchorageModule),

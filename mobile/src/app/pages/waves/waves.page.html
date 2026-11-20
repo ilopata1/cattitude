@@ -1,0 +1,62 @@
+<app-header title="Wave height" [showBack]="openedFromMore" [backTo]="openedFromMore ? 'more' : null">
+  <ion-button headerActions fill="clear" color="dark" [routerLink]="settingsLink" [queryParams]="{ section: 'waves' }">
+    Setup
+  </ion-button>
+</app-header>
+
+<ion-content>
+  <p class="status-note" *ngIf="!state.connected">
+    <ion-icon name="warning-outline" aria-hidden="true"></ion-icon>
+    Signal K is not connected. The estimate needs pitch, roll, and speed from the boat.
+  </p>
+
+  <section class="panel">
+    <h2 class="section-title cs-kicker">Latest estimate</h2>
+    <div class="live-readouts">
+      <div class="live-item">
+        <span class="label cs-kicker">Height</span>
+        <span class="value cs-value">
+          <ng-container *ngIf="height() | csReading as parts">{{ parts.figure }}<span class="cs-unit" *ngIf="parts.unit" [class.cs-unit-tight]="parts.tight">{{ parts.unit }}</span></ng-container>
+        </span>
+      </div>
+      <div class="live-item">
+        <span class="label cs-kicker">Period</span>
+        <span class="value cs-value">
+          <ng-container *ngIf="period() | csReading as parts">{{ parts.figure }}<span class="cs-unit" *ngIf="parts.unit" [class.cs-unit-tight]="parts.tight">{{ parts.unit }}</span></ng-container>
+        </span>
+      </div>
+      <div class="live-item">
+        <span class="label cs-kicker">Encounter</span>
+        <span class="value cs-value">
+          <ng-container *ngIf="encounter() | csReading as parts">{{ parts.figure }}<span class="cs-unit" *ngIf="parts.unit" [class.cs-unit-tight]="parts.tight">{{ parts.unit }}</span></ng-container>
+        </span>
+      </div>
+      <div class="live-item">
+        <span class="label cs-kicker">From</span>
+        <span class="value cs-value">
+          <ng-container *ngIf="direction() | csReading as parts">{{ parts.figure }}<span class="cs-unit" *ngIf="parts.unit" [class.cs-unit-tight]="parts.tight">{{ parts.unit }}</span></ng-container>
+        </span>
+      </div>
+    </div>
+    <p class="source-note" *ngIf="sea()">{{ sea() }}<span *ngIf="confidence()"> · {{ confidence() }} confidence</span></p>
+    <p class="source-note" *ngIf="candidates()">Could be coming from {{ candidates() }}.</p>
+    <p class="source-note" *ngIf="progress()">{{ progress() }}</p>
+    <p class="source-note" *ngIf="method()">{{ method() }}</p>
+    <p class="source-note" *ngIf="chop()">{{ chop() }}</p>
+  </section>
+
+  <section class="panel" *ngIf="flags().length">
+    <h2 class="section-title cs-kicker">Notes</h2>
+    <ul class="flag-list">
+      <li *ngFor="let flag of flags()">{{ flag }}</li>
+    </ul>
+  </section>
+
+  <section class="panel">
+    <p class="source-note lead">
+      Height, period, and the direction the waves are coming from, estimated from
+      the boat's pitch, roll, and GPS height. A result needs about 20 minutes of
+      steady heading and speed, and it refreshes every 5 minutes.
+    </p>
+  </section>
+</ion-content>

@@ -119,6 +119,15 @@
               </span>
               <span class="widget-detail">{{ windDetailLabel() }}</span>
             </ng-container>
+            <span class="polar-averages" *ngIf="item.id === 'widget:waves'">
+              <span class="polar-stat" *ngFor="let row of waveRows()">
+                <span class="polar-min cs-kicker">{{ row.label }}</span>
+                <span class="polar-pct cs-value">
+                  <ng-container *ngIf="row.value | csReading as parts">{{ parts.figure }}<span class="cs-unit" *ngIf="parts.unit" [class.cs-unit-tight]="parts.tight">{{ parts.unit }}</span></ng-container>
+                </span>
+              </span>
+            </span>
+            <span class="widget-detail" *ngIf="item.id === 'widget:waves'">{{ waveDetail() }}</span>
             <span class="polar-averages" *ngIf="item.id === 'widget:polar'">
               <span class="polar-stat" *ngFor="let row of polarRows()">
                 <span class="polar-min cs-kicker">{{ row.minutes }} min</span>

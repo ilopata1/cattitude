@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import {
   FuelCurveFields,
@@ -21,6 +22,14 @@ import { NotificationPreferenceService } from '../../core/services/notification-
 import { SignalKService, SignalKConnectionState } from '../../core/services/signal-k.service';
 import { SignalKSettingsService } from '../../core/services/signal-k-settings.service';
 import { ThemePreference, ThemeService } from '../../core/services/theme.service';
+import { WaveSettingsService } from '../../core/services/wave-settings.service';
+import {
+  HullType,
+  WAVE_PRESETS,
+  WaveSettingsFields,
+  hullTypeForVessel,
+  waveSettingsFromFields,
+} from '../../core/waves/wave-settings';
 
 @Component({
   selector: 'app-settings',
@@ -44,6 +53,17 @@ export class SettingsPage implements OnInit, OnDestroy {
   engineCountControl = new FormControl('');
   idleFuelControl = new FormControl('');
   housePercentControl = new FormControl('30');
+  waveOpen = false;
+  hullType: HullType = 'mono';
+  waveError = '';
+  lWlControl = new FormControl('');
+  bRollControl = new FormControl('');
+  tRollControl = new FormControl('');
+  tPitchControl = new FormControl('');
+  antennaXControl = new FormControl('');
+  antennaYControl = new FormControl('');
+  antennaZControl = new FormControl('');
+  rollGainControl = new FormControl('');
 
   private subs: Subscription[] = [];
 
@@ -52,7 +72,9 @@ export class SettingsPage implements OnInit, OnDestroy {
     private readonly skSettings: SignalKSettingsService,
     private readonly fuelCurve: FuelCurveSettingsService,
     private readonly houseBattery: HouseBatterySettingsService,
+    private readonly waveSettings: WaveSettingsService,
     private readonly content: ContentService,
+    private readonly route: ActivatedRoute,
     private readonly notificationPrefs: NotificationPreferenceService,
     private readonly notifications: NotificationBridgeService,
     readonly theme: ThemeService,
@@ -68,7 +90,11 @@ export class SettingsPage implements OnInit, OnDestroy {
     this.urlControl.setValue(this.skSettings.url);
     this.tokenControl.setValue(this.skSettings.token ?? '');
     this.loadFuelCurve();
+    this.loadWaves();
     this.housePercentControl.setValue(formatHousePercent(this.houseBattery.percent));
+    this.subs.push(this.route.queryParamMap.subscribe((params) => {
+      if (params.get('section') === 'waves') this.waveOpen = true;
+    }));
 
     this.subs.push(
       this.sk.state$.subscribe(state => {
@@ -136,6 +162,7 @@ export class SettingsPage implements OnInit, OnDestroy {
   ionViewWillLeave(): void {
     this.saveFuelCurve();
     this.saveHousePercent();
+    this.saveWaves();
   }
 
   ionViewWillEnter(): void {
@@ -218,6 +245,59 @@ export class SettingsPage implements OnInit, OnDestroy {
       default:
         return 'Allow device notifications to hear alerts when the app is in the background. The browser only asks from the button below.';
     }
+  }
+
+  toggleWaves(): void {
+    this.waveOpen = !this.waveOpen;
+  }
+
+  onHull(value: string | undefined): void {
+    if (value !== 'mono' && value !== 'cat') return;
+    this.hullType = value;
+    this.saveWaves();
+  }
+
+  rollWidthLabel(): string {
+    return this.hullType === 'cat' ? 'Distance between hull centrelines (m)' : 'Waterline beam (m)';
+  }
+
+  wavePresetHint(): string {
+    const preset = WAVE_PRESETS[this.hullType];
+    return `Leave a period blank to start from ${preset.tRollNatural} s of roll and ${preset.tPitchNatural} s of pitch. Measure them from a wake when you can.`;
+  }
+
+  saveWaves(): void {
+    const parsed = waveSettingsFromFields(this.waveFields());
+    this.waveError = parsed.error;
+    if (!parsed.settings) return;
+    this.waveSettings.save(parsed.settings);
+  }
+
+  private waveFields(): WaveSettingsFields {
+    return {
+      hullType: this.hullType,
+      lWl: text(this.lWlControl.value),
+      bRoll: text(this.bRollControl.value),
+      tRoll: text(this.tRollControl.value),
+      tPitch: text(this.tPitchControl.value),
+      antennaX: text(this.antennaXControl.value),
+      antennaY: text(this.antennaYControl.value),
+      antennaZ: text(this.antennaZControl.value),
+      rollGain: text(this.rollGainControl.value),
+    };
+  }
+
+  private loadWaves(): void {
+    const saved = this.waveSettings.current;
+    this.hullType = saved.hullType ?? hullTypeForVessel(this.content.bootstrap.branding.vesselType);
+    this.lWlControl.setValue(saved.lWl == null ? '' : String(saved.lWl));
+    this.bRollControl.setValue(saved.bRoll == null ? '' : String(saved.bRoll));
+    this.tRollControl.setValue(saved.tRollNatural == null ? '' : String(saved.tRollNatural));
+    this.tPitchControl.setValue(saved.tPitchNatural == null ? '' : String(saved.tPitchNatural));
+    this.antennaXControl.setValue(saved.antennaX ? String(saved.antennaX) : '');
+    this.antennaYControl.setValue(saved.antennaY ? String(saved.antennaY) : '');
+    this.antennaZControl.setValue(saved.antennaZ ? String(saved.antennaZ) : '');
+    this.rollGainControl.setValue(saved.rollGain == null ? '' : String(saved.rollGain));
   }
 
   private loadFuelCurve(): void {

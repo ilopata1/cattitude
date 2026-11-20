@@ -7,7 +7,7 @@ export const SAILING_VESSEL_TYPES = [
 ] as const;
 
 export interface MoreRow {
-  id: 'ask' | 'sail' | 'polar' | 'ab' | 'levels' | 'logbook' | 'duty' | 'anchorage' | 'settings';
+  id: 'ask' | 'sail' | 'polar' | 'ab' | 'waves' | 'levels' | 'logbook' | 'duty' | 'anchorage' | 'settings';
   label: string;
   subtitle: string;
   icon: string;
@@ -37,6 +37,13 @@ export function moreMenu(vesselType: string | null | undefined): MoreRow[] {
       subtitle: 'Depth, speed, and wind',
       icon: sailing ? 'compass-outline' : 'speedometer-outline',
       route: ['sail'],
+    },
+    {
+      id: 'waves',
+      label: 'Wave height',
+      subtitle: 'Height, period, and direction from the boat’s motion',
+      icon: 'pulse-outline',
+      route: ['waves'],
     },
   ];
   if (sailing) {

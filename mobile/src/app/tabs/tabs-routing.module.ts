@@ -38,6 +38,11 @@ const routes: Routes = [
         loadChildren: () =>
           import('../pages/sail/sail.module').then((m) => m.SailPageModule),
       },
+      {
+        path: 'waves',
+        loadChildren: () =>
+          import('../pages/waves/waves.module').then((m) => m.WavesModule),
+      },
       { path: 'anchorage', redirectTo: 'more/anchorage', pathMatch: 'full' },
       { path: 'polar', redirectTo: 'more/polar', pathMatch: 'full' },
       { path: 'ab-test', redirectTo: 'more/ab-test', pathMatch: 'full' },

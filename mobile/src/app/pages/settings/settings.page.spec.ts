@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { FUEL_CURVE_STORAGE_KEY } from '../../core/services/fuel-curve-settings.service';
+import { WAVE_SETTINGS_KEY } from '../../core/services/wave-settings.service';
 import { HOUSE_BATTERY_PERCENT_KEY } from '../../core/services/house-battery-settings.service';
 import { ContentService } from '../../core/services/content.service';
 import { NotificationBridgeService } from '../../core/services/notification-bridge.service';
@@ -22,6 +23,7 @@ describe('SettingsPage notifications', () => {
     localStorage.removeItem('cattitude.notifications.enabled');
     localStorage.removeItem(FUEL_CURVE_STORAGE_KEY);
     localStorage.removeItem(HOUSE_BATTERY_PERCENT_KEY);
+    localStorage.removeItem(WAVE_SETTINGS_KEY);
     allowFromUserGesture = jasmine.createSpy('allowFromUserGesture').and.resolveTo('granted');
 
     await TestBed.configureTestingModule({

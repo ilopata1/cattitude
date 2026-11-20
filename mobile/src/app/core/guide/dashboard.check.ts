@@ -79,10 +79,11 @@ export function dashboardFailures(): string[] {
   );
   expect(
     defaultTileIds('crew', sailing, true).join(',') ===
-      'widget:aws,widget:tws,widget:sog,widget:awa,widget:twa,widget:heading,widget:cog,widget:polar,do:inspection,more:duty,know:engines,know:electrical,more:sail,more:anchorage,fix,more:ask',
+      'widget:aws,widget:tws,widget:sog,widget:awa,widget:twa,widget:heading,widget:cog,widget:polar,widget:waves,do:inspection,more:duty,know:engines,know:electrical,more:sail,more:anchorage,fix,more:ask',
     'crew default leads with live readings, then the daily inspection and duty rota',
   );
   expect(byId.get('widget:aws')?.span === 1 && byId.get('widget:polar')?.span === 2, 'wind readings share a cell and polar uses the row');
+  expect(byId.get('widget:waves')?.span === 2 && byId.get('widget:waves')?.segments.join('/') === 'waves', 'waves tile opens the waves tab');
   expect(byId.get('widget:fuel-range')?.span === 2, 'fuel range uses a wide tile');
   expect(byId.get('widget:fuel-range')?.segments.join('/') === 'more/levels', 'fuel range opens Levels');
   expect(
@@ -162,7 +163,7 @@ export function dashboardFailures(): string[] {
   expect(levelItems.every((item) => item.segments.join('/') === 'more/levels' && item.span === 1), 'level tiles open Levels');
   expect(
     defaultTileIds('crew', withLevels, true).join(',') ===
-      'widget:aws,widget:tws,widget:sog,widget:awa,widget:twa,widget:heading,widget:cog,widget:polar,do:inspection,more:duty,know:engines,know:electrical,more:sail,more:anchorage,fix,more:ask',
+      'widget:aws,widget:tws,widget:sog,widget:awa,widget:twa,widget:heading,widget:cog,widget:polar,widget:waves,do:inspection,more:duty,know:engines,know:electrical,more:sail,more:anchorage,fix,more:ask',
     'level tiles stay off the crew default',
   );
   expect(

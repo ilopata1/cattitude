@@ -31,6 +31,8 @@ import { InstrumentHistoryService } from '../../core/services/instrument-history
 import { InstrumentLiveService } from '../../core/services/instrument-live.service';
 import { LevelsService } from '../../core/services/levels.service';
 import { PolarService } from '../../core/services/polar.service';
+import { WaveEstimatorService } from '../../core/services/wave-estimator.service';
+import { formatFrom, formatMetres, formatSeconds, seaStateLabel } from '../../core/waves/wave-estimator';
 import { ProgressService } from '../../core/services/progress.service';
 import { ReaderViewService } from '../../core/services/reader-view.service';
 import { SignalKConnectionState, SignalKService } from '../../core/services/signal-k.service';
@@ -73,6 +75,7 @@ export class HomePage {
   private readonly fuelCurve = inject(FuelCurveSettingsService);
   private readonly fuelMotion = inject(FuelMotionService);
   private readonly polar = inject(PolarService);
+  private readonly waveMonitor = inject(WaveEstimatorService);
   private readonly layouts = inject(DashboardLayoutService);
   private readonly routes = inject(VesselRouteService);
   private readonly vesselContext = inject(VesselContextService);
@@ -87,6 +90,7 @@ export class HomePage {
   readonly essentials = toSignal(this.live.essentials$, { initialValue: EMPTY_SAIL_ESSENTIALS });
   readonly wind = toSignal(this.live.wind$, { initialValue: EMPTY_WIND_STEER });
   readonly polarWindows = toSignal(this.polar.windows$, { initialValue: EMPTY_POLAR_WINDOWS });
+  readonly waveState = toSignal(this.waveMonitor.state$, { initialValue: this.waveMonitor.current });
   private readonly levelsState = toSignal(this.levels.state$, { initialValue: this.levels.current });
   private readonly curve = toSignal(this.fuelCurve.settings$, { initialValue: this.fuelCurve.current });
   private readonly motion = toSignal(this.fuelMotion.state$, { initialValue: this.fuelMotion.current });
@@ -285,6 +289,10 @@ export class HomePage {
       void this.routes.navigateTabs('more', 'polar');
       return;
     }
+    if (item.id === 'widget:waves') {
+      void this.routes.navigateTabs('waves');
+      return;
+    }
     if (item.id === 'widget:fuel-range' || item.id.startsWith('widget:level:')) {
       void this.routes.navigateTabs('more', 'levels');
       return;
@@ -394,7 +402,45 @@ export class HomePage {
     if (item.id.startsWith('widget:level:') || item.id === 'widget:rules' || item.id === 'widget:fuel-range') {
       return false;
     }
+    if (item.id === 'widget:waves') return this.waveStale();
     return item.kind === 'widget' && this.liveStale();
+  }
+
+  waveRows(): Array<{ label: string; value: string }> {
+    const estimate = this.waveState().estimate;
+    if (!estimate || estimate.status !== 'ok') {
+      return [
+        { label: 'Hs', value: '—' },
+        { label: 'Period', value: '—' },
+        { label: 'From', value: '—' },
+      ];
+    }
+    return [
+      { label: 'Hs', value: formatMetres(estimate.hs) },
+      { label: 'Period', value: formatSeconds(estimate.tpTrue) },
+      { label: 'From', value: formatFrom(estimate.dirFromTrue) },
+    ];
+  }
+
+  waveDetail(): string {
+    const state = this.waveState();
+    const estimate = state.estimate;
+    if (estimate?.status === 'ok') {
+      if (estimate.ambiguous) return 'Direction still ambiguous';
+      const sea = seaStateLabel(estimate.dirTravelBow);
+      return estimate.confidence === 'low' && sea ? `${sea} · low confidence` : sea;
+    }
+    if (estimate?.status === 'skipped' && estimate.reason) return estimate.reason;
+    const have = Math.round(state.collectedS / 60);
+    const need = Math.round(state.windowS / 60);
+    if (have <= 0) return 'Waiting for pitch and roll';
+    return `Collecting ${have} of ${need} min`;
+  }
+
+  private waveStale(): boolean {
+    const estimate = this.waveState().estimate;
+    if (!estimate || estimate.status !== 'ok') return false;
+    return Date.now() - estimate.time > 20 * 60 * 1000;
   }
 
   sparkRole(id: string): HistoryRole | null {
@@ -470,6 +516,7 @@ export class HomePage {
 
   widgetLink(id: string): string {
     if (id === 'widget:polar') return 'Open Polar';
+    if (id === 'widget:waves') return 'Open Waves';
     if (id === 'widget:fuel-range' || id.startsWith('widget:level:')) return 'Open Levels';
     return 'Open Sail';
   }
