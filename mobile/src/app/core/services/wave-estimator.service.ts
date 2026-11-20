@@ -7,6 +7,7 @@ import {
   WaveTrace,
   analyzeWindow,
 } from '../waves/wave-estimator';
+import { AttitudeBucket, attitudeParts, attitudeSourceId, fasterAttitude } from '../waves/wave-attitude';
 import { resolveWaveConfig } from '../waves/wave-settings';
 import { ContentService } from './content.service';
 import { sampleTimeMs } from './instrument-damping';
@@ -21,8 +22,6 @@ export interface WaveMonitorState {
 }
 
 const TRACKED = new Set([
-  'navigation.attitude.pitch',
-  'navigation.attitude.roll',
   'navigation.gnss.antennaAltitude',
   'navigation.rateOfTurn',
   'steering.rudderAngle',
@@ -48,7 +47,10 @@ export class WaveEstimatorService implements OnDestroy {
   readonly state$ = this.stateSubject.asObservable();
 
   private readonly traces = new Map<string, WaveTrace>();
+  /** Pitch and roll kept apart per Signal K source, so a slow sensor cannot mix into a fast one. */
+  private readonly attitude = new Map<string, AttitudeBucket>();
   private readonly sub = new Subscription();
+  private lastCollectedPatch = 0;
   private timer: ReturnType<typeof setInterval> | null = null;
   private lastRun = 0;
   private running = false;
@@ -119,15 +121,59 @@ export class WaveEstimatorService implements OnDestroy {
     const context = delta.context ?? '';
     if (context.startsWith('vessels.') && this.sk.self && context !== this.sk.self) return;
     const keepFrom = Date.now() / 1000 - 1260;
+    let sawAttitude = false;
     for (const update of delta.updates ?? []) {
       const t = sampleTimeMs(update.timestamp, Date.now()) / 1000;
+      const source = attitudeSourceId(update);
       for (const kv of update.values ?? []) {
-        if (typeof kv.value !== 'number' || !Number.isFinite(kv.value)) continue;
         const path = kv.path.startsWith('self.') ? kv.path.slice(5) : kv.path;
+        if (path === 'navigation.attitude') {
+          const parts = attitudeParts(kv.value);
+          if (!parts) continue;
+          this.noteAttitude(source, t, parts.pitch, parts.roll, keepFrom);
+          sawAttitude = true;
+          continue;
+        }
+        if (typeof kv.value !== 'number' || !Number.isFinite(kv.value)) continue;
+        if (path === 'navigation.attitude.pitch') {
+          this.noteAttitude(source, t, kv.value, null, keepFrom);
+          sawAttitude = true;
+          continue;
+        }
+        if (path === 'navigation.attitude.roll') {
+          this.noteAttitude(source, t, null, kv.value, keepFrom);
+          sawAttitude = true;
+          continue;
+        }
         if (!TRACKED.has(path)) continue;
         this.push(path, t, kv.value, keepFrom);
       }
     }
+    if (sawAttitude) this.publishCollected();
+  }
+
+  private noteAttitude(
+    source: string,
+    t: number,
+    pitch: number | null,
+    roll: number | null,
+    keepFrom: number,
+  ): void {
+    let bucket = this.attitude.get(source);
+    if (!bucket) {
+      bucket = { pitch: { t: [], v: [] }, roll: { t: [], v: [] } };
+      this.attitude.set(source, bucket);
+    }
+    if (pitch != null) this.pushTrace(bucket.pitch, t, pitch, keepFrom);
+    if (roll != null) this.pushTrace(bucket.roll, t, roll, keepFrom);
+  }
+
+  private publishCollected(): void {
+    const now = Date.now();
+    if (now - this.lastCollectedPatch < 1000) return;
+    this.lastCollectedPatch = now;
+    const config = resolveWaveConfig(this.settings.current, this.vesselType());
+    this.patch({ collectedS: this.collectedSeconds(), windowS: config.windowS });
   }
 
   private push(path: string, t: number, value: number, keepFrom: number): void {
@@ -136,6 +182,10 @@ export class WaveEstimatorService implements OnDestroy {
       trace = { t: [], v: [] };
       this.traces.set(path, trace);
     }
+    this.pushTrace(trace, t, value, keepFrom);
+  }
+
+  private pushTrace(trace: WaveTrace, t: number, value: number, keepFrom: number): void {
     const n = trace.t.length;
     if (n > 0 && t < trace.t[n - 1] - 1) return;
     if (n > 0 && t === trace.t[n - 1]) {
@@ -154,12 +204,11 @@ export class WaveEstimatorService implements OnDestroy {
   }
 
   private series(): WaveSeries | null {
-    const pitch = this.traces.get('navigation.attitude.pitch');
-    const roll = this.traces.get('navigation.attitude.roll');
-    if (!pitch || !roll) return null;
+    const motion = this.motion();
+    if (!motion) return null;
     return {
-      pitch,
-      roll,
+      pitch: motion.pitch,
+      roll: motion.roll,
       antennaAltitude: this.traces.get('navigation.gnss.antennaAltitude'),
       rateOfTurn: this.traces.get('navigation.rateOfTurn'),
       rudderAngle: this.traces.get('steering.rudderAngle'),
@@ -214,12 +263,16 @@ export class WaveEstimatorService implements OnDestroy {
   }
 
   private collectedSeconds(): number {
-    const pitch = this.traces.get('navigation.attitude.pitch');
-    const roll = this.traces.get('navigation.attitude.roll');
-    if (!pitch || !roll || pitch.t.length < 2 || roll.t.length < 2) return 0;
-    const start = Math.max(pitch.t[0], roll.t[0]);
-    const end = Math.min(pitch.t[pitch.t.length - 1], roll.t[roll.t.length - 1]);
+    const motion = this.motion();
+    if (!motion) return 0;
+    const start = Math.max(motion.pitch.t[0], motion.roll.t[0]);
+    const end = Math.min(motion.pitch.t[motion.pitch.t.length - 1], motion.roll.t[motion.roll.t.length - 1]);
     return Math.max(0, end - start);
+  }
+
+  /** One attitude stream. Two devices on the same path would otherwise be interleaved. */
+  private motion(): AttitudeBucket | null {
+    return fasterAttitude(this.attitude.values());
   }
 
   private vesselType(): string | null {

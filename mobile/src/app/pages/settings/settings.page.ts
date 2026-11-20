@@ -252,8 +252,12 @@ export class SettingsPage implements OnInit, OnDestroy {
   }
 
   onHull(value: string | undefined): void {
-    if (value !== 'mono' && value !== 'cat') return;
+    if ((value !== 'mono' && value !== 'cat') || value === this.hullType) return;
+    const previous = WAVE_PRESETS[this.hullType];
+    const next = WAVE_PRESETS[value];
     this.hullType = value;
+    this.swapAntennaDefault(this.antennaYControl, previous.antennaY, next.antennaY);
+    this.swapAntennaDefault(this.antennaZControl, previous.antennaZ, next.antennaZ);
     this.saveWaves();
   }
 
@@ -294,10 +298,23 @@ export class SettingsPage implements OnInit, OnDestroy {
     this.bRollControl.setValue(saved.bRoll == null ? '' : String(saved.bRoll));
     this.tRollControl.setValue(saved.tRollNatural == null ? '' : String(saved.tRollNatural));
     this.tPitchControl.setValue(saved.tPitchNatural == null ? '' : String(saved.tPitchNatural));
+    const preset = WAVE_PRESETS[this.hullType];
     this.antennaXControl.setValue(saved.antennaX ? String(saved.antennaX) : '');
-    this.antennaYControl.setValue(saved.antennaY ? String(saved.antennaY) : '');
-    this.antennaZControl.setValue(saved.antennaZ ? String(saved.antennaZ) : '');
+    this.antennaYControl.setValue(this.antennaDefaultText(saved.antennaY, preset.antennaY));
+    this.antennaZControl.setValue(this.antennaDefaultText(saved.antennaZ, preset.antennaZ));
     this.rollGainControl.setValue(saved.rollGain == null ? '' : String(saved.rollGain));
+  }
+
+  private antennaDefaultText(value: number | null, preset: number): string {
+    if (value == null) return preset ? String(preset) : '';
+    return String(value);
+  }
+
+  private swapAntennaDefault(control: FormControl, from: number, to: number): void {
+    const current = text(control.value).trim();
+    const fromText = from ? String(from) : '';
+    if (current !== fromText) return;
+    control.setValue(to ? String(to) : '');
   }
 
   private loadFuelCurve(): void {

@@ -1,4 +1,5 @@
-import { G, ResolvedWaveConfig, WaveBoatSettings, defaultWaveSettings, resolveWaveConfig } from './wave-settings';
+import { attitudeParts, attitudeSourceId, fasterAttitude } from './wave-attitude';
+import { G, ResolvedWaveConfig, WaveBoatSettings, defaultWaveSettings, normalizeWaveSettings, resolveWaveConfig } from './wave-settings';
 import {
   WaveEstimate,
   analyzeWindow,
@@ -13,6 +14,20 @@ export function waveEstimatorFailures(): string[] {
   const expect = (condition: boolean, message: string) => {
     if (!condition) failures.push(message);
   };
+
+  const packed = attitudeParts({ yaw: null, pitch: -0.0116, roll: -0.0162 });
+  expect(packed?.pitch === -0.0116 && packed.roll === -0.0162, 'navigation.attitude carries pitch and roll together');
+  expect(attitudeSourceId({ $source: 'imu.fast', source: { label: 'slow' } }) === 'imu.fast', 'the named Signal K source identifies the device');
+  const slow = { pitch: { t: [0, 1, 2], v: [0, 0, 0] }, roll: { t: [0, 1, 2], v: [0, 0, 0] } };
+  const fast = { pitch: { t: [0, 0.1, 0.2, 0.3], v: [0, 0, 0, 0] }, roll: { t: [0, 0.1, 0.2, 0.3], v: [0, 0, 0, 0] } };
+  expect(fasterAttitude([slow, fast]) === fast, 'the faster attitude source is the one that is used');
+
+  const catDefault = resolveWaveConfig(defaultWaveSettings(), 'sailing_catamaran');
+  expect(catDefault.antennaY === 3 && catDefault.antennaZ === 1.5, `cat antenna defaults, got ${catDefault.antennaY} m starboard and ${catDefault.antennaZ} m high`);
+  const monoDefault = resolveWaveConfig(defaultWaveSettings(), 'sailing_monohull');
+  expect(monoDefault.antennaY === 0 && monoDefault.antennaZ === 0, 'mono antenna defaults stay on the centreline at the waterline');
+  const migrated = resolveWaveConfig(normalizeWaveSettings({ hullType: 'cat', antennaY: 0, antennaZ: 0 }), 'sailing_catamaran');
+  expect(migrated.antennaY === 3 && migrated.antennaZ === 1.5, 'an unset stored cat antenna picks up the preset');
 
   const mono = boat('mono', 12, 3.8, 5, 3.5, 3, 0.4);
   const cat = boat('cat', 16, 6.5, 2, 3, 2, 1);

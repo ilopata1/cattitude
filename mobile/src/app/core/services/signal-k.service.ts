@@ -32,6 +32,8 @@ export interface SignalKMeta {
 
 export interface SignalKUpdate {
   source?: { label?: string; type?: string; };
+  /** Device that produced this update, when the server names it. */
+  $source?: string;
   timestamp?: string;
   values: SignalKValue[];
   meta?: SignalKMeta[];

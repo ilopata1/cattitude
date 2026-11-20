@@ -324,7 +324,7 @@
             [formControl]="antennaYControl"
             type="number"
             inputmode="decimal"
-            placeholder="0"
+            [placeholder]="hullType === 'cat' ? '3' : '0'"
             class="settings-input"
             (ionBlur)="saveWaves()"
           ></ion-input>
@@ -333,7 +333,7 @@
             [formControl]="antennaZControl"
             type="number"
             inputmode="decimal"
-            placeholder="0"
+            [placeholder]="hullType === 'cat' ? '1.5' : '0'"
             class="settings-input"
             (ionBlur)="saveWaves()"
           ></ion-input>

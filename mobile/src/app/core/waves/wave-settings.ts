@@ -20,10 +20,10 @@ export interface WaveBoatSettings {
   tPitchNatural: number | null;
   /** Antenna forward of the centre of motion. Aft is negative. */
   antennaX: number;
-  /** Antenna to starboard of the centreline. */
-  antennaY: number;
-  /** Antenna height above the waterline. Recorded with the installation. */
-  antennaZ: number;
+  /** Antenna to starboard of the centreline. Null uses the hull preset. */
+  antennaY: number | null;
+  /** Antenna height above the waterline. Null uses the hull preset. */
+  antennaZ: number | null;
   /** Null uses the hull preset (1). */
   rollGain: number | null;
 }
@@ -54,9 +54,12 @@ export interface ResolvedWaveConfig {
   resonanceTol: number;
 }
 
-export const WAVE_PRESETS: Record<HullType, { tRollNatural: number; tPitchNatural: number; rollGain: number }> = {
-  mono: { tRollNatural: 5, tPitchNatural: 3.5, rollGain: 1 },
-  cat: { tRollNatural: 2, tPitchNatural: 3, rollGain: 1 },
+export const WAVE_PRESETS: Record<
+  HullType,
+  { tRollNatural: number; tPitchNatural: number; rollGain: number; antennaY: number; antennaZ: number }
+> = {
+  mono: { tRollNatural: 5, tPitchNatural: 3.5, rollGain: 1, antennaY: 0, antennaZ: 0 },
+  cat: { tRollNatural: 2, tPitchNatural: 3, rollGain: 1, antennaY: 3, antennaZ: 1.5 },
 };
 
 export const WAVE_PROCESSING = {
@@ -82,8 +85,8 @@ export function defaultWaveSettings(): WaveBoatSettings {
     tRollNatural: null,
     tPitchNatural: null,
     antennaX: 0,
-    antennaY: 0,
-    antennaZ: 0,
+    antennaY: null,
+    antennaZ: null,
     rollGain: null,
   };
 }
@@ -110,8 +113,8 @@ export function resolveWaveConfig(settings: WaveBoatSettings, vesselType?: strin
     tRollNatural,
     tPitchNatural,
     antennaX: finite(settings.antennaX),
-    antennaY: finite(settings.antennaY),
-    antennaZ: finite(settings.antennaZ),
+    antennaY: settings.antennaY == null ? preset.antennaY : finite(settings.antennaY),
+    antennaZ: settings.antennaZ == null ? preset.antennaZ : finite(settings.antennaZ),
     rollGain,
     fs,
     minNativeRateHz,
@@ -137,8 +140,8 @@ export function waveSettingsFromFields(fields: WaveSettingsFields): { settings: 
   const tRoll = optionalNumber(fields.tRoll, 'Natural roll period', { min: 0.5, max: 20 });
   const tPitch = optionalNumber(fields.tPitch, 'Natural pitch period', { min: 0.5, max: 20 });
   const antennaX = optionalNumber(fields.antennaX, 'Antenna forward position', { min: -40, max: 40, blank: 0 });
-  const antennaY = optionalNumber(fields.antennaY, 'Antenna starboard position', { min: -20, max: 20, blank: 0 });
-  const antennaZ = optionalNumber(fields.antennaZ, 'Antenna height', { min: 0, max: 40, blank: 0 });
+  const antennaY = optionalNumber(fields.antennaY, 'Antenna starboard position', { min: -20, max: 20 });
+  const antennaZ = optionalNumber(fields.antennaZ, 'Antenna height', { min: 0, max: 40 });
   const rollGain = optionalNumber(fields.rollGain, 'Roll gain', { min: 0.2, max: 3 });
   const parsed = [lWl, bRoll, tRoll, tPitch, antennaX, antennaY, antennaZ, rollGain];
   const error = parsed.find((item) => item.error)?.error ?? '';
@@ -155,8 +158,8 @@ export function waveSettingsFromFields(fields: WaveSettingsFields): { settings: 
       tRollNatural: tRoll.value,
       tPitchNatural: tPitch.value,
       antennaX: antennaX.value ?? 0,
-      antennaY: antennaY.value ?? 0,
-      antennaZ: antennaZ.value ?? 0,
+      antennaY: antennaY.value,
+      antennaZ: antennaZ.value,
       rollGain: rollGain.value,
     },
   };
@@ -172,8 +175,7 @@ export function normalizeWaveSettings(value: unknown): WaveBoatSettings {
     tRollNatural: optionalStored(raw['tRollNatural']),
     tPitchNatural: optionalStored(raw['tPitchNatural']),
     antennaX: finite(raw['antennaX']),
-    antennaY: finite(raw['antennaY']),
-    antennaZ: finite(raw['antennaZ']),
+    ...storedAntenna(raw),
     rollGain: optionalStored(raw['rollGain']),
   };
 }
@@ -185,6 +187,16 @@ function positive(value: number | null | undefined): number | null {
 function finite(value: unknown): number {
   const n = typeof value === 'number' ? value : Number(value);
   return Number.isFinite(n) ? n : 0;
+}
+
+/** Both offsets at zero means the antenna was never entered, so the hull preset applies. */
+function storedAntenna(raw: Record<string, unknown>): { antennaY: number | null; antennaZ: number | null } {
+  const antennaY = optionalStored(raw['antennaY']);
+  const antennaZ = optionalStored(raw['antennaZ']);
+  if ((antennaY ?? 0) === 0 && (antennaZ ?? 0) === 0) {
+    return { antennaY: null, antennaZ: null };
+  }
+  return { antennaY: antennaY ?? 0, antennaZ: antennaZ ?? 0 };
 }
 
 function optionalStored(value: unknown): number | null {
