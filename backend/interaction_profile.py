@@ -20,6 +20,7 @@ from sqlalchemy import text
 from sqlalchemy.engine import Connection
 
 from config import settings
+from llm_client import build_chat_llm, chat_model_name
 from fragment_drafting import (
     CLEARED_MANUAL_LEGAL_STATUS,
     FragmentDraftingError,
@@ -582,14 +583,7 @@ def _parse_llm_json(raw: str) -> dict[str, Any]:
 
 
 def _build_llm() -> AzureOpenAI:
-    return AzureOpenAI(
-        model="gpt-4o",
-        deployment_name=settings.azure_openai_chat_deployment,
-        api_key=settings.azure_openai_api_key,
-        azure_endpoint=settings.azure_openai_endpoint,
-        api_version=settings.azure_openai_api_version,
-        temperature=0.0,
-    )
+    return build_chat_llm(0.0)
 
 
 def _complete_json(
@@ -609,7 +603,7 @@ def _complete_json(
             azure_endpoint=settings.azure_openai_endpoint,
         )
         kwargs: dict[str, Any] = {
-            "model": settings.azure_openai_chat_deployment,
+            "model": chat_model_name(),
             "temperature": 0,
             "messages": [
                 {"role": "system", "content": system},

@@ -1,0 +1,30 @@
+<section class="coach-card" aria-live="polite" *ngIf="coach.view$ | async as view">
+  <header class="coach-head">
+    <h2 class="cs-kicker">{{ view.handover ? 'Handover' : 'Coach' }}</h2>
+    <span class="coach-source">{{ view.source }}</span>
+  </header>
+
+  <p class="coach-note">{{ view.note }}</p>
+
+  <p class="coach-offline" *ngIf="!view.connected">
+    Signal K is not connected. No sail advice until it is.
+  </p>
+
+  <p class="coach-header" *ngIf="view.header">{{ view.header }}</p>
+  <p class="coach-body" *ngIf="view.body">{{ view.body }}</p>
+
+  <ul class="coach-health" *ngIf="view.healthLines.length">
+    <li *ngFor="let line of view.healthLines">{{ line }}</li>
+  </ul>
+
+  <div class="coach-actions">
+    <button type="button" (click)="refresh()">Refresh</button>
+    <button type="button" (click)="toggleExpanded(view.expanded)" [attr.aria-pressed]="view.expanded">
+      {{ view.expanded ? 'Bottom line' : 'Full briefing' }}
+    </button>
+    <button type="button" (click)="toggleLongForm(view.longForm)" [attr.aria-pressed]="view.longForm">
+      Long form
+    </button>
+  </div>
+  <p class="coach-hold" *ngIf="view.holdNote">{{ view.holdNote }}</p>
+</section>

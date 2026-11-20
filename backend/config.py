@@ -30,9 +30,12 @@ class Settings(BaseSettings):
     # Azure OpenAI
     azure_openai_api_key: str
     azure_openai_endpoint: str
-    azure_openai_api_version: str = "2024-02-01"
+    # 2024-10-21 or newer is required for strict JSON schema responses.
+    azure_openai_api_version: str = "2024-10-21"
     azure_openai_embedding_deployment: str  # e.g. "text-embedding-3-small"
-    azure_openai_chat_deployment: str  # e.g. "gpt-4o"
+    azure_openai_chat_deployment: str  # Azure deployment name
+    # Optional model id when it differs from the deployment name. Env: AZURE_OPENAI_CHAT_MODEL.
+    azure_openai_chat_model: str | None = None
 
     # Database
     database_url: str  # postgresql://user:pass@host:5432/dbname

@@ -11,6 +11,7 @@ import { NotificationBridgeService } from './core/services/notification-bridge.s
 import { HouseBatteryWatchService } from './core/services/house-battery-watch.service';
 import { LogbookTriggerService } from './core/services/logbook-trigger.service';
 import { CoachInputsService } from './core/services/coach-inputs.service';
+import { CoachService } from './core/services/coach.service';
 import { SailWatchService } from './core/services/sail-watch.service';
 import { ThemeService } from './core/services/theme.service';
 import { VesselRouteService } from './core/services/vessel-route.service';
@@ -45,6 +46,7 @@ export class AppComponent {
     this.houseBattery.ensureRunning();
     this.logbook.ensureRunning();
     void inject(CoachInputsService);
+    void inject(CoachService);
     this.appUpdate.start();
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),

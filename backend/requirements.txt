@@ -6,7 +6,7 @@ llama-index-vector-stores-postgres
 llama-index-embeddings-azure-openai
 llama-index-llms-azure-openai
 llama-index-readers-file
-openai
+openai==2.44.0
 pypdf
 pydantic>=2.13.4
 pydantic-settings>=2.14.1

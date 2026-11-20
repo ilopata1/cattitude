@@ -26,6 +26,9 @@
       >
         {{ readerLabel }}
       </button>
+      <ion-button class="skip-btn" (click)="openCoach()">
+        Ask Skip
+      </ion-button>
       <ion-button class="emergency-btn" (click)="openEmergency()">
         <ion-icon name="help-buoy-outline" slot="start" aria-hidden="true"></ion-icon>
         Emergency
@@ -94,6 +97,21 @@
       </div>
 
       <button class="modal-close" (click)="closeEmergency()">Close</button>
+    </div>
+  </ng-template>
+</ion-modal>
+
+<ion-modal
+  [isOpen]="coachOpen"
+  [breakpoints]="emergencyBreakpoints"
+  [initialBreakpoint]="emergencyInitial"
+  [handle]="true"
+  (didDismiss)="closeCoach()"
+>
+  <ng-template>
+    <div class="modal-sheet coach-sheet">
+      <app-coach-card></app-coach-card>
+      <button class="modal-close" type="button" (click)="closeCoach()">Close</button>
     </div>
   </ng-template>
 </ion-modal>

@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { ContentService } from '../../../core/services/content.service';
+import { CoachService } from '../../../core/services/coach.service';
 import { EmergencyService } from '../../../core/services/emergency.service';
 import { ReaderViewService } from '../../../core/services/reader-view.service';
 import { VesselRouteService } from '../../../core/services/vessel-route.service';
@@ -31,6 +32,7 @@ export class AppHeaderComponent implements OnInit, OnDestroy {
   @Output() back = new EventEmitter<void>();
 
   emergencyOpen = false;
+  coachOpen = false;
   readonly emergencyBreakpoints = [0, 0.9];
   readonly emergencyInitial = 0.9;
   private emergencySub?: Subscription;
@@ -39,6 +41,7 @@ export class AppHeaderComponent implements OnInit, OnDestroy {
     public readonly content: ContentService,
     public readonly readerView: ReaderViewService,
     private readonly emergency: EmergencyService,
+    private readonly coach: CoachService,
     private readonly vesselRoutes: VesselRouteService,
     private readonly location: Location,
     private readonly router: Router,
@@ -96,6 +99,15 @@ export class AppHeaderComponent implements OnInit, OnDestroy {
     if (segments.length) {
       void this.vesselRoutes.navigateTabs(...segments);
     }
+  }
+
+  openCoach(): void {
+    this.coach.notePageEnter();
+    this.coachOpen = true;
+  }
+
+  closeCoach(): void {
+    this.coachOpen = false;
   }
 
   openEmergency(): void {

@@ -167,3 +167,18 @@ export const COACH_PERCENT_ROUND = 1;
 
 /** Waves this close to dead astern are a following sea. */
 export const FOLLOWING_STERN_DEG = 20;
+
+/** The snapshot window the briefing describes. */
+export const COACH_WINDOW_MIN = 30;
+
+/** The on-screen briefing stays as it is until this long has passed. */
+export const COACH_BRIEF_HOLD_MS = 10 * 60_000;
+
+/** Background snapshot rebuilds wait at least this long between runs. */
+export const COACH_REBUILD_MIN_MS = 60_000;
+
+/** Stream samples kept for the hour of wind trend. */
+export const COACH_SAMPLE_RETAIN_MS = 60 * 60_000;
+
+/** The rewrite call gives up after this, then the software text stays. */
+export const COACH_REWRITE_TIMEOUT_MS = 25_000;

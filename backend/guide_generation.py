@@ -12,6 +12,7 @@ from sqlalchemy import text
 from sqlalchemy.engine import Connection
 
 from config import settings
+from llm_client import build_chat_llm
 from content.audience import guest_steps_problem
 from guide_bootstrap import canonical_json_hash
 from guide_context_utils import emergency_contacts_count, merge_guide_context
@@ -98,14 +99,7 @@ def _parse_llm_json(raw: str) -> Any:
 
 
 def _build_llm() -> AzureOpenAI:
-    return AzureOpenAI(
-        model="gpt-4o",
-        deployment_name=settings.azure_openai_chat_deployment,
-        api_key=settings.azure_openai_api_key,
-        azure_endpoint=settings.azure_openai_endpoint,
-        api_version=settings.azure_openai_api_version,
-        temperature=0.2,
-    )
+    return build_chat_llm(0.2)
 
 
 def load_vessel_generation_context(conn: Connection, vessel_id: str) -> dict[str, Any]:

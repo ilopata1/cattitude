@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { AppHeaderComponent } from './components/app-header/app-header.component';
+import { CoachCardComponent } from './components/coach-card/coach-card.component';
 import { GuideChapterComponent } from './components/guide-chapter/guide-chapter.component';
 import { PhotoOverlayComponent } from './components/photo-overlay/photo-overlay.component';
 import { UiIconComponent } from './components/ui-icon/ui-icon.component';
@@ -25,6 +26,7 @@ import { CsWindDialComponent } from './components/viz/cs-wind-dial.component';
   ],
   declarations: [
     AppHeaderComponent,
+    CoachCardComponent,
     PhotoOverlayComponent,
     RichHtmlDirective,
     GuideChapterComponent,
@@ -33,6 +35,7 @@ import { CsWindDialComponent } from './components/viz/cs-wind-dial.component';
   ],
   exports: [
     AppHeaderComponent,
+    CoachCardComponent,
     PhotoOverlayComponent,
     RichHtmlDirective,
     GuideChapterComponent,

@@ -18,6 +18,7 @@ from db import postgres_connection_strings
 from english_text import extract_english
 from guide_api import router as guide_router
 from instrument_map_api import router as instrument_map_router
+from coach_api import router as coach_router
 from logbook_api import router as logbook_router
 from duty_rota_api import router as duty_rota_router
 from inspection_api import router as inspection_router
@@ -31,6 +32,9 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def _app_lifespan(_app: FastAPI):
+    from llm_client import require_structured_output_api_version
+
+    require_structured_output_api_version()
     from guide_assets_service import seed_missing_guide_assets
 
     copied = seed_missing_guide_assets()
@@ -45,6 +49,7 @@ app.include_router(guide_router)
 app.include_router(sail_plan_router)
 app.include_router(instrument_map_router)
 app.include_router(logbook_router)
+app.include_router(coach_router)
 app.include_router(duty_rota_router)
 app.include_router(inspection_router)
 app.include_router(admin_router)

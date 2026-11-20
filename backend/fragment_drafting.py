@@ -16,6 +16,7 @@ from sqlalchemy import text
 from sqlalchemy.engine import Connection
 
 from config import settings
+from llm_client import build_chat_llm
 from content.loader import load_yaml_cached
 from guide_system_assembly import draft_target_systems
 from manual_retrieval import retrieve_manual_excerpts
@@ -217,14 +218,7 @@ def _parse_llm_json(raw: str) -> dict[str, Any]:
 
 
 def _build_llm() -> AzureOpenAI:
-    return AzureOpenAI(
-        model="gpt-4o",
-        deployment_name=settings.azure_openai_chat_deployment,
-        api_key=settings.azure_openai_api_key,
-        azure_endpoint=settings.azure_openai_endpoint,
-        api_version=settings.azure_openai_api_version,
-        temperature=0.1,
-    )
+    return build_chat_llm(0.1)
 
 
 def _collect_retrieval_queries(

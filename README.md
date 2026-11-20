@@ -362,7 +362,9 @@ Bulk ingest helper: `utilities/ingest_all_manuals.py`. Clear vectors: `utilities
 | `AZURE_OPENAI_API_KEY` | Azure OpenAI |
 | `AZURE_OPENAI_ENDPOINT` | Azure endpoint URL |
 | `AZURE_OPENAI_EMBEDDING_DEPLOYMENT` | e.g. `text-embedding-3-small` |
-| `AZURE_OPENAI_CHAT_DEPLOYMENT` | e.g. `gpt-4o` |
+| `AZURE_OPENAI_API_VERSION` | `2024-10-21` or newer (strict JSON schema) |
+| `AZURE_OPENAI_CHAT_DEPLOYMENT` | Azure deployment name |
+| `AZURE_OPENAI_CHAT_MODEL` | Optional model id; defaults to the deployment name |
 | `CORS_ORIGINS` | Comma-separated browser origins |
 | `ADMIN_USERNAME` | Admin portal Basic Auth username (default `admin`) |
 | `ADMIN_PASSWORD` | Admin portal password (required to use `/admin`; empty disables login) |

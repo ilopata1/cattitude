@@ -173,6 +173,34 @@
   text-overflow: ellipsis;
 }
 
+.skip-btn {
+  --background: transparent;
+  --color: var(--cattitude-on-navy);
+  --border-color: var(--cattitude-on-navy-line);
+  --border-width: 1px;
+  --border-style: solid;
+  --border-radius: 20px;
+  --padding-start: 14px;
+  --padding-end: 14px;
+  font-size: var(--cattitude-text-sm);
+  font-weight: 600;
+  text-transform: none;
+
+  @media (max-width: 480px) {
+    --padding-start: 10px;
+    --padding-end: 10px;
+  }
+}
+
+.coach-sheet {
+  background: var(--cattitude-sand);
+  color: var(--cattitude-text-dark);
+
+  .modal-close {
+    color: var(--cattitude-text-dark);
+  }
+}
+
 .emergency-btn {
   --background: var(--cattitude-coral);
   --color: var(--cattitude-text-on-fill);

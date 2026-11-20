@@ -19,6 +19,7 @@ from openai import BadRequestError
 from pydantic import BaseModel, Field, field_validator
 
 from config import settings
+from llm_client import build_chat_llm
 from db import postgres_connection_strings
 from english_text import extract_english
 from prompts.ask.registry import get_ask_text
@@ -222,13 +223,7 @@ def _build_embed_model() -> AzureOpenAIEmbedding:
 
 
 def _build_llm() -> AzureOpenAI:
-    return AzureOpenAI(
-        model="gpt-4o",
-        deployment_name=settings.azure_openai_chat_deployment,
-        api_key=settings.azure_openai_api_key,
-        azure_endpoint=settings.azure_openai_endpoint,
-        api_version=settings.azure_openai_api_version,
-    )
+    return build_chat_llm(None)
 
 
 def _build_index(embed_model: AzureOpenAIEmbedding) -> VectorStoreIndex:
