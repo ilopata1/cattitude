@@ -182,3 +182,18 @@ export const COACH_SAMPLE_RETAIN_MS = 60 * 60_000;
 
 /** The rewrite call gives up after this, then the software text stays. */
 export const COACH_REWRITE_TIMEOUT_MS = 25_000;
+
+/** A stored A/B test matches the present wind inside this true-wind-speed gap. */
+export const AB_EVIDENCE_TWS_KN = 3;
+
+/** A stored A/B test matches the present true wind angle inside this gap. */
+export const AB_EVIDENCE_TWA_DEG = 15;
+
+/** A stored A/B test is quoted only at this confidence or higher. */
+export const AB_EVIDENCE_CONFIDENCE_PCT = 70;
+
+/** Passage summaries are written on this interval. */
+export const COACH_SUMMARY_MS = 10 * 60_000;
+
+/** Summaries stay this long after the passage arrives, then they are dropped. */
+export const COACH_SUMMARY_RETAIN_MS = 7 * 24 * 60 * 60 * 1000;

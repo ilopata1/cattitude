@@ -498,6 +498,32 @@ export function buildReport(session: AbSession): AbReport | null {
   };
 }
 
+export interface AbArchiveFacts {
+  meanTwsKn: number | null;
+  meanTwaDeg: number | null;
+  vmgWinner: 'A' | 'B' | 'tie';
+  vmgConfidencePct: number | null;
+  vmgAPct: number | null;
+  vmgBPct: number | null;
+}
+
+/** Mean wind and VMG from the same scored samples the report uses. */
+export function abArchiveFacts(session: AbSession): AbArchiveFacts | null {
+  const report = buildReport(session);
+  if (!report) return null;
+  const course = courseOf(session.setup);
+  const sideA = combineSide(session.legs.filter((leg) => leg.id === 'A').map((leg) => scoreLeg(leg, course)));
+  const sideB = combineSide(session.legs.filter((leg) => leg.id === 'B').map((leg) => scoreLeg(leg, course)));
+  return {
+    meanTwsKn: averageOrNull(finite([sideA.windSpeed.mean, sideB.windSpeed.mean])),
+    meanTwaDeg: averageOrNull(finite([sideA.twa, sideB.twa])),
+    vmgWinner: report.vmg.winner,
+    vmgConfidencePct: report.vmg.confidencePct,
+    vmgAPct: sideA.vmgPct.mean,
+    vmgBPct: sideB.vmgPct.mean,
+  };
+}
+
 function metric(label: string, a: string, b: string, focus = false, ahead: 'A' | 'B' | null = null): AbRow {
   return { kind: 'metric', label, a, b, focus, ahead };
 }

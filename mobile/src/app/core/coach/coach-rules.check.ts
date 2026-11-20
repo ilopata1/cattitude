@@ -3,6 +3,7 @@ import { SailPlan, SailPlanCell } from '../models/sail-plan.model';
 import { NEAR_TWA_ENTER_DEG, NEAR_TWS_ENTER_KN } from '../services/sail-plan-advisor';
 import { emptyEstimate, WaveEstimate } from '../waves/wave-estimator';
 import { COACH_INPUT_ORDER } from './coach-inputs';
+import { CoachAbRecord } from './coach-memory';
 import { CoachFinding, CoachSnapshot, Stat } from './coach.model';
 import { coachFindings } from './coach-rules';
 import {
@@ -300,7 +301,37 @@ export function coachRuleFailures(): string[] {
   expect(!moreSail, 'no finding recommends more sail than the sail plan cell');
   expect([...mismatch, ...heavy, ...lee, ...ordered].every(item => grounded(item) && !item.text.includes('!')), 'findings stay grounded and unexclaimed');
 
+  const similar = coachFindings(base(), { abTests: [abRecord()] });
+  const quoted = one(similar, 'performance.ab-evidence');
+  expect(quoted?.text === 'In similar wind (21 Jun 2026), B (traveller down) beat A by 10% VMG at 80% confidence.', `similar wind quotes the test, got ${quoted?.text}`);
+  expect(grounded(quoted), 'the quoted test keeps its numbers in evidence');
+  const windFar = coachFindings(base(), { abTests: [abRecord({ meanTwsKn: 18 })] });
+  expect(!windFar.some(item => item.id === 'performance.ab-evidence'), '4 kn away is not similar wind');
+  const quietConfidence = coachFindings(base(), { abTests: [abRecord({ vmgConfidencePct: 69 })] });
+  expect(!quietConfidence.some(item => item.id === 'performance.ab-evidence'), '69% confidence stays quiet');
+  const staleTws = base();
+  staleTws.dataHealth = staleTws.dataHealth.map(row => row.input === 'tws' ? { ...row, status: 'stale' } : row);
+  expect(
+    !coachFindings(staleTws, { abTests: [abRecord()] }).some(item => item.id === 'performance.ab-evidence'),
+    'stale true wind speed does not quote a stored test',
+  );
+
   return failures;
+}
+
+function abRecord(partial: Partial<CoachAbRecord> = {}): CoachAbRecord {
+  return {
+    id: 'test',
+    finishedAt: Date.UTC(2026, 5, 21),
+    settingA: 'traveller up',
+    settingB: 'traveller down',
+    meanTwsKn: 14,
+    meanTwaDeg: 60,
+    vmgWinner: 'B',
+    vmgConfidencePct: 80,
+    vmgDeltaPct: 10,
+    ...partial,
+  };
 }
 
 function one(findings: CoachFinding[], id: string): CoachFinding | undefined {

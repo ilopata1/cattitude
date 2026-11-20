@@ -10,6 +10,7 @@
 import { windVmgKnots } from '../ab-test/ab-test';
 import { SailPlan, bandsFromCuts } from '../models/sail-plan.model';
 import { findBandIndex, NEAR_TWA_ENTER_DEG, NEAR_TWS_ENTER_KN } from '../services/sail-plan-advisor';
+import { abEvidenceText, matchingAbRecord, CoachAbRecord } from './coach-memory';
 import { CoachFinding, CoachSection, CoachSnapshot, Confidence } from './coach.model';
 import { COACH_INPUT_LABELS, CoachInputId } from './coach-inputs';
 import {
@@ -48,6 +49,8 @@ export interface CoachRulesOptions {
   minutesToNight?: number | null;
   /** Overrides the nose-dive default for a caller that has confirmed wave direction. */
   noseDiveEnabled?: boolean;
+  /** Finished A/B tests stored on this phone. */
+  abTests?: readonly CoachAbRecord[];
 }
 
 const SEVERITY_RANK = { action: 0, prepare: 1, info: 2 };
@@ -76,6 +79,7 @@ export function coachFindings(snapshot: CoachSnapshot, options: CoachRulesOption
     balanceWorkload(snapshot),
     performanceLowPolar(snapshot),
     performanceSensor(snapshot),
+    performanceAbEvidence(snapshot, options.abTests ?? []),
     wavesAngle(snapshot, options.polarTargetKn),
     wavesSteep(snapshot),
     wavesUnusable(snapshot),
@@ -500,6 +504,33 @@ function swellCaveat(): CoachFinding {
     text: 'Peak period may be swell rather than the wind waves the boat surfs.',
     evidence: {},
     requires: [],
+  });
+}
+
+function performanceAbEvidence(
+  snapshot: CoachSnapshot,
+  records: readonly CoachAbRecord[],
+): CoachFinding | null {
+  if (!ready(snapshot, ['tws', 'twa'])) return null;
+  const record = matchingAbRecord(snapshot.wind.tws.mean, snapshot.wind.twa.mean, records);
+  if (!record || record.meanTwsKn == null || record.meanTwaDeg == null) return null;
+  if (record.vmgDeltaPct == null || record.vmgConfidencePct == null) return null;
+  const text = abEvidenceText(record);
+  if (!text) return null;
+  return finding({
+    id: 'performance.ab-evidence',
+    section: 'performance',
+    severity: 'info',
+    confidence: 'high',
+    text,
+    evidence: {
+      twsKn: record.meanTwsKn,
+      twaDeg: record.meanTwaDeg,
+      vmgDeltaPct: record.vmgDeltaPct,
+      confidencePct: record.vmgConfidencePct,
+    },
+    requires: ['tws', 'twa'],
+    direction: 'none',
   });
 }
 

@@ -11,6 +11,7 @@ import { SailPlan } from '../models/sail-plan.model';
 import { adviseSailPlan } from '../services/sail-plan-advisor';
 import { WaveEstimate } from '../waves/wave-estimator';
 import { CurrentDrift, SurfSample } from './coach-features';
+import { CoachAbRecord } from './coach-memory';
 import { CoachInputHealth } from './coach-inputs';
 import { CoachFinding, CoachSnapshot } from './coach.model';
 import { coachFindings } from './coach-rules';
@@ -39,6 +40,7 @@ export interface CoachAssembly {
   vessel: CoachSnapshot['vessel'];
   watch: { at: number; name: string; minutes: number } | null;
   minutesToNight: number | null;
+  abTests?: readonly CoachAbRecord[];
 }
 
 export interface CoachAssemblyResult {
@@ -96,6 +98,7 @@ export function assembleCoach(input: CoachAssembly): CoachAssemblyResult {
     polarTargetKn: input.polarTargetKn,
     sailPlan: input.plan,
     minutesToNight: input.minutesToNight,
+    abTests: input.abTests ?? [],
   });
   return { snapshot, findings };
 }

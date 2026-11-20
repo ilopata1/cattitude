@@ -12,6 +12,7 @@
 
   <p class="coach-header" *ngIf="view.header">{{ view.header }}</p>
   <p class="coach-body" *ngIf="view.body">{{ view.body }}</p>
+  <p class="coach-body" *ngIf="view.sinceWatch">{{ view.sinceWatch }}</p>
 
   <ul class="coach-health" *ngIf="view.healthLines.length">
     <li *ngFor="let line of view.healthLines">{{ line }}</li>

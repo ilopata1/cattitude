@@ -9,6 +9,7 @@ import { Injectable, OnDestroy, inject } from '@angular/core';
 import { BehaviorSubject, Subscription, firstValueFrom, interval } from 'rxjs';
 import { timeout } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
+import { AbReport, buildReport } from '../ab-test/ab-test';
 import { assembleCoach } from '../coach/coach-assemble';
 import { coachBriefing } from '../coach/coach-briefing';
 import {
@@ -23,6 +24,19 @@ import {
   rebuildMayRun,
 } from '../coach/coach-display';
 import { CoachInputHealth, formatCoachInputLine } from '../coach/coach-inputs';
+import {
+  CoachAbRecord,
+  CoachSummary,
+  RememberedPassage,
+  coachAbRecord,
+  keepSummaries,
+  rememberPassage,
+  sinceWatchLine,
+  summaryDue,
+  summaryFromSnapshot,
+  summaryHasFacts,
+  watchStartedAt,
+} from '../coach/coach-memory';
 import { CoachFinding, CoachSnapshot } from '../coach/coach.model';
 import { CoachStreamSample } from '../coach/coach-snapshot';
 import {
@@ -32,6 +46,8 @@ import {
 import { coachSamplesFromDelta, rememberCoachSample } from '../coach/coach-stream';
 import { PolarSample, PolarWindowMinutes } from '../models/polar.model';
 import { hullTypeForVessel, resolveWaveConfig } from '../waves/wave-settings';
+import { AbTestService } from './ab-test.service';
+import { CoachStoreService, StoredCoachTest } from './coach-store.service';
 import { ContentService } from './content.service';
 import { CurrentSailService } from './current-sail.service';
 import { DutyRotaService } from './duty-rota.service';
@@ -57,6 +73,7 @@ export interface CoachView {
   note: string;
   handover: boolean;
   holdNote: string | null;
+  sinceWatch: string | null;
 }
 
 interface HeldText {
@@ -82,6 +99,7 @@ const EMPTY_VIEW: CoachView = {
   note: COACH_OPEN_NOTE,
   handover: false,
   holdNote: null,
+  sinceWatch: null,
 };
 
 @Injectable({ providedIn: 'root' })
@@ -100,6 +118,8 @@ export class CoachService implements OnDestroy {
   private readonly content = inject(ContentService);
   private readonly vessel = inject(VesselContextService);
   private readonly notifications = inject(NotificationBridgeService);
+  private readonly memory = inject(CoachStoreService);
+  private readonly abTests = inject(AbTestService);
 
   private readonly viewSubject = new BehaviorSubject<CoachView>(EMPTY_VIEW);
   readonly view$ = this.viewSubject.asObservable();
@@ -120,6 +140,11 @@ export class CoachService implements OnDestroy {
   private rewriteToken = 0;
   private rewritePending = false;
   private readonly openPush = new Set<string>();
+  private abRecords: CoachAbRecord[] = [];
+  private summaries: CoachSummary[] = [];
+  private passages: RememberedPassage[] = [];
+  private lastSummaryAt: number | null = null;
+  private savedAbId = '';
 
   constructor() {
     this.polar.start();
@@ -154,6 +179,24 @@ export class CoachService implements OnDestroy {
       this.scheduleRebuild();
     }));
     this.subs.add(interval(COACH_BRIEF_HOLD_MS).subscribe(() => this.scheduleRebuild()));
+    this.subs.add(this.abTests.session$.subscribe(session => {
+      if (session.phase !== 'results') return;
+      const finishedAt = Date.now();
+      const record = coachAbRecord(session, finishedAt);
+      const report = buildReport(session);
+      if (!record || !report || record.id === this.savedAbId) return;
+      this.savedAbId = record.id;
+      void this.rememberTest(record, report);
+    }));
+    void this.memory.load().then(stored => {
+      this.abRecords = stored.tests;
+      this.summaries = stored.summaries;
+      this.passages = stored.passages;
+      this.lastSummaryAt = stored.summaries.length
+        ? stored.summaries[stored.summaries.length - 1].at
+        : null;
+      this.scheduleRebuild();
+    }).catch(() => undefined);
   }
 
   ngOnDestroy(): void {
@@ -253,8 +296,10 @@ export class CoachService implements OnDestroy {
       },
       watch: nextWatchChange(this.duty.rota(), nowMs),
       minutesToNight: minutesUntilNight(position, nowMs),
+      abTests: this.abRecords,
     });
     this.latest = result;
+    this.noteSummary(result.snapshot, nowMs);
     if (this.connected) this.notify(result.findings);
     this.publish();
   }
@@ -332,6 +377,7 @@ export class CoachService implements OnDestroy {
       note: COACH_OPEN_NOTE,
       handover: false,
       holdNote: null,
+      sinceWatch: null,
     };
     if (!this.connected || !this.held || !this.latest) return view;
     const full = this.longForm ? (this.held.llm ?? this.held.long) : this.held.short;
@@ -346,7 +392,40 @@ export class CoachService implements OnDestroy {
       source: this.longForm && this.held.llm ? 'AI-written' : 'software',
       handover,
       holdNote: left > 0 ? `Same briefing for ${Math.ceil(left / 60_000)} min.` : null,
+      sinceWatch: handover
+        ? sinceWatchLine(this.summaries, watchStartedAt(this.duty.rota(), this.latest.snapshot.builtAt), this.latest.snapshot.builtAt)
+        : null,
     };
+  }
+
+  private noteSummary(snapshot: CoachSnapshot, nowMs: number): void {
+    const passage = this.logbook.passage$.value;
+    this.passages = rememberPassage(
+      this.passages,
+      passage ? { id: passage.id, arrivedAt: passage.arrivedAt } : null,
+      nowMs,
+    );
+    if (!this.connected || !summaryDue(this.lastSummaryAt, nowMs)) {
+      this.summaries = keepSummaries(this.summaries, this.passages, nowMs);
+      return;
+    }
+    const row = summaryFromSnapshot(snapshot, passage?.id ?? null);
+    if (!summaryHasFacts(row)) return;
+    this.lastSummaryAt = row.at;
+    this.summaries = keepSummaries([...this.summaries, row], this.passages, nowMs);
+    void this.memory.saveMemory(row, this.passages, nowMs).then(stored => {
+      this.abRecords = stored.tests;
+      this.summaries = stored.summaries;
+      this.passages = stored.passages;
+      this.publish();
+    }).catch(() => undefined);
+  }
+
+  private rememberTest(record: CoachAbRecord, report: AbReport): Promise<void> {
+    const stored: StoredCoachTest = { ...record, report };
+    this.abRecords = [record, ...this.abRecords.filter(item => item.id !== record.id)];
+    this.scheduleRebuild();
+    return this.memory.saveTest(stored);
   }
 
   private vesselType(): string | null {
