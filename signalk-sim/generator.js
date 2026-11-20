@@ -136,7 +136,7 @@ function sailingDelta(opts) {
   const target = polarTarget(twaDeg, twsKnots);
   const stw = target * polarPct;
   const headingTrue = normBearing(windDirDeg + twaDeg);
-  return vesselDelta(SELF_CTX, {
+  const raw = JSON.parse(vesselDelta(SELF_CTX, {
     lat, lon,
     headingTrue,
     cog: headingTrue,
@@ -149,7 +149,15 @@ function sailingDelta(opts) {
     twsKnots,
     twaDeg,
     windDirDeg,
-  });
+  }));
+  // The sailing scenario otherwise publishes no helm or motion. These are
+  // steady stand-ins so the coach can see the paths, not a sea model.
+  // Rudder is radians, positive to starboard, matching NMEA RSA.
+  const values = raw.updates[0].values;
+  values.push({ path: 'steering.rudderAngle', value: 0.04 });
+  values.push({ path: 'steering.autopilot.state', value: 'auto' });
+  values.push({ path: 'navigation.attitude', value: { yaw: 0, pitch: 0.01, roll: -0.02 } });
+  return JSON.stringify(raw);
 }
 
 function advanceSailing(lat, lon, headingDeg, stwKnots, dtSec) {

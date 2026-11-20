@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { BehaviorSubject, Subject } from 'rxjs';
+import { CoachInputsService } from '../../core/services/coach-inputs.service';
 import { FUEL_CURVE_STORAGE_KEY } from '../../core/services/fuel-curve-settings.service';
 import { WAVE_SETTINGS_KEY } from '../../core/services/wave-settings.service';
 import { HOUSE_BATTERY_PERCENT_KEY } from '../../core/services/house-battery-settings.service';
@@ -18,8 +19,10 @@ describe('SettingsPage notifications', () => {
   let fixture: ComponentFixture<SettingsPage>;
   let prefs: NotificationPreferenceService;
   let allowFromUserGesture: jasmine.Spy;
+  const coachHealth = new BehaviorSubject<{ input: string; status: string; ageMs: null; ratePerMin: null; samples: number }[]>([]);
 
   beforeEach(async () => {
+    coachHealth.next([]);
     localStorage.removeItem('cattitude.notifications.enabled');
     localStorage.removeItem(FUEL_CURVE_STORAGE_KEY);
     localStorage.removeItem(HOUSE_BATTERY_PERCENT_KEY);
@@ -39,9 +42,14 @@ describe('SettingsPage notifications', () => {
             state$: new BehaviorSubject('disconnected'),
             self$: new BehaviorSubject(''),
             error$: new Subject<string>(),
+            delta$: new Subject(),
             connect: () => undefined,
             disconnect: () => undefined,
           },
+        },
+        {
+          provide: CoachInputsService,
+          useValue: { health$: coachHealth },
         },
         {
           provide: ContentService,
@@ -104,6 +112,14 @@ describe('SettingsPage notifications', () => {
 
     expect(allowFromUserGesture).toHaveBeenCalledTimes(1);
     expect(fixture.componentInstance.devicePermission).toBe('granted');
+  });
+
+  it('lists each coach input as missing, stale, or OK', () => {
+    coachHealth.next([{ input: 'tws', status: 'missing', ageMs: null, ratePerMin: null, samples: 0 }]);
+    fixture.detectChanges();
+    const text = fixture.nativeElement.textContent as string;
+    expect(text).toContain('Coach data health');
+    expect(text).toContain('True wind speed — Missing');
   });
 
   it('hides the browser prompt when alerts are turned off', () => {

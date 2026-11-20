@@ -9,6 +9,7 @@ import { LevelsService } from './core/services/levels.service';
 import { NotificationBridgeService } from './core/services/notification-bridge.service';
 import { HouseBatteryWatchService } from './core/services/house-battery-watch.service';
 import { LogbookTriggerService } from './core/services/logbook-trigger.service';
+import { CoachInputsService } from './core/services/coach-inputs.service';
 import { SailWatchService } from './core/services/sail-watch.service';
 import { WaveEstimatorService } from './core/services/wave-estimator.service';
 
@@ -27,6 +28,7 @@ describe('AppComponent', () => {
         { provide: SailWatchService, useValue: { ensureRunning: () => undefined } },
         { provide: HouseBatteryWatchService, useValue: { ensureRunning: () => undefined } },
         { provide: LogbookTriggerService, useValue: { ensureRunning: () => undefined } },
+        { provide: CoachInputsService, useValue: {} },
         { provide: AppUpdateService, useValue: { start: () => undefined } },
       ],
     }).compileComponents();

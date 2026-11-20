@@ -359,6 +359,28 @@
 
     <ion-list inset="true" lines="none" class="settings-list">
       <ion-list-header>
+        <ion-label class="cs-kicker">Coach data health</ion-label>
+      </ion-list-header>
+      <ion-item>
+        <div class="settings-row">
+          <p class="settings-hint">
+            Each reading the sailing coach uses. A missing or stale input is left out of the briefing.
+          </p>
+          <ul class="health-list">
+            <li
+              *ngFor="let row of coachHealth"
+              [class.health-stale]="row.status === 'stale'"
+              [class.health-missing]="row.status === 'missing'"
+            >
+              {{ formatCoachHealth(row) }}
+            </li>
+          </ul>
+        </div>
+      </ion-item>
+    </ion-list>
+
+    <ion-list inset="true" lines="none" class="settings-list">
+      <ion-list-header>
         <ion-label class="cs-kicker">Instruments</ion-label>
       </ion-list-header>
       <ion-item>

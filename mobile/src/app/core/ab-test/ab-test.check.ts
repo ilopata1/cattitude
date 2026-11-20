@@ -27,7 +27,7 @@ import {
 
 export function abTestFailures(): string[] {
   const failures: string[] = [];
-  const expect = (condition: boolean, message: string) => {
+  const expect = (condition: boolean | undefined, message: string) => {
     if (!condition) failures.push(message);
   };
 

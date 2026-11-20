@@ -11,6 +11,8 @@ import {
 } from '../../core/fuel/fuel-range';
 import { formatHousePercent, houseBatteryPercentFromText } from '../../core/levels/house-battery';
 import { isSailingVessel } from '../../core/guide/more-menu';
+import { CoachInputHealth, formatCoachInputLine } from '../../core/coach/coach-inputs';
+import { CoachInputsService } from '../../core/services/coach-inputs.service';
 import { ContentService } from '../../core/services/content.service';
 import { FuelCurveSettingsService } from '../../core/services/fuel-curve-settings.service';
 import { HouseBatterySettingsService } from '../../core/services/house-battery-settings.service';
@@ -56,6 +58,8 @@ export class SettingsPage implements OnInit, OnDestroy {
   waveOpen = false;
   hullType: HullType = 'mono';
   waveError = '';
+  coachHealth: CoachInputHealth[] = [];
+  readonly formatCoachHealth = formatCoachInputLine;
   lWlControl = new FormControl('');
   bRollControl = new FormControl('');
   tRollControl = new FormControl('');
@@ -77,6 +81,7 @@ export class SettingsPage implements OnInit, OnDestroy {
     private readonly route: ActivatedRoute,
     private readonly notificationPrefs: NotificationPreferenceService,
     private readonly notifications: NotificationBridgeService,
+    private readonly coachInputs: CoachInputsService,
     readonly theme: ThemeService,
   ) {
     this.alertsEnabled = this.notificationPrefs.enabled();
@@ -103,6 +108,7 @@ export class SettingsPage implements OnInit, OnDestroy {
       }),
       this.sk.self$.subscribe(self => { this.selfContext = self; }),
       this.sk.error$.subscribe(err => { this.lastError = err; }),
+      this.coachInputs.health$.subscribe(rows => { this.coachHealth = rows; }),
     );
   }
 

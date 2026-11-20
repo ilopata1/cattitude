@@ -750,10 +750,15 @@ function formatHelm(value: number | null): string {
   return `${abs.toFixed(1)}° ${value > 0 ? 'weather' : 'lee'}`;
 }
 
+/** Wind VMG. Downwind flips the sign so a run toward the wind's destination stays positive. */
+export function windVmgKnots(speedKn: number, twaDeg: number, downwind: boolean): number {
+  const upwind = speedKn * Math.cos((twaDeg * Math.PI) / 180);
+  return downwind ? -upwind : upwind;
+}
+
 function progressVmg(sample: AbSample, mode: PointOfSail): number | null {
   if (sample.vmgSpeedKn == null || sample.twaDeg == null) return null;
-  const upwind = sample.vmgSpeedKn * Math.cos((sample.twaDeg * Math.PI) / 180);
-  return mode === 'downwind' ? -upwind : upwind;
+  return windVmgKnots(sample.vmgSpeedKn, sample.twaDeg, mode === 'downwind');
 }
 
 function progressPct(sample: AbSample, mode: PointOfSail): number | null {
@@ -842,7 +847,7 @@ function rmsDegrees(points: { v: number }[]): number | null {
   return rmsDemean(points.map((point) => (point.v * 180) / Math.PI));
 }
 
-function rmsDemean(values: number[]): number | null {
+export function rmsDemean(values: number[]): number | null {
   if (values.length < 16) return null;
   const mean = average(values);
   let sum = 0;
@@ -978,7 +983,7 @@ function scored<T extends { tOffsetMs: number }>(points: T[]): T[] {
   return points.filter((point) => point.tOffsetMs >= AB_SETTLE_MS && point.tOffsetMs < AB_BLOCK_MS);
 }
 
-function slopePerMinute(timesMs: number[], values: number[]): number | null {
+export function slopePerMinute(timesMs: number[], values: number[]): number | null {
   const n = values.length;
   if (n < 3 || timesMs.length !== n) return null;
   let sumT = 0;
@@ -997,7 +1002,7 @@ function slopePerMinute(timesMs: number[], values: number[]): number | null {
   return (n * sumTY - sumT * sumY) / den;
 }
 
-function circularMeanDeg(degrees: number[]): number | null {
+export function circularMeanDeg(degrees: number[]): number | null {
   if (!degrees.length) return null;
   let sin = 0;
   let cos = 0;
@@ -1009,7 +1014,7 @@ function circularMeanDeg(degrees: number[]): number | null {
   return (Math.atan2(sin, cos) * 180 / Math.PI + 360) % 360;
 }
 
-function circularSdDeg(degrees: number[]): number | null {
+export function circularSdDeg(degrees: number[]): number | null {
   if (degrees.length < 2) return null;
   let sin = 0;
   let cos = 0;
@@ -1024,7 +1029,7 @@ function circularSdDeg(degrees: number[]): number | null {
   return Math.sqrt(-2 * Math.log(radius)) * (180 / Math.PI);
 }
 
-function unwrapDegrees(degrees: number[]): number[] {
+export function unwrapDegrees(degrees: number[]): number[] {
   if (!degrees.length) return [];
   const out = [degrees[0]];
   for (let i = 1; i < degrees.length; i++) {
@@ -1082,7 +1087,7 @@ function finite(values: Array<number | null | undefined>): number[] {
   return out;
 }
 
-function sampleSd(values: number[]): number {
+export function sampleSd(values: number[]): number {
   if (values.length < 2) return 0;
   const mean = average(values);
   let sum = 0;

@@ -258,6 +258,6 @@ function asPosition(value: unknown): { lat: number; lon: number } | null {
   return { lat: point.latitude, lon: point.longitude };
 }
 
-function stripVessel(path: string): string {
+export function stripVessel(path: string): string {
   return path.replace(/^self\./, '').replace(/^vessels\.[^.]+\./, '');
 }

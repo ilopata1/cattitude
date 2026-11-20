@@ -10,6 +10,7 @@ import { EmergencyService } from './core/services/emergency.service';
 import { NotificationBridgeService } from './core/services/notification-bridge.service';
 import { HouseBatteryWatchService } from './core/services/house-battery-watch.service';
 import { LogbookTriggerService } from './core/services/logbook-trigger.service';
+import { CoachInputsService } from './core/services/coach-inputs.service';
 import { SailWatchService } from './core/services/sail-watch.service';
 import { ThemeService } from './core/services/theme.service';
 import { VesselRouteService } from './core/services/vessel-route.service';
@@ -43,6 +44,7 @@ export class AppComponent {
     this.sailWatch.ensureRunning();
     this.houseBattery.ensureRunning();
     this.logbook.ensureRunning();
+    void inject(CoachInputsService);
     this.appUpdate.start();
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),
