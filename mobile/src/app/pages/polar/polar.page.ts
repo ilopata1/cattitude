@@ -11,7 +11,6 @@ import {
   PolarWindowMinutes,
   PolarWindowSet,
 } from '../../core/models/polar.model';
-import { CoachService } from '../../core/services/coach.service';
 import { PolarService } from '../../core/services/polar.service';
 import { POLAR_BUFFER_MS, holdWindowDisplay, HeldWindow } from '../../core/services/polar-window';
 import { SignalKService } from '../../core/services/signal-k.service';
@@ -90,7 +89,6 @@ export class PolarPage implements OnInit, OnDestroy {
   readonly mainReefOptions = MAIN_REEF_OPTIONS;
 
   private readonly polar = inject(PolarService);
-  private readonly coach = inject(CoachService);
   private readonly sk = inject(SignalKService);
   private readonly sampler = inject(LogbookSamplerService);
   private readonly sailPlans = inject(SailPlanService);
@@ -144,10 +142,6 @@ export class PolarPage implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       }),
     );
-  }
-
-  ionViewDidEnter(): void {
-    this.coach.notePageEnter();
   }
 
   ngOnDestroy(): void {

@@ -208,7 +208,7 @@ export class NotificationBridgeService implements OnDestroy {
     if (severity === 'emergency' || path.includes('anchor')) {
       return { label: 'Open Anchorage', route: ['more', 'anchorage'] };
     }
-    if (path.startsWith('sail-plan')) {
+    if (path.startsWith('sail-plan') || path.startsWith('coach.gust')) {
       return { label: 'Open Polar', route: ['more', 'polar'] };
     }
     if (path.startsWith('house-battery')) {

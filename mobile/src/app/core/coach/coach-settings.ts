@@ -66,6 +66,12 @@ export const STW_RESIDUAL_FRACTION = 0.07;
 /** Gusts this far above the mean are a reason to set sail for the gust, not the average. */
 export const GUST_SPREAD_KN = 6;
 
+/**
+ * A gust warning that has gone quiet can be sent again after this.
+ * A shorter gap, or a new gust speed in the same warning, stays quiet.
+ */
+export const GUST_WARNING_QUIET_MS = 30 * 60_000;
+
 /** Reef-before-dark looks this far ahead of sunset. */
 export const REEF_BEFORE_DARK_MIN = 60;
 

@@ -1,7 +1,9 @@
 /**
- * What the coach may show, and which less-sail findings may notify.
- * The on-screen text changes only after the hold, and only when the page
- * is opened again or Refresh is pressed.
+ * What the coach may show, and when the gust warning may notify.
+ * The on-screen briefing changes only after the hold, and only when Ask
+ * Skip is opened or Refresh is pressed. Sail-plan changes are notified
+ * from the Polar watch and do not pass through the gust repeat check:
+ * stripping the numbers would treat reef 1 and reef 2 as the same warning.
  */
 
 import { DutyRota, dutySlots } from '../duty/duty-rota';
@@ -11,8 +13,11 @@ import {
   COACH_BRIEF_HOLD_MS,
   COACH_NIGHT_ELEVATION_MAX_DEG,
   COACH_REBUILD_MIN_MS,
+  GUST_WARNING_QUIET_MS,
   WATCH_HANDOVER_MIN,
 } from './coach-settings';
+
+const GUST_WARNING_ID = 'sails.reef-gust-spread';
 
 export const COACH_OPEN_NOTE = 'Coach updates while this app is open.';
 
@@ -20,10 +25,16 @@ export interface HeldBrief {
   generatedAt: number;
 }
 
+export interface GustWarningMemory {
+  /** Warning with the speeds removed. Null until one has been sent. */
+  signature: string | null;
+  /** When the gust warning last dropped out. Null while it is active. */
+  absentSinceMs: number | null;
+}
+
 export interface CoachPushDecision {
   notify: { id: string; text: string }[];
-  /** Finding ids still active. A cleared id can notify again next time. */
-  open: string[];
+  memory: GustWarningMemory;
 }
 
 export function briefMayRefresh(
@@ -40,16 +51,44 @@ export function rebuildMayRun(lastAtMs: number | null, nowMs: number, minMs = CO
   return nowMs - lastAtMs >= minMs;
 }
 
+/** Speeds and other trigger values removed, so 25 kn and 27 kn are one warning. */
+export function gustWarningSignature(text: string): string {
+  return text.replace(/-?\d+(?:\.\d+)?/g, '#').replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+export function emptyGustWarningMemory(): GustWarningMemory {
+  return { signature: null, absentSinceMs: null };
+}
+
+/**
+ * Ask Skip findings stay in the briefing. The gust warning can notify, and
+ * a later one that differs only by the knots that triggered it stays quiet
+ * until the warning has been gone for the quiet period.
+ */
 export function decideCoachPush(
   findings: readonly CoachFinding[],
-  open: ReadonlySet<string>,
+  memory: GustWarningMemory,
+  nowMs: number,
+  quietMs = GUST_WARNING_QUIET_MS,
 ): CoachPushDecision {
-  const active = findings.filter(finding => finding.severity === 'action' && finding.direction === 'less-sail');
+  const gust = findings.find(finding => (
+    finding.id === GUST_WARNING_ID
+    && finding.severity === 'action'
+    && finding.direction === 'less-sail'
+  ));
+  if (!gust) {
+    const absentSinceMs = memory.signature == null || memory.absentSinceMs != null
+      ? memory.absentSinceMs
+      : nowMs;
+    return { notify: [], memory: { ...memory, absentSinceMs } };
+  }
+  const signature = gustWarningSignature(gust.text);
+  const sameWarning = signature === memory.signature;
+  const stillQuiet = memory.absentSinceMs == null || nowMs - memory.absentSinceMs < quietMs;
+  const duplicate = memory.signature != null && sameWarning && stillQuiet;
   return {
-    notify: active
-      .filter(finding => !open.has(finding.id))
-      .map(finding => ({ id: finding.id, text: finding.text })),
-    open: active.map(finding => finding.id),
+    notify: duplicate ? [] : [{ id: gust.id, text: gust.text }],
+    memory: { signature, absentSinceMs: null },
   };
 }
 

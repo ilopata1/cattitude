@@ -1,8 +1,9 @@
 /**
  * Builds the coach snapshot from the live services and keeps the briefing
- * the captain is reading. Background rebuilds can notify. The words on
- * screen change only after ten minutes, when the page is opened or Refresh
- * is pressed. The long form may then replace those words with a checked rewrite.
+ * the captain is reading. The words on screen change only after ten minutes,
+ * when Ask Skip is opened or Refresh is pressed. A gust warning can notify
+ * on its own; the rest of the briefing stays in Ask Skip. The long form may
+ * then replace those words with a checked rewrite.
  */
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy, inject } from '@angular/core';
@@ -17,6 +18,8 @@ import {
   briefMayRefresh,
   coachPreview,
   decideCoachPush,
+  emptyGustWarningMemory,
+  GustWarningMemory,
   handoverBrief,
   handoverDue,
   minutesUntilNight,
@@ -139,7 +142,7 @@ export class CoachService implements OnDestroy {
   private longForm = false;
   private rewriteToken = 0;
   private rewritePending = false;
-  private readonly openPush = new Set<string>();
+  private gustMemory: GustWarningMemory = emptyGustWarningMemory();
   private abRecords: CoachAbRecord[] = [];
   private summaries: CoachSummary[] = [];
   private passages: RememberedPassage[] = [];
@@ -203,7 +206,7 @@ export class CoachService implements OnDestroy {
     this.subs.unsubscribe();
   }
 
-  /** Opening Ask Skip, or coming back to the Polar page. */
+  /** Opening Ask Skip. */
   notePageEnter(nowMs = Date.now()): void {
     if (!this.connected || !briefMayRefresh(this.held, nowMs)) {
       this.publish();
@@ -300,7 +303,7 @@ export class CoachService implements OnDestroy {
     });
     this.latest = result;
     this.noteSummary(result.snapshot, nowMs);
-    if (this.connected) this.notify(result.findings);
+    if (this.connected) this.notify(result.findings, nowMs);
     this.publish();
   }
 
@@ -349,12 +352,11 @@ export class CoachService implements OnDestroy {
     }
   }
 
-  private notify(findings: CoachFinding[]): void {
-    const decision = decideCoachPush(findings, this.openPush);
-    this.openPush.clear();
-    decision.open.forEach(id => this.openPush.add(id));
+  private notify(findings: CoachFinding[], nowMs: number): void {
+    const decision = decideCoachPush(findings, this.gustMemory, nowMs);
+    this.gustMemory = decision.memory;
     for (const item of decision.notify) {
-      this.notifications.notifyAppEvent(`coach.less-sail.${item.id}`, 'Coach', item.text);
+      this.notifications.notifyAppEvent('coach.gust', 'Gusts', item.text);
     }
   }
 

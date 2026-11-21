@@ -18,6 +18,9 @@ export interface SailWindowDecision {
  * Each window decides on its own. A shorter window that already notified, or
  * that currently matches, does not silence a longer one. An uncovered window
  * keeps its memory so a brief gap does not send the same alert again.
+ * The remembered value is the recommended sail plan. A new plan notifies
+ * even when the only difference is a number, such as reef 1 and reef 2.
+ * That repeat check belongs to the gust warning, not to a sail change.
  */
 export function decideSailWindows(
   windows: readonly SailWindowSnapshot[],

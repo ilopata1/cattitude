@@ -79,6 +79,21 @@ describe('NotificationBridgeService', () => {
     }
   });
 
+  it('opens Polar for a gust warning', async () => {
+    spyOn(access(service), 'readDevicePermission').and.resolveTo('prompt');
+
+    service.notifyAppEvent(
+      'coach.gust',
+      'Gusts',
+      'Gusts of 25 kn reach the 20 kn band; set the sail for the gusts, not the mean.',
+    );
+    await flushPromises();
+    await flushPromises();
+
+    expect(alarms.current()?.actionLabel).toBe('Open Polar');
+    expect(alarms.current()?.route).toEqual(['more', 'polar']);
+  });
+
   it('opens Levels for a house battery alert', async () => {
     spyOn(access(service), 'readDevicePermission').and.resolveTo('prompt');
 

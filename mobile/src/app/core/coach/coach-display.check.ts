@@ -6,11 +6,14 @@ import {
   COACH_BRIEF_HOLD_MS,
   COACH_NIGHT_ELEVATION_MAX_DEG,
   COACH_REBUILD_MIN_MS,
+  GUST_WARNING_QUIET_MS,
 } from './coach-settings';
 import {
   briefMayRefresh,
   coachPreview,
   decideCoachPush,
+  emptyGustWarningMemory,
+  gustWarningSignature,
   handoverBrief,
   handoverDue,
   minutesUntilNight,
@@ -33,14 +36,40 @@ export function coachDisplayFailures(): string[] {
 
   const less = finding('sails.reef', 'action', 'less-sail');
   const same = finding('sails.same', 'action', 'same');
-  const first = decideCoachPush([less, same], new Set());
-  expect(first.notify.map(item => item.id).join(',') === 'sails.reef', 'only a less-sail action notifies');
-  const again = decideCoachPush([less], new Set(first.open));
-  expect(again.notify.length === 0 && again.open.join(',') === 'sails.reef', 'the same finding stays quiet until it clears');
-  const cleared = decideCoachPush([], new Set(again.open));
-  expect(cleared.open.length === 0, 'a cleared finding is forgotten');
-  const returned = decideCoachPush([less], new Set(cleared.open));
-  expect(returned.notify.length === 1, 'the finding can notify again after it clears');
+  const sailPlan = finding('sails.mismatch', 'action', 'less-sail');
+  sailPlan.text = '15-minute average suggests reef 1. You have full main up.';
+  const gustText = 'Gusts of 25 kn reach the 20 kn band; set the sail for the gusts, not the mean.';
+  const gustAgain = 'Gusts of 27 kn reach the 22 kn band; set the sail for the gusts, not the mean.';
+  const memory = emptyGustWarningMemory();
+  const first = decideCoachPush([gustFinding(gustText), less, same, sailPlan], memory, now);
+  expect(first.notify.map(item => item.id).join(',') === 'sails.reef-gust-spread', 'only the gust warning notifies');
+  expect(first.notify[0].text === gustText, 'the gust notification keeps the speeds that triggered it');
+  expect(
+    gustWarningSignature(gustText) === gustWarningSignature(gustAgain),
+    'gust warnings that differ by knots share a signature',
+  );
+  expect(
+    gustWarningSignature('15-minute average suggests reef 1. You have full main up.')
+      === gustWarningSignature('30-minute average suggests reef 2. You have full main up.'),
+    'number stripping would also collapse two sail plans, so that path does not use it',
+  );
+  const again = decideCoachPush([gustFinding(gustAgain)], first.memory, now + 60_000);
+  expect(again.notify.length === 0, 'a gust warning that differs only by the trigger values stays quiet');
+  const dropped = decideCoachPush([], again.memory, now + 2 * 60_000);
+  const returnedSoon = decideCoachPush([gustFinding(gustAgain)], dropped.memory, now + 3 * 60_000);
+  expect(returnedSoon.notify.length === 0, 'a brief lull does not send the gust warning again');
+  const rested = decideCoachPush(
+    [gustFinding('Gusts of 30 kn reach the 22 kn band; set the sail for the gusts, not the mean.')],
+    dropped.memory,
+    now + 2 * 60_000 + GUST_WARNING_QUIET_MS,
+  );
+  expect(rested.notify.length === 1, 'after the lull the gust warning can notify again');
+  const otherWords = decideCoachPush(
+    [gustFinding('Gusts are 8 kn above the mean; set the sail for the gusts, not the mean.')],
+    first.memory,
+    now + 60_000,
+  );
+  expect(otherWords.notify.length === 1, 'a gust warning with different words is not the same warning');
 
   const text = [
     '14:20 · 30 min window · data OK',
@@ -83,6 +112,10 @@ export function coachDisplayFailures(): string[] {
   expect(nextWatchChange(sanitizeRota({}), startMs) == null, 'a rota with nobody on watch has no handover');
 
   return failures;
+}
+
+function gustFinding(text: string): CoachFinding {
+  return { ...finding('sails.reef-gust-spread', 'action', 'less-sail'), text };
 }
 
 function finding(
