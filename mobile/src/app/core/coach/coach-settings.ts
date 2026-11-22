@@ -63,8 +63,14 @@ export const STW_RESIDUAL_KN = 0.5;
 /** The residual must also exceed this share of speed through water. */
 export const STW_RESIDUAL_FRACTION = 0.07;
 
-/** Gusts this far above the mean are a reason to set sail for the gust, not the average. */
-export const GUST_SPREAD_KN = 6;
+/**
+ * A gust warning needs the gust to clear at least one of these two gates
+ * against the mean wind. Matching a gate exactly stays quiet.
+ */
+export const GUST_OVER_BASE_KN = 5;
+
+/** The same gate as a fraction of the mean wind. 0.3 is 30 percent. */
+export const GUST_OVER_BASE_FRACTION = 0.3;
 
 /**
  * A gust warning that has gone quiet can be sent again after this.

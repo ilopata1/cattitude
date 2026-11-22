@@ -9,7 +9,8 @@ import { coachFindings } from './coach-rules';
 import {
   COACH_NOSE_DIVE_ENABLED,
   COACH_VMG_DOWNWIND_TWA_DEG,
-  GUST_SPREAD_KN,
+  GUST_OVER_BASE_FRACTION,
+  GUST_OVER_BASE_KN,
   HEADING_SD_WORK_DEG,
   HELM_NOTABLE_DEG,
   HELM_SIGNIFICANT_DEG,
@@ -95,11 +96,54 @@ export function coachRuleFailures(): string[] {
   const gust = one(coachFindings(gustAction, { sailPlan: plan() }), 'sails.reef-gust-spread');
   expect(gust?.severity === 'action' && gust.direction === 'less-sail', 'gusts into the next band are an action to reduce sail');
   expect(gust?.text.includes('25 kn') && gust.text.includes('20 kn band'), `gust text, got ${gust?.text}`);
-  const gustWide = scene(snap => { snap.wind.gustSpreadKn = GUST_SPREAD_KN; snap.wind.gust10mKn = 19; });
-  const wide = one(coachFindings(gustWide, { sailPlan: plan() }), 'sails.reef-gust-spread');
-  expect(wide?.severity === 'prepare' && wide.text.includes('above the mean'), `a wide gust spread prepares, got ${wide?.text}`);
-  const gustQuiet = scene(snap => { snap.wind.gustSpreadKn = GUST_SPREAD_KN - 1; snap.wind.gust10mKn = 19; });
-  expect(!coachFindings(gustQuiet, { sailPlan: plan() }).some(item => item.id === 'sails.reef-gust-spread'), 'gusts under both gates stay quiet');
+  const gustByKnots = scene(snap => {
+    snap.wind.tws = stat(20);
+    snap.wind.gust10mKn = 20 + GUST_OVER_BASE_KN + 0.2;
+    snap.wind.gustSpreadKn = GUST_OVER_BASE_KN + 0.2;
+  });
+  const byKnots = one(coachFindings(gustByKnots, { sailPlan: plan() }), 'sails.reef-gust-spread');
+  expect(
+    byKnots?.severity === 'prepare' && byKnots.text.includes('5.2 kn above the mean'),
+    `a gust more than 5 kn over the mean prepares, got ${byKnots?.text}`,
+  );
+  const gustByPercent = scene(snap => {
+    snap.wind.tws = stat(10);
+    snap.wind.gust10mKn = 14;
+    snap.wind.gustSpreadKn = 4;
+  });
+  const byPercent = one(coachFindings(gustByPercent, { sailPlan: plan() }), 'sails.reef-gust-spread');
+  expect(
+    byPercent?.severity === 'prepare' && byPercent.text.includes('4 kn above the mean'),
+    `a gust more than 30% over the mean prepares, got ${byPercent?.text}`,
+  );
+  expect(4 / 10 > GUST_OVER_BASE_FRACTION && 4 <= GUST_OVER_BASE_KN, 'the percent case stays inside the knot gate');
+  const gustBandOnly = scene(snap => {
+    snap.wind.tws = stat(18);
+    snap.wind.gust10mKn = 20;
+    snap.wind.gustSpreadKn = 2;
+  });
+  expect(
+    !coachFindings(gustBandOnly, { sailPlan: plan() }).some(item => item.id === 'sails.reef-gust-spread'),
+    'a gust that reaches the next band but is within 5 kn and 30% of the mean stays quiet',
+  );
+  const gustExactKnots = scene(snap => {
+    snap.wind.tws = stat(20);
+    snap.wind.gust10mKn = 20 + GUST_OVER_BASE_KN;
+    snap.wind.gustSpreadKn = GUST_OVER_BASE_KN;
+  });
+  expect(
+    !coachFindings(gustExactKnots, { sailPlan: plan() }).some(item => item.id === 'sails.reef-gust-spread'),
+    'a gust exactly 5 kn over the mean stays quiet',
+  );
+  const gustExactPercent = scene(snap => {
+    snap.wind.tws = stat(10);
+    snap.wind.gust10mKn = 13;
+    snap.wind.gustSpreadKn = 3;
+  });
+  expect(
+    !coachFindings(gustExactPercent, { sailPlan: plan() }).some(item => item.id === 'sails.reef-gust-spread'),
+    'a gust exactly 30% over the mean stays quiet',
+  );
 
   const beforeDark = scene(snap => {
     snap.sails.nextCutover = { kind: 'tws', value: 20, distance: 10, approaching: true };

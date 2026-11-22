@@ -16,7 +16,8 @@ import { COACH_INPUT_LABELS, CoachInputId } from './coach-inputs';
 import {
   COACH_NOSE_DIVE_ENABLED,
   COACH_VMG_DOWNWIND_TWA_DEG,
-  GUST_SPREAD_KN,
+  GUST_OVER_BASE_FRACTION,
+  GUST_OVER_BASE_KN,
   HEADING_SD_WORK_DEG,
   HELM_NOTABLE_DEG,
   HELM_SIGNIFICANT_DEG,
@@ -178,16 +179,15 @@ function sailsNearCutover(snapshot: CoachSnapshot, plan: SailPlan | null): Coach
 
 function sailsGust(snapshot: CoachSnapshot, plan: SailPlan | null): CoachFinding | null {
   if (!ready(snapshot, ['tws'])) return null;
-  const spread = snapshot.wind.gustSpreadKn;
   const gust = snapshot.wind.gust10mKn;
-  const tws = snapshot.wind.tws.mean;
-  const nextCut = nextHigherTwsCut(plan, tws, snapshot);
-  const reaches = gust != null && nextCut != null && gust >= nextCut;
-  const wide = spread != null && spread >= GUST_SPREAD_KN;
-  if (!reaches && !wide) return null;
+  const base = snapshot.wind.tws.mean;
+  if (gust == null || base == null || !gustClearsBase(gust, base)) return null;
+  const nextCut = nextHigherTwsCut(plan, base, snapshot);
+  const reaches = nextCut != null && gust >= nextCut;
+  const over = shown(gust - base);
   const text = reaches
-    ? `Gusts of ${shown(gust!)} kn reach the ${shown(nextCut!)} kn band; set the sail for the gusts, not the mean.`
-    : `Gusts are ${shown(spread!)} kn above the mean; set the sail for the gusts, not the mean.`;
+    ? `Gusts of ${shown(gust)} kn reach the ${shown(nextCut!)} kn band; set the sail for the gusts, not the mean.`
+    : `Gusts are ${over} kn above the mean; set the sail for the gusts, not the mean.`;
   return finding({
     id: 'sails.reef-gust-spread',
     section: 'sails',
@@ -195,11 +195,18 @@ function sailsGust(snapshot: CoachSnapshot, plan: SailPlan | null): CoachFinding
     confidence: 'high',
     text,
     evidence: evidenceOf(reaches
-      ? { gustKn: shown(gust!), nextCutKn: shown(nextCut!) }
-      : { gustSpreadKn: shown(spread!) }),
+      ? { gustKn: shown(gust), nextCutKn: shown(nextCut!) }
+      : { gustSpreadKn: over }),
     requires: ['tws'],
     direction: 'less-sail',
   });
+}
+
+/** Either gate is enough. A gust that only matches a gate stays quiet. */
+function gustClearsBase(gust: number, base: number): boolean {
+  const over = gust - base;
+  if (over > GUST_OVER_BASE_KN) return true;
+  return base > 0 && over / base > GUST_OVER_BASE_FRACTION;
 }
 
 function sailsReefBeforeDark(snapshot: CoachSnapshot, minutesToNight: number | null): CoachFinding | null {
