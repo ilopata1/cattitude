@@ -169,9 +169,12 @@ export function prunePassages(
 }
 
 export function watchStartedAt(rota: DutyRota, atMs: number): number | null {
-  const slot = dutySlots(rota, atMs, atMs + 1)
-    .find(item => item.taskId === 'watch' || item.taskName.toLowerCase() === 'watch');
-  return slot?.startMs ?? null;
+  const onWatch = dutySlots(rota, atMs, atMs + 1)
+    .filter(item => item.taskId === 'watch' || item.taskName.toLowerCase() === 'watch');
+  if (!onWatch.length) return null;
+  const taskId = onWatch[0].taskId;
+  const starts = onWatch.filter(item => item.taskId === taskId).map(item => item.startMs);
+  return Math.max(...starts);
 }
 
 /** Change from the first summary of this watch to the latest. Null when nothing moved. */

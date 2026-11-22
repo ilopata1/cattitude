@@ -8,6 +8,7 @@ import {
   formatSlotWhen,
   namedCrew,
   nearestInterval,
+  overlapHint,
   preferRota,
   rosterWindow,
   sanitizeRota,
@@ -29,6 +30,7 @@ export function dutyRotaFailures(): string[] {
   );
   expect(nearestInterval(5) === 4, 'an off-list interval snaps to the nearer allowed length');
   expect(nearestInterval(24) === 24, 'daily stays daily');
+  expect(fresh.tasks.every((task) => task.offsetHours == null), 'overlap is off until someone sets it');
 
   const start = '2026-11-12T12:00';
   const startMs = parseWall(start)!;
@@ -104,6 +106,103 @@ export function dutyRotaFailures(): string[] {
     tasks: [{ id: 'watch', name: 'Watch', intervalHours: 4, sequence: [] }],
   });
   expect(dutySlots(nobody, startMs, startMs + hour).length === 0, 'a task with an empty sequence assigns nobody');
+
+  const overlap = sanitizeRota({
+    startAt: start,
+    crew: [
+      { id: 'sam', name: 'Sam' },
+      { id: 'jo', name: 'Jo' },
+      { id: 'alex', name: 'Alex' },
+    ],
+    tasks: [
+      { id: 'watch', name: 'Watch', intervalHours: 4, offsetHours: 2, sequence: ['sam', 'jo', 'alex'] },
+      { id: 'cooking', name: 'Cooking', intervalHours: 24, sequence: ['sam'] },
+    ],
+  });
+  expect(overlap.tasks[0].offsetHours === 2, 'an offset shorter than the turn is kept');
+  expect(
+    sanitizeRota({
+      tasks: [{ id: 'watch', name: 'Watch', intervalHours: 4, offsetHours: 4 }],
+    }).tasks[0].offsetHours == null,
+    'an offset that does not overlap is cleared',
+  );
+  expect(
+    sanitizeRota({
+      tasks: [{ id: 'watch', name: 'Watch', intervalHours: 4, offsetHours: 5 }],
+    }).tasks[0].offsetHours == null,
+    'an offset off the list is cleared',
+  );
+  const overlapWatches = dutySlots(overlap, startMs, startMs + 8 * hour).filter((slot) => slot.taskId === 'watch');
+  expect(
+    overlapWatches.map((slot) => `${slot.crewName}@${(slot.startMs - startMs) / hour}`).join(',')
+      === 'Alex@-2,Sam@0,Jo@2,Alex@4,Sam@6',
+    'each watch starts two hours after the previous person, including the person already on at the start',
+  );
+  expect(overlapWatches[0].endMs - overlapWatches[0].startMs === 4 * hour, 'an overlapping watch still lasts four hours');
+  expect(assigneeAt(overlap, 'watch', startMs + hour) === 'Alex, Sam', 'the first two hours are the person before and the person who just started');
+  expect(assigneeAt(overlap, 'watch', startMs + 2 * hour) === 'Sam, Jo', 'a boundary hands the first person off and brings the next person on');
+  expect(assigneeAt(overlap, 'watch', startMs + 3 * hour) === 'Sam, Jo', 'the second two hours are with the person after');
+  const staggeredDay = sanitizeRota({
+    startAt: start,
+    crew: overlap.crew,
+    tasks: [{ id: 'cooking', name: 'Cooking', intervalHours: 24, offsetHours: 12, sequence: ['sam', 'jo'] }],
+  });
+  expect(
+    assigneeAt(staggeredDay, 'cooking', startMs + hour) === 'Jo, Sam',
+    'a daily task can overlap from the trip start',
+  );
+  const solo = sanitizeRota({
+    startAt: start,
+    crew: [{ id: 'sam', name: 'Sam' }],
+    tasks: [{ id: 'watch', name: 'Watch', intervalHours: 4, offsetHours: 2, sequence: ['sam'] }],
+  });
+  expect(
+    dutySlots(solo, startMs, startMs + 8 * hour).map((slot) => (slot.startMs - startMs) / hour).join(',') === '0,4',
+    'one person does not overlap their own watch',
+  );
+  const overlapRows = rosterWindow(overlap, startMs + hour, 0, 1).days[0]?.rows ?? [];
+  expect(
+    overlapRows.slice(0, 4).map((row) => `${row.when}|${row.cells.join('|')}`).join(';')
+      === '12:00–14:00|Alex, Sam|Sam;14:00–16:00|Sam, Jo|;16:00–18:00|Jo, Alex|;18:00–20:00|Alex, Sam|',
+    'each two-hour row names both people on watch, and a daily name appears once',
+  );
+  const joOverlap = rosterWindow(overlap, startMs + hour, 0, 1, 'jo');
+  const joWatch = joOverlap.days[0]?.rows.filter((row) => row.cells[0] === 'Jo') ?? [];
+  expect(
+    joWatch.slice(0, 2).map((row) => row.when).join(',') === '14:00–16:00,16:00–18:00',
+    'one person keeps their name for both halves of an overlapping watch',
+  );
+  expect(
+    overlapHint(4, 2, 4) === 'Two people are on together. Each person spends the first 2 hours with the person before them, and the next 2 hours with the person after them.',
+    'a half overlap tells each person who they stand with',
+  );
+  expect(
+    overlapHint(4, 2, 2).endsWith('With 2 people, both stay on watch.'),
+    'two people on a half overlap never come off watch',
+  );
+  expect(
+    overlapHint(4, 3, 3) === 'The next person starts 3 hours later. Each person stays for 4 hours. The watches overlap for 1 hour.',
+    'an uneven offset says how long the watches overlap',
+  );
+  const overlapIcs = unfoldIcs(dutyToIcs(sanitizeRota({
+    startAt: start,
+    crew: overlap.crew,
+    tasks: [overlap.tasks[0]],
+  }), {
+    fromMs: startMs,
+    toMs: startMs + 2 * hour,
+    remindMinutes: null,
+    stampMs: Date.UTC(2026, 10, 12, 18, 0, 0),
+  }));
+  expect(
+    summaries(overlapIcs).join(',') === 'Watch · Alex,Watch · Sam',
+    'the opening pair is on the calendar',
+  );
+  expect(
+    overlapIcs.includes('DTSTART:20261112T120000\r\n') && overlapIcs.includes('DTEND:20261112T140000\r\n')
+      && !overlapIcs.includes('DTSTART:20261112T100000'),
+    'a watch that began before the trip is shown from the trip start',
+  );
 
   const renamed = { ...rota, tasks: rota.tasks.map((task) => task.id === 'watch' ? { ...task, name: 'Helm' } : task) };
   expect(dutySlots(renamed, startMs, startMs + hour)[0].taskName === 'Helm', 'renaming a task keeps its rotation');

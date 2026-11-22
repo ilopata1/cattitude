@@ -88,6 +88,16 @@
               <option *ngFor="let option of intervals" [ngValue]="option.hours">{{ option.label }}</option>
             </select>
           </label>
+          <label class="duty-field" *ngIf="offsetChoices(task).length">
+            <span>Next person starts</span>
+            <select [ngModel]="task.offsetHours ?? null" (ngModelChange)="setOffset(task.id, $event)">
+              <option [ngValue]="null">When this turn ends</option>
+              <option *ngFor="let option of offsetChoices(task)" [ngValue]="option.hours">
+                {{ option.hours }} hours after the previous start
+              </option>
+            </select>
+          </label>
+          <p class="duty-hint" *ngIf="task.offsetHours">{{ taskOverlapHint(task) }}</p>
           <p class="duty-hint">Order is who takes this job, then the list repeats.</p>
           <div class="duty-line" *ngFor="let crewId of task.sequence; let i = index; trackBy: trackIndex">
             <span class="duty-sequence-name">{{ crewLabel(crewId) }}</span>

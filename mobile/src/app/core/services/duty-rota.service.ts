@@ -11,6 +11,7 @@ import {
   newDutyId,
   preferRota,
   sanitizeRota,
+  validOffset,
 } from '../duty/duty-rota';
 import { wallNowMs } from '../wall-time';
 import { VesselContextService } from './vessel-context.service';
@@ -105,6 +106,7 @@ export class DutyRotaService {
         id: newDutyId(),
         name: '',
         intervalHours: 24,
+        offsetHours: null,
         sequence: namedCrew(rota).map((person) => person.id),
       }],
     }));
@@ -120,7 +122,19 @@ export class DutyRotaService {
   setInterval(id: string, hours: number): void {
     this.mutate((rota) => ({
       ...rota,
-      tasks: rota.tasks.map((task) => task.id === id ? { ...task, intervalHours: hours } : task),
+      tasks: rota.tasks.map((task) => task.id === id
+        ? { ...task, intervalHours: hours, offsetHours: validOffset(task.offsetHours, hours) }
+        : task),
+    }));
+  }
+
+  /** Null starts the next person when this turn ends. */
+  setOffset(id: string, hours: number | null): void {
+    this.mutate((rota) => ({
+      ...rota,
+      tasks: rota.tasks.map((task) => task.id === id
+        ? { ...task, offsetHours: validOffset(hours, task.intervalHours) }
+        : task),
     }));
   }
 

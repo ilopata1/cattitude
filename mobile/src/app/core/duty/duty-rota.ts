@@ -24,6 +24,12 @@ export interface DutyTask {
   name: string;
   /** Length of one assignment. Daily runs to midnight, then one calendar day each. */
   intervalHours: number;
+  /**
+   * Hours after one person starts before the next person starts.
+   * Null means the next person starts when this turn ends.
+   * Shorter than the turn, so two or more people are on together.
+   */
+  offsetHours?: number | null;
   /** Crew ids in this task's own order. The same person may appear more than once. */
   sequence: string[];
 }
@@ -78,10 +84,10 @@ export function defaultDutyRota(): DutyRota {
     startAt: '',
     crew: [],
     tasks: [
-      { id: 'watch', name: 'Watch', intervalHours: 4, sequence: [] },
-      { id: 'cooking', name: 'Cooking', intervalHours: 24, sequence: [] },
-      { id: 'inspection', name: 'Inspection', intervalHours: 24, sequence: [] },
-      { id: 'cleaning', name: 'Cleaning', intervalHours: 24, sequence: [] },
+      { id: 'watch', name: 'Watch', intervalHours: 4, offsetHours: null, sequence: [] },
+      { id: 'cooking', name: 'Cooking', intervalHours: 24, offsetHours: null, sequence: [] },
+      { id: 'inspection', name: 'Inspection', intervalHours: 24, offsetHours: null, sequence: [] },
+      { id: 'cleaning', name: 'Cleaning', intervalHours: 24, offsetHours: null, sequence: [] },
     ],
     updatedAt: '',
   };
@@ -101,6 +107,33 @@ export function nearestInterval(hours: number): number {
     }
   }
   return best;
+}
+
+/** Hours between starts, or null when the next person waits until this turn ends. */
+export function validOffset(hours: unknown, intervalHours: number): number | null {
+  const value = typeof hours === 'number' ? hours : Number(hours);
+  if (!Number.isInteger(value) || !(DUTY_INTERVAL_HOURS as readonly number[]).includes(value)) {
+    return null;
+  }
+  if (!(intervalHours > value)) {
+    return null;
+  }
+  return value;
+}
+
+/** What to tell the crew when the next person starts before this turn ends. */
+export function overlapHint(intervalHours: number, offsetHours: number, people: number): string {
+  if (people < 2) {
+    return `The next person starts ${hoursLabel(offsetHours)} after the previous one. Add at least two people and the watches overlap.`;
+  }
+  const paired = offsetHours * 2 === intervalHours
+    ? `Two people are on together. Each person spends the first ${hoursLabel(offsetHours)} with the person before them, and the next ${hoursLabel(offsetHours)} with the person after them.`
+    : overlapLead(intervalHours, offsetHours);
+  if (people * offsetHours <= intervalHours) {
+    const who = people === 2 ? 'both stay on watch' : 'everyone stays on watch';
+    return `${paired} With ${people} people, ${who}.`;
+  }
+  return paired;
 }
 
 export function sanitizeRota(raw: unknown): DutyRota {
@@ -125,6 +158,8 @@ export function namedCrew(rota: DutyRota): CrewMember[] {
 /**
  * Assignments that overlap `[fromMs, toMs)`.
  * Slot `i` of a task belongs to that task's sequence at `i % sequence`.
+ * When the next person starts before the turn ends, watches overlap.
+ * The person before the first in the list is already on at the trip start.
  */
 export function dutySlots(
   rota: DutyRota,
@@ -142,32 +177,14 @@ export function dutySlots(
   const slots: DutySlot[] = [];
   for (const task of tasks) {
     const rotation = taskRotation(task, byId);
-    const interval = task.intervalHours * 60 * 60 * 1000;
-    if (!rotation.length || interval <= 0 || toMs <= start) {
+    if (!rotation.length || toMs <= start) {
       continue;
     }
-    let index = fromMs > start ? assignmentIndex(start, interval, fromMs) : 0;
-    while (slots.length < MAX_SLOTS) {
-      const bounds = assignmentBounds(start, interval, index);
-      index += 1;
-      if (bounds.startMs >= toMs) {
-        break;
-      }
-      if (bounds.endMs <= fromMs) {
-        continue;
-      }
-      const person = rotation[(index - 1) % rotation.length];
-      if (crewId && person.id !== crewId) {
-        continue;
-      }
-      slots.push({
-        taskId: task.id,
-        taskName: task.name.trim(),
-        crewId: person.id,
-        crewName: person.name.trim(),
-        startMs: bounds.startMs,
-        endMs: bounds.endMs,
-      });
+    const offset = rotation.length >= 2 ? validOffset(task.offsetHours, task.intervalHours) : null;
+    if (offset == null) {
+      appendTurns(slots, task, rotation, start, fromMs, toMs, crewId);
+    } else {
+      appendOverlap(slots, task, rotation, start, offset, fromMs, toMs, crewId);
     }
   }
   const order = new Map(tasks.map((task, index) => [task.id, index]));
@@ -185,7 +202,16 @@ export function assigneeAt(rota: DutyRota, taskId: string, atMs: number): string
     return null;
   }
   const slots = dutySlots({ ...rota, tasks: [task] }, atMs, atMs + 1);
-  return slots[0]?.crewName ?? null;
+  const names: string[] = [];
+  const seen = new Set<string>();
+  for (const slot of slots) {
+    if (!slot.crewName || seen.has(slot.crewId)) {
+      continue;
+    }
+    seen.add(slot.crewId);
+    names.push(slot.crewName);
+  }
+  return names.length ? names.join(', ') : null;
 }
 
 export function formatSlotWhen(startMs: number, endMs: number): string {
@@ -199,9 +225,10 @@ export function formatSlotWhen(startMs: number, endMs: number): string {
 }
 
 /**
- * One row per slot of the most frequent task, counted from the trip start.
+ * One row per step of the task that changes most often, counted from the trip start.
  * A cell names the person only on the first of those rows in their assignment,
  * so a daily job is named once and the next name appears the next day.
+ * An overlapping watch names everyone on it, on every row.
  * A person filter keeps a row only when they hold at least one task then.
  */
 export function rosterGrid(
@@ -213,10 +240,13 @@ export function rosterGrid(
   const tasks = rota.tasks.filter((task) => task.name.trim() && task.intervalHours > 0);
   const columns: RosterColumn[] = tasks.map((task) => ({ id: task.id, name: task.name.trim() }));
   const start = parseWall(rota.startAt);
-  if (!columns.length || start == null || !namedCrew(rota).length || !(toMs > fromMs) || toMs <= start) {
+  const people = namedCrew(rota);
+  if (!columns.length || start == null || !people.length || !(toMs > fromMs) || toMs <= start) {
     return { columns, days: [] };
   }
-  const step = Math.min(...tasks.map((task) => task.intervalHours)) * 60 * 60 * 1000;
+  const namedIds = new Set(people.map((person) => person.id));
+  const overlapIds = new Set(tasks.filter((task) => taskOverlaps(task, namedIds)).map((task) => task.id));
+  const step = Math.min(...tasks.map((task) => stepHours(task, namedIds))) * 60 * 60 * 1000;
   let index = fromMs > start ? assignmentIndex(start, step, fromMs) : 0;
   const priorStart = index > 0 ? assignmentBounds(start, step, index - 1).startMs : start;
   const slots = dutySlots(rota, priorStart, toMs);
@@ -248,12 +278,12 @@ export function rosterGrid(
     const heldNow = new Map<string, string>();
     let held = false;
     for (const column of columns) {
-      const holder = holderAt(byTask.get(column.id) ?? [], rowStart);
-      const visible = holder && (!crewId || holder.crewId === crewId) ? holder.crewName : '';
+      const visible = holderLabel(holdersAt(byTask.get(column.id) ?? [], rowStart), crewId);
       if (visible) {
         held = true;
       }
-      cells.push(visible && visible !== (previous.get(column.id) ?? '') ? visible : '');
+      const changed = visible !== (previous.get(column.id) ?? '');
+      cells.push(visible && (overlapIds.has(column.id) || changed) ? visible : '');
       heldNow.set(column.id, visible);
     }
     previous.clear();
@@ -342,14 +372,16 @@ export function dutyToIcs(rota: DutyRota, options: DutyCalendarOptions): string 
     `NAME:${icsText(title)}`,
     `X-WR-CALNAME:${icsText(title)}`,
   ];
+  const tripStart = parseWall(rota.startAt);
   for (const slot of slots) {
-    if (slot.endMs <= slot.startMs) {
+    const shownStart = tripStart == null ? slot.startMs : Math.max(slot.startMs, tripStart);
+    if (slot.endMs <= shownStart) {
       continue;
     }
     lines.push('BEGIN:VEVENT');
     lines.push(`UID:cattitude-duty-${slot.taskId}-${slot.crewId}-${slot.startMs}@cattitude`);
     lines.push(`DTSTAMP:${formatIcsUtc(options.stampMs)}`);
-    lines.push(`DTSTART:${formatIcsLocal(slot.startMs)}`);
+    lines.push(`DTSTART:${formatIcsLocal(shownStart)}`);
     lines.push(`DTEND:${formatIcsLocal(slot.endMs)}`);
     lines.push(`SUMMARY:${icsText(`${slot.taskName} · ${slot.crewName}`)}`);
     lines.push(`DESCRIPTION:${icsText(`${slot.taskName} for ${slot.crewName}`)}`);
@@ -419,18 +451,25 @@ function rememberHolders(
   previous: Map<string, string>,
 ): void {
   for (const column of columns) {
-    const holder = holderAt(byTask.get(column.id) ?? [], atMs);
-    previous.set(column.id, holder && (!crewId || holder.crewId === crewId) ? holder.crewName : '');
+    previous.set(column.id, holderLabel(holdersAt(byTask.get(column.id) ?? [], atMs), crewId));
   }
 }
 
-function holderAt(slots: DutySlot[], atMs: number): DutySlot | null {
+function holdersAt(slots: DutySlot[], atMs: number): DutySlot[] {
+  const holders: DutySlot[] = [];
+  const seen = new Set<string>();
   for (const slot of slots) {
-    if (slot.startMs <= atMs && atMs < slot.endMs) {
-      return slot;
+    if (slot.startMs <= atMs && atMs < slot.endMs && !seen.has(slot.crewId)) {
+      seen.add(slot.crewId);
+      holders.push(slot);
     }
   }
-  return null;
+  return holders;
+}
+
+function holderLabel(holders: DutySlot[], crewId?: string | null): string {
+  const shown = crewId ? holders.filter((slot) => slot.crewId === crewId) : holders;
+  return shown.map((slot) => slot.crewName).join(', ');
 }
 
 /** Local unsynced edits win. Otherwise the newer `updatedAt` wins. */
@@ -465,6 +504,123 @@ function sanitizeCrew(raw: unknown): CrewMember[] {
   return crew;
 }
 
+function hoursLabel(hours: number): string {
+  return hours === 1 ? '1 hour' : `${hours} hours`;
+}
+
+function overlapLead(intervalHours: number, offsetHours: number): string {
+  const share = intervalHours % offsetHours === 0
+    ? `${intervalHours / offsetHours} people are on at once.`
+    : `The watches overlap for ${hoursLabel(intervalHours - offsetHours)}.`;
+  return `The next person starts ${hoursLabel(offsetHours)} later. Each person stays for ${hoursLabel(intervalHours)}. ${share}`;
+}
+
+function appendTurns(
+  slots: DutySlot[],
+  task: DutyTask,
+  rotation: CrewMember[],
+  start: number,
+  fromMs: number,
+  toMs: number,
+  crewId?: string | null,
+): void {
+  const interval = task.intervalHours * 60 * 60 * 1000;
+  if (interval <= 0) {
+    return;
+  }
+  let index = fromMs > start ? assignmentIndex(start, interval, fromMs) : 0;
+  while (slots.length < MAX_SLOTS) {
+    const bounds = assignmentBounds(start, interval, index);
+    index += 1;
+    if (bounds.startMs >= toMs) {
+      break;
+    }
+    if (bounds.endMs <= fromMs) {
+      continue;
+    }
+    pushSlot(slots, task, rotation[(index - 1) % rotation.length], bounds.startMs, bounds.endMs, crewId);
+  }
+}
+
+/**
+ * Person `m` starts `m` offsets after the trip, and stays for the whole turn.
+ * `m` can be negative, so the person before the first name is on at the start.
+ */
+function appendOverlap(
+  slots: DutySlot[],
+  task: DutyTask,
+  rotation: CrewMember[],
+  start: number,
+  offsetHours: number,
+  fromMs: number,
+  toMs: number,
+  crewId?: string | null,
+): void {
+  const offsetMs = offsetHours * 60 * 60 * 1000;
+  const intervalMs = task.intervalHours * 60 * 60 * 1000;
+  if (offsetMs <= 0 || intervalMs <= 0) {
+    return;
+  }
+  let index = Math.floor((fromMs - start - intervalMs) / offsetMs) + 1;
+  const last = Math.floor((toMs - start - 1) / offsetMs);
+  while (index <= last && slots.length < MAX_SLOTS) {
+    const slotStart = start + index * offsetMs;
+    const person = rotation[mod(index, rotation.length)];
+    index += 1;
+    if (slotStart + intervalMs <= fromMs) {
+      continue;
+    }
+    pushSlot(slots, task, person, slotStart, slotStart + intervalMs, crewId);
+  }
+}
+
+function pushSlot(
+  slots: DutySlot[],
+  task: DutyTask,
+  person: CrewMember,
+  startMs: number,
+  endMs: number,
+  crewId?: string | null,
+): void {
+  if (crewId && person.id !== crewId) {
+    return;
+  }
+  slots.push({
+    taskId: task.id,
+    taskName: task.name.trim(),
+    crewId: person.id,
+    crewName: person.name.trim(),
+    startMs,
+    endMs,
+  });
+}
+
+function mod(value: number, length: number): number {
+  return ((value % length) + length) % length;
+}
+
+function stepHours(task: DutyTask, namedIds: Set<string>): number {
+  const offset = validOffset(task.offsetHours, task.intervalHours);
+  if (offset != null && namedInSequence(task, namedIds) >= 2) {
+    return offset;
+  }
+  return task.intervalHours;
+}
+
+function taskOverlaps(task: DutyTask, namedIds: Set<string>): boolean {
+  return validOffset(task.offsetHours, task.intervalHours) != null && namedInSequence(task, namedIds) >= 2;
+}
+
+function namedInSequence(task: DutyTask, namedIds: Set<string>): number {
+  let count = 0;
+  for (const id of task.sequence) {
+    if (namedIds.has(id)) {
+      count += 1;
+    }
+  }
+  return count;
+}
+
 function taskRotation(task: DutyTask, byId: Map<string, CrewMember>): CrewMember[] {
   const rotation: CrewMember[] = [];
   for (const id of task.sequence) {
@@ -494,10 +650,12 @@ function sanitizeTasks(raw: unknown, crew: CrewMember[]): DutyTask[] {
     }
     seen.add(id);
     const hours = typeof row.intervalHours === 'number' ? row.intervalHours : Number(row.intervalHours);
+    const intervalHours = nearestInterval(hours);
     tasks.push({
       id,
       name: clipText(row.name, 40),
-      intervalHours: nearestInterval(hours),
+      intervalHours,
+      offsetHours: validOffset(row.offsetHours, intervalHours),
       sequence: sanitizeSequence(row.sequence, known, crew),
     });
   }

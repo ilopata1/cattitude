@@ -54,6 +54,22 @@ def main() -> None:
         "tasks": [{"id": "watch", "name": "Watch", "intervalHours": 4, "sequence": []}],
     })
     check(empty["tasks"][0]["sequence"] == [], "an empty sequence stays empty")
+    check(rota["tasks"][0]["offsetHours"] is None, "overlap stays off when it was not set")
+    kept = sanitize_rota({
+        "crew": rota["crew"],
+        "tasks": [{"id": "watch", "name": "Watch", "intervalHours": 4, "offsetHours": 2}],
+    })
+    check(kept["tasks"][0]["offsetHours"] == 2, "an offset shorter than the turn is kept")
+    cleared = sanitize_rota({
+        "tasks": [
+            {"id": "watch", "name": "Watch", "intervalHours": 4, "offsetHours": 4},
+            {"id": "cooking", "name": "Cooking", "intervalHours": 6, "offsetHours": 5},
+        ],
+    })
+    check(
+        cleared["tasks"][0]["offsetHours"] is None and cleared["tasks"][1]["offsetHours"] is None,
+        "an offset that does not overlap, or is off the list, is cleared",
+    )
     check(sanitize_rota({"startAt": "2026-02-31T12:00"})["startAt"] == "", "an impossible start is cleared")
 
     day = sanitize_day({

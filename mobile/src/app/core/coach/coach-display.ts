@@ -128,18 +128,24 @@ export function minutesUntilNight(
   return null;
 }
 
+const WATCH_LOOKAHEAD_MS = 48 * 60 * 60 * 1000;
+
 export function nextWatchChange(
   rota: DutyRota,
   atMs: number,
 ): { at: number; name: string; minutes: number } | null {
-  const current = dutySlots(rota, atMs, atMs + 1).find(slot => slot.taskId === 'watch' || slot.taskName.toLowerCase() === 'watch');
-  if (!current) return null;
-  const next = dutySlots(rota, current.endMs, current.endMs + 1)
-    .find(slot => slot.taskId === current.taskId);
+  const onWatch = dutySlots(rota, atMs, atMs + 1).filter(isWatchSlot);
+  if (!onWatch.length) return null;
+  const next = dutySlots(rota, atMs, atMs + WATCH_LOOKAHEAD_MS)
+    .find(slot => slot.taskId === onWatch[0].taskId && slot.startMs > atMs);
   if (!next?.crewName) return null;
   return {
-    at: current.endMs,
+    at: next.startMs,
     name: next.crewName,
-    minutes: (current.endMs - atMs) / 60_000,
+    minutes: (next.startMs - atMs) / 60_000,
   };
+}
+
+function isWatchSlot(slot: { taskId: string; taskName: string }): boolean {
+  return slot.taskId === 'watch' || slot.taskName.toLowerCase() === 'watch';
 }

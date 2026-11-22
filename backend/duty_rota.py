@@ -39,6 +39,22 @@ def _nearest_interval(raw: Any) -> int:
     return best
 
 
+def _offset_hours(raw: Any, interval: int) -> int | None:
+    """Hours between starts. None means the next person waits until this turn ends."""
+    if raw is None or isinstance(raw, bool):
+        return None
+    try:
+        hours = float(raw)
+    except (TypeError, ValueError):
+        return None
+    if hours != hours or hours != int(hours):
+        return None
+    whole = int(hours)
+    if whole not in _INTERVALS or whole >= interval:
+        return None
+    return whole
+
+
 def _sequence(raw: Any, crew_ids: list[str]) -> list[str]:
     """A missing sequence keeps the old crew-list order. An empty one stays empty."""
     if not isinstance(raw, list):
@@ -92,10 +108,12 @@ def sanitize_rota(raw: Any) -> dict[str, Any]:
             if not _ID_RE.match(task_id) or task_id in seen_tasks:
                 continue
             seen_tasks.add(task_id)
+            interval = _nearest_interval(item.get("intervalHours"))
             tasks.append({
                 "id": task_id,
                 "name": _clip(item.get("name"), 40),
-                "intervalHours": _nearest_interval(item.get("intervalHours")),
+                "intervalHours": interval,
+                "offsetHours": _offset_hours(item.get("offsetHours"), interval),
                 "sequence": _sequence(item.get("sequence"), [person["id"] for person in crew]),
             })
     updated = _clip(source.get("updatedAt"), 40)

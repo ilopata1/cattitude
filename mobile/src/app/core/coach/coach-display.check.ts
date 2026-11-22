@@ -110,6 +110,17 @@ export function coachDisplayFailures(): string[] {
   const watch = nextWatchChange(rota, startMs);
   expect(watch?.name === 'Jo' && watch.minutes === 240, `the next watch is Jo in 240 min, got ${watch?.name} ${watch?.minutes}`);
   expect(nextWatchChange(sanitizeRota({}), startMs) == null, 'a rota with nobody on watch has no handover');
+  const overlap = sanitizeRota({
+    startAt: start,
+    crew: [
+      { id: 'sam', name: 'Sam' },
+      { id: 'jo', name: 'Jo' },
+      { id: 'alex', name: 'Alex' },
+    ],
+    tasks: [{ id: 'watch', name: 'Watch', intervalHours: 4, offsetHours: 2, sequence: ['sam', 'jo', 'alex'] }],
+  });
+  const joined = nextWatchChange(overlap, startMs + 60 * 60 * 1000);
+  expect(joined?.name === 'Jo' && joined.minutes === 60, `the next person joins in 60 min, got ${joined?.name} ${joined?.minutes}`);
 
   return failures;
 }

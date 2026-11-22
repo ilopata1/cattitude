@@ -6,6 +6,7 @@ import {
   dutyCalendarFilename,
   dutySlots,
   dutyToIcs,
+  overlapHint,
   rosterBounds,
   rosterWindow,
 } from '../../core/duty/duty-rota';
@@ -121,7 +122,21 @@ export class DutyPage implements OnInit {
   taskSummary(task: DutyTask): string {
     const option = this.intervals.find((item) => item.hours === task.intervalHours);
     const names = task.sequence.map((id) => this.crewLabel(id)).filter((name) => name && name !== 'Unnamed');
-    return `${option?.label ?? ''} · ${names.length ? names.join(', ') : 'No one yet'}`;
+    const cadence = task.offsetHours ? ` · starts every ${task.offsetHours} hours` : '';
+    return `${option?.label ?? ''}${cadence} · ${names.length ? names.join(', ') : 'No one yet'}`;
+  }
+
+  offsetChoices(task: DutyTask): typeof DUTY_INTERVAL_OPTIONS[number][] {
+    return this.intervals.filter((option) => option.hours < task.intervalHours);
+  }
+
+  taskOverlapHint(task: DutyTask): string {
+    if (task.offsetHours == null) {
+      return '';
+    }
+    const named = new Set(this.duty.named().map((person) => person.id));
+    const people = task.sequence.filter((id) => named.has(id)).length;
+    return overlapHint(task.intervalHours, task.offsetHours, people);
   }
 
   crewLabel(id: string): string {
@@ -138,6 +153,13 @@ export class DutyPage implements OnInit {
       return;
     }
     this.duty.setInterval(id, value);
+  }
+
+  setOffset(id: string, hours: number | null): void {
+    if (hours != null && !this.intervals.some((option) => option.hours === hours)) {
+      return;
+    }
+    this.duty.setOffset(id, hours);
   }
 
   downloadCalendar(): void {

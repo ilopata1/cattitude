@@ -89,6 +89,21 @@ export function coachMemoryFailures(): string[] {
   const start = Date.UTC(2026, 5, 21, 12, 0);
   const at = Date.UTC(2026, 5, 21, 13, 0);
   expect(watchStartedAt(rota(), at) === start, `the current watch starts at 12:00, got ${watchStartedAt(rota(), at)}`);
+  const overlap = {
+    startAt: '2026-06-21T12:00',
+    crew: [
+      { id: 'sam', name: 'Sam' },
+      { id: 'jo', name: 'Jo' },
+      { id: 'alex', name: 'Alex' },
+    ],
+    tasks: [{ id: 'watch', name: 'Watch', intervalHours: 4, offsetHours: 2, sequence: ['sam', 'jo', 'alex'] }],
+    updatedAt: '',
+  };
+  expect(watchStartedAt(overlap, start + 60 * 60 * 1000) === start, 'an overlap counts from the person who came on most recently');
+  expect(
+    watchStartedAt(overlap, start + 3 * 60 * 60 * 1000) === start + 2 * 60 * 60 * 1000,
+    'the next overlap starts when the new person comes on',
+  );
   const early = summary({ at: start + 60_000, twsKn: 10, polarPct: 90, helmDeg: 2, hsM: 1, sailsUp: 'full main' });
   const late = summary({ at: start + 120_000, twsKn: 14, polarPct: 91, helmDeg: 5, hsM: 1.2, sailsUp: 'reefed main' });
   const line = sinceWatchLine([late, early], start, late.at);
