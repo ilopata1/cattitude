@@ -7,6 +7,8 @@ import {
   bearingDeg,
   beaufortFromKnots,
   derivePropulsion,
+  DESTINATION_PROGRESS_HOURS,
+  destinationBearingDeg,
   destinationDistanceNm,
   etaIso,
   formatPosition,
@@ -15,7 +17,9 @@ import {
   latestSlotMs,
   holdSailAdvice,
   livePropulsion,
+  passageIsActive,
   pressureHpa,
+  progressToDestinationNm,
   propulsionTriggerFor,
   rpmFromRevolutions,
   summarizeTrack,
@@ -33,6 +37,14 @@ export function logbookMathFailures(): string[] {
   const equator = haversineNm({ lat: 0, lon: 0 }, { lat: 0, lon: 1 });
   expect(Math.abs(equator - 60.04) < 0.2, `one degree of longitude at the equator is about 60 nm, got ${equator}`);
   expect(Math.abs(bearingDeg({ lat: 0, lon: 0 }, { lat: 1, lon: 0 }) - 0) < 0.1, 'north bearing');
+  expect(Math.abs(bearingDeg({ lat: 0, lon: 0 }, { lat: 0, lon: 1 }) - 90) < 0.1, 'east bearing');
+  expect(Math.abs(bearingDeg({ lat: 0, lon: 0 }, { lat: -1, lon: 0 }) - 180) < 0.1, 'south bearing');
+  expect(Math.abs(bearingDeg({ lat: 0, lon: 0 }, { lat: 0, lon: -1 }) - 270) < 0.1, 'west bearing');
+  expect(Math.abs(bearingDeg({ lat: 0, lon: 179 }, { lat: 0, lon: -179 }) - 90) < 0.1, 'dateline bearing stays east');
+  expect(Math.abs(bearingDeg(
+    { lat: 50 + 3 / 60 + 59 / 3600, lon: -(5 + 42 / 60 + 53 / 3600) },
+    { lat: 58 + 38 / 60 + 38 / 3600, lon: -(3 + 4 / 60 + 12 / 3600) },
+  ) - 9.1198) < 0.001, 'published initial great-circle bearing');
   expect(formatPosition(24.52, -64.21333) === "24°31.2'N  064°12.8'W", `position format ${formatPosition(24.52, -64.21333)}`);
   expect(beaufortFromKnots(18) === 5, '18 kn is force 5');
   expect(beaufortFromKnots(0.2) === 0, 'calm');
@@ -137,6 +149,23 @@ export function logbookMathFailures(): string[] {
   };
   const dtg = destinationDistanceNm({ lat: 32.3, lon: -64.8 }, passage);
   expect(dtg === 0, `dtg at destination ${dtg}`);
+  expect(passageIsActive(passage), 'a departed passage with a destination is active');
+  expect(!passageIsActive({ ...passage, departedAt: null }), 'before departure the passage is not active');
+  expect(!passageIsActive({ ...passage, arrivedAt: passage.departedAt }), 'an arrived passage is not active');
+  expect(destinationBearingDeg({ lat: 32.3, lon: -64.8 }, passage) == null, 'a bearing on the destination is undefined');
+  const northOfMark = destinationBearingDeg({ lat: 32, lon: -64.8 }, passage);
+  expect(northOfMark != null && Math.abs(northOfMark - 0) < 1, `heading north to the mark, got ${northOfMark}`);
+  const hour = 3_600_000;
+  const toward: Passage = { ...passage, destinationLat: 1, destinationLon: 0 };
+  const track: TrackSample[] = [
+    { at: 0, lat: 0, lon: 0, twsKn: null, pressureHpa: null, tripLogM: null, sogKn: 6 },
+  ];
+  const closer = progressToDestinationNm(track, { lat: 0.1, lon: 0 }, toward, hour, 1);
+  expect(closer != null && closer > 5 && closer < 7, `an hour closer to the finish, got ${closer}`);
+  const farther = progressToDestinationNm(track, { lat: -0.1, lon: 0 }, toward, hour, 1);
+  expect(farther != null && farther < -5 && farther > -7, `an hour farther from the finish, got ${farther}`);
+  expect(progressToDestinationNm(track, { lat: 0.1, lon: 0 }, toward, hour, 4) == null, 'four hours needs a fix from then');
+  expect(DESTINATION_PROGRESS_HOURS.join(',') === '1,4,6,12,24', 'progress windows');
   expect(vmgKnots(8, 0, 0) === 8, 'vmg dead on');
   expect(etaIso(6, 6, Date.UTC(2026, 9, 2, 0, 0)) === '2026-10-02T01:00:00.000Z', 'eta');
   expect(

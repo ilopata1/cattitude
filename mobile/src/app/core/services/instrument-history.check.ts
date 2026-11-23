@@ -1,4 +1,5 @@
 import { EMPTY_SAIL_ESSENTIALS, EMPTY_WIND_STEER } from '../models/instrument-map.model';
+import { Passage } from '../models/logbook.model';
 import {
   HISTORY_CAPACITY,
   applyHistorySample,
@@ -49,10 +50,67 @@ export function instrumentHistoryFailures(): string[] {
   expect(samples[0] === 1 && samples[samples.length - 1] === HISTORY_CAPACITY, 'the ring drops the oldest sample');
   expect(pushHistorySample(samples, Number.NaN) === samples, 'a non-finite sample does not change the ring');
 
+  const beat = historySample({
+    essentials: {
+      depthM: null,
+      speedKn: 8,
+      speedSource: 'stw',
+      sogKnots: 6,
+      stale: false,
+    },
+    wind: { ...EMPTY_WIND_STEER, heading: 0, headingFresh: true, twa: 60, twaFresh: true, cog: 0, cogFresh: true },
+    position: { lat: 0, lon: 0 },
+    passage: activePassage(),
+  });
+  expect(beat.vmg === 4, `VMG at 60° is half the boat speed, got ${beat.vmg}`);
+  expect(beat.vmc === 6, `VMC straight at the mark, got ${beat.vmc}`);
+
+  const down = historySample({
+    essentials: {
+      depthM: null,
+      speedKn: 8,
+      speedSource: 'stw',
+      sogKnots: 8,
+      stale: false,
+    },
+    wind: { ...EMPTY_WIND_STEER, heading: 0, headingFresh: true, twa: 180, twaFresh: true },
+  });
+  expect(down.vmg === 8, `downwind VMG stays positive, got ${down.vmg}`);
+
+  const planned = historySample({
+    essentials: {
+      depthM: null,
+      speedKn: 8,
+      speedSource: 'stw',
+      sogKnots: 6,
+      stale: false,
+    },
+    wind: { ...EMPTY_WIND_STEER, heading: 0, headingFresh: true, twa: 60, twaFresh: true, cog: 0, cogFresh: true },
+    position: { lat: 0, lon: 0 },
+    passage: { ...activePassage(), departedAt: null },
+  });
+  expect(planned.vmc == null, 'VMC waits until the passage has departed');
+
   const series = applyHistorySample({}, { depth: 3, heading: 90 });
   const again = applyHistorySample(series, { depth: 4 });
   expect(series.depth?.length === 1 && series.heading?.[0] === 90, 'each role keeps its own trace');
   expect(again.depth?.[1] === 4 && again.heading?.[0] === 90, 'a later sample appends without clearing other roles');
 
   return failures;
+}
+
+function activePassage(): Passage {
+  return {
+    id: 'p',
+    name: 'North',
+    destinationName: 'Mark',
+    destinationLat: 1,
+    destinationLon: 0,
+    arrivalRadiusNm: 0.3,
+    waypoints: [],
+    departedAt: '2026-06-01T00:00:00.000Z',
+    arrivedAt: null,
+    watch: '',
+    updatedAt: '2026-06-01T00:00:00.000Z',
+  };
 }

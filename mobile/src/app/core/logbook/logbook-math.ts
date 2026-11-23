@@ -284,13 +284,76 @@ export function destinationDistanceNm(
   position: { lat: number; lon: number } | null,
   passage: Passage | null,
 ): number | null {
-  if (!position || !passage || passage.destinationLat == null || passage.destinationLon == null) {
-    return null;
+  const destination = passageDestination(passage);
+  if (!position || !destination) return null;
+  return round1(haversineNm(position, destination));
+}
+
+export function passageDestination(
+  passage: Passage | null,
+): { lat: number; lon: number } | null {
+  if (passage?.destinationLat == null || passage.destinationLon == null) return null;
+  if (!Number.isFinite(passage.destinationLat) || !Number.isFinite(passage.destinationLon)) return null;
+  return { lat: passage.destinationLat, lon: passage.destinationLon };
+}
+
+/** Departed, not yet arrived, with a destination set. */
+export function passageIsActive(passage: Passage | null): boolean {
+  return !!passage?.departedAt && !passage.arrivedAt && passageDestination(passage) != null;
+}
+
+/** Inside this, the initial bearing is too unstable to call a heading. */
+const BEARING_MIN_NM = 0.05;
+
+/**
+ * Initial great-circle heading from the boat to the passage destination,
+ * degrees true. Null when the destination is missing or the boat is on it.
+ */
+export function destinationBearingDeg(
+  position: { lat: number; lon: number } | null,
+  passage: Passage | null,
+): number | null {
+  const destination = passageDestination(passage);
+  if (!position || !destination) return null;
+  if (haversineNm(position, destination) < BEARING_MIN_NM) return null;
+  const bearing = bearingDeg(position, destination);
+  return Number.isFinite(bearing) ? bearing : null;
+}
+
+/** Hours shown for passage progress. */
+export const DESTINATION_PROGRESS_HOURS = [1, 4, 6, 12, 24] as const;
+
+/** A sample this far from the window start is not that window. */
+const PROGRESS_MATCH_MS = 30 * 60_000;
+
+/**
+ * Nautical miles closer to the destination than `hours` ago.
+ * Negative means farther away. Null when no fix falls within half an hour of that time.
+ */
+export function progressToDestinationNm(
+  samples: TrackSample[],
+  position: { lat: number; lon: number } | null,
+  passage: Passage | null,
+  nowMs: number,
+  hours: number,
+): number | null {
+  const destination = passageDestination(passage);
+  if (!position || !destination || !Number.isFinite(hours) || hours <= 0) return null;
+  const target = nowMs - hours * 3_600_000;
+  let best: TrackSample | null = null;
+  let bestGap = Infinity;
+  for (const sample of samples) {
+    if (sample.lat == null || sample.lon == null || sample.at > nowMs) continue;
+    const gap = Math.abs(sample.at - target);
+    if (gap < bestGap) {
+      best = sample;
+      bestGap = gap;
+    }
   }
-  return round1(haversineNm(position, {
-    lat: passage.destinationLat,
-    lon: passage.destinationLon,
-  }));
+  if (!best || best.lat == null || best.lon == null || bestGap > PROGRESS_MATCH_MS) return null;
+  const thenNm = haversineNm({ lat: best.lat, lon: best.lon }, destination);
+  const nowNm = haversineNm(position, destination);
+  return round1(thenNm - nowNm);
 }
 
 export function vmgKnots(sogKn: number | null, cogDeg: number | null, bearingToDest: number | null): number | null {

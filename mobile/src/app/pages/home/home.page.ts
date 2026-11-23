@@ -14,7 +14,10 @@ import { emptyFuelCurve, fuelRangeView, FuelRangeView } from '../../core/fuel/fu
 import { emptyFuelMotion } from '../../core/fuel/fuel-motion';
 import { levelWidgetValue, parseLevelWidgetId } from '../../core/levels/levels';
 import { resolveLearnPath } from '../../core/guide/learn-path';
+import { passageIsActive } from '../../core/logbook/logbook-math';
 import { EMPTY_SAIL_ESSENTIALS, EMPTY_WIND_STEER } from '../../core/models/instrument-map.model';
+import { emptyReading } from '../../core/models/logbook.model';
+import { liveVmcKn, liveVmgKn } from '../../core/nav/made-good';
 import {
   POLAR_WINDOW_MINUTES,
   PolarWindowAverages,
@@ -29,6 +32,8 @@ import { FuelMotionService } from '../../core/services/fuel-motion.service';
 import { HistoryRole } from '../../core/services/instrument-history';
 import { InstrumentHistoryService } from '../../core/services/instrument-history.service';
 import { InstrumentLiveService } from '../../core/services/instrument-live.service';
+import { LogbookSamplerService } from '../../core/services/logbook-sampler.service';
+import { LogbookService } from '../../core/services/logbook.service';
 import { LevelsService } from '../../core/services/levels.service';
 import { PolarService } from '../../core/services/polar.service';
 import { WaveEstimatorService } from '../../core/services/wave-estimator.service';
@@ -71,6 +76,8 @@ export class HomePage {
   private readonly destroyRef = inject(DestroyRef);
   private readonly live = inject(InstrumentLiveService);
   private readonly history = inject(InstrumentHistoryService);
+  private readonly logbook = inject(LogbookService);
+  private readonly sampler = inject(LogbookSamplerService);
   private readonly levels = inject(LevelsService);
   private readonly fuelCurve = inject(FuelCurveSettingsService);
   private readonly fuelMotion = inject(FuelMotionService);
@@ -89,6 +96,8 @@ export class HomePage {
 
   readonly essentials = toSignal(this.live.essentials$, { initialValue: EMPTY_SAIL_ESSENTIALS });
   readonly wind = toSignal(this.live.wind$, { initialValue: EMPTY_WIND_STEER });
+  readonly passage = toSignal(this.logbook.passage$, { initialValue: this.logbook.passage$.value });
+  readonly fix = toSignal(this.sampler.reading$, { initialValue: emptyReading() });
   readonly polarWindows = toSignal(this.polar.windows$, { initialValue: EMPTY_POLAR_WINDOWS });
   readonly waveState = toSignal(this.waveMonitor.state$, { initialValue: this.waveMonitor.current });
   private readonly levelsState = toSignal(this.levels.state$, { initialValue: this.levels.current });
@@ -183,6 +192,9 @@ export class HomePage {
   }
 
   showTile(item: DashboardItem): boolean {
+    if (item.id === 'widget:vmc' && !this.editing && !passageIsActive(this.passage() ?? null)) {
+      return false;
+    }
     if (item.kind === 'widget' && item.id !== 'widget:rules' && !this.liveConfigured() && !this.editing) {
       return false;
     }
@@ -331,6 +343,15 @@ export class HomePage {
         const sog = this.essentials().sogKnots;
         return sog === null ? '—' : `${sog.toFixed(1)} kn`;
       }
+      case 'widget:vmg':
+        return this.madeGoodLabel(liveVmgKn(this.essentials(), this.wind()));
+      case 'widget:vmc':
+        return this.madeGoodLabel(liveVmcKn(
+          this.essentials(),
+          this.wind(),
+          this.fix().position,
+          this.passage() ?? null,
+        ));
       default:
         return null;
     }
@@ -455,6 +476,10 @@ export class HomePage {
         return 'aws';
       case 'widget:tws':
         return 'tws';
+      case 'widget:vmg':
+        return 'vmg';
+      case 'widget:vmc':
+        return 'vmc';
       case 'widget:wind':
         return this.wind().twsFresh ? 'tws' : 'aws';
       default:
@@ -519,6 +544,10 @@ export class HomePage {
     if (id === 'widget:waves') return 'Open Waves';
     if (id === 'widget:fuel-range' || id.startsWith('widget:level:')) return 'Open Levels';
     return 'Open Sail';
+  }
+
+  private madeGoodLabel(kn: number | null): string {
+    return kn == null ? '—' : `${kn.toFixed(1)} kn`;
   }
 
   private openLive(): void {

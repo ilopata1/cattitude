@@ -1,4 +1,6 @@
+import { liveVmcKn, liveVmgKn } from '../nav/made-good';
 import { SailEssentialsLive, WindSteerLive } from '../models/instrument-map.model';
+import { Passage } from '../models/logbook.model';
 
 /** Ten minutes at one sample every ten seconds. */
 export const HISTORY_SAMPLE_MS = 10_000;
@@ -14,6 +16,8 @@ export const HISTORY_ROLES = [
   'cog',
   'awa',
   'twa',
+  'vmg',
+  'vmc',
 ] as const;
 
 export type HistoryRole = typeof HISTORY_ROLES[number];
@@ -21,6 +25,8 @@ export type HistoryRole = typeof HISTORY_ROLES[number];
 export interface HistorySampleInput {
   essentials: SailEssentialsLive;
   wind: WindSteerLive;
+  position?: { lat: number; lon: number } | null;
+  passage?: Passage | null;
 }
 
 /**
@@ -44,6 +50,10 @@ export function historySample(input: HistorySampleInput): Partial<Record<History
   take('cog', input.wind.cog, input.wind.cogFresh);
   take('awa', input.wind.awa, input.wind.awaFresh);
   take('twa', input.wind.twa, input.wind.twaFresh);
+  const vmg = liveVmgKn(input.essentials, input.wind);
+  if (vmg != null) sample.vmg = vmg;
+  const vmc = liveVmcKn(input.essentials, input.wind, input.position ?? null, input.passage ?? null);
+  if (vmc != null) sample.vmc = vmc;
   return sample;
 }
 

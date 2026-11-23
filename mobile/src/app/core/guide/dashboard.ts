@@ -79,7 +79,7 @@ const CREW_SHORTCUTS = [
   'fix',
   'more:ask',
 ];
-const CREW_LIVE = ['widget:aws', 'widget:tws', 'widget:sog', 'widget:awa', 'widget:twa', 'widget:heading', 'widget:cog', 'widget:polar', 'widget:waves'];
+const CREW_LIVE = ['widget:aws', 'widget:tws', 'widget:sog', 'widget:awa', 'widget:twa', 'widget:heading', 'widget:cog', 'widget:vmg', 'widget:vmc', 'widget:polar', 'widget:waves'];
 
 export function knowChapterRoute(
   systemId: string,
@@ -225,7 +225,11 @@ export function buildDashboardCatalog(input: DashboardCatalogInput): DashboardIt
     widget('widget:waves', 'Waves', 'Height, period, and direction', 'water-outline', 2, ['waves']),
   );
   if (isSailingVessel(input.vesselType)) {
-    items.push(widget('widget:polar', 'Polar', '15, 30, and 60 minute average', 'trending-up-outline', 2));
+    items.push(
+      widget('widget:vmg', 'VMG', 'Speed made good to the wind', 'speedometer-outline', 1),
+      widget('widget:vmc', 'VMC', 'Speed toward the passage destination', 'navigate-outline', 1),
+      widget('widget:polar', 'Polar', '15, 30, and 60 minute average', 'trending-up-outline', 2),
+    );
   }
   if (input.rulesAvailable) {
     items.push(widget('widget:rules', 'Boat rules', 'Never, always, and good habits', 'clipboard-outline', 2));
@@ -252,6 +256,17 @@ export function defaultTileIds(
   return [...live, ...shortcuts];
 }
 
+/** A home that already shows the polar tile picks up VMG and VMC in front of it. */
+function withMadeGoodTiles(ids: string[]): string[] {
+  const at = ids.indexOf('widget:polar');
+  if (at < 0) return ids;
+  const insert = ['widget:vmg', 'widget:vmc'].filter((id) => !ids.includes(id));
+  if (!insert.length) return ids;
+  const next = ids.slice();
+  next.splice(at, 0, ...insert);
+  return next;
+}
+
 /** A home that already shows AWA picks up TWA beside it. A cleared home stays empty. */
 function withTrueWindTile(ids: string[]): string[] {
   if (ids.includes('widget:twa') || !ids.includes('widget:awa')) {
@@ -270,7 +285,7 @@ export function layoutIds(
   signalK: boolean,
 ): string[] {
   const chosen = saved ?? defaultTileIds(view, catalog, signalK);
-  return resolveDashboard(withTrueWindTile(chosen), catalog, view).map((item) => item.id);
+  return resolveDashboard(withMadeGoodTiles(withTrueWindTile(chosen)), catalog, view).map((item) => item.id);
 }
 
 export function resolveDashboard(

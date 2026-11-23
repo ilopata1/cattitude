@@ -3,11 +3,6 @@
   grid-template-columns: 1fr 1fr;
   gap: 10px;
   padding: 0 12px 12px;
-
-  &.stale .value,
-  &.stale cs-sparkline {
-    color: var(--cattitude-text-light);
-  }
 }
 
 .card {
@@ -32,8 +27,13 @@
   }
 }
 
-.essentials.stale .cs-stale-flag {
+.card.stale .cs-stale-flag {
   display: inline-flex;
+}
+
+.card.stale .value,
+.card.stale cs-sparkline {
+  color: var(--cattitude-text-light);
 }
 
 .value {

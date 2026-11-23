@@ -6,18 +6,22 @@ import {
   OnInit,
   inject,
 } from '@angular/core';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ViewWillEnter } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { formatCurrentSails } from '../../core/guide/current-sail';
 import { tankTitle } from '../../core/levels/levels';
 import { logbookPrintHtml, logbookToCsv, logbookToGpx, triggerLabel } from '../../core/logbook/logbook-export';
 import { formatLevelNumber, levelRatio, logLevelColumns, logLevelsSummary } from '../../core/logbook/logbook-levels';
 import {
+  DESTINATION_PROGRESS_HOURS,
+  destinationBearingDeg,
   destinationDistanceNm,
   formatLogClock,
   formatPosition,
   livePropulsion,
   nextSlotMs,
+  passageIsActive,
+  progressToDestinationNm,
   utcDayKey,
   utcDayLabel,
 } from '../../core/logbook/logbook-math';
@@ -114,7 +118,7 @@ const LOGBOOK_VIEW_KEY = 'cattitude.logbook.entryView';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
-export class LogbookPage implements OnInit, OnDestroy {
+export class LogbookPage implements OnInit, OnDestroy, ViewWillEnter {
   private readonly logbook = inject(LogbookService);
   private readonly levels = inject(LevelsService);
   readonly boat = inject(LogbookRemoteService);
@@ -153,9 +157,9 @@ export class LogbookPage implements OnInit, OnDestroy {
     { key: 'depth', label: 'Depth', unit: 'm', numeric: true },
     { key: 'status', label: 'Status', unit: '', numeric: false, cap: true },
     { key: 'sails', label: 'Sails', unit: '', numeric: false, wrap: true },
-    { key: 'nm', label: 'Since', unit: 'nm', numeric: true },
+    { key: 'nm', label: 'Since entry', unit: 'nm', numeric: true },
     { key: 'wp', label: 'Waypoint', unit: 'nm', numeric: true },
-    { key: 'dtg', label: 'To go', unit: 'nm', numeric: true },
+    { key: 'dtg', label: 'DTF', unit: 'nm', numeric: true },
     { key: 'sea', label: 'Sea', unit: '0–9', numeric: true },
     { key: 'cloud', label: 'Cloud', unit: 'oktas', numeric: true },
     { key: 'vis', label: 'Vis', unit: 'nm', numeric: true },
@@ -192,6 +196,10 @@ export class LogbookPage implements OnInit, OnDestroy {
         this.reading = reading;
         this.cdr.markForCheck();
       }),
+      this.sampler.tick$.subscribe(() => {
+        this.reading = this.sampler.snapshot;
+        this.cdr.markForCheck();
+      }),
       this.sails.changed$.subscribe(() => this.cdr.markForCheck()),
       this.levels.state$.subscribe(() => this.cdr.markForCheck()),
     );
@@ -199,6 +207,15 @@ export class LogbookPage implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subs.forEach(sub => sub.unsubscribe());
+  }
+
+  /** Recompute the heading and progress from the latest fix each time the page is shown. */
+  ionViewWillEnter(): void {
+    void this.logbook.ensureReady();
+    void this.sampler.start();
+    this.reading = this.sampler.snapshot;
+    this.passage = this.logbook.passage$.value;
+    this.cdr.markForCheck();
   }
 
   visible(): LogEntry[] {
@@ -236,6 +253,28 @@ export class LogbookPage implements OnInit, OnDestroy {
   liveDtg(): string {
     const distance = destinationDistanceNm(this.reading.position, this.passage);
     return distance == null ? '' : `${distance.toFixed(1)} nm to go`;
+  }
+
+  liveBearing(): string {
+    const bearing = destinationBearingDeg(this.reading.position, this.passage);
+    if (bearing == null) return '';
+    const rounded = ((Math.round(bearing) % 360) + 360) % 360;
+    return `${String(rounded).padStart(3, '0')}° to destination`;
+  }
+
+  passageActive(): boolean {
+    return passageIsActive(this.passage);
+  }
+
+  progressLine(): string {
+    const nowMs = Date.now();
+    const samples = this.sampler.samplesSince(nowMs - 25 * 3_600_000);
+    const parts = DESTINATION_PROGRESS_HOURS.map(hours => {
+      const nm = progressToDestinationNm(samples, this.reading.position, this.passage, nowMs, hours);
+      const text = nm == null ? '—' : `${nm > 0 ? '+' : ''}${nm.toFixed(1)} nm`;
+      return `${hours} h ${text}`;
+    });
+    return `Progress · ${parts.join(' · ')}`;
   }
 
   nextLog(): string {

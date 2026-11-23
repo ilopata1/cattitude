@@ -47,8 +47,12 @@ export function coachBriefingFailures(): string[] {
   missing.helm.rudderSdDeg = 14;
   mark(missing, 'rudder', 'missing');
   const missingBrief = coachBriefing(missing, coachFindings(missing), { timeZone: 'UTC' });
-  expect(missingBrief.short.includes('Rudder is missing.'), `missing rudder is a caveat, got ${missingBrief.short}`);
+  expect(
+    !missingBrief.short.includes('missing') && !missingBrief.long.includes('missing'),
+    `a missing rudder is left unsaid, got ${missingBrief.short}`,
+  );
   expect(!missingBrief.short.includes('weather helm') && !missingBrief.short.includes('working hard'), 'missing rudder removes the balance advice');
+  expect(missingBrief.long.includes('Polar 15 min 95%'), `polar figures are still stated, got ${missingBrief.long}`);
 
   const unresolved = bare();
   unresolved.waves = {

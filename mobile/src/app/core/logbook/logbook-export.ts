@@ -169,7 +169,7 @@ export function logbookPrintHtml(entries: LogEntry[], passage: Passage | null, t
       <tr>
         <th>Time</th><th>Why</th><th>Position</th><th>HDG</th><th>COG</th>
         <th>SOG</th><th>TWS</th><th>Gust</th><th>hPa</th><th>3h</th>
-        <th>Status</th><th>Sails</th><th>nm</th><th>DTG</th><th>Watch</th>
+        <th>Status</th><th>Sails</th><th>Since entry</th><th>DTF</th><th>Watch</th>
         ${levels.map(column => `<th>${escapeXml(column.label)} %</th>`).join('')}
         <th>Remarks</th>
       </tr>

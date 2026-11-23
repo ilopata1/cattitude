@@ -12,7 +12,7 @@ import { timeout } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { AbReport, buildReport } from '../ab-test/ab-test';
 import { assembleCoach } from '../coach/coach-assemble';
-import { coachBriefing } from '../coach/coach-briefing';
+import { coachBriefing, findingsForAskSkip } from '../coach/coach-briefing';
 import {
   COACH_OPEN_NOTE,
   briefMayRefresh,
@@ -26,7 +26,7 @@ import {
   nextWatchChange,
   rebuildMayRun,
 } from '../coach/coach-display';
-import { CoachInputHealth, formatCoachInputLine } from '../coach/coach-inputs';
+import { CoachInputHealth } from '../coach/coach-inputs';
 import {
   CoachAbRecord,
   CoachSummary,
@@ -311,12 +311,13 @@ export class CoachService implements OnDestroy {
     this.lastRebuildAt = nowMs;
     this.rebuild(nowMs);
     if (!this.latest) return;
-    const brief = coachBriefing(this.latest.snapshot, this.latest.findings);
+    const findings = findingsForAskSkip(this.latest.findings);
+    const brief = coachBriefing(this.latest.snapshot, findings);
     this.held = { generatedAt: nowMs, short: brief.short, long: brief.long, llm: null };
     this.rewriteToken += 1;
     const token = this.rewriteToken;
     this.publish();
-    if (this.longForm) void this.rewrite(token, this.latest, brief.long);
+    if (this.longForm) void this.rewrite(token, { snapshot: this.latest.snapshot, findings }, brief.long);
   }
 
   private async rewrite(
@@ -365,9 +366,6 @@ export class CoachService implements OnDestroy {
   }
 
   private compose(): CoachView {
-    const healthLines = this.health
-      .filter(row => row.status !== 'ok')
-      .map(formatCoachInputLine);
     const view: CoachView = {
       connected: this.connected,
       header: '',
@@ -375,7 +373,7 @@ export class CoachService implements OnDestroy {
       expanded: this.expanded,
       longForm: this.longForm,
       source: 'software',
-      healthLines,
+      healthLines: [],
       note: COACH_OPEN_NOTE,
       handover: false,
       holdNote: null,

@@ -5,7 +5,6 @@
  */
 
 import { CoachFinding, CoachSnapshot, Confidence } from './coach.model';
-import { COACH_INPUT_LABELS, CoachInputId } from './coach-inputs';
 import {
   COACH_ANGLE_ROUND_DEG,
   COACH_BOTTOM_LINE_MAX,
@@ -43,12 +42,17 @@ const SECTION_RANK = {
   data: 6,
 };
 
+/** Missing and stale inputs stay out of Ask Skip. The topics they feed stay quiet. */
+export function findingsForAskSkip(findings: readonly CoachFinding[]): CoachFinding[] {
+  return findings.filter(item => !/^data\.(missing|stale)\./.test(item.id));
+}
+
 export function coachBriefing(
   snapshot: CoachSnapshot,
   findings: CoachFinding[],
   options: CoachBriefingOptions = {},
 ): CoachBriefing {
-  const ordered = findings.slice().sort(compareFindings);
+  const ordered = findingsForAskSkip(findings).slice().sort(compareFindings);
   const zone = options.timeZone;
   const bottom = bottomLines(snapshot, ordered, zone);
   const shared = [headerLine(snapshot, zone), bottomBlock(bottom)];
@@ -74,25 +78,24 @@ export function coachBriefing(
 }
 
 function headerLine(snapshot: CoachSnapshot, timeZone: string | undefined): string {
-  return `${clock(snapshot.builtAt, timeZone)} · ${snapshot.windowMin} min window · ${healthLine(snapshot)}`;
+  const base = `${clock(snapshot.builtAt, timeZone)} · ${snapshot.windowMin} min window`;
+  const health = healthLine(snapshot);
+  return health ? `${base} · ${health}` : base;
 }
 
-function healthLine(snapshot: CoachSnapshot): string {
+function healthLine(snapshot: CoachSnapshot): string | null {
   const gaps = snapshot.dataHealth.filter(row => row.status !== 'ok');
-  if (!gaps.length) {
-    const wave = snapshot.waves.estimate;
-    if (wave && !snapshot.waves.usable) {
-      return wave.ambiguous
-        ? 'data OK (wave direction unresolved)'
-        : 'data OK (wave direction low confidence)';
-    }
-    if (wave && wave.confidence !== 'high' && wave.confidence !== 'none') {
-      return `data OK (wave direction ${wave.confidence} confidence)`;
-    }
-    return 'data OK';
+  if (gaps.length) return null;
+  const wave = snapshot.waves.estimate;
+  if (wave && !snapshot.waves.usable) {
+    return wave.ambiguous
+      ? 'data OK (wave direction unresolved)'
+      : 'data OK (wave direction low confidence)';
   }
-  const named = gaps.slice(0, COACH_CAVEAT_LINES).map(row => `${labelFor(row.input)} ${row.status}`);
-  return `data: ${named.join(', ')}`;
+  if (wave && wave.confidence !== 'high' && wave.confidence !== 'none') {
+    return `data OK (wave direction ${wave.confidence} confidence)`;
+  }
+  return 'data OK';
 }
 
 function bottomLines(snapshot: CoachSnapshot, findings: CoachFinding[], timeZone: string | undefined): string[] {
@@ -425,11 +428,6 @@ function roundTo(value: number, step: number): number {
 function signed180(deg: number): number {
   const wrapped = ((deg % 360) + 360) % 360;
   return wrapped > 180 ? wrapped - 360 : wrapped;
-}
-
-function labelFor(input: string): string {
-  if (input in COACH_INPUT_LABELS) return COACH_INPUT_LABELS[input as CoachInputId];
-  return input;
 }
 
 function countWords(text: string): number {

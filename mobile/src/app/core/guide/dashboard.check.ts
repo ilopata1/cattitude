@@ -79,7 +79,7 @@ export function dashboardFailures(): string[] {
   );
   expect(
     defaultTileIds('crew', sailing, true).join(',') ===
-      'widget:aws,widget:tws,widget:sog,widget:awa,widget:twa,widget:heading,widget:cog,widget:polar,widget:waves,do:inspection,more:duty,know:engines,know:electrical,more:sail,more:anchorage,fix,more:ask',
+      'widget:aws,widget:tws,widget:sog,widget:awa,widget:twa,widget:heading,widget:cog,widget:vmg,widget:vmc,widget:polar,widget:waves,do:inspection,more:duty,know:engines,know:electrical,more:sail,more:anchorage,fix,more:ask',
     'crew default leads with live readings, then the daily inspection and duty rota',
   );
   expect(byId.get('widget:aws')?.span === 1 && byId.get('widget:polar')?.span === 2, 'wind readings share a cell and polar uses the row');
@@ -113,6 +113,15 @@ export function dashboardFailures(): string[] {
     'a saved home without apparent wind does not gain a true wind tile',
   );
   expect(
+    layoutIds(['widget:cog', 'widget:polar', 'widget:waves'], 'crew', sailing, true).join(',') ===
+      'widget:cog,widget:vmg,widget:vmc,widget:polar,widget:waves',
+    'a saved home gains VMG and VMC before polar',
+  );
+  expect(
+    layoutIds(['widget:cog', 'widget:waves'], 'crew', sailing, true).join(',') === 'widget:cog,widget:waves',
+    'a saved home without polar stays without VMG',
+  );
+  expect(
     layoutIds(undefined, 'guest', sailing, false).join(',') ===
       'learn,do:safety-brief,do:gh,know:overview,know:heads,more:ask',
     'an unsaved home uses the guest default',
@@ -122,6 +131,7 @@ export function dashboardFailures(): string[] {
   const powerIds = power.map((item) => item.id);
   expect(!powerIds.includes('more:polar'), 'power boats hide polar');
   expect(!powerIds.includes('widget:polar'), 'power boats hide the polar widget');
+  expect(!powerIds.includes('widget:vmg') && !powerIds.includes('widget:vmc'), 'power boats hide VMG and VMC');
   expect(power.find((item) => item.id === 'more:sail')?.label === 'Instruments', 'power sail row is Instruments');
 
   const withoutElectrical = buildDashboardCatalog({
@@ -163,7 +173,7 @@ export function dashboardFailures(): string[] {
   expect(levelItems.every((item) => item.segments.join('/') === 'more/levels' && item.span === 1), 'level tiles open Levels');
   expect(
     defaultTileIds('crew', withLevels, true).join(',') ===
-      'widget:aws,widget:tws,widget:sog,widget:awa,widget:twa,widget:heading,widget:cog,widget:polar,widget:waves,do:inspection,more:duty,know:engines,know:electrical,more:sail,more:anchorage,fix,more:ask',
+      'widget:aws,widget:tws,widget:sog,widget:awa,widget:twa,widget:heading,widget:cog,widget:vmg,widget:vmc,widget:polar,widget:waves,do:inspection,more:duty,know:engines,know:electrical,more:sail,more:anchorage,fix,more:ask',
     'level tiles stay off the crew default',
   );
   expect(

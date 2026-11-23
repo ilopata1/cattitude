@@ -1,5 +1,5 @@
-<div class="essentials" [class.stale]="essentials().stale">
-  <div class="card">
+<div class="essentials">
+  <div class="card" [class.stale]="essentials().stale">
     <span class="label cs-kicker">
       Depth
       <span class="cs-stale-flag">Stale</span>
@@ -12,7 +12,7 @@
     </span>
     <cs-sparkline [values]="depthTrace()"></cs-sparkline>
   </div>
-  <div class="card">
+  <div class="card" [class.stale]="essentials().stale">
     <span class="label cs-kicker">
       Speed
       <span class="cs-stale-flag">Stale</span>
@@ -25,4 +25,32 @@
     </span>
     <cs-sparkline [values]="speedTrace()"></cs-sparkline>
   </div>
+  <div class="card" [class.stale]="essentials().stale">
+    <span class="label cs-kicker">
+      VMG
+      <span class="cs-stale-flag">Stale</span>
+    </span>
+    <span class="value cs-value">
+      {{ vmgParts().figure }}
+      @if (vmgParts().unit) {
+        <span class="cs-unit" [class.cs-unit-tight]="vmgParts().tight">{{ vmgParts().unit }}</span>
+      }
+    </span>
+    <cs-sparkline [values]="vmgTrace()"></cs-sparkline>
+  </div>
+  @if (showVmc()) {
+    <div class="card" [class.stale]="essentials().stale">
+      <span class="label cs-kicker">
+        VMC
+        <span class="cs-stale-flag">Stale</span>
+      </span>
+      <span class="value cs-value">
+        {{ vmcParts().figure }}
+        @if (vmcParts().unit) {
+          <span class="cs-unit" [class.cs-unit-tight]="vmcParts().tight">{{ vmcParts().unit }}</span>
+        }
+      </span>
+      <cs-sparkline [values]="vmcTrace()"></cs-sparkline>
+    </div>
+  }
 </div>
