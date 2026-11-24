@@ -2,7 +2,14 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { Injectable, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { DutyRota } from '../duty/duty-rota';
-import { entriesFromLogentriesBody, isPassage, recorderIsFresh } from '../logbook/logbook-remote';
+import {
+  BoatPart,
+  BoatRevs,
+  entriesFromLogentriesBody,
+  isPassage,
+  parseBoatRevs,
+  recorderStatusFresh,
+} from '../logbook/logbook-remote';
 import {
   LogEntry,
   LogTrigger,
@@ -14,6 +21,8 @@ import { SignalKSettingsService } from './signal-k-settings.service';
 import { SignalKService } from './signal-k.service';
 
 export interface RecorderContext {
+  /** The boat revision each sent part was based on. A stale part is refused with 409. */
+  baseRevs?: Partial<Record<BoatPart, number>>;
   settings?: LogbookSettings;
   passage?: Passage | null;
   rota?: DutyRota;
@@ -23,11 +32,22 @@ export interface RecorderContext {
   recommended?: string | null;
 }
 
-interface RecorderStatus {
+export interface RecorderStatus {
   recording?: boolean;
   recordingAt?: string;
+  /** Boat clock. */
+  now?: string;
   settings?: LogbookSettings;
   passage?: Passage | null;
+  rota?: DutyRota | null;
+  sails?: { main?: string; headsail?: string; label?: string; recommended?: string | null } | null;
+  revs?: unknown;
+  conflicts?: BoatPart[];
+}
+
+export interface PublishResult {
+  /** Parts the boat refused because another device changed them first. */
+  conflicts: BoatPart[];
 }
 
 /**
@@ -56,13 +76,33 @@ export class LogbookRemoteService {
         `${base}/plugins/cattitude-logbook/status`,
         { headers: this.headers() },
       ));
-      this.status = status;
-      this.recording.set(status.recording === true && recorderIsFresh(status.recordingAt, Date.now()));
+      this.take(status);
       this.error.set(null);
     } catch {
       this.recording.set(false);
       this.status = null;
     }
+  }
+
+  /** Revisions from the last status. Null when the plugin predates them or is unreachable. */
+  revs(): BoatRevs | null {
+    return parseBoatRevs(this.status?.revs);
+  }
+
+  boatRota(): DutyRota | null {
+    const rota = this.status?.rota;
+    return rota && typeof rota === 'object' ? rota : null;
+  }
+
+  boatSails(): { main: string; headsail: string } | null {
+    const sails = this.status?.sails;
+    if (!sails || typeof sails !== 'object') return null;
+    return { main: String(sails.main ?? ''), headsail: String(sails.headsail ?? '') };
+  }
+
+  private take(status: RecorderStatus): void {
+    this.status = status;
+    this.recording.set(status.recording === true && recorderStatusFresh(status, Date.now()));
   }
 
   passage(): Passage | null {
@@ -79,21 +119,29 @@ export class LogbookRemoteService {
     return settings;
   }
 
-  async publish(context: RecorderContext): Promise<void> {
+  /** Null when the boat could not be reached and nothing was applied. */
+  async publish(context: RecorderContext): Promise<PublishResult | null> {
     const base = this.sk.httpBaseUrl();
-    if (!base) return;
+    if (!base) return null;
     try {
       const status = await firstValueFrom(this.http.put<RecorderStatus>(
         `${base}/plugins/cattitude-logbook/context`,
         context,
         { headers: this.headers() },
       ));
-      this.status = status;
-      this.recording.set(status.recording === true && recorderIsFresh(status.recordingAt, Date.now()));
+      this.take(status);
       this.error.set(null);
+      return { conflicts: [] };
     } catch (err) {
-      if (err instanceof HttpErrorResponse && err.status === 404) return;
+      if (err instanceof HttpErrorResponse && err.status === 409 && err.error && typeof err.error === 'object') {
+        const status = err.error as RecorderStatus;
+        this.take(status);
+        this.error.set('Another device changed this first. Showing the boat\'s copy.');
+        return { conflicts: Array.isArray(status.conflicts) ? status.conflicts : [] };
+      }
+      if (err instanceof HttpErrorResponse && err.status === 404) return null;
       this.note(err, 'The boat recorder did not take the latest passage.');
+      return null;
     }
   }
 

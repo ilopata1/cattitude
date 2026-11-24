@@ -9,7 +9,11 @@ import { VesselContextService } from './vessel-context.service';
 interface LogbookPayload {
   entries: LogEntry[];
   passage: Passage | null;
+  serverTime?: string | null;
 }
+
+/** Overlap between polls, so a row committed while the last poll ran is not skipped. */
+const CURSOR_OVERLAP_MS = 2 * 60_000;
 
 @Injectable({ providedIn: 'root' })
 export class LogbookSyncService {
@@ -20,6 +24,9 @@ export class LogbookSyncService {
   private pushing = false;
   readonly error = signal<string | null>(null);
   readonly lastSyncedAt = signal<string | null>(null);
+  /** Railway time of the last full or partial pull. Later pulls ask only for newer rows. */
+  private cursor: string | null = null;
+  private cursorSlug = '';
 
   schedule(): void {
     if (this.timer) clearTimeout(this.timer);
@@ -54,15 +61,25 @@ export class LogbookSyncService {
     }
   }
 
-  /** Pull entries this device does not have. Local unsynced edits win. */
-  async pull(): Promise<{ entries: LogEntry[]; passage: Passage | null }> {
+  /**
+   * Pull entries this device does not have. Local unsynced edits win.
+   * `incremental` asks Railway only for rows written since the last pull, to save bandwidth.
+   */
+  async pull(incremental = false): Promise<{ entries: LogEntry[]; passage: Passage | null }> {
     const localEntries = await this.store.entries();
     const localPassage = await this.store.passage();
     if (!(await this.store.settings()).syncEnabled) {
       return { entries: localEntries, passage: localPassage };
     }
     try {
-      const remote = await firstValueFrom(this.http.get<LogbookPayload>(this.url()));
+      if (this.cursorSlug !== this.vessel.vesselSlug) {
+        this.cursor = null;
+        this.cursorSlug = this.vessel.vesselSlug;
+      }
+      const cursor = incremental ? this.cursor : null;
+      const url = cursor ? `${this.url()}?updatedSince=${encodeURIComponent(cursor)}` : this.url();
+      const remote = await firstValueFrom(this.http.get<LogbookPayload>(url));
+      this.cursor = cursorFrom(remote.serverTime);
       const dirty = new Set(await this.store.dirtyIds());
       const byId = new Map(localEntries.map(entry => [entry.id, entry]));
       for (const entry of remote.entries ?? []) {
@@ -95,4 +112,10 @@ export class LogbookSyncService {
   private url(): string {
     return `${environment.apiUrl}/api/v1/vessels/${encodeURIComponent(this.vessel.vesselSlug)}/logbook`;
   }
+}
+
+function cursorFrom(serverTime: string | null | undefined): string | null {
+  const at = serverTime ? Date.parse(serverTime) : NaN;
+  if (!Number.isFinite(at)) return null;
+  return new Date(at - CURSOR_OVERLAP_MS).toISOString();
 }

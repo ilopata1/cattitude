@@ -27,6 +27,7 @@ export class SailPlanService {
   private hydrateSlug: string | null = null;
   /** True once a saved plan (this device or the server) is the active plan. */
   private usingStored = false;
+  private saving = false;
 
   constructor(
     private readonly http: HttpClient,
@@ -60,16 +61,31 @@ export class SailPlanService {
     return this.hydratePromise;
   }
 
+  /**
+   * Fetch the plan from Railway again, for changes made on other devices.
+   * A plan saved here that Railway has not taken yet is sent first instead.
+   */
+  async refresh(): Promise<void> {
+    const slug = this.vesselContext.vesselSlug;
+    if (!slug || this.saving || this.hydrateSlug !== slug) return;
+    await this.hydrate(slug).catch(() => undefined);
+  }
+
   async save(plan: SailPlan): Promise<boolean> {
     const slug = this.vesselContext.vesselSlug;
     const next = sanitizePlan(plan);
     this.usingStored = true;
     this.apply(next, slug);
+    this.markUnsent(slug, true);
+    this.saving = true;
     try {
       await this.push(next, slug);
+      this.markUnsent(slug, false);
       return true;
     } catch {
       return false;
+    } finally {
+      this.saving = false;
     }
   }
 
@@ -108,6 +124,15 @@ export class SailPlanService {
   private async hydrate(slug: string): Promise<void> {
     const cached = this.readCache(slug);
     this.usingStored = cached != null;
+    if (cached && this.unsent(slug)) {
+      // Saved here while Railway was out of reach. Send it rather than lose it to the older copy.
+      this.apply(cached, slug, false);
+      try {
+        await this.push(cached, slug);
+        this.markUnsent(slug, false);
+      } catch { /* Still unsent. The next refresh tries again. */ }
+      return;
+    }
     try {
       const res = await firstValueFrom(this.http.get<SailPlanResponse>(this.url(slug)));
       if (res.plan) {
@@ -160,6 +185,21 @@ export class SailPlanService {
 
   private url(slug: string): string {
     return `${environment.apiUrl}/api/v1/vessels/${encodeURIComponent(slug)}/sail-plan`;
+  }
+
+  private unsent(slug: string): boolean {
+    try {
+      return localStorage.getItem(`${this.cacheKey(slug)}:unsent`) === '1';
+    } catch {
+      return false;
+    }
+  }
+
+  private markUnsent(slug: string, unsent: boolean): void {
+    try {
+      if (unsent) localStorage.setItem(`${this.cacheKey(slug)}:unsent`, '1');
+      else localStorage.removeItem(`${this.cacheKey(slug)}:unsent`);
+    } catch { /* ignore */ }
   }
 
   private cacheKey(slug: string): string {

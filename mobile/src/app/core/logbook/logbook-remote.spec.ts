@@ -1,4 +1,4 @@
-import { entriesFromLogentriesBody, recorderIsFresh } from './logbook-remote';
+import { boatAction, entriesFromLogentriesBody, parseBoatRevs, recorderIsFresh, recorderStatusFresh } from './logbook-remote';
 
 describe('logbook remote entries', () => {
   it('keeps a Clever Sailor row and a manual line, and drops the plugin hourly row', () => {
@@ -44,5 +44,29 @@ describe('logbook remote entries', () => {
     expect(recorderIsFresh('2026-06-01T11:59:00.000Z', now)).toBeTrue();
     expect(recorderIsFresh('2026-06-01T11:58:00.000Z', now)).toBeFalse();
     expect(recorderIsFresh(null, now)).toBeFalse();
+  });
+});
+
+describe('boat revisions', () => {
+  it('reads revisions and refuses a partial set', () => {
+    expect(parseBoatRevs({ settings: 1, passage: 2, rota: 0, sails: 4, entries: 9 }))
+      .toEqual({ settings: 1, passage: 2, rota: 0, sails: 4, entries: 9 });
+    expect(parseBoatRevs({ passage: 2 })).toBeNull();
+    expect(parseBoatRevs(undefined)).toBeNull();
+  });
+
+  it('judges the recorder by the boat clock when the boat sends one', () => {
+    const phoneAhead = Date.parse('2026-06-01T12:05:00.000Z');
+    const status = { recordingAt: '2026-06-01T12:00:00.000Z', now: '2026-06-01T12:00:05.000Z' };
+    expect(recorderStatusFresh(status, phoneAhead)).toBeTrue();
+    expect(recorderStatusFresh({ recordingAt: status.recordingAt }, phoneAhead)).toBeFalse();
+    expect(recorderStatusFresh(null, phoneAhead)).toBeFalse();
+  });
+
+  it('adopts newer boat parts and resends after the boat lost its state', () => {
+    expect(boatAction(null, 0)).toBe('adopt');
+    expect(boatAction(3, 4)).toBe('adopt');
+    expect(boatAction(4, 4)).toBe('keep');
+    expect(boatAction(4, 0)).toBe('resend');
   });
 });

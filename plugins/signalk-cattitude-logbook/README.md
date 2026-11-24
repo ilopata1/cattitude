@@ -15,3 +15,5 @@ The recorder uses the interval, offset, passage, sail set, and duty rota publish
 Polar samples are taken on the boat once a second for the last hour, including while no phone has the polar page open. The app reads them from `GET /plugins/cattitude-logbook/polar`. Restart Signal K after updating this plugin so that history starts recording.
 
 `signalk-logbook` also writes its own hourly, engine, and alarm lines. Those stay in the Signal K logbook web app. Clever Sailor shows the rows this recorder writes, plus manual lines.
+
+The boat holds one copy of the passage, duty rota, sail set, and logbook settings, each with a revision number. A phone sends a part only when someone changes it there, together with the revision it started from. If another device changed that part first, the boat refuses it with `409` and the phone takes the boat's copy. Phones read `/status` every 30 s to pick up changes from other devices. `/status` also returns the boat's own time, so a phone with a wrong clock still sees the recorder as running. Restart Signal K after updating this plugin.

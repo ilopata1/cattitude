@@ -19,6 +19,9 @@ export class CurrentSailService {
   private readonly changedSubject = new Subject<void>();
   readonly selection = this.selectionSignal.asReadonly();
   readonly changed$ = this.changedSubject.asObservable();
+  private readonly localChangeSubject = new Subject<void>();
+  /** Only changes made on this device, which go to the boat. */
+  readonly localChange$ = this.localChangeSubject.asObservable();
 
   configuration(): string {
     return formatCurrentSails(this.selectionSignal());
@@ -36,14 +39,31 @@ export class CurrentSailService {
     this.write({ ...this.selectionSignal(), headsail: trimmed });
   }
 
+  /** Take the sail set another device sent to the boat. Fires `changed$`, not `localChange$`. */
+  adopt(raw: { main: string; headsail: string }): void {
+    const main = isMainReef(raw.main) ? raw.main : '';
+    const headsail = raw.headsail.trim();
+    const current = this.selectionSignal();
+    if (current.main === main && current.headsail === headsail) {
+      return;
+    }
+    this.store({ main, headsail });
+    this.changedSubject.next();
+  }
+
   private write(selection: CurrentSailSelection): void {
+    this.store(selection);
+    this.changedSubject.next();
+    this.localChangeSubject.next();
+  }
+
+  private store(selection: CurrentSailSelection): void {
     this.selectionSignal.set(selection);
     try {
       localStorage.setItem(this.storageKey(), JSON.stringify(selection));
     } catch {
       /* private mode and full storage can refuse the write */
     }
-    this.changedSubject.next();
   }
 
   private read(): CurrentSailSelection {

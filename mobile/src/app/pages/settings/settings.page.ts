@@ -23,6 +23,7 @@ import {
 import { NotificationPreferenceService } from '../../core/services/notification-preference.service';
 import { SignalKService, SignalKConnectionState } from '../../core/services/signal-k.service';
 import { SignalKSettingsService } from '../../core/services/signal-k-settings.service';
+import { SignalKAccessService } from '../../core/services/signal-k-access.service';
 import { ThemePreference, ThemeService } from '../../core/services/theme.service';
 import { WaveSettingsService } from '../../core/services/wave-settings.service';
 import {
@@ -43,6 +44,7 @@ export class SettingsPage implements OnInit, OnDestroy {
 
   urlControl = new FormControl('', [Validators.pattern(/^(https?|wss?):\/\/.+|[a-zA-Z0-9.-]+(:\d+)?$/)]);
   tokenControl = new FormControl('');
+  deviceNameControl = new FormControl('');
 
   connectionState: SignalKConnectionState = 'disconnected';
   selfContext = '';
@@ -83,6 +85,7 @@ export class SettingsPage implements OnInit, OnDestroy {
     private readonly notifications: NotificationBridgeService,
     private readonly coachInputs: CoachInputsService,
     readonly theme: ThemeService,
+    readonly access: SignalKAccessService,
   ) {
     this.alertsEnabled = this.notificationPrefs.enabled();
   }
@@ -94,6 +97,7 @@ export class SettingsPage implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.urlControl.setValue(this.skSettings.url);
     this.tokenControl.setValue(this.skSettings.token ?? '');
+    this.deviceNameControl.setValue(this.access.defaultName());
     this.loadFuelCurve();
     this.loadWaves();
     this.housePercentControl.setValue(formatHousePercent(this.houseBattery.percent));
@@ -163,6 +167,22 @@ export class SettingsPage implements OnInit, OnDestroy {
 
   disconnect(): void {
     this.sk.disconnect();
+  }
+
+  get hasToken(): boolean {
+    return !!this.skSettings.token;
+  }
+
+  async requestAccess(): Promise<void> {
+    const url = (this.urlControl.value ?? '').trim();
+    if (url && url !== this.skSettings.url && !this.urlControl.invalid) {
+      this.skSettings.setUrl(url);
+      this.sk.connect();
+    }
+    await this.access.request(this.deviceNameControl.value ?? '');
+    if (this.access.state() === 'approved') {
+      this.tokenControl.setValue(this.skSettings.token);
+    }
   }
 
   ionViewWillLeave(): void {

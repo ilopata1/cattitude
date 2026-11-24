@@ -55,7 +55,56 @@
             Address of this boat's live-data server. Depth, speed, and wind on
             Instruments, Sail, Polar, Anchorage, and the logbook come from this connection.
           </p>
-          <ion-label class="settings-label">Access token</ion-label>
+          <ion-label class="settings-label">Access for this device</ion-label>
+          <p class="settings-hint">
+            The logbook needs write access to the boat. Request it here, then approve it
+            once on the boat in the Signal K admin under Security, Access Requests.
+            {{ hasToken ? 'This device already has a token. Requesting again replaces it.' : '' }}
+          </p>
+          <ion-input
+            [formControl]="deviceNameControl"
+            type="text"
+            placeholder="Name shown on the boat"
+            autocorrect="off"
+            class="settings-input"
+            aria-label="Device name shown on the boat"
+          ></ion-input>
+          <div class="settings-actions">
+            <ion-button
+              (click)="requestAccess()"
+              [disabled]="access.state() === 'pending' || urlControl.invalid || !urlControl.value"
+              expand="block"
+              fill="outline"
+              color="primary"
+              class="settings-btn"
+            >
+              Request access
+            </ion-button>
+            <ion-button
+              *ngIf="access.state() === 'pending'"
+              (click)="access.checkNow()"
+              expand="block"
+              fill="clear"
+              color="primary"
+              class="settings-btn"
+            >
+              Check again
+            </ion-button>
+            <ion-button
+              *ngIf="access.state() === 'pending'"
+              (click)="access.cancel()"
+              expand="block"
+              fill="clear"
+              color="dark"
+              class="settings-btn"
+            >
+              Stop waiting
+            </ion-button>
+          </div>
+          <p class="settings-hint" role="status" aria-live="polite" *ngIf="access.message()">
+            {{ access.message() }}
+          </p>
+          <ion-label class="settings-label">Or paste a token</ion-label>
           <ion-input
             [formControl]="tokenControl"
             type="password"
@@ -66,7 +115,7 @@
             class="settings-input"
           ></ion-input>
           <p class="settings-hint">
-            A read/write token from the Signal K admin, used so this app can write the logbook.
+            A read/write token from the Signal K admin. Saved with Save &amp; Connect.
           </p>
           <p class="field-error" *ngIf="urlError && (urlControl.dirty || urlControl.touched || !urlControl.value)">
             {{ urlError }}

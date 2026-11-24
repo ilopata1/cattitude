@@ -13,6 +13,7 @@ import { LogbookTriggerService } from './core/services/logbook-trigger.service';
 import { CoachInputsService } from './core/services/coach-inputs.service';
 import { CoachService } from './core/services/coach.service';
 import { SailWatchService } from './core/services/sail-watch.service';
+import { SharedRefreshService } from './core/services/shared-refresh.service';
 import { ThemeService } from './core/services/theme.service';
 import { VesselRouteService } from './core/services/vessel-route.service';
 import { WaveEstimatorService } from './core/services/wave-estimator.service';
@@ -45,6 +46,7 @@ export class AppComponent {
     this.sailWatch.ensureRunning();
     this.houseBattery.ensureRunning();
     this.logbook.ensureRunning();
+    inject(SharedRefreshService).start();
     void inject(CoachInputsService);
     void inject(CoachService);
     this.appUpdate.start();
