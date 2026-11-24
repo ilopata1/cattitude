@@ -13,8 +13,12 @@ router = APIRouter(prefix="/api/v1/vessels/{slug}", tags=["logbook"])
 
 
 @router.get("/logbook")
-async def get_logbook(slug: str, since: str | None = None) -> JSONResponse:
-    result = fetch_logbook(slug, since)
+async def get_logbook(
+    slug: str,
+    since: str | None = None,
+    updatedSince: str | None = None,  # noqa: N803 - query name used by the app
+) -> JSONResponse:
+    result = fetch_logbook(slug, since, updatedSince)
     if result is None:
         raise HTTPException(status_code=404, detail=f"Vessel '{slug}' not found")
     return JSONResponse(content=result, headers={"Cache-Control": "no-cache"})

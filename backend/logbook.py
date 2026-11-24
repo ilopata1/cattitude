@@ -93,7 +93,23 @@ def sanitize_passage(raw: Any) -> dict[str, Any] | None:
     return cleaned
 
 
-def fetch_logbook(slug: str, since: str | None = None) -> dict[str, Any] | None:
+def _parse_cursor(value: str | None) -> datetime | None:
+    if not value:
+        return None
+    try:
+        parsed = datetime.fromisoformat(value[:40].replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return parsed if parsed.tzinfo else parsed.replace(tzinfo=timezone.utc)
+
+
+def fetch_logbook(
+    slug: str,
+    since: str | None = None,
+    updated_since: str | None = None,
+) -> dict[str, Any] | None:
+    """Entries for a vessel. `updated_since` (a `serverTime` from an earlier reply)
+    returns only rows written after it, so a phone can poll cheaply."""
     from guide_service import fetch_vessel, get_engine
 
     vessel = fetch_vessel(slug)
@@ -104,7 +120,12 @@ def fetch_logbook(slug: str, since: str | None = None) -> dict[str, Any] | None:
     if since:
         since_sql = " AND entry->>'at' >= :since"
         params["since"] = since[:40]
+    cursor = _parse_cursor(updated_since)
+    if cursor is not None:
+        since_sql += " AND updated_at > :updated_since"
+        params["updated_since"] = cursor
     with get_engine().connect() as conn:
+        server_time = conn.execute(text("SELECT now()")).scalar_one()
         rows = conn.execute(
             text(
                 f"""
@@ -140,6 +161,8 @@ def fetch_logbook(slug: str, since: str | None = None) -> dict[str, Any] | None:
         "entries": entries,
         "passage": passage,
         "updatedAt": _iso(passage_row[1]) if passage_row else None,
+        "serverTime": _iso(server_time),
+        "incremental": cursor is not None,
     }
 
 

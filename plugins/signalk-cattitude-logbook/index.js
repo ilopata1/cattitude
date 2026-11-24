@@ -13,6 +13,9 @@ const {
 } = require('./lib/math');
 const { applyPassageEvent, buildEntry, toLogentryResource } = require('./lib/entry');
 const { watchAssignee } = require('./lib/duty');
+const { emptyRevs, mergeContext, normalizeRevs, sailLabel } = require('./lib/context');
+const { HOUSE_BATTERY_PATH, houseBatteryAlarm, normalizeAlerts } = require('./lib/alarms');
+const { exportTrack, importTrack, trackSince } = require('./lib/track');
 const {
   POLAR_RETAIN_MS,
   POLAR_SAMPLE_MS,
@@ -25,6 +28,7 @@ const {
 
 const SAMPLE_MS = 10_000;
 const RETAIN_MS = 48 * 60 * 60 * 1000;
+const TRACK_SAVE_MS = 5 * 60_000;
 const AUTOMATIC = new Set([
   'interval',
   'propulsion-change',
@@ -57,11 +61,16 @@ module.exports = (app) => {
   let polarTimer = null;
   let polarDirty = false;
   let polarSavedAt = 0;
+  let trackSavedAt = 0;
+  let houseAlarmState = null;
 
   plugin.start = () => {
     dataDir = app.getDataDirPath();
     state = loadState(dataDir);
     polar = loadPolar(dataDir);
+    samples = loadTrack(dataDir);
+    trackSavedAt = Date.now();
+    houseAlarmState = null;
     registerStateProvider();
     const subscription = {
       context: 'vessels.self',
@@ -83,6 +92,11 @@ module.exports = (app) => {
     timer = setInterval(() => {
       recordingAt = Date.now();
       sample(recordingAt);
+      checkAlarms();
+      if (recordingAt - trackSavedAt >= TRACK_SAVE_MS) {
+        trackSavedAt = recordingAt;
+        saveTrack();
+      }
       chain = chain.then(() => evaluate(recordingAt)).catch((err) => {
         app.error(`Cattitude logbook: ${err.message}`);
       });
@@ -113,6 +127,7 @@ module.exports = (app) => {
     polarTimer = null;
     persist();
     savePolar();
+    saveTrack();
   };
 
   plugin.registerWithRouter = (router) => {
@@ -130,9 +145,18 @@ module.exports = (app) => {
         samples: samplesSince(polar, since),
       });
     });
+    read.get('/track', (req, res) => {
+      res.json({
+        now: Date.now(),
+        retainMs: RETAIN_MS,
+        sampleIntervalMs: SAMPLE_MS,
+        samples: trackSince(samples, Number(req.query.since), Number(req.query.step)),
+      });
+    });
     write.put('/context', (req, res) => {
-      applyContext(req.body || {});
-      res.json(publicState());
+      const conflicts = applyContext(req.body || {});
+      // 409 tells the phone its copy was older. The body is the boat's state to adopt.
+      res.status(conflicts.length ? 409 : 200).json({ ...publicState(), conflicts });
     });
     write.post('/record', (req, res) => {
       const body = req.body || {};
@@ -195,43 +219,28 @@ module.exports = (app) => {
     return {
       recording: true,
       recordingAt: new Date(recordingAt || Date.now()).toISOString(),
+      // The boat's own clock, so phones judge freshness without trusting theirs.
+      now: new Date().toISOString(),
       settings: state.settings,
       passage: state.passage,
       sails: state.sails,
+      rota: state.rota,
+      alerts: normalizeAlerts(state.alerts),
+      revs: normalizeRevs(state.revs),
     };
   }
 
+  /** Returns the parts refused because the phone sent them from an older revision. */
   function applyContext(body) {
-    if (body.settings) state.settings = normalizeSettings(body.settings);
-    if (body.sails && typeof body.sails === 'object') {
-      const next = {
-        main: String(body.sails.main || ''),
-        headsail: String(body.sails.headsail || ''),
-        label: sailLabel(body.sails),
-        recommended: body.recommended ?? body.sails.recommended ?? state.sails.recommended ?? null,
-      };
-      if (next.label !== state.sails.label) {
-        state.sails = next;
-        state.sailDirtyAt = Date.now();
-      } else {
-        state.sails = next;
-      }
-    } else if (body.recommended !== undefined) {
-      state.sails = { ...state.sails, recommended: body.recommended };
-    }
-    if (body.passage && typeof body.passage === 'object') {
-      const previous = state.passage;
-      const incoming = body.passage;
-      const samePassage = !!(previous && previous.id && incoming.id && previous.id === incoming.id);
-      // The rota on this server owns the watch name. A phone publish must not move it.
-      state.passage = {
-        ...incoming,
-        watch: samePassage ? (previous.watch ?? '') : (incoming.watch ?? ''),
-      };
-    }
-    if (body.rota && typeof body.rota === 'object') state.rota = body.rota;
-    if (Number.isFinite(body.wallOffsetMs)) state.wallOffsetMs = body.wallOffsetMs;
+    const merged = mergeContext(state, body, Date.now());
+    state = merged.state;
     persist();
+    return merged.conflicts;
+  }
+
+  function bumpRev(part) {
+    state.revs = normalizeRevs(state.revs);
+    state.revs[part] += 1;
   }
 
   async function applyRotaWatch(now) {
@@ -241,6 +250,7 @@ module.exports = (app) => {
     if (String(passage.watch || '').trim() === watch) return;
     const previous = passage;
     state.passage = { ...passage, watch };
+    bumpRev('passage');
     if (!passage.departedAt) {
       persist();
       return;
@@ -362,7 +372,12 @@ module.exports = (app) => {
     });
     await writeResource(entry);
     remember(entry);
-    state.passage = applyPassageEvent(state.passage, trigger, entry.at, waypoint?.id ?? null);
+    bumpRev('entries');
+    const passage = applyPassageEvent(state.passage, trigger, entry.at, waypoint?.id ?? null);
+    if (passage !== state.passage) {
+      state.passage = passage;
+      bumpRev('passage');
+    }
     persist();
     const status = app.setPluginStatus || app.setProviderStatus;
     if (status) status(`Logged ${trigger}`);
@@ -395,6 +410,8 @@ module.exports = (app) => {
     const resource = toLogentryResource(next);
     delete resource.enrich;
     await app.resourcesApi.setResource('logentries', id, { ...resource, enrich: false });
+    bumpRev('entries');
+    persist();
     return next;
   }
 
@@ -434,6 +451,46 @@ module.exports = (app) => {
     const cutoff = now - RETAIN_MS;
     if (samples.length && samples[0].at < cutoff) {
       samples = samples.filter((item) => item.at >= cutoff);
+    }
+  }
+
+  /** Raise or clear the house battery alarm when its state changes. */
+  function checkAlarms() {
+    const notice = houseBatteryAlarm(reading, state.alerts);
+    if (!notice || notice.state === houseAlarmState) return;
+    if (houseAlarmState == null && notice.state === 'normal') {
+      houseAlarmState = 'normal';
+      return;
+    }
+    houseAlarmState = notice.state;
+    try {
+      app.handleMessage(plugin.id, {
+        updates: [{ values: [{ path: HOUSE_BATTERY_PATH, value: notice }] }],
+      });
+    } catch (err) {
+      app.error(`Cattitude logbook alarm: ${err.message}`);
+    }
+  }
+
+  function loadTrack(dir) {
+    try {
+      const raw = JSON.parse(fs.readFileSync(path.join(dir, 'track.json'), 'utf8'));
+      return importTrack(raw, Date.now() - RETAIN_MS);
+    } catch {
+      return [];
+    }
+  }
+
+  function saveTrack() {
+    if (!dataDir) return;
+    try {
+      const file = path.join(dataDir, 'track.json');
+      const temp = `${file}.tmp`;
+      fs.mkdirSync(dataDir, { recursive: true });
+      fs.writeFileSync(temp, JSON.stringify(exportTrack(samples)));
+      fs.renameSync(temp, file);
+    } catch (err) {
+      app.error(`Cattitude logbook track history: ${err.message}`);
     }
   }
 
@@ -484,6 +541,8 @@ function emptyState() {
     sails: { main: '', headsail: '', label: '', recommended: null },
     rota: null,
     wallOffsetMs: 0,
+    revs: emptyRevs(),
+    alerts: normalizeAlerts(null),
     stable: null,
     pending: null,
     pendingSince: 0,
@@ -501,6 +560,8 @@ function loadState(dir) {
     return {
       ...emptyState(),
       ...parsed,
+      revs: normalizeRevs(parsed.revs),
+      alerts: normalizeAlerts(parsed.alerts),
       settings: normalizeSettings(parsed.settings),
       sails: {
         main: parsed.sails?.main || '',
@@ -512,12 +573,6 @@ function loadState(dir) {
   } catch {
     return emptyState();
   }
-}
-
-function sailLabel(sails) {
-  if (!sails) return '';
-  if (sails.label) return String(sails.label);
-  return [sails.main, sails.headsail].filter(Boolean).join(' + ');
 }
 
 function notFound() {

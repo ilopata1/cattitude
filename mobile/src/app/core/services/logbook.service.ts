@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { formatCurrentSails } from '../guide/current-sail';
 import { enginesRunning } from '../logbook/logbook-ingest';
+import { BoatPart, BoatRevs, boatAction } from '../logbook/logbook-remote';
 import {
   bearingDeg,
   beaufortFromKnots,
@@ -27,7 +28,8 @@ import {
 import { wallNowMs } from '../wall-time';
 import { CurrentSailService } from './current-sail.service';
 import { DutyRotaService } from './duty-rota.service';
-import { LogbookRemoteService } from './logbook-remote.service';
+import { HouseBatterySettingsService } from './house-battery-settings.service';
+import { LogbookRemoteService, RecorderContext } from './logbook-remote.service';
 import { LogbookSamplerService } from './logbook-sampler.service';
 import { LogbookStoreService } from './logbook-store.service';
 import { LogbookSyncService } from './logbook-sync.service';
@@ -58,6 +60,11 @@ const BOAT_ONLY = new Set<LogTrigger>([
   'watch-change',
 ]);
 
+const BOAT_PARTS: BoatPart[] = ['settings', 'passage', 'rota', 'sails', 'alerts'];
+/** History fetched from the boat on first contact: enough for the 24 h progress figure. */
+const TRACK_HISTORY_MS = 25 * 3_600_000;
+const TRACK_HISTORY_STEP_MS = 60_000;
+
 @Injectable({ providedIn: 'root' })
 export class LogbookService {
   private readonly store = inject(LogbookStoreService);
@@ -68,6 +75,7 @@ export class LogbookService {
   private readonly sailPlans = inject(SailPlanService);
   private readonly polar = inject(PolarService);
   private readonly duty = inject(DutyRotaService);
+  private readonly houseBattery = inject(HouseBatterySettingsService);
 
   readonly entries$ = new BehaviorSubject<LogEntry[]>([]);
   readonly passage$ = new BehaviorSubject<Passage | null>(null);
@@ -75,6 +83,8 @@ export class LogbookService {
 
   private ready: Promise<void> | null = null;
   private tail: Promise<unknown> = Promise.resolve();
+  /** Boat revisions this device last took or wrote. Null until the first status read. */
+  private knownRevs: BoatRevs | null = null;
 
   ensureReady(): Promise<void> {
     if (!this.ready) {
@@ -145,14 +155,14 @@ export class LogbookService {
   }
 
   async savePassage(passage: Passage): Promise<void> {
-    await this.writePassage(passage);
+    await this.writePassage(passage, true);
   }
 
   /**
    * The passage watch is the person currently on the duty rota's watch task.
    * The boat recorder logs the handover. This device only stores and publishes it.
    */
-  private async writePassage(passage: Passage): Promise<void> {
+  private async writePassage(passage: Passage, publish: boolean): Promise<void> {
     await this.ensureReady();
     if (this.duty.hasVessel()) await this.duty.whenReady();
     const next: Passage = {
@@ -164,7 +174,7 @@ export class LogbookService {
     await this.store.markPassageDirty(true);
     this.passage$.next(next);
     this.sync.schedule();
-    await this.publishContext();
+    if (publish) await this.publishContext(['passage']);
   }
 
   private async noteDutyWatch(): Promise<void> {
@@ -174,7 +184,8 @@ export class LogbookService {
     if (!passage) return;
     const watch = this.dutyWatch();
     if (passage.watch.trim() === watch) return;
-    await this.writePassage({ ...passage, watch });
+    // The boat writes the watch from its own rota, so this only updates this device.
+    await this.writePassage({ ...passage, watch }, false);
   }
 
   private dutyWatch(): string {
@@ -200,27 +211,158 @@ export class LogbookService {
     await this.store.saveSettings(next);
     const normalized = await this.store.settings();
     this.settings$.next(normalized);
-    await this.publishContext();
+    await this.publishContext(['settings']);
   }
 
-  /** Sail set, duty rota, passage, and interval, for the recorder on the boat. */
-  async publishContext(): Promise<void> {
+  /**
+   * Send the parts this device changed to the boat recorder. Each part carries the boat
+   * revision it was based on, so the boat refuses it when another device changed it first.
+   * The refused parts are replaced here with the boat's copy.
+   */
+  async publishContext(parts: BoatPart[] = BOAT_PARTS): Promise<void> {
     if (this.duty.hasVessel()) await this.duty.whenReady();
-    const selection = this.sails.selection();
+    if (!this.knownRevs) {
+      await this.remote.refresh();
+      if (this.remote.revs()) await this.syncFromBoat(false);
+    }
+    const recommended = this.recommendedSail();
+    const context: RecorderContext = { recommended };
+    const baseRevs: Partial<Record<BoatPart, number>> = {};
+    const sent: BoatPart[] = [];
+    for (const part of parts) {
+      if (part === 'settings') context.settings = this.settings$.value;
+      else if (part === 'passage') context.passage = this.passageForBoat();
+      else if (part === 'rota') {
+        if (!this.duty.hasVessel()) continue;
+        context.rota = this.duty.rota();
+        context.wallOffsetMs = wallNowMs() - Date.now();
+      } else if (part === 'sails') {
+        const selection = this.sails.selection();
+        context.sails = { main: selection.main, headsail: selection.headsail, recommended };
+      } else if (part === 'alerts') {
+        context.alerts = { houseBatteryPercent: this.houseBattery.percent };
+      }
+      sent.push(part);
+      if (this.knownRevs) baseRevs[part] = this.knownRevs[part];
+    }
+    if (this.knownRevs) context.baseRevs = baseRevs;
+    const result = await this.remote.publish(context);
+    const revs = this.remote.revs();
+    if (!result || !revs || !this.knownRevs) return;
+    const refused = new Set(result.conflicts);
+    for (const part of sent) {
+      if (!refused.has(part)) this.knownRevs[part] = revs[part];
+    }
+    if (refused.size) await this.adoptFromBoat([...refused], revs);
+  }
+
+  /** Only the polar advice, which the boat stamps on each row. Not versioned. */
+  async publishAdvice(): Promise<void> {
+    if (!this.knownRevs) return;
+    await this.remote.publish({ recommended: this.recommendedSail() });
+  }
+
+  /**
+   * Take what other devices changed on the boat since this device last looked, and give
+   * the boat back anything it lost. Call after `remote.refresh()`.
+   */
+  async syncFromBoat(allowResend = true): Promise<void> {
+    const revs = this.remote.revs();
+    if (!revs) return;
+    if (this.duty.hasVessel()) await this.duty.whenReady();
+    const known = this.knownRevs;
+    const adopt: BoatPart[] = [];
+    const resend: BoatPart[] = [];
+    for (const part of BOAT_PARTS) {
+      const action = !known && revs[part] === 0 && this.hasLocal(part)
+        ? 'resend'
+        : boatAction(known ? known[part] : null, revs[part]);
+      if (action === 'adopt') adopt.push(part);
+      else if (action === 'resend') resend.push(part);
+    }
+    const entriesChanged = !known || known.entries !== revs.entries;
+    this.knownRevs = { ...revs };
+    await this.adoptFromBoat(adopt, revs);
+    if (entriesChanged) await this.absorbBoatEntries();
+    if (resend.length && allowResend) await this.publishContext(resend);
+  }
+
+  private hasLocal(part: BoatPart): boolean {
+    if (part === 'passage') return !!this.passage$.value;
+    if (part === 'rota') return this.duty.hasVessel() && this.duty.named().length > 0;
+    if (part === 'sails') {
+      const selection = this.sails.selection();
+      return !!(selection.main || selection.headsail);
+    }
+    if (part === 'alerts') return this.houseBattery.isSaved();
+    return false;
+  }
+
+  private async adoptFromBoat(parts: BoatPart[], revs: BoatRevs): Promise<void> {
+    for (const part of parts) {
+      if (part === 'passage') {
+        const passage = this.remote.passage();
+        if (passage) {
+          await this.store.savePassage(passage);
+          // Relay the boat's passage, with its departure and waypoint times, to Railway.
+          await this.store.markPassageDirty(true);
+          this.passage$.next(passage);
+          this.sync.schedule();
+        }
+      } else if (part === 'settings') {
+        const settings = this.remote.serverSettings();
+        if (settings) {
+          await this.store.saveSettings(settings);
+          this.settings$.next(await this.store.settings());
+        }
+      } else if (part === 'rota') {
+        const rota = this.remote.boatRota();
+        if (rota) this.duty.adoptFromBoat(rota);
+      } else if (part === 'sails') {
+        const sails = this.remote.boatSails();
+        if (sails) this.sails.adopt(sails);
+      } else if (part === 'alerts') {
+        const alerts = this.remote.boatAlerts();
+        if (alerts) this.houseBattery.adopt(alerts.houseBatteryPercent);
+      }
+      if (this.knownRevs) this.knownRevs[part] = revs[part];
+    }
+  }
+
+  /**
+   * Fetch the boat's track since this device last did, so progress figures and rows
+   * written on this device cover the hours when it was closed.
+   */
+  async syncBoatTrack(): Promise<void> {
+    const latest = this.sampler.latestBoatAt();
+    const samples = latest
+      ? await this.remote.track(latest - this.remote.trackOffsetMs)
+      : await this.remote.track(Date.now() - TRACK_HISTORY_MS, TRACK_HISTORY_STEP_MS);
+    if (samples) this.sampler.absorbBoat(samples);
+  }
+
+  private recommendedSail(): string | null {
     const average = this.polar.windows[15];
     const advice = this.sailPlans.advise(average.twaDeg, average.twsKnots, average.polarPct);
-    await this.remote.publish({
-      settings: this.settings$.value,
-      passage: this.passageForBoat(),
-      rota: this.duty.hasVessel() ? this.duty.rota() : undefined,
-      wallOffsetMs: wallNowMs() - Date.now(),
-      sails: {
-        main: selection.main,
-        headsail: selection.headsail,
-        recommended: advice && !advice.empty ? advice.primary : null,
-      },
-      recommended: advice && !advice.empty ? advice.primary : null,
+    return advice && !advice.empty ? advice.primary : null;
+  }
+
+  /**
+   * Fetch what other devices sent to Railway, and what the boat holds, again.
+   * Safe to call often. Does nothing until the logbook has loaded once.
+   */
+  async refreshShared(): Promise<void> {
+    if (!this.ready) return;
+    await this.ready;
+    const run = this.tail.then(async () => {
+      const pulled = await this.sync.pull(true);
+      this.entries$.next(pulled.entries);
+      if (!this.remote.revs()) this.passage$.next(pulled.passage);
+      await this.remote.refresh();
+      if (this.remote.revs()) await this.syncFromBoat();
     });
+    this.tail = run.then(() => undefined, () => undefined);
+    await run;
   }
 
   private async load(): Promise<void> {
@@ -230,7 +372,8 @@ export class LogbookService {
     this.entries$.next(pulled.entries);
     this.passage$.next(pulled.passage);
     await this.remote.refresh();
-    await this.absorbBoat();
+    if (this.remote.revs()) await this.syncFromBoat(false);
+    else await this.absorbBoat();
   }
 
   private async recordNowOrRemote(
@@ -242,7 +385,9 @@ export class LogbookService {
       const remote = await this.remote.record(trigger, options);
       if (remote) {
         await this.persist(remote);
-        await this.absorbBoat();
+        await this.remote.refresh();
+        if (this.remote.revs()) await this.syncFromBoat(false);
+        else await this.absorbBoat();
         return remote;
       }
       if (remote === null) return null;
@@ -251,10 +396,25 @@ export class LogbookService {
     return this.recordNow(trigger, options);
   }
 
-  /** Boat rows replace this device's copy, then Railway receives anything new. */
+  /** For a recorder without revisions: rows, passage and settings from the boat. */
   private async absorbBoat(): Promise<void> {
+    if (!(await this.absorbBoatEntries())) return;
+    const passage = this.remote.passage();
+    if (passage && !(await this.store.passageDirty())) {
+      await this.store.savePassage(passage);
+      this.passage$.next(passage);
+    }
+    const settings = this.remote.serverSettings();
+    if (settings) {
+      await this.store.saveSettings(settings);
+      this.settings$.next(await this.store.settings());
+    }
+  }
+
+  /** Boat rows replace this device's copy, then Railway receives anything new. False when the boat could not be read. */
+  private async absorbBoatEntries(): Promise<boolean> {
     const boat = await this.remote.pullEntries();
-    if (!boat) return;
+    if (!boat) return false;
     const dirty = new Set(await this.store.dirtyIds());
     const byId = new Map(this.entries$.value.map(entry => [entry.id, entry]));
     let changed = false;
@@ -272,20 +432,11 @@ export class LogbookService {
         changed = true;
       }
     }
-    const passage = this.remote.passage();
-    if (passage && !(await this.store.passageDirty())) {
-      await this.store.savePassage(passage);
-      this.passage$.next(passage);
-    }
-    const settings = this.remote.serverSettings();
-    if (settings) {
-      await this.store.saveSettings(settings);
-      this.settings$.next(await this.store.settings());
-    }
     if (changed) {
       this.entries$.next([...byId.values()].sort((a, b) => b.at.localeCompare(a.at)));
       this.sync.schedule();
     }
+    return true;
   }
 
   private async recordNow(trigger: LogTrigger, options: LogRecordOptions): Promise<LogEntry | null> {

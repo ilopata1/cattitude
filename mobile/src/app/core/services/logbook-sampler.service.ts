@@ -1,6 +1,7 @@
 import { Injectable, OnDestroy, inject } from '@angular/core';
 import { BehaviorSubject, Subject, Subscription, interval } from 'rxjs';
 import { ingestSignalK } from '../logbook/logbook-ingest';
+import { mergeTrack } from '../logbook/logbook-remote';
 import { LiveReading, TrackSample, emptyReading } from '../models/logbook.model';
 import { LogbookStoreService } from './logbook-store.service';
 import { SignalKDelta, SignalKService } from './signal-k.service';
@@ -21,6 +22,8 @@ export class LogbookSamplerService implements OnDestroy {
 
   private reading = emptyReading();
   private samples: TrackSample[] = [];
+  /** Samples the boat recorded, on this device's clock. Preferred over this device's own. */
+  private boat: TrackSample[] = [];
   private subs: Subscription[] = [];
   private started = false;
   private lastPersistAt = 0;
@@ -30,7 +33,24 @@ export class LogbookSamplerService implements OnDestroy {
   }
 
   samplesSince(sinceMs: number): TrackSample[] {
-    return this.samples.filter(sample => sample.at >= sinceMs);
+    const local = this.samples.filter(sample => sample.at >= sinceMs);
+    const boat = this.boat.filter(sample => sample.at >= sinceMs);
+    return mergeTrack(boat, local);
+  }
+
+  /** Newest boat sample held, on this device's clock. Zero when none. */
+  latestBoatAt(): number {
+    return this.boat.length ? this.boat[this.boat.length - 1].at : 0;
+  }
+
+  /** Add samples fetched from the boat recorder. */
+  absorbBoat(samples: TrackSample[]): void {
+    if (!samples.length) return;
+    const cutoff = Date.now() - RETAIN_MS;
+    const last = this.latestBoatAt();
+    const fresh = samples.filter(sample => sample.at > last && sample.at >= cutoff);
+    this.boat = [...this.boat.filter(sample => sample.at >= cutoff), ...fresh];
+    this.boat.sort((a, b) => a.at - b.at);
   }
 
   async start(): Promise<void> {

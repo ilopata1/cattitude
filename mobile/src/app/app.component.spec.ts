@@ -9,6 +9,7 @@ import { LevelsService } from './core/services/levels.service';
 import { NotificationBridgeService } from './core/services/notification-bridge.service';
 import { HouseBatteryWatchService } from './core/services/house-battery-watch.service';
 import { LogbookTriggerService } from './core/services/logbook-trigger.service';
+import { SharedRefreshService } from './core/services/shared-refresh.service';
 import { CoachInputsService } from './core/services/coach-inputs.service';
 import { CoachService } from './core/services/coach.service';
 import { SailWatchService } from './core/services/sail-watch.service';
@@ -29,6 +30,7 @@ describe('AppComponent', () => {
         { provide: SailWatchService, useValue: { ensureRunning: () => undefined } },
         { provide: HouseBatteryWatchService, useValue: { ensureRunning: () => undefined } },
         { provide: LogbookTriggerService, useValue: { ensureRunning: () => undefined } },
+        { provide: SharedRefreshService, useValue: { start: () => undefined } },
         { provide: CoachInputsService, useValue: {} },
         { provide: CoachService, useValue: {} },
         { provide: AppUpdateService, useValue: { start: () => undefined } },

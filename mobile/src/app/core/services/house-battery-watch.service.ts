@@ -4,6 +4,7 @@ import { houseBatteryNotice, houseChargePercent } from '../levels/house-battery'
 import { LevelsState } from '../levels/levels';
 import { HouseBatterySettingsService } from './house-battery-settings.service';
 import { LevelsService } from './levels.service';
+import { LogbookRemoteService } from './logbook-remote.service';
 import { NotificationBridgeService } from './notification-bridge.service';
 import { NotificationPreferenceService } from './notification-preference.service';
 
@@ -17,6 +18,7 @@ export class HouseBatteryWatchService {
   private readonly settings = inject(HouseBatterySettingsService);
   private readonly notifications = inject(NotificationBridgeService);
   private readonly preferences = inject(NotificationPreferenceService);
+  private readonly boat = inject(LogbookRemoteService);
   private latched = false;
   private started = false;
   private subs: Subscription[] = [];
@@ -33,6 +35,11 @@ export class HouseBatteryWatchService {
 
   private evaluate(state: LevelsState): void {
     if (!this.preferences.enabled()) {
+      this.latched = false;
+      return;
+    }
+    // A current boat recorder raises this alarm itself, full time, as a Signal K notification.
+    if (this.boat.revs()) {
       this.latched = false;
       return;
     }

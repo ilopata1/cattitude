@@ -5,12 +5,14 @@ import {
   WaveEstimate,
   WaveSeries,
   WaveTrace,
+  afterLastLongGap,
   analyzeWindow,
 } from '../waves/wave-estimator';
 import { AttitudeBucket, attitudeParts, attitudeSourceId, fasterAttitude } from '../waves/wave-attitude';
 import { resolveWaveConfig } from '../waves/wave-settings';
 import { ContentService } from './content.service';
 import { sampleTimeMs } from './instrument-damping';
+import { STW_MIN_USEFUL_MPS, isInterspersedStwZero } from './stw-dropout';
 import { SignalKDelta, SignalKService } from './signal-k.service';
 import { WaveSettingsService } from './wave-settings.service';
 
@@ -20,6 +22,9 @@ export interface WaveMonitorState {
   estimate: WaveEstimate | null;
   connected: boolean;
 }
+
+const SOG_PATH = 'navigation.speedOverGround';
+const STW_PATH = 'navigation.speedThroughWater';
 
 const TRACKED = new Set([
   'navigation.gnss.antennaAltitude',
@@ -55,6 +60,9 @@ export class WaveEstimatorService implements OnDestroy {
   private lastRun = 0;
   private running = false;
   private prior: CoursePrior | null = null;
+  private sogMps: number | null = null;
+  private lastGoodStw: number | null = null;
+  private lastGoodStwAt: number | null = null;
 
   constructor() {
     this.sub.add(this.sk.delta$.subscribe((delta) => this.onDelta(delta)));
@@ -145,11 +153,33 @@ export class WaveEstimatorService implements OnDestroy {
           sawAttitude = true;
           continue;
         }
+        if (path === SOG_PATH) {
+          this.sogMps = kv.value;
+          continue;
+        }
+        if (path === STW_PATH && this.isStwDropout(kv.value, t * 1000)) continue;
         if (!TRACKED.has(path)) continue;
         this.push(path, t, kv.value, keepFrom);
       }
     }
     if (sawAttitude) this.publishCollected();
+  }
+
+  /**
+   * The log on some boats sends an odd zero while the boat is moving. Kept, those zeros
+   * make the speed look unsteady and the whole window is rejected. Same rule as the A/B test.
+   */
+  private isStwDropout(mps: number, atMs: number): boolean {
+    if (isInterspersedStwZero(mps, {
+      previousMps: this.lastGoodStw ?? undefined,
+      previousAtMs: this.lastGoodStwAt,
+      sogMps: this.sogMps ?? undefined,
+    }, atMs)) {
+      return true;
+    }
+    this.lastGoodStw = mps;
+    if (Math.abs(mps) >= STW_MIN_USEFUL_MPS) this.lastGoodStwAt = atMs;
+    return false;
   }
 
   private noteAttitude(
@@ -206,7 +236,7 @@ export class WaveEstimatorService implements OnDestroy {
   private series(): WaveSeries | null {
     const motion = this.motion();
     if (!motion) return null;
-    return {
+    return afterLastLongGap({
       pitch: motion.pitch,
       roll: motion.roll,
       antennaAltitude: this.traces.get('navigation.gnss.antennaAltitude'),
@@ -215,7 +245,7 @@ export class WaveEstimatorService implements OnDestroy {
       stw: this.traces.get('navigation.speedThroughWater'),
       heading: this.headingTrace(),
       windFrom: this.traces.get('environment.wind.directionTrue'),
-    };
+    });
   }
 
   private headingTrace(): WaveTrace | undefined {
@@ -262,9 +292,12 @@ export class WaveEstimatorService implements OnDestroy {
     };
   }
 
+  /** Seconds of unbroken pitch and roll, counted from the last long gap. */
   private collectedSeconds(): number {
-    const motion = this.motion();
-    if (!motion) return 0;
+    const whole = this.motion();
+    if (!whole) return 0;
+    const motion = afterLastLongGap({ pitch: whole.pitch, roll: whole.roll });
+    if (!motion.pitch.t.length || !motion.roll.t.length) return 0;
     const start = Math.max(motion.pitch.t[0], motion.roll.t[0]);
     const end = Math.min(motion.pitch.t[motion.pitch.t.length - 1], motion.roll.t[motion.roll.t.length - 1]);
     return Math.max(0, end - start);

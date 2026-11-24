@@ -12,6 +12,7 @@ import { ContentService } from '../../core/services/content.service';
 import { NotificationBridgeService } from '../../core/services/notification-bridge.service';
 import { NotificationPreferenceService } from '../../core/services/notification-preference.service';
 import { SignalKSettingsService } from '../../core/services/signal-k-settings.service';
+import { SignalKAccessService } from '../../core/services/signal-k-access.service';
 import { SignalKService } from '../../core/services/signal-k.service';
 import { SettingsPage } from './settings.page';
 
@@ -35,6 +36,17 @@ describe('SettingsPage notifications', () => {
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         NotificationPreferenceService,
+        {
+          provide: SignalKAccessService,
+          useValue: {
+            state: () => 'idle',
+            message: () => '',
+            defaultName: () => 'Clever Sailor on device',
+            request: () => Promise.resolve(),
+            checkNow: () => undefined,
+            cancel: () => undefined,
+          },
+        },
         { provide: SignalKSettingsService, useValue: { url: '', token: '', setUrl: () => undefined, setToken: () => undefined } },
         {
           provide: SignalKService,

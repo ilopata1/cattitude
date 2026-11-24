@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { Subject, firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   CrewMember,
@@ -29,6 +29,9 @@ export class DutyRotaService {
 
   readonly rota = signal<DutyRota>(defaultDutyRota());
   readonly syncNote = signal<string | null>(null);
+  private readonly changedSubject = new Subject<void>();
+  /** Fires when someone edits the rota on this device. Not when a copy arrives from elsewhere. */
+  readonly changed$ = this.changedSubject.asObservable();
 
   private slug = '';
   private dirty = false;
@@ -51,6 +54,28 @@ export class DutyRotaService {
     this.slug = slug;
     this.restore();
     this.ready = this.hydrate().then(() => undefined, () => undefined);
+  }
+
+  /** Fetch the rota from Railway again, for changes made on other devices. */
+  refresh(): Promise<void> {
+    if (!this.slug || this.pushing) return this.ready;
+    this.ready = this.hydrate().then(() => undefined, () => undefined);
+    return this.ready;
+  }
+
+  /**
+   * Take the boat's rota, which another device changed after this one last sent.
+   * Marked unsent so Railway gets it too.
+   */
+  adoptFromBoat(raw: unknown): void {
+    const incoming = sanitizeRota(raw);
+    if (sameRota(incoming, this.rota())) {
+      return;
+    }
+    this.rota.set(incoming);
+    this.dirty = true;
+    this.persist();
+    this.schedule();
   }
 
   /** Resolves after the latest local restore and server load for this vessel. */
@@ -192,6 +217,7 @@ export class DutyRotaService {
     this.rota.set({ ...next, updatedAt: new Date().toISOString() });
     this.persist();
     this.schedule();
+    this.changedSubject.next();
   }
 
   private async hydrate(): Promise<void> {

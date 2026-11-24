@@ -130,6 +130,12 @@ export class InspectionService {
     this.schedule();
   }
 
+  /** Fetch inspections from Railway again, for changes made on other devices. */
+  refresh(): Promise<void> {
+    if (!this.slug || this.pushing) return Promise.resolve();
+    return this.hydrate().catch(() => undefined);
+  }
+
   private async hydrate(): Promise<void> {
     const slug = this.slug;
     const seen = this.localEdits;
