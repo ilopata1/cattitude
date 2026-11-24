@@ -1044,6 +1044,47 @@ function detrendLinear(x: Float64Array): Float64Array {
   return out;
 }
 
+/**
+ * A pause in a stream up to this long is bridged by interpolation. Instruments on a
+ * busy network, or a phone that briefly loses the stream, leave short holes that
+ * would otherwise count as missing data.
+ */
+export const WAVE_BRIDGE_GAP_S = 5;
+
+/**
+ * Pitch and roll after the last pause longer than `maxGapS`, with the other traces cut
+ * to match. A phone that slept leaves a hole of minutes. Analysing only the stretch
+ * after it gives a result once that stretch is long enough, instead of failing the
+ * whole window on data gaps for the next 20 minutes.
+ */
+export function afterLastLongGap(series: WaveSeries, maxGapS = WAVE_BRIDGE_GAP_S): WaveSeries {
+  const lastGapEnd = (trace?: WaveTrace): number => {
+    if (!trace) return -Infinity;
+    for (let i = trace.t.length - 1; i > 0; i--) {
+      if (trace.t[i] - trace.t[i - 1] > maxGapS) return trace.t[i];
+    }
+    return -Infinity;
+  };
+  const t0 = Math.max(lastGapEnd(series.pitch), lastGapEnd(series.roll));
+  if (!Number.isFinite(t0)) return series;
+  const trim = (trace?: WaveTrace): WaveTrace | undefined => {
+    if (!trace) return undefined;
+    const index = trace.t.findIndex((time) => time >= t0);
+    if (index <= 0) return index === 0 ? trace : { t: [], v: [] };
+    return { t: trace.t.slice(index), v: trace.v.slice(index) };
+  };
+  return {
+    pitch: trim(series.pitch) as WaveTrace,
+    roll: trim(series.roll) as WaveTrace,
+    antennaAltitude: trim(series.antennaAltitude),
+    rateOfTurn: trim(series.rateOfTurn),
+    rudderAngle: trim(series.rudderAngle),
+    stw: trim(series.stw),
+    heading: trim(series.heading),
+    windFrom: trim(series.windFrom),
+  };
+}
+
 function interp(trace: WaveTrace, grid: Float64Array, wrap: boolean): Float64Array {
   const out = filled(grid.length, NaN);
   if (!trace || trace.t.length < 2) return out;
@@ -1055,7 +1096,7 @@ function interp(trace: WaveTrace, grid: Float64Array, wrap: boolean): Float64Arr
     while (j < trace.t.length - 2 && trace.t[j + 1] < t) j++;
     const t0 = trace.t[j];
     const t1 = trace.t[j + 1];
-    if (t1 - t0 > 2) continue;
+    if (t1 - t0 > WAVE_BRIDGE_GAP_S) continue;
     const u = t1 === t0 ? 0 : (t - t0) / (t1 - t0);
     out[i] = values[j] * (1 - u) + values[j + 1] * u;
   }

@@ -16,6 +16,7 @@ import {
   LogbookSettings,
   Passage,
 } from '../models/logbook.model';
+import { TrackSample } from '../models/logbook.model';
 import { PolarHistoryResponse } from '../models/polar.model';
 import { SignalKSettingsService } from './signal-k-settings.service';
 import { SignalKService } from './signal-k.service';
@@ -26,6 +27,7 @@ export interface RecorderContext {
   settings?: LogbookSettings;
   passage?: Passage | null;
   rota?: DutyRota;
+  alerts?: { houseBatteryPercent: number };
   /** Phone wall clock minus `Date.now()`, so the boat can follow the duty rota. */
   wallOffsetMs?: number;
   sails?: { main: string; headsail: string; recommended?: string | null };
@@ -40,6 +42,7 @@ export interface RecorderStatus {
   settings?: LogbookSettings;
   passage?: Passage | null;
   rota?: DutyRota | null;
+  alerts?: { houseBatteryPercent?: number } | null;
   sails?: { main?: string; headsail?: string; label?: string; recommended?: string | null } | null;
   revs?: unknown;
   conflicts?: BoatPart[];
@@ -63,6 +66,8 @@ export class LogbookRemoteService {
   readonly recording = signal(false);
   readonly error = signal<string | null>(null);
   private status: RecorderStatus | null = null;
+  /** This device's clock minus the boat's, from the last track fetch. */
+  trackOffsetMs = 0;
 
   async refresh(): Promise<void> {
     const base = this.sk.httpBaseUrl();
@@ -92,6 +97,35 @@ export class LogbookRemoteService {
   boatRota(): DutyRota | null {
     const rota = this.status?.rota;
     return rota && typeof rota === 'object' ? rota : null;
+  }
+
+  boatAlerts(): { houseBatteryPercent: number } | null {
+    const percent = Number(this.status?.alerts?.houseBatteryPercent);
+    return Number.isFinite(percent) ? { houseBatteryPercent: percent } : null;
+  }
+
+  /**
+   * Track samples the boat recorded after `since` (boat clock, ms), at most one per
+   * `stepMs`. Times come back on this device's clock. Null when the plugin has no track.
+   */
+  async track(since: number, stepMs = 0): Promise<TrackSample[] | null> {
+    const base = this.sk.httpBaseUrl();
+    if (!base) return null;
+    try {
+      const query = `since=${encodeURIComponent(String(since))}${stepMs ? `&step=${stepMs}` : ''}`;
+      const body = await firstValueFrom(this.http.get<{ now?: number; samples?: TrackSample[] }>(
+        `${base}/plugins/cattitude-logbook/track?${query}`,
+        { headers: this.headers() },
+      ));
+      if (!body || !Array.isArray(body.samples) || !Number.isFinite(body.now)) return null;
+      const offset = Date.now() - (body.now as number);
+      this.trackOffsetMs = offset;
+      return body.samples
+        .filter(sample => sample && Number.isFinite(sample.at))
+        .map(sample => ({ ...sample, at: sample.at + offset }));
+    } catch {
+      return null;
+    }
   }
 
   boatSails(): { main: string; headsail: string } | null {

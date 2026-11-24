@@ -1,10 +1,11 @@
 const { normalizeSettings } = require('./math');
+const { normalizeAlerts } = require('./alarms');
 
 /** Parts of the shared context that carry a revision. The boat assigns each one. */
-const VERSIONED = ['settings', 'passage', 'rota', 'sails'];
+const VERSIONED = ['settings', 'passage', 'rota', 'sails', 'alerts'];
 
 function emptyRevs() {
-  return { settings: 0, passage: 0, rota: 0, sails: 0, entries: 0 };
+  return { settings: 0, passage: 0, rota: 0, sails: 0, alerts: 0, entries: 0 };
 }
 
 function normalizeRevs(raw) {
@@ -95,6 +96,14 @@ function mergeContext(state, body, nowMs) {
     if (!same(body.rota, next.rota)) {
       next.rota = body.rota;
       bump('rota');
+    }
+  }
+
+  if (body.alerts && typeof body.alerts === 'object' && accepts('alerts')) {
+    const alerts = normalizeAlerts(body.alerts);
+    if (!same(alerts, normalizeAlerts(next.alerts))) {
+      next.alerts = alerts;
+      bump('alerts');
     }
   }
 

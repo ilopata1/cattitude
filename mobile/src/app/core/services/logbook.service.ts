@@ -28,6 +28,7 @@ import {
 import { wallNowMs } from '../wall-time';
 import { CurrentSailService } from './current-sail.service';
 import { DutyRotaService } from './duty-rota.service';
+import { HouseBatterySettingsService } from './house-battery-settings.service';
 import { LogbookRemoteService, RecorderContext } from './logbook-remote.service';
 import { LogbookSamplerService } from './logbook-sampler.service';
 import { LogbookStoreService } from './logbook-store.service';
@@ -59,7 +60,10 @@ const BOAT_ONLY = new Set<LogTrigger>([
   'watch-change',
 ]);
 
-const BOAT_PARTS: BoatPart[] = ['settings', 'passage', 'rota', 'sails'];
+const BOAT_PARTS: BoatPart[] = ['settings', 'passage', 'rota', 'sails', 'alerts'];
+/** History fetched from the boat on first contact: enough for the 24 h progress figure. */
+const TRACK_HISTORY_MS = 25 * 3_600_000;
+const TRACK_HISTORY_STEP_MS = 60_000;
 
 @Injectable({ providedIn: 'root' })
 export class LogbookService {
@@ -71,6 +75,7 @@ export class LogbookService {
   private readonly sailPlans = inject(SailPlanService);
   private readonly polar = inject(PolarService);
   private readonly duty = inject(DutyRotaService);
+  private readonly houseBattery = inject(HouseBatterySettingsService);
 
   readonly entries$ = new BehaviorSubject<LogEntry[]>([]);
   readonly passage$ = new BehaviorSubject<Passage | null>(null);
@@ -234,6 +239,8 @@ export class LogbookService {
       } else if (part === 'sails') {
         const selection = this.sails.selection();
         context.sails = { main: selection.main, headsail: selection.headsail, recommended };
+      } else if (part === 'alerts') {
+        context.alerts = { houseBatteryPercent: this.houseBattery.percent };
       }
       sent.push(part);
       if (this.knownRevs) baseRevs[part] = this.knownRevs[part];
@@ -287,6 +294,7 @@ export class LogbookService {
       const selection = this.sails.selection();
       return !!(selection.main || selection.headsail);
     }
+    if (part === 'alerts') return this.houseBattery.isSaved();
     return false;
   }
 
@@ -313,9 +321,24 @@ export class LogbookService {
       } else if (part === 'sails') {
         const sails = this.remote.boatSails();
         if (sails) this.sails.adopt(sails);
+      } else if (part === 'alerts') {
+        const alerts = this.remote.boatAlerts();
+        if (alerts) this.houseBattery.adopt(alerts.houseBatteryPercent);
       }
       if (this.knownRevs) this.knownRevs[part] = revs[part];
     }
+  }
+
+  /**
+   * Fetch the boat's track since this device last did, so progress figures and rows
+   * written on this device cover the hours when it was closed.
+   */
+  async syncBoatTrack(): Promise<void> {
+    const latest = this.sampler.latestBoatAt();
+    const samples = latest
+      ? await this.remote.track(latest - this.remote.trackOffsetMs)
+      : await this.remote.track(Date.now() - TRACK_HISTORY_MS, TRACK_HISTORY_STEP_MS);
+    if (samples) this.sampler.absorbBoat(samples);
   }
 
   private recommendedSail(): string | null {

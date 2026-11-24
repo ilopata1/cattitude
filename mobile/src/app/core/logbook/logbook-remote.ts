@@ -132,15 +132,16 @@ export interface BoatRevs {
   passage: number;
   rota: number;
   sails: number;
+  alerts: number;
   entries: number;
 }
 
-export type BoatPart = 'settings' | 'passage' | 'rota' | 'sails';
+export type BoatPart = 'settings' | 'passage' | 'rota' | 'sails' | 'alerts';
 
 export function parseBoatRevs(raw: unknown): BoatRevs | null {
   if (!raw || typeof raw !== 'object') return null;
   const source = raw as Record<string, unknown>;
-  const revs: BoatRevs = { settings: 0, passage: 0, rota: 0, sails: 0, entries: 0 };
+  const revs: BoatRevs = { settings: 0, passage: 0, rota: 0, sails: 0, alerts: 0, entries: 0 };
   for (const key of Object.keys(revs) as (keyof BoatRevs)[]) {
     const value = Number(source[key]);
     if (!Number.isInteger(value) || value < 0) return null;
@@ -175,4 +176,28 @@ export function boatAction(known: number | null | undefined, boat: number): Boat
   if (boat > known) return 'adopt';
   if (boat < known) return 'resend';
   return 'keep';
+}
+
+/**
+ * Merge the boat's track with this device's own samples. Boat samples win; a local
+ * sample is kept only where the boat has none within `coverMs`, for example while the
+ * boat PC was off.
+ */
+export function mergeTrack<T extends { at: number }>(boat: T[], local: T[], coverMs = 90_000): T[] {
+  if (!boat.length) return local.slice();
+  const times = boat.map(sample => sample.at);
+  const covered = (at: number): boolean => {
+    let lo = 0;
+    let hi = times.length - 1;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (times[mid] < at) lo = mid + 1;
+      else hi = mid;
+    }
+    const near = [times[lo], times[lo - 1]].filter(value => value != null);
+    return near.some(value => Math.abs(value - at) <= coverMs);
+  };
+  const merged = [...boat, ...local.filter(sample => !covered(sample.at))];
+  merged.sort((a, b) => a.at - b.at);
+  return merged;
 }

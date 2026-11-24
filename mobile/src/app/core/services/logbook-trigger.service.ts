@@ -2,6 +2,7 @@ import { Injectable, OnDestroy, inject } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CurrentSailService } from './current-sail.service';
 import { DutyRotaService } from './duty-rota.service';
+import { HouseBatterySettingsService } from './house-battery-settings.service';
 import { LogbookRemoteService } from './logbook-remote.service';
 import { LogbookService } from './logbook.service';
 
@@ -16,6 +17,7 @@ export class LogbookTriggerService implements OnDestroy {
   private readonly sails = inject(CurrentSailService);
   private readonly remote = inject(LogbookRemoteService);
   private readonly duty = inject(DutyRotaService);
+  private readonly houseBattery = inject(HouseBatterySettingsService);
 
   private started = false;
   private busy = false;
@@ -29,6 +31,7 @@ export class LogbookTriggerService implements OnDestroy {
     this.subs.push(
       this.sails.localChange$.subscribe(() => void this.send(['sails'])),
       this.duty.changed$.subscribe(() => void this.send(['rota'])),
+      this.houseBattery.localChange$.subscribe(() => void this.send(['alerts'])),
     );
     this.clock = setInterval(() => void this.heartbeat(), 30_000);
     void this.heartbeat();
@@ -44,7 +47,7 @@ export class LogbookTriggerService implements OnDestroy {
     if (this.clock) clearInterval(this.clock);
   }
 
-  private async send(parts: ('sails' | 'rota')[]): Promise<void> {
+  private async send(parts: ('sails' | 'rota' | 'alerts')[]): Promise<void> {
     try {
       await this.logbook.ensureReady();
       await this.logbook.publishContext(parts);
@@ -63,6 +66,7 @@ export class LogbookTriggerService implements OnDestroy {
         await this.logbook.syncFromBoat();
         await this.logbook.syncWatchFromDuty();
         await this.logbook.publishAdvice();
+        await this.logbook.syncBoatTrack();
       } else {
         // A recorder from before revisions: keep the old full publish.
         await this.logbook.syncWatchFromDuty();

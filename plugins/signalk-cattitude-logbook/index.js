@@ -14,6 +14,8 @@ const {
 const { applyPassageEvent, buildEntry, toLogentryResource } = require('./lib/entry');
 const { watchAssignee } = require('./lib/duty');
 const { emptyRevs, mergeContext, normalizeRevs, sailLabel } = require('./lib/context');
+const { HOUSE_BATTERY_PATH, houseBatteryAlarm, normalizeAlerts } = require('./lib/alarms');
+const { exportTrack, importTrack, trackSince } = require('./lib/track');
 const {
   POLAR_RETAIN_MS,
   POLAR_SAMPLE_MS,
@@ -26,6 +28,7 @@ const {
 
 const SAMPLE_MS = 10_000;
 const RETAIN_MS = 48 * 60 * 60 * 1000;
+const TRACK_SAVE_MS = 5 * 60_000;
 const AUTOMATIC = new Set([
   'interval',
   'propulsion-change',
@@ -58,11 +61,16 @@ module.exports = (app) => {
   let polarTimer = null;
   let polarDirty = false;
   let polarSavedAt = 0;
+  let trackSavedAt = 0;
+  let houseAlarmState = null;
 
   plugin.start = () => {
     dataDir = app.getDataDirPath();
     state = loadState(dataDir);
     polar = loadPolar(dataDir);
+    samples = loadTrack(dataDir);
+    trackSavedAt = Date.now();
+    houseAlarmState = null;
     registerStateProvider();
     const subscription = {
       context: 'vessels.self',
@@ -84,6 +92,11 @@ module.exports = (app) => {
     timer = setInterval(() => {
       recordingAt = Date.now();
       sample(recordingAt);
+      checkAlarms();
+      if (recordingAt - trackSavedAt >= TRACK_SAVE_MS) {
+        trackSavedAt = recordingAt;
+        saveTrack();
+      }
       chain = chain.then(() => evaluate(recordingAt)).catch((err) => {
         app.error(`Cattitude logbook: ${err.message}`);
       });
@@ -114,6 +127,7 @@ module.exports = (app) => {
     polarTimer = null;
     persist();
     savePolar();
+    saveTrack();
   };
 
   plugin.registerWithRouter = (router) => {
@@ -129,6 +143,14 @@ module.exports = (app) => {
         retainMs: POLAR_RETAIN_MS,
         sampleIntervalMs: POLAR_SAMPLE_MS,
         samples: samplesSince(polar, since),
+      });
+    });
+    read.get('/track', (req, res) => {
+      res.json({
+        now: Date.now(),
+        retainMs: RETAIN_MS,
+        sampleIntervalMs: SAMPLE_MS,
+        samples: trackSince(samples, Number(req.query.since), Number(req.query.step)),
       });
     });
     write.put('/context', (req, res) => {
@@ -203,6 +225,7 @@ module.exports = (app) => {
       passage: state.passage,
       sails: state.sails,
       rota: state.rota,
+      alerts: normalizeAlerts(state.alerts),
       revs: normalizeRevs(state.revs),
     };
   }
@@ -431,6 +454,46 @@ module.exports = (app) => {
     }
   }
 
+  /** Raise or clear the house battery alarm when its state changes. */
+  function checkAlarms() {
+    const notice = houseBatteryAlarm(reading, state.alerts);
+    if (!notice || notice.state === houseAlarmState) return;
+    if (houseAlarmState == null && notice.state === 'normal') {
+      houseAlarmState = 'normal';
+      return;
+    }
+    houseAlarmState = notice.state;
+    try {
+      app.handleMessage(plugin.id, {
+        updates: [{ values: [{ path: HOUSE_BATTERY_PATH, value: notice }] }],
+      });
+    } catch (err) {
+      app.error(`Cattitude logbook alarm: ${err.message}`);
+    }
+  }
+
+  function loadTrack(dir) {
+    try {
+      const raw = JSON.parse(fs.readFileSync(path.join(dir, 'track.json'), 'utf8'));
+      return importTrack(raw, Date.now() - RETAIN_MS);
+    } catch {
+      return [];
+    }
+  }
+
+  function saveTrack() {
+    if (!dataDir) return;
+    try {
+      const file = path.join(dataDir, 'track.json');
+      const temp = `${file}.tmp`;
+      fs.mkdirSync(dataDir, { recursive: true });
+      fs.writeFileSync(temp, JSON.stringify(exportTrack(samples)));
+      fs.renameSync(temp, file);
+    } catch (err) {
+      app.error(`Cattitude logbook track history: ${err.message}`);
+    }
+  }
+
   function setStatus() {
     const status = app.setPluginStatus || app.setProviderStatus;
     if (!status) return;
@@ -479,6 +542,7 @@ function emptyState() {
     rota: null,
     wallOffsetMs: 0,
     revs: emptyRevs(),
+    alerts: normalizeAlerts(null),
     stable: null,
     pending: null,
     pendingSince: 0,
@@ -497,6 +561,7 @@ function loadState(dir) {
       ...emptyState(),
       ...parsed,
       revs: normalizeRevs(parsed.revs),
+      alerts: normalizeAlerts(parsed.alerts),
       settings: normalizeSettings(parsed.settings),
       sails: {
         main: parsed.sails?.main || '',

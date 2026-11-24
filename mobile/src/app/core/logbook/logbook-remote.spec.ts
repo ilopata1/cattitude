@@ -1,4 +1,11 @@
-import { boatAction, entriesFromLogentriesBody, parseBoatRevs, recorderIsFresh, recorderStatusFresh } from './logbook-remote';
+import {
+  boatAction,
+  entriesFromLogentriesBody,
+  mergeTrack,
+  parseBoatRevs,
+  recorderIsFresh,
+  recorderStatusFresh,
+} from './logbook-remote';
 
 describe('logbook remote entries', () => {
   it('keeps a Clever Sailor row and a manual line, and drops the plugin hourly row', () => {
@@ -49,8 +56,8 @@ describe('logbook remote entries', () => {
 
 describe('boat revisions', () => {
   it('reads revisions and refuses a partial set', () => {
-    expect(parseBoatRevs({ settings: 1, passage: 2, rota: 0, sails: 4, entries: 9 }))
-      .toEqual({ settings: 1, passage: 2, rota: 0, sails: 4, entries: 9 });
+    expect(parseBoatRevs({ settings: 1, passage: 2, rota: 0, sails: 4, alerts: 1, entries: 9 }))
+      .toEqual({ settings: 1, passage: 2, rota: 0, sails: 4, alerts: 1, entries: 9 });
     expect(parseBoatRevs({ passage: 2 })).toBeNull();
     expect(parseBoatRevs(undefined)).toBeNull();
   });
@@ -68,5 +75,15 @@ describe('boat revisions', () => {
     expect(boatAction(3, 4)).toBe('adopt');
     expect(boatAction(4, 4)).toBe('keep');
     expect(boatAction(4, 0)).toBe('resend');
+  });
+});
+
+describe('boat track merge', () => {
+  it('prefers boat samples and keeps local ones only where the boat has a gap', () => {
+    const boat = [{ at: 0, src: 'boat' }, { at: 10_000, src: 'boat' }, { at: 1_000_000, src: 'boat' }];
+    const local = [{ at: 5_000, src: 'phone' }, { at: 500_000, src: 'phone' }];
+    expect(mergeTrack(boat, local).map(sample => `${sample.at}:${sample.src}`))
+      .toEqual(['0:boat', '10000:boat', '500000:phone', '1000000:boat']);
+    expect(mergeTrack([], local).length).toBe(2);
   });
 });
