@@ -240,7 +240,7 @@ export function logbookMathFailures(): string[] {
     ...entry,
     ship: { batteries: [], tanks: [{ id: '2', type: 'freshWater', level: 1 }] },
   }, () => '  ');
-  expect(blankName === 'Water 100%', `blank name keeps the instance label (${blankName})`);
+  expect(blankName === 'Water 100% · House —', `blank name keeps the instance label (${blankName})`);
   const namedHouse = logLevelsSummary({
     ...entry,
     ship: { batteries: [{ id: 'house', soc: 0.5, volts: null }], tanks: [] },
