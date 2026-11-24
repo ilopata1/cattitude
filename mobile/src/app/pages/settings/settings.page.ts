@@ -14,6 +14,7 @@ import { isSailingVessel } from '../../core/guide/more-menu';
 import { CoachInputHealth, formatCoachInputLine } from '../../core/coach/coach-inputs';
 import { CoachInputsService } from '../../core/services/coach-inputs.service';
 import { ContentService } from '../../core/services/content.service';
+import { DialStyle, DialStyleService } from '../../core/services/dial-style.service';
 import { FuelCurveSettingsService } from '../../core/services/fuel-curve-settings.service';
 import { HouseBatterySettingsService } from '../../core/services/house-battery-settings.service';
 import {
@@ -85,9 +86,16 @@ export class SettingsPage implements OnInit, OnDestroy {
     private readonly notifications: NotificationBridgeService,
     private readonly coachInputs: CoachInputsService,
     readonly theme: ThemeService,
+    readonly dialStyle: DialStyleService,
     readonly access: SignalKAccessService,
   ) {
     this.alertsEnabled = this.notificationPrefs.enabled();
+  }
+
+  onDialStyleChange(value: string | undefined): void {
+    if (value === 'classic' || value === 'modern') {
+      this.dialStyle.setStyle(value as DialStyle);
+    }
   }
 
   get sailing(): boolean {

@@ -32,6 +32,28 @@
         Anchorage toward red so the helm stays readable after dark.
       </p>
       </ion-item>
+      <ion-item>
+      <div class="settings-row">
+        <ion-label class="settings-label" id="dial-style-label">{{ sailing ? 'Sail' : 'Instruments' }} dial</ion-label>
+        <ion-segment
+          class="appearance-segment"
+          [value]="dialStyle.style()"
+          (ionChange)="onDialStyleChange($any($event).detail.value)"
+          aria-labelledby="dial-style-label"
+        >
+          <ion-segment-button value="classic">
+            <ion-label>Classic</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="modern">
+            <ion-label>Modern</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+        <p class="settings-hint">
+          The wind dial on the {{ sailing ? 'Sail' : 'Instruments' }} tab. Classic shows wind speeds on the dial.
+          Modern is a compass card that turns under a fixed lubber line.
+        </p>
+      </div>
+      </ion-item>
     </ion-list>
 
     <ion-list inset="true" lines="none" class="settings-list">

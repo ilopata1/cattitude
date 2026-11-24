@@ -21,23 +21,6 @@
   width: 100%;
 }
 
-.dial-style {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 4px 12px 0;
-
-  ion-segment {
-    flex: 1;
-    max-width: 280px;
-    margin-inline-start: auto;
-  }
-
-  ion-segment-button {
-    min-height: var(--cattitude-touch-min);
-  }
-}
-
 .sail-content {
   --background: var(--cattitude-sand);
 }
@@ -51,7 +34,14 @@
   overflow-y: auto;
 }
 
-app-wind-steer-panel,
+// The dial is square. Size it by width so its height is known and the cards
+// below start where the dial ends, whichever dial style is showing.
+app-wind-steer-panel {
+  width: min(100%, 72vw, 420px);
+  flex: none;
+  margin-bottom: 16px;
+}
+
 app-sail-essentials {
   width: 100%;
 }
@@ -75,6 +65,10 @@ app-sail-essentials {
     flex: 1 1 0;
     width: auto;
     min-width: 0;
+  }
+
+  app-wind-steer-panel {
+    margin-bottom: 0;
   }
 }
 
