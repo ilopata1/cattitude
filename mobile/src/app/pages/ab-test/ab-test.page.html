@@ -9,8 +9,9 @@
   <section class="panel" *ngIf="session.phase === 'setup'">
     <h2 class="section-title cs-kicker">The change</h2>
     <p class="lead">
-      Change one thing between A and B. Each part records for 6½ minutes.
-      The first 90 seconds settle the boat and stay out of the score.
+      Change one thing between A and B. Each part settles the boat for 90 seconds,
+      which stays out of the score, then scores for the duration you pick.
+      After each A/B cycle you can run another or finish the test.
       The result is VMG as a percentage of the polar.
     </p>
 
@@ -36,6 +37,16 @@
       placeholder="38°"
     ></ion-input>
     <p class="field-help" *ngIf="sameSettings">B should be the other setting.</p>
+    <ion-select
+      label="Scored time per part"
+      label-placement="stacked"
+      interface="popover"
+      [value]="setup.durationMin"
+      (ionChange)="setDuration($any($event).detail.value)"
+    >
+      <ion-select-option *ngFor="let minutes of durations" [value]="minutes">{{ minutes }} minutes</ion-select-option>
+    </ion-select>
+    <p class="field-help">Each part runs 90 seconds longer than this while the boat settles.</p>
 
     <h2 class="section-title cs-kicker">Boat state</h2>
     <p class="lead">What stays the same while A and B are sailed.</p>
@@ -148,20 +159,26 @@
   </section>
 
   <section class="panel" *ngIf="session.phase === 'rerun'">
-    <h2 class="section-title cs-kicker">Both parts are recorded</h2>
+    <h2 class="section-title cs-kicker">Cycle {{ session.cycle }} is recorded</h2>
     <p class="lead">
-      A second A/B cycle can make the result clearer.
-      The settings stay as you entered them.
+      Another A/B cycle can make the result clearer, or you can mark the test complete.
+      The settings and the {{ durationMin }} minute parts stay as they are.
     </p>
     <div class="actions">
-      <ion-button expand="block" (click)="rerun()">Run the pair again</ion-button>
-      <ion-button expand="block" fill="outline" (click)="showResults()">Show results</ion-button>
+      <ion-button expand="block" (click)="rerun()">Run another cycle</ion-button>
+      <ion-button expand="block" fill="outline" (click)="showResults()">Mark test complete</ion-button>
+      <ion-button expand="block" fill="clear" (click)="toggleInterim()">
+        {{ interim ? 'Hide results so far' : 'View results so far' }}
+      </ion-button>
     </div>
   </section>
 
-  <section class="panel" *ngIf="session.phase === 'results' && report">
+  <section class="panel" *ngIf="(session.phase === 'results' || session.phase === 'rerun') && report">
     <ng-container *ngIf="report as result">
     <h2 class="section-title cs-kicker">{{ result.variable }}</h2>
+    <p class="boat-line" *ngIf="session.phase === 'rerun'">
+      Results so far · {{ cyclesDone }} {{ cyclesDone === 1 ? 'cycle' : 'cycles' }}. The test is still open.
+    </p>
     <p class="boat-line" *ngIf="result.boatState">{{ result.boatState }}</p>
 
     <article class="verdict primary">
@@ -201,7 +218,11 @@
     <p class="note" *ngFor="let note of result.notes">{{ note }}</p>
     <p class="note alarm" *ngFor="let line of result.alarmLines">{{ line }}</p>
 
-    <div class="actions">
+    <div class="actions" *ngIf="session.phase === 'rerun'">
+      <ion-button expand="block" (click)="rerun()">Run another cycle</ion-button>
+      <ion-button expand="block" fill="outline" (click)="showResults()">Mark test complete</ion-button>
+    </div>
+    <div class="actions" *ngIf="session.phase === 'results'">
       <ion-button expand="block" (click)="newTest()">New test</ion-button>
     </div>
     </ng-container>
