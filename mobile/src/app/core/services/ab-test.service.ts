@@ -5,7 +5,6 @@
 import { Injectable, OnDestroy, inject } from '@angular/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import {
-  AB_BLOCK_MS,
   AB_SAMPLE_MS,
   AbSample,
   AbSession,
@@ -18,6 +17,7 @@ import {
   clearTest,
   emptySession,
   noteAlarm,
+  partMs,
   requestRerun,
   revealResults,
   startTest,
@@ -126,6 +126,7 @@ export class AbTestService implements OnDestroy {
     this.sessionSubject.next(requestRerun(this.session));
   }
 
+  /** Marks the test complete after any cycle and opens the final result. */
   showResults(): void {
     this.stopClock();
     this.sessionSubject.next(revealResults(this.session));
@@ -156,7 +157,7 @@ export class AbTestService implements OnDestroy {
     }
     const now = Date.now();
     const offset = now - current.startedAt;
-    const sample = offset >= AB_BLOCK_MS ? null : this.capture(offset, now);
+    const sample = offset >= partMs(current.setup) ? null : this.capture(offset, now);
     const next = tick(current, now, sample);
     this.sessionSubject.next(next);
     if (next.phase !== 'recording') this.stopClock();
@@ -296,7 +297,7 @@ export class AbTestService implements OnDestroy {
     const session = this.session;
     if (session.phase !== 'recording' || session.startedAt == null) return;
     const tOffsetMs = now - session.startedAt;
-    if (tOffsetMs < 0 || tOffsetMs >= AB_BLOCK_MS) return;
+    if (tOffsetMs < 0 || tOffsetMs >= partMs(session.setup)) return;
     const buffer = session.imuLive;
     if (buffer.length >= 80_000) {
       const kept = buffer.filter((_, index) => index % 2 === 0);

@@ -1,14 +1,19 @@
 /**
  * A/B sail test.
  *
- * Each part records 6½ minutes. The first 90 seconds settle the boat and stay
- * out of the scores. One or two A/B cycles are compared on VMG as a percentage
- * of the polar, with a confidence that accounts for serial correlation.
+ * Each part settles the boat for 90 seconds, then scores for the duration the
+ * crew picks (5 to 60 minutes). After each A/B cycle the crew chooses to run
+ * another cycle or mark the test complete. All cycles are compared on VMG as a
+ * percentage of the polar, with a confidence that accounts for serial correlation.
  */
 import { bearingDeg, haversineNm } from '../logbook/logbook-math';
 
-export const AB_BLOCK_MS = 6.5 * 60 * 1000;
 export const AB_SETTLE_MS = 90 * 1000;
+/** Scored minutes per part the crew can choose from. */
+export const AB_DURATION_OPTIONS_MIN: readonly number[] = [5, 10, 15, 30, 60];
+export const AB_DEFAULT_DURATION_MIN = 5;
+/** Length of a part at the default duration: settle plus five scored minutes. */
+export const AB_BLOCK_MS = AB_SETTLE_MS + AB_DEFAULT_DURATION_MIN * 60 * 1000;
 export const AB_SAMPLE_MS = 1000;
 
 const MIN_PERF = 20;
@@ -16,7 +21,8 @@ const MIN_SCALAR = 5;
 
 export type AbPhase = 'setup' | 'recording' | 'prepare' | 'rerun' | 'results';
 export type AbLegId = 'A' | 'B';
-export type AbCycle = 1 | 2;
+/** Cycle number, counted from 1. */
+export type AbCycle = number;
 export type PointOfSail = 'upwind' | 'downwind';
 
 export interface AbSetup {
@@ -29,6 +35,8 @@ export interface AbSetup {
   boardStarboard: string;
   trimNotes: string;
   courseDeg: string;
+  /** Scored minutes per part, one of AB_DURATION_OPTIONS_MIN. */
+  durationMin: number;
 }
 
 export interface AbSample {
@@ -71,6 +79,8 @@ export interface AbLeg {
   samples: AbSample[];
   alarms: string[];
   imu: ImuPoint[];
+  /** Full length of this part, settle included. Older legs without it used AB_BLOCK_MS. */
+  blockMs?: number;
 }
 
 export interface AbSession {
@@ -170,6 +180,7 @@ export function emptySetup(): AbSetup {
     boardStarboard: '',
     trimNotes: '',
     courseDeg: '',
+    durationMin: AB_DEFAULT_DURATION_MIN,
   };
 }
 
@@ -185,6 +196,17 @@ export function emptySession(): AbSession {
     openAlarms: [],
     imuLive: [],
   };
+}
+
+/** Scored minutes per part, falling back to the default for a missing or unknown value. */
+export function durationMinOf(setup: Pick<AbSetup, 'durationMin'> | null | undefined): number {
+  const value = Number(setup?.durationMin);
+  return AB_DURATION_OPTIONS_MIN.includes(value) ? value : AB_DEFAULT_DURATION_MIN;
+}
+
+/** Full length of one part for this setup: the settle plus the scored minutes. */
+export function partMs(setup: Pick<AbSetup, 'durationMin'> | null | undefined): number {
+  return AB_SETTLE_MS + durationMinOf(setup) * 60 * 1000;
 }
 
 export function variableLabel(setup: AbSetup): string {
@@ -225,7 +247,7 @@ export function preparePrompt(session: AbSession): AbPrompt {
   }
   return {
     title: 'Set Part A again',
-    body: `Set ${name} back to ${setting}. The entries from the first run stay as they are. Start Part A once the boat is sailing it.`,
+    body: `Set ${name} back to ${setting}. The earlier cycles stay as they are. Start Part A once the boat is sailing it.`,
     action: 'Start Part A',
   };
 }
@@ -243,13 +265,14 @@ export function elapsedMs(session: AbSession, now: number): number {
 }
 
 export function remainingMs(session: AbSession, now: number): number {
-  if (session.phase !== 'recording') return AB_BLOCK_MS;
-  return Math.max(0, AB_BLOCK_MS - elapsedMs(session, now));
+  const block = partMs(session.setup);
+  if (session.phase !== 'recording') return block;
+  return Math.max(0, block - elapsedMs(session, now));
 }
 
 export function blockProgress(session: AbSession, now: number): number {
   if (session.phase !== 'recording') return 0;
-  return Math.max(0, Math.min(100, (elapsedMs(session, now) / AB_BLOCK_MS) * 100));
+  return Math.max(0, Math.min(100, (elapsedMs(session, now) / partMs(session.setup)) * 100));
 }
 
 export function isSettling(session: AbSession, now: number): boolean {
@@ -324,7 +347,7 @@ export function armLeg(session: AbSession, now: number): AbSession {
 
 export function requestRerun(session: AbSession): AbSession {
   if (session.phase !== 'rerun') return session;
-  return { ...session, phase: 'prepare', cycle: 2, leg: 'A' };
+  return { ...session, phase: 'prepare', cycle: session.cycle + 1, leg: 'A' };
 }
 
 export function revealResults(session: AbSession): AbSession {
@@ -344,7 +367,7 @@ export function noteAlarm(session: AbSession, message: string): AbSession {
 
 export function tick(session: AbSession, now: number, sample: AbSample | null): AbSession {
   if (session.phase !== 'recording' || session.startedAt == null) return session;
-  if (now - session.startedAt >= AB_BLOCK_MS) return finishLeg(session);
+  if (now - session.startedAt >= partMs(session.setup)) return finishLeg(session);
   if (!sample) return session;
   return { ...session, liveSamples: [...session.liveSamples, sample] };
 }
@@ -411,7 +434,7 @@ export function buildReport(session: AbSession): AbReport | null {
   const scoredB = bLegs.map((leg) => scoreLeg(leg, course));
   const sideA = combineSide(scoredA);
   const sideB = combineSide(scoredB);
-  const cycles: AbCycle = session.legs.some((leg) => leg.cycle === 2) ? 2 : 1;
+  const cycles = completedCycles(session.legs);
 
   let vmgBasis: 'pct' | 'knots' = 'pct';
   let vmg = judge('VMG', sideA.vmgPct, sideB.vmgPct, 1, '%', false);
@@ -425,10 +448,8 @@ export function buildReport(session: AbSession): AbReport | null {
   const vmc = judge('VMC', sideA.vmcKn, sideB.vmcKn, 2, 'kn', true);
   const modes = new Set([...scoredA, ...scoredB].map((score) => score.mode));
 
-  const notes = [
-    'Each part runs for 6½ minutes. The first 90 seconds settle the boat and stay out of the scores.',
-  ];
-  if (cycles === 2) notes.push('The figures are the average of the two cycles.');
+  const notes = [partNote(session.setup)];
+  if (cycles > 1) notes.push(`The figures are the average of the ${cycles} cycles.`);
   if (modes.size > 1) {
     notes.push('The legs sat on different sides of a beam reach, so each VMG is progress along that leg.');
   } else if (modes.has('downwind')) {
@@ -528,6 +549,16 @@ function metric(label: string, a: string, b: string, focus = false, ahead: 'A' |
   return { kind: 'metric', label, a, b, focus, ahead };
 }
 
+/** Number of cycles that have both an A and a B part recorded. */
+export function completedCycles(legs: AbLeg[]): number {
+  const a = new Set(legs.filter((leg) => leg.id === 'A').map((leg) => leg.cycle));
+  return new Set(legs.filter((leg) => leg.id === 'B' && a.has(leg.cycle)).map((leg) => leg.cycle)).size;
+}
+
+function partNote(setup: AbSetup): string {
+  return `Each part scores for ${durationMinOf(setup)} minutes after 90 seconds of settling. The settling stays out of the scores.`;
+}
+
 function finishLeg(session: AbSession): AbSession {
   const leg: AbLeg = {
     id: session.leg,
@@ -536,6 +567,7 @@ function finishLeg(session: AbSession): AbSession {
     samples: session.liveSamples,
     alarms: session.openAlarms,
     imu: [...session.imuLive],
+    blockMs: partMs(session.setup),
   };
   const cleared: AbSession = {
     ...session,
@@ -546,8 +578,7 @@ function finishLeg(session: AbSession): AbSession {
     startedAt: null,
   };
   if (session.leg === 'A') return { ...cleared, phase: 'prepare', leg: 'B' };
-  if (session.cycle === 1) return { ...cleared, phase: 'rerun', leg: 'B' };
-  return { ...cleared, phase: 'results', leg: 'B' };
+  return { ...cleared, phase: 'rerun', leg: 'B' };
 }
 
 function cleaned(setup: AbSetup): AbSetup {
@@ -561,6 +592,7 @@ function cleaned(setup: AbSetup): AbSetup {
     boardStarboard: setup.boardStarboard.trim(),
     trimNotes: setup.trimNotes.trim(),
     courseDeg: String(setup.courseDeg ?? '').trim(),
+    durationMin: durationMinOf(setup),
   };
 }
 
@@ -594,13 +626,14 @@ export function markCourseFromDestination(
 }
 
 function scoreLeg(leg: AbLeg, course: number | null): LegScore {
-  const window = scored(leg.samples).sort((a, b) => a.tOffsetMs - b.tOffsetMs);
+  const limit = leg.blockMs ?? AB_BLOCK_MS;
+  const window = scored(leg.samples, limit).sort((a, b) => a.tOffsetMs - b.tOffsetMs);
   const twa = averageOrNull(finite(window.map((sample) => sample.twaDeg)));
   const mode: PointOfSail = twa != null && twa > 90 ? 'downwind' : 'upwind';
   const wind = pairs(window, (sample) => sample.twsKn);
   const direction = pairs(window, (sample) => sample.twdDeg);
   const helm = pairs(window, sampleHelm);
-  const sea = seaStats(leg.samples, leg.imu);
+  const sea = seaStats(leg.samples, leg.imu, limit);
   const current = currentVector(window);
   const setDrift = current ? vectorToSetDrift(current.north, current.east) : { setDeg: null, driftKn: null };
   let sogCount = 0;
@@ -827,11 +860,11 @@ function vectorToSetDrift(north: number, east: number): { setDeg: number; driftK
   };
 }
 
-function seaStats(samples: AbSample[], imu: ImuPoint[]): Pick<LegScore, 'rmsPitch' | 'rmsRoll' | 'rmsAccel' | 'periodS' | 'periodSource'> {
-  const pitch = channel(imu, samples, (point) => point.pitchRad, (sample) => sample.pitchRad);
-  const roll = channel(imu, samples, (point) => point.rollRad, (sample) => sample.rollRad);
-  const heave = channel(imu, samples, (point) => point.heaveM, (sample) => sample.heaveM);
-  const accel = channel(imu, samples, (point) => point.vertAccel, (sample) => sample.vertAccel);
+function seaStats(samples: AbSample[], imu: ImuPoint[], limitMs: number): Pick<LegScore, 'rmsPitch' | 'rmsRoll' | 'rmsAccel' | 'periodS' | 'periodSource'> {
+  const pitch = channel(imu, samples, (point) => point.pitchRad, (sample) => sample.pitchRad, limitMs);
+  const roll = channel(imu, samples, (point) => point.rollRad, (sample) => sample.rollRad, limitMs);
+  const heave = channel(imu, samples, (point) => point.heaveM, (sample) => sample.heaveM, limitMs);
+  const accel = channel(imu, samples, (point) => point.vertAccel, (sample) => sample.vertAccel, limitMs);
   const rmsPitch = rmsDegrees(pitch);
   const rmsRoll = rmsDegrees(roll);
   let rmsAccel = rmsDemean(accel.map((point) => point.v));
@@ -859,12 +892,13 @@ function channel(
   samples: AbSample[],
   readImu: (point: ImuPoint) => number | undefined,
   readSample: (sample: AbSample) => number | null,
+  limitMs: number,
 ): { t: number; v: number }[] {
-  const fromImu = scored(imu)
+  const fromImu = scored(imu, limitMs)
     .filter((point) => readImu(point) != null && Number.isFinite(readImu(point)))
     .map((point) => ({ t: point.tOffsetMs, v: readImu(point) as number }));
   if (fromImu.length >= 16) return fromImu;
-  return scored(samples)
+  return scored(samples, limitMs)
     .filter((sample) => readSample(sample) != null && Number.isFinite(readSample(sample)))
     .map((sample) => ({ t: sample.tOffsetMs, v: readSample(sample) as number }));
 }
@@ -1005,8 +1039,8 @@ function gated(values: number[]): Moment {
   return meanAndError(values);
 }
 
-function scored<T extends { tOffsetMs: number }>(points: T[]): T[] {
-  return points.filter((point) => point.tOffsetMs >= AB_SETTLE_MS && point.tOffsetMs < AB_BLOCK_MS);
+function scored<T extends { tOffsetMs: number }>(points: T[], limitMs = AB_BLOCK_MS): T[] {
+  return points.filter((point) => point.tOffsetMs >= AB_SETTLE_MS && point.tOffsetMs < limitMs);
 }
 
 export function slopePerMinute(timesMs: number[], values: number[]): number | null {

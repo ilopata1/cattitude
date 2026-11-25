@@ -8,6 +8,10 @@ import {
   armLeg,
   buildReport,
   canStart,
+  completedCycles,
+  durationMinOf,
+  partMs,
+  remainingMs,
   markCourseFromDestination,
   emptySession,
   emptySetup,
@@ -93,7 +97,36 @@ export function abTestFailures(): string[] {
   expect(session.phase === 'prepare' && session.leg === 'B' && session.cycle === 2, 'the second part A still waits for part B');
   session = armLeg(session, 3_000_000);
   session = tick(session, 3_000_000 + AB_BLOCK_MS, null);
-  expect(session.phase === 'results', 'the second part B opens the result');
+  expect(session.phase === 'rerun', 'the second part B asks again whether to run another cycle');
+  expect(completedCycles(session.legs) === 2, 'two cycles are complete');
+  session = requestRerun(session);
+  expect(session.phase === 'prepare' && session.cycle === 3 && session.leg === 'A', 'a third cycle can be run');
+  session = armLeg(session, 4_000_000);
+  session = tick(session, 4_000_000 + AB_BLOCK_MS, null);
+  session = armLeg(session, 5_000_000);
+  session = tick(session, 5_000_000 + AB_BLOCK_MS, null);
+  expect(session.phase === 'rerun' && completedCycles(session.legs) === 3, 'the third cycle closes into the decision');
+  session = revealResults(session);
+  expect(session.phase === 'results', 'marking the test complete opens the result');
+  expect(requestRerun(session) === session, 'a completed test cannot add a cycle');
+
+  expect(durationMinOf(emptySetup()) === 5, 'the default scored time is 5 minutes');
+  expect(durationMinOf({ durationMin: 7 }) === 5, 'an unknown duration falls back to 5 minutes');
+  expect(partMs({ durationMin: 60 }) === AB_SETTLE_MS + 60 * 60_000, 'a 60 minute part adds the 90 second settle');
+  let long = startTest(emptySession(), { ...setup, durationMin: 30 }, 0);
+  expect(long.setup.durationMin === 30, 'the chosen duration is kept');
+  expect(formatClock(remainingMs(long, 0)) === '31:30', 'a 30 minute part counts down from 31:30');
+  long = tick(long, AB_BLOCK_MS, null);
+  expect(long.phase === 'recording', 'a 30 minute part is still recording at 6½ minutes');
+  long = tick(long, partMs(long.setup), null);
+  expect(long.phase === 'prepare' && long.legs[0]?.blockMs === partMs(long.setup), 'a 30 minute part closes at 31½ minutes');
+  const longBlock = partMs({ durationMin: 30 });
+  const longReport = buildReport(session({ ...setup, durationMin: 30 }, [
+    { ...leg('A', 1, steady(60, 8, 10, 1800)), blockMs: longBlock },
+    { ...leg('B', 1, steady(60, 7, 10, 1800)), blockMs: longBlock },
+  ]));
+  expect(row(longReport, 'Scored samples')?.a === '1800', 'every sample of a 30 minute part is scored');
+  expect(longReport?.notes[0]?.includes('30 minutes'), 'the result names the scored time');
 
   const comparison = buildReport(performanceSession());
   const vmg = comparison?.rows.find((row) => row.label === 'VMG of polar');
@@ -178,7 +211,7 @@ function point(tOffsetMs: number, extra: Partial<AbSample> = {}): AbSample {
   };
 }
 
-function leg(id: 'A' | 'B', cycle: 1 | 2, samples: AbSample[], alarms: string[] = [], imu: AbLeg['imu'] = []): AbLeg {
+function leg(id: 'A' | 'B', cycle: number, samples: AbSample[], alarms: string[] = [], imu: AbLeg['imu'] = []): AbLeg {
   return { id, cycle, startedAt: 0, samples, alarms, imu };
 }
 

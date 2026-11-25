@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { AlertController } from '@ionic/angular';
 import { Subscription, combineLatest } from 'rxjs';
 import {
+  AB_DURATION_OPTIONS_MIN,
   AB_SETTLE_MS,
   AbReport,
   AbSession,
@@ -10,6 +11,8 @@ import {
   boatStateLine,
   buildReport,
   canStart,
+  completedCycles,
+  durationMinOf,
   elapsedMs,
   emptySession,
   emptySetup,
@@ -44,12 +47,15 @@ export class AbTestPage implements OnInit, OnDestroy {
 
   readonly mainReefOptions = MAIN_REEF_OPTIONS;
   readonly boards = ['Up', 'Half', 'Down'];
+  readonly durations = AB_DURATION_OPTIONS_MIN;
 
   setup: AbSetup = emptySetup();
   session: AbSession = emptySession();
   report: AbReport | null = null;
   connected = false;
   clock = '6:30';
+  /** Showing the results so far while the crew decides on another cycle. */
+  interim = false;
   progress = 0;
   settling = false;
   settleClock = '1:30';
@@ -131,8 +137,16 @@ export class AbTestPage implements OnInit, OnDestroy {
   }
 
   get partLabel(): string {
-    const cycle = this.session.cycle === 2 ? 'Second cycle · ' : '';
+    const cycle = this.session.cycle > 1 ? `Cycle ${this.session.cycle} · ` : '';
     return `${cycle}Part ${this.session.leg}`;
+  }
+
+  get durationMin(): number {
+    return durationMinOf(this.session.phase === 'setup' ? this.setup : this.session.setup);
+  }
+
+  get cyclesDone(): number {
+    return completedCycles(this.session.legs);
   }
 
   get boatLine(): string {
@@ -170,6 +184,13 @@ export class AbTestPage implements OnInit, OnDestroy {
     this.touch();
   }
 
+  setDuration(value: number | string | null | undefined): void {
+    const next = Number(value);
+    if (!AB_DURATION_OPTIONS_MIN.includes(next)) return;
+    this.setup.durationMin = next;
+    this.touch();
+  }
+
   setBoard(side: 'boardPort' | 'boardStarboard', value: string | null | undefined): void {
     if (typeof value !== 'string') return;
     this.setup[side] = value;
@@ -186,10 +207,17 @@ export class AbTestPage implements OnInit, OnDestroy {
   }
 
   rerun(): void {
+    this.interim = false;
     this.tests.rerun();
   }
 
+  toggleInterim(): void {
+    this.interim = !this.interim;
+    this.refresh(this.session);
+  }
+
   showResults(): void {
+    this.interim = false;
     this.tests.showResults();
   }
 
@@ -249,7 +277,9 @@ export class AbTestPage implements OnInit, OnDestroy {
 
   private refresh(session: AbSession): void {
     const now = Date.now();
-    this.report = session.phase === 'results' ? buildReport(session) : null;
+    if (session.phase !== 'rerun') this.interim = false;
+    const showReport = session.phase === 'results' || (session.phase === 'rerun' && this.interim);
+    this.report = showReport ? buildReport(session) : null;
     this.clock = formatClock(remainingMs(session, now));
     this.progress = blockProgress(session, now);
     this.settling = isSettling(session, now);
