@@ -121,10 +121,10 @@ export function abTestFailures(): string[] {
   long = tick(long, partMs(long.setup), null);
   expect(long.phase === 'prepare' && long.legs[0]?.blockMs === partMs(long.setup), 'a 30 minute part closes at 31½ minutes');
   const longBlock = partMs({ durationMin: 30 });
-  const longReport = buildReport(session({ ...setup, durationMin: 30 }, [
+  const longReport = buildReport({ ...emptySession(), phase: 'results', setup: { ...setup, durationMin: 30 }, legs: [
     { ...leg('A', 1, steady(60, 8, 10, 1800)), blockMs: longBlock },
     { ...leg('B', 1, steady(60, 7, 10, 1800)), blockMs: longBlock },
-  ]));
+  ] });
   expect(row(longReport, 'Scored samples')?.a === '1800', 'every sample of a 30 minute part is scored');
   expect(longReport?.notes[0]?.includes('30 minutes'), 'the result names the scored time');
 
