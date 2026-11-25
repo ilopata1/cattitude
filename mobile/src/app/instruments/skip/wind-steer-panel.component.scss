@@ -7,9 +7,18 @@
   position: relative;
 }
 
-svg-windsteer,
-cs-compass-card {
+svg-windsteer {
   display: block;
   width: 100%;
   height: 100%;
+}
+
+// The compass card draws at its own width, so keep it a square that fits
+// inside the panel. Otherwise it grows past the panel and covers the cards below.
+cs-compass-card {
+  display: block;
+  height: 100%;
+  aspect-ratio: 1;
+  max-width: 100%;
+  margin: 0 auto;
 }

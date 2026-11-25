@@ -1,5 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { DIAL_STYLE_KEY, DialStyleService } from '../../core/services/dial-style.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
@@ -97,6 +98,18 @@ describe('SettingsPage notifications', () => {
     expect(text).toContain('Fuel at 2,000 RPM');
     expect(text).toContain('Number of engines');
     expect(text).toContain('Idle fuel');
+  });
+
+  it('chooses the Sail dial style here and saves it', () => {
+    localStorage.removeItem(DIAL_STYLE_KEY);
+    expect(fixture.nativeElement.textContent).toContain('Classic');
+    expect(fixture.nativeElement.textContent).toContain('Modern');
+    fixture.componentInstance.onDialStyleChange('modern');
+    expect(TestBed.inject(DialStyleService).style()).toBe('modern');
+    expect(localStorage.getItem(DIAL_STYLE_KEY)).toBe('modern');
+    fixture.componentInstance.onDialStyleChange('bogus');
+    expect(TestBed.inject(DialStyleService).style()).toBe('modern');
+    localStorage.removeItem(DIAL_STYLE_KEY);
   });
 
   it('defaults the house battery alert to 30%', () => {
