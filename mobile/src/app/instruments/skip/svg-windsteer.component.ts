@@ -27,6 +27,8 @@ export class SvgWindsteerComponent implements OnDestroy {
   protected readonly cogIndicator = viewChild.required<ElementRef<SVGGElement>>('cogIndicator');
 
   readonly compassHeading = input.required<number>();
+  /** North the dial's bearings are measured from; labels the heading °M or °T. */
+  readonly headingReference = input<'true' | 'magnetic'>('true');
   readonly compassModeEnabled = input.required<boolean>();
   readonly updateInterval = input<number | undefined>(undefined);
   readonly courseOverGroundAngle = input<number | undefined>(undefined);

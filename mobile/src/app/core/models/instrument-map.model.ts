@@ -38,6 +38,7 @@ export interface SailEssentialsLive {
 }
 
 export interface WindSteerLive {
+  /** Degrees, in the frame `headingRef` names. Calculations use this as it is. */
   heading: number;
   cog: number;
   awa: number;
@@ -51,6 +52,16 @@ export interface WindSteerLive {
   awsFresh: boolean;
   twaFresh: boolean;
   twsFresh: boolean;
+  /** North the mapped heading path is measured from. `twa` (a direction) shares it. */
+  headingRef: 'true' | 'magnetic';
+  /** North the mapped COG path is measured from. */
+  cogRef: 'true' | 'magnetic';
+  /**
+   * Magnetic variation in degrees, east positive, from Signal K
+   * `navigation.magneticVariation`. Null when the boat does not send it.
+   * Only display code uses it, to show bearings as magnetic.
+   */
+  variation: number | null;
 }
 
 export const EMPTY_WIND_STEER: WindSteerLive = {
@@ -67,6 +78,9 @@ export const EMPTY_WIND_STEER: WindSteerLive = {
   awsFresh: false,
   twaFresh: false,
   twsFresh: false,
+  headingRef: 'true',
+  cogRef: 'true',
+  variation: null,
 };
 
 export const EMPTY_SAIL_ESSENTIALS: SailEssentialsLive = {

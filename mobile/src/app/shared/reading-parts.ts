@@ -2,12 +2,12 @@
 export interface LiveReadingParts {
   figure: string;
   unit: string;
-  /** True when the unit sits against the figure, as with % and °. */
+  /** True when the unit sits against the figure, as with %, °, and °M. */
   tight: boolean;
 }
 
 const SPACED = /^([+\-−]?\d[\d.,]*)\s+(.+)$/;
-const TIGHT = /^([+\-−]?\d[\d.,]*)([%°])$/;
+const TIGHT = /^([+\-−]?\d[\d.,]*)(%|°[MT]?)$/;
 
 export function splitLiveReading(value: string | null | undefined): LiveReadingParts {
   const text = (value ?? '').trim();

@@ -25,13 +25,13 @@ export const INSTRUMENT_ROLE_CONFIG: InstrumentRoleConfig[] = [
   {
     role: 'heading',
     label: 'Heading',
-    hint: 'True heading for the wind-steer rose',
+    hint: 'True or magnetic heading. Shown as °M when the boat sends variation',
     pattern: /^navigation\.heading(True|Magnetic)?$/,
   },
   {
     role: 'cog',
     label: 'Course over ground',
-    hint: 'True COG for the wind-steer rose',
+    hint: 'True or magnetic COG. Shown as °M when the boat sends variation',
     pattern: /^navigation\.courseOverGround(True|Magnetic)?$/,
   },
   {

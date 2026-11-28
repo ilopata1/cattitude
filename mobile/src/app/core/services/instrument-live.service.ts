@@ -30,6 +30,7 @@ import {
   normalizeAngleDeg,
 } from '../../instruments/skip/wind-steer.util';
 import { STW_MIN_USEFUL_MPS, isInterspersedStwZero } from './stw-dropout';
+import { MAGNETIC_VARIATION_PATH, pathBearingRef } from '../nav/magnetic';
 
 const MPS_TO_KNOTS = 1.94384;
 const RAD_TO_DEG = 180 / Math.PI;
@@ -37,6 +38,11 @@ const STALE_MS = 15_000;
 const FRESH_MS = 5_000;
 /** Below this damped speed over ground, course is published but marked stale. */
 const COG_MIN_SOG_KN = 0.5;
+/**
+ * Variation changes over miles, not seconds. A last value is kept this long
+ * after the source goes quiet before bearings fall back to °T.
+ */
+const VARIATION_HOLD_MS = 10 * 60_000;
 const SPEED_SNAP = {
   fraction: DAMPING_SNAP.speedFraction,
   floor: DAMPING_SNAP.speedFloorKn,
@@ -74,6 +80,8 @@ export class InstrumentLiveService implements OnDestroy {
   private rawTwaDeg: number | null = null;
   private rawTwsKn: number | null = null;
   private rawDepthM: number | null = null;
+  private variationDeg: number | null = null;
+  private variationSeenMs = 0;
 
   private wind: WindSteerLive = { ...EMPTY_WIND_STEER };
   private stwMps: number | null = null;
@@ -146,6 +154,11 @@ export class InstrumentLiveService implements OnDestroy {
     };
 
     const inst = map.instruments;
+    this.wind = {
+      ...this.wind,
+      headingRef: pathBearingRef(inst.heading?.path),
+      cogRef: pathBearingRef(inst.cog?.path),
+    };
     add('heading', inst.heading);
     add('cog', inst.cog);
     add('speed', inst.speed);
@@ -169,6 +182,11 @@ export class InstrumentLiveService implements OnDestroy {
       for (const kv of update.values ?? []) {
         if (typeof kv.value !== 'number' || !Number.isFinite(kv.value)) continue;
         const key = kv.path.startsWith('self.') ? kv.path.slice(5) : kv.path;
+        if (key === MAGNETIC_VARIATION_PATH) {
+          // Display only: never fed into the wind or course maths.
+          this.variationDeg = kv.value * RAD_TO_DEG;
+          this.variationSeenMs = arrivedMs;
+        }
         const roles = this.pathToRoles.get(key);
         if (!roles?.length) continue;
 
@@ -317,6 +335,9 @@ export class InstrumentLiveService implements OnDestroy {
       awsFresh: fresh('aws'),
       twaFresh: fresh('twa'),
       twsFresh: fresh('tws'),
+      variation: this.variationDeg !== null && now - this.variationSeenMs <= VARIATION_HOLD_MS
+        ? this.variationDeg
+        : null,
     };
   }
 
@@ -369,7 +390,10 @@ export class InstrumentLiveService implements OnDestroy {
       && a.awaFresh === b.awaFresh
       && a.awsFresh === b.awsFresh
       && a.twaFresh === b.twaFresh
-      && a.twsFresh === b.twsFresh;
+      && a.twsFresh === b.twsFresh
+      && a.headingRef === b.headingRef
+      && a.cogRef === b.cogRef
+      && a.variation === b.variation;
   }
 
   private sameEssentials(a: SailEssentialsLive, b: SailEssentialsLive): boolean {

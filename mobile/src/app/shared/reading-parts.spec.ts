@@ -10,6 +10,8 @@ describe('splitLiveReading', () => {
   it('keeps percent and degrees tight against the figure', () => {
     expect(splitLiveReading('72%')).toEqual({ figure: '72', unit: '%', tight: true });
     expect(splitLiveReading('247°')).toEqual({ figure: '247', unit: '°', tight: true });
+    expect(splitLiveReading('247°M')).toEqual({ figure: '247', unit: '°M', tight: true });
+    expect(splitLiveReading('260°T')).toEqual({ figure: '260', unit: '°T', tight: true });
   });
 
   it('leaves a missing reading as a single figure', () => {
