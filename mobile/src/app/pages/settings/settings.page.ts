@@ -15,6 +15,7 @@ import { CoachInputHealth, formatCoachInputLine } from '../../core/coach/coach-i
 import { CoachInputsService } from '../../core/services/coach-inputs.service';
 import { ContentService } from '../../core/services/content.service';
 import { DialStyle, DialStyleService } from '../../core/services/dial-style.service';
+import { KioskService } from '../../core/services/kiosk.service';
 import { FuelCurveSettingsService } from '../../core/services/fuel-curve-settings.service';
 import { HouseBatterySettingsService } from '../../core/services/house-battery-settings.service';
 import {
@@ -88,6 +89,7 @@ export class SettingsPage implements OnInit, OnDestroy {
     readonly theme: ThemeService,
     readonly dialStyle: DialStyleService,
     readonly access: SignalKAccessService,
+    readonly kiosk: KioskService,
   ) {
     this.alertsEnabled = this.notificationPrefs.enabled();
   }

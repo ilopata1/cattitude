@@ -3,6 +3,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { filter, take } from 'rxjs';
 import { AlarmBannerService, AlarmNotice } from './core/services/alarm-banner.service';
 import { FuelMotionService } from './core/services/fuel-motion.service';
+import { KioskService } from './core/services/kiosk.service';
 import { InstrumentHistoryService } from './core/services/instrument-history.service';
 import { LevelsService } from './core/services/levels.service';
 import { AppUpdateService } from './core/services/app-update.service';
@@ -26,6 +27,7 @@ import { WaveEstimatorService } from './core/services/wave-estimator.service';
 })
 export class AppComponent {
   readonly alarms = inject(AlarmBannerService);
+  readonly kiosk = inject(KioskService);
   private readonly notificationBridge = inject(NotificationBridgeService);
   private readonly sailWatch = inject(SailWatchService);
   private readonly houseBattery = inject(HouseBatteryWatchService);
@@ -50,6 +52,7 @@ export class AppComponent {
     void inject(CoachInputsService);
     void inject(CoachService);
     this.appUpdate.start();
+    this.kiosk.start();
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),
     ).subscribe(event => this.syncHelmRoute(event.urlAfterRedirects));

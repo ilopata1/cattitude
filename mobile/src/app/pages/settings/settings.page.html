@@ -54,6 +54,32 @@
         </p>
       </div>
       </ion-item>
+      <ion-item>
+      <div class="settings-row">
+        <ion-label class="settings-label">Full screen</ion-label>
+        <ion-button
+          *ngIf="kiosk.canRequest"
+          (click)="kiosk.kiosk() ? kiosk.exit() : kiosk.enter()"
+          expand="block"
+          fill="outline"
+          color="primary"
+          class="settings-btn"
+        >
+          {{ kiosk.kiosk() ? 'Exit full screen' : 'Go full screen' }}
+        </ion-button>
+        <p class="settings-hint" *ngIf="kiosk.canRequest">
+          Fills the screen and hides the menu, for a screen left at the helm or
+          the chart table. Press Escape, or tap Exit full screen in the corner,
+          to bring the menu back. The browser's own full screen (F11) hides the
+          menu too.
+        </p>
+        <p class="settings-hint" *ngIf="!kiosk.canRequest">
+          This browser does not let a web page fill the screen. On iPhone, add
+          Clever Sailor to the Home Screen to drop Safari's address bar; the menu
+          stays so you can always move between tabs.
+        </p>
+      </div>
+      </ion-item>
     </ion-list>
 
     <ion-list inset="true" lines="none" class="settings-list">
