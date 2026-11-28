@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkapp=self.webpackChunkapp||[]).push([[5253,7634],{5253(p,u,n){n.d(u,{V:()=>r});const s=/^([+\-\u2212]?\d[\d.,]*)\s+(.+)$/,c=/^([+\-\u2212]?\d[\d.,]*)([%\xb0])$/;function r(f){const t=(f??"").trim(),e=s.exec(t);if(e)return{figure:e[1],unit:e[2],tight:!1};const i=c.exec(t);return i?{figure:i[1],unit:i[2],tight:!0}:{figure:t,unit:"",tight:!1}}}}]);
