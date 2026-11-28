@@ -48,3 +48,44 @@
 .alarm-banner.emergency .alarm-dismiss {
   background: rgba(255, 255, 255, 0.18);
 }
+
+/* Kiosk mode's only control: small, out of the way, and still reachable
+   without an Escape key on an iPad. */
+.kiosk-control {
+  position: fixed;
+  z-index: 90;
+  right: calc(12px + env(safe-area-inset-right));
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--cattitude-line);
+  border-radius: 22px;
+  background: var(--cattitude-surface);
+  color: var(--cattitude-text-light);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  opacity: 0.7;
+  box-shadow: 0 2px 8px rgba(13, 33, 55, 0.15);
+
+  ion-icon {
+    font-size: 1.1rem;
+  }
+
+  &:hover,
+  &:focus-visible {
+    opacity: 1;
+  }
+}
+
+:host-context(html.kiosk-reveal) .kiosk-control {
+  bottom: calc(68px + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 1024px) {
+  :host-context(html.kiosk-reveal) .kiosk-control {
+    bottom: calc(12px + env(safe-area-inset-bottom));
+  }
+}

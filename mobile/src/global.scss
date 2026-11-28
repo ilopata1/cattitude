@@ -375,3 +375,15 @@ $pressable: '.dash-shortcut',
   }
 }
 
+
+/* Kiosk mode: the browser is full screen, so the menu goes away. The
+   floating control in app.component brings it back. See KioskService. */
+html.kiosk:not(.kiosk-reveal) ion-tab-bar.bottom-nav {
+  display: none !important;
+}
+
+@media (min-width: 1024px) {
+  html.kiosk:not(.kiosk-reveal) ion-tabs .tabs-inner {
+    margin-inline-start: 0;
+  }
+}

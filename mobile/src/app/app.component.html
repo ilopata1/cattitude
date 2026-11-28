@@ -20,4 +20,13 @@
   </div>
   <ion-router-outlet></ion-router-outlet>
   <app-photo-overlay></app-photo-overlay>
+  <button
+    *ngIf="kiosk.control() as control"
+    type="button"
+    class="kiosk-control"
+    (click)="control === 'exit' ? kiosk.exit() : kiosk.toggleMenu()"
+  >
+    <ion-icon [name]="control === 'exit' ? 'contract-outline' : 'menu-outline'" aria-hidden="true"></ion-icon>
+    {{ control === 'exit' ? 'Exit full screen' : (kiosk.menuRevealed() ? 'Hide menu' : 'Show menu') }}
+  </button>
 </ion-app>
