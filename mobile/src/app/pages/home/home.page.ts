@@ -45,6 +45,7 @@ import { SignalKSettingsService } from '../../core/services/signal-k-settings.se
 import { VesselContextService } from '../../core/services/vessel-context.service';
 import { VesselRouteService } from '../../core/services/vessel-route.service';
 import { normalizeAngleDeg } from '../../instruments/skip/wind-steer.util';
+import { displayBearing, formatBearing } from '../../core/nav/magnetic';
 
 const HERO_SEEN = 'cattitude.home.heroSeen';
 
@@ -336,9 +337,9 @@ export class HomePage {
       case 'widget:twa':
         return freshDegrees(wind.twa, wind.twaFresh);
       case 'widget:heading':
-        return freshDegrees(wind.heading, wind.headingFresh);
+        return formatBearing(wind.heading, wind.headingRef, wind.variation, wind.headingFresh);
       case 'widget:cog':
-        return freshDegrees(wind.cog, wind.cogFresh);
+        return formatBearing(wind.cog, wind.cogRef, wind.variation, wind.cogFresh);
       case 'widget:sog': {
         const sog = this.essentials().sogKnots;
         return sog === null ? '—' : `${sog.toFixed(1)} kn`;
@@ -515,11 +516,24 @@ export class HomePage {
     if (id === 'widget:twa') {
       return { bearings: this.trace('twa'), current: compass(wind.twa, wind.twaFresh), heading };
     }
+    // Heading and COG are read as magnetic, so their dials are drawn against
+    // magnetic north too: the trace, the current mark, and the bow markers
+    // all move by the same variation, and the arc keeps its shape.
+    const shown = (deg: number, ref: typeof wind.headingRef) => displayBearing(deg, ref, wind.variation).deg;
+    const shownHeading = heading == null ? null : shown(heading, wind.headingRef);
     if (id === 'widget:heading') {
-      return { bearings: this.trace('heading'), current: compass(wind.heading, wind.headingFresh), heading };
+      return {
+        bearings: this.trace('heading').map((deg) => shown(deg, wind.headingRef)),
+        current: wind.headingFresh && Number.isFinite(wind.heading) ? shown(wind.heading, wind.headingRef) : null,
+        heading: shownHeading,
+      };
     }
     if (id === 'widget:cog') {
-      return { bearings: this.trace('cog'), current: compass(wind.cog, wind.cogFresh), heading };
+      return {
+        bearings: this.trace('cog').map((deg) => shown(deg, wind.cogRef)),
+        current: wind.cogFresh && Number.isFinite(wind.cog) ? shown(wind.cog, wind.cogRef) : null,
+        heading: shownHeading,
+      };
     }
     return null;
   }

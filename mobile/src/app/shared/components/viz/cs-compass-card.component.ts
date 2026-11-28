@@ -22,7 +22,8 @@ import {
  * Compass card. The card turns under a fixed lubber line; the boat does not.
  * The Sail page shows this when Dial style is Modern.
  *
- * `heading`, `cog`, and `twa` are compass degrees (`twa` matches `wind().twa`).
+ * `heading`, `cog`, and `twa` are compass degrees (`twa` matches `wind().twa`),
+ * all against the north `reference` names.
  * `awa` is degrees clockwise from the bow.
  */
 @Component({
@@ -39,6 +40,9 @@ export class CsCompassCardComponent {
   readonly cog = input<number | null>(null);
   readonly awa = input<number | null>(null);
   readonly twa = input<number | null>(null);
+  /** North the bearings are measured from; labels the heading °M or °T. */
+  readonly reference = input<'true' | 'magnetic'>('true');
+  protected readonly referenceLetter = computed(() => (this.reference() === 'magnetic' ? 'M' : 'T'));
 
   protected readonly ticks: readonly CompassTick[] = compassTicks();
   protected readonly cardTurn = signal<number | null>(null);
